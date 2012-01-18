@@ -1,0 +1,443 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @package Extensions
+ */
+?>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/structureFunctions.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/validatingFunctions.js"></script>
+
+<div id="dataAnalysis" class="window windowbuttonscount-right-1 <?php if($this->analysis['rule']['completeStructure']): echo 'is-minimized'; endif;?>">
+    <h1 class="title"><?php echo $this->_('title data analysis'); ?></h1>
+    <div class="slidehelper">
+        <div class="content">
+            <?php if(isset($this->analysis)): ?>
+            <table border="0">
+                <tr>
+                    <th><center><?php echo $this->_('title data structures'); ?></center></th>
+                    <th><center><?php echo $this->_('title data sets'); ?></center></th>
+                    <th><center><?php echo $this->_('title component specifications'); ?></center></th>
+                    <th><center><?php echo $this->_('title unused dimensions'); ?></center></th>
+                    <th><center><?php echo $this->_('title unused measures'); ?></center></th>
+                    <th><center><?php echo $this->_('title unused attributes'); ?></center></th>
+                    <th><center><?php echo $this->_('title unbound observations'); ?></center></th>
+                </tr>
+                <tr>
+                    <td><p align="center" <?php if($this->analysis['counts']['dsd']==0): echo 'style="color:#C44;"'; endif; ?>><?php echo $this->analysis['counts']['dsd']; ?></p></td>
+                    <td><p align="center" <?php if($this->analysis['counts']['ds']==0): echo 'style="color:#C44;"'; endif; ?>><?php echo $this->analysis['counts']['ds']; ?></p></td>
+                    <td><p align="center" <?php if($this->analysis['counts']['cs']==0): echo 'style="color:#C44;"'; endif; ?>><?php echo $this->analysis['counts']['cs']; ?></p></td>
+                    <td><p align="center" <?php if($this->analysis['counts']['dp']>0): echo 'style="color:#F93;"'; endif; ?>><?php echo $this->analysis['counts']['dp']; ?></p></td>
+                    <td><p align="center" <?php if($this->analysis['counts']['mp']>0): echo 'style="color:#F93;"'; endif; ?>><?php echo $this->analysis['counts']['mp']; ?></p></td>
+                    <td><p align="center"><?php echo $this->analysis['counts']['ap']; ?></p></td>
+                    <td><p align="center" <?php if($this->analysis['counts']['obs']>0): echo 'style="color:#F93;"'; endif; ?>><?php echo $this->analysis['counts']['obs']; ?></p></td>
+                </tr>
+            </table>
+            <?php if($this->analysis['rule']['completeStructure']):
+                    echo '<i>'.$this->_('info structure given').'</i>';
+                  elseif($this->analysis['rule']['noProcessing']):
+                    echo '<i>'.$this->_('info no processing').'</i>';
+                else: ?>
+            <form name="genericElementsCreationForm" method="POST" action="<?php echo $this->submitUri; ?>" onsubmit="return validateGenericElementsCreationForm();">
+                <?php if(isset($_POST['isUriPatternSet'])):
+                    echo '<input type="hidden" name="isUriPatternSet" value="true" />';
+                    foreach($this->uriPattern as $spec => $pattern):
+                        echo '<input type="hidden" name="'.$spec.'" value="'.$pattern.'" />';
+                    endforeach;
+                endif;
+                ?>
+                <input type="hidden" value="true" name="isCreateElementsSet" />
+                <input type="submit" <?php ($this->isCreationAllowed ? '' : 'disabled'); ?> style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;margin-right:10px;margin-left:10px;" value="<?php echo $this->_('button create elements') ?>" />
+                <a style="float:right;margin-top:5px;margin-right:10px;" href="javascript:toggleCreationList('<?php echo $this->structureUri; ?>', 'elementsCreation');">+ <?php echo $this->_('link detailed creation list'); ?></a>
+                <a style="float:right;margin-top:5px;margin-right:10px;" href="javascript:var result = $('#uriPattern').toggle();">+ <?php echo $this->_('link detailed uri patterns') ?></a>
+                <br />
+                <div id="elementsCreation" style="display:none;margin:10px;overflow:auto;">
+                    <div id="elementsCreationList" style="border:1px solid grey;overflow:auto;max-height:30em"></div>
+                </div>
+            </form>
+            <form name="uriPatternForm" method="POST" action="<?php echo $this->submitUri; ?>" onsubmit="return validateUriPatternForm();">
+                <div id="uriPattern" style="display:none;margin:10px;overflow:auto;">
+                    <input type="hidden" name="isUriPatternSet" value="true" />
+                    <div id="uriPatternList" style="border:1px solid grey;overflow:auto;height:12em">
+                        <ol class="bullets-none separated">
+                            <?php
+                            $i=0;
+                            foreach($this->uriPattern as $spec => $pattern):
+                                echo '<li class="'.($i % 2 == 0 ? 'even' : 'odd').'"><table border="0"><tr><td>'.$this->_('text pattern '.$spec).'&nbsp;:&nbsp;<input name="'.$spec.'" value="'.$pattern.'"/></td></tr></table></li>';
+                                $i++;
+                            endforeach;
+                            ?>
+                        </ol>
+                    </div>
+                    <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="<?php echo $this->_('button set uri patterns') ?>" />
+                    <?php
+                    $uriElementString = $this->_('text pattern description').': ';
+                    foreach($this->uriElements as $element => $description):
+                        $uriElementString .= '<abbr title="'.$this->_('text pattern description '.$element).'">&lt;'.$element.'&gt;</abbr>&nbsp;&nbsp;';
+                    endforeach;
+                    echo '<p style="margin-top:5px;margin-left:2px;float:left;">'.$uriElementString.'</p>';
+                    ?>
+                </div>
+            </form>
+            <?php endif;
+           endif;?>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <div class="window-buttons-right">
+            <span class="button <?php if($this->analysis['rule']['completeStructure']): echo 'button-windowrestore'; else: echo 'button-windowminimize'; endif; ?>"></span>
+        </div>
+    </div>
+</div>
+<?php if(!($this->analysis['rule']['noProcessing'])): ?>
+<div id="dataSelection" class="window windowbuttonscount-right-1">
+    <h1 class="title"><?php echo $this->_('title data selection'); ?></h1>
+    <div class="slidehelper">
+        <div class="content">
+            <?php if(isset($this->dsd) && isset($this->ds) && isset($this->dim) && isset($this->ms)): ?>
+            <table border="0">
+                <tr><th><?php echo $this->_('title data structures and sets'); ?></th>
+                    <th><?php echo $this->_('title dimensions'); ?></th>
+                    <th><?php echo $this->_('title measures'); ?></th>
+                </tr>
+                <tr><td width="33%">
+                    <form name="dataSelectionDSDForm" method="POST" action="<?php echo $this->submitUri; ?>">
+                    <select name="dsd" size="3" multiple="false" onChange="this.form.submit()">
+                        <?php foreach($this->dsd as $index=>$uri):
+                            $selected = false;
+                            if($_POST['dsd'] == $uri) $selected = true;
+                            echo '<option name="'.$uri.'" value="'.$uri.'" '.($selected ? 'selected="selected"' : '').'>'.
+                            $this->titleHelper->getTitle($uri).'</option>';
+                        endforeach; ?>
+                    </select>
+                    </form>
+                    <br /><br />
+                    <form name="dataSelectionDSForm" method="POST" action="<?php echo $this->submitUri; ?>">
+                    <?php if(isset($_POST['dsd'])) echo '<input type="hidden" name="dsd" value="'.$_POST['dsd'].'"/>'; ?>    
+                    <select name="ds" size="3" multiple="false" onChange="this.form.submit()">
+                        <?php foreach($this->ds as $index=>$uri):
+                            $selected = false;
+                            if($_POST['ds'] == $uri) $selected = true;
+                            echo '<option name="'.$uri.'" value="'.$uri.'" '.($selected ? 'selected="selected"' : '').'>'.
+                            $this->titleHelper->getTitle($uri).'</option>';
+                        endforeach;
+                        ?>
+                    </select>
+                    </form>
+                </td><td width="33%">
+                    <form name="dataSelectionForm" method="POST" action="<?php echo $this->submitUri; ?>" onsubmit="return validateDataSelectionForm();">
+                    <?php if(isset($_POST['dsd'])) echo '<input type="hidden" name="dsd" value="'.$_POST['dsd'].'"/>'; ?>
+                    <?php if(isset($_POST['ds'])) echo '<input type="hidden" name="ds" value="'.$_POST['ds'].'"/>'; ?>
+                    <div style="max-height:22em;overflow:auto;">
+                    <?php if(isset($this->dim)):
+                        foreach($this->dim as $elementDIM):
+                            $dimensionUri = $elementDIM['uri'];
+                            $dimensionName = $this->titleHelper->getTitle($elementDIM['uri']);
+                            $selected = false;
+                            $orderElement = '';
+                            $axisElement = '';
+                            if(in_array($elementDIM['uri'], $_POST['dim'])):
+                                 $selected = true;
+                                 $currentOrder = isset($_POST['dim'.md5($dimensionUri).'Order']) ? $_POST['dim'.md5($dimensionUri).'Order'] : 'NONE';
+                                 $selectedString = 'selected="selected"';
+                                 $orderElement = $this->_('text order direction').': <select name="dim'.md5($dimensionUri).'Order" size="1" style="min-width:8em;width:8em;">
+                                    <option value="NONE" '.($currentOrder == 'NONE' ? $selectedString: '').'>'.$this->_('text order none').'</option>
+                                    <option value="ASC" '.($currentOrder == 'ASC' ? $selectedString: '').'>'.$this->_('text order ascending').'</option>
+                                    <option value="DESC" '.($currentOrder == 'DESC' ? $selectedString: '').'>'.$this->_('text order descending').'</option>
+                                    </select>';
+                                 $axisElement .= '<input type="hidden" name="dim'.md5($dimensionUri).'Axis" value="'.$this->axisAllocation[$elementDIM['uri']].'"/>
+                                     '.$this->_('text chart axis').': '.$this->axisAllocation[$elementDIM['uri']].
+                                     ($this->axisAllocation[$elementDIM['uri']] == 'z' ? '&nbsp;&nbsp;<a href="javascript:submitAxisChange(\'dim'.md5($dimensionUri).'Axis\');"># '.$this->_('link set as x-axis').'</a>' : '');
+                            endif;
+                            $pagination = $elementDIM['elemCount'] > $this->options['paginationLimit'] ? true : false;
+                            $limit = (isset($_POST['dim'.md5($dimensionUri).'Limit']) ? $_POST['dim'.md5($dimensionUri).'Limit'] : (((int) $this->options['paginationLimit'])/10)*10);
+                            $offset = (isset($_POST['dim'.md5($dimensionUri).'Offset']) ? $_POST['dim'.md5($dimensionUri).'Offset'] : 0);
+                            $limitElement = '';
+                            $listElementsLink = '';
+                            if($pagination):
+                                $limitElement = '<select name="dim'.md5($dimensionUri).'Limit" size="1" style="min-width:4em;width:4em;">';
+                                $selectedString = ' selected="selected"';
+                                for($i = 1; $i<min($this->options['paginationLimit'], 6); $i++):
+                                    $limitElement .= '<option '.($limit == $i ? $selectedString : '').'>'.$i.'</option>';
+                                endfor;
+                                for($i = 10; $i<=($this->options['paginationLimit']); $i+=10):
+                                    $limitElement .= '<option '.($limit == $i ? $selectedString : '').'>'.$i.'</option>';
+                                endfor;
+                                $limitElement .= '</select>';
+                                $listElementsLink = str_replace('PROPERTYURI', urlencode($elementDIM['type']), $this->listElementsUri);
+                            endif;
+                            echo '<input type="checkbox" name="dim[]" value="'.$elementDIM['uri'].'" 
+                                '.($selected ? ' checked="checked"' : '').'>&nbsp;'.
+                                $dimensionName.' ('.$this->_('text elements').': '.$elementDIM['elemCount'].($pagination ? ', '.$this->_('text pagination only'):'').')&nbsp;'.
+                                    ($selected && !$pagination ?                     
+                                '<a href="javascript:toggleComponentElements(\''.$this->filterUri.'\',\''.$_POST['ds'].'\',\''.$elementDIM['type'].'\', \''.md5($dimensionUri).'\')">+ '.$this->_('link select some elements').'</a>' : '').
+                                    
+                                    ($selected && $pagination ? 
+                                '<a href="javascript:var result = $(\'#dim'.md5($dimensionUri).'pagination\').toggle();">~ '.$this->_('link pagination').'</a>' : '').
+                                
+                                    ($selected ? 
+                                '&nbsp;&nbsp;<a href="javascript:var result = $(\'#dim'.md5($dimensionUri).'options\').toggle();"># '.$this->_('link options').'</a><br />': '').
+                                
+                                    ($selected && !$pagination ? '<div id="dim'.md5($dimensionUri).'" style="display:none;margin:10px;overflow:auto;">
+                                    <div id="dim'.md5($dimensionUri).'elem" style="max-height:8em;overflow:auto;border: 1px solid grey"></div>
+                                    <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="'.$this->_('button select elements').'" />
+                                    <a style="float:left;margin-left:2px;margin-top:5px;" href="javascript: selectAllElements(\''.md5($dimensionUri).'\');"># '.$this->_('link select all elements').'</a>
+                                    <a style="float:left;margin-left:10px;margin-top:5px;" href="javascript: deselectAllElements(\''.md5($dimensionUri).'\');"># '.$this->_('link deselect all elements').'</a>
+                                    </div>' : '').
+                                    
+                                    ($selected && $pagination ? '<div id="dim'.md5($dimensionUri).'pagination" style="display:none;margin:10px;overflow:auto;">
+                                    <div id="dim'.md5($dimensionUri).'elem" style="max-height:8em;overflow:auto;border: 1px solid grey">
+                                        <ol class="bullets-none separated">
+                                        <li class="even"><table border="0"><tr><td>'.$this->_('text number of elements').': '.$limitElement.'&nbsp;&nbsp;&nbsp;
+                                       '.$this->_('text begin at').': <input name="dim'.md5($dimensionUri).'Offset" value="'.$offset.'" style="min-width:4em;width:4em;" /></td></tr></table></li>
+                                        </ol>
+                                    </div>
+                                    <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="'.$this->_('button select elements').'" />
+                                    <a style="float:left;margin-left:2px;margin-top:5px;" href="'.$listElementsLink.'">+ '.$this->_('link show all elements').'</a>
+                                    </div>' : '').
+                                
+                                    (!$selected && $pagination ? '<input type="hidden" name="dim'.md5($dimensionUri).'Limit" value="'.$this->options['paginationLimit'].'" />
+                                        <input type="hidden" name="dim'.md5($dimensionUri).'Offset" value="'.$offset.'" />' : '').
+                                    
+                                    ($selected ? '<div id="dim'.md5($dimensionUri).'options" style="display:none;margin:10px;overflow:auto;">
+                                    <div id="dim'.md5($dimensionUri).'optionsElem" style="max-height:8em;overflow:auto;border: 1px solid grey">
+                                        <ol class="bullets-none separated">
+                                        <li class="even"><table border="0"><tr><td>'.$orderElement.'</td></tr></table></li>
+                                        <li class="odd"><table border="0"><tr><td>'.$axisElement.'</td></tr></table></li>
+                                        </ol>
+                                    </div>
+                                    <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="'.$this->_('button set options').'" />
+                                    </div>' : '').
+                                
+                                    (!$selected ? '<br />' : '');
+                        endforeach;
+                    endif; ?>
+                    </div>
+                </td><td width="33%">
+                    <div style="max-height:22em;overflow:auto;">
+                     <?php if(isset($this->ms)):
+                         foreach($this->ms as $elementMS):
+                            $selected = false;
+                            if(in_array($elementMS['uri'], $_POST['ms'])) $selected = true;
+                            $measureUri = $elementMS['uri'];
+                            $measureName = $this->titleHelper->getTitle($elementMS['uri']);
+                            $aggregationElement = '';
+                            $orderElement = '';
+                            $roundElement = '';
+                            if($selected):
+                                $i = 0;
+                                $aggregationElement .= $this->_('text aggregation method').': <select name="meas'.md5($measureUri).'Aggr" size="1" style="min-width:8em;width:8em;">';
+                                foreach($this->msAggr as $key => $name):
+                                    $i++;
+                                    $aggrSelected = '';
+                                    if($_POST['meas'.md5($measureUri).'Aggr'] == $key):
+                                        $aggrSelected = 'selected="selected"';
+                                    endif;
+                                    $aggregationElement .= '<option value="'.$key.'" '.$aggrSelected.'>'.$this->_('text aggregation '.$key).'</option>';
+                                endforeach;
+                                $aggregationElement .= '</select>';
+                                $currentOrder = isset($_POST['meas'.md5($measureUri).'Order']) ? $_POST['meas'.md5($measureUri).'Order'] : 'NONE';
+                                $selectedString = 'selected="selected"';
+                                $orderElement = $this->_('text order direction').': <select name="meas'.md5($measureUri).'Order" size="1" style="min-width:8em;width:8em;">
+                                   <option value="NONE" '.($currentOrder == 'NONE' ? $selectedString: '').'>'.$this->_('text order none').'</option>
+                                   <option value="ASC" '.($currentOrder == 'ASC' ? $selectedString: '').'>'.$this->_('text order ascending').'</option>
+                                   <option value="DESC" '.($currentOrder == 'DESC' ? $selectedString: '').'>'.$this->_('text order descending').'</option>
+                                   </select>';
+                                $roundElement = '<input type="checkbox" name="meas'.md5($measureUri).'Round" value="true" '
+                                .(isset($_POST['meas'.md5($measureUri).'Round']) ? 'checked="checked"' : '').'/>&nbsp;'.$this->_('text round value');
+                            endif;
+                            echo '<input type="checkbox" name="ms[]" value="'.$elementMS['uri'].'" 
+                                '.($selected ? ' checked="checked"' : '').'>&nbsp;'.$measureName.'&nbsp;'.
+                                    ($selected ?                     
+                                '<a href="javascript:var result = $(\'#meas'.md5($measureUri).'\').toggle();"># '.$this->_('link options').'</a><br />' : '').
+                                
+                                    ($selected ? '<div id="meas'.md5($measureUri).'" style="display:none;margin-left:10px;margin-top:10px;margin-right:10px;margin-bottom:10px;overflow:auto;">
+                                    <div id="meas'.md5($measureUri).'elem" style="max-height:12em;overflow:auto;border: 1px solid grey">
+                                    <ol class="bullets-none separated">
+                                        <li class="even"><table border="0"><tr><td>'.$aggregationElement.'</td></tr></table></li>
+                                        <li class="odd"><table border="0"><tr><td>'.$orderElement.'</td></tr></table></li>
+                                        <li class="even"><table border="0"><tr><td>'.$roundElement.'</td></tr></table></li>
+                                    </ol>
+                                    </div>
+                                    <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="'.$this->_('button set options').'" /></div>' : '<br />');
+                         endforeach;
+                     endif;   ?>
+                    </div>
+                </td></tr>
+            </table>
+            <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;margin-left:10px;margin-right:10px;" value="<?php echo $this->_('button select data'); ?>" />
+            <a href="javascript:var result = $('#configurationLoad').toggle();" style="float:right;margin-top:5px;margin-right:10px;">+&nbsp;<?php echo $this->_('link load configuration'); ?></a>
+            <?php if(isset($_POST['dim']) && isset($_POST['ms']) && $this->isConfigSaveAllowed):
+            echo '<a href="'.$this->saveConfigurationUri.'?configuration='.urlencode($this->serializedResultCubeSpec).'" target="_blank" 
+               style="float:right;margin-top:5px;margin-right:10px;">+&nbsp;'.$this->_('link save configuration').'</a>';
+            endif; ?>
+            <br /><br />
+            <div id="configurationLoad" style="display:none;margin:10px;overflow:auto;">
+                <div id="configurationLoadInput" style="border:1px solid grey;overflow:auto;max-height:6em">
+                    <ol class="bullets-none separated">
+                        <li class="even"><table border="0"><tr><td><?php echo $this->_('text configuration file'); ?>:&nbsp;<input name="configurationFile" style="min-width:16em;width:16em;"/></td></tr></table></li>
+                    </ol>
+                </div>
+                <input type="submit" style="background:#fefefe;float:right;padding-left:1em;padding-right:1em;" value="<?php echo $this->_('button load file'); ?>" />
+            </div>
+            <?php else: ?>
+            <i><?php echo $this->_('info data selection creation first'); ?></i>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <div class="window-buttons-right">
+            <span class="button button-windowminimize"></span>
+        </div>
+    </div>
+</div>
+
+<div id="chartDisplay" class="window windowbuttonscount-right-1">
+    <h1 class="title"><?php echo $this->_('title chart display'); ?></h1>
+    <div class="slidehelper">
+        <div class="content">
+            <?php if(isset($this->chart)): ?>
+            <table border="0">
+                <tr><td width="100%">
+                    <?php echo $this->chart; ?>
+                </td></tr>
+            </table>
+            <?php else: ?>
+                <? if(!isset($this->parser)): ?>
+                <i><?php echo $this->_('info chart display selection first'); ?></i>
+                <? else: ?>
+                <i><?php echo $this->_('info chart type change'); ?></i>
+                <? endif; ?>
+            <?php endif;?>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <div class="window-buttons-right">
+            <span class="button button-windowminimize"></span>
+        </div>
+    </div>
+</div>
+
+<div id="chartSelection" class="window windowbuttonscount-right-1">
+    <h1 class="title"><?php echo $this->_('title chart selection'); ?></h1>
+    <div class="slidehelper">
+        <div class="content">
+            <?php if(isset($this->avChrts) && isset($this->parser)): ?>
+            <table border="0">
+                <tr><th><?php echo $this->_('title types of presentation'); ?></th>
+                    <th><?php echo $this->_('title rendering libraries'); ?></th></tr>
+                <tr><td width="50%">
+                        <?php
+                         foreach($this->avChrts as $type => $typeSet):
+                            $selected = false;
+                            if($_POST['type'] == $type) $selected = true;
+                            echo '<input type="radio" name="type" value="'.$type.'"
+                            onChange="this.form.submit()"
+                            '.($selected ? ' checked="checked"' : '').'>&nbsp;'.
+                            $this->_('text chart type '.$type).'&nbsp;&nbsp;';
+                         endforeach;
+                        ?>
+                </td><td width="50%">
+                        <?php
+                        if(!empty($this->parser)):
+                            foreach($this->parser as $parser => $name):
+                                $selected = false;
+                                if($_POST['parser'] == $parser) $selected = true;
+                                echo '<input type="radio" name="parser" value="'.$parser.'"
+                                onChange="this.form.submit()"
+                                '.($selected ? ' checked="checked"' : '').'>&nbsp;'.
+                                $name.'&nbsp;&nbsp;';
+                            endforeach;
+                        else:
+                            echo $this->_('info no chart library for selected type');
+                        endif;    
+                        ?>
+                </td></tr>
+            </table>
+            <?php else: ?>
+                <i><?php echo $this->_('info chart selection selection first'); ?></i>
+            <?php endif; ?>
+            </form>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <div class="window-buttons-right">
+            <span class="button button-windowminimize"></span>
+        </div>
+    </div>
+</div>
+
+<?php if(isset($this->parserAddOns)): ?>
+<div id="parserAddOns" class="window windowbuttonscount-right-1">
+    <h1 class="title"><?php echo $this->_('title chart addons'); ?></h1>
+    <div class="slidehelper">
+        <div class="content">
+            <?php echo $this->parserAddOns; ?>
+        </div>
+    </div>
+    <div class="window-buttons">
+        <div class="window-buttons-right">
+            <span class="button button-windowminimize"></span>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<?php endif; ?>
+<!-- Script section for the preparation and initial data of the JS stuff -->
+<script type="text/javascript">
+selectedElementsList = new Array();
+elementCreationList = new Array();
+uriPatternList = new Array();
+elementCountList = new Array();
+optionList = new Array();
+messageList = new Array();
+<?php
+if(isset($_POST['dim'])):
+    foreach($_POST['dim'] as $dimension):
+        $dimensionUriHash = md5($dimension);
+        echo 'dim'.$dimensionUriHash.'elemList = new Array();';
+        if(isset($_POST['dim'.$dimensionUriHash.'elemList'])):
+            foreach($_POST['dim'.$dimensionUriHash.'elemList'] as $dimElement):
+                echo 'dim'.$dimensionUriHash.'elemList.push("'.$dimElement.'");';
+            endforeach;
+            //initial load of the selected elements to ensure that the form which is
+            //loaded will be sent again
+            echo 'getComponentElements(\''.$this->filterUri.'\',\''.$_POST['ds'].'\', \''.$this->dim[$dimension]['type'].'\', \''.md5($dimension).'\');';
+        endif;
+        //set all selected elements and the dimension counts
+        echo 'selectedElementsList["dim'.$dimensionUriHash.'elemList"] = dim'.$dimensionUriHash.'elemList;';
+        echo 'elementCountList["dim'.$dimensionUriHash.'"] = '.$this->dim[$dimension]['elemCount'].';';
+    endforeach;
+endif;
+//set all uri patterns
+foreach($this->uriPattern as $spec => $pattern):
+    echo 'uriPatternList["'.$spec.'"] = "'.$pattern.'";';
+endforeach;
+//set all options
+foreach($this->options as $key => $value):
+    echo 'optionList["'.$key.'"] = "'.$value.'";';
+endforeach;
+//load the message texts for the JS part in the correct language
+//all fixed values (paginationLimit...) will be inserted here
+//all variable values from forms will be inserted with JS replace() in the respective function
+echo 'messageList["text loading"] = "'.$this->_('text loading').'";';
+echo 'messageList["text component for dimension"] = "'.$this->_('text component for dimension').'";';
+echo 'messageList["text uri"] = "'.$this->_('text uri').'";';
+echo 'messageList["text name"] = "'.$this->_('text name').'";';
+echo 'messageList["text component for measure"] = "'.$this->_('text component for measure').'";';
+echo 'messageList["text dataset"] = "'.$this->_('text dataset').'";';
+echo 'messageList["text datastructure"] = "'.$this->_('text datastructure').'";';
+echo 'messageList["text with"] = "'.$this->_('text with').'";';
+echo 'messageList["text using components"] = "'.$this->_('text using components').'";';
+echo 'messageList["alert pagination limit"] = "'.sprintf($this->_('alert pagination limit'), $this->options['paginationLimit']).'";';
+echo 'messageList["alert offset limit"] = "'.$this->_('alert offset limit').'";';
+echo 'messageList["alert empty pattern values"] = "'.$this->_('alert empty pattern values').'";';
+echo 'messageList["alert missing generic name"] = "'.$this->_('alert missing generic name').'";';
+echo 'messageList["alert missing uri"] = "'.$this->_('alert missing uri').'";';
+echo 'messageList["alert missing name"] = "'.$this->_('alert missing name').'";';
+echo 'messageList["alert doubled uri"] = "'.$this->_('alert doubled uri').'";';
+echo 'messageList["alert doubled name"] = "'.$this->_('alert doubled name').'";';
+?>
+</script>

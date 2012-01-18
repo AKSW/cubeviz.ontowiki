@@ -1,0 +1,179 @@
+title data analysis;Data analysis
+title data structures;Data structures
+title data sets;Data sets
+title component specifications;Component specifications
+title unused dimensions;Unused dimension properties
+title unused measures;Unused measure properties
+title unused attributes;Unused attribute properties
+title unbound observations;Unbound observations
+title data selection;Data selection
+title data structures and sets;Data Structures and Sets
+title dimensions;Dimensions
+title measures;Measures
+title chart display;Chart display
+title chart selection;Chart selection
+title types of presentation;Types of presentation
+title rendering libraries;Rendering libraries
+title chart addons;Library options
+text order direction;Order direction
+text order none;none
+text order ascending;ascending
+text order descending;descending
+text chart axis;Chart axis
+text elements;elements
+text pagination only;pagination only
+text number of elements;Number of elements
+text begin at;Begin at
+text aggregation method;Aggregation method
+text aggregation SUM;sum
+text aggregation AVG;average
+text aggregation MIN;minimum
+text aggregation MAX;maximum
+text round value;Round the values
+text chart type bar;Bars
+text chart type pie;Pie
+text chart type line;Lines
+text chart type area;Areas
+text chart type splines;Splines
+text chart type scatterplot;Scatter plot
+text chart type table;Table
+text loading;Loading...
+text component for dimension;Component for dimension
+text uri;URI
+text name;Name
+text component for measure;Component for measure
+text dataset;DataSet for %1 observations
+text datastructure;DataStructure
+text with;with
+text using components;using the components for
+text pattern ComponentSpecification;Component specification
+text pattern DataStructureDefinition;Data structure
+text pattern DataSet;Data set
+text pattern description;You can use the following elements in your patterns
+text pattern description MODEL;The uri of the current model will be inserted.
+text pattern description MD5;A md5-hashsum of the element attributes will be inserted.
+text pattern description COUNTER;The current element number will be inserted.
+text configuration file;URL to configuration file
+link detailed creation list;Detailed creation list
+link detailed uri patterns;Detailed URI patterns
+link set as x-axis;Set as x-axis
+link select some elements;Select some elements
+link pagination;Pagination
+link options;Options
+link show all elements;Show all elements
+link select all elements;Select all
+link deselect all elements;Deselect all
+link load configuration;Load configuration
+link save configuration;Save configuration
+button create elements;Create elements
+button set uri patterns;Set URI patterns
+button select data;Select data
+button load file;Load file
+button select elements;Select elements
+button set options;Set options
+info no processing;Sorry, there are no RDF Data Cube elements in this knowledge base, so no further processing is possible.
+info data selection creation first;Please create some RDF Data Cube structure elements in the data analysis area first.
+info chart display selection first;Please select the data first.
+info chart selection selection first;Please select the data first.
+info structure given;The current model is already structered with the RDF Data Cube vocabulary.
+info chart type change;Please change the chart type.
+info no chart library for selected type;There is currently no chart library configured to handle this chart type.
+info scatterplot two elements in x needed;Please select exactly two elements in the dimension for the x-Axis in order to use this chart type.
+alert pagination limit;Please choose a limit smaller than the pagination limit of %1 elements.
+alert offset limit;Please choose an offset smaller than the total amount of %1 elements.
+alert empty pattern values;Empty pattern values are not allowed.
+alert missing generic name;Please insert a generic name element.
+alert missing uri;Please enter an uri for the selected element.
+alert missing name;Please enter a name for the selected element.
+alert doubled uri;The selected uri exists twice in the creation list. Please change it.
+alert doubled name;The selected name exists twice in the creation list. Please change it.
+addon AttributeConfigurationHighChartsParserAddOn title AttributeConfigurationHighChartsParserAddOn;Chart properties
+addon AttributeConfigurationHighChartsParserAddOn title chart elements;Chart elements
+addon AttributeConfigurationHighChartsParserAddOn title chart legend;Legend
+addon AttributeConfigurationHighChartsParserAddOn title chart xaxis;x-Axis
+addon AttributeConfigurationHighChartsParserAddOn title chart yaxis;y-Axis
+addon AttributeConfigurationHighChartsParserAddOn title chart line style;Line style
+addon AttributeConfigurationHighChartsParserAddOn title chart area style;Area style
+addon AttributeConfigurationHighChartsParserAddOn title chart bar style;Bar style
+addon AttributeConfigurationHighChartsParserAddOn title chart title;Chart title
+addon AttributeConfigurationHighChartsParserAddOn title chart credits;Credits
+addon AttributeConfigurationHighChartsParserAddOn title pie elements;Pie and its elements
+addon AttributeConfigurationHighChartsParserAddOn text stacking;Stacking of the z-elements
+addon AttributeConfigurationHighChartsParserAddOn text disabled;disabled
+addon AttributeConfigurationHighChartsParserAddOn text normal;normal
+addon AttributeConfigurationHighChartsParserAddOn text percent;percent
+addon AttributeConfigurationHighChartsParserAddOn text shadow;Shadow
+addon AttributeConfigurationHighChartsParserAddOn text enabled;enabled
+addon AttributeConfigurationHighChartsParserAddOn text data labels;Show data labels
+addon AttributeConfigurationHighChartsParserAddOn text legend show;Show legend
+addon AttributeConfigurationHighChartsParserAddOn text layout;Layout
+addon AttributeConfigurationHighChartsParserAddOn text horizontal;horizontal
+addon AttributeConfigurationHighChartsParserAddOn text vertical;vertical
+addon AttributeConfigurationHighChartsParserAddOn text label rotation;Label rotation
+addon AttributeConfigurationHighChartsParserAddOn text rotation 0;0°
+addon AttributeConfigurationHighChartsParserAddOn text rotation -45;-45°
+addon AttributeConfigurationHighChartsParserAddOn text rotation -90;-90°
+addon AttributeConfigurationHighChartsParserAddOn text rotation 45;45°
+addon AttributeConfigurationHighChartsParserAddOn text rotation 90;90°
+addon AttributeConfigurationHighChartsParserAddOn text label align;Label align
+addon AttributeConfigurationHighChartsParserAddOn text left;left
+addon AttributeConfigurationHighChartsParserAddOn text right;right
+addon AttributeConfigurationHighChartsParserAddOn text center;center
+addon AttributeConfigurationHighChartsParserAddOn text label staggering;Label staggering
+addon AttributeConfigurationHighChartsParserAddOn text none;none
+addon AttributeConfigurationHighChartsParserAddOn text 1 line;1 line
+addon AttributeConfigurationHighChartsParserAddOn text 2 lines;2 lines
+addon AttributeConfigurationHighChartsParserAddOn text 3 lines;3 lines
+addon AttributeConfigurationHighChartsParserAddOn text minimum value;Minimum
+addon AttributeConfigurationHighChartsParserAddOn text maximum value;Maximum
+addon AttributeConfigurationHighChartsParserAddOn text top;top
+addon AttributeConfigurationHighChartsParserAddOn text bottom;bottom
+addon AttributeConfigurationHighChartsParserAddOn text dash style;Dash style
+addon AttributeConfigurationHighChartsParserAddOn text solid;solid
+addon AttributeConfigurationHighChartsParserAddOn text short dashed;short dashes
+addon AttributeConfigurationHighChartsParserAddOn text short dotted;short dots
+addon AttributeConfigurationHighChartsParserAddOn text dotted;dots
+addon AttributeConfigurationHighChartsParserAddOn text dashed;dashes
+addon AttributeConfigurationHighChartsParserAddOn text long dashed;long dashes
+addon AttributeConfigurationHighChartsParserAddOn text dash dot;dash dots
+addon AttributeConfigurationHighChartsParserAddOn text line width;Line width
+addon AttributeConfigurationHighChartsParserAddOn text 1px;1px
+addon AttributeConfigurationHighChartsParserAddOn text 2px;2px
+addon AttributeConfigurationHighChartsParserAddOn text 3px;3px
+addon AttributeConfigurationHighChartsParserAddOn text 4px;4px
+addon AttributeConfigurationHighChartsParserAddOn text 5px;5px
+addon AttributeConfigurationHighChartsParserAddOn text 6px;6px
+addon AttributeConfigurationHighChartsParserAddOn text fill opacity;Opacity of filling
+addon AttributeConfigurationHighChartsParserAddOn text 100%;100%
+addon AttributeConfigurationHighChartsParserAddOn text 10%;10%
+addon AttributeConfigurationHighChartsParserAddOn text area threshold;Threshold for the area on the y-Axis
+addon AttributeConfigurationHighChartsParserAddOn text bar direction;Direction
+addon AttributeConfigurationHighChartsParserAddOn text columns;vertical
+addon AttributeConfigurationHighChartsParserAddOn text bars;horizontal
+addon AttributeConfigurationHighChartsParserAddOn text border width;Border width
+addon AttributeConfigurationHighChartsParserAddOn text border radius;Border radius
+addon AttributeConfigurationHighChartsParserAddOn text pie size;Size
+addon AttributeConfigurationHighChartsParserAddOn text 90%;90%
+addon AttributeConfigurationHighChartsParserAddOn text 75%;75%
+addon AttributeConfigurationHighChartsParserAddOn text 50%;50%
+addon AttributeConfigurationHighChartsParserAddOn text 25%;25%
+addon AttributeConfigurationHighChartsParserAddOn text pie inner size;Inner diameter
+addon AttributeConfigurationHighChartsParserAddOn text 0;0
+addon AttributeConfigurationHighChartsParserAddOn text pie sliced offset;Offset of selected slice
+addon AttributeConfigurationHighChartsParserAddOn text 0px;0px
+addon AttributeConfigurationHighChartsParserAddOn text 10px;10px
+addon AttributeConfigurationHighChartsParserAddOn text 20px;20px
+addon AttributeConfigurationHighChartsParserAddOn text chart title;Title
+addon AttributeConfigurationHighChartsParserAddOn text chart subtitle;Subtitle
+addon AttributeConfigurationHighChartsParserAddOn text show credits;Show credits
+addon AttributeConfigurationHighChartsParserAddOn text credits text;Text
+addon AttributeConfigurationHighChartsParserAddOn text credits link;Link
+addon AttributeConfigurationHighChartsParserAddOn link set values;Set values
+addon AttributeConfigurationPhplotParserAddOn title AttributeConfigurationPhplotParserAddOn;Chart properties
+addon AttributeConfigurationPhplotParserAddOn title chart title;Chart title
+addon AttributeConfigurationPhplotParserAddOn title submit changes;Changes
+addon AttributeConfigurationPhplotParserAddOn text chart title;Headline
+addon AttributeConfigurationPhplotParserAddOn button submit;apply
+addon AttributeConfigurationPhplotParserAddOn button reset;reset
+addon AttributeConfigurationPhplotParserAddOn text x title;X-axis
+addon AttributeConfigurationPhplotParserAddOn text y title;Y-axis

@@ -1,0 +1,179 @@
+title data analysis;Datenanalyse
+title data structures;Datenstrukturen
+title data sets;Datensätze
+title component specifications;Komponenten
+title unused dimensions;Ungenutzte Dimensionen
+title unused measures;Ungenutzte Messgrößen
+title unused attributes;Ungenutzte Attribute
+title unbound observations;Beobachtungen ohne Datensatz
+title data selection;Datenauswahl
+title data structures and sets;Datenstrukturen und Datensätze
+title dimensions;Dimensionen
+title measures;Messgrößen
+title chart display;Diagrammanzeige
+title chart selection;Diagrammauswahl
+title types of presentation;Diagrammtypen
+title rendering libraries;Diagramm-Bibliotheken
+title chart addons;Optionen der Bibliothek
+text order direction;Ordnung
+text order none;keine
+text order ascending;aufsteigend
+text order descending;absteigend
+text chart axis;Diagrammachse
+text elements;Elemente
+text pagination only;Zugriff seitenweise
+text number of elements;Anzahl der Elemente
+text begin at;Anfang bei Position
+text aggregation method;Aggregation mittels
+text aggregation SUM;Summe
+text aggregation AVG;Durchschnitt
+text aggregation MIN;Minimum
+text aggregation MAX;Maximum
+text round value;Werte runden
+text chart type bar;Balken
+text chart type pie;Kreis
+text chart type line;Linien
+text chart type area;Flächen
+text chart type splines;Splines
+text chart type scatterplot;Punktwolke
+text chart type table;Tabelle
+text loading;Lade...
+text component for dimension;Komponente für Dimension
+text uri;URI
+text name;Name
+text component for measure;Komponente für Messgröße
+text dataset;Datensatz für %1 Beobachtungen
+text datastructure;Datenstruktur
+text with;mit
+text using components;unter Nutzung der Komponenten für
+text pattern ComponentSpecification;Komponente
+text pattern DataStructureDefinition;Datenstruktur
+text pattern DataSet;Datensatz
+text pattern description;Folgende Pattern-Elemente können Sie verwenden
+text pattern description MODEL;Die URI der aktuellen Wissensbasis wird eingefügt.
+text pattern description MD5;Ein MD5-Hash der Attribute des Elementes wird eingefügt.
+text pattern description COUNTER;Die aktuelle Elementnummer wird eingefügt.
+text configuration file;URL zur Konfigurationsdatei
+link detailed creation list;Detaillierte Elementliste
+link detailed uri patterns;URI-Patterns der Elemente
+link set as x-axis;Als X-Achse auswählen
+link select some elements;Elemente auswählen
+link pagination;Seitenauswahl
+link options;Optionen
+link show all elements;Alle Elemente anzeigen
+link select all elements;Alle auswählen
+link deselect all elements;Keines auswählen
+link load configuration;Konfiguration laden
+link save configuration;Konfiguration speichern
+button create elements;Elemente erstellen
+button set uri patterns;URI-Patterns speichern
+button select data;Daten auswählen
+button load file;Datei laden
+button select elements;Auswählen
+button set options;Speichern
+info no processing;Leider sind in dieser Wissensbasis keine RDF-DataCube-Elemente zur weiteren Verarbeitung enthalten.
+info data selection creation first;Bitte erstellen Sie zuerst DataCube-Elemente im Datenanalyse-Bereich.
+info chart display selection first;Bitte wählen Sie die anzuzeigenden Daten im Auswahl-Bereich aus.
+info chart selection selection first;Bitte wählen Sie die anzuzeigenden Daten im Auswahl-Bereich aus.
+info structure given;Die ausgewählte Wissensbasis ist bereits mit dem RDF-DataCube-Vokabular strukturiert.
+info chart type change;Bitte ändern Sie den Diagrammtyp.
+info no chart library for selected type;Für diesen Diagrammtyp ist gegenwärtig keine Diagramm-Bibliothek konfiguriert.
+info scatterplot two elements in x needed;Bitte wählen Sie genau zwei Elemente in der Dimension der x-Achse aus, um diesen Diagrammtyp nutzen zu können.
+alert pagination limit;Bitte wählen Sie eine Menge mit höchstens %1 Elementen.
+alert offset limit;Bitte wählen Sie den Beginn der Elementauswahl kleiner als %1.
+alert empty pattern values;Leere Pattern-Eingaben sind nicht zugelassen.
+alert missing generic name;Bitte verwenden Sie ein generisches Namenselement.
+alert missing uri;Bitte geben Sie eine URI für das Element ein.
+alert missing name;Bitte geben Sie einen Namen für das Element ein.
+alert doubled uri;Die angegebene URI wurde bereits vergeben. Bitte ändern Sie Ihre Eingabe.
+alert doubled name;Der angegebene Name wurde bereits vergeben. Bitte ändern Sie Ihre Eingabe.
+addon AttributeConfigurationHighChartsParserAddOn title AttributeConfigurationHighChartsParserAddOn;Einstellungen der Diagrammattribute
+addon AttributeConfigurationHighChartsParserAddOn title chart elements;Diagrammelemente
+addon AttributeConfigurationHighChartsParserAddOn title chart legend;Legende
+addon AttributeConfigurationHighChartsParserAddOn title chart xaxis;X-Achse
+addon AttributeConfigurationHighChartsParserAddOn title chart yaxis;Y-Achse
+addon AttributeConfigurationHighChartsParserAddOn title chart line style;Linienstil
+addon AttributeConfigurationHighChartsParserAddOn title chart area style;Flächenstil
+addon AttributeConfigurationHighChartsParserAddOn title chart bar style;Balkenstil
+addon AttributeConfigurationHighChartsParserAddOn title chart title;Diagrammtitel
+addon AttributeConfigurationHighChartsParserAddOn title chart credits;Credits
+addon AttributeConfigurationHighChartsParserAddOn title pie elements;Kreis und Kreiselemente
+addon AttributeConfigurationHighChartsParserAddOn text stacking;Stapelung der z-Elemente
+addon AttributeConfigurationHighChartsParserAddOn text disabled;deaktiviert
+addon AttributeConfigurationHighChartsParserAddOn text normal;normal
+addon AttributeConfigurationHighChartsParserAddOn text percent;prozentual
+addon AttributeConfigurationHighChartsParserAddOn text shadow;Schattierung
+addon AttributeConfigurationHighChartsParserAddOn text enabled;aktiviert
+addon AttributeConfigurationHighChartsParserAddOn text data labels;Elementwerte anzeigen
+addon AttributeConfigurationHighChartsParserAddOn text legend show;Legende anzeigen
+addon AttributeConfigurationHighChartsParserAddOn text layout;Anordnung
+addon AttributeConfigurationHighChartsParserAddOn text horizontal;horizontal
+addon AttributeConfigurationHighChartsParserAddOn text vertical;vertikal
+addon AttributeConfigurationHighChartsParserAddOn text label rotation;Drehung der Beschriftung
+addon AttributeConfigurationHighChartsParserAddOn text rotation 0;0°
+addon AttributeConfigurationHighChartsParserAddOn text rotation -45;-45°
+addon AttributeConfigurationHighChartsParserAddOn text rotation -90;-90°
+addon AttributeConfigurationHighChartsParserAddOn text rotation 45;45°
+addon AttributeConfigurationHighChartsParserAddOn text rotation 90;90°
+addon AttributeConfigurationHighChartsParserAddOn text label align;Ausrichtung der Beschriftung
+addon AttributeConfigurationHighChartsParserAddOn text left;linksbündig
+addon AttributeConfigurationHighChartsParserAddOn text right;rechtsbündig
+addon AttributeConfigurationHighChartsParserAddOn text center;mittig
+addon AttributeConfigurationHighChartsParserAddOn text label staggering;Staffelung der Beschriftung
+addon AttributeConfigurationHighChartsParserAddOn text none;keine
+addon AttributeConfigurationHighChartsParserAddOn text 1 line;1 Zeile
+addon AttributeConfigurationHighChartsParserAddOn text 2 lines;2 Zeilen
+addon AttributeConfigurationHighChartsParserAddOn text 3 lines;3 Zeilen
+addon AttributeConfigurationHighChartsParserAddOn text minimum value;Minimum
+addon AttributeConfigurationHighChartsParserAddOn text maximum value;Maximum
+addon AttributeConfigurationHighChartsParserAddOn text top;oben
+addon AttributeConfigurationHighChartsParserAddOn text bottom;unten
+addon AttributeConfigurationHighChartsParserAddOn text dash style;Strichelung
+addon AttributeConfigurationHighChartsParserAddOn text solid;keine
+addon AttributeConfigurationHighChartsParserAddOn text short dashed;kurze Striche
+addon AttributeConfigurationHighChartsParserAddOn text short dotted;kleine Punkte
+addon AttributeConfigurationHighChartsParserAddOn text dotted;Punkte
+addon AttributeConfigurationHighChartsParserAddOn text dashed;Striche
+addon AttributeConfigurationHighChartsParserAddOn text long dashed;lange Striche
+addon AttributeConfigurationHighChartsParserAddOn text dash dot;Strich-Punkt
+addon AttributeConfigurationHighChartsParserAddOn text line width;Linienstärke
+addon AttributeConfigurationHighChartsParserAddOn text 1px;1px
+addon AttributeConfigurationHighChartsParserAddOn text 2px;2px
+addon AttributeConfigurationHighChartsParserAddOn text 3px;3px
+addon AttributeConfigurationHighChartsParserAddOn text 4px;4px
+addon AttributeConfigurationHighChartsParserAddOn text 5px;5px
+addon AttributeConfigurationHighChartsParserAddOn text 6px;6px
+addon AttributeConfigurationHighChartsParserAddOn text fill opacity;Deckkraft der Füllung
+addon AttributeConfigurationHighChartsParserAddOn text 100%;100%
+addon AttributeConfigurationHighChartsParserAddOn text 10%;10%
+addon AttributeConfigurationHighChartsParserAddOn text area threshold;Flächen-Nulllinie auf der Y-Achse bei
+addon AttributeConfigurationHighChartsParserAddOn text bar direction;Ausrichtung
+addon AttributeConfigurationHighChartsParserAddOn text columns;vertikal
+addon AttributeConfigurationHighChartsParserAddOn text bars;horizontal
+addon AttributeConfigurationHighChartsParserAddOn text border width;Randbreite
+addon AttributeConfigurationHighChartsParserAddOn text border radius;Randabrundung
+addon AttributeConfigurationHighChartsParserAddOn text pie size;Größe
+addon AttributeConfigurationHighChartsParserAddOn text 90%;90%
+addon AttributeConfigurationHighChartsParserAddOn text 75%;75%
+addon AttributeConfigurationHighChartsParserAddOn text 50%;50%
+addon AttributeConfigurationHighChartsParserAddOn text 25%;25%
+addon AttributeConfigurationHighChartsParserAddOn text pie inner size;Innendurchmesser
+addon AttributeConfigurationHighChartsParserAddOn text 0;0
+addon AttributeConfigurationHighChartsParserAddOn text pie sliced offset;Abstand ausgewählter Sektoren
+addon AttributeConfigurationHighChartsParserAddOn text 0px;0px
+addon AttributeConfigurationHighChartsParserAddOn text 10px;10px
+addon AttributeConfigurationHighChartsParserAddOn text 20px;20px
+addon AttributeConfigurationHighChartsParserAddOn text chart title;Titel
+addon AttributeConfigurationHighChartsParserAddOn text chart subtitle;Untertitel
+addon AttributeConfigurationHighChartsParserAddOn text show credits;Credits anzeigen
+addon AttributeConfigurationHighChartsParserAddOn text credits text;Text
+addon AttributeConfigurationHighChartsParserAddOn text credits link;Link
+addon AttributeConfigurationHighChartsParserAddOn link set values;Eingaben anwenden
+addon AttributeConfigurationPhplotParserAddOn title AttributeConfigurationPhplotParserAddOn;Einstellungen der Diagrammattribute
+addon AttributeConfigurationPhplotParserAddOn title chart title;Diagrammtitel
+addon AttributeConfigurationPhplotParserAddOn title submit changes;Einstellungen
+addon AttributeConfigurationPhplotParserAddOn text chart title;Titel
+addon AttributeConfigurationPhplotParserAddOn button submit;speichern
+addon AttributeConfigurationPhplotParserAddOn button reset;zurücksetzen
+addon AttributeConfigurationPhplotParserAddOn text x title;X-Achse
+addon AttributeConfigurationPhplotParserAddOn text y title;Y-Achse
