@@ -1,0 +1,192 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @package Extensions
+ */
+
+//var_dump( $this->analysis );
+//var_dump( $this->analysis['rule']['noProcessing']); // no rendering the page?
+//echo $this->_('title data selection'); - Data Selection (language dependent?)
+//var_dump($this->dsd); - data structure description
+//var_dump($this->ds); - dataset
+//var_dump($this->dim); - dimensions
+//var_dump($this->ms); - measurements
+//echo $this->_('title data structures and sets'); - Data Structures and Sets
+//echo $this->_('title dimensions'); - Dimensions 
+//echo $this->_('title measures'); - Measures
+//echo $this->submitUri;
+?>
+
+<style>
+	.selectable .ui-selecting { background: #FECA40; }
+	.selectable .ui-selected { background: #F39814; color: white; }
+	.selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+	.selectable li { margin: 3px; padding: 0.4em; font-size: 1em; height: 18px; }
+</style>
+
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/AJAXcalls.js"></script>
+
+<script type="text/javascript">
+	// serializing variables
+	data_structure_description = <?php echo json_encode($this->dsd); ?>;
+	data_set = <?php echo json_encode($this->ds); ?>;
+	dimensions = <?php echo json_encode($this->dim); ?>;
+	measures = <?php echo json_encode($this->ms); ?>;
+	baseUri = <?php echo json_encode($this->basePath); ?>;
+	// Global variables - selected by user
+	selectedDsdUri = '';
+	selectedDsUri = '';
+	
+	// initializing jquery UI stuff
+	$(function() {
+		
+		//show DSD selector
+		$("#dsd").show();
+				
+		
+		// adding elements to the DSD list		
+		for(var i=0; i < data_structure_description.length; i++) {
+			var dsd = data_structure_description[i];
+			$("#dsd-selector").append($('<li/>', {text: "Data Structure " + i}).data("dsd", {"uri": dsd}));
+		}
+		
+		// adding elements to the DSD list		
+		for(var i=0; i < data_set.length; i++) {
+			var ds = data_set[i];
+			$("#ds-selector").append($('<li/>', {text: ds}).data("ds", {"uri": ds}));
+		}
+		
+		for(var dim in dimensions) {
+			// dim is an URL itself
+			var elemCount = dimensions[dim]['elemCount']; //elements in each dimensions
+			var order = dimensions[dim]['order']; // ?
+			var typeUri = dimensions[dim]['type']; // type of the dimension
+			var type = getTypeOfUri(typeUri);
+			var uri = dimensions[dim]['uri'];
+			var md5 = dimensions[dim]['md5']; // md5(uri); - done with PHP
+			$("#dim-selector").append($('<li/>', {text: type + " (elements: " + elemCount + ")" , id: md5}));
+			$("#" + md5).data("dimension", {"uri": uri, "order": order, "typeUri": typeUri, "type": type} );
+		}
+		
+		for(var ms in measures) {
+			var typeUri = measures[ms]['type'];
+			var type = getTypeOfUri(typeUri);
+			var uri = measures[ms]['uri'];
+			var order = measures[ms]['order'];
+			var md5 = measures[ms]['md5'];
+			$("#meas-selector").append($('<li/>', {text: type, id: md5 }));
+			$("#" + md5).data("measure", {"uri": uri, "order": order, "typeUri": typeUri, "type": type} );
+		}
+		
+		// initialize all buttons
+		$( ".button" ).button();
+		
+		// select dsd button
+		$( "#select-dsd-button" ).click(function() {
+			//set dsd to the variable
+			selectedDsdUri = $("ol#dsd-selector > .ui-selected").data("dsd").uri;
+			//hide dsd selection, show ds selection
+			$("#dsd").hide();
+			$("#ds").show();
+		});
+		
+		// select ds button
+		$( "#select-ds-button" ).click(function() {
+			//set ds to the variable
+			selectedDsUri = $("ol#ds-selector > .ui-selected").data("ds").uri;
+			//hide dsd selection, show ds selection
+			$("#ds").hide();
+			$("#dim").show();
+		});
+		
+		// get dimensions button
+		$( "#fetch-dim" ).click(function() { 
+				
+				// dimension_ids == false, if no dimensions are selected
+				dimension_ids = getDimensionsID();
+				
+				if(dimension_ids) {
+					// AJAX request to get dimensions from the CubevizController.php
+					// Previously made by "Select some elements"
+					
+					for(var i=0; i < dimension_ids.length; i++) {
+						dimensionData = $("#" + dimension_ids[i]).data("dimension"); //array => order, typeUri, uri
+						dimensionList = getDimensionList(dimensionData['typeUri'], selectedDsUri, baseUri, dimensionData['type']);
+					}
+										
+				}
+			});
+		
+		$( ".selectable" ).selectable();
+	});
+	
+	function getTypeOfUri(uri) {
+		temp = uri.split("/");
+		return temp.pop();
+	}
+	
+	function getDimensionsID() {
+		// select all selected <li/> elements in dim-selector list
+		var selected_dimensions = $("ol#dim-selector > .ui-selected");
+		var ids = new Array();
+		for(var i = 0; i < selected_dimensions.length; i++) {
+			var id = $(selected_dimensions[i]).attr('id');
+			ids.push(id);
+		}
+		
+		if(ids.length == 0) {
+			return false;
+		} else {
+			return ids;
+		}
+	}
+	
+	//console.log(data_structure_description);
+
+</script>
+
+<!-- show all DSD from the $this->dsd and let the user choose one of them -->
+<section id="dsd" style="display: none">
+	<header>
+		<?php echo $this->_('title data structures'); ?>
+	</header>
+	
+	<ol id="dsd-selector" class="selectable"></ol>
+	
+	<div id="select-dsd-button" class="button">Confirm</div>
+</section>
+
+<!-- show all DS from the $this->ds and let the user choose one of them -->
+<section id="ds" style="display: none">
+	<header>
+		<?php echo $this->_('title data sets'); ?>
+	</header>
+	
+	<ol id="ds-selector" class="selectable"></ol>
+	
+	<div id="select-ds-button" class="button">Confirm</div>
+</section>
+
+<!-- show all dimensions from the $this->dim and let the user choose one of them -->
+<section id="dim" style="display: none">
+	<header>
+		<?php echo $this->_('title dimensions'); ?>
+	</header>
+	
+	<ol id="dim-selector" class="selectable"></ol>
+	
+	<div id="fetch-dim" class="button">Get dimensions</div>
+	<div id="dim-list"></div>
+</section>
+
+<!-- show all measures from the $this->dim and let the user choose one of them -->
+<section id="meas" style="display: none">
+	<header>
+		<?php echo $this->_('title measures'); ?>
+	</header>
+	
+	<ol id="meas-selector" class="selectable"></ol>
+</section>

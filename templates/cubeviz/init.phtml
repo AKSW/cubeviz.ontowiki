@@ -1,0 +1,278 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @package Extensions
+ */
+?>
+
+<!-- page specific stylesheets -->
+<link rel="stylesheet" href="<?php echo $this->basePath; ?>css/init.css" type="text/css" media="screen" />
+
+<!-- page specific JS files -->
+<!-- NOTICE: some files loaded dynamically by the Namespace.js include() function -->
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/init.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/jquery-plugins/jquery.json-2.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/namespacedotjs/Namespace.js"></script>
+
+<script type="text/javascript">
+	
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	// URI for the component, for the localhost should be http://localhost/cubeviz/
+	cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;
+	Namespace.baseUri = <?php echo json_encode($this->basePath . 'javascript/'); ?>;
+	backend = <?php echo json_encode($this->backend); ?>;
+	modelUri = <?php echo json_encode($this->modelUri); ?>;
+</script>
+
+<!-- View #7: Summary of the chosen parameters -->
+<section id="summary" style="display: none" class="summary-container">
+	<!-- right to left interaction with the user -->
+	
+	<div id="summary-sparql-endpoint-box" class="summary-box">
+		<header>Sparql Endpoint:</header>
+		<span id="summary-sparql-endpoint"></span>
+	</div>
+	
+	<div id="summary-graph-name-box" class="summary-box">
+		<header>Graph:</header>
+		<span id="summary-graph-name"></span>
+	</div>
+	
+	<div id="summary-dsd-box" class="summary-box">
+		<header>Data Structure Definition:</header>
+		<span id="summary-dsd"></span>
+	</div>
+	
+	<div id="summary-ds-box" class="summary-box">
+		<header>Data Set:</header>
+		<span id="summary-ds"></span>
+	</div>
+	
+	<div id="summary-dimensions-box" class="summary-box">
+		<header>Dimensions:</header>
+		<span class="template"></span>
+	</div>
+	
+	<div id="summary-measures-box" class="summary-box">
+		<header>Measures:</header>
+		<span class="template"></span>
+	</div>
+	
+	<div id="summary-permalink"></div>
+</section><br/>
+
+<!-- View #1: Choose the SPARQL Endpoint (upload dump file) -->
+<!-- TODO: Add the selector for SPARQL Endpoints with Data Cube - use LODStats -->
+<section id="sparql-endpoint-view" style="display: none" class="view-container">
+	<header>
+		<?php //echo $this->_('title sparql endpoint'); ?>
+	</header>
+	
+	<label for="sparql-endpoint">SPARQL EndPoint</label>
+	<input type="text" id="sparql-endpoint-input" class="uri-input" name="sparql-endpoint"></input>
+	
+	<button id="select-sparql-endpoint-button" class="button">Proceed</button>
+</section>
+
+<!-- View #2: Choose the graph from the SPARQL Endpoint specified -->
+<!-- TODO: add graph description - it can be taken from the data store -->
+<!-- TODO: Graph title - graph description (like an accordion) -->
+<section id="graph-view" style="display: none" class="view-container">
+	<header>
+		<?php //echo $this->_('title choose the graph for'); ?>
+		<span id="sparql-endpoint-specified"></span>
+	</header>
+
+	<table id="graph-table">
+		<thead>
+			<tr>
+				<th>Graph Number</th>
+				<th>Graph Name</th>
+			</tr>
+		</thead>
+		<tr class="template selectable" style="display: none;">
+			<td><span class="graph-number"></span></td>
+			<td><span class="graph-name"></span></td>
+		</tr>
+	</table>
+	
+	<button id="select-graph-button" class="button">Proceed</button>
+</section>
+
+<!-- View #3: Choose Data Structure Description for the graph -->
+<section id="datastructure-view" style="display: none" class="view-container">
+	<header>
+		<?php //echo $this->_('title data structure for'); ?>
+		<span id="graph-specified"></span>
+	</header>
+
+	<table id="datastructure-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Data Structure URI</th>
+				<th>Data Structure Label</th>
+			</tr>
+		</thead>
+		<tr class="template selectable" style="display: none;">
+			<td style="display:none;"><span class="datastructure-uri"></span></td>
+			<td><span class="datastructure-label"></span></td>
+		</tr>
+	</table>
+	
+	<button id="select-datastructure-button" class="button">Proceed</button>
+</section>
+
+<!-- View #4: Choose Data Set -->
+<section id="dataset-view" style="display: none" class="view-container">
+	<header>
+		<?php //echo $this->_('title choose data set for'); ?>
+		<span id="datastructure-specified"></span>
+	</header>
+
+	<table id="dataset-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Data Set URI</th>
+				<th>Data Set Label</th>
+			</tr>
+		</thead>
+		<tr class="template selectable" style="display: none;">
+			<td style="display:none;"><span class="dataset-uri"></span></td>
+			<td><span class="dataset-label"></span></td>
+		</tr>
+	</table>
+	
+	<button id="select-dataset-button" class="button">Proceed</button>
+</section>
+
+<!-- View #5: Choose the Dimensions and Measures -->
+<section id="dimension-measure-view" style="display: none" class="view-container">
+	<header>
+		<?php //echo $this->_('title choose dimensions and measures for'); ?>
+		<span id="dataset-specified"></span>
+	</header>
+
+
+	<table id="dimension-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Dimension URI</th>
+				<th style="display:none;">Dimension Type</th>
+				<th style="display:none;">Dimension Order</th>
+				<th style="display:none;">Dimension Element Count</th>
+				<th>Dimension Label</th>
+			</tr>
+		</thead>
+		<tr class="template selectable" style="display: none;">
+			<td style="display:none;"><span class="dimension-uri"></span></td>
+			<td style="display:none;"><span class="dimension-type"></span></td>
+			<td style="display:none;"><span class="dimension-order"></span></td>
+			<td style="display:none;"><span class="dimension-element-count"></span></td>
+			<td><span class="dimension-label"></span></td>
+		</tr>
+	</table>
+
+	<table id="measure-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Measure URI</th>
+				<th style="display:none;">Measure Type</th>
+				<th style="display:none;">Measure Order</th>
+				<th>Measure Label</th>
+			</tr>
+		</thead>
+		<tr class="template selectable" style="display: none;">
+			<td style="display:none;"><span class="measure-uri"></span></td>
+			<td style="display:none;"><span class="measure-type"></span></td>
+			<td style="display:none;"><span class="measure-order"></span></td>
+			<td><span class="measure-label"></span></td>
+		</tr>
+	</table>
+	
+	<button id="select-dimension-measure-button" class="button">Proceed</button>
+</section>
+
+<!-- View #6: Specify dimensions -->
+<section id="specify-dimensions" style="display: none;" class="view-container">
+	<header>
+		<?php //echo $this->_('title specify dimensions for'); ?>
+		<span id="dimensions-selected"></span>
+	</header>
+
+	<table id="dimension-elements-table">
+		<thead>
+			<tr>
+				<th>Dimension Label</th>
+				<th>Dimension Property</th>
+			</tr>
+		</thead>
+		<tr class="selectable template" style="display: none;">
+			<td><span class="dimension-label"></span></td>
+			<td><span class="dimension-property"></span></td>
+		</tr>
+	</table>	
+	
+	<button id="specify-dimension-button" class="button">Proceed</button>
+</section>
+
+<!-- View #8: Permalink, based on the all parameters -->
+<section id="permalink-section" style="display: none;" class="view-container">
+	<input id="permalink-input" type="text" size="100" name="tb1"></input>
+</section>
+
+<!-- View #9: Dimensions chart options -->
+<section id="chart-options-section" style="display: none;" class="view-container">
+	<table id="dimension-chart-options-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Dimension URI</th>
+				<th style="display:none;">Dimension Type</th>
+				<th style="display:none;">Dimension Order</th>
+				<th style="display:none;">Dimension Element Count</th>
+				<th>Dimension Label</th>
+				<th>Order Direction</th>
+				<th>Chart Axis</th>
+			</tr>
+		</thead>
+		<tr class="template" style="display: none;">
+			<td style="display:none;"><span class="dimension-uri"></span></td>
+			<td style="display:none;"><span class="dimension-type"></span></td>
+			<td style="display:none;"><span class="dimension-order"></span></td>
+			<td style="display:none;"><span class="dimension-element-count"></span></td>
+			<td style="display:none;"><span class="dimension-selected-element-count"></span></td>
+			<td><span class="dimension-label"></span></td>
+			<td><span class="dimension-order-direction"></span></td>
+			<td><span class="dimension-chart-axis"></span></td>
+		</tr>
+	</table>
+	
+	<table id="measure-chart-options-table">
+		<thead>
+			<tr>
+				<th style="display:none;">Measure URI</th>
+				<th style="display:none;">Measure Type</th>
+				<th style="display:none;">Measure Order</th>
+				<th>Measure Label</th>
+				<th>Order Direction</th>
+				<th>Aggregation Method</th>
+				<th>Round Values?</th>
+			</tr>
+		</thead>
+		<tr class="template" style="display: none;">
+			<td style="display:none;"><span class="measure-uri"></span></td>
+			<td style="display:none;"><span class="measure-type"></span></td>
+			<td style="display:none;"><span class="measure-order"></span></td>
+			<td><span class="measure-label"></span></td>
+			<td><span class="measure-order-direction"></span></td>
+			<td><span class="measure-aggregation-method"></span></td>
+			<td><span class="measure-round-values"></span></td>
+		</tr>
+	</table>
+	
+	<button id="specify-chart-options-button" class="button">Proceed</button>
+</section>

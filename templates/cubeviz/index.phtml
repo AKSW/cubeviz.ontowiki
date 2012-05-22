@@ -1,0 +1,220 @@
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/main.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/namespacedotjs/Namespace.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/json-template.min.js"></script>
+
+<?php if ( true == $this->isModelSelected ): ?>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/index.js"></script>
+<?php endif; ?>
+
+<script type="text/javascript">
+    
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	Namespace.baseUri = <?php echo json_encode($this->basePath . 'javascript/'); ?>;
+	
+	var cubevizParameters = {
+		sparqlEndpoint: <?php echo json_encode($this->sparqlEndpoint); ?>,
+		selectedGraph: <?php echo json_encode($this->selectedGraph); ?>,
+		selectedDSD: <?php echo json_encode($this->selectedDSD); ?>,
+		selectedDS: <?php echo json_encode($this->selectedDS); ?>,
+		selectedMeasures: <?php echo json_encode($this->selectedMeasures); ?>,
+		selectedDimensions: <?php echo json_encode($this->selectedDimensions); ?>,
+		selectedDimensionComponents: <?php echo json_encode($this->selectedDimensionComponents); ?>,
+		modelUri: "<?php echo $this->modelUri; ?>",
+		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
+		backend: <?php echo json_encode($this->backend); ?>,
+		chartType: <?php echo json_encode($this->chartType); ?>
+	}
+	
+</script>
+
+<!-- Include index json-templates for instance the dialogs. -->
+<?php include ("extensions/cubeviz/templates/cubeviz/indexTemplates.phtml"); ?>
+
+<style type="text/css">
+	@import url("<?php echo $this->basePath; ?>css/main.css");
+</style>
+
+<div id="wrapper">
+
+
+	
+	<div id="header">
+        <a href="../../">
+            <img src="<?php echo $this->basePath; ?>images/logo_european_commision.gif" id="header-logo"/></a>
+		<div id="header-headline">
+			<a href="../../"><?php echo $this->_translate->_('Open Data Portal'); ?></a>
+		</div>
+		<div id="header-abstract">
+			CubeViz 
+            	<?php if ( true == $this->isModelSelected ): ?>
+                    <?php echo $this->_translate->_('for') . " " . $this->header ['selectedModelLabel']; ?>
+                <?php endif ?>
+		</div>
+		<div id="header-menu-right">    
+            <div id="header-language">
+                <div class="region region-header-language">
+                    <div class="block block-lang-dropdown" id="block-lang-dropdown-language">
+                        <div class="content">
+                            <form   accept-charset="UTF-8" 
+                                    id="lang-dropdown-form" 
+                                    method="post" 
+                                    action="/open-data/apps/images/services-separator.gif">
+                                <div>
+                                    <div class="form-item form-type-select form-item-lang-dropdown-select">
+                                        <div id="edit-lang-dropdown-select_msddHolder" style="height: 0px; overflow: hidden; position: absolute;" class="ddOutOfVision">
+                                            <select name="lang_dropdown_select" id="edit-lang-dropdown-select" class="lang-dropdown-select-element form-select" style="width:140px">
+                                                <option selected="selected" value="en">English (en)</option>
+<!--                                                <option value="nl">Nederlands (nl)</option> -->
+                                            </select>
+                                        </div>
+                                        <div style="width: 116.317px;" class="dd" id="edit-lang-dropdown-select_msdd">
+                                            <div class="ddTitle" id="edit-lang-dropdown-select_title">
+                                                <span class="arrow" id="edit-lang-dropdown-select_arrow" style="background-position: 0pt 0pt;"></span>
+                                                <span id="edit-lang-dropdown-select_titletext" class="ddTitleText">
+                                                    <span class="ddTitleText">English (en)</span>
+                                                </span>
+                                            </div>
+                                            <div style="width: 114.317px; z-index: 0; top: 22px; display: none;" class="ddChild" id="edit-lang-dropdown-select_child">
+                                                <a id="edit-lang-dropdown-select_msa_0" class="selected enabled" href="javascript:void(0);">
+                                                    <span class="ddTitleText">English (en)</span>
+                                                </a>
+<!--                                                <a id="edit-lang-dropdown-select_msa_1" class="enabled" href="javascript:void(0);">
+                                                    <span class="ddTitleText">Nederlands (nl)</span>
+                                                </a> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" value="/open-data/apps/images/services-separator.gif" name="en">
+<!--                                    <input type="hidden" value="/open-data/nl/apps/images/services-separator.gif" name="nl"> -->
+                                    <noscript>
+                                        &lt;span&gt;
+                                        &lt;input type="submit" id="edit-submit" name="op" value="Go" class="form-submit" /&gt;
+                                        &lt;/span&gt;
+                                    </noscript>
+                                    <input type="hidden" value="form-g7eD9QVY_T1_S-1joXhtcqjAcE7j9BoDU4iKnw9b-vg" name="form_build_id">
+                                    <input type="hidden" value="lang_dropdown_form" name="form_id">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+            <div id="header-menu">
+                <div class="region region-header-menu">
+                    <div id="block-menu-menu-service-menu" class="block block-menu">
+                        <div class="content">
+                            <ul class="menu">
+                                <li class="first leaf">
+                                    <a href="http://ec.europa.eu/geninfo/legal_notices_en.htm" title="">Legal notice</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="../../../contact" title="">Contact</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="http://ec.europa.eu/geninfo/query/search_en.html" title="">Search</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div id="header-blueblock">&nbsp;</div>
+	</div>
+
+	<div id="content-wrapper">
+		
+		<!-- If model is not selected does not show left data selection bar
+			 nor render the contents -->
+		<?php if ( true == $this->isModelSelected ): ?>
+		
+            <div id="sidebar-left">
+                <div id="sidebar-left-data-selection">
+                    <div id="sidebar-left-data-selection-wrapper">
+                        <div id="sidebar-left-data-selection-title">
+                            <h2><?php echo $this->_translate->_('Data Selection'); ?></h2>
+                        </div>
+                        <div id="sidebar-left-data-selection-dims">
+                            <h3><?php echo $this->_translate->_('Dimensions'); ?></h3>
+                            <div id="sidebar-left-data-selection-dims-boxes"></div>
+                        </div>
+                        <div id="sidebar-left-data-selection-meas">
+                            <h3><?php echo $this->_translate->_('Measures'); ?></h3>
+                            <div id="sidebar-left-data-selection-meas-boxes"></div>
+                        </div>
+                        <div id="sidebar-left-data-selection-strcsets">
+                            <h3><?php echo $this->_translate->_('Data Structure and Sets'); ?></h3>
+                        </div>
+                        <select name="datastructures" id="sidebar-left-data-selection-strc"></select>
+                        <select name="datasets" id="sidebar-left-data-selection-sets"></select>
+                        <div id="sidebar-left-data-selection-submitbtn-box">
+                            <input type="submit" value="<?php echo $this->_translate->_('Select Data'); ?>" id="sidebar-left-data-selection-submitbtn"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="sidebar-left-page-selection">
+                    <ul>
+                        <li><a href="" class="sidebar-left-page-selection-nopage"><?php echo $this->_translate->_('Show Graph'); ?></a></li>
+                        <li><div class="page-link" id="page-startNoModelGiven"><?php echo $this->_translate->_('Home'); ?></div></li>
+                        <li><div class="page-link" id="page-faq"><?php echo $this->_translate->_('FAQ'); ?></div></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="content">
+                <?php if(isset($this->chart)): ?>
+                    <?php echo $this->chart; ?>
+                <?php else: ?>
+                    <? if(!isset($this->parser)): ?>
+                    <i><?php echo $this->_('info chart display selection first'); ?></i>
+                    <? else: ?>
+                    <i><?php echo $this->_('info chart type change'); ?></i>
+                    <? endif; ?>
+                <?php endif;?>
+            </div>
+        
+        <?php else: ?> 
+        
+            <div id="content">
+                <script type="text/javascript">
+                    $(function() {
+                        Namespace.include('org.aksw.cubeViz.Index.Main');
+                        $("#sidebar-left-arrow").hide ();
+                        org.aksw.cubeViz.Index.Main.loadPage ('startNoModelGiven');
+                    });
+                </script>
+            </div>
+        
+        <?php endif; ?>
+        
+        <div id="site-overlay">&nbsp;</div>
+        
+        <div id="sidebar-left-arrow">
+            <img src="<?php echo $this->basePath; ?>images/arrow_left.png" alt=""/>
+        </div>
+        
+        <div id="sidebar-right-arrow">
+            <img src="<?php echo $this->basePath; ?>images/arrow_right.png" alt=""/>
+        </div>
+        
+	</div>
+</div>
+
+<!-- If model is not selected does not charts icon set-->
+<?php if ( true == $this->isModelSelected ): ?>
+<div id="chart-selection">
+    <div id="chart-selection-container">
+        <!-- If you add new chart option, please, redefine org.aksw.cubeViz.Index.Main.availableChartTypes
+             in index.js file-->
+        <img id="chart-selection-bar" src="<?php echo $this->basePath; ?>images/bars.png"/>
+        <img id="chart-selection-line" src="<?php echo $this->basePath; ?>images/lines.png"/>
+        <img id="chart-selection-area" src="<?php echo $this->basePath; ?>images/areas.png"/>
+        <img id="chart-selection-splines" src="<?php echo $this->basePath; ?>images/splines.png"/>
+        <img id="chart-selection-table" src="<?php echo $this->basePath; ?>images/table.png"/>
+        <input type="hidden" id="chart-selection-selected-chart" value="bars">
+    </div>
+</div>
+<?php endif; ?>

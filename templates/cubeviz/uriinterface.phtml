@@ -1,0 +1,42 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @package Extensions
+ */
+?>
+
+<!-- page specific stylesheets -->
+<link rel="stylesheet" href="<?php echo $this->basePath; ?>css/init.css" type="text/css" media="screen" />
+
+<!-- page specific JS files -->
+<!-- NOTICE: some files loaded dynamically by the Namespace.js include() function -->
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/init.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/jquery-plugins/jquery.json-2.3.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/namespacedotjs/Namespace.js"></script>
+
+<script type="text/javascript">
+	
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	// URI for the component, for the localhost should be http://localhost/cubeviz/
+	cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;
+	Namespace.baseUri = <?php echo json_encode($this->basePath . 'javascript/'); ?>;
+	backend = <?php echo json_encode($this->backend); ?>;
+	
+</script>
+
+<!-- View Chart -->
+
+<?php if(isset($this->chart)): ?>
+		<?php echo $this->chart; ?>
+<?php else: ?>
+	<? if(!isset($this->parser)): ?>
+	<i><?php echo $this->_('info chart display selection first'); ?></i>
+	<? else: ?>
+	<i><?php echo $this->_('info chart type change'); ?></i>
+	<? endif; ?>
+<?php endif;?>

@@ -1,0 +1,9 @@
+<?php
+
+if ( true == isset ( $_REQUEST ['page'] ) ) {
+        
+    $filePath = dirname (__FILE__). '/../../pages/'. $_REQUEST ['page'] .'.phtml';
+    
+    if ( true == file_exists ( $filePath ) ) 
+        require $filePath;
+}

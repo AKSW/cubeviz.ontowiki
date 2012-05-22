@@ -1,0 +1,209 @@
+<div id="stringContainerDimensionsTemplate" style="display:none;">
+    {.section dimensions}
+        {.repeated section @}
+            
+            <div class="sidebar-left-data-selection-dims-box-seperator">
+                <input type="checkbox" class="sidebar-left-data-selection-dims-box" name="" value="{uri}">
+                <div class="sidebar-left-data-selection-dims-box-lblabs">
+                    <div class="sidebar-left-data-selection-dims-box-label">
+                        <span class="sidebar-left-data-selection-dims-box-label-value">{label}</span> (<span id="dialog-{label}-selected-items">0/</span>{elementCount})
+                    </div>
+                    <div class="sidebar-left-data-selection-dims-box-abstract">
+                        <div id="open-dialog-{label}-selector">
+                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->basePath; ?>images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
+                        </div>
+                        <div id="open-dialog-{label}-options">
+                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->basePath; ?>images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>     
+                          
+        {.end}    
+    {.or}{.end}
+</div>
+
+
+<div id="stringContainerMeasuresTemplate" style="display:none;">
+    {.section measures}	
+        {.repeated section @}
+            <div class="sidebar-left-data-selection-meas-box-seperator">
+                <input type="checkbox" name="" class="sidebar-left-data-selection-meas-box" value="{uri}"/>
+                <div class="sidebar-left-data-selection-meas-box-label">{label}</div>
+                <div class="sidebar-left-data-selection-meas-box-abstract">
+                    <div id="open-dialog-{label}-options">
+                        <img class="sidebar-left-data-selection-meas-box-abstract-img" src="<?php echo $this->basePath; ?>images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>"/>
+                    </div>
+                </div>
+            </div>
+        {.end}    
+    {.or}{.end}
+</div>
+
+
+<div id="stringContainerDialogTemplate" style="display:none;">
+    <div class="dialog" id="dialog-{label}">
+        <div class="dialog-header">
+            <div class="dialog-header-label">{label}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
+            <div id="dialog-btn-close-{label}" class="dialog-btn-close"><?php echo $this->_translate->_('Save'); ?></div>
+        </div>
+        <div class="dialog-components">
+            {.repeated section list}
+                <div class="dialog-listitem">
+                    <input type="checkbox" name="" class="dialog-listitem-box" value="{value}"/>
+                    <label class="dialog-listitem-value">{label}</label>
+                </div>
+            {.end}
+        </div>
+        <span class="dialog-number-of-selected-elements" style="display:none;"></span>
+    </div>
+</div>
+
+
+<div id="stringContainerOptionsDimensionTemplate" style="display:none;">
+    
+    <div class="dialog-options-dimension" id="dialog-options-dimension-{label}">
+        
+        <div id="dialog-options-dimension-btn-close-{label}" class="dialog-options-dimension-btn-close"><?php echo $this->_translate->_('Save'); ?></div>
+        
+        <h2><?php echo $this->_translate->_('Dimension'); ?>: {label}</h2>
+        <div class="dialog-options-dimension-items">
+        
+            <div class="dialog-options-dimension-items-floatblock">
+                <b><?php echo $this->_translate->_('Order Direction'); ?></b>
+                <span id="dialog-options-dimension-order-direction-value-{label}" style="display:none;">{orderDirection}</span>
+                <br/>
+                <input type="radio" 
+                       name="order-direction" 
+                       value="None" 
+                       class="dialog-options-dimension-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('None'); ?>
+                <br/>
+                <input type="radio" 
+                       name="order-direction" 
+                       value="Ascending" 
+                       class="dialog-options-dimension-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('Ascending'); ?>
+                <br/>    
+                <input type="radio" 
+                       name="order-direction" 
+                       value="Descending" 
+                       class="dialog-options-dimension-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('Descending'); ?>
+            </div>
+            
+            <div class="dialog-options-dimension-items-floatblock">
+                <b><?php echo $this->_translate->_('Chart Axis'); ?></b>
+                <span id="dialog-options-dimension-chart-axis-value-{label}" style="display:none;">{chartAxis}</span>
+                <br/>
+                <input type="radio" 
+                       name="chart-axis" 
+                       value="x" 
+                       class="dialog-options-dimension-items-chart-axis-{label}"/>x
+                <br/>
+                <!-- input type="radio" 
+                       name="chart-axis" 
+                       value="y" 
+                       class="dialog-options-dimension-items-chart-axis-{label}"/>y
+                <br/ -->    
+                <input type="radio" 
+                       name="chart-axis" 
+                       value="z" 
+                       class="dialog-options-dimension-items-chart-axis-{label}"/>y
+                       <!-- the Z axis on the back end is actually Y axis in real life -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="stringContainerOptionsMeasureTemplate" style="display:none;">
+       
+    <div class="dialog-options-measure" id="dialog-options-measure-{label}">
+        <h2><?php echo $this->_translate->_('Measure'); ?>: {label}</h2>
+        <div class="dialog-options-measure-items">
+            <b><?php echo $this->_translate->_('Aggregation Method'); ?></b>
+            <span id="dialog-options-measure-aggregation-method-value-{label}" style="display:none;">{aggregationMethod}</span>
+            <br/>
+                <input type="radio" 
+                       name="aggregation-method" 
+                       value="sum" 
+                       class="dialog-options-measure-items-aggregation-method-{label}"/>
+                <?php echo $this->_translate->_('sum'); ?>
+            <br/>
+                <input type="radio" 
+                       name="aggregation-method" 
+                       value="average" 
+                       class="dialog-options-measure-items-aggregation-method-{label}"/>
+                <?php echo $this->_translate->_('average'); ?>
+            <br/>    
+                <input type="radio" 
+                       name="aggregation-method" 
+                       value="minimum" 
+                       class="dialog-options-measure-items-aggregation-method-{label}"/>
+                <?php echo $this->_translate->_('minimum'); ?>
+            <br/>
+                <input type="radio" 
+                       name="aggregation-method" 
+                       value="maximum" 
+                       class="dialog-options-measure-items-aggregation-method-{label}"/>
+                <?php echo $this->_translate->_('maximum'); ?>
+            <br/>
+            <br/>
+            
+            <b><?php echo $this->_translate->_('Order Direction'); ?></b>
+            <span id="dialog-options-measure-order-direction-value-{label}" style="display:none;">{orderDirection}</span>
+            <br/>
+                <input type="radio" 
+                       name="order-direction" 
+                       value="None" 
+                       class="dialog-options-measure-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('None'); ?>
+            <br/>
+                <input type="radio" 
+                       name="order-direction" 
+                       value="Ascending" 
+                       class="dialog-options-measure-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('Ascending'); ?>
+            <br/>    
+                <input type="radio" 
+                       name="order-direction" 
+                       value="Descending" 
+                       class="dialog-options-measure-items-order-direction-{label}"/>
+                <?php echo $this->_translate->_('Descending'); ?>
+            <br/>
+            <br/>
+            
+            <b><?php echo $this->_translate->_('Round Value?'); ?></b>
+            <span id="dialog-options-measure-round-values-value-{label}" style="display:none;">{roundValues}</span>
+            <br/>
+                <input type="radio" 
+                       name="round-values" 
+                       value="yes" 
+                       class="dialog-options-measure-items-round-values-{label}"/>
+                <?php echo $this->_translate->_('Yes'); ?>
+            <br/>
+                <input type="radio" 
+                       name="round-values" 
+                       value="no" 
+                       class="dialog-options-measure-items-round-values-{label}"/>
+                <?php echo $this->_translate->_('No'); ?>
+            <br/>
+
+        </div>
+    
+        <div id="dialog-options-measure-btn-close-{label}" class="dialog-options-measure-btn-close"><?php echo $this->_translate->_('Save'); ?></div>
+    </div>
+    
+</div>
+    
+<script type="text/javascript">
+
+    var dimensionsTemplate = $("#stringContainerDimensionsTemplate").html ();
+    var measuresTemplate = $("#stringContainerMeasuresTemplate").html ();
+    var dialogTemplate = $("#stringContainerDialogTemplate").html ();
+    var optionsDimensionTemplate = $("#stringContainerOptionsDimensionTemplate").html ();
+    var optionsMeasureTemplate = $("#stringContainerOptionsMeasureTemplate").html ();
+    
+</script>

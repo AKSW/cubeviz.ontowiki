@@ -1,0 +1,55 @@
+#summary .summary-box {
+	height: 12em;
+	width: 15.8em;
+	border-style: dotted;
+	float: left;
+}
+
+section.summary-container {
+	position: absolute;
+	left:76px;
+	margin: 0 auto;
+	width: 984px;
+	text-align: center;
+}
+
+section.view-container {
+	position: relative;
+	left:76px;
+	top:12em;
+	text-align: left;
+	width:200px;
+	height:150px;
+}
+
+section.view-container#sparql-endpoint-view {
+	left:8em;
+}
+
+section.view-container#graph-view {
+	left:23.8em;
+}
+
+section.view-container#datastructure-view {
+	left:40.5em;
+}
+
+section.view-container#dataset-view {
+	left:56.4em;
+}
+
+section.view-container#dimension-measure-view {
+	left:73.2em;
+}
+
+section.view-container#specify-dimensions {
+	left:73.2em;
+	overflow-y:scroll;
+}
+
+section.view-container#chart-options-section {
+	left:73.2em;
+}
+
+section.view-container#permalink-section {
+}
