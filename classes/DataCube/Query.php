@@ -10,38 +10,9 @@
  * @author Ivan Ermilov 
  */
 class DataCube_Query {
-	
-	/**
-	 * Variables from the config file
-	 */
-	//special entities
-	static private $qb = "http://purl.org/linked-data/cube#";
-	static private $rdfType = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-	static private $rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
-	
-	//cube concepts
-	static private $qb_DataStructureDefinition = "http://purl.org/linked-data/cube#DataStructureDefinition";
-	static private $qb_ComponentSpecification = "http://purl.org/linked-data/cube#ComponentSpecification";
-	static private $qb_ComponentProperty = "http://purl.org/linked-data/cube#ComponentProperty";
-	static private $qb_DimensionProperty = "http://purl.org/linked-data/cube#DimensionProperty";
-	static private $qb_MeasureProperty = "http://purl.org/linked-data/cube#MeasureProperty";
-	static private $qb_AttributeProperty = "http://purl.org/linked-data/cube#AttributeProperty";
-	static private $qb_DataSet = "http://purl.org/linked-data/cube#DataSet";
-	static private $qb_Observation = "http://purl.org/linked-data/cube#Observation";
-
-	//cube properties
-	static private $qb_component = "http://purl.org/linked-data/cube#component";
-	static private $qb_measure = "http://purl.org/linked-data/cube#measure";
-	static private $qb_dimension = "http://purl.org/linked-data/cube#dimension";
-	static private $qb_attribute = "http://purl.org/linked-data/cube#attribute";
-	static private $qb_order = "http://purl.org/linked-data/cube#order";
-	static private $qb_datasetrel = "http://purl.org/linked-data/cube#dataset";
-	static private $qb_structure = "http://purl.org/linked-data/cube#structure";
-
+    
     private $_model = null;
     private $_titleHelper = null;
-
-	//chart types
     
     /**
      * Constructor
@@ -50,28 +21,6 @@ class DataCube_Query {
         $this->_model = $model;
         $this->_titleHelper = $titleHelper;
     }
-    
-    static public function old_getDataStructureDefinition($titleHelper = null) {   
-		$store = Erfurt_App::getInstance()->getStore();
-
-		//get the required initializations
-		$queryDSD = new Erfurt_Sparql_SimpleQuery();
-		$result = array();
-
-		//get all indicators in the cube by the DataStructureDefinitions
-		$queryDSD->setProloguePart('SELECT ?dsd');
-		$queryDSD->setWherePart('WHERE {?dsd <'.DataCube_Query::$rdfType.'> <'.DataCube_Query::$qb_DataStructureDefinition.'>}');
-		//$store = Erfurt_App::getInstance()->getStore();
-		$queryResultDSD = $store->sparqlQuery($queryDSD);
-
-		foreach($queryResultDSD as $dsd) {
-			if(isset($dsd['dsd'])) {
-				$result[] = $dsd['dsd'];
-				if(isset($titleHelper)) $titleHelper->addResource($dsd['dsd']);
-			}
-		}
-		return $result;
-	}
 	
 	/**
 	 * Function for retrieving Data Structure Definitions of the 
@@ -84,8 +33,7 @@ class DataCube_Query {
 
 		//get all indicators in the cube by the DataStructureDefinitions
 		$sparql = 'SELECT ?dsd WHERE {
-            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
-            <http://purl.org/linked-data/cube#DataStructureDefinition>. 
+            ?dsd <'. DataCube_UriOf::RdfType .'> <'. DataCube_UriOf::DataStructureDefinition .'>. 
         }';
 		
         $queryResultDSD = $this->_model->sparqlQuery($sparql);
@@ -99,38 +47,30 @@ class DataCube_Query {
 			}
 		}
 		return $result;
-	}
+	}  
     
-    
-    
-    
-    
-    
-	
 	/**
 	 * Function for getting datasets for this data structure
-	 * dataStructure = http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe
+	 * E.g. dsUri can be http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe
 	 */
-    static public function getDataSets($dsUri, $titleHelper = null) {	
-		$store = Erfurt_App::getInstance()->getStore();
-			
-        //get the required initializations
-        $queryDS = new Erfurt_Sparql_SimpleQuery();
+    public function getDataSets($dsUri) {	
+        
+        //get all data sets in the cube for the given DataStructureDefinition
+        $sparql = 'SELECT ?ds WHERE {
+            ?ds <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataSet.'>.
+            ?ds <'.DataCube_UriOf::Structure.'> <'.$dsUri.'>.
+        };';
+
+        $queryResultDS = $this->_model->sparqlQuery($sparql);
+
         $result = array();
 
-        //get all data sets in the cube for the given DataStructureDefinition
-        $queryDS->setProloguePart('SELECT ?ds');
-        $queryDS->setWherePart('WHERE {?ds <'.DataCube_Query::$rdfType.'> 
-            <'.DataCube_Query::$qb_DataSet.'>.
-            ?ds <'.DataCube_Query::$qb_structure.'> <'.$dsUri.'>.}');
-
-        $queryResultDS = $store->sparqlQuery($queryDS);
-
         foreach($queryResultDS as $ds) {
-
-            if(isset($ds['ds'])) {
+            if(false == empty($ds['ds'])) {
                 $result[] = $ds['ds'];
-                if(isset($titleHelper)) $titleHelper->addResource($ds['ds']);
+                if( false == empty ($this->_titleHelper) ) {
+                    $this->_titleHelper->addResource($dsd['ds']);
+                }
             }
         }
         

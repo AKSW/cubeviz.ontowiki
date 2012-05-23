@@ -9,7 +9,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     private $_owApp;
     
     public function setUp ()
-    {
+    {        
         $this->_erfurt      = Erfurt_App::getInstance ();
         
         $this->_owApp       = new Zend_Application( 'default', _OW . 'application/config/application.ini');
@@ -21,17 +21,19 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function tearDown ()
     {
+        Zend_Controller_Front::getInstance()->resetInstance();
+        $this->_erfurt->reset ();
+        Zend_Loader_Autoloader::resetInstance();
     }
     
     public function testGetDataStructureDefinition()
     {
-        $q = new DataCube_Query ($this->_model, $this->titleHelper);
-        $resultDsd = $q->getDataStructureDefinition ();
+        $query = new DataCube_Query ($this->_model, $this->titleHelper);
+        $resultDsd = $query->getDataStructureDefinition ();
         
         // Get test data
         $testSparql = 'SELECT ?dsd WHERE {
-            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
-            <http://purl.org/linked-data/cube#DataStructureDefinition>. 
+            ?dsd <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataStructureDefinition.'>. 
         }';
         
         $testDsd = $this->_model->sparqlQuery ( $testSparql );
@@ -41,5 +43,31 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         }
         
         $this->assertEquals ($resultDsd, $testResult);
+    }
+    
+    public function testGetDataSets()
+    {
+        $query = new DataCube_Query ($this->_model, $this->titleHelper);
+        $resultDsd = $query->getDataStructureDefinition ();
+        
+        if (0 == count($resultDsd)) return;
+        
+        $dsUri = $resultDsd [0];
+        
+        $resultDs = $query->getDataSets ($dsUri);
+        
+        // Get test data
+        $testSparql = 'SELECT ?ds WHERE {
+            ?ds <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataSet.'>.
+            ?ds <'.DataCube_UriOf::Structure.'> <'.$dsUri.'>.
+        };';
+        
+        $testDsd = $this->_model->sparqlQuery ( $testSparql );
+        $testResult = array ();
+        foreach ( $testDsd as $entry ) {
+            $testResult [] = $entry ['ds'];
+        }
+        
+        $this->assertEquals ($resultDs, $testResult);
     }
 }
