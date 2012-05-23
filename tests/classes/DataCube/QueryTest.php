@@ -10,27 +10,36 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function setUp ()
     {
-        $this->_erfurt = Erfurt_App::getInstance ();
-        $this->_model = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
-        $this->_owApp = new Zend_Application(
-            'default', _OW . 'application/config/application.ini'
-        );
+        $this->_erfurt      = Erfurt_App::getInstance ();
+        
+        $this->_owApp       = new Zend_Application( 'default', _OW . 'application/config/application.ini');
         $this->_owApp->bootstrap();
+        
+        $this->_model       = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
+        $this->_titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
     }
     
     public function tearDown ()
     {
     }
     
-    public function testGeneral()
+    public function testGetDataStructureDefinition()
     {
-        $th = new OntoWiki_Model_TitleHelper ($this->_model);
-        $dsd = DataCube_Query::getDataStructureDefinition ($th);
-        $ds = DataCube_Query::getDataSets ( $dsd [0], $th );
-        $co = DataCube_Query::getComponents ( $dsd [0], $ds [0], 'dimension', $th );
+        $q = new DataCube_Query ($this->_model, $this->titleHelper);
+        $resultDsd = $q->getDataStructureDefinition ();
         
-        var_dump ( $dsd );
-        var_dump ( $ds );
-        var_dump ( $co );
+        // Get test data
+        $testSparql = 'SELECT ?dsd WHERE {
+            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
+            <http://purl.org/linked-data/cube#DataStructureDefinition>. 
+        }';
+        
+        $testDsd = $this->_model->sparqlQuery ( $testSparql );
+        $testResult = array ();
+        foreach ( $testDsd as $entry ) {
+            $testResult [] = $entry ['dsd'];
+        }
+        
+        $this->assertEquals ($resultDsd, $testResult);
     }
 }

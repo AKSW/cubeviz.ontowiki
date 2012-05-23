@@ -38,15 +38,22 @@ class DataCube_Query {
 	static private $qb_datasetrel = "http://purl.org/linked-data/cube#dataset";
 	static private $qb_structure = "http://purl.org/linked-data/cube#structure";
 
+    private $_model = null;
+    private $_titleHelper = null;
+
 	//chart types
-	
-	/**
-	 * Function for retrieving Data Structure Definitions of the 
-	 * Data Cube through OntoWiki ODBC
-	 */ 
-	static public function getDataStructureDefinition($titleHelper = null) {   
+    
+    /**
+     * Constructor
+     */
+    public function __construct (&$model = null, &$titleHelper = null) {
+        $this->_model = $model;
+        $this->_titleHelper = $titleHelper;
+    }
+    
+    static public function old_getDataStructureDefinition($titleHelper = null) {   
 		$store = Erfurt_App::getInstance()->getStore();
-		
+
 		//get the required initializations
 		$queryDSD = new Erfurt_Sparql_SimpleQuery();
 		$result = array();
@@ -65,6 +72,41 @@ class DataCube_Query {
 		}
 		return $result;
 	}
+	
+	/**
+	 * Function for retrieving Data Structure Definitions of the 
+	 * Data Cube through OntoWiki ODBC
+     * @return array List of DataStructureDefinition's
+	 */ 
+	public function getDataStructureDefinition() {   
+		
+		$result = array();
+		$queryDSD = new Erfurt_Sparql_SimpleQuery();
+
+		//get all indicators in the cube by the DataStructureDefinitions
+		$queryDSD->setProloguePart('SELECT ?dsd');
+		$queryDSD->setWherePart(
+            'WHERE {?dsd <'.DataCube_Query::$rdfType.'> <'.DataCube_Query::$qb_DataStructureDefinition.'>}'
+        );
+		
+        $queryResultDSD = $this->_model->sparqlQuery($queryDSD);
+
+		foreach($queryResultDSD as $dsd) {
+			if( false == empty ($dsd['dsd']) ) {
+				$result[] = $dsd['dsd'];
+				if( false == empty ($this->_titleHelper) ) {
+                    $this->_titleHelper->addResource($dsd['dsd']);
+                }
+			}
+		}
+		return $result;
+	}
+    
+    
+    
+    
+    
+    
 	
 	/**
 	 * Function for getting datasets for this data structure
@@ -143,12 +185,8 @@ class DataCube_Query {
      * TODO: put comments
      */
     static public function getComponentElements($dsUri, $componentProperty, $model = null, $limits = array()) {
+        
         $store = Erfurt_App::getInstance()->getStore();
-        
-        //var_dump($titleHelper); die;
-        
-        //dsUri =  "http://data.lod2.eu/scoreboard/DS_6b611b19ff2a0b58057966f04dd1ddcb"
-		//componentProperty =  "http://data.lod2.eu/scoreboard/properties/country"
         
         $result = array();
         $result_label = array();
@@ -178,18 +216,15 @@ class DataCube_Query {
     }
     
     static public function getLabels($uris, $model) {
-		/***********************************************
-		 * TODO: Unoptimal usage of Title Helper below *
-		 ***********************************************/
 		
 		$result = array();
-		
-        foreach($uris as $uri) {
-			//initialize titleHelper
-			$titleHelper = new OntoWiki_Model_TitleHelper($model);
+		$titleHelper = new OntoWiki_Model_TitleHelper($model);        
+        
+        foreach($uris as $uri)
 	        $titleHelper->addResource($uri);
-			$result[] = $titleHelper->getTitle($uri);
-        }
+        
+        foreach($uris as $uri)
+            $result[] = $titleHelper->getTitle($uri);
         
         return $result;
 	}
