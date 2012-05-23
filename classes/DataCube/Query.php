@@ -81,15 +81,14 @@ class DataCube_Query {
 	public function getDataStructureDefinition() {   
 		
 		$result = array();
-		$queryDSD = new Erfurt_Sparql_SimpleQuery();
 
 		//get all indicators in the cube by the DataStructureDefinitions
-		$queryDSD->setProloguePart('SELECT ?dsd');
-		$queryDSD->setWherePart(
-            'WHERE {?dsd <'.DataCube_Query::$rdfType.'> <'.DataCube_Query::$qb_DataStructureDefinition.'>}'
-        );
+		$sparql = 'SELECT ?dsd WHERE {
+            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
+            <http://purl.org/linked-data/cube#DataStructureDefinition>. 
+        }';
 		
-        $queryResultDSD = $this->_model->sparqlQuery($queryDSD);
+        $queryResultDSD = $this->_model->sparqlQuery($sparql);
 
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
