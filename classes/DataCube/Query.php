@@ -78,42 +78,43 @@ class DataCube_Query {
     }
     
     /**
-     * Function for getting components (dimension | measure)
+     * Function for getting components
+     * @param $dsdUri
+     * @param $dsUri
+     * @param $component Element of DataCube_ComponentType
      */
-	static public function getComponents($dsdUri, $dsUri, $componentType, $titleHelper = null) {
-        $store = Erfurt_App::getInstance()->getStore();
-        
-        // dimension | measure
-        $typeVarName = "qb_" . $componentType;
+	public function getComponents($dsdUri, $dsUri, $componentType) {
+                
+        //search for the components specified by the parameters
+        $sparql = 'SELECT ?comp ?comptype ?order WHERE {
+            <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
+            ?comp <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::ComponentSpecification.'>.
+            ?comp <'.$componentType.'> ?comptype.
+            
+            OPTIONAL {?comp <'.DataCube_UriOf::Order.'> ?order.}
+        }
+        ORDER BY ASC(?order);';
+
+        $queryresultComp = $this->_model->sparqlQuery($sparql);
         
         $result = array();
         
-        //search for the components specified by the parameters
-        $queryComp = new Erfurt_Sparql_SimpleQuery();
-        $queryComp->setProloguePart('SELECT ?comp ?comptype ?order');
-        $queryComp->setWherePart('WHERE {<'.$dsdUri.'> <'.DataCube_Query::$qb_component.'> ?comp.                
-                                    ?comp <'.DataCube_Query::$rdfType.'> 
-                                        <'.DataCube_Query::$qb_ComponentSpecification.'>.
-                                    ?comp <'.DataCube_Query::$$typeVarName.'> ?comptype.
-                                    OPTIONAL {?comp <'.DataCube_Query::$qb_order.'> ?order.}}
-                                  ORDER BY ASC(?order)');
-
-        $queryresultComp = $store->sparqlQuery($queryComp);
         //iterate through all found results
         foreach($queryresultComp as $comp) {
-            if(isset($comp['comp'])) {
+            if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
                 $result[$comp['comp']]['uri'] = $comp['comp'];
                 $result[$comp['comp']]['md5'] = md5($comp['comp']);
                 $result[$comp['comp']]['type'] = $comp['comptype'];
-                if($componentType == 'dimension') {
-					
+                if($componentType == 'dimension'){
                     $result[$comp['comp']]['elementCount'] 
                         = DataCube_Query::getComponentElementCount($dsUri, $comp['comptype']);
                 }
-                $result[$comp['comp']]['order'] 
-                    = (isset($comp['order']) ? $comp['order'] : -1);
-                if(isset($titleHelper)) $titleHelper->addResource($comp['comp']);
+                $result[$comp['comp']]['order'] = isset($comp['order']) 
+                    ? $comp['order'] : -1;
+                    
+                if( false == empty ($this->_titleHelper) )
+                    $this->_titleHelper->addResource($comp['comp']);
             }
         }
         

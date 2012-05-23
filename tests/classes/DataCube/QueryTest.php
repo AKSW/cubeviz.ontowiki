@@ -22,8 +22,14 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     public function tearDown ()
     {
         Zend_Controller_Front::getInstance()->resetInstance();
+        
         $this->_erfurt->reset ();
+        
         Zend_Loader_Autoloader::resetInstance();
+        $loader = Zend_Loader_Autoloader::getInstance();
+        $loader->registerNamespace('DataCube_');
+        $loader->registerNamespace('Erfurt_');
+        $loader->registerNamespace('OntoWiki_');
     }
     
     public function testGetDataStructureDefinition()
@@ -69,5 +75,54 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         }
         
         $this->assertEquals ($resultDs, $testResult);
+    }
+    
+    public function testGetComponents()
+    {
+        $query = new DataCube_Query ($this->_model, $this->titleHelper);
+        $dsd = $query->getDataStructureDefinition ();
+        if (0 == count($dsd)) return;
+        
+        $dsd = $dsd [0];
+        
+        $ds = $query->getDataSets ($dsd); 
+        if ( 0 == count($ds)) return;
+        
+        $ds = $ds[0];
+        $componentType = DataCube_UriOf::Dimension;
+        
+        $resultComponents = $query->getComponents ($dsd, $ds, $componentType);
+        
+        // Get test data
+        $testSparql = 'SELECT ?comp ?comptype ?order WHERE {
+            <'.$dsd.'> <'.DataCube_UriOf::Component.'> ?comp.                
+            ?comp <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::ComponentSpecification.'>.
+            ?comp <'.$componentType.'> ?comptype.
+            
+            OPTIONAL {?comp <'.DataCube_UriOf::Order.'> ?order.}
+        }
+        ORDER BY ASC(?order);';
+        
+        $queryresultComp = $this->_model->sparqlQuery($testSparql);
+        
+        $testResult = array();
+        
+        //iterate through all found results
+        foreach($queryresultComp as $comp) {
+            if(false == empty($comp['comp'])) {
+				//add the component properties to the result set
+                $testResult[$comp['comp']]['uri'] = $comp['comp'];
+                $testResult[$comp['comp']]['md5'] = md5($comp['comp']);
+                $testResult[$comp['comp']]['type'] = $comp['comptype'];
+                if($componentType == 'dimension'){
+                    $testResult[$comp['comp']]['elementCount'] 
+                        = DataCube_Query::getComponentElementCount($dsUri, $comp['comptype']);
+                }
+                $testResult[$comp['comp']]['order'] = isset($comp['order']) 
+                    ? $comp['order'] : -1;
+            }
+        }
+        
+        $this->assertEquals ( $resultComponents, $testResult );
     }
 }
