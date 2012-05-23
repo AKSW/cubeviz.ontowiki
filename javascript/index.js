@@ -9,9 +9,9 @@ $(function() {
 	/************************************************
 	 * Include org.aksw.cubeViz.GUI.Views namespace *
 	 ************************************************/
-	 
-	Namespace.include('org.aksw.cubeViz.Index.Main');	
-	Namespace.include('org.aksw.cubeViz.Index.Adapter');	
+		 
+	Namespacedotjs.include('org.aksw.cubeViz.Index.Main');	
+	Namespacedotjs.include('org.aksw.cubeViz.Index.Adapter');	
 	
 	/***************************
 	 * Configurable parameters *

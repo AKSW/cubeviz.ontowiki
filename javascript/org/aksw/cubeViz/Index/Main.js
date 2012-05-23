@@ -2,7 +2,7 @@
 //Namespace('org.aksw.cubeViz.GUI');
 
 // creates or use a namespace and fill it with the specified properties
-Namespace('org.aksw.cubeViz.Index.Main', {
+Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 	
 	/********************************
 	 *                              *

@@ -6,7 +6,7 @@
  *************************************************/
 
 // creates or use a namespace and fill it with the specified properties
-Namespace('org.aksw.cubeViz.Index.Adapter', {
+Namespacedotjs('org.aksw.cubeViz.Index.Adapter', {
 	
 	// All functions in this namespace take some variable(s) and transform it
 	// in the different format

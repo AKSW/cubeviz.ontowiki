@@ -15,7 +15,7 @@ Version:
 /*jslint evil : true */
 /*global Namespace, XMLHttpRequest, ActiveXObject, window, document */
 
-var Namespace = (function() {
+var Namespacedotjs = (function() {
 
 	var _listeners = {};
 	var _includedIdentifiers = [];
@@ -117,7 +117,7 @@ var Namespace = (function() {
 		var ns = window;
 		
 		if (identifier !== '') {
-			var parts = identifier.split(Namespace.separator);
+			var parts = identifier.split(Namespacedotjs.separator);
 			for (var i = 0; i < parts.length; i++) {
 				if (!ns[parts[i]]) {
 					ns[parts[i]] = {};
@@ -148,7 +148,7 @@ var Namespace = (function() {
 	_namespace.exist = function(identifier) {
 		if (identifier === '') { return true; }
 		
-		var parts = identifier.split(Namespace.separator);
+		var parts = identifier.split(Namespacedotjs.separator);
 		var ns = window;
 		for (var i = 0; i < parts.length; i++) {
 			if (!ns[parts[i]]) {
@@ -168,8 +168,8 @@ var Namespace = (function() {
 	 * @return	String				The uri
 	 */
 	_namespace.mapIdentifierToUri = function(identifier) {
-		var regexp = new RegExp('\\' + Namespace.separator, 'g');
-		return Namespace.baseUri + identifier.replace(regexp, '/') + '.js';
+		var regexp = new RegExp('\\' + Namespacedotjs.separator, 'g');
+		return Namespacedotjs.baseUri + identifier.replace(regexp, '/') + '.js';
 	};
 	
 	/**
@@ -271,16 +271,16 @@ var Namespace = (function() {
 	_namespace.use = function(identifier) {
 		var identifiers 		= _toArray(identifier);
 		var callback 			= arguments[1] || false;
-		var autoInclude 		= arguments.length > 2 ? arguments[2] : Namespace.autoInclude;
+		var autoInclude 		= arguments.length > 2 ? arguments[2] : Namespacedotjs.autoInclude;
 		var event				= { 'identifier': identifier };
         var parts, target, ns;
 		
 		for (var i = 0; i < identifiers.length; i++) {
 			identifier = identifiers[i];
 		
-			parts = identifier.split(Namespace.separator);
+			parts = identifier.split(Namespacedotjs.separator);
 			target = parts.pop();
-			ns = _namespace(parts.join(Namespace.separator));
+			ns = _namespace(parts.join(Namespacedotjs.separator));
 		
 			if (target == '*') {
 				// imports all objects from the identifier, can't use include() in that case
@@ -480,7 +480,7 @@ var Namespace = (function() {
  *
  * @var String
  */
-Namespace.separator = '.';
+Namespacedotjs.separator = '.';
 
 /**
  * Base uri when using Namespace.include()
@@ -488,7 +488,7 @@ Namespace.separator = '.';
  *
  * @var String
  */
-Namespace.baseUri = './';
+Namespacedotjs.baseUri = './';
 
 /**
  * Whether to automatically call Namespace.include() when Namespace.import() 
@@ -496,5 +496,5 @@ Namespace.baseUri = './';
  *
  * @var Boolean
  */
-Namespace.autoInclude = true;
+Namespacedotjs.autoInclude = true;
 	

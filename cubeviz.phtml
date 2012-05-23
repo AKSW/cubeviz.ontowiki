@@ -1,15 +1,86 @@
 <?php
 
 /**
- * OntoWiki navigation template
+ * OntoWiki cubeviz "select data" template
  *
  */
 
-#var_dump($this->data);
+//var_dump($this->basePath); die;
 ?>
-<ul id="navigation-content" class="nav nav-list init-me-please">
-	<li>I am a list item!</li>
-	<li>I am a list item!</li>
-	<li>I am a list item!</li>
-	<li>I am a list item!</li>
-</ul>
+
+<link rel="stylesheet" href="<?php echo $this->basePath; ?>css/main.css" type="text/css" media="screen" />
+
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/main.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>libraries/namespacedotjs/Namespace.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/json-template.min.js"></script>
+
+<?php if ( true == $this->isModelSelected ): ?>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>javascript/index.js"></script>
+<?php endif; ?>
+
+<script type="text/javascript">
+    
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	Namespacedotjs.baseUri = <?php echo json_encode($this->basePath . 'javascript/'); ?>;
+	
+	console.log(Namespace.baseUri);
+	
+	var cubevizParameters = {
+		sparqlEndpoint: <?php echo json_encode($this->sparqlEndpoint); ?>,
+		selectedGraph: <?php echo json_encode($this->selectedGraph); ?>,
+		selectedDSD: <?php echo json_encode($this->selectedDSD); ?>,
+		selectedDS: <?php echo json_encode($this->selectedDS); ?>,
+		selectedMeasures: <?php echo json_encode($this->selectedMeasures); ?>,
+		selectedDimensions: <?php echo json_encode($this->selectedDimensions); ?>,
+		selectedDimensionComponents: <?php echo json_encode($this->selectedDimensionComponents); ?>,
+		modelUri: "<?php echo $this->modelUri; ?>",
+		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
+		backend: <?php echo json_encode($this->backend); ?>,
+		chartType: <?php echo json_encode($this->chartType); ?>
+	}
+	
+</script>
+
+<!-- Include index json-templates for instance the dialogs. -->
+<?php include ("extensions/cubeviz/templates/cubeviz/indexTemplates.phtml"); ?>
+
+<style type="text/css">
+	@import url("<?php echo $this->basePath; ?>css/main.css");
+</style>
+
+<!-- Selection data routine -->
+
+<div id="wrapper"></div>
+
+<div id="sidebar-left">
+	<div id="sidebar-left-data-selection">
+		<div id="sidebar-left-data-selection-wrapper">
+			<div id="sidebar-left-data-selection-dims">
+				<h3><?php echo $this->_translate->_('Dimensions'); ?></h3>
+				<div id="sidebar-left-data-selection-dims-boxes"></div>
+			</div>
+			<div id="sidebar-left-data-selection-meas">
+				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
+				<div id="sidebar-left-data-selection-meas-boxes"></div>
+			</div>
+			<div id="sidebar-left-data-selection-strcsets">
+				<h3><?php echo $this->_translate->_('Data Structure and Sets'); ?></h3>
+			</div>
+			<select name="datastructures" id="sidebar-left-data-selection-strc"></select>
+			<select name="datasets" id="sidebar-left-data-selection-sets"></select>
+			<div id="sidebar-left-data-selection-submitbtn-box">
+				<input type="submit" value="<?php echo $this->_translate->_('Select Data'); ?>" id="sidebar-left-data-selection-submitbtn"/>
+			</div>
+		</div>
+	</div>
+	<div id="sidebar-left-page-selection">
+		<ul>
+			<li><a href="" class="sidebar-left-page-selection-nopage"><?php echo $this->_translate->_('Show Graph'); ?></a></li>
+			<li><div class="page-link" id="page-startNoModelGiven"><?php echo $this->_translate->_('Home'); ?></div></li>
+			<li><div class="page-link" id="page-faq"><?php echo $this->_translate->_('FAQ'); ?></div></li>
+		</ul>
+	</div>
+</div>
