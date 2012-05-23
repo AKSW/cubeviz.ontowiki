@@ -1178,8 +1178,8 @@ class CubevizController extends OntoWiki_Controller_Component
     }
 		
     public function indexAction() {
-        $this->view->basePath = $this->_componentUrlBase;
-        $this->view->cubevizPath = $this->getComponentPath($this->_componentUrlBase);
+        $this->view->basePath = $this->_config->staticUrlBase . "extensions" . DS . "cubeviz" . DS;
+        $this->view->cubevizPath = $this->_config->staticUrlBase . "cubeviz" . DS;
         $this->view->backend = $this->_owApp->getConfig()->store->backend;
         $this->view->isModelSelected = true;
         
