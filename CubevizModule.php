@@ -28,6 +28,16 @@ class CubevizModule extends OntoWiki_Module
     public function getTitle() {
         return "Data Selection";
     }
+    
+    public function shouldShow(){
+		//show only for http://data.lod2.eu/scoreboard/
+		$scoreboard = "http://data.lod2.eu/scoreboard/";
+		if (isset($this->_owApp->selectedModel) && ($this->_owApp->selectedModel->getBaseIri() == $scoreboard)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Returns the content

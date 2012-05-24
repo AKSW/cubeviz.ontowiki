@@ -1183,12 +1183,16 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->backend = $this->_owApp->getConfig()->store->backend;
         $this->view->isModelSelected = true;
         
+        if( isset($this->_owApp->selectedModel) ) {
+			$_REQUEST['m'] = $this->_owApp->selectedModel->getBaseIri();
+		}
+        
         if ( '0777' != substr(decoct( fileperms(dirname (__FILE__) .'/links/') ), 1) )
         {
             echo 'Cubeviz links folder is <b>not</b> writeable! You have to set it to <b>0777</b>.';
             exit;
         }
-        
+                
         if(false == isset( $_REQUEST ['m'] ) ) {
             $this->view->isModelSelected = false;
             
@@ -1220,7 +1224,7 @@ class CubevizController extends OntoWiki_Controller_Component
              * bar pie line area splines   *
              * scatterplot table           *
              *******************************/
-            
+                        
             $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'bar';
             switch($chartType) {
 				case 'bar':
