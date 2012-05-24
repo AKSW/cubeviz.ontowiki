@@ -319,11 +319,47 @@
 /**
  * Left panel - "Data Selection"
  */
+ 
+#sidebar-left {
+    margin-top: 30px;
+}
+
+#sidebar-left-data-selection-dims-boxes {
+    margin-top: -20px;
+}
 
 .sidebar-left-data-selection-dims-box-seperator {
+    margin-top: 40px;
 } 
  
+.sidebar-left-data-selection-dims-box {
+    float: left;
+} 
+
+.sidebar-left-data-selection-dims-box-label {
+}
+
+.sidebar-left-data-selection-dims-box-label-value {
+
+}
+
 .sidebar-left-data-selection-dims-box-abstract {
+}
+
+#sidebar-left-data-selection-strc {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#sidebar-left-data-selection-sets {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#sidebar-left-data-selection-strcsets {
+    margin-top: 45px;
 }
  
 .open-dialog-selector {
@@ -331,3 +367,22 @@
 
 .open-dialog-options {
 }
+
+.sidebar-left-data-selection-dims-box-abstract-img,
+ .sidebar-left-data-selection-meas-box-abstract-img {
+    width: 15px;
+    float: left;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+#sidebar-left-data-selection-meas {
+    clear: both;
+    margin-top: 50px;
+}
+
+.sidebar-left-data-selection-meas-box {
+    float: left;
+}
+
+
