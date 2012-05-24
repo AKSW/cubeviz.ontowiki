@@ -481,6 +481,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			url: this.cubevizPath + actionName + "/",
 			data: "dataStructure="+dataStructureUri,
 			success: function(jsonObject){
+				console.log("here");
 				var dataSets = JSON.parse(jsonObject);
 				dataSets = createDataSetObjects(dataSets);
 				

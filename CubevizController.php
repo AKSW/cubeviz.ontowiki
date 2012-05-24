@@ -740,9 +740,9 @@ class CubevizController extends OntoWiki_Controller_Component
         
         $dataStructure = $_REQUEST['dataStructure'];
         $dataSets = CubeQuery::getDataSets($dataStructure);
-        
+                
         $dataSets = $this->_getLabelsFor($dataSets, $this->_owApp);
-        
+                
         $this->_response->setBody(json_encode($dataSets));
     }
     

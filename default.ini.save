@@ -1,0 +1,65 @@
+templates  = "templates"
+languages  = "languages/"
+enabled    = true
+action     = analyze
+name       = "Cubev	iz"
+position   = 30
+
+[private]
+
+;-------------------------------------------------------------
+;options of the chartview component
+;these configurations are intended to be adapted to your needs
+;-------------------------------------------------------------
+;chart libraries
+parser["HighChartsParser"] = "HighCharts"
+parser["PhplotParser"] = "PHPlot"
+parser["TableParser"] = "GenericTable"
+
+;chart plugins for manipulating the parser output
+parseraddon["AttributeConfigurationHighChartsParserAddOn"] = "HighChartsParser"
+parseraddon["AttributeConfigurationPhplotParserAddOn"] = "PhplotParser"
+
+;available uri pattern elements
+;uncomment entries for an activation
+urielement[] = "MD5"
+urielement[] = "MODEL"
+urielement[] = "COUNTER"
+
+;default uri patterns for element creation
+uripattern["ComponentSpecification"] = "<MODEL>/CS_<MD5>"
+uripattern["DataStructureDefinition"] = "<MODEL>/DSD_<MD5>"
+uripattern["DataSet"] = "<MODEL>/DS_<MD5>"
+
+;other configuration options
+options["paginationLimit"] = 75
+options["provideService"] = true
+
+;-----------------------------------------------------
+;uris of the cube vocabulary and others
+;this is intended for updating the uris only if needed
+;-----------------------------------------------------
+;special entities
+uris["qb"] = "http://purl.org/linked-data/cube#"
+uris["rdfType"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+uris["rdfsLabel"] = "http://www.w3.org/2000/01/rdf-schema#label"
+uris["someotherstuff"] = "http://www.example.org/2000/01/rdf-schema#"
+
+;cube concepts
+uris["DataStructureDefinition"] = "DataStructureDefinition"
+uris["ComponentSpecification"] = "ComponentSpecification"
+uris["ComponentProperty"] = "ComponentProperty"
+uris["DimensionProperty"] = "DimensionProperty"
+uris["MeasureProperty"] = "MeasureProperty"
+uris["AttributeProperty"] = "AttributeProperty"
+uris["DataSet"] = "DataSet"
+uris["Observation"] = "Observation"
+
+;cube properties
+uris["component"] = "component"
+uris["measure"] = "measure"
+uris["dimension"] = "dimension"
+uris["attribute"] = "attribute"
+uris["order"] = "order"
+uris["datasetrel"] = "dataset"
+uris["structure"] = "structure"

@@ -134,6 +134,7 @@ $(function() {
 			};
 		
 		org.aksw.cubeViz.Index.Main.reloadDataSetList($("#sidebar-left-data-selection-strc").val());
+		console.log("here");
 	}
 	
 	//next logic step is in the reloadDataSetList function
