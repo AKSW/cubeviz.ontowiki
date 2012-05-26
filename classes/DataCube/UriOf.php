@@ -7,7 +7,8 @@
  * @category OntoWiki
  * @package Extensions
  * @subpackage Cubeviz
- * @author Ivan Ermilov 
+ * @author Ivan Ermilov
+ * @author Konrad Abicht
  */
 class DataCube_UriOf
 {    

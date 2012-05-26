@@ -121,7 +121,6 @@ class DataCube_Query {
         return $result;
     }
     
-    
     /**
      * 
      */
@@ -135,7 +134,6 @@ class DataCube_Query {
         return $this->_model->sparqlQuery($sparql);
     }   
     
-    
     /**
      * 
      */
@@ -148,7 +146,6 @@ class DataCube_Query {
         
         return $this->_model->sparqlQuery($sparql);
     }   
-    
     
     /**
      * TODO: put comments
