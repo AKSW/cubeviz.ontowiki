@@ -1,6 +1,6 @@
 <?php
 
-require dirname ( __FILE__ ). '/../../bootstrap.php';
+require_once dirname ( __FILE__ ). '/../../bootstrap.php';
 
 class DataCube_ChartTest extends PHPUnit_Framework_TestCase
 {
