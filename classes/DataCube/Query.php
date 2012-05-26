@@ -33,7 +33,7 @@ class DataCube_Query {
 
 		//get all indicators in the cube by the DataStructureDefinitions
 		$sparql = 'SELECT ?dsd WHERE {
-            ?dsd <'. DataCube_UriOf::RdfType .'> <'. DataCube_UriOf::DataStructureDefinition .'>. 
+            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
         }';
 		
         $queryResultDSD = $this->_model->sparqlQuery($sparql);
@@ -57,7 +57,7 @@ class DataCube_Query {
         
         //get all data sets in the cube for the given DataStructureDefinition
         $sparql = 'SELECT ?ds WHERE {
-            ?ds <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataSet.'>.
+            ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
             ?ds <'.DataCube_UriOf::Structure.'> <'.$dsUri.'>.
         };';
 
@@ -88,7 +88,7 @@ class DataCube_Query {
         //search for the components specified by the parameters
         $sparql = 'SELECT ?comp ?comptype ?order WHERE {
             <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
-            ?comp <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::ComponentSpecification.'>.
+            ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
             ?comp <'.$componentType.'> ?comptype.
             
             OPTIONAL {?comp <'.DataCube_UriOf::Order.'> ?order.}
@@ -121,30 +121,57 @@ class DataCube_Query {
         return $result;
     }
     
+    
+    /**
+     * 
+     */
+    public function getDimensionProperties () {
+        
+        $sparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
+        };';
+        
+        return $this->_model->sparqlQuery($sparql);
+    }   
+    
+    
+    /**
+     * 
+     */
+    public function getMeasureProperties () {
+        
+        $sparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
+        };';
+        
+        return $this->_model->sparqlQuery($sparql);
+    }   
+    
+    
     /**
      * TODO: put comments
      */
-    static public function getComponentElements($dsUri, $componentProperty, $model = null, $limits = array()) {
-        
-        $store = Erfurt_App::getInstance()->getStore();
+    public function getComponentElements($dataSetUri, $componentProperty, $limit, $offset) {
         
         $result = array();
         $result_label = array();
                 
-        $queryComponentElements = new Erfurt_Sparql_SimpleQuery();
-        $queryComponentElements->setProloguePart('SELECT DISTINCT(?element)');
+        // componentProperty, e.g. http://data.lod2.eu/scoreboard/properties/value
+            
+        $sparql = 'SELECT DISTINCT(?element) WHERE {
+            ?observation <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element)';
         
-        $wherePart = 'WHERE {?observation <'.DataCube_Query::$rdfType.'> <'.DataCube_Query::$qb_Observation.'>.
-            ?observation <'.DataCube_Query::$qb_datasetrel.'> <'.$dsUri.'>.
-            ?observation <'.$componentProperty.'> ?element.} ORDER BY ASC(?element)';
+        $sparql .= 0 < $limit ? ' LIMIT '. $limit .' OFFSET '. $offset .';' : ';';
         
-        if(count($limits)>0) {
-            $wherePart .= ' LIMIT '.$limits['limit'].' OFFSET '.$limits['offset'];
-        }
+        echo $sparql;
         
-        $queryComponentElements->setWherePart($wherePart);
-        
-        $queryResultElements = $store->sparqlQuery($queryComponentElements);
+        $queryResultElements = $store->sparqlQuery($sparql);
 		
 		foreach($queryResultElements as $key => $element) {
             if(isset($element['element'])) {

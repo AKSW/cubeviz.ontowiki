@@ -39,7 +39,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         
         // Get test data
         $testSparql = 'SELECT ?dsd WHERE {
-            ?dsd <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataStructureDefinition.'>. 
+            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataStructureDefinition.'>. 
         }';
         
         $testDsd = $this->_model->sparqlQuery ( $testSparql );
@@ -64,7 +64,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         
         // Get test data
         $testSparql = 'SELECT ?ds WHERE {
-            ?ds <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::DataSet.'>.
+            ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
             ?ds <'.DataCube_UriOf::Structure.'> <'.$dsUri.'>.
         };';
         
@@ -96,7 +96,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         // Get test data
         $testSparql = 'SELECT ?comp ?comptype ?order WHERE {
             <'.$dsd.'> <'.DataCube_UriOf::Component.'> ?comp.                
-            ?comp <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::ComponentSpecification.'>.
+            ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
             ?comp <'.$componentType.'> ?comptype.
             
             OPTIONAL {?comp <'.DataCube_UriOf::Order.'> ?order.}
@@ -124,5 +124,37 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         }
         
         $this->assertEquals ( $resultComponents, $testResult );
+    }
+    
+    public function testGetDimensionProperties ()
+    {
+        $query = new DataCube_Query ($this->_model, $this->titleHelper);
+        
+        $result = $query->getDimensionProperties ();
+        
+        $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel}
+        };';
+        
+        $testResult = $this->_model->sparqlQuery($testSparql);
+        
+        $this->assertEquals ( $result, $testResult );
+    }
+    
+    public function testGetMeasureProperties()
+    {
+        $query = new DataCube_Query ($this->_model, $this->titleHelper);
+        
+        $result = $query->getMeasureProperties ();
+        
+        $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel}
+        };';
+        
+        $testResult = $this->_model->sparqlQuery($testSparql);
+        
+        $this->assertEquals ( $result, $testResult );
     }
 }

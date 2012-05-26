@@ -13,9 +13,7 @@ class DataCube_UriOf
 {    
     //special entities
 	const Qb = "http://purl.org/linked-data/cube#";
-	const RdfType = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-	const RdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
-	
+    
 	//cube concepts
 	const DataStructureDefinition = "http://purl.org/linked-data/cube#DataStructureDefinition";
 	const ComponentSpecification = "http://purl.org/linked-data/cube#ComponentSpecification";
@@ -32,6 +30,6 @@ class DataCube_UriOf
 	const Dimension = "http://purl.org/linked-data/cube#dimension";
 	const Attribute = "http://purl.org/linked-data/cube#attribute";
 	const Order = "http://purl.org/linked-data/cube#order";
-	const Datasetrel = "http://purl.org/linked-data/cube#dataset";
+	const DataSetRelation = "http://purl.org/linked-data/cube#dataset";
 	const Structure = "http://purl.org/linked-data/cube#structure";
 }
