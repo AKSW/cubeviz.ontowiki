@@ -182,30 +182,6 @@ class DataCube_Query {
                         
         return $result;
     }
-    
-    static public function getLabels($uris, $model) {
-		
-		$result = array();
-		$titleHelper = new OntoWiki_Model_TitleHelper($model);        
-        
-        foreach($uris as $uri)
-	        $titleHelper->addResource($uri);
-        
-        foreach($uris as $uri)
-            $result[] = $titleHelper->getTitle($uri);
-        
-        return $result;
-	}
-    
-    /**
-     * Function for retrieving the graph names from the specified SPARQL Endpoint
-     * TODO: Micha
-     */
-    static public function getGraphs($sparqlEndpoint) {
-		$graphs = array();
-		
-		return $graphs;
-	}
 	
 	/**
 	 * 
