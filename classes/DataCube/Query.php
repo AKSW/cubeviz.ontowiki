@@ -150,28 +150,24 @@ class DataCube_Query {
     /**
      * TODO: put comments
      */
-    public function getComponentElements($dataSetUri, $componentProperty, $limit, $offset) {
+    public function getComponentElements($dataSetUri, $componentProperty, $limit = 0, $offset = 0) {
         
-        $result = array();
-        $result_label = array();
-                
-        // componentProperty, e.g. http://data.lod2.eu/scoreboard/properties/value
-            
-        $sparql = 'SELECT DISTINCT(?element) WHERE {
-            ?observation <'.DataCube_UriOf::RdfType.'> <'.DataCube_UriOf::Observation.'>.
+        $sparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
             ?observation <'.$componentProperty.'> ?element.
         } 
         ORDER BY ASC(?element)';
         
-        $sparql .= 0 < $limit ? ' LIMIT '. $limit .' OFFSET '. $offset .';' : ';';
+        $sparql .= 0 < $limit ? ' LIMIT '. $limit : '';
+        $sparql .= 0 < $limit && 0 <= $offset ? ' OFFSET '. $offset .';' : '';
         
-        echo $sparql;
-        
-        $queryResultElements = $store->sparqlQuery($sparql);
+        $queryResultElements = $this->_model->sparqlQuery($sparql);
 		
+        $result = array();
+        
 		foreach($queryResultElements as $key => $element) {
-            if(isset($element['element'])) {
+            if(false == empty ($element['element'])) {
 				$result[$key] = $element['element'];
 			}
         }

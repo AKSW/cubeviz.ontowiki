@@ -80,13 +80,12 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetComponents()
     {
-        $query = new DataCube_Query ($this->_model, $this->titleHelper);
         $dsd = $this->_query->getDataStructureDefinition ();
         if (0 == count($dsd)) return;
         
         $dsd = $dsd [0];
         
-        $ds = $query->getDataSets ($dsd); 
+        $ds = $this->_query->getDataSets ($dsd); 
         if ( 0 == count($ds)) return;
         
         $ds = $ds[0];
@@ -157,6 +156,36 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetComponentElements()
     {   
+        $dsd = $this->_query->getDataStructureDefinition ();
+        $dsd = $dsd [0];
         
+        $ds = $this->_query->getDataSets ($dsd);         
+        $ds = $ds[0];
+        
+        $componentProperty = $this->_query->getDimensionProperties ();
+        $componentProperty = $componentProperty [0] ['propertyUri'];
+        
+        $result = $this->_query->getComponentElements ( $ds, $componentProperty );
+        
+        
+        // test query
+        $testSparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element)';
+        
+        $queryResultElements = $this->_model->sparqlQuery($testSparql);
+		
+        $testResult = array();
+        
+		foreach($queryResultElements as $key => $element) {
+            if(false == empty ($element['element'])) {
+				$testResult[$key] = $element['element'];
+			}
+        }
+        
+        $this->assertEquals ( $result, $testResult );
     }
 }
