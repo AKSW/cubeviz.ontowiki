@@ -7,6 +7,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     private $_erfurt;
     private $_model;
     private $_owApp;
+    private $_query;
     
     public function setUp ()
     {        
@@ -17,6 +18,8 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         
         $this->_model       = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
         $this->_titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+        
+        $this->_query       = new DataCube_Query ($this->_model, $this->titleHelper);
     }
     
     public function tearDown ()
@@ -34,8 +37,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetDataStructureDefinition()
     {
-        $query = new DataCube_Query ($this->_model, $this->titleHelper);
-        $resultDsd = $query->getDataStructureDefinition ();
+        $resultDsd = $this->_query->getDataStructureDefinition ();
         
         // Get test data
         $testSparql = 'SELECT ?dsd WHERE {
@@ -53,14 +55,13 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetDataSets()
     {
-        $query = new DataCube_Query ($this->_model, $this->titleHelper);
-        $resultDsd = $query->getDataStructureDefinition ();
+        $resultDsd = $this->_query->getDataStructureDefinition ();
         
         if (0 == count($resultDsd)) return;
         
         $dsUri = $resultDsd [0];
         
-        $resultDs = $query->getDataSets ($dsUri);
+        $resultDs = $this->_query->getDataSets ($dsUri);
         
         // Get test data
         $testSparql = 'SELECT ?ds WHERE {
@@ -80,7 +81,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     public function testGetComponents()
     {
         $query = new DataCube_Query ($this->_model, $this->titleHelper);
-        $dsd = $query->getDataStructureDefinition ();
+        $dsd = $this->_query->getDataStructureDefinition ();
         if (0 == count($dsd)) return;
         
         $dsd = $dsd [0];
@@ -91,7 +92,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $ds = $ds[0];
         $componentType = DataCube_UriOf::Dimension;
         
-        $resultComponents = $query->getComponents ($dsd, $ds, $componentType);
+        $resultComponents = $this->_query->getComponents ($dsd, $ds, $componentType);
         
         // Get test data
         $testSparql = 'SELECT ?comp ?comptype ?order WHERE {
@@ -128,9 +129,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetDimensionProperties ()
     {
-        $query = new DataCube_Query ($this->_model, $this->titleHelper);
-        
-        $result = $query->getDimensionProperties ();
+        $result = $this->_query->getDimensionProperties ();
         
         $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
             ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
@@ -144,9 +143,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetMeasureProperties()
     {
-        $query = new DataCube_Query ($this->_model, $this->titleHelper);
-        
-        $result = $query->getMeasureProperties ();
+        $result = $this->_query->getMeasureProperties ();
         
         $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
             ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
@@ -156,5 +153,10 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $testResult = $this->_model->sparqlQuery($testSparql);
         
         $this->assertEquals ( $result, $testResult );
+    }
+    
+    public function testGetComponentElements()
+    {   
+        
     }
 }

@@ -3,9 +3,7 @@
 require_once dirname ( __FILE__ ). '/../../bootstrap.php';
 
 class DataCube_ChartTest extends PHPUnit_Framework_TestCase
-{
-    private $_erfurt;
-    
+{    
     public function setUp ()
     {        
     }
