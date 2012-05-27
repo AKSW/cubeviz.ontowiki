@@ -23,9 +23,8 @@ class DataCube_Query {
     }
 	
 	/**
-	 * Function for retrieving Data Structure Definitions of the 
-	 * Data Cube through OntoWiki ODBC
-     * @return array List of DataStructureDefinition's
+	 * Returns array of Data Structure Definitions 
+     * @return array
 	 */ 
 	public function getDataStructureDefinition() {   
 		
@@ -51,7 +50,8 @@ class DataCube_Query {
     
 	/**
 	 * Function for getting datasets for this data structure
-	 * E.g. dsUri can be http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe
+	 * @param $dsUri Data Set Uri
+     * @return array
 	 */
     public function getDataSets($dsUri) {	
         
@@ -78,10 +78,11 @@ class DataCube_Query {
     }
     
     /**
-     * Function for getting components
-     * @param $dsdUri
-     * @param $dsUri
-     * @param $component Element of DataCube_ComponentType
+     * Returns an array of components (Component) with md5 of URI, type and URI.
+     * @param $dsdUri Data Structure Definition URI
+     * @param $dsUri Data Set URI
+     * @param $component DataCube_UriOf::Dimension or ::Measure
+     * @return array
      */
 	public function getComponents($dsdUri, $dsUri, $componentType) {
                 
@@ -122,7 +123,8 @@ class DataCube_Query {
     }
     
     /**
-     * 
+     * Returns an array of all dimension properties
+     * @return array
      */
     public function getDimensionProperties () {
         
@@ -135,7 +137,8 @@ class DataCube_Query {
     }   
     
     /**
-     * 
+     * Returns an array of all measure properties
+     * @return array
      */
     public function getMeasureProperties () {
         
@@ -148,7 +151,12 @@ class DataCube_Query {
     }   
     
     /**
-     * TODO: put comments
+     * Returns an array of Resources which has a certain relation ($componentProperty) to a dataset.
+     * @param $dataSetUri DataSet Uri
+     * @param $componentProperty Uri of a certain dimension property
+     * @param $limit Limit number of result entries
+     * @param $offset Start position in result 
+     * @return array
      */
     public function getComponentElements($dataSetUri, $componentProperty, $limit = 0, $offset = 0) {
         
