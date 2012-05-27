@@ -187,25 +187,9 @@ class DataCube_Query {
 	 * 
 	 * 
 	 */
-	static private function getComponentElementCount($dsUri, $componentProperty) {
-        $store = Erfurt_App::getInstance()->getStore();
-        $result = 0;
-                
-        $queryComponentElementCount = new Erfurt_Sparql_SimpleQuery();
-        $queryComponentElementCount->setProloguePart('SELECT COUNT(DISTINCT(?element)) 
-            AS ?elemCount');
-        $queryComponentElementCount->setWherePart('WHERE {?observation 
-            <'.DataCube_Query::$rdfType.'> <'.DataCube_Query::$qb_Observation.'>.
-            ?observation <'.DataCube_Query::$qb_datasetrel.'> <'.$dsUri.'>.
-            ?observation <'.$componentProperty.'> ?element.}');
-        
-        $queryResultElementCount 
-            = $store->sparqlQuery($queryComponentElementCount);
+	public function getComponentElementCount($dsUri, $componentProperty) {
 
-        $countRow = current($queryResultElementCount);
-        $result = (int) $countRow['elemCount'];
-        
-        return $result;
+        return count ( $this->getComponentElements ( $dsUri, $componentProperty ) );
     } 
     
     /**

@@ -260,4 +260,37 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         
         $this->assertEquals ( $result, $testResult );
     }
+    
+    public function testGetComponentElementCount()
+    {   
+        $dsd = $this->_query->getDataStructureDefinition ();
+        $dsd = $dsd [0];
+        
+        $ds = $this->_query->getDataSets ($dsd);         
+        $ds = $ds[0];
+        
+        $componentProperty = $this->_query->getDimensionProperties ();
+        $componentProperty = $componentProperty [0] ['propertyUri'];
+     
+        $result = $this->_query->getComponentElementCount ( $ds, $componentProperty );
+        
+        $testSparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element)';
+        
+        $queryResultElements = $this->_model->sparqlQuery($testSparql);
+		
+        $testResult = array();
+        
+		foreach($queryResultElements as $key => $element) {
+            if(false == empty ($element['element'])) {
+				$testResult[$key] = $element['element'];
+			}
+        }
+        
+        $this->assertEquals ( $result, count ( $testResult ) );
+    }
 }
