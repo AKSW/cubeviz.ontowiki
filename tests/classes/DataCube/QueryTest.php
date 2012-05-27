@@ -165,16 +165,88 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $componentProperty = $this->_query->getDimensionProperties ();
         $componentProperty = $componentProperty [0] ['propertyUri'];
         
+        // case 1        
         $result = $this->_query->getComponentElements ( $ds, $componentProperty );
         
-        
-        // test query
         $testSparql = 'SELECT DISTINCT ?element WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
             ?observation <'.$componentProperty.'> ?element.
         } 
         ORDER BY ASC(?element)';
+        
+        $queryResultElements = $this->_model->sparqlQuery($testSparql);
+		
+        $testResult = array();
+        
+		foreach($queryResultElements as $key => $element) {
+            if(false == empty ($element['element'])) {
+				$testResult[$key] = $element['element'];
+			}
+        }
+        
+        $this->assertEquals ( $result, $testResult );
+        
+        
+        // case 2
+        $result = $this->_query->getComponentElements ( $ds, $componentProperty, 0, 0 );
+                
+        $testSparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element)';
+        
+        $queryResultElements = $this->_model->sparqlQuery($testSparql);
+		
+        $testResult = array();
+        
+		foreach($queryResultElements as $key => $element) {
+            if(false == empty ($element['element'])) {
+				$testResult[$key] = $element['element'];
+			}
+        }
+        
+        $this->assertEquals ( $result, $testResult );
+        
+        
+        // case 3
+        $result = $this->_query->getComponentElements ( $ds, $componentProperty, 5, 0 );
+                
+        $testSparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element) 
+        LIMIT 5 
+        OFFSET 0';
+        
+        $queryResultElements = $this->_model->sparqlQuery($testSparql);
+		
+        $testResult = array();
+        
+		foreach($queryResultElements as $key => $element) {
+            if(false == empty ($element['element'])) {
+				$testResult[$key] = $element['element'];
+			}
+        }
+        
+        $this->assertEquals ( $result, $testResult );
+        
+        
+        // case 4
+        $result = $this->_query->getComponentElements ( $ds, $componentProperty, 1, 3 );
+                
+        $testSparql = 'SELECT DISTINCT ?element WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$ds.'>.
+            ?observation <'.$componentProperty.'> ?element.
+        } 
+        ORDER BY ASC(?element) 
+        LIMIT 1 
+        OFFSET 3';
         
         $queryResultElements = $this->_model->sparqlQuery($testSparql);
 		
