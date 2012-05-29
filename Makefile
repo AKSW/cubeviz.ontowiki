@@ -1,5 +1,6 @@
 default:
 	@echo "CubeViz - cli"
+	@echo " make install > setup cubeviz"
 	@echo " make test > run PHPUnit tests"
 	@echo " "
 	@echo "To setup the test environment run this commands in a row:"
@@ -20,4 +21,4 @@ install-phpunit:
 	sudo pear install -a pear.phpunit.de/PHPUnit
 
 install:
-	chmod 777 config/links
+	chmod 0777 data/links
