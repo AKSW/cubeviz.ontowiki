@@ -13,7 +13,7 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     {        
         $this->_erfurt      = Erfurt_App::getInstance ();
         
-        $this->_owApp       = new Zend_Application( 'default', _OW . 'application/config/application.ini');
+        $this->_owApp       = new Zend_Application( 'default', _OWROOT . 'application/config/application.ini');
         $this->_owApp->bootstrap();
         
         $this->_model       = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
@@ -292,5 +292,14 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         }
         
         $this->assertEquals ( $result, count ( $testResult ) );
+    }
+    
+    public function testGetResultObservations()
+    {   
+        $dsd = $this->_query->getDataStructureDefinition ();
+        $dsd = $dsd [0];
+        
+        $ds = $this->_query->getDataSets ($dsd);         
+        $ds = $ds[0];
     }
 }
