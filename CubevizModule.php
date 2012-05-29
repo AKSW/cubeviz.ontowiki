@@ -13,12 +13,6 @@
  */
 
 /**
- * Define CubeViz ROOT
- */
-define("CUBEVIZ_ROOT", __DIR__);
-define("DS", DIRECTORY_SEPARATOR);
-
-/**
  * Static class AuxilaryFunctions. Contain transformation and adapter functions. 
  */
 //require_once 'model/AuxilaryFunctions.php';

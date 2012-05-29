@@ -10,60 +10,74 @@
  * @subpackage Cubeviz
  * @author Ivan Ermilov
  * @author Konrad Abicht
- */
-
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'DataStructureDefinition.php';
-require_once CUBEVIZ_ROOT . DS .'classes' . DS . 'DataCube' . DS . 'DataSet.php';
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'MeasureFactory.php';
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'DimensionFactory.php';
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'DimensionComponentFactory.php';
- 
+ */ 
 class CubeViz_ConfigurationLink
 {   
 	/**
-     * Path to the links/ folder
+     * Path to the links folder
      */
-    protected $_linksFolder = '';
+    protected $_linksFolder = '';    
+    protected $_links = null;
     
-    public $sparqlEndpoint;
-    public $selectedGraph;
-    public $selectedDSD;
-    public $selectedDS;
-    public $selectedMeasures;
-    public $selectedDimensions;
-    public $selectedDimensionComponents;
-    public $selectedChartType;
-    
-    
+    /**
+     * Constructor
+     */
     public function __construct() {
-		$this->_linksFolder = CUBEVIZ_ROOT . DS . 'config' . DS . 'links/';
+        
+        $ds = DIRECTORY_SEPARATOR;        
+		$this->_linksFolder = dirname (__FILE__) . $ds . '..' . $ds . '..' . $ds . 'data' . $ds . 'links/';
+        
+        $this->_links = array ();
 	}
 	
 	/**
-	 * Read configuration from 
+	 * Read configuration from a json file in links folder
+     * @param $linkCode Name of the file (name = hash code)
+     * @return true
+     * @throws CubeViz_Exception
 	 */
 	public function initFromLink($linkCode) {
-		$configuration = array();
+		
 		if(file_exists($this->_linksFolder . $linkCode)) {
-			$parameters = file($this->_linksFolder . $linkCode);
-			$this->sparqlEndpoint = json_decode(trim($parameters[0]), true);
-			$this->selectedGraph = json_decode(trim($parameters[1]), true);
-			$selectedDSD = json_decode(trim($parameters[2]), true);
-			$this->selectedDSD = new DataCube_DataStructureDefinition($selectedDSD['uri'],$selectedDSD['label']);
-			$selectedDS = json_decode(trim($parameters[3]), true);
-			$this->selectedDS = new DataCube_DataSet($selectedDS['uri'],$selectedDS['label']);
-			$selectedMeasures = json_decode(trim($parameters[4]), true);
-			$this->selectedMeasures = new DataCube_MeasureFactory();
-			$this->selectedMeasures->initFromArray($selectedMeasures);
-			$selectedDimensions = json_decode(trim($parameters[5]), true);
+			
+            $parameters = file($this->_linksFolder . $linkCode);
+			
+            $this->_links [$linkCode] ['sparqlEndpoint'] = json_decode(trim($parameters[0]), true);
+            
+			$this->_links [$linkCode] ['selectedGraph'] = json_decode(trim($parameters[1]), true);
+			
+            // Data Structure Definition
+            $selectedDSD = json_decode(trim($parameters[2]), true);
+			$this->_links [$linkCode] ['selectedDSD'] = new DataCube_DataStructureDefinition (
+                $selectedDSD['uri'], $selectedDSD['label']
+            );
+			
+            // Data Set
+            $selectedDS = json_decode(trim($parameters[3]), true);
+			$this->_links [$linkCode] ['selectedDS'] = new DataCube_DataSet(
+                $selectedDS['uri'],$selectedDS['label']
+            );
+			
+            // Measures
+            $selectedMeasures = json_decode(trim($parameters[4]), true);
+			$this->_links [$linkCode] ['selectedMeasures'] = new DataCube_MeasureFactory();
+			$this->_links [$linkCode] ['selectedMeasures']->initFromArray($selectedMeasures);
+			
+            // Dimensions
+            $selectedDimensions = json_decode(trim($parameters[5]), true);
 			$this->selectedDimensions = new DataCube_DimensionFactory();
 			$this->selectedDimensions->initFromArray($selectedDimensions);
+            
+            // Dimension components
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
-			$this->selectedDimensionComponents = new DataCube_DimensionComponentFactory();
-			$this->selectedDimensionComponents->initFromArray($selectedDimensionComponents);
-			$this->selectedChartType = json_decode(trim($parameters[7]), true);
+			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_DimensionComponentFactory();
+			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);
+			
+            // Chart type
+            $this->_links [$linkCode] ['selectedChartType'] = json_decode(trim($parameters[7]), true);
+            
 		} else {
-            throw new CubeViz_Exception ('Link you specified does not exist! Please, check extensions/cubeviz/config/links folder');
+            throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
 		}
 		return true;
 	}
