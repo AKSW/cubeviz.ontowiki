@@ -3,7 +3,7 @@
 class CubevizController extends OntoWiki_Controller_Component {
     
     public function init () {
-        parent::init();   
+        parent::init();
     }
     
     /**
