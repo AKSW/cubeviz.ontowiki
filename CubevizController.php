@@ -1044,7 +1044,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $selectedDimensions = $selectedDimensions->dimensions;
         $selectedDimensionComponents = json_decode($configuration['selectedDimensionComponents']);
         $selectedChartType = $configuration['selectedChartType'];
-
+		
         /***********************
          * Model Analysis part *
          ***********************/
@@ -1079,13 +1079,14 @@ class CubevizController extends OntoWiki_Controller_Component
         /********************
          * Get Observations *
          ********************/
-        $selectedDimensionComponents = json_decode($configuration['selectedDimensionComponents']);
+        //$selectedDimensionComponents = json_decode($configuration['selectedDimensionComponents']);
         
         $resultCubeSpec = AuxilaryFunctions::resultCubeSpecAdapter($selectedDS,$selectedDimensions,
                                             $selectedDimensionComponents,$selectedMeasures);
+   
         
         $resultObservations = CubeQuery::getResultObservations($resultCubeSpec, $this->_owApp->selectedModel);
-                    
+   
         /*******************
          * Axis allocation *
          *******************/
@@ -1254,7 +1255,7 @@ class CubevizController extends OntoWiki_Controller_Component
             $hashCode = true == isset ( $_REQUEST ['hC'] ) ? $_REQUEST ['hC'] : 'default';
             
             $configuration = AuxilaryFunctions::readConfiguration($hashCode);
-                        
+                                    
             $chart = $this->getChart($configuration, $chartType);
             
             /***********************

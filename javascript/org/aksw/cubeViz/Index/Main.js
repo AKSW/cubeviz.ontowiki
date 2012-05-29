@@ -182,7 +182,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 		selectedDimensionComponents_temp = [];
 		selectedDimension_length = selectedDimensionLabels.length;
 		while(selectedDimension_length--) {
-			current_label = selectedDimensionLabels[selectedDimension_length];
+			current_label = jQuery.trim(selectedDimensionLabels[selectedDimension_length]);
 			current_dialog = $("#dialog-"+current_label);
 			
 			for(dimension in org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions) {
@@ -202,7 +202,9 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 		//Chart Type
 		//org.aksw.cubeViz.Index.Main.chartType = 
 		//			org.aksw.cubeViz.Index.Main.getChartType($("#chart-selection-selected-chart").val());
-		org.aksw.cubeViz.Index.Main.chartType = $("#chart-selection-selected-chart").val();
+		
+		//TODO: ACTIVATE WHEN CHART SELECTION WILL BE AVAILABLE
+		//org.aksw.cubeViz.Index.Main.chartType = $("#chart-selection-selected-chart").val();
 				
 		var selectedDataErrorCode = org.aksw.cubeViz.Index.Main.checkSelectedData();		
 				
@@ -456,7 +458,6 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 	 */	
 	saveConfigurationToFile: function(configuration) {
 		actionName = "saveconfiguration";
-        
 		$.ajax({
 			type: "POST",
 			url: this.cubevizPath + actionName + "/",
@@ -481,7 +482,6 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			url: this.cubevizPath + actionName + "/",
 			data: "dataStructure="+dataStructureUri,
 			success: function(jsonObject){
-				console.log("here");
 				var dataSets = JSON.parse(jsonObject);
 				dataSets = createDataSetObjects(dataSets);
 				
