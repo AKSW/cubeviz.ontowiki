@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * OntoWiki cubeviz "select data" template
+ *
+ */
+
+//var_dump($this->basePath); die;
+?>
+
+<!-- Libraries -->
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/namespacedotjs/Namespace.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json-template.min.js"></script>
+
+<!-- CubeViz related javascript -->
+<!--script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizInterface.js"></script-->
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizModule.js"></script>
+
+<script type="text/javascript">
+    
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	Namespacedotjs.baseUri = <?php echo json_encode($this->moduleUrl . 'static/javascript/frontend/'); ?>;
+	
+	var cubevizConfiguration = <?php echo $this->configuration; ?>;
+	
+	var cubevizParameters = {
+		sparqlEndpoint: cubevizConfiguration["sparqlEndpoint"],
+		selectedGraph: cubevizConfiguration["selectedGraph"],
+		selectedDSD: cubevizConfiguration["selectedDSD"],
+		selectedDS: cubevizConfiguration["selectedDSD"],
+		selectedMeasures: cubevizConfiguration["selectedDSD"],
+		selectedDimensions: cubevizConfiguration["selectedDSD"],
+		selectedDimensionComponents: cubevizConfiguration["selectedDSD"],
+		modelUri: "<?php echo $this->modelUri; ?>",
+		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
+		backend: cubevizConfiguration["backend"],
+		chartType: cubevizConfiguration["chartType"]
+	}
+</script>
+
+<!-- Include index json-templates for instance the dialogs. -->
+<?php include ("extensions/cubeviz/static/templates/CubeVizModuleTemplates.phtml"); ?>
+
+<style type="text/css">
+	@import url("<?php echo $this->moduleUrl; ?>static/css/main.css");
+</style>
+
+<!-- Selection data routine -->
+
+<div id="wrapper"></div>
+
+<div id="sidebar-left">
+	<div id="sidebar-left-data-selection">
+		<div id="sidebar-left-data-selection-wrapper">
+			<div id="sidebar-left-data-selection-dims">
+				<h3><?php echo $this->_translate->_('Dimensions'); ?></h3>
+				<div id="sidebar-left-data-selection-dims-boxes"></div>
+			</div>
+			<div id="sidebar-left-data-selection-meas">
+				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
+				<div id="sidebar-left-data-selection-meas-boxes"></div>
+			</div>
+			<div id="sidebar-left-data-selection-strcsets">
+				<h3><?php echo $this->_translate->_('Data Structure and Sets'); ?></h3>
+			</div>
+			<select name="datastructures" id="sidebar-left-data-selection-strc"></select>
+			<select name="datasets" id="sidebar-left-data-selection-sets"></select>
+			<div id="sidebar-left-data-selection-submitbtn-box">
+				<input type="submit" value="<?php echo $this->_translate->_('Select Data'); ?>" id="sidebar-left-data-selection-submitbtn"/>
+			</div>
+		</div>
+	</div>
+</div>

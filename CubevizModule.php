@@ -93,8 +93,9 @@ class CubevizModule extends OntoWiki_Module
 		$configuration->initFromLink($linkCode);
 								
 		$this->view->configuration = json_encode($configuration);
+		$this->view->modelUri = $_REQUEST['m'];
 		
-        $content = $this->render('cubeviz');
+        $content = $this->render('static/pages/CubeVizModule');
         return $content;
     }
 
