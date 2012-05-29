@@ -1,0 +1,388 @@
+/* div-containers which looks likes buttons */
+
+.btn-submit {
+    background-color: #DFE8EF;
+    height:20px;
+    width:55px;
+    padding: 5px;
+    font-size: 15px;
+    border: 1px solid #B8BBC0;
+    cursor: pointer;
+}
+
+.btn-close {
+    height:20px;
+    width:45px;    
+    padding: 5px;
+    font-size: 15px;
+    border: 1px solid #B8BBC0;
+    cursor: pointer;
+}
+
+
+/* main container which contains all the content */
+#wrapper { 
+    width: 100%; 
+    margin: 0px; 
+    padding: 0px;
+}
+
+
+/**
+ * content related stuff -----------------------------------------------
+ */
+ 
+#content-wrapper { 
+    float: left; 
+    width: 100%; 
+    margin: 0px; 
+    padding: 0px;
+    display: block; 
+    clear: both; 
+    border: 0px;
+}
+
+.page-link {
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+#content {
+    left: 195px;
+    right: 80px;
+    height: 80%;
+}
+
+#site-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #1A1A1A;
+    opacity: 0.5;
+    z-index: 10;
+    display: none;
+}
+
+#container {
+    height: 100%;
+    width: auto;
+}
+
+#chart-selection {
+    position: absolute;
+    right:0px;
+    top: 40px;
+    bottom: 0px;
+    width: 64px;
+    height: 90%;
+    border-left: 1px solid #D8D8D8;
+}
+
+#chart-selection-container {
+    position: absolute;
+    right:13px;
+    top: 20px;
+    width: 50px;
+}
+
+#chart-selection img {
+    float: none;
+    width: 27px;
+    margin: 10px;
+    margin-left: 10px;
+    opacity:1.0;
+    filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
+
+
+/**
+ * Dialogs -------------------------------------------------------------
+ */
+ 
+.dialog {
+	z-index: 1000;
+    position: absolute;
+    top: 170px;
+    left: 300px;
+    height: 60%;
+    width: 60%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+    background-color: #EEEEEE;
+    border: 1px solid #6A7D8C;
+    /* CSS3 (Webkit) */
+    border-top-left-radius: 10px 5px;
+    border-bottom-left-radius: 10px 5px;
+    border-bottom-right-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+    /* FF3.5+ */
+    -moz-border-radius-topleft: 10px 5px;
+    -moz-border-radius-bottomleft: 10px 5px;
+    -moz-border-radius-bottomright: 10px 5px;
+    -moz-border-radius-topright: 10px 5px;
+}
+
+.dialog-header {
+	margin-top: 2px;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.dialog-header-label {
+    float: left;
+    font-size: 16px;
+    font-family: verdana;
+    font-weight: bold;
+    color: #545454;
+	margin-top: 3px;
+    margin-left: 0px;
+}
+
+.dialog-header-label-warning {
+    float: left;
+    font-size: 12px;
+    font-weight: normal;
+    color: #A52A2A;
+    margin-top: 5px;
+    margin-left: 15px;
+    display: none;
+}
+
+/**
+ * This is the submit button actually
+ * naming need refactoring!
+ */
+.dialog-btn-close {
+    float:right;
+    margin-top: 3px;
+    border: 1px solid #BFBFBF;
+    font-weight: bold;
+    background-color: #FFFFFF;
+    padding: 5px;
+    cursor: pointer;
+    /* CSS3 (Webkit) */
+    border-top-left-radius: 10px 5px;
+    border-bottom-left-radius: 10px 5px;
+    border-bottom-right-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+    /* FF3.5+ */
+    -moz-border-radius-topleft: 10px 5px;
+    -moz-border-radius-bottomleft: 10px 5px;
+    -moz-border-radius-bottomright: 10px 5px;
+    -moz-border-radius-topright: 10px 5px;
+}
+
+.dialog-components {
+    margin-top: 30px;
+    height: 90%;
+    width: 100%;
+    background-color: #FFFFFF;
+    overflow-y:scroll;
+}
+
+.dialog-components ul {
+    list-style-type: none;
+    margin-left: -5px; 
+}
+
+.dialog-components li {
+    margin-bottom: 5px;
+}
+
+/*********************
+ * Dimension Options *
+ *********************/
+ 
+.dialog-options-dimension {
+    z-index: 1000;
+    position: absolute;
+    top: 170px;
+    left: 500px;
+    height: auto;
+    width: 250px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 15px;
+    background-color: #EEEEEE;
+    border: 1px solid #6A7D8C;
+    /* CSS3 (Webkit) */
+    border-top-left-radius: 10px 5px;
+    border-bottom-left-radius: 10px 5px;
+    border-bottom-right-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+    /* FF3.5+ */
+    -moz-border-radius-topleft: 10px 5px;
+    -moz-border-radius-bottomleft: 10px 5px;
+    -moz-border-radius-bottomright: 10px 5px;
+    -moz-border-radius-topright: 10px 5px;
+}
+
+/**
+ * This is the submit button actually
+ * naming need refactoring!
+ */
+.dialog-options-dimension-btn-close {
+    margin-top: 5px;
+    float:right;
+    border: 1px solid #BFBFBF;
+    background-color: #FFFFFF;
+    padding: 6px;
+    cursor: pointer;
+    /* CSS3 (Webkit) */
+    border-top-left-radius: 10px 5px;
+    border-bottom-left-radius: 10px 5px;
+    border-bottom-right-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+    /* FF3.5+ */
+    -moz-border-radius-topleft: 10px 5px;
+    -moz-border-radius-bottomleft: 10px 5px;
+    -moz-border-radius-bottomright: 10px 5px;
+    -moz-border-radius-topright: 10px 5px;
+}
+
+/**************************
+ * Measure options dialog *
+ **************************/
+
+.dialog-options-measure {
+    position: absolute;
+    top: 170px;
+    left: 200px;
+    height: auto;
+    width: 250px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    background-color: #EEEEEE;
+    border: 1px solid #6A7D8C;
+    /* CSS3 (Webkit) */
+    border-top-left-radius: 10px 5px;
+    border-bottom-left-radius: 10px 5px;
+    border-bottom-right-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+    /* FF3.5+ */
+    -moz-border-radius-topleft: 10px 5px;
+    -moz-border-radius-bottomleft: 10px 5px;
+    -moz-border-radius-bottomright: 10px 5px;
+    -moz-border-radius-topright: 10px 5px;
+}
+
+/**
+ * This is the submit button actually
+ * naming need refactoring!
+ */
+.dialog-options-measure-btn-close {
+    float:right;
+    margin-top: 30px;
+    margin-right: 30px;
+    border: 1px solid #BFBFBF;
+    background-color: #FFFFFF;
+    padding: 6px;
+    cursor: pointer;
+}
+
+.dialog-options-dimension-items-floatblock {
+    float: left;
+    margin-right: 10px;
+}
+ 
+.chart-table {
+    border-spacing: 0px;
+	border-collapse: separate;
+    width: 90%;
+}
+ 
+.chart-table th {
+    font-weight: bold;
+    border-bottom: 1px solid #000000;
+    text-align: center;
+}
+ 
+.chart-table tr {
+}
+
+.chart-table tr:hover {
+    background-color: #F1FBFD;
+}
+ 
+.chart-table td {
+    font-weight: normal;
+    border-bottom: 1px solid #000000;
+    text-align: center;
+    padding: 5px;
+}
+
+/**
+ * Left panel - "Data Selection"
+ */
+ 
+#sidebar-left {
+    margin-top: 30px;
+}
+
+#sidebar-left-data-selection-dims-boxes {
+    margin-top: -20px;
+}
+
+.sidebar-left-data-selection-dims-box-seperator {
+    margin-top: 40px;
+} 
+ 
+.sidebar-left-data-selection-dims-box {
+    float: left;
+} 
+
+.sidebar-left-data-selection-dims-box-label {
+}
+
+.sidebar-left-data-selection-dims-box-label-value {
+
+}
+
+.sidebar-left-data-selection-dims-box-abstract {
+}
+
+#sidebar-left-data-selection-strc {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#sidebar-left-data-selection-sets {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#sidebar-left-data-selection-strcsets {
+    margin-top: 45px;
+}
+ 
+.open-dialog-selector {
+}
+
+.open-dialog-options {
+}
+
+.sidebar-left-data-selection-dims-box-abstract-img,
+ .sidebar-left-data-selection-meas-box-abstract-img {
+    width: 15px;
+    float: left;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+#sidebar-left-data-selection-meas {
+    clear: both;
+    margin-top: 50px;
+}
+
+.sidebar-left-data-selection-meas-box {
+    float: left;
+}
+
+

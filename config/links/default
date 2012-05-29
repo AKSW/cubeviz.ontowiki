@@ -1,0 +1,8 @@
+"virtuoso"
+"http://data.lod2.eu/scoreboard/"
+{"label":"DataStructure0","uri":"http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe"}
+{"label":"DataSet0","uri":"http://data.lod2.eu/scoreboard/DS_6b611b19ff2a0b58057966f04dd1ddcb"}
+{"measures":[{"uri":"http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046","md5":"b66fe2139fd09ae845f0c28de136ae07","type":"http://data.lod2.eu/scoreboard/properties/value","order":"-1","label":"value","aggregationMethod":"sum","roundValues":"no","orderDirection":"None"}]}
+{"dimensions":[{"uri":"http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39","md5":"5dddcb1565af0a65027c954705c160fe","type":"http://data.lod2.eu/scoreboard/properties/country","elementCount":32,"order":-1,"label":"country","orderDirection":"None","chartAxis":"x","selectedElementCount":3},{"uri":"http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5","md5":"5be404848e1550f427eddd22fc99ed6e","type":"http://data.lod2.eu/scoreboard/properties/indicator","elementCount":67,"order":-1,"label":"indicator","orderDirection":"None","chartAxis":"z","selectedElementCount":5}]}
+[{"label":"indicator","property":"http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent"},{"label":"indicator","property":"http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent"},{"label":"indicator","property":"http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent"},{"label":"indicator","property":"http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent"},{"label":"indicator","property":"http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent"},{"label":"country","property":"Austria"},{"label":"country","property":"Latvia"},{"label":"country","property":"Slovenia"}]
+"area"

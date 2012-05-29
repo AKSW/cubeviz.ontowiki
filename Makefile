@@ -18,3 +18,6 @@ install-phpunit:
 	sudo pear channel-update pear.php.net
 	sudo pear upgrade pear
 	sudo pear install -a pear.phpunit.de/PHPUnit
+
+install:
+	chmod 777 config/links
