@@ -16,10 +16,12 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $this->_owApp       = new Zend_Application( 'default', _OWROOT . 'application/config/application.ini');
         $this->_owApp->bootstrap();
         
+        $logger = OntoWiki::getInstance()->logger;
+        
         $this->_model       = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
         $this->_titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
         
-        $this->_query       = new DataCube_Query ($this->_model, $this->titleHelper);
+        $this->_query       = new DataCube_Query ($this->_model, $this->_titleHelper);
     }
     
     public function tearDown ()
@@ -33,6 +35,8 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $loader->registerNamespace('DataCube_');
         $loader->registerNamespace('Erfurt_');
         $loader->registerNamespace('OntoWiki_');
+        
+        OntoWiki_Navigation::reset();
     }
     
     public function testGetDataStructureDefinition()
@@ -296,12 +300,186 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     
     public function testGetResultObservations()
     {   
-		$resultCubeSpec = json_decode('{"ds":"http:\/\/data.lod2.eu\/scoreboard\/DS_6b611b19ff2a0b58057966f04dd1ddcb","dim":["http:\/\/data.lod2.eu\/scoreboard\/CS_6446b89c16157a57572faf63ae3abe39","http:\/\/data.lod2.eu\/scoreboard\/CS_f50ed29d32cfe1eee6d686359c96f3c5"],"dimtypes":{"http:\/\/data.lod2.eu\/scoreboard\/CS_6446b89c16157a57572faf63ae3abe39":{"uri":"http:\/\/data.lod2.eu\/scoreboard\/CS_6446b89c16157a57572faf63ae3abe39","type":"http:\/\/data.lod2.eu\/scoreboard\/properties\/country","elemCount":32,"order":-1},"http:\/\/data.lod2.eu\/scoreboard\/CS_f50ed29d32cfe1eee6d686359c96f3c5":{"uri":"http:\/\/data.lod2.eu\/scoreboard\/CS_f50ed29d32cfe1eee6d686359c96f3c5","type":"http:\/\/data.lod2.eu\/scoreboard\/properties\/indicator","elemCount":67,"order":-1}},"dimOptionList":{"http:\/\/data.lod2.eu\/scoreboard\/CS_6446b89c16157a57572faf63ae3abe39":{"order":"NONE"},"http:\/\/data.lod2.eu\/scoreboard\/CS_f50ed29d32cfe1eee6d686359c96f3c5":{"order":"NONE"}},"dimElemList":{"http:\/\/data.lod2.eu\/scoreboard\/CS_6446b89c16157a57572faf63ae3abe39":["Austria","Latvia","Slovenia"],"http:\/\/data.lod2.eu\/scoreboard\/CS_f50ed29d32cfe1eee6d686359c96f3c5":["http:\/\/data.lod2.eu\/scoreboard\/indicators\/e_adesucu_ENT_ALL_XFIN_ent","http:\/\/data.lod2.eu\/scoreboard\/indicators\/e_broad_ENT_ALL_XFIN_ent","http:\/\/data.lod2.eu\/scoreboard\/indicators\/e_crman_ENT_ALL_XFIN_ent","http:\/\/data.lod2.eu\/scoreboard\/indicators\/e_ebuy_ENT_ALL_XFIN_ent","http:\/\/data.lod2.eu\/scoreboard\/indicators\/e_ebuy_ENT_SM_XFIN_ent"]},"ms":["http:\/\/data.lod2.eu\/scoreboard\/CS_96a30f4c16b4bcbfba54658ec7a99046"],"mstypes":{"http:\/\/data.lod2.eu\/scoreboard\/CS_96a30f4c16b4bcbfba54658ec7a99046":{"uri":"http:\/\/data.lod2.eu\/scoreboard\/CS_96a30f4c16b4bcbfba54658ec7a99046","type":"http:\/\/data.lod2.eu\/scoreboard\/properties\/value","order":"-1"}},"measFunctionList":{"http:\/\/data.lod2.eu\/scoreboard\/CS_96a30f4c16b4bcbfba54658ec7a99046":"sum"},"measOptionList":{"http:\/\/data.lod2.eu\/scoreboard\/CS_96a30f4c16b4bcbfba54658ec7a99046":{"order":"NONE"}}}', true);
-		
-        $dsd = $this->_query->getDataStructureDefinition ();
-        $dsd = $dsd [0];
+        $dsUri = 'http://data.lod2.eu/scoreboard/DS_6b611b19ff2a0b58057966f04dd1ddcb';
         
-        $ds = $this->_query->getDataSets ($dsd);         
-        $ds = $ds[0];
+        $dimensions = array ( 
+            'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39',
+            'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5'
+        );
+    
+        $dimensionElements = array (
+            'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39' => array (
+                'Austria', 'Latvia', 'Slovenia'
+            ), 
+            'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5' => array (
+                'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent',
+                'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent',
+                'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent',
+                'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent',
+                'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent'
+            )
+        );
+        
+        $dimensionTypes = array (
+            'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39' => array (
+                'uri'       => 'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39',
+                'type'      => 'http://data.lod2.eu/scoreboard/properties/country',
+                'elemCount' => 32,
+                'order'     => -1
+            ),
+            'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5' => array (
+                'uri'       => 'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5',
+                'type'      => 'http://data.lod2.eu/scoreboard/properties/indicator',
+                'elemCount' => 67,
+                'order'     => 1
+            )
+        );
+        
+        $dimensionOptions = array (
+            'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39' => array (
+                'order' => 'NONE'
+            ), 
+            'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5' => array (
+                'order' => 'NONE'
+            ) 
+        );
+    
+        $measures = array (
+            'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046'
+        );
+        
+        $measureTypes = array (
+            'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046' => array (
+                'uri'   => 'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046',
+                'type'  => 'http://data.lod2.eu/scoreboard/properties/value',
+                'order' => '-1'
+            )
+        );
+           
+        $measureAggregationMethods = array (
+            'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046' => 'sum'
+        );
+        
+        $measureOptions = array (
+            'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046' => array ( 
+                'order' => 'NONE'
+            )
+        );
+        
+        $result = $this->_query->getResultObservations (
+            $dsUri, 
+            $dimensions, $dimensionElements, $dimensionTypes, $dimensionOptions, 
+            $measures, $measureTypes, $measureAggregationMethods, $measureOptions
+        );
+        
+        // construct test result
+        $testResult = array ( 
+        
+            'nameTable' => array (
+                'd' => array (
+                    'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39' => array (
+                        'index' => 0,
+                        'qname' => 'd0',
+                        'uri'   => 'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39',
+                        'type'  => 'http://data.lod2.eu/scoreboard/properties/country',
+                        'label' => 'country'
+                    ),
+                    'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5' => array (
+                        'index' => 1,
+                        'qname' => 'd1',
+                        'uri'   => 'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5',
+                        'type'  => 'http://data.lod2.eu/scoreboard/properties/indicator',
+                        'label' => 'indicator'
+                    )
+                )
+            ),
+        
+            'observations' => array (
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_broad_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_SM_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_crman_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Austria', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Latvia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' ), 
+                array ( 'd0' => 'Slovenia', 'd1' => 'http://data.lod2.eu/scoreboard/indicators/e_adesucu_ENT_ALL_XFIN_ent' )
+            )
+        );
+        
+        $this->assertEquals ( $result, $testResult );
     }
 }
