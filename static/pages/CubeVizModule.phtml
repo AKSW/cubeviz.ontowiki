@@ -26,18 +26,22 @@
 	
 	var cubevizConfiguration = <?php echo $this->configuration; ?>;
 	
+	//default config here
+	var default_cubeviz_config = cubevizConfiguration['_links']['default'];
+	console.log(default_cubeviz_config);
+	
 	var cubevizParameters = {
-		sparqlEndpoint: cubevizConfiguration["sparqlEndpoint"],
-		selectedGraph: cubevizConfiguration["selectedGraph"],
-		selectedDSD: cubevizConfiguration["selectedDSD"],
-		selectedDS: cubevizConfiguration["selectedDSD"],
-		selectedMeasures: cubevizConfiguration["selectedDSD"],
-		selectedDimensions: cubevizConfiguration["selectedDSD"],
-		selectedDimensionComponents: cubevizConfiguration["selectedDSD"],
+		sparqlEndpoint: default_cubeviz_config["sparqlEndpoint"],
+		selectedGraph: default_cubeviz_config["selectedGraph"],
+		selectedDSD: default_cubeviz_config["selectedDSD"],
+		selectedDS: default_cubeviz_config["selectedDS"],
+		selectedMeasures: default_cubeviz_config["selectedMeasures"],
+		selectedDimensions: default_cubeviz_config["selectedDimensions"],
+		selectedDimensionComponents: default_cubeviz_config["selectedDimensionComponents"],
 		modelUri: "<?php echo $this->modelUri; ?>",
 		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
-		backend: cubevizConfiguration["backend"],
-		chartType: cubevizConfiguration["chartType"]
+		backend: <?php echo json_encode($this->backend); ?>,
+		chartType: default_cubeviz_config["selectedChartType"]
 	}
 </script>
 

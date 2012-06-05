@@ -11,19 +11,32 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */ 
+
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DataStructureDefinition.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DataSet.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'Dimension.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionComponent.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'Measure.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionFactory.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionComponentFactory.php'; 
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'MeasureFactory.php'; 
+
 class CubeViz_ConfigurationLink
 {   
 	/**
      * Path to the links folder
      */
     protected $_linksFolder = '';    
-    protected $_links = null;
+    
+    /**
+     * Needs to be public to be accessible through json_encode interface
+     */
+    public $_links = null;
     
     /**
      * Constructor
      */
     public function __construct() {
-        
         $ds = DIRECTORY_SEPARATOR;        
 		$this->_linksFolder = dirname (__FILE__) . $ds . '..' . $ds . '..' . $ds . 'data' . $ds . 'links/';
         
@@ -65,8 +78,8 @@ class CubeViz_ConfigurationLink
 			
             // Dimensions
             $selectedDimensions = json_decode(trim($parameters[5]), true);
-			$this->selectedDimensions = new DataCube_DimensionFactory();
-			$this->selectedDimensions->initFromArray($selectedDimensions);
+			$this->_links [$linkCode]['selectedDimensions'] = new DataCube_DimensionFactory();
+			$this->_links [$linkCode]['selectedDimensions']->initFromArray($selectedDimensions);
             
             // Dimension components
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);

@@ -12,27 +12,25 @@
  * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
-/**
- * Static class AuxilaryFunctions. Contain transformation and adapter functions. 
- */
-//require_once 'model/AuxilaryFunctions.php';
+define("DS", DIRECTORY_SEPARATOR);
+define("CUBEVIZ_ROOT", __DIR__);
 
 /**
  * Class DataCube_Chart.
  * (function) getAvailableChartTypes - scans through config/charttypes 
  * folder and return available chart types
  */
-require_once 'classes/DataCube/Chart.php';
+require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'Chart.php';
 
 /**
  * Class CubeViz_Exception. Custom CubeViz exceptions class.
  */
-require_once 'classes/CubeViz/Exception.php';
+require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'CubeViz' . DS . 'Exception.php';
 
 /**
  * Class CubeViz_ConfigurationLink. Manipulate files in config/links directory
  */
-require_once 'classes/CubeViz/ConfigurationLink.php';
+require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'CubeViz'. DS .'ConfigurationLink.php';
 
 class CubevizModule extends OntoWiki_Module
 {
@@ -40,6 +38,9 @@ class CubevizModule extends OntoWiki_Module
 
     public function init() {
         $this->session = $this->_owApp->session;
+        
+        $path = __DIR__;
+		set_include_path(get_include_path() . PATH_SEPARATOR . $path);
     }
 
     public function getTitle() {
@@ -85,9 +86,11 @@ class CubevizModule extends OntoWiki_Module
 		// initialize links handle and read configuration
 		$configuration = new CubeViz_ConfigurationLink();
 		$configuration->initFromLink($linkCode);
-								
+										
 		$this->view->configuration = json_encode($configuration);
 		$this->view->modelUri = $_REQUEST['m'];
+		// TODO: get backend from OntoWiki config
+		$this->view->backend = "virtuoso";
 		
         $content = $this->render('static/pages/CubeVizModule');
         return $content;

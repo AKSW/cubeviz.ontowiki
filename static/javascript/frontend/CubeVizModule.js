@@ -1,11 +1,4 @@
 $(function() {
-	/********************************
-	 * Quick Fixes need refactoring *
-	 ********************************/
-	
-	// title change
-	//document.title = "CubeViz";
-	
 	/************************************************
 	 * Include org.aksw.cubeViz.GUI.Views namespace *
 	 ************************************************/
@@ -13,18 +6,10 @@ $(function() {
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Main');	
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Adapter');	
 	
-	/***************************
-	 * Configurable parameters *
-	 ***************************/
-	
-	org.aksw.cubeViz.Index.Main.availableChartTypes = new Array("bar","pie","line","area","splines","scatterplot","table");
-	
 	/************************
 	 * Initialize templates *
 	 ************************/
-	
-	//for template code look into index.phtml file
-	 
+		 
 	dimensionsTemplate = jsontemplate.Template(dimensionsTemplate);
 	measuresTemplate = jsontemplate.Template(measuresTemplate);
 	dialogTemplate = jsontemplate.Template(dialogTemplate);
@@ -35,7 +20,6 @@ $(function() {
 	 * Set variables to the namespace *
 	 **********************************/
 	
-	//TODO: use the package vars everywhere
 	org.aksw.cubeViz.Index.Main.sparqlEndpoint = cubevizParameters.sparqlEndpoint; 
 	org.aksw.cubeViz.Index.Main.selectedGraph = cubevizParameters.selectedGraph; 
 	org.aksw.cubeViz.Index.Main.selectedDSD = cubevizParameters.selectedDSD; 
@@ -57,31 +41,7 @@ $(function() {
 	org.aksw.cubeViz.Index.Main.optionsMeasures = 
 			org.aksw.cubeViz.Index.Adapter.extractOptionsFromSelectedMeasures(
 			                     org.aksw.cubeViz.Index.Main.selectedMeasures);
-		
-	/**************************
-	 * Global scope functions *
-	 **************************/
-	 
-	String.prototype.hashCode = function() {
-	  for(var ret = 0, i = 0, len = this.length; i < len; i++) {
-	    ret = (31 * ret + this.charCodeAt(i)) << 0;
-	  }
-	  return ret;
-	};		 
-			 
-	/******************************
-	 * Bind events to the buttons *
-	 ******************************/
-		
-	//chart options button
-	//$("#specify-chart-options-button").click(org.aksw.cubeViz.GUI.Views.specifyChartOptionsButton);
-	
-	/*******************
-	 * Set header etc. *
-	 *******************/
-	
-	//$("#header-model-uri").text(modelUri);
-	
+			                     		
 	/************************
 	 * Template Processing  *
 	 * Initialization stage *
@@ -92,6 +52,7 @@ $(function() {
 	containerId = "sidebar-left-data-selection-sets";
 	org.aksw.cubeViz.Index.Main.addItem(containerId, org.aksw.cubeViz.Index.Main.selectedDS);
 	
+	/*
 	$("#sidebar-left-data-selection-dims-boxes").html(dimensionsTemplate.expand(org.aksw.cubeViz.Index.Main.selectedDimensions));
 	$("#sidebar-left-data-selection-meas-boxes").html(measuresTemplate.expand(org.aksw.cubeViz.Index.Main.selectedMeasures));
 	
