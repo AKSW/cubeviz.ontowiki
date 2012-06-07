@@ -11,16 +11,6 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */ 
-
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DataStructureDefinition.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DataSet.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'Dimension.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionComponent.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'Measure.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionFactory.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'DimensionComponentFactory.php'; 
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'MeasureFactory.php'; 
-
 class CubeViz_ConfigurationLink
 {   
 	/**

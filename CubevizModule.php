@@ -11,27 +11,6 @@
  * @copyright  Copyright (c) 2009, {@link http://aksw.org AKSW}
  * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
-
-define("DS", DIRECTORY_SEPARATOR);
-define("CUBEVIZ_ROOT", __DIR__);
-
-/**
- * Class DataCube_Chart.
- * (function) getAvailableChartTypes - scans through config/charttypes 
- * folder and return available chart types
- */
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'Chart.php';
-
-/**
- * Class CubeViz_Exception. Custom CubeViz exceptions class.
- */
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'CubeViz' . DS . 'Exception.php';
-
-/**
- * Class CubeViz_ConfigurationLink. Manipulate files in config/links directory
- */
-require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'CubeViz'. DS .'ConfigurationLink.php';
-
 class CubevizModule extends OntoWiki_Module
 {
     protected $session = null;
@@ -39,9 +18,12 @@ class CubevizModule extends OntoWiki_Module
     public function init() {
         $this->session = $this->_owApp->session;
         
-        $path = __DIR__;
-		set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-    }
+		$loader = Zend_Loader_Autoloader::getInstance();
+		$loader->registerNamespace('CubeViz_');
+		$loader->registerNamespace('DataCube_');
+		$path = __DIR__;
+		set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
+	}
 
     public function getTitle() {
         return "Data Selection";
