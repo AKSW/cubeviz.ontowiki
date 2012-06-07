@@ -105,7 +105,10 @@ class DataCube_Query {
                 
         if ( $componentType != DataCube_UriOf::Dimension && 
              $componentType != DataCube_UriOf::Measure ) {
-            throw CubeViz_Exception ('Invalid component type given ('. $componentType .')');
+            throw new CubeViz_Exception (
+                'Invalid component type given! '. 
+                'You have to use '. DataCube_UriOf::Dimension .' or '. DataCube_UriOf::Measure
+            );
         }
                 
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
