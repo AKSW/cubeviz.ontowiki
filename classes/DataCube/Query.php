@@ -11,13 +11,13 @@
  */
 class DataCube_Query {
     
-    private $_model = null;
-    private $_titleHelper = null;
+    protected $_model = null;
+    protected $_titleHelper = null;
     
     /**
      * Constructor
      */
-    public function __construct (&$model = null, &$titleHelper = null) {
+    public function __construct (&$model, &$titleHelper) {
         $this->_model = $model;
         $this->_titleHelper = $titleHelper;
     }
@@ -69,7 +69,7 @@ class DataCube_Query {
             if(false == empty($ds['ds'])) {
                 $result[] = $ds['ds'];
                 if( false == empty ($this->_titleHelper) ) {
-                    $this->_titleHelper->addResource($dsd['ds']);
+                    $this->_titleHelper->addResource($ds['ds']);
                 }
             }
         }
@@ -198,7 +198,7 @@ class DataCube_Query {
      * @param $dimensions Array of dimension URI's
      * @param $dimensionElements Array of dimension URI's
      * @param $dimensionLimits Array of elements with structure: dimension URI => order (NONE, ASC, DESC)
-     * @param $dimensionOptionList Array of elements with structure: dimension URI => order (NONE, ASC, DESC)
+     * @param $dimensionOptions Array of elements with structure: dimension URI => order (NONE, ASC, DESC)
      * @param $dimensionTypes Array of elements with structure: dimension URI => uri, md5, type, elemCount, order
      * @param $measures Array of measure URI
      * @param $measureTypes Array of elements with structure: measure URI => uri, md5, type, order
@@ -207,14 +207,14 @@ class DataCube_Query {
      * @return
      */
     public function getResultObservations($dsUri, $dimensions, $dimensionElements, $dimensionTypes, 
-        $dimensionOptionList, $measure, $measureTypes, $measureAggregationMethod, $measureOptionList) {
+        $dimensionOptions, $measures, $measureTypes, $measureAggregationMethods, $measureOptions) {
         
         $internalNameTable = array ();        
         
         $sparqlSelect = 'SELECT ';
-        $sparqlWhere  = 'WHERE {
-            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'>
-            ?observation <'. DataCube_UriOf::DataSetRelation .'> <'. $dsUri .'>';
+        $sparqlWhere  = ' WHERE {
+            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'> .
+            ?observation <'. DataCube_UriOf::DataSetRelation .'> <'. $dsUri .'> . ';
         
         $sparqlGroupBy = '';
         $sparqlOrderBy = '';
@@ -227,15 +227,15 @@ class DataCube_Query {
             // temporary name of this dimension
             $dimQName = 'd'. $index;
                         
-            $dimensionOptionList [$dimension]['order'] = strtoupper($dimensionOptionList [$dimension]['order']);
+            $dimensionOptions [$dimension]['order'] = strtoupper($dimensionOptions [$dimension]['order']);
             
             // only add those dimensions for which more than one element was selected
             if (1 < $dimensionTypes[$dimension]['elemCount']) {
                 $sparqlSelect .= ' ?'. $dimQName;
                 $sparqlGroupBy .= ' ?'. $dimQName;
                 
-                if ( $dimensionOptionList [$dimension]['order'] != 'NONE' ) {
-                    $sparqlOrderBy .= $dimensionOptionList [$dimension]['order'] .'(?'.$dimQName.') ';
+                if ( $dimensionOptions [$dimension]['order'] != 'NONE' ) {
+                    $sparqlOrderBy .= $dimensionOptions [$dimension]['order'] .'(?'.$dimQName.') ';
                 }
             }
             
@@ -255,7 +255,7 @@ class DataCube_Query {
             // add constraints for the dimension element selection in the observations
             if ( true == isset($dimensionElements [$dimension]) ) {
                 
-                $dimElemList = DataCube_Query::getComponentElements ($resultCubeSpec['ds'], $dimPropertyUri);
+                $dimElemList = DataCube_Query::getComponentElements ($dsUri, $dimPropertyUri);
                 $falseList = array_diff($dimElemList, $dimensionElements [$dimension]);
                 
                 if(count($falseList)>0) {
@@ -309,7 +309,7 @@ class DataCube_Query {
             $measPropertyUri = $measureTypes [$measure]['type'];
             $measQName = 'm'. $index;
             
-            $sparqlSelect .= ' '. $measureAggregationMethod [$measure] . '(?'. $measQName .') AS ?'. $measQName;    
+            $sparqlSelect .= ' '. $measureAggregationMethods [$measure] . '(?'. $measQName .') AS ?'. $measQName;    
             
             $sparqlWhere .= ' ?observation <'. $measureTypes [$measure]['type'] .'> ?'. $measQName .'.';
             
@@ -324,218 +324,26 @@ class DataCube_Query {
                 ); 
             }
         
-            // kucke title helper reset!
-            
             foreach($internalNameTable as $type => $compSpec) {
                 foreach($compSpec as $uri => $elements) {
                     $internalNameTable[$type][$uri]['label'] 
-                        = $titleHelper->getTitle($elements['uri']); 
+                        = $this->_titleHelper->getTitle($elements['uri']); 
                 }
             }
             
             //add group-by- and order-by-statements only if there are things to group and to sort
-            $queryWherePart.="}".($queryGroupByPart != "" ? " GROUP BY ".$queryGroupByPart : "")
-                .($queryOrderByPart != "" ? " ORDER BY ".$queryOrderByPart : "");
+            $sparqlWhere .= '} ';
             
-            //create and run the query
-            $queryObservations = new Erfurt_Sparql_SimpleQuery();
+            if ('' != $sparqlGroupBy)
+                $sparqlWhere .= ' GROUP BY '. $sparqlGroupBy;
+                
+            if ('' != $sparqlOrderBy)
+                $sparqlWhere .= ' ORDER BY '. $sparqlOrderBy;
             
-            $queryObservations->setProloguePart($queryProloguePart);
-            $queryObservations->setWherePart($queryWherePart);
-            
-            $queryResultObservations = $model->sparqlQuery($queryObservations);
-            
-            
-            $result = array ('observations'=>$queryResultObservations, 
-                'nameTable'=>$internalNameTable);
-
-            return $result;
+            return array (
+                'observations' => $this->_model->sparqlQuery($sparqlSelect . $sparqlWhere), 
+                'nameTable' => $internalNameTable
+            );
         }
     }
-    
-    
-    public function getResultObservationsOld($resultCubeSpec, $model) {
-        
-        //$resultCubeSpec - array(8)
-        //["ds"] => URI
-        //["dim"] => array() URIs
-        //["dimtypes"] => array() ["URI" => uri, md5, type, elemCount, order]
-        //["ms"] => URI
-        //["mstypes"] => array() ["URI" => uri, md5, type, order]
-        //["dimOptionList"] => array() ["URI" => string()]
-        //["measFunctionList"] => ["URI" => string()] - SUM
-        //["measOptionList"] => ["URI" => string()] - DESC
-        
-        $internalNameTable = array();
-        
-        $titleHelper = new OntoWiki_Model_TitleHelper($model);
-        
-        $queryProloguePart = "SELECT";
-        $queryWherePart = "WHERE { ?observation <".DataCube_Query::$rdfType."> 
-            <".DataCube_Query::$qb_Observation.">.";
-        $queryWherePart .= " ?observation <".DataCube_Query::$qb_datasetrel."> 
-            <".$resultCubeSpec['ds'].">.";
-        $queryGroupByPart = "";
-        $queryOrderByPart = "";
-        
-        $queryComp = new Erfurt_Sparql_SimpleQuery();
-        
-        //add all dimensions to the query
-        foreach($resultCubeSpec['dim'] as $index => $dimension) {
-            
-            $dimPropertyUri = $resultCubeSpec['dimtypes'][$dimension]['type'];
-            $dimQName = "d".$index;
-            
-            /*if ( false == isset ($resultCubeSpec['dimOptionList'][$dimension]) ) {
-                $resultCubeSpec['dimOptionList'][$dimension] = array ();
-                $resultCubeSpec['dimOptionList'][$dimension]['order'] = '';
-            }*/
-            
-            //$queryOrderByPart = 'ASC';
-            
-            $resultCubeSpec['dimOptionList'][$dimension]['order'] = 
-					strtoupper($resultCubeSpec['dimOptionList'][$dimension]['order']);
-            //only add those dimensions for which more than one element was
-            //selected
-            if($resultCubeSpec['dimtypes'][$dimension]['elemCount'] != 1) {
-                $queryProloguePart.= " ?".$dimQName;
-                $queryGroupByPart .= " ?".$dimQName;
-                
-                $queryOrderByPart .= ($resultCubeSpec['dimOptionList'][$dimension]['order'] != 'NONE' ? 
-                    $resultCubeSpec['dimOptionList'][$dimension]['order'].
-                    '(?'.$dimQName.') ' : '');
-            }
-             
-            // $dimPropertyUri = http://data.lod2.eu/scoreboard/properties/country
-               
-            $queryWherePart.= " ?observation <".$dimPropertyUri."> ?".$dimQName.".";
-            
-            $titleHelper->addResource($dimension);
-            
-            $internalNameTable['d'][$dimension]['index'] = $index;
-            $internalNameTable['d'][$dimension]['qname'] = $dimQName;
-            $internalNameTable['d'][$dimension]['uri'] = $dimension;
-            $internalNameTable['d'][$dimension]['type'] = $dimPropertyUri;
-            
-            //add constraints for the dimension element selection in the observations
-            if(isset($resultCubeSpec['dimElemList'][$dimension])) {
-                
-                $dimElemList = DataCube_Query::getComponentElements($resultCubeSpec['ds'], $dimPropertyUri);
-                $falseList = array_diff($dimElemList, $resultCubeSpec['dimElemList'][$dimension]);
-                
-                if(count($falseList)>0) {
-                
-                    //if the falselist contains less then 80 elements, use NOT 
-                    //filter statement
-                    if(count($falseList) < 80) {
-                    
-                        $queryWherePart = substr($queryWherePart,0,strlen($queryWherePart)-1).
-                                " FILTER ( NOT(";
-
-                        foreach($falseList as $element) {
-                            $elementString = '<'.$element.'>';
-                            if(strpos($element, 'http://') === false) 
-                                    $elementString = '"'.$element.'"';
-                            $queryWherePart.= " ?".$dimQName." = ".$elementString." OR";
-                        }
-
-                        $queryWherePart 
-                            = substr($queryWherePart, 0, strlen($queryWherePart)-3).")).";
-                                        
-                    } 
-                    //else use the regular filter statement
-                    else {
-                        
-                        $queryWherePart = substr($queryWherePart,0,strlen($queryWherePart)-1).
-                                " FILTER ( (";
-
-                        foreach($resultCubeSpec['dimElemList'][$dimension] as $element) {
-                            $elementString = '<'.$element.'>';
-                            if(strpos($element, 'http://') === false) 
-                                    $elementString = '"'.$element.'"';
-                            $queryWherePart.= " ?".$dimQName." = ".$elementString." OR";
-                        }
-
-                        $queryWherePart 
-                            = substr($queryWherePart, 0, strlen($queryWherePart)-3).")).";
-                        
-                    }
-                }
-            }
-            
-            //add element constraints if the dimension elements are paginated
-            if(isset($resultCubeSpec['dimLimitList'][$dimension])) {
-                
-                $dimElemList = $this->getComponentElements($resultCubeSpec['ds'], 
-                        $dimPropertyUri, null, $resultCubeSpec['dimLimitList'][$dimension]);
-                
-                $queryWherePart = substr($queryWherePart,0,strlen($queryWherePart)-1).
-                        " FILTER (";
-                
-                foreach($dimElemList as $element) {
-                    $elementString = '<'.$element.'>';
-                    if(strpos($element, 'http://') === false) 
-                            $elementString = '"'.$element.'"';
-                    $queryWherePart.= " ?".$dimQName." = ".$elementString." OR";
-                }
-                
-                $queryWherePart = substr($queryWherePart, 0, strlen($queryWherePart)-3).").";
-            }
-        }
-        
-        //add all measures to the query
-        foreach($resultCubeSpec['ms'] as $index => $measure) {
-            
-            $measPropertyUri = $resultCubeSpec['mstypes'][$measure]['type'];
-            $measQName = "m".$index;
-            
-            
-            /**************
-             * TODO BLOCK *
-             **************/
-            
-            $queryProloguePart .= " ".$resultCubeSpec['measFunctionList'][$measure].
-                    "(?".$measQName.") AS ?".$measQName;    
-            
-            $queryWherePart .= " ?observation <".$measPropertyUri."> ?".$measQName.".";
-            
-            $queryOrderByPart .= ($resultCubeSpec['measOptionList'][$measure]['order'] != 'NONE' ? 
-                    $resultCubeSpec['measOptionList'][$measure]['order'].
-                    '(?'.$measQName.') ' : '');
-            
-            $titleHelper->addResource($measure);
-            
-            $internalNameTable['m'][$measure]['index'] = $index;
-            $internalNameTable['m'][$measure]['qname'] = $measQName;
-            $internalNameTable['m'][$measure]['uri'] = $measure;
-            $internalNameTable['m'][$measure]['type'] = $measPropertyUri;
-        }
-        
-        foreach($internalNameTable as $type => $compSpec) {
-            foreach($compSpec as $uri => $elements) {
-                $internalNameTable[$type][$uri]['label'] 
-                    = $titleHelper->getTitle($elements['uri']); 
-            }
-        }
-        
-        //add group-by- and order-by-statements only if there are things to group and to sort
-        $queryWherePart.="}".($queryGroupByPart != "" ? " GROUP BY ".$queryGroupByPart : "")
-            .($queryOrderByPart != "" ? " ORDER BY ".$queryOrderByPart : "");
-        
-        //create and run the query
-        $queryObservations = new Erfurt_Sparql_SimpleQuery();
-        
-        $queryObservations->setProloguePart($queryProloguePart);
-        $queryObservations->setWherePart($queryWherePart);
-        
-        $queryResultObservations = $model->sparqlQuery($queryObservations);
-        
-        
-        $result = array ('observations'=>$queryResultObservations, 
-            'nameTable'=>$internalNameTable);
-
-        return $result;
-        
-    }
-	 
 }
