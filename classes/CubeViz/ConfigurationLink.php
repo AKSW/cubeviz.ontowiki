@@ -61,29 +61,29 @@ class CubeViz_ConfigurationLink
 			
             // Data Structure Definition
             $selectedDSD = json_decode(trim($parameters[2]), true);
-			$this->_links [$linkCode] ['selectedDSD'] = new DataCube_DataStructureDefinition (
+			$this->_links [$linkCode] ['selectedDSD'] = new DataCube_VocabularyTerms_DataStructureDefinition (
                 $selectedDSD['uri'], $selectedDSD['label']
             );
 			
             // Data Set
             $selectedDS = json_decode(trim($parameters[3]), true);
-			$this->_links [$linkCode] ['selectedDS'] = new DataCube_DataSet(
+			$this->_links [$linkCode] ['selectedDS'] = new DataCube_VocabularyTerms_DataSet(
                 $selectedDS['uri'],$selectedDS['label']
             );
 			
             // Measures
             $selectedMeasures = json_decode(trim($parameters[4]), true);
-			$this->_links [$linkCode] ['selectedMeasures'] = new DataCube_MeasureFactory();
+			$this->_links [$linkCode] ['selectedMeasures'] = new DataCube_VocabularyTerms_MeasureFactory();
 			$this->_links [$linkCode] ['selectedMeasures']->initFromArray($selectedMeasures);
 			
             // Dimensions
             $selectedDimensions = json_decode(trim($parameters[5]), true);
-			$this->_links [$linkCode]['selectedDimensions'] = new DataCube_DimensionFactory();
+			$this->_links [$linkCode]['selectedDimensions'] = new DataCube_VocabularyTerms_DimensionFactory();
 			$this->_links [$linkCode]['selectedDimensions']->initFromArray($selectedDimensions);
             
             // Dimension components
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
-			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_DimensionComponentFactory();
+			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_VocabularyTerms_DimensionComponentFactory();
 			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);
 			
             // Chart type
