@@ -10,20 +10,14 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_DataStructureDefinition
+class DataCube_DataStructureDefinition extends ArrayObject
 {    
 	/**
-	 * Data structure definition label
+	 * @param $label Data structure definition label
+	 * @param $uri Data structure definition uri
 	 */
-	public $label;
-	
-	/**
-	 * Data structure definition uri
-	 */
-	public $uri;
-	
 	public function __construct($uri = '', $label = '') {
-		$this->uri = $uri;
-		$this->label = $label;
+		$this ['uri'] = $uri;
+		$this ['label'] = $label;
 	}
 }

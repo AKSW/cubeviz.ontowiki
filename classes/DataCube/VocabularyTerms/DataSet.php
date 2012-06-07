@@ -10,20 +10,14 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_DataSet
+class DataCube_DataSet extends ArrayObject
 {    
 	/**
-	 * Data Set label
-	 */
-	public $label;
-	
-	/**
-	 * Data Set uri
-	 */
-	public $uri;
-	
+	 * @param $label Data Set label
+	 * @param $uri Data Set uri
+	*/
 	public function __construct($uri = '', $label = '') {
-		$this->uri = $uri;
-		$this->label = $label;
+		$this ['uri'] = $uri;
+		$this ['label'] = $label;
 	}
 }

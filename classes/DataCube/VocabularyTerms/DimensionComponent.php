@@ -10,13 +10,14 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_DimensionComponent
-{    
-	public $property;
-	public $label;
-	
+class DataCube_DimensionComponent extends ArrayObject
+{   
+	/**
+	 * @param $property
+	 * @param $label
+	 */
 	public function __construct($property, $label) {
-		$this->property = $property;
-		$this->label = $label;
+		$this ['property'] = $property;
+		$this ['label'] = $label;
 	}
 }
