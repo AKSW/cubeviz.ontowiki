@@ -35,8 +35,6 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $loader->registerNamespace('DataCube_');
         $loader->registerNamespace('Erfurt_');
         $loader->registerNamespace('OntoWiki_');
-        
-        OntoWiki_Navigation::reset();
     }
     
     public function testGetDataStructureDefinition()
