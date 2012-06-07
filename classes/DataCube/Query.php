@@ -103,6 +103,13 @@ class DataCube_Query {
      */
 	public function getComponents($dsdUri, $dsUri, $componentType) {
                 
+        if ( $componentType != DataCube_UriOf::Dimension && 
+             $componentType != DataCube_UriOf::Measure ) {
+            throw CubeViz_Exception ('Invalid component type given ('. $componentType .')');
+        }
+                
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+                
         //search for the components specified by the parameters
         $sparql = 'SELECT ?comp ?comptype ?order WHERE {
             <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
@@ -117,22 +124,32 @@ class DataCube_Query {
         
         $result = array();
         
-        //iterate through all found results
+        // iterate through all found results
+        foreach($queryresultComp as $comp) {
+            if(false == empty($comp['comp'])) {
+                $titleHelper->addResource($comp['comp']);
+            }
+        }
+        
+        // iterate through all found results again and add title
         foreach($queryresultComp as $comp) {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
-                $result[$comp['comp']]['uri'] = $comp['comp'];
-                $result[$comp['comp']]['md5'] = md5($comp['comp']);
-                $result[$comp['comp']]['type'] = $comp['comptype'];
+                $entry = array ( 
+                    'uri'   => $comp['comp'],
+                    'md5'   => md5($comp['comp']),
+                    'type'  => $comp['comptype'],
+                    'order' => isset($comp['order']) ? $comp['order'] : -1,
+                    'label' => $titleHelper->getTitle($comp['comp'])
+                );
+
                 if($componentType == 'dimension'){
-                    $result[$comp['comp']]['elementCount'] 
-                        = DataCube_Query::getComponentElementCount($dsUri, $comp['comptype']);
+                    $entry ['elementCount'] = $this->getComponentElementCount(
+                        $dsUri, $entry['type']
+                    );
                 }
-                $result[$comp['comp']]['order'] = isset($comp['order']) 
-                    ? $comp['order'] : -1;
                     
-                if( false == empty ($this->_titleHelper) )
-                    $this->_titleHelper->addResource($comp['comp']);
+                $result[$comp['comp']] = $entry;
             }
         }
         
