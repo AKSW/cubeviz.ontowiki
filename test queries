@@ -1,0 +1,13 @@
+SELECT ?comp ?comptype ?order WHERE {
+            <http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe> <http://purl.org/linked-data/cube#component> ?comp.                
+            ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#ComponentSpecification>.
+            ?comp <http://purl.org/linked-data/cube#dimension> ?comptype.
+            
+            OPTIONAL {?comp <http://purl.org/linked-data/cube#order> ?order.}
+        }
+        ORDER BY ASC(?order)
+        
+        SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
+            ?propertyUri ?p <http://purl.org/linked-data/cube#DimensionProperty>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
+        }
