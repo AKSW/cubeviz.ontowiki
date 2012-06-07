@@ -11,3 +11,8 @@ SELECT ?comp ?comptype ?order WHERE {
             ?propertyUri ?p <http://purl.org/linked-data/cube#DimensionProperty>.
             OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
         }
+
+http://localhost/cubeviz/getdatastructuredefinitions?m=http://data.lod2.eu/scoreboard/
+http://localhost/cubeviz/getdatasets?m=http://data.lod2.eu/scoreboard/&dsdUri=http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe
+http://localhost/cubeviz/getcomponents/?m=http://data.lod2.eu/scoreboard/&cT=http%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23dimension&dsdUri=http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe&dsUri=http://data.lod2.eu/scoreboard/DS_6b611b19ff2a0b58057966f04dd1ddcb
+http://localhost/cubeviz/getcomponentelements/?m=http://data.lod2.eu/scoreboard/&dsUri=http://data.lod2.eu/scoreboard/DS_6b611b19ff2a0b58057966f04dd1ddcb&cP=http://data.lod2.eu/scoreboard/properties/indicator
