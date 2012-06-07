@@ -2,7 +2,7 @@
 /**
  * This class represents a DimensionFactory
  *
- * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  * @category OntoWiki
  * @package Extensions
@@ -10,15 +10,10 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
- 
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'VocabularyTerms' . DS . 'Dimension.php';
-
-class DataCube_DimensionFactory
+class DataCube_DimensionFactory extends ArrayObject
 {    
-	public $dimensions = array();
-
 	public function __construct() {
-		
+		$this ['dimensions'] = array ();
 	}
 	
 	public function initFromArray($selectedDimensions) {
@@ -29,7 +24,7 @@ class DataCube_DimensionFactory
 										    $current_dimension['type'], $current_dimension['order'], $current_dimension['chartAxis'],
 										    $current_dimension['orderDirection'], $current_dimension['elementCount'], 
 										    $current_dimension['selectedElementCount']);
-			array_push($this->dimensions, $dimension);
+			array_push($this ['dimensions'], $dimension);
 		}
 	}
 }

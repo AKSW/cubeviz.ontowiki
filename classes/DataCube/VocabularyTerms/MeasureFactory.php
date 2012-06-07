@@ -2,7 +2,7 @@
 /**
  * This class represents a MeasureFactory
  *
- * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  * @category OntoWiki
  * @package Extensions
@@ -10,16 +10,16 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
- 
-require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'VocabularyTerms' . DS . 'Measure.php';
-
-class DataCube_MeasureFactory extends ArrayObject
-{   
-	
+class DataCube_MeasureFactory
+{    
 	public function __construct() {
-		$this ['measures'] = array();
+		$this ['measures'] = array ();
 	}
 	
+    /**
+     * @param $selectedMeasures 
+     * @todo change selectedMeasures -> measures 
+     */
 	public function initFromArray($selectedMeasures) {
 		$selectedMeasures_length = sizeof($selectedMeasures["measures"]);
 		while($selectedMeasures_length--) {
