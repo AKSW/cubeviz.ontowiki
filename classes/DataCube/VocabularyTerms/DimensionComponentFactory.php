@@ -13,20 +13,21 @@
  
 require_once CUBEVIZ_ROOT . DS . 'classes'. DS .'DataCube'. DS .'VocabularyTerms'. DS .'Dimension.php'; 
 
-class DataCube_DimensionComponentFactory
+class DataCube_DimensionComponentFactory extends ArrayObject
 {    
-	public $dimensionComponents = array();
-
 	public function __construct() {
-		
+		$this ['selectedDimensionComponents'] = array();
 	}
 	
-	public function initFromArray($selectedDimensionComponents) {
+	/**
+	 * @param $dimensionComponents 
+	 */	
+	public function initFromArray($dimensionComponents) {
 		$selectedDimensionComponents_length = sizeof($selectedDimensionComponents);
 		while($selectedDimensionComponents_length--) {
 			$current_dimensionComponent = $selectedDimensionComponents[$selectedDimensionComponents_length];
 			$dimensionComponent = new DataCube_DimensionComponent($current_dimensionComponent['property'], $current_dimensionComponent['label']);
-			array_push($this->dimensionComponents, $dimensionComponent);
+			array_push($this ['selectedDimensionComponents'], $dimensionComponent);
 		}
 	}
 }

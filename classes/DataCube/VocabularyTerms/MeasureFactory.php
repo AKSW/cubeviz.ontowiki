@@ -13,12 +13,11 @@
  
 require_once CUBEVIZ_ROOT . DS . 'classes' . DS . 'DataCube' . DS . 'VocabularyTerms' . DS . 'Measure.php';
 
-class DataCube_MeasureFactory
-{    
-	public $measures = array();
-
+class DataCube_MeasureFactory extends ArrayObject
+{   
+	
 	public function __construct() {
-		
+		$this ['measures'] = array();
 	}
 	
 	public function initFromArray($selectedMeasures) {
@@ -28,7 +27,7 @@ class DataCube_MeasureFactory
 			$measure = new DataCube_Measure($current_measure['uri'], $current_measure['md5'], $current_measure['label'], 
 										    $current_measure['type'], $current_measure['order'], $current_measure['aggregationMethod'],
 										    $current_measure['roundValues'], $current_measure['orderDirection']);
-			array_push($this->measures, $measure);
+			array_push($this ['measures'], $measure);
 		}
 	}
 }

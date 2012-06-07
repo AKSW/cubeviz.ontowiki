@@ -31,7 +31,7 @@ class CubeViz_ConfigurationLink
     /**
      * Needs to be public to be accessible through json_encode interface
      */
-    public $_links = null;
+    protected $_links = null;
     
     /**
      * Constructor
@@ -93,5 +93,9 @@ class CubeViz_ConfigurationLink
             throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
 		}
 		return true;
+	}
+	
+	public function getLinks() {
+		return $this->_links;
 	}
 }
