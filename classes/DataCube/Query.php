@@ -12,14 +12,12 @@
 class DataCube_Query {
     
     protected $_model = null;
-    protected $_titleHelper = null;
     
     /**
      * Constructor
      */
-    public function __construct (&$model, &$titleHelper) {
+    public function __construct (&$model) {
         $this->_model = $model;
-        $this->_titleHelper = $titleHelper;
     }
 	
 	/**
@@ -29,6 +27,7 @@ class DataCube_Query {
 	public function getDataStructureDefinition() {   
 		
 		$result = array();
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
 
 		//get all indicators in the cube by the DataStructureDefinitions
 		$sparql = 'SELECT ?dsd WHERE {
@@ -36,15 +35,25 @@ class DataCube_Query {
         }';
 		
         $queryResultDSD = $this->_model->sparqlQuery($sparql);
-
+    
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
-				$result[] = $dsd['dsd'];
+				// $result[] = $dsd['dsd'];
 				if( false == empty ($this->_titleHelper) ) {
-                    $this->_titleHelper->addResource($dsd['dsd']);
+                    $titleHelper->addResource($dsd['dsd']);
                 }
 			}
 		}
+
+		foreach($queryResultDSD as $dsd) {
+			if( false == empty ($dsd['dsd']) ) {
+                $result [] = array ( 
+                    'url'   => $dsd['dsd'],
+                    'label' => $titleHelper->getTitle($dsd['dsd'])
+                );
+			}
+		}
+        
 		return $result;
 	}  
     
