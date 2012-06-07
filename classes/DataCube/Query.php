@@ -64,6 +64,8 @@ class DataCube_Query {
 	 */
     public function getDataSets($dsUri) {	
         
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+        
         //get all data sets in the cube for the given DataStructureDefinition
         $sparql = 'SELECT ?ds WHERE {
             ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
@@ -76,10 +78,16 @@ class DataCube_Query {
 
         foreach($queryResultDS as $ds) {
             if(false == empty($ds['ds'])) {
-                $result[] = $ds['ds'];
-                if( false == empty ($this->_titleHelper) ) {
-                    $this->_titleHelper->addResource($ds['ds']);
-                }
+                $titleHelper->addResource($ds['ds']);
+            }
+        }
+
+        foreach($queryResultDS as $ds) {
+            if(false == empty($ds['ds'])) {
+                $result[] = array (
+                    'url'   => $ds ['ds'],
+                    'label' => $titleHelper->getTitle($ds['ds'])
+                );
             }
         }
         
