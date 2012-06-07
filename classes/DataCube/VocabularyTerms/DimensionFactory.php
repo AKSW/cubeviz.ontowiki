@@ -10,7 +10,7 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_DimensionFactory extends ArrayObject
+class DataCube_VocabularyTerms_DimensionFactory extends ArrayObject
 {    
 	public function __construct() {
 		$this ['dimensions'] = array ();

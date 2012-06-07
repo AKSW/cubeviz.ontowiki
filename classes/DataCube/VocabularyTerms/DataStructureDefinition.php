@@ -2,7 +2,7 @@
 /**
  * This class represents a DataStructureDefinition
  *
- * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  * @category OntoWiki
  * @package Extensions
@@ -10,7 +10,7 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_DataStructureDefinition extends ArrayObject
+class DataCube_VocabularyTerms_DataStructureDefinition extends ArrayObject
 {    
 	/**
 	 * @param $label Data structure definition label

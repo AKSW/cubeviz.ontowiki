@@ -10,7 +10,7 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_MeasureFactory
+class DataCube_VocabularyTerms_MeasureFactory
 {    
 	public function __construct() {
 		$this ['measures'] = array ();

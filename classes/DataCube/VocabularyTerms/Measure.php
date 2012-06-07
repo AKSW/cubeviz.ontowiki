@@ -10,7 +10,7 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_Measure extends ArrayObject
+class DataCube_VocabularyTerms_Measure extends ArrayObject
 {    
     /**
      * Constructor
