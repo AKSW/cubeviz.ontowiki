@@ -160,34 +160,6 @@ class DataCube_Query {
     }
     
     /**
-     * Returns an array of all dimension properties
-     * @return array
-     */
-    public function getDimensionProperties () {
-        
-        $sparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
-        };';
-        
-        return $this->_model->sparqlQuery($sparql);
-    }   
-    
-    /**
-     * Returns an array of all measure properties
-     * @return array
-     */
-    public function getMeasureProperties () {
-        
-        $sparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
-        };';
-        
-        return $this->_model->sparqlQuery($sparql);
-    }   
-    
-    /**
      * Returns an array of Resources which has a certain relation ($componentProperty) to a dataset.
      * @param $dataSetUri DataSet Uri
      * @param $componentProperty Uri of a certain dimension property
