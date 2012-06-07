@@ -27,9 +27,8 @@
 	var cubevizConfiguration = <?php echo $this->configuration; ?>;
 	
 	//default config here
-	var default_cubeviz_config = cubevizConfiguration['_links']['default'];
-	console.log(default_cubeviz_config);
-	
+	var default_cubeviz_config = cubevizConfiguration['default'];
+		
 	var cubevizParameters = {
 		sparqlEndpoint: default_cubeviz_config["sparqlEndpoint"],
 		selectedGraph: default_cubeviz_config["selectedGraph"],
@@ -43,6 +42,7 @@
 		backend: <?php echo json_encode($this->backend); ?>,
 		chartType: default_cubeviz_config["selectedChartType"]
 	}
+	
 </script>
 
 <!-- Include index json-templates for instance the dialogs. -->

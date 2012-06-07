@@ -19,11 +19,11 @@ class DataCube_VocabularyTerms_DimensionComponentFactory extends ArrayObject
 	/**
 	 * @param $dimensionComponents 
 	 */	
-	public function initFromArray($dimensionComponents) {
+	public function initFromArray($selectedDimensionComponents) {
 		$selectedDimensionComponents_length = sizeof($selectedDimensionComponents);
 		while($selectedDimensionComponents_length--) {
 			$current_dimensionComponent = $selectedDimensionComponents[$selectedDimensionComponents_length];
-			$dimensionComponent = new DataCube_DimensionComponent($current_dimensionComponent['property'], $current_dimensionComponent['label']);
+			$dimensionComponent = new DataCube_VocabularyTerms_DimensionComponent($current_dimensionComponent['property'], $current_dimensionComponent['label']);
 			array_push($this ['selectedDimensionComponents'], $dimensionComponent);
 		}
 	}
