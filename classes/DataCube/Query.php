@@ -246,8 +246,9 @@ class DataCube_Query {
     public function getResultObservations($dsUri, $dimensions, $dimensionElements, $dimensionTypes, 
         $dimensionOptions, $measures, $measureTypes, $measureAggregationMethods, $measureOptions) {
         
-        $internalNameTable = array ();        
-        
+        $internalNameTable = array ();       
+        $titleHelper = new TitleHelper ($this->_model); 
+
         $sparqlSelect = 'SELECT ';
         $sparqlWhere  = ' WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'> .
@@ -257,6 +258,10 @@ class DataCube_Query {
         $sparqlOrderBy = '';
         
         // add all dimensions to the query
+        foreach($dimensions as $index => $dimension) {
+            $titleHelper->addResource($dimension);
+        }
+            
         foreach($dimensions as $index => $dimension) {
             
             $dimPropertyUri = $dimensionTypes [$dimension]['type'];
@@ -279,13 +284,12 @@ class DataCube_Query {
             // predicate is here the URI of a dimension                
             $sparqlWhere .= ' ?observation <'. $dimensionTypes [$dimension]['type'] .'> ?'. $dimQName . '.';
             
-            $this->_titleHelper->addResource($dimension);
-            
             // 
             $internalNameTable['d'][$dimension] = array ( 
                 'index' => $index, 
                 'qname' => $dimQName,
                 'uri' => $dimension,
+                'label' => $titleHelper->getTitle ( $dimension ),
                 'type' => $dimensionTypes [$dimension]['type']
             );
             
@@ -338,10 +342,14 @@ class DataCube_Query {
             }
         }
         
+        $titleHelper = new TitleHelper ($this->_model); 
+        
         // add all measures to the query
         foreach($measures as $index => $measure) {
-            
-            $this->_titleHelper->addResource($measure);
+            $titleHelper->addResource($measure);
+        }    
+        
+        foreach($measures as $index => $measure) {
             
             $measPropertyUri = $measureTypes [$measure]['type'];
             $measQName = 'm'. $index;
@@ -364,7 +372,7 @@ class DataCube_Query {
             foreach($internalNameTable as $type => $compSpec) {
                 foreach($compSpec as $uri => $elements) {
                     $internalNameTable[$type][$uri]['label'] 
-                        = $this->_titleHelper->getTitle($elements['uri']); 
+                        = $titleHelper->getTitle($elements['uri']); 
                 }
             }
             
