@@ -16,8 +16,9 @@ class DataCube_VocabularyTerms_DimensionComponent extends ArrayObject
 	 * @param $property
 	 * @param $label
 	 */
-	public function __construct($property, $label) {
+	public function __construct($property, $property_label, $label) {
 		$this ['property'] = $property;
+		$this ['property_label'] = $property_label;
 		$this ['label'] = $label;
 	}
 }

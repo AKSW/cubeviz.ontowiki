@@ -6,7 +6,7 @@
  *************************************************/
 
 // creates or use a namespace and fill it with the specified properties
-Namespacedotjs('org.aksw.cubeViz.Index.Adapter', {
+Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	
 	// All functions in this namespace take some variable(s) and transform it
 	// in the different format
@@ -16,30 +16,35 @@ Namespacedotjs('org.aksw.cubeViz.Index.Adapter', {
 	 * with the Dialog template
 	 */
 	packDimensionComponentsForTemplate: function(selectedDimensionComponents, selectedDimensions) {
-		packedDimensionComponents = [];
-		i = 0;
-		for(dimensionComponent in selectedDimensionComponents) {
+		console.log(selectedDimensionComponents);
+		console.log(selectedDimensions);
+		var packedDimensionComponents = [];
+		var i = 0;
+		for(dimensionComponent in selectedDimensionComponents.selectedDimensionComponents) {
+			var dimcomp_current = selectedDimensionComponents.selectedDimensionComponents[dimensionComponent];
+			
 			for(dimension in selectedDimensions.dimensions) {
-				dimensionComponent_label = selectedDimensionComponents[dimensionComponent].label;
-				dimension_label = selectedDimensions.dimensions[dimension].label;
-				if(dimensionComponent_label == dimension_label) {
+				dim_current = selectedDimensions.dimensions[dimension];
+				
+				if(dimcomp_current.label == dim_current.label) {
 					
-					if(packedDimensionComponents[dimensionComponent_label] == undefined) {
-						packedDimensionComponents[dimensionComponent_label] = [];
-						packedDimensionComponents[dimensionComponent_label]["list"] = [];
+					if(packedDimensionComponents[dimcomp_current.label] == undefined) {
+						packedDimensionComponents[dimcomp_current.label] = [];
+						packedDimensionComponents[dimcomp_current.label]["list"] = [];
 						//if label changed, reset i!
 						i = 0;
 					}
-					packedDimensionComponents[dimensionComponent_label]["list"][i] = [];
+					packedDimensionComponents[dimcomp_current.label]["list"][i] = [];
 									
-					if(packedDimensionComponents[dimensionComponent_label]["label"] == undefined) {
-						packedDimensionComponents[dimensionComponent_label]["label"] = dimensionComponent_label;
+					if(packedDimensionComponents[dimcomp_current.label]["label"] == undefined) {
+						packedDimensionComponents[dimcomp_current.label]["label"] = dimcomp_current.label;
 					}
 					
-					packedDimensionComponents[dimensionComponent_label]["list"][i]["value"] = selectedDimensionComponents[dimensionComponent].property;
+					packedDimensionComponents[dimcomp_current.label]["list"][i]["value"] = dimcomp_current.property;
 					
-					// TODO: request labels before (probably the best case: on config load)
-					packedDimensionComponents[dimensionComponent_label]["list"][i]["label"] = "Dialog is loading, please wait!";
+					packedDimensionComponents[dimcomp_current.label]["list"][i]["label"] = dimcomp_current.property_label;
+					
+					packedDimensionComponents[dimcomp_current.label]["list"][i]["dimension"] = dimcomp_current.label;
 					
 					i++;
 				}			

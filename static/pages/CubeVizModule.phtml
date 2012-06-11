@@ -23,24 +23,24 @@
 	 * Importing Server-Side System Info *
 	 *************************************/
 	Namespacedotjs.baseUri = <?php echo json_encode($this->moduleUrl . 'static/javascript/frontend/'); ?>;
+
+	var CubeViz_Links = <?php echo $this->links; ?>;
 	
-	var cubevizConfiguration = <?php echo $this->configuration; ?>;
-	
-	//default config here
-	var default_cubeviz_config = cubevizConfiguration['default'];
+	// choose default config for the start
+	var CubeViz_Link_Chosen = 'default';
 		
-	var cubevizParameters = {
-		sparqlEndpoint: default_cubeviz_config["sparqlEndpoint"],
-		selectedGraph: default_cubeviz_config["selectedGraph"],
-		selectedDSD: default_cubeviz_config["selectedDSD"],
-		selectedDS: default_cubeviz_config["selectedDS"],
-		selectedMeasures: default_cubeviz_config["selectedMeasures"],
-		selectedDimensions: default_cubeviz_config["selectedDimensions"],
-		selectedDimensionComponents: default_cubeviz_config["selectedDimensionComponents"],
+	var CubeViz_Parameters = {
+		sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
+		selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
+		selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
+		selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
+		selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
+		selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
+		selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
 		modelUri: "<?php echo $this->modelUri; ?>",
 		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
 		backend: <?php echo json_encode($this->backend); ?>,
-		chartType: default_cubeviz_config["selectedChartType"]
+		chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"]
 	}
 	
 </script>

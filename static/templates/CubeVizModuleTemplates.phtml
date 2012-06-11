@@ -11,10 +11,10 @@
                     </div>
                     <div class="sidebar-left-data-selection-dims-box-abstract">
                         <div id="open-dialog-{label}-selector" class="open-dialog-selector">
-                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->basePath; ?>images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
+                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
                         </div>
                         <div id="open-dialog-{label}-options" class="open-dialog-options">
-                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->basePath; ?>images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>">
+                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>">
                         </div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                 <div class="sidebar-left-data-selection-meas-box-label">&nbsp; {label}</div>
                 <div class="sidebar-left-data-selection-meas-box-abstract">
                     <div id="open-dialog-{label}-options">
-                        <img class="sidebar-left-data-selection-meas-box-abstract-img" src="<?php echo $this->basePath; ?>images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>"/>
+                        <img class="sidebar-left-data-selection-meas-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>"/>
                     </div>
                 </div>
             </div>
@@ -51,12 +51,11 @@
         <div class="dialog-components">
             {.repeated section list}
                 <div class="dialog-listitem">
-                    <input type="checkbox" name="" class="dialog-listitem-box" value="{value}"/>
+                    <input type="checkbox" name="" class="dialog-listitem-box-{dimension}" value="{value}"/>
                     <label class="dialog-listitem-value">{label}</label>
                 </div>
             {.end}
         </div>
-        <span class="dialog-number-of-selected-elements" style="display:none;"></span>
     </div>
 </div>
 
@@ -201,10 +200,10 @@
     
 <script type="text/javascript">
 
-    var dimensionsTemplate = $("#stringContainerDimensionsTemplate").html ();
-    var measuresTemplate = $("#stringContainerMeasuresTemplate").html ();
-    var dialogTemplate = $("#stringContainerDialogTemplate").html ();
-    var optionsDimensionTemplate = $("#stringContainerOptionsDimensionTemplate").html ();
-    var optionsMeasureTemplate = $("#stringContainerOptionsMeasureTemplate").html ();
+    var CubeViz_Dimension_Template = $("#stringContainerDimensionsTemplate").html ();
+    var CubeViz_Measure_Template = $("#stringContainerMeasuresTemplate").html ();
+    var CubeViz_Dialog_Template = $("#stringContainerDialogTemplate").html ();
+    var CubeViz_Options_Dimension_Template = $("#stringContainerOptionsDimensionTemplate").html ();
+    var CubeViz_Options_Measure_Template = $("#stringContainerOptionsMeasureTemplate").html ();
     
 </script>

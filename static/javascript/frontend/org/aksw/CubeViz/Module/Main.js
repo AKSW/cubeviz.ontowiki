@@ -2,7 +2,7 @@
 //Namespace('org.aksw.cubeViz.GUI');
 
 // creates or use a namespace and fill it with the specified properties
-Namespacedotjs('org.aksw.cubeViz.Index.Main', {
+Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	/********************************
 	 *                              *
@@ -46,19 +46,141 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 	 * Functions start from here *
 	 *****************************/
 	
+	/****************************
+	 * Initialization functions *
+	 *        API level         *
+	 ****************************/
+	
+	/**
+	 * Input: CubeViz_Parameters object
+	 */
+	init: function(CubeViz_Parameters, CubeViz_Adapter_Module) {
+		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint; 
+		this.selectedGraph = CubeViz_Parameters.selectedGraph; 
+		this.selectedDSD = CubeViz_Parameters.selectedDSD; 
+		this.selectedDS = CubeViz_Parameters.selectedDS; 
+		this.selectedMeasures = CubeViz_Parameters.selectedMeasures; 
+		this.selectedDimensions = CubeViz_Parameters.selectedDimensions; 
+		this.selectedDimensionComponents = CubeViz_Parameters.selectedDimensionComponents; 
+		this.modelUri = CubeViz_Parameters.modelUri; 
+		this.cubevizPath = CubeViz_Parameters.cubevizPath; 
+		this.backend = CubeViz_Parameters.backend;
+		this.chartType = CubeViz_Parameters.chartType;
+				
+		// unpack options from selectedDimensions object
+		this.optionsDimensions = CubeViz_Adapter_Module.extractOptionsFromSelectedDimensions(this.selectedDimensions);
+		
+		// unpack options from selectedMeasures object
+		this.optionsMeasures = CubeViz_Adapter_Module.extractOptionsFromSelectedMeasures(this.selectedMeasures);
+	},
+	
+	/**
+	 * Action: adds elements to the module
+	 */
+	load: function(CubeViz_Dimension_Template,
+				   CubeViz_Measure_Template,
+				   CubeViz_Dialog_Template,
+				   CubeViz_Options_Dimension_Template,
+				   CubeViz_Options_Measure_Template,
+				   CubeViz_Adapter_Module) {
+		try {
+			containerId = "sidebar-left-data-selection-strc";
+			this.addItem(containerId, this.selectedDSD);
+			containerId = "sidebar-left-data-selection-sets";
+			this.addItem(containerId, this.selectedDS);
+			$("#sidebar-left-data-selection-dims-boxes").html(CubeViz_Dimension_Template.expand(this.selectedDimensions));
+			$("#sidebar-left-data-selection-meas-boxes").html(CubeViz_Measure_Template.expand(this.selectedMeasures));
+			
+			var dimCompForTemplate = [];
+			var dimCompForTemplate = CubeViz_Adapter_Module.packDimensionComponentsForTemplate(this.selectedDimensionComponents, 
+																							   this.selectedDimensions);
+			this.renderDialogsForDimensions(dimCompForTemplate, CubeViz_Dialog_Template);
+			
+		} catch(error) {
+			throw error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.";
+		}
+	
+	},
+	
+	registerUiEvents: function() {
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			
+			this.registerOpenDialog(dimension_current.label);
+			this.registerCloseDialog(dimension_current.label);
+			this.registerCheckboxDialog(dimension_current.label);
+		}
+		
+		this.registerDataStructureDefinition();
+		this.registerDataSet();
+	},
+	
+	registerOpenDialog: function(dimensionLabel) {
+		$("#open-dialog-"+dimensionLabel+"-selector").click($.proxy(function(event) {
+			var elementId = $(event.target).parent().attr('id').split("-");
+			var label_current = elementId[2];
+			this.closeAllDialogs();
+			$("#dialog-"+label_current).show();
+			$("#site-overlay").show ();
+			
+			$(event.target).trigger("dialogOpened.CubeViz");
+		}, this));
+	},
+	
+	registerCloseDialog: function(dimensionLabel) {
+		$("#dialog-btn-close-"+dimensionLabel).click( $.proxy(function(event) {
+			var elementId = $(event.target).attr('id').split("-");
+			var label_current = elementId[3];
+			
+			$("#dialog-"+label_current).hide();
+			$("#site-overlay").hide ();
+			
+			
+			$(event.target).trigger("dialogClosed.CubeViz");
+		}, this));
+	},
+	
+	registerCheckboxDialog: function(dimensionLabel) {
+		$(".dialog-listitem-box-"+dimensionLabel).click( $.proxy(function(event) {
+			
+			var dimensionElementsLimit = this.dimensionElementsLimit;
+			
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[3];
+			
+			$(event.target).trigger("dialogCheckboxClicked.CubeViz");			
+		}, this));
+	},
+	
+	registerDataStructureDefinition: function() {
+		$("#sidebar-left-data-selection-strc").click( $.proxy(function(event) {
+			$(event.target).trigger("dataStructureDefinitionClicked.CubeViz");			
+		}, this));
+	},
+	
+	registerDataSet: function() {
+		$("#sidebar-left-data-selection-sets").click( $.proxy(function(event) {
+			$(event.target).trigger("dataSetClicked.CubeViz");			
+		}, this));
+	},
+	
+	/****************************
+	 * View rendering functions *
+	 ****************************/
+	
 	addItem: function(containerId, item) {
 		switch(containerId) {
 			case "sidebar-left-data-selection-strc":
-				org.aksw.cubeViz.Index.Main.addItemDataStructureOrDataSet(item.uri, item.label, containerId);
+				this.addItemDataStructureOrDataSet(item.uri, item.label, containerId);
 				break;
 			case "sidebar-left-data-selection-sets":
-				org.aksw.cubeViz.Index.Main.addItemDataStructureOrDataSet(item.uri, item.label, containerId);
+				this.addItemDataStructureOrDataSet(item.uri, item.label, containerId);
 				break;
 			case "sidebar-left-data-selection-dims":
-				org.aksw.cubeViz.Index.Main.addItemDimension(item, containerId);
+				this.addItemDimension(item, containerId);
 				break;
 			case "sidebar-left-data-selection-meas":
-				org.aksw.cubeViz.Index.Main.addItemMeasure(item);
+				this.addItemMeasure(item);
 				break;
 		}
 	},
@@ -69,13 +191,27 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 						  .text(label));
 	},
 	
-	addItemDimension: function (item) {
-		
-	}, 
-	
-	addItemMeasure: function (item) {
-		
+	/**
+	 * Input: array [dimension_name: [label: label, list: [dimension components] ] ]
+	 * Action: process dialog template on initialization of the widget
+	 * Output: no output
+	 */
+	renderDialogsForDimensions: function(dimensions, CubeViz_Dialog_Template) {
+		for(dimension in dimensions) {
+			$("#dialog-"+dimensions[dimension].label).remove();
+			$("#wrapper").append(CubeViz_Dialog_Template.expand(dimensions[dimension]));
+			$("#dialog-"+dimensions[dimension].label).hide();
+			
+			/**************************************************
+			 * All event handlers for dialogs should be here! *
+			 **************************************************/
+			
+		}
 	},
+	
+	/*******************
+	 * UI interactions *
+	 *******************/
 	
 	sidebarLeftDataSelectionSubmitbtnClick: function() {
 		
@@ -190,7 +326,6 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 					org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions[dimension].selectedElementCount = current_dialog.find("input:checkbox:checked").next().length;
 				}
 			}
-			
 			
 			
 			current_dialog.find("input:checkbox:checked").each(function() {
@@ -596,34 +731,6 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
             }
         });
     },
-
-	/**
-	 * Input: dimensions array
-	 * Action: initialize "+ select some elements" link
-	 * Side Effect: get dimension elements and render dialogs
-	 * Output: no output
-	 */
-	initSelectElementLink: function(dimensions) {
-		for(dimension in dimensions.dimensions) {
-			$("#open-dialog-"+dimensions.dimensions[dimension].label+"-selector").click(function () {
-				label_current = this.id.split("-");
-				label_current = label_current[2];
-				
-				// here we suppose, that label is unique
-				// maybe a bad assumption
-				
-				/********************************************************************
-				 * Important notice: don't append event before template processing! *
-				 ********************************************************************/
-								
-				//org.aksw.cubeViz.Index.Main.reloadDimensionComponentDialog(label_current);
-				
-				org.aksw.cubeViz.Index.Main.closeAllDialogs();
-				$("#dialog-"+label_current).show();
-                $("#site-overlay").show ();
-			});
-		}
-	},
 	
 	/**
 	 * Input: dimensions array
@@ -773,7 +880,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 	 * Input: array [dimension_name: [label: label, list: [dimension components] ] ]
 	 * Action: process dialog template on "select some elements" event
 	 * Output: no output
-	 */
+	 *
 	
 	renderDialogsForDimensions: function(dimensions) {
 		
@@ -787,7 +894,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			
 			/***************************
 			 * Checking the checkboxes *
-			 ***************************/
+			 ***************************
 			var dialog_current = $("#dialog-"+dimensions[dimension].label);
 			dialog_current.hide();
 			var components = dialog_current.find(".dialog-listitem");
@@ -811,7 +918,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			
 			/***********************************************************
 			 * Set the .dialog-number-of-selected-elements DOM element *
-			 ***********************************************************/
+			 ***********************************************************
 			 
 			var selectedElementsLength = $("#dialog-"+dimensions[dimension].label).find("input:checked").length; 
 			$(".dialog-number-of-selected-elements", "#dialog-"+dimensions[dimension].label).text(selectedElementsLength);
@@ -819,7 +926,7 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			/**********************************************
 			 * Set initial value for selected elements    *
 			 * in the dimensions box, e.g. Country (4/26) *
-			 **********************************************/
+			 **********************************************
 			 
 			// Set number of selected items
             selectedItems = selectedElementsLength + "/";
@@ -829,88 +936,11 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 			 * All event handlers for dialogs should be here! *
 			 * if in other place, you should use .live jquery *
 			 * method - http://api.jquery.com/live/           *
-			 **************************************************/
+			 **************************************************
 			
-			// "Save" button click event
-			$("#dialog-btn-close-"+dimensions[dimension].label).click( function() {
-				var label_current = this.id.split("-");
-				label_current = label_current[3];
-				$("#dialog-"+label_current).hide();
-                $("#site-overlay").hide ();
-                
-                // Set number of selected items
-                // in the Dimensions menu, e.g. Country (3 / 26)
-                var selectedElements = $(".dialog-number-of-selected-elements", "#dialog-"+label_current).text();
-                selectedElements = selectedElements + "/";
-                $("#dialog-" + label_current + "-selected-items").html (selectedElements);
-                
-                //update namespace variable
-                //selectedElementCount for this dimension in SelectedDimensions object
-                for(dimension in org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions) {
-					var dimension_current = org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions[dimension];
-					if(dimension_current.label == label_current) {
-						org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions[dimension].selectedElementCount = parseInt(selectedElements);
-					}
-				}
-			});
 			
 			// Checkbox (any) click event
-            $(".dialog-listitem-box", "#dialog-"+dimensions[dimension].label).click( function() {
-				
-				/***************************************
-				 * Here is the configurable parameter! *
-				 ***************************************/
-				var dimensionElementsLimit = org.aksw.cubeViz.Index.Main.dimensionElementsLimit;
-				
-				var label_current = $(this).parent().parent().parent().attr("id").split("-");
-				label_current = label_current[1];
-				var selectedElements_old = $(".dialog-number-of-selected-elements", "#dialog-"+label_current).text();
-				
-				// current checkbox
-				var selectedElements = $(this).parent().find("input:checked").length;
-				// plus all checked siblings
-				selectedElements += $(this).parent().siblings().find("input:checked").length;
-				
-				$(".dialog-number-of-selected-elements", "#dialog-"+label_current).text(selectedElements);
-				
-				// check if elements are increasing and equal 10
-				if( (selectedElements > selectedElements_old) && 
-				    (selectedElements == dimensionElementsLimit)) {
-					// TODO: replace alert with more beautiful notification
-					// alert("You may have problems with visualizing more, than 10 elements.");
-                    $(this).parent().siblings().find("input").each ( function () {
-                        if ( false == $(this).is (':checked') ) {
-                            $(this).attr('disabled','disabled');
-                        } 
-                    });
-                    $(".dialog-header-label-warning").each ( function () {
-                        $(this).show ();
-                        $(this).fadeOut (9000);
-                    });
-				} else {
-                    $(this).parent().siblings().find("input").each ( function () {
-                        $(this).removeAttr('disabled');
-                    });
-                }				
-			});
-		}
-	},
-	
-	/**
-	 * Input: array [dimension_name: [label: label, list: [dimension components] ] ]
-	 * Action: process dialog template on initialization of the widget
-	 * Output: no output
-	 */
-	renderDialogsForDimensionsInit: function(dimensions) {
-		for(dimension in dimensions) {
-			$("#dialog-"+dimensions[dimension].label).remove();
-			$("#wrapper").append(dialogTemplate.expand(dimensions[dimension]));
-			$("#dialog-"+dimensions[dimension].label).hide();
-			
-			/**************************************************
-			 * All event handlers for dialogs should be here! *
-			 **************************************************/
-			
+            
 		}
 	},
 	
@@ -1204,5 +1234,76 @@ Namespacedotjs('org.aksw.cubeViz.Index.Main', {
 	
 	countSelectedDimensionCheckboxes: function() {
 		return $(".sidebar-left-data-selection-dims-box-seperator").find("input:checked").length;
-	}
+	},
+	
+	/***********************
+	 * Dialog interactions *
+	 ***********************/
+	 
+	recalculateSelectedElementsCount: function(dimensionLabel) {
+		var dialog_current = $("#dialog-"+dimensionLabel);
+		var selectedElements = $(dialog_current).find("input:checked").length;
+		
+		// set selectedElements to the selectedDimensions object
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			if(dimension_current.label == dimensionLabel) {
+				this.selectedDimensions.dimensions[dimension].selectedElementCount = selectedElements;
+			}
+		}
+		
+		// check if elements are increasing and equal 10
+		this.dimensionElementsLimit = 2;
+		if(selectedElements == this.dimensionElementsLimit) {
+			$(dialog_current).trigger("dialogMaxDimensionComponentsExceeded.CubeViz");
+		} else {
+			$(dialog_current).trigger("dialogMaxDimensionComponentsNotExceeded.CubeViz");
+		}	
+	},
+	
+	updateDimensionElementCount: function(dimensionLabel) {
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			if(dimensionLabel == dimension_current.label) {
+				var selectedElements = dimension_current.selectedElementCount + "/";
+				$("#dialog-" + dimensionLabel + "-selected-items").html (selectedElements);
+			}
+		}
+	},
+	
+	blockDialogCheckboxes: function(dimensionLabel) {
+		var dialog_current = $("#dialog-"+dimensionLabel);
+		$(dialog_current).find("input").each ( function () {
+			if ( false == $(this).is (':checked') ) {
+				$(this).attr('disabled','disabled');
+			} 
+		});				
+	},
+	
+	unblockDialogCheckboxes: function(dimensionLabel) {
+		var dialog_current = $("#dialog-"+dimensionLabel);
+		$(dialog_current).find("input").each ( function () {
+				$(this).removeAttr('disabled');
+		});					
+	},
+	
+	showMaxDimensionsWarning: function() {
+		$(".dialog-header-label-warning").each ( function () {
+			$(this).show ();
+			$(this).fadeOut (9000);
+		});	
+	},
+	
+	/***********************
+	 * Setters and getters *
+	 ***********************/
+	 
+	setDSD: function(newDSD) {
+		this.selectedDSD = newDSD;
+	},
+	
+	setDS: function(newDS) {
+		this.selectedDS = newDS;
+	}	
+	
 });

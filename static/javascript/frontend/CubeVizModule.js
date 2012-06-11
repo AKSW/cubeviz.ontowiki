@@ -1,74 +1,96 @@
 $(function() {
-	/************************************************
-	 * Include org.aksw.cubeViz.GUI.Views namespace *
-	 ************************************************/
+	/************************
+	 * Initialize templates *
+	 ************************/
+		 
+	CubeViz_Dimension_Template = jsontemplate.Template(CubeViz_Dimension_Template);
+	CubeViz_Measure_Template = jsontemplate.Template(CubeViz_Measure_Template);
+	CubeViz_Dialog_Template = jsontemplate.Template(CubeViz_Dialog_Template);
+	CubeViz_Options_Dimension_Template = jsontemplate.Template(CubeViz_Options_Dimension_Template);
+	CubeViz_Options_Measure_Template = jsontemplate.Template(CubeViz_Options_Measure_Template);
+	
+	/************************************
+	 * Import namespaces as global vars *
+	 ************************************/
 		 
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Main');	
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Adapter');	
 	
 	/************************
-	 * Initialize templates *
+	 * Initializing objects *
 	 ************************/
-		 
-	dimensionsTemplate = jsontemplate.Template(dimensionsTemplate);
-	measuresTemplate = jsontemplate.Template(measuresTemplate);
-	dialogTemplate = jsontemplate.Template(dialogTemplate);
-	optionsDimensionTemplate = jsontemplate.Template(optionsDimensionTemplate);
-	optionsMeasureTemplate = jsontemplate.Template(optionsMeasureTemplate);
+	
+	var CubeViz_Main_Module = org.aksw.CubeViz.Module.Main;
+	var CubeViz_Adapter_Module = org.aksw.CubeViz.Module.Adapter;
+	
+	
+	CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
+	CubeViz_Main_Module.load(CubeViz_Dimension_Template,
+						     CubeViz_Measure_Template,
+						     CubeViz_Dialog_Template,
+						     CubeViz_Options_Dimension_Template,
+						     CubeViz_Options_Measure_Template,
+						     CubeViz_Adapter_Module);
+						     
+	CubeViz_Main_Module.registerUiEvents();
+	
+	// events reference here!				     	
+	$(body).bind("dialogOpened.CubeViz", function(event) {
+		//console.log($(event.target));
+	});		
+	
+	$(body).bind("dialogClosed.CubeViz", function(event) {
+		// make a function for retrieving ID (class?)
+		var elementId = $(event.target).attr('id').split("-");
+		var label_current = elementId[3];
 		
-	/**********************************
-	 * Set variables to the namespace *
-	 **********************************/
+		CubeViz_Main_Module.updateDimensionElementCount(label_current);
+	});		
 	
-	org.aksw.cubeViz.Index.Main.sparqlEndpoint = cubevizParameters.sparqlEndpoint; 
-	org.aksw.cubeViz.Index.Main.selectedGraph = cubevizParameters.selectedGraph; 
-	org.aksw.cubeViz.Index.Main.selectedDSD = cubevizParameters.selectedDSD; 
-	org.aksw.cubeViz.Index.Main.selectedDS = cubevizParameters.selectedDS; 
-	org.aksw.cubeViz.Index.Main.selectedMeasures = cubevizParameters.selectedMeasures; 
-	org.aksw.cubeViz.Index.Main.selectedDimensions = cubevizParameters.selectedDimensions; 
-	org.aksw.cubeViz.Index.Main.selectedDimensionComponents = cubevizParameters.selectedDimensionComponents; 
-	org.aksw.cubeViz.Index.Main.modelUri = cubevizParameters.modelUri; 
-	org.aksw.cubeViz.Index.Main.cubevizPath = cubevizParameters.cubevizPath; 
-	org.aksw.cubeViz.Index.Main.backend = cubevizParameters.backend;
-	org.aksw.cubeViz.Index.Main.chartType = cubevizParameters.chartType;
+	$(body).bind("dialogCheckboxClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr('class').split("-");
+		var label_current = elementClass[3];
+		
+		CubeViz_Main_Module.recalculateSelectedElementsCount(label_current);
+	});		           
 	
-	// unpack options from selectedDimensions object
-	org.aksw.cubeViz.Index.Main.optionsDimensions = 
-			org.aksw.cubeViz.Index.Adapter.extractOptionsFromSelectedDimensions(
-								 org.aksw.cubeViz.Index.Main.selectedDimensions);
+	$(body).bind("dialogMaxDimensionComponentsExceeded.CubeViz", function(event) {
+		var elementClass = $(event.target).attr('id').split("-");
+		var label_current = elementClass[1];		
+		
+		CubeViz_Main_Module.blockDialogCheckboxes(label_current);
+		CubeViz_Main_Module.showMaxDimensionsWarning();		
+	});     
 	
-	// unpack options from selectedMeasures object
-	org.aksw.cubeViz.Index.Main.optionsMeasures = 
-			org.aksw.cubeViz.Index.Adapter.extractOptionsFromSelectedMeasures(
-			                     org.aksw.cubeViz.Index.Main.selectedMeasures);
-			                     		
+	$(body).bind("dialogMaxDimensionComponentsNotExceeded.CubeViz", function(event) {
+		var elementClass = $(event.target).attr('id').split("-");
+		var label_current = elementClass[1];
+			
+		CubeViz_Main_Module.unblockDialogCheckboxes(label_current);
+	});		           
+	
+	$(body).bind("dataStructureDefinitionClicked.CubeViz", function(event) {
+		var newDSD = {"url": $(event.target).find(":selected").val(),
+					       "label": $(event.target).find(":selected").text() };
+		CubeViz_Main_Module.setDSD(newDSD);
+	});		      
+	
+	$(body).bind("dataSetClicked.CubeViz", function(event) {
+		var newDS = {"url": $(event.target).find(":selected").val(),
+					  "label": $(event.target).find(":selected").text() };
+					  console.log(123);
+		CubeViz_Main_Module.setDS(newDS);
+	});		          
+	     		
 	/************************
 	 * Template Processing  *
 	 * Initialization stage *
-	 ************************/
+	 ************************
 	
-	containerId = "sidebar-left-data-selection-strc";
-	org.aksw.cubeViz.Index.Main.addItem(containerId, org.aksw.cubeViz.Index.Main.selectedDSD);
-	containerId = "sidebar-left-data-selection-sets";
-	org.aksw.cubeViz.Index.Main.addItem(containerId, org.aksw.cubeViz.Index.Main.selectedDS);
-	
+
 	/*
-	$("#sidebar-left-data-selection-dims-boxes").html(dimensionsTemplate.expand(org.aksw.cubeViz.Index.Main.selectedDimensions));
-	$("#sidebar-left-data-selection-meas-boxes").html(measuresTemplate.expand(org.aksw.cubeViz.Index.Main.selectedMeasures));
-	
-	//TODO: retrieve labels for selected components and save them to the file!
-	var dimensionComponentsAggregated = [];
-	var dimensionComponentsAggregated = 
-			org.aksw.cubeViz.Index.Adapter.packDimensionComponentsForTemplate(org.aksw.cubeViz.Index.Main.selectedDimensionComponents, 
-																			  org.aksw.cubeViz.Index.Main.selectedDimensions);
-	
-	org.aksw.cubeViz.Index.Main.renderDialogsForDimensionsInit(dimensionComponentsAggregated);
-			
-	//set events for page links
-	org.aksw.cubeViz.Index.Main.initPageLinks ();
-			
-	//create dialogs for each dimension (and fill it with dimension components)
-	org.aksw.cubeViz.Index.Main.initSelectElementLink(org.aksw.cubeViz.Index.Main.selectedDimensions);
+
+
 	
 	//initialize the Options link for dimensions
 	org.aksw.cubeViz.Index.Main.initOptionsDimensionLinkOnInit(org.aksw.cubeViz.Index.Main.selectedDimensions);	
@@ -80,7 +102,7 @@ $(function() {
 	 * Logic branch: if only one selection exists in *
 	 * datastructures or dataelements                *
 	 * dialog render is also here                    *
-	 *************************************************/
+	 *************************************************
 	
 	//check if there is only one dataStructure exist
 	if($("#sidebar-left-data-selection-strc").children().length == 1) {
@@ -97,12 +119,12 @@ $(function() {
 	
 	/**************************
 	 * Button event listeners *
-	 **************************/
+	 **************************
 	$("#sidebar-left-data-selection-submitbtn").click(org.aksw.cubeViz.Index.Main.sidebarLeftDataSelectionSubmitbtnClick);
 		
 	/****************************
 	 * Data Selection listeners *
-	 ****************************/
+	 ****************************
 	
 	// data structure
 	$("#sidebar-left-data-selection-strc").click( function() {
@@ -123,7 +145,7 @@ $(function() {
 	/**********************************
 	 * Chart selection event listener *
 	 *      For chart icon menu       *
-	 **********************************/
+	 **********************************
 	
 	$("#chart-selection-selected-chart").val(org.aksw.cubeViz.Index.Main.chartType);
 	//set the default selected chart type
@@ -194,7 +216,7 @@ $(function() {
 				$(this).css("filter","alpha(opacity=100)");
 			}
 		});
-	}
+	}*/
 
 	
 });
