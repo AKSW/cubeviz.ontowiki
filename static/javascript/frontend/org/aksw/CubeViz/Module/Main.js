@@ -96,11 +96,32 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 																							   this.selectedDimensions);
 			this.renderDialogsForDimensions(dimCompForTemplate, CubeViz_Dialog_Template);
 			
+			this.renderOptionsForDimensions(this.selectedDimensions, CubeViz_Options_Dimension_Template);
+			this.renderOptionsForMeasures(this.selectedMeasures, CubeViz_Options_Measure_Template);
+			
 		} catch(error) {
 			throw error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.";
 		}
 	
 	},
+	
+	setControlElements: function() {
+		this.setDialogCheckBoxes();
+		this.setOptionRadioButtons();
+		this.setDimensionsMeasuresCheckBoxes();
+		
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			
+			
+		}
+		
+		for(measure in this.selectedMeasures.measures) {
+			var measure_current = this.selectedMeasures.measures[measure];
+			
+		}
+		
+	}, 
 	
 	registerUiEvents: function() {
 		for(dimension in this.selectedDimensions.dimensions) {
@@ -109,6 +130,22 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.registerOpenDialog(dimension_current.label);
 			this.registerCloseDialog(dimension_current.label);
 			this.registerCheckboxDialog(dimension_current.label);
+			this.registerOptionsDimensionOpen(dimension_current.label);
+			this.registerOptionsDimensionClose(dimension_current.label);
+			this.registerOptionsDimensionOrderDirection(dimension_current.label);
+			this.registerOptionsDimensionChartAxis(dimension_current.label);
+			this.registerDimensionCheckBox(dimension_current.label);
+		}
+		
+		for(measure in this.selectedMeasures.measures) {
+			var measure_current = this.selectedMeasures.measures[measure];
+			
+			this.registerOptionsMeasureOpen(measure_current.label);
+			this.registerOptionsMeasureClose(measure_current.label);
+			this.registerOptionsMeasureAggregationMethod(measure_current.label);
+			this.registerOptionsMeasureOrderDirection(measure_current.label);
+			this.registerOptionsMeasureRoundValues(measure_current.label);
+			this.registerMeasureCheckBox(measure_current.label);
 		}
 		
 		this.registerDataStructureDefinition();
@@ -135,7 +172,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			$("#dialog-"+label_current).hide();
 			$("#site-overlay").hide ();
 			
-			
 			$(event.target).trigger("dialogClosed.CubeViz");
 		}, this));
 	},
@@ -153,16 +189,129 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	registerDataStructureDefinition: function() {
+		// TODO: use .change event here
 		$("#sidebar-left-data-selection-strc").click( $.proxy(function(event) {
 			$(event.target).trigger("dataStructureDefinitionClicked.CubeViz");			
 		}, this));
 	},
 	
 	registerDataSet: function() {
+		// TODO: use .change event here
 		$("#sidebar-left-data-selection-sets").click( $.proxy(function(event) {
 			$(event.target).trigger("dataSetClicked.CubeViz");			
 		}, this));
 	},
+	
+	registerOptionsDimensionOpen: function(dimensionLabel) {
+		$("#open-dialog-"+dimensionLabel+"-options").click($.proxy(function(event) {
+			var elementId = $(event.target).parent().attr("id").split("-");
+			var label_current = elementId[2];
+			
+			this.closeAllDialogs();
+			$("#dialog-options-dimension-"+label_current).show();
+							
+			$(event.target).trigger("optionsDimensionOpened.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsDimensionClose: function(dimensionLabel) {
+		$("#dialog-options-dimension-btn-close-"+dimensionLabel).click($.proxy(function(event) {
+			var elementId = $(event.target).attr("id").split("-");
+			var label_current = elementId[5];
+			
+			$("#dialog-options-dimension-"+label_current).hide();
+			$("#site-overlay").hide ();
+			
+			$(event.target).trigger("optionsDimensionClosed.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsDimensionOrderDirection: function(dimensionLabel) {
+		$(".dialog-options-dimension-items-order-direction-"+dimensionLabel).click($.proxy(function(event) {
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[6];
+			
+			$(event.target).trigger("optionsDimensionOrderDirectionClicked.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsDimensionChartAxis: function(dimensionLabel) {
+		$(".dialog-options-dimension-items-chart-axis-"+dimensionLabel).click($.proxy(function(event) {
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[6];
+			
+			$(event.target).trigger("optionsDimensionChartAxisClicked.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsMeasureOpen: function(measureLabel) {
+		$("#open-dialog-"+measureLabel+"-options").click($.proxy(function(event) {
+			var elementId = $(event.target).parent().attr("id").split("-");
+			var label_current = elementId[2];
+			
+			this.closeAllDialogs();
+			$("#dialog-options-measure-"+label_current).show();
+							
+			$(event.target).trigger("optionsMeasureOpened.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsMeasureClose: function(measureLabel) {
+		$("#dialog-options-measure-btn-close-"+measureLabel).click($.proxy(function(event) {
+			var elementId = $(event.target).attr("id").split("-");
+			var label_current = elementId[5];
+			
+			$("#dialog-options-measure-"+label_current).hide();
+			$("#site-overlay").hide ();
+			
+			$(event.target).trigger("optionsMeasureClosed.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsMeasureAggregationMethod: function(measureLabel) {
+		$(".dialog-options-measure-items-aggregation-method-"+measureLabel).click($.proxy(function(event) {
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[6];
+			
+			$(event.target).trigger("optionsMeasureAggregationMethodClicked.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsMeasureOrderDirection: function(measureLabel) {
+		$(".dialog-options-measure-items-order-direction-"+measureLabel).click($.proxy(function(event) {
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[6];
+			
+			$(event.target).trigger("optionsMeasureOrderDirectionClicked.CubeViz");
+		}, this));
+	},
+	
+	registerOptionsMeasureRoundValues: function(measureLabel) {
+		$(".dialog-options-measure-items-round-values-"+measureLabel).click($.proxy(function(event) {
+			var elementClass = $(event.target).attr("class").split("-");
+			var label_current = elementClass[6];
+			
+			$(event.target).trigger("optionsMeasureRoundValuesClicked.CubeViz");
+		}, this));
+	},
+	
+	registerDimensionCheckBox: function(dimensionLabel) {
+		$("#sidebar-left-data-selection-dims-box-"+dimensionLabel).click($.proxy(function(event) {
+			var elementId = $(event.target).attr("id").split("-");
+			var label_current = elementId[6];
+			
+			$(event.target).trigger("dimensionCheckBoxClicked.CubeViz");
+		}, this));
+	},
+	
+	registerMeasureCheckBox: function(measureLabel) {
+		$("#sidebar-left-data-selection-meas-box-"+measureLabel).click($.proxy(function(event) {
+			var elementId = $(event.target).attr("id").split("-");
+			var label_current = elementId[6];
+			
+			$(event.target).trigger("measureCheckBoxClicked.CubeViz");
+		}, this));
+	},	
 	
 	/****************************
 	 * View rendering functions *
@@ -191,23 +340,32 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 						  .text(label));
 	},
 	
-	/**
-	 * Input: array [dimension_name: [label: label, list: [dimension components] ] ]
-	 * Action: process dialog template on initialization of the widget
-	 * Output: no output
-	 */
 	renderDialogsForDimensions: function(dimensions, CubeViz_Dialog_Template) {
 		for(dimension in dimensions) {
 			$("#dialog-"+dimensions[dimension].label).remove();
 			$("#wrapper").append(CubeViz_Dialog_Template.expand(dimensions[dimension]));
 			$("#dialog-"+dimensions[dimension].label).hide();
-			
-			/**************************************************
-			 * All event handlers for dialogs should be here! *
-			 **************************************************/
-			
 		}
 	},
+	
+	renderOptionsForDimensions: function(dimensions, CubeViz_Options_Dimension_Template) {
+		for(dimension in dimensions.dimensions) {
+			var dimension_current = dimensions.dimensions[dimension];
+			$("#dialog-options-dimension-"+dimension_current.label).remove();
+			$("#wrapper").append(CubeViz_Options_Dimension_Template.expand(dimension_current));
+			$("#dialog-options-dimension-"+dimension_current.label).hide();
+		}
+	},
+	
+	renderOptionsForMeasures: function(measures, CubeViz_Options_Measure_Template) {
+		for(measure in measures.measures) {
+			var measure_current = measures.measures[measure];
+			$("#dialog-options-measure-"+measure_current.label).remove();
+			$("#wrapper").append(CubeViz_Options_Measure_Template.expand(measure_current));
+			$("#dialog-options-measure-"+measure_current.label).hide();
+		}
+	}, 
+	
 	
 	/*******************
 	 * UI interactions *
@@ -730,319 +888,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
                 $("#content").html ( html );
             }
         });
-    },
-	
-	/**
-	 * Input: dimensions array
-	 * Action: initialize "Options" link
-	 * Side effect:
-	 * Output: no output
-	 */	
-	initOptionsDimensionLinkOnInit: function(dimensions) {
-		org.aksw.cubeViz.Index.Main.renderOptionsForDimensions(dimensions.dimensions);
-		for(dimension in dimensions.dimensions) {
-			$("#open-dialog-"+dimensions.dimensions[dimension].label+"-options").click(function () {
-				label_current = this.id.split("-");
-				label_current = label_current[2];
-								
-				/********************************************************************
-				 * Important notice: don't append event before template processing! *
-				 ********************************************************************/
-				
-				org.aksw.cubeViz.Index.Main.closeAllDialogs();
-				$("#dialog-options-dimension-"+label_current).show();
-			});
-		}
-	},
-	
-	/**
-	 * Duplicate of initOptionsDimensionLinkOnInit
-	 * Triggers on dimensions and measures retrieval
-	 */	
-	initOptionsDimensionLink: function(dimensions) {
-		
-		//fill options with dummy values
-		for(dimension in dimensions.dimensions) {
-			dimensions.dimensions[dimension].chartAxis = "x";
-			// dimensions.dimensions[dimension].orderDirection = "Please, choose order direction";
-			dimensions.dimensions[dimension].orderDirection = "None";
-		}
-		
-		//check for options availability in this.optionsDimensions
-		for(dimension in dimensions.dimensions) {
-			dimension_label = dimensions.dimensions[dimension].label;
-			for(option in this.optionsDimensions) {
-				option_label = this.optionsDimensions[option]["label"];
-				if(option_label == dimension_label) {
-					dimensions.dimensions[dimension].chartAxis = this.optionsDimensions[option]["chartAxis"];
-					dimensions.dimensions[dimension].orderDirection = this.optionsDimensions[option]["orderDirection"];
-				}
-			}
-		}
-		
-		//render template		
-		org.aksw.cubeViz.Index.Main.renderOptionsForDimensions(dimensions.dimensions);
-		
-		for(dimension in dimensions.dimensions) {
-			$("#open-dialog-"+dimensions.dimensions[dimension].label+"-options").click(function () {
-				label_current = this.id.split("-");
-				label_current = label_current[2];
-								
-				/********************************************************************
-				 * Important notice: don't append event before template processing! *
-				 ********************************************************************/
-				
-				org.aksw.cubeViz.Index.Main.closeAllDialogs();
-				//check the radio buttons here		 
-				org.aksw.cubeViz.Index.Main.markRadioButtonsForDimensionDialogs(label_current);
-				
-				$("#dialog-options-dimension-"+label_current).show();
-                $("#site-overlay").show ();
-			});
-		}
-	},
-	
-	/**
-	 * 
-	 */
-	initOptionsMeasureLinkOnInit: function(measures) {
-		org.aksw.cubeViz.Index.Main.renderOptionsForMeasures(measures.measures);
-		for(measure in measures.measures) {
-			label_current = measures.measures[measure].label;
-			$("#open-dialog-"+current_label+"-options").click(function () {
-				label_current = this.id.split("-");
-				label_current = label_current[2];
-								
-				/********************************************************************
-				 * Important notice: don't append event before template processing! *
-				 ********************************************************************/
-				
-				org.aksw.cubeViz.Index.Main.closeAllDialogs();
-				$("#dialog-options-measure-"+label_current).show();
-                $("#site-overlay").show ();
-			});
-		}
-	},
-	
-	/**
-	 * Duplicate of initOptionsMeasureLinkOnInit
-	 * Triggers on dimensions and measures retrieval
-	 */	
-	initOptionsMeasureLink: function(measures) {
-		
-		//fill options with dummy values
-		for(measure in measures.measures) {
-			measures.measures[measure].aggregationMethod = "Please, set chartAxis.";
-			measures.measures[measure].orderDirection = "Please, choose order direction";
-			measures.measures[measure].roundValues = "Please, choose order direction";
-		}
-		
-		//check for options availability in this.optionsDimensions
-		for(measure in measures.measures) {
-			measure_label = measures.measures[measure].label;
-			for(option in this.optionsMeasures) {
-				option_label = this.optionsMeasures[option]["label"];
-				if(option_label == measure_label) {
-					measures.measures[measure].aggregationMethod = this.optionsMeasures[option]["aggregationMethod"];
-					measures.measures[measure].orderDirection = this.optionsMeasures[option]["orderDirection"];
-					measures.measures[measure].roundValues = this.optionsMeasures[option]["roundValues"];
-				}
-			}
-		}
-		
-		//render template		
-		org.aksw.cubeViz.Index.Main.renderOptionsForMeasures(measures.measures);
-		
-		for(measure in measures.measures) {			
-			label_current = measures.measures[measure].label;
-			$("#open-dialog-"+label_current+"-options").click(function () {
-				label_current = this.id.split("-");
-				label_current = label_current[2];
-												
-				/********************************************************************
-				 * Important notice: don't append event before template processing! *
-				 ********************************************************************/
-				
-					
-				/************************************
-				 * Check Radio buttons for measures *
-				 ************************************/
-				
-				org.aksw.cubeViz.Index.Main.markRadioButtonsForMeasureDialogs(label_current);
-				
-				org.aksw.cubeViz.Index.Main.closeAllDialogs();
-				$("#dialog-options-measure-"+label_current).show();
-			});
-		}
-	},
-			
-	/**
-	 * Input: array [dimension_name: [label: label, list: [dimension components] ] ]
-	 * Action: process dialog template on "select some elements" event
-	 * Output: no output
-	 *
-	
-	renderDialogsForDimensions: function(dimensions) {
-		
-		for(dimension in dimensions) {
-			
-			// as we remove this selector it can't be used further in the code!
-			var dialog_current = $("#dialog-"+dimensions[dimension].label);
-			dialog_current.remove();
-			
-			$("#wrapper").append(dialogTemplate.expand(dimensions[dimension]));
-			
-			/***************************
-			 * Checking the checkboxes *
-			 ***************************
-			var dialog_current = $("#dialog-"+dimensions[dimension].label);
-			dialog_current.hide();
-			var components = dialog_current.find(".dialog-listitem");
-			var selectedDimensionComponents = org.aksw.cubeViz.Index.Main.selectedDimensionComponents;
-			
-			//console.log(selectedDimensionComponents);
-			
-			$.each(components, function() {
-				
-				checkbox_current = $(this).find(".dialog-listitem-box");
-				componentUri = checkbox_current.val();
-				
-				
-				for(selDimComp in selectedDimensionComponents) {
-					selDimCompUri = selectedDimensionComponents[selDimComp].property;
-					if(componentUri == selDimCompUri) {
-						checkbox_current.attr('checked','checked');
-					}
-				}
-			});
-			
-			/***********************************************************
-			 * Set the .dialog-number-of-selected-elements DOM element *
-			 ***********************************************************
-			 
-			var selectedElementsLength = $("#dialog-"+dimensions[dimension].label).find("input:checked").length; 
-			$(".dialog-number-of-selected-elements", "#dialog-"+dimensions[dimension].label).text(selectedElementsLength);
-			
-			/**********************************************
-			 * Set initial value for selected elements    *
-			 * in the dimensions box, e.g. Country (4/26) *
-			 **********************************************
-			 
-			// Set number of selected items
-            selectedItems = selectedElementsLength + "/";
-            $("#dialog-" + dimensions[dimension].label + "-selected-items").html (selectedItems);
-			
-			/**************************************************
-			 * All event handlers for dialogs should be here! *
-			 * if in other place, you should use .live jquery *
-			 * method - http://api.jquery.com/live/           *
-			 **************************************************
-			
-			
-			// Checkbox (any) click event
-            
-		}
-	},
-	
-	/**
-	 * 
-	 */
-	renderOptionsForDimensions: function(options) {
-		//console.log(dimensions);
-		for(dimension in options) {
-			$("#dialog-options-dimension-"+options[dimension].label).remove();
-			$("#wrapper").append(optionsDimensionTemplate.expand(options[dimension]));
-			$("#dialog-options-dimension-"+options[dimension].label).hide();
-			
-			/**************************************************
-			 * All event handlers for dialogs should be here! *
-			 **************************************************/
-			
-			$(".dialog-options-dimension-items-order-direction-"+options[dimension].label).click( function() {
-				var label_current = $(this).attr("class").split("-");
-				label_current = label_current[6];
-				$(this).siblings("#dialog-options-dimension-order-direction-value-"+label_current).text($(this).val());
-			});
-			
-			$(".dialog-options-dimension-items-chart-axis-"+options[dimension].label).click( function() {
-				var label_current = $(this).attr("class").split("-");
-				label_current = label_current[6];
-				
-				$(this).siblings("#dialog-options-dimension-chart-axis-value-"+label_current).text($(this).val());
-			
-				//if some other got the same chart axis - set it to another (!)
-				//get all axisAllocation
-				var axisAllocation = [];
-				for(dimension in org.aksw.cubeViz.Index.Main.allDimensions.dimensions) {
-					var label_current_inner = org.aksw.cubeViz.Index.Main.allDimensions.dimensions[dimension].label;
-					axisAllocation[label_current_inner] = $("#dialog-options-dimension-chart-axis-value-"+label_current_inner).text();
-				}
-				
-				//set other label to the different value
-				for(dimension in org.aksw.cubeViz.Index.Main.allDimensions.dimensions) {
-					var label_current_inner = org.aksw.cubeViz.Index.Main.allDimensions.dimensions[dimension].label;
-					if( (label_current_inner != label_current) && 
-						(axisAllocation[label_current_inner] == axisAllocation[label_current]) ) {
-						if(axisAllocation[label_current] == "x") {
-							$("#dialog-options-dimension-chart-axis-value-"+label_current_inner).text("z");
-						} else {
-							$("#dialog-options-dimension-chart-axis-value-"+label_current_inner).text("x");
-						}						
-					}
-				}
-				
-			});
-			
-			$("#dialog-options-dimension-btn-close-"+options[dimension].label).click( function() {
-				var label_current = this.id.split("-");
-				label_current = label_current[5];
-				$("#dialog-options-dimension-"+label_current).hide();
-                $("#site-overlay").hide ();
-			});
-		}
-	},
-	
-	/**
-	 * 
-	 */
-	renderOptionsForMeasures: function(options) {
-		for(measure in options) {
-			label_current = options[measure].label;
-			$("#dialog-options-measure-"+label_current).remove();
-			$("#wrapper").append(optionsMeasureTemplate.expand(options[measure]));
-			$("#dialog-options-measure-"+label_current).hide();
-			
-			/**************************************************
-			 * All event handlers for dialogs should be here! *
-			 **************************************************/
-						
-			$(".dialog-options-measure-items-order-direction-"+label_current).click( function() {
-				label_current = $(this).attr("class").split("-");
-				label_current = label_current[6];
-				$(this).siblings("#dialog-options-measure-order-direction-value-"+label_current).text($(this).val());
-			});
-			
-			$(".dialog-options-measure-items-round-values-"+label_current).click( function() {
-				label_current = $(this).attr("class").split("-");
-				label_current = label_current[6];
-				$(this).siblings("#dialog-options-measure-round-values-value-"+label_current).text($(this).val());
-			});
-			
-			$(".dialog-options-measure-items-aggregation-method-"+label_current).click( function() {
-				label_current = $(this).attr("class").split("-");
-				label_current = label_current[6];
-				$(this).siblings("#dialog-options-measure-aggregation-method-value-"+label_current).text($(this).val());
-			});
-			
-			$("#dialog-options-measure-btn-close-"+label_current).click( function() {
-				label_current = this.id.split("-");
-				label_current = label_current[5];
-				$("#dialog-options-measure-"+label_current).hide();
-                $("#site-overlay").hide ();
-			});
-		}
-	}, 
-	
+    },	
 	
 	/**
 	 * Input: dimention label - we assume that label is unique
@@ -1070,103 +916,12 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	/**
 	 * Input: no input
 	 * Output: no output
-	 * Action: Scans through dimensions and measures lists and check
-	 * checkboxes
-	 */
-	markSelectedDimensionsAndMeasures: function() {
-		var dimensions = $("#sidebar-left-data-selection-dims-boxes").children(); 
-		var selectedDimensions = org.aksw.cubeViz.Index.Main.selectedDimensions.dimensions;
-		$.each(dimensions, function() {
-			checkbox_current = $(this).find(".sidebar-left-data-selection-dims-box");
-			dimensionUri = checkbox_current.val();
-			for(selectedDimension in selectedDimensions) {
-				var dimension_current = selectedDimensions[selectedDimension];
-				if(dimension_current.uri == dimensionUri) {
-					checkbox_current.attr('checked','checked');
-				}
-			}
-		});
-		
-		var measures = $("#sidebar-left-data-selection-meas-boxes").children(); 
-		var selectedMeasures = org.aksw.cubeViz.Index.Main.selectedMeasures.measures;
-		$.each(measures, function() {
-			checkbox_current = $(this).find(".sidebar-left-data-selection-meas-box");
-			measureUri = checkbox_current.val();
-			for(selectedMeasure in selectedMeasures) {
-				var measure_current = selectedMeasures[selectedMeasure];
-				if(measure_current.uri == measureUri) {
-					checkbox_current.attr('checked','checked');
-				}
-			}
-		});
-		
-		org.aksw.cubeViz.Index.Main.initDimensionRestrictions();
-	},
-	
-	/**
-	 * Input: no input
-	 * Output: no output
 	 * Action: close all dialogs
 	 */
 	closeAllDialogs: function() {
 		$(".dialog-options-measure").hide();
 		$(".dialog-options-dimension").hide();
 		$(".dialog").hide();
-	},
-	
-	/**
-	 * Input: options dialog DOM element (label name!)
-	 * Output: no output
-	 * Action: check the radio buttons of the measure options dialogs
-	 */
-	markRadioButtonsForMeasureDialogs: function(label) {
-		var aggrMethod = $("#dialog-options-measure-aggregation-method-value-"+label).text();
-		var aggrMethodRadio = $(".dialog-options-measure-items-aggregation-method-"+label);
-		$.each(aggrMethodRadio, function() {
-			if($(this).val() == aggrMethod) {
-				$(this).attr('checked','checked');
-			}
-		});
-		
-		var orderDirection = $("#dialog-options-measure-order-direction-value-"+label).text();
-		var orderDirectionRadio = $(".dialog-options-measure-items-order-direction-"+label);
-		$.each(orderDirectionRadio, function() {
-			if($(this).val() == orderDirection) {
-				$(this).attr('checked','checked');
-			}
-		});
-		
-		var roundValues = $("#dialog-options-measure-round-values-value-"+label).text();
-		var roundValuesRadio = $(".dialog-options-measure-items-round-values-"+label);
-		$.each(roundValuesRadio, function() {
-			if($(this).val() == roundValues) {
-				$(this).attr('checked','checked');
-			}
-		});	
-	},
-	
-	/**
-	 * Input: options dialog DOM element (label name!)
-	 * Output: no output
-	 * Action: check the radio buttons of the dimension options dialogs
-	 */
-	markRadioButtonsForDimensionDialogs: function(label) {
-		
-		var orderDirection = $("#dialog-options-dimension-order-direction-value-"+label).text();
-		var orderDirectionRadio = $(".dialog-options-dimension-items-order-direction-"+label);
-		$.each(orderDirectionRadio, function() {
-			if($(this).val() === orderDirection) {
-				$(this).attr('checked','checked');
-			}
-		});
-		
-		var chartAxis = $("#dialog-options-dimension-chart-axis-value-"+label).text();
-		var chartAxisRadio = $(".dialog-options-dimension-items-chart-axis-"+label);
-		$.each(chartAxisRadio, function() {
-			if($(this).val() == chartAxis) {
-				$(this).attr('checked','checked');
-			}
-		});	
 	},
 	
 	/**
@@ -1197,45 +952,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		});
 	},
 	
-	/**
-	 * Input: no input
-	 * Action: apply restrictions on the dimensions checkboxes
-	 * Output: no output
-	 */
-	initDimensionRestrictions: function () {
-		
-		$(".sidebar-left-data-selection-dims-box").each( function() {
-			$(this).click( function () {
-				var count = org.aksw.cubeViz.Index.Main.countSelectedDimensionCheckboxes();
-				if(count < 2) {
-					$(".sidebar-left-data-selection-dims-box").each( function() {
-						if($(this).attr("checked") == false) {
-							$(this).attr("disabled", false);
-						}		
-					});
-				} else {
-					$(".sidebar-left-data-selection-dims-box").each( function() {
-						if($(this).attr("checked") == false) {
-							$(this).attr("disabled", true);
-						}		
-					});
-				}
-			});			
-		});
-		
-		if ( 2 == this.selectedDimensions.dimensions.length) {
-			$(".sidebar-left-data-selection-dims-box").each( function() {
-				if($(this).attr("checked") == false) {
-					$(this).attr("disabled", true);
-				}		
-			});
-		}
-	},
-	
-	countSelectedDimensionCheckboxes: function() {
-		return $(".sidebar-left-data-selection-dims-box-seperator").find("input:checked").length;
-	},
-	
 	/***********************
 	 * Dialog interactions *
 	 ***********************/
@@ -1252,8 +968,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			}
 		}
 		
-		// check if elements are increasing and equal 10
-		this.dimensionElementsLimit = 2;
 		if(selectedElements == this.dimensionElementsLimit) {
 			$(dialog_current).trigger("dialogMaxDimensionComponentsExceeded.CubeViz");
 		} else {
@@ -1294,6 +1008,19 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		});	
 	},
 	
+	setDialogCheckBoxes: function() {
+		//TODO: change bruteforce method to some smart algo here				
+		for(dimComp in this.selectedDimensionComponents.selectedDimensionComponents) {
+			dimComp_current = this.selectedDimensionComponents.selectedDimensionComponents[dimComp];
+			
+			$.each( $(".dialog-listitem-box-"+dimComp_current.label), function() {
+				if( $(this).val() == dimComp_current.property) {
+					$(this).attr('checked', true);
+				}
+			});
+		}
+	},
+	
 	/***********************
 	 * Setters and getters *
 	 ***********************/
@@ -1304,6 +1031,190 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	setDS: function(newDS) {
 		this.selectedDS = newDS;
-	}	
+	},
 	
+	
+	/*********************************************************
+	 * STARTOF: Check if I can merge four functions into two *
+	 *********************************************************/
+	 
+	getDimensionByLabel: function(label) {
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			if(dimension_current.label == label) {
+				return dimension_current;
+			}
+		}
+		throw new "There is no dimesions with "+label+" label in selectedDimensions array!";
+	},
+	
+	setDimension: function(newDimension) {
+		var index = "Make an new array element!";
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			
+			if(dimension_current.label == newDimension.label) {
+				index = dimension;
+				break;
+			} else {
+				index = "Make an new array element!";
+			}
+		}
+		
+		if(isNaN(index)) {
+			this.selectedDimensions.dimensions.push(newDimension);
+		} else {
+			this.selectedDimensions.dimensions[index] = newDimension;
+		}		
+	},
+	
+	getMeasureByLabel: function(label) {
+		for(measure in this.selectedMeasures.measures) {
+			var measure_current = this.selectedMeasures.measures[measure];
+			if(measure_current.label == label) {
+				return measure_current;
+			}
+		}
+		throw new "There is no measures with "+label+" label in selectedMeasures array!";
+	},
+	
+	setMeasure: function(newMeasure) {
+		var index = "Make an new array element!";
+		for(measure in this.selectedMeasures.measures) {
+			var measure_current = this.selectedMeasures.measures[measure];
+			
+			if(measure_current.label == newMeasure.label) {
+				index = measure;
+				break;
+			} else {
+				index = "Make an new array element!";
+			}
+		}
+		
+		if(isNaN(index)) {
+			this.selectedMeasures.measures.push(newMeasure);
+		} else {
+			this.selectedMeasures.measures[index] = newMeasure;
+		}	
+	},
+	
+	/*******************************************************
+	 * ENDOF: Check if I can merge four functions into two *
+	 *******************************************************/
+	
+	/**************************************
+	 * Dimension Options Dialog functions *
+	 **************************************/
+	
+	// TODO: some of the radio buttons are not checked visually!!!
+	
+	setOptionRadioButtons: function() {
+		//TODO: change bruteforce method to some smart algo here			
+
+		
+		for(meas in this.selectedMeasures.measures) {
+			var meas_current = this.selectedMeasures.measures[meas];
+			
+			var aggregationMethodRadio = $(".dialog-options-measure-items-aggregation-method-"+meas_current.label);
+			this.setRadioButtonIn(aggregationMethodRadio, meas_current.aggregationMethod);
+			
+			var orderDirectionRadio = $(".dialog-options-measure-items-order-direction-"+meas_current.label);
+			this.setRadioButtonIn(orderDirectionRadio, meas_current.orderDirection);
+			
+			var roundValuesRadio = $(".dialog-options-measure-items-round-values-"+meas_current.label);
+			this.setRadioButtonIn(roundValuesRadio, meas_current.roundValues);
+		}
+		
+				for(dim in this.selectedDimensions.dimensions) {
+			var dim_current = this.selectedDimensions.dimensions[dim];
+						
+			var orderDirectionRadio = $(".dialog-options-dimension-items-order-direction-"+dim_current.label);
+			this.setRadioButtonIn(orderDirectionRadio, dim_current.orderDirection);
+						
+			var chartAxisRadio = $(".dialog-options-dimension-items-chart-axis-"+dim_current.label);
+			this.setRadioButtonIn(chartAxisRadio, dim_current.chartAxis);
+		}
+	},
+	
+	setRadioButtonIn: function(radioButtons, value) {
+		$.each(radioButtons, function() {
+			if( $(this).val() == value) {
+				$(this)[0].checked = true;
+				$(this).attr('checked',true);
+			}
+		});
+	},
+	
+	/**************************************
+	 * Dimensions and Measures CheckBoxes *
+	 **************************************/
+	 
+	setDimensionsMeasuresCheckBoxes: function() {
+		var dimensions = $("#sidebar-left-data-selection-dims-boxes").children(); 
+		var selectedDimensions = this.selectedDimensions.dimensions;
+		$.each(dimensions, function() {
+			checkbox_current = $(this).find(".sidebar-left-data-selection-dims-box");
+			dimensionUri = checkbox_current.val();
+			for(selectedDimension in selectedDimensions) {
+				var dimension_current = selectedDimensions[selectedDimension];
+				if(dimension_current.uri == dimensionUri) {
+					checkbox_current.attr('checked','checked');
+				}
+			}
+		});
+		
+		var measures = $("#sidebar-left-data-selection-meas-boxes").children(); 
+		var selectedMeasures = this.selectedMeasures.measures;
+		$.each(measures, function() {
+			checkbox_current = $(this).find(".sidebar-left-data-selection-meas-box");
+			measureUri = checkbox_current.val();
+			for(selectedMeasure in selectedMeasures) {
+				var measure_current = selectedMeasures[selectedMeasure];
+				if(measure_current.uri == measureUri) {
+					checkbox_current.attr('checked','checked');
+				}
+			}
+		});
+		
+		this.initDimensionRestrictions();
+	},
+	
+	/**
+	 * TODO: enhance this piece of functionality
+	 */
+	initDimensionRestrictions: function () {
+		
+		var namespace = this;
+		$(".sidebar-left-data-selection-dims-box").each( function() {
+			$(this).click( function () {
+				var count = namespace.countSelectedDimensionCheckboxes();
+				console.log(count);
+				if(count < 2) {
+					$(".sidebar-left-data-selection-dims-box").each( function() {
+						if($(this).attr("checked") == false) {
+							$(this).attr("disabled", false);
+						}		
+					});
+				} else {
+					$(".sidebar-left-data-selection-dims-box").each( function() {
+						if($(this).attr("checked") == false) {
+							$(this).attr("disabled", true);
+						}		
+					});
+				}
+			});			
+		});
+		
+		if ( 2 == this.selectedDimensions.dimensions.length) {
+			$(".sidebar-left-data-selection-dims-box").each( function() {
+				if($(this).attr("checked") == false) {
+					$(this).attr("disabled", true);
+				}		
+			});
+		}
+	},
+	
+	countSelectedDimensionCheckboxes: function() {
+		return $(".sidebar-left-data-selection-dims-box-seperator").find("input:checked").length;
+	},
 });

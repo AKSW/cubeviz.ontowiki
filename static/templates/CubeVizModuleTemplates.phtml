@@ -3,7 +3,7 @@
         {.repeated section @}
             
             <div class="sidebar-left-data-selection-dims-box-seperator">
-                <input type="checkbox" class="sidebar-left-data-selection-dims-box" name="" value="{uri}">
+                <input type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{uri}">
                 <div class="sidebar-left-data-selection-dims-box-lblabs">
                     <div class="sidebar-left-data-selection-dims-box-label">
                         <span class="sidebar-left-data-selection-dims-box-label-value">&nbsp; {label}</span> 
@@ -29,7 +29,7 @@
     {.section measures}	
         {.repeated section @}
             <div class="sidebar-left-data-selection-meas-box-seperator">
-                <input type="checkbox" name="" class="sidebar-left-data-selection-meas-box" value="{uri}"/>
+                <input type="checkbox" name="" class="sidebar-left-data-selection-meas-box" id="sidebar-left-data-selection-meas-box-{label}" value="{uri}"/>
                 <div class="sidebar-left-data-selection-meas-box-label">&nbsp; {label}</div>
                 <div class="sidebar-left-data-selection-meas-box-abstract">
                     <div id="open-dialog-{label}-options">

@@ -16,8 +16,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	 * with the Dialog template
 	 */
 	packDimensionComponentsForTemplate: function(selectedDimensionComponents, selectedDimensions) {
-		console.log(selectedDimensionComponents);
-		console.log(selectedDimensions);
 		var packedDimensionComponents = [];
 		var i = 0;
 		for(dimensionComponent in selectedDimensionComponents.selectedDimensionComponents) {

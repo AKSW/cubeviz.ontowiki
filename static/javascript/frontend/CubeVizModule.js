@@ -19,21 +19,24 @@ $(function() {
 	/************************
 	 * Initializing objects *
 	 ************************/
-	
-	var CubeViz_Main_Module = org.aksw.CubeViz.Module.Main;
-	var CubeViz_Adapter_Module = org.aksw.CubeViz.Module.Adapter;
-	
-	
-	CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
-	CubeViz_Main_Module.load(CubeViz_Dimension_Template,
-						     CubeViz_Measure_Template,
-						     CubeViz_Dialog_Template,
-						     CubeViz_Options_Dimension_Template,
-						     CubeViz_Options_Measure_Template,
-						     CubeViz_Adapter_Module);
-						     
-	CubeViz_Main_Module.registerUiEvents();
-	
+	$(document).ready(function() {
+		var CubeViz_Main_Module = org.aksw.CubeViz.Module.Main;
+		var CubeViz_Adapter_Module = org.aksw.CubeViz.Module.Adapter;
+		
+		CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
+		CubeViz_Main_Module.load(CubeViz_Dimension_Template,
+								 CubeViz_Measure_Template,
+								 CubeViz_Dialog_Template,
+								 CubeViz_Options_Dimension_Template,
+								 CubeViz_Options_Measure_Template,
+								 CubeViz_Adapter_Module);
+							   
+		
+		CubeViz_Main_Module.setControlElements();					     
+		CubeViz_Main_Module.registerUiEvents();
+	});
+
+
 	// events reference here!				     	
 	$(body).bind("dialogOpened.CubeViz", function(event) {
 		//console.log($(event.target));
@@ -78,9 +81,93 @@ $(function() {
 	$(body).bind("dataSetClicked.CubeViz", function(event) {
 		var newDS = {"url": $(event.target).find(":selected").val(),
 					  "label": $(event.target).find(":selected").text() };
-					  console.log(123);
 		CubeViz_Main_Module.setDS(newDS);
 	});		          
+	
+	$(body).bind("optionsDimensionOpened.CubeViz", function(event) {
+		var elementId = $(event.target).parent().attr("id").split("-");
+		var label_current = elementId[2];
+		
+	});
+	
+	$(body).bind("optionsDimensionClosed.CubeViz", function(event) {
+		var elementId = $(event.target).parent().attr("id").split("-");
+		var label_current = elementId[3];
+		
+	});
+	
+	$(body).bind("optionsDimensionOrderDirectionClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr("class").split("-");
+		var label_current = elementClass[6];
+		
+		var newOrderDirection = $(event.target).val();
+		var newDimension = CubeViz_Main_Module.getDimensionByLabel(label_current);
+		newDimension.orderDirection = newOrderDirection;
+		CubeViz_Main_Module.setDimension(newDimension);
+	});
+	
+	$(body).bind("optionsDimensionChartAxisClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr("class").split("-");
+		var label_current = elementClass[6];
+		
+		var newChartAxis = $(event.target).val();
+		var newDimension = CubeViz_Main_Module.getDimensionByLabel(label_current);
+		newDimension.chartAxis = newChartAxis;
+		CubeViz_Main_Module.setDimension(newDimension);
+	
+	});
+	
+	$(body).bind("optionsMeasureOpened.CubeViz", function(event) {
+		var elementId = $(event.target).parent().attr("id").split("-");
+		var label_current = elementId[2];
+		
+	});
+	
+	$(body).bind("optionsMeasureClosed.CubeViz", function(event) {
+		var elementId = $(event.target).parent().attr("id").split("-");
+		var label_current = elementId[3];
+		
+	});
+	
+	$(body).bind("optionsMeasureAggregationMethodClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr("class").split("-");
+		var label_current = elementClass[6];
+		
+		var newAggregationMethod = $(event.target).val();
+		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
+		newMeasure.aggregationMethod = newAggregationMethod;
+		CubeViz_Main_Module.setMeasure(newMeasure);
+	});
+	
+	$(body).bind("optionsMeasureOrderDirectionClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr("class").split("-");
+		var label_current = elementClass[6];
+		
+		var newOrderDirection = $(event.target).val();
+		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
+		newMeasure.orderDirection = newOrderDirection;
+		CubeViz_Main_Module.setMeasure(newMeasure);
+	});
+	
+	$(body).bind("optionsMeasureRoundValuesClicked.CubeViz", function(event) {
+		var elementClass = $(event.target).attr("class").split("-");
+		var label_current = elementClass[6];
+		
+		var newRoundValues = $(event.target).val();
+		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
+		newMeasure.roundValues = newRoundValues;
+		CubeViz_Main_Module.setMeasure(newMeasure);
+	});
+	
+	$(body).bind("dimensionCheckBoxClicked.CubeViz", function(event) {
+		var elementId = $(event.target).attr("id").split("-");
+		var label_current = elementId[6];
+	});
+	
+	$(body).bind("measureCheckBoxClicked.CubeViz", function(event) {
+		var elementId = $(event.target).attr("id").split("-");
+		var label_current = elementId[6];
+	});
 	     		
 	/************************
 	 * Template Processing  *
