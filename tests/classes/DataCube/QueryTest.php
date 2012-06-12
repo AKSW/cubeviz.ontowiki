@@ -16,19 +16,18 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $this->_owApp       = new Zend_Application( 'default', _OWROOT . 'application/config/application.ini');
         $this->_owApp->bootstrap();
         
-        $logger = OntoWiki::getInstance()->logger;
-        
         $this->_model       = new Erfurt_Rdf_Model ('http://data.lod2.eu/scoreboard/');
-        $this->_titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
         
-        $this->_query       = new DataCube_Query ($this->_model, $this->_titleHelper);
+        $writer = new Zend_Log_Writer_Stream(dirname(__FILE__).'/../../../../../logs/ontowiki.log');
+        
+        OntoWiki::getInstance()->logger = new Zend_Log($writer);
+        
+        $this->_query       = new DataCube_Query ($this->_model);
     }
     
     public function tearDown ()
     {
         Zend_Controller_Front::getInstance()->resetInstance();
-        
-        $this->_erfurt->reset ();
         
         Zend_Loader_Autoloader::resetInstance();
         $loader = Zend_Loader_Autoloader::getInstance();
@@ -42,15 +41,10 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $resultDsd = $this->_query->getDataStructureDefinition ();
         
         // Get test data
-        $testSparql = 'SELECT ?dsd WHERE {
-            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataStructureDefinition.'>. 
-        }';
-        
-        $testDsd = $this->_model->sparqlQuery ( $testSparql );
-        $testResult = array ();
-        foreach ( $testDsd as $entry ) {
-            $testResult [] = $entry ['dsd'];
-        }
+        $testResult = array(array(
+            'uri'   => 'http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe',
+            'label' => 'DataStructure0'
+        ));
         
         $this->assertEquals ($resultDsd, $testResult);
     }
@@ -128,44 +122,16 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals ( $resultComponents, $testResult );
     }
     
-    public function testGetDimensionProperties ()
-    {
-        $result = $this->_query->getDimensionProperties ();
-        
-        $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel}
-        };';
-        
-        $testResult = $this->_model->sparqlQuery($testSparql);
-        
-        $this->assertEquals ( $result, $testResult );
-    }
-    
-    public function testGetMeasureProperties()
-    {
-        $result = $this->_query->getMeasureProperties ();
-        
-        $testSparql = 'SELECT DISTINCT ?propertyUri ?rdfsLabel WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel}
-        };';
-        
-        $testResult = $this->_model->sparqlQuery($testSparql);
-        
-        $this->assertEquals ( $result, $testResult );
-    }
-    
     public function testGetComponentElements()
     {   
         $dsd = $this->_query->getDataStructureDefinition ();
-        $dsd = $dsd [0];
+        $dsd = $dsd [0] ['uri'];
         
         $ds = $this->_query->getDataSets ($dsd);         
-        $ds = $ds[0];
+        $ds = $ds[0] ['uri'];
         
         $componentProperty = $this->_query->getDimensionProperties ();
-        $componentProperty = $componentProperty [0] ['propertyUri'];
+        $componentProperty = $componentProperty [0] ['uri'];
         
         // case 1        
         $result = $this->_query->getComponentElements ( $ds, $componentProperty );
@@ -266,13 +232,13 @@ class DataCube_QueryTest extends PHPUnit_Framework_TestCase
     public function testGetComponentElementCount()
     {   
         $dsd = $this->_query->getDataStructureDefinition ();
-        $dsd = $dsd [0];
+        $dsd = $dsd [0]['uri'];
         
         $ds = $this->_query->getDataSets ($dsd);         
-        $ds = $ds[0];
+        $ds = $ds[0]['uri'];
         
         $componentProperty = $this->_query->getDimensionProperties ();
-        $componentProperty = $componentProperty [0] ['propertyUri'];
+        $componentProperty = $componentProperty [0] ['uri'];
      
         $result = $this->_query->getComponentElementCount ( $ds, $componentProperty );
         
