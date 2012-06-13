@@ -45,7 +45,7 @@ class DataCube_Query {
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
                 $result [] = array ( 
-                    'uri'   => $dsd['dsd'],
+                    'url'   => $dsd['dsd'],
                     'label' => $titleHelper->getTitle($dsd['dsd'])
                 );
 			}
@@ -82,7 +82,7 @@ class DataCube_Query {
         foreach($queryResultDS as $ds) {
             if(false == empty($ds['ds'])) {
                 $result[] = array (
-                    'uri'   => $ds ['ds'],
+                    'url'   => $ds ['ds'],
                     'label' => $titleHelper->getTitle($ds['ds'])
                 );
             }
@@ -321,14 +321,14 @@ class DataCube_Query {
                 $internalNameTable['m'][$measure] = array ( 
                     'index' => $index,
                     'qname' => $measQName,
-                    'uri'   => $measure,
+                    'url'   => $measure,
                     'type'  => $measureTypes [$measure]['type']
                 ); 
             }
         
             foreach($internalNameTable as $type => $compSpec) {
                 foreach($compSpec as $uri => $elements) {
-                    $internalNameTable[$type][$uri]['label'] = $titleHelper->addResource($elements['uri']); 
+                    $internalNameTable[$type][$uri]['label'] = $titleHelper->addResource($elements['url']); 
                 }
             }
         }    
