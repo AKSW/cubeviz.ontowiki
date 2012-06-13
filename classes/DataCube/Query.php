@@ -38,17 +38,14 @@ class DataCube_Query {
     
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
-				// $result[] = $dsd['dsd'];
-				if( false == empty ($this->_titleHelper) ) {
-                    $titleHelper->addResource($dsd['dsd']);
-                }
+				$titleHelper->addResource($dsd['dsd']);
 			}
 		}
 
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
                 $result [] = array ( 
-                    'url'   => $dsd['dsd'],
+                    'uri'   => $dsd['dsd'],
                     'label' => $titleHelper->getTitle($dsd['dsd'])
                 );
 			}
@@ -62,14 +59,14 @@ class DataCube_Query {
 	 * @param $dsUri Data Set Uri
      * @return array
 	 */
-    public function getDataSets($dsUri) {	
+    public function getDataSets($dsdUri) {	
         
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
         
         //get all data sets in the cube for the given DataStructureDefinition
         $sparql = 'SELECT ?ds WHERE {
             ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
-            ?ds <'.DataCube_UriOf::Structure.'> <'.$dsUri.'>.
+            ?ds <'.DataCube_UriOf::Structure.'> <'.$dsdUri.'>.
         };';
 
         $queryResultDS = $this->_model->sparqlQuery($sparql);
@@ -85,7 +82,7 @@ class DataCube_Query {
         foreach($queryResultDS as $ds) {
             if(false == empty($ds['ds'])) {
                 $result[] = array (
-                    'url'   => $ds ['ds'],
+                    'uri'   => $ds ['ds'],
                     'label' => $titleHelper->getTitle($ds['ds'])
                 );
             }
@@ -219,7 +216,7 @@ class DataCube_Query {
         $dimensionOptions, $measures, $measureTypes, $measureAggregationMethods, $measureOptions) {
         
         $internalNameTable = array ();       
-        $titleHelper = new TitleHelper ($this->_model); 
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
 
         $sparqlSelect = 'SELECT ';
         $sparqlWhere  = ' WHERE {
@@ -314,11 +311,26 @@ class DataCube_Query {
             }
         }
         
-        $titleHelper = new TitleHelper ($this->_model); 
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
         
         // add all measures to the query
         foreach($measures as $index => $measure) {
-            $titleHelper->addResource($measure);
+            
+            if ( $measureOptions [$measure]['order'] != 'NONE' ) {
+            
+                $internalNameTable['m'][$measure] = array ( 
+                    'index' => $index,
+                    'qname' => $measQName,
+                    'uri'   => $measure,
+                    'type'  => $measureTypes [$measure]['type']
+                ); 
+            }
+        
+            foreach($internalNameTable as $type => $compSpec) {
+                foreach($compSpec as $uri => $elements) {
+                    $internalNameTable[$type][$uri]['label'] = $titleHelper->addResource($elements['uri']); 
+                }
+            }
         }    
         
         foreach($measures as $index => $measure) {
@@ -343,8 +355,7 @@ class DataCube_Query {
         
             foreach($internalNameTable as $type => $compSpec) {
                 foreach($compSpec as $uri => $elements) {
-                    $internalNameTable[$type][$uri]['label'] 
-                        = $titleHelper->getTitle($elements['url']); 
+                    $internalNameTable[$type][$uri]['label'] = $titleHelper->getTitle($elements['url']); 
                 }
             }
             
@@ -362,5 +373,33 @@ class DataCube_Query {
                 'nameTable' => $internalNameTable
             );
         }
+    }
+    
+    /**
+     * Returns an array of all dimension properties
+     * @return array
+     */
+    public function getDimensionProperties () {
+        
+        $sparql = 'SELECT DISTINCT ?uri ?label WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdfschema#label> ?rdfsLabel }
+        };';
+        
+        return $this->_model->sparqlQuery($sparql);
+    }   
+    
+    /**
+     * Returns an array of all measure properties
+     * @return array
+     */
+    public function getMeasureProperties () {
+        
+        $sparql = 'SELECT DISTINCT ?uri ?label WHERE {
+            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
+            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
+        };';
+        
+        return $this->_model->sparqlQuery($sparql);
     }
 }
