@@ -16,8 +16,8 @@ class DataCube_VocabularyTerms_DataStructureDefinition extends ArrayObject
 	 * @param $label Data structure definition label
 	 * @param $uri Data structure definition uri
 	 */
-	public function __construct($uri = '', $label = '') {
-		$this ['uri'] = $uri;
+	public function __construct($url = '', $label = '') {
+		$this ['url'] = $url;
 		$this ['label'] = $label;
 	}
 }

@@ -139,8 +139,8 @@ class DataCube_Query {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
                 $entry = array ( 
-                    'uri'   => $comp['comp'],
-                    'md5'   => md5($comp['comp']),
+                    'url'   => $comp['comp'],
+                    'url_md5'   => md5($comp['comp']),
                     'type'  => $comp['comptype'],
                     'order' => isset($comp['order']) ? $comp['order'] : -1,
                     'label' => $titleHelper->getTitle($comp['comp'])
@@ -152,7 +152,7 @@ class DataCube_Query {
                     );
                 }
                     
-                $result[$comp['comp']] = $entry;
+                array_push($result, $entry);
             }
         }
         
@@ -260,7 +260,7 @@ class DataCube_Query {
             $internalNameTable['d'][$dimension] = array ( 
                 'index' => $index, 
                 'qname' => $dimQName,
-                'uri' => $dimension,
+                'url' => $dimension,
                 'label' => $titleHelper->getTitle ( $dimension ),
                 'type' => $dimensionTypes [$dimension]['type']
             );
@@ -336,7 +336,7 @@ class DataCube_Query {
                 $internalNameTable['m'][$measure] = array ( 
                     'index' => $index,
                     'qname' => $measQName,
-                    'uri'   => $measure,
+                    'url'   => $measure,
                     'type'  => $measureTypes [$measure]['type']
                 ); 
             }
@@ -344,7 +344,7 @@ class DataCube_Query {
             foreach($internalNameTable as $type => $compSpec) {
                 foreach($compSpec as $uri => $elements) {
                     $internalNameTable[$type][$uri]['label'] 
-                        = $titleHelper->getTitle($elements['uri']); 
+                        = $titleHelper->getTitle($elements['url']); 
                 }
             }
             

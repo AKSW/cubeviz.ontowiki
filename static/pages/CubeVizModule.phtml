@@ -28,9 +28,7 @@
 	
 	// choose default config for the start
 	var CubeViz_Link_Chosen = 'default';
-	
-	console.log(CubeViz_Links);
-		
+			
 	var CubeViz_Parameters = {
 		sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
 		selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
@@ -39,7 +37,7 @@
 		selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
 		selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
 		selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
-		modelUri: "<?php echo $this->modelUri; ?>",
+		modelUrl: "<?php echo $this->modelUrl; ?>",
 		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
 		backend: <?php echo json_encode($this->backend); ?>,
 		chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"]

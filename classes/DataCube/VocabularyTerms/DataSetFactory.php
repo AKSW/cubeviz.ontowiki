@@ -20,7 +20,7 @@ class DataCube_VocabularyTerms_DataSetFactory extends ArrayObject
 		$selectedDataSets_length = sizeof($selectedDataSets);
 		while($selectedDataSets_length--) {
 			$current_ds = $selectedDataSets[$selectedDataSets_length];
-			$ds = new DataCube_VocabularyTerms_DataSet($current_ds['uri'], $current_ds['label']);
+			$ds = new DataCube_VocabularyTerms_DataSet($current_ds['url'], $current_ds['label']);
 			array_push($this ['dataSets'], $ds);
 		}
 	}

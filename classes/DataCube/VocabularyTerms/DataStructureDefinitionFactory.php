@@ -20,7 +20,7 @@ class DataCube_VocabularyTerms_DataStructureDefinitionFactory extends ArrayObjec
 		$selectedDataStructureDefinitions_length = sizeof($selectedDataStructureDefinitions);
 		while($selectedDataStructureDefinitions_length--) {
 			$current_dsd = $selectedDataStructureDefinitions[$selectedDataStructureDefinitions_length];
-			$dsd = new DataCube_VocabularyTerms_DataStructureDefinition($current_dsd['uri'], $current_dsd['label']);
+			$dsd = new DataCube_VocabularyTerms_DataStructureDefinition($current_dsd['url'], $current_dsd['label']);
 			array_push($this ['dataStructureDefinitions'], $dsd);
 		}
 	}

@@ -70,7 +70,7 @@ class CubevizModule extends OntoWiki_Module
 		$configuration->initFromLink($linkCode);
 													
 		$this->view->links = json_encode($configuration->getLinks());
-		$this->view->modelUri = $_REQUEST['m'];
+		$this->view->modelUrl = $_REQUEST['m'];
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
 		

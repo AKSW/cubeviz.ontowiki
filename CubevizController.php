@@ -49,11 +49,11 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsdUri = $this->_request->getParam('dsdUri'); // Data Structure Definition
+		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 				
 		$query = new DataCube_Query($model);
 				
-        $this->_response->setBody(json_encode($query->getDataSets($dsdUri)));
+        $this->_response->setBody(json_encode($query->getDataSets($dsdUrl)));
 	}
 	
 	/**
@@ -64,14 +64,20 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsdUri = $this->_request->getParam('dsdUri'); // Data Structure Definition
-		$dsUri = $this->_request->getParam('dsUri'); // Data Set
+		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
+		$dsUrl = $this->_request->getParam('dsUrl'); // Data Set
 		$componentType = $this->_request->getParam('cT'); // can be  DataCube_UriOf::Dimension or DataCube_UriOf::Measure
 		
-		$query = new DataCube_Query($model);
+		if($componentType == "measure") {
+			$componentType = DataCube_UriOf::Measure;
+		} else if($componentType == "dimension") {
+			$componentType = DataCube_UriOf::Dimension;
+		}
 		
+		$query = new DataCube_Query($model);
+				
 		try {
-			$this->_response->setBody(json_encode($query->getComponents($dsdUri, $dsUri, $componentType)));
+			$this->_response->setBody(json_encode($query->getComponents($dsdUrl, $dsUrl, $componentType)));
 		} catch(CubeViz_Exception $e) {
 			$this->_response->setBody($e->getMessage());
 			//error message
@@ -86,11 +92,11 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsUri = $this->_request->getParam('dsUri'); // Data Structure Definition
+		$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
 		$componentProperty = $this->_request->getParam('cP'); // Data Structure Definition
 				
 		$query = new DataCube_Query($model);
 				
-        $this->_response->setBody(json_encode($query->getComponentElements($dsUri, $componentProperty)));
+        $this->_response->setBody(json_encode($query->getComponentElements($dsUrl, $componentProperty)));
 	}
 }

@@ -52,13 +52,13 @@ class CubeViz_ConfigurationLink
             // Data Structure Definition
             $selectedDSD = json_decode(trim($parameters[2]), true);
 			$this->_links [$linkCode] ['selectedDSD'] = new DataCube_VocabularyTerms_DataStructureDefinition (
-                $selectedDSD['uri'], $selectedDSD['label']
+                $selectedDSD['url'], $selectedDSD['label']
             );
 			
             // Data Set
             $selectedDS = json_decode(trim($parameters[3]), true);
 			$this->_links [$linkCode] ['selectedDS'] = new DataCube_VocabularyTerms_DataSet(
-                $selectedDS['uri'],$selectedDS['label']
+                $selectedDS['url'],$selectedDS['label']
             );
 			
             // Measures

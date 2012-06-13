@@ -85,6 +85,78 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 			options[current_label]["aggregationMethod"] = current_measure.aggregationMethod;
 		}
 		return options;
-	}
+	},
 	
+	processRetrievedDimensions: function(retrievedDimensions, selectedDimensions) {
+		var processedDimensions = [];
+		
+		//set defaults
+		var retrievedDimensions_length = retrievedDimensions.length;
+		while(retrievedDimensions_length--) {
+			var dimension_current = retrievedDimensions[retrievedDimensions_length];
+			//dimension_current.label;
+			//dimension_current.url_md5;
+			//dimension_current.url;
+			//dimension_current.type;
+			//dimension_current.order;
+			dimension_current.chartAxis = "x";
+			dimension_current.orderDirection = "None";
+			dimension_current.elementCount = 0;
+			dimension_current.selectedElementCount = 0;
+			processedDimensions.push(dimension_current);
+		}
+		
+		//look if there any dimensions exists in selectedDimensions
+		var processedDimensions_length = processedDimensions.length;
+		while(processedDimensions_length--) {
+			var dimension_current = processedDimensions[processedDimensions_length];
+			var selectedDimension_length = selectedDimensions.dimensions.length;
+			while(selectedDimension_length--) {
+				var seldimension_current = selectedDimensions.dimensions[selectedDimension_length];
+							
+				if(seldimension_current.url == dimension_current.url) {
+					processedDimensions[processedDimensions_length] = seldimension_current;
+				}
+			}
+		}
+		
+		//pack everything inside a "dimensions" key
+		return {"dimensions":processedDimensions};
+	},
+	
+	processRetrievedMeasures: function(retrievedMeasures, selectedMeasures) {
+		var processedMeasures = [];
+		
+		//set defaults
+		var retrievedMeasures_length = retrievedMeasures.length;
+		while(retrievedMeasures_length--) {
+			var measure_current = retrievedMeasures[retrievedMeasures_length];
+			//measure_current.label;
+			//measure_current.url_md5;
+			//measure_current.url;
+			//measure_current.type;
+			//measure_current.order;
+			measure_current.aggregationMethod = "sum";
+			measure_current.orderDirection = "None";
+			measure_current.roundValues = "no";
+			processedMeasures.push(measure_current);
+		}
+		
+		//look if there any measures exists in selectedMeasures
+		var processedMeasures_length = processedMeasures.length;
+		while(processedMeasures_length--) {
+			var measure_current = processedMeasures[processedMeasures_length];
+			var selectedMeasure_length = selectedMeasures.measures.length;
+			while(selectedMeasure_length--) {
+				var selmeasure_current = selectedMeasures.measures[selectedMeasure_length];
+							
+				if(selmeasure_current.url == measure_current.url) {
+					processedMeasures[processedMeasures_length] = selmeasure_current;
+				}
+			}
+		}
+		
+		//pack everything inside a "measures" key
+		return {"measures":processedMeasures};
+	}	
 });
