@@ -87,6 +87,29 @@ class CubevizController extends OntoWiki_Controller_Component {
 	/**
 	 * 
 	 */
+	public function getalldimensionselementsAction() {
+		$this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+		
+		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+		$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
+		$dimensions = json_decode($this->_request->getParam('dimensions'), true); // Data Structure Definition
+		
+		$query = new DataCube_Query($model);
+		$result = array();
+		
+		$dimensions_length = sizeof($dimensions["dimensions"]);
+		for($i = 0; $i < $dimensions_length; $i++) {
+			$dim_cur = $dimensions["dimensions"][$i];
+			$result[$dim_cur["label"]] = $query->getComponentElements($dsUrl, $dim_cur["type"]);
+		}		
+		       
+        $this->_response->setBody(json_encode($result));
+	}
+	
+	/**
+	 * 
+	 */
 	public function getcomponentelementsAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();

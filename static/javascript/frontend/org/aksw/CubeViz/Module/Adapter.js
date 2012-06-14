@@ -15,38 +15,31 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	 * Packs selected dimension components into the format compatible
 	 * with the Dialog template
 	 */
-	packDimensionComponentsForTemplate: function(selectedDimensionComponents, selectedDimensions) {
+	packDimensionComponentsForTemplate: function(selectedDimensionComponents) {
 		var packedDimensionComponents = [];
 		var i = 0;
 		for(dimensionComponent in selectedDimensionComponents.selectedDimensionComponents) {
 			var dimcomp_current = selectedDimensionComponents.selectedDimensionComponents[dimensionComponent];
 			
-			for(dimension in selectedDimensions.dimensions) {
-				dim_current = selectedDimensions.dimensions[dimension];
-				
-				if(dimcomp_current.label == dim_current.label) {
-					
-					if(packedDimensionComponents[dimcomp_current.label] == undefined) {
-						packedDimensionComponents[dimcomp_current.label] = [];
-						packedDimensionComponents[dimcomp_current.label]["list"] = [];
-						//if label changed, reset i!
-						i = 0;
-					}
-					packedDimensionComponents[dimcomp_current.label]["list"][i] = [];
-									
-					if(packedDimensionComponents[dimcomp_current.label]["label"] == undefined) {
-						packedDimensionComponents[dimcomp_current.label]["label"] = dimcomp_current.label;
-					}
-					
-					packedDimensionComponents[dimcomp_current.label]["list"][i]["value"] = dimcomp_current.property;
-					
-					packedDimensionComponents[dimcomp_current.label]["list"][i]["label"] = dimcomp_current.property_label;
-					
-					packedDimensionComponents[dimcomp_current.label]["list"][i]["dimension"] = dimcomp_current.label;
-					
-					i++;
-				}			
-			}	
+			if(packedDimensionComponents[dimcomp_current.label] == undefined) {
+				packedDimensionComponents[dimcomp_current.label] = [];
+				packedDimensionComponents[dimcomp_current.label]["list"] = [];
+				//if label changed, reset i!
+				i = 0;
+			}
+			packedDimensionComponents[dimcomp_current.label]["list"][i] = [];
+							
+			if(packedDimensionComponents[dimcomp_current.label]["label"] == undefined) {
+				packedDimensionComponents[dimcomp_current.label]["label"] = dimcomp_current.label;
+			}
+			
+			packedDimensionComponents[dimcomp_current.label]["list"][i]["value"] = dimcomp_current.property;
+			
+			packedDimensionComponents[dimcomp_current.label]["list"][i]["label"] = dimcomp_current.property_label;
+			
+			packedDimensionComponents[dimcomp_current.label]["list"][i]["dimension"] = dimcomp_current.label;
+			
+			i++;	
 		}
 		
 		return packedDimensionComponents;
@@ -158,5 +151,23 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		
 		//pack everything inside a "measures" key
 		return {"measures":processedMeasures};
+	},
+	
+	processRetrievedDimensionComponents: function(retrievedDimComps, selectedDimComps) {
+		var result = [];
+		
+		for(dimCompLabel in retrievedDimComps) {
+			var label_current = dimCompLabel;
+			var dimension_current = retrievedDimComps[label_current];
+			
+			for(component in dimension_current) {
+				result.push( { "property_label": dimension_current[component].property_label,
+							   "property":dimension_current[component].property,
+							   "label":label_current } );
+			}
+			
+			//console.log(dimension_current);
+		}
+		return {"selectedDimensionComponents":result};
 	}	
 });

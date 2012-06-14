@@ -90,7 +90,6 @@ $(function() {
 	$(body).bind("optionsDimensionOpened.CubeViz", function(event) {
 		var elementId = $(event.target).parent().attr("id").split("-");
 		var label_current = elementId[2];
-		
 	});
 	
 	$(body).bind("optionsDimensionClosed.CubeViz", function(event) {
@@ -217,8 +216,8 @@ $(function() {
 		CubeViz_Main_Module.allMeasures = CubeViz_Adapter_Module.processRetrievedMeasures(CubeViz_Ajax_Module.retrievedMeasures,
 																						  CubeViz_Main_Module.selectedMeasures);
 																						  
-		console.log(CubeViz_Main_Module.allMeasures);
-		console.log(CubeViz_Main_Module.selectedMeasures);
+		CubeViz_Main_Module.renderMeasures(CubeViz_Main_Module.allMeasures);
+		CubeViz_Main_Module.renderOptionsForMeasures(CubeViz_Main_Module.allMeasures, CubeViz_Options_Measure_Template);
 	});
 	
 	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function() {		
@@ -226,7 +225,49 @@ $(function() {
 		CubeViz_Main_Module.allDimensions = CubeViz_Adapter_Module.processRetrievedDimensions(CubeViz_Ajax_Module.retrievedDimensions,
 																							  CubeViz_Main_Module.selectedDimensions);
 		
-		//CubeViz_Ajax_Module.getComponentElements(DS_test, dimension_test);
+		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
+	});
+	
+	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function() {
+		CubeViz_Main_Module.allDimensionComponents = CubeViz_Adapter_Module.processRetrievedDimensionComponents(CubeViz_Ajax_Module.retrievedDimensionComponents,
+																												CubeViz_Main_Module.selectedDimensionComponents);
+		// the order is significant here!
+		CubeViz_Main_Module.setDimensionElementCount(CubeViz_Ajax_Module.retrievedDimensionComponents);	
+		CubeViz_Main_Module.renderDimensions(CubeViz_Main_Module.allDimensions);
+		CubeViz_Main_Module.renderOptionsForDimensions(CubeViz_Main_Module.allDimensions, CubeViz_Options_Dimension_Template);
+		CubeViz_Main_Module.renderDialogsForDimensions(CubeViz_Main_Module.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
+	});
+	
+	/******************************************************
+	 * Hooks for binding events after template processing *
+	 ******************************************************/
+	 
+	$(body).bind("dimensionsRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerDimensions();
+	});
+	
+	$(body).bind("measuresRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerMeasures();
+	});
+	
+	$(body).bind("dsdRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerDataStructureDefinition();
+	});
+	
+	$(body).bind("dsRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerDataSet();
+	});
+	
+	$(body).bind("optionsDimensionRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerDimensionOptions();
+	});
+	
+	$(body).bind("optionsMeasureRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerMeasureOptions();
+	});
+	
+	$(body).bind("dialogsRendered.CubeViz", function() {
+		CubeViz_Main_Module.registerDimensionDialogs();
 	});
 	     		
 	/************************

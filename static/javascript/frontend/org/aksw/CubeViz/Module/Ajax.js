@@ -11,7 +11,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	retrievedDS: null,
 	retrievedMeasures: null,
 	retrievedDimensions: null,
-	retrievedComponentElements: null,
+	retrievedDimensionComponents: null,
 	
 	
 	init: function(CubeViz_Parameters) {
@@ -58,11 +58,19 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 		}, this));
 	},
 	
+	getAllDimensionsComponents: function(ds, dimensions) {
+		var action = "getalldimensionselements";
+		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsUrl="+ds.url+"&dimensions="+$.toJSON(dimensions), $.proxy(function(json) {
+			this.retrievedDimensionComponents = json;
+			$(body).trigger("AjaxAllDimensionsComponentsRetrieved.CubeViz");
+		}, this));
+	},
+	
+	// not using this function
 	getComponentElements: function(ds, component) {
 		var action = "getcomponentelements";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsUrl="+ds.url+"&cP="+component.type, $.proxy(function(json) {
 			this.retrievedComponentElements = json;
-			$(body).trigger("AjaxComponentElementsRetrieved.CubeViz");
 		}, this));
 	},
 	
@@ -245,7 +253,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 				  "&m="+this.modelUri,
 			success: function(jsonObject){
 				var applicableCharts = JSON.parse(jsonObject, true);			
-				console.log(applicableCharts);
 			}
 		});
 	}

@@ -185,8 +185,22 @@ class DataCube_Query {
 				$result[$key] = $element['element'];
 			}
         }
-                        
-        return $result;
+        
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
+        
+        foreach($result as $key => $element) {
+            $titleHelper->addResource($element);
+		}
+		
+		
+		//var_dump($result); die;
+		$result_with_labels = array();
+		foreach($result as $key => $element) {
+			$result_with_labels[$key]["property_label"] = $titleHelper->getTitle ( $element );
+			$result_with_labels[$key]["property"] = $element;
+		}
+		                                
+        return $result_with_labels;
     }
 	
 	/**
