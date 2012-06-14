@@ -381,7 +381,7 @@ class DataCube_Query {
      */
     public function getDimensionProperties () {
         
-        $sparql = 'SELECT DISTINCT ?uri ?label WHERE {
+        $sparql = 'SELECT DISTINCT ?url ?label WHERE {
             ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
             OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdfschema#label> ?rdfsLabel }
         };';
@@ -395,7 +395,7 @@ class DataCube_Query {
      */
     public function getMeasureProperties () {
         
-        $sparql = 'SELECT DISTINCT ?uri ?label WHERE {
+        $sparql = 'SELECT DISTINCT ?url ?label WHERE {
             ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
             OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
         };';
