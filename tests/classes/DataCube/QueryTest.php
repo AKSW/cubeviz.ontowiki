@@ -20,7 +20,7 @@ class DataCube_QueryTest extends DataCube_TestCase
         
         // Get test data
         $testResult = array(array(
-            'uri'   => 'http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe',
+            'url'   => 'http://data.lod2.eu/scoreboard/DSD_a110cc8322b900af0121c5860fc1d9fe',
             'label' => 'DataStructure0'
         ));
         
@@ -85,7 +85,7 @@ class DataCube_QueryTest extends DataCube_TestCase
         foreach($queryresultComp as $comp) {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
-                $testResult[$comp['comp']]['uri'] = $comp['comp'];
+                $testResult[$comp['comp']]['url'] = $comp['comp'];
                 $testResult[$comp['comp']]['md5'] = md5($comp['comp']);
                 $testResult[$comp['comp']]['type'] = $comp['comptype'];
                 if($componentType == 'dimension'){
@@ -103,13 +103,13 @@ class DataCube_QueryTest extends DataCube_TestCase
     public function testGetComponentElements()
     {   
         $dsd = $this->_query->getDataStructureDefinition ();
-        $dsd = $dsd [0] ['uri'];
+        $dsd = $dsd [0] ['url'];
         
         $ds = $this->_query->getDataSets ($dsd);         
-        $ds = $ds[0] ['uri'];
+        $ds = $ds[0] ['url'];
         
         $componentProperty = $this->_query->getDimensionProperties ();
-        $componentProperty = $componentProperty [0] ['uri'];
+        $componentProperty = $componentProperty [0] ['url'];
         
         // case 1        
         $result = $this->_query->getComponentElements ( $ds, $componentProperty );
@@ -210,13 +210,13 @@ class DataCube_QueryTest extends DataCube_TestCase
     public function testGetComponentElementCount()
     {   
         $dsd = $this->_query->getDataStructureDefinition ();
-        $dsd = $dsd [0]['uri'];
+        $dsd = $dsd [0]['url'];
         
         $ds = $this->_query->getDataSets ($dsd);         
-        $ds = $ds[0]['uri'];
+        $ds = $ds[0]['url'];
         
         $componentProperty = $this->_query->getDimensionProperties ();
-        $componentProperty = $componentProperty [0] ['uri'];
+        $componentProperty = $componentProperty [0] ['url'];
      
         $result = $this->_query->getComponentElementCount ( $ds, $componentProperty );
         
@@ -292,7 +292,7 @@ class DataCube_QueryTest extends DataCube_TestCase
         
         $measureTypes = array (
             'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046' => array (
-                'uri'   => 'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046',
+                'url'   => 'http://data.lod2.eu/scoreboard/CS_96a30f4c16b4bcbfba54658ec7a99046',
                 'type'  => 'http://data.lod2.eu/scoreboard/properties/value',
                 'order' => '-1'
             )
@@ -322,14 +322,14 @@ class DataCube_QueryTest extends DataCube_TestCase
                     'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39' => array (
                         'index' => 0,
                         'qname' => 'd0',
-                        'uri'   => 'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39',
+                        'url'   => 'http://data.lod2.eu/scoreboard/CS_6446b89c16157a57572faf63ae3abe39',
                         'type'  => 'http://data.lod2.eu/scoreboard/properties/country',
                         'label' => 'country'
                     ),
                     'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5' => array (
                         'index' => 1,
                         'qname' => 'd1',
-                        'uri'   => 'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5',
+                        'url'   => 'http://data.lod2.eu/scoreboard/CS_f50ed29d32cfe1eee6d686359c96f3c5',
                         'type'  => 'http://data.lod2.eu/scoreboard/properties/indicator',
                         'label' => 'indicator'
                     )
