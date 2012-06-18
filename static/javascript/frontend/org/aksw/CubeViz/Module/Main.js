@@ -49,10 +49,15 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint; 
 		this.selectedGraph = CubeViz_Parameters.selectedGraph; 
 		this.selectedDSD = CubeViz_Parameters.selectedDSD; 
+		this.allDSD = [CubeViz_Parameters.selectedDSD]; 
 		this.selectedDS = CubeViz_Parameters.selectedDS; 
+		this.allDS = [CubeViz_Parameters.selectedDS]; 
 		this.selectedMeasures = CubeViz_Parameters.selectedMeasures; 
+		this.allMeasures = CubeViz_Parameters.selectedMeasures; 
 		this.selectedDimensions = CubeViz_Parameters.selectedDimensions; 
+		this.allDimensions = CubeViz_Parameters.selectedDimensions; 
 		this.selectedDimensionComponents = CubeViz_Parameters.selectedDimensionComponents; 
+		this.allDimensionComponents = CubeViz_Parameters.selectedDimensionComponents; 
 		this.modelUrl = CubeViz_Parameters.modelUrl; 
 		this.cubevizPath = CubeViz_Parameters.cubevizPath; 
 		this.backend = CubeViz_Parameters.backend;
@@ -75,19 +80,15 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				   CubeViz_Options_Measure_Template,
 				   CubeViz_Adapter_Module) {
 		try {
-			//containerId = "sidebar-left-data-selection-strc";
-			//this.addItem(containerId, this.selectedDSD);
-			this.renderDSD([this.selectedDSD]);
-			//containerId = "sidebar-left-data-selection-sets";
-			//this.addItem(containerId, this.selectedDS);
-			this.renderDS([this.selectedDS]);
-			this.renderDimensions(this.selectedDimensions);
-			this.renderMeasures(this.selectedMeasures);
+			this.renderDSD(this.allDSD);
+			this.renderDS(this.allDS);
+			this.renderDimensions(this.allDimensions);
+			this.renderMeasures(this.allMeasures);
 			
-			this.renderDialogsForDimensions(this.selectedDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
+			this.renderDialogsForDimensions(this.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
 			
-			this.renderOptionsForDimensions(this.selectedDimensions, CubeViz_Options_Dimension_Template);
-			this.renderOptionsForMeasures(this.selectedMeasures, CubeViz_Options_Measure_Template);
+			this.renderOptionsForDimensions(this.allDimensions, CubeViz_Options_Dimension_Template);
+			this.renderOptionsForMeasures(this.allMeasures, CubeViz_Options_Measure_Template);
 			
 		} catch(error) {
 			throw error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.";
@@ -113,8 +114,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	}, 
 	
 	registerUiEvents: function() {
-		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+		for(dimension in this.allDimensions.dimensions) {
+			var dimension_current = this.allDimensions.dimensions[dimension];
 			
 			this.registerOpenDialog(dimension_current.label);
 			this.registerCloseDialog(dimension_current.label);
@@ -126,8 +127,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.registerDimensionCheckBox(dimension_current.label);
 		}
 		
-		for(measure in this.selectedMeasures.measures) {
-			var measure_current = this.selectedMeasures.measures[measure];
+		for(measure in this.allMeasures.measures) {
+			var measure_current = this.allMeasures.measures[measure];
 			
 			this.registerOptionsMeasureOpen(measure_current.label);
 			this.registerOptionsMeasureClose(measure_current.label);
@@ -495,68 +496,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 * UI interactions *
 	 *******************/
 	
-	checkSelectedData: function() {
-		//for scoreboard 3 dimensions should be chosen!
-		
-		//if options for chosen dimension X not specified
-		for(var selectedDimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[selectedDimension];
-			
-			var orderDirection = dimension_current.orderDirection;
-			var axis = dimension_current.chartAxis;
-			
-			if(orderDirection == "None" || 
-			   orderDirection == "Ascending" || 
-			   orderDirection == "Descending" ) {
-				//everything is okay
-			} else {
-                dimension_current.orderDirection = "None";
-			}
-			
-			if(axis == "x" ||
-			   axis == "y" ||
-			   axis == "z") {
-				//everything is okay
-			} else { 
-                dimension_current.chartAxis = "x";
-		    }	
-		}
-		
-		// measure is chosen ?
-		
-		//check chosen measure options
-		for(selectedMeasure in this.selectedMeasures.measures) {
-			measure_current = this.selectedMeasures.measures[selectedMeasure];
-			var aggregationMethod = measure_current.aggregationMethod;
-			var orderDirection = measure_current.orderDirection;
-			var roundValues = measure_current.roundValues;
-			
-			if(aggregationMethod == "sum" ||
-			   aggregationMethod == "average" ||
-			   aggregationMethod == "minimum" ||
-			   aggregationMethod == "maximum") {
-				//everything okay, captain!
-			} else {
-				measure_current.aggregationMethod = "sum";
-			}
-			
-			if(orderDirection == "None" ||
-			   orderDirection == "Ascending" ||
-			   orderDirection == "Descending") {
-				//everything okay, captain!
-			} else {
-				measure_current.orderDirection = "None";
-			}
-			
-			if(roundValues == "yes" ||
-			   roundValues == "no") {
-				//everything okay, captain!
-			} else {
-				measure_current.roundValues = "no";
-			}
-		}
-	},
-	
 	/**
 	 * Input: no input, works with namespace vars
 	 * Action: make a URI for saving configuration into file
@@ -598,10 +537,10 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		var selectedElements = $(dialog_current).find("input:checked").length;
 		
 		// set selectedElements to the selectedDimensions object
-		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+		for(dimension in this.allDimensions.dimensions) {
+			var dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimension_current.label == dimensionLabel) {
-				this.selectedDimensions.dimensions[dimension].selectedElementCount = selectedElements;
+				this.allDimensions.dimensions[dimension].selectedElementCount = selectedElements;
 			}
 		}
 		
@@ -613,8 +552,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateDimensionElementCount: function(dimensionLabel) {
-		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+		for(dimension in this.allDimensions.dimensions) {
+			var dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimensionLabel == dimension_current.label) {
 				var selectedElements = dimension_current.selectedElementCount + "/";
 				$("#dialog-" + dimensionLabel + "-selected-items").html (selectedElements);
@@ -662,77 +601,80 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 * Setters and getters *
 	 ***********************/
 	 
-	setDSD: function(newDSD) {
-		this.selectedDSD = newDSD;
-	},
-	
-	setDS: function(newDS) {
-		this.selectedDS = newDS;
-	},
-	
-	
 	/*********************************************************
 	 * STARTOF: Check if I can merge four functions into two *
 	 *********************************************************/
-	 
+		 
 	getDimensionByLabel: function(label) {
-		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+		for(dimension in this.allDimensions.dimensions) {
+			var dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimension_current.label == label) {
 				return dimension_current;
 			}
 		}
-		throw new "There is no dimesions with "+label+" label in selectedDimensions array!";
+		throw "There is no dimesions with "+label+" label in allDimensions array!";
 	},
 	
-	setDimension: function(newDimension) {
-		var index = "Make an new array element!";
+	updateDimension: function(newDimension) {
+		for(dimension in this.allDimensions.dimensions) {
+			var dimension_current = this.allDimensions.dimensions[dimension];
+			
+			if(dimension_current.label == newDimension.label) {
+				this.allDimensions.dimensions[dimension] = newDimension;
+				return;
+			} 
+		}
+		
+		console.error("No dimension with label "+newDimension.label+" found in allDimensions array. Can't update.");	
+	},
+	
+	updateSelectedDimension: function(newDimension) {
 		for(dimension in this.selectedDimensions.dimensions) {
 			var dimension_current = this.selectedDimensions.dimensions[dimension];
 			
 			if(dimension_current.label == newDimension.label) {
-				index = dimension;
-				break;
-			} else {
-				index = "Make an new array element!";
-			}
+				this.selectedDimensions.dimensions[dimension] = newDimension;
+				return;
+			} 
 		}
 		
-		if(isNaN(index)) {
-			this.selectedDimensions.dimensions.push(newDimension);
-		} else {
-			this.selectedDimensions.dimensions[index] = newDimension;
-		}		
+		console.error("No dimension with label "+newDimension.label+" found in selectedDimensions array. Can't update.");	
 	},
 	
 	getMeasureByLabel: function(label) {
-		for(measure in this.selectedMeasures.measures) {
-			var measure_current = this.selectedMeasures.measures[measure];
+		for(measure in this.allMeasures.measures) {
+			var measure_current = this.allMeasures.measures[measure];
 			if(measure_current.label == label) {
 				return measure_current;
 			}
 		}
-		throw new "There is no measures with "+label+" label in selectedMeasures array!";
+		console.error( "There is no measures with "+label+" label in selectedMeasures array!");
 	},
 	
-	setMeasure: function(newMeasure) {
-		var index = "Make an new array element!";
+	updateMeasure: function(newMeasure) {
+		for(measure in this.allMeasures.measures) {
+			var measure_current = this.allMeasures.measures[measure];
+			
+			if(measure_current.label == newMeasure.label) {
+				this.allMeasures.measures[measure] = newMeasure;
+				return;
+			} 
+		}
+		
+		console.error("No measure with label "+newMeasure.label+" found in allMeasures array. Can't update.");	
+	},
+	
+	updateSelectedMeasure: function(newMeasure) {
 		for(measure in this.selectedMeasures.measures) {
 			var measure_current = this.selectedMeasures.measures[measure];
 			
 			if(measure_current.label == newMeasure.label) {
-				index = measure;
-				break;
-			} else {
-				index = "Make an new array element!";
-			}
+				this.selectedMeasures.measures[measure] = newMeasure;
+				return;
+			} 
 		}
 		
-		if(isNaN(index)) {
-			this.selectedMeasures.measures.push(newMeasure);
-		} else {
-			this.selectedMeasures.measures[index] = newMeasure;
-		}	
+		console.error("No measure with label "+newMeasure.label+" found in selectedMeasures array. Can't update.");	
 	},
 	
 	setDimensionElementCount: function(dimensionComponents) {
@@ -744,6 +686,16 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				}
 			}
 		}
+	},
+	
+	getDimensionComponentByUrl: function(url) {
+		for(component in this.allDimensionComponents.selectedDimensionComponents) {
+			var component_current = this.allDimensionComponents.selectedDimensionComponents[component];
+			if(component_current.property == url) {
+				return component_current;
+			}
+		}
+		console.error( "There is no dimension component "+url+" in allDimensionComponents array!");
 	},
 	
 	/*******************************************************
@@ -820,5 +772,72 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				}
 			}
 		});
-	}
+	},
+	
+	/*******************
+	 * Selecting stuff *
+	 *******************/
+	 
+	selectDSD: function(newDSD) {
+		this.selectedDSD = newDSD;
+	},
+	
+	selectDS: function(newDS) {
+		this.selectedDS = newDS;
+	},
+	
+	selectDimension: function(dimension) {
+		this.selectedDimensions.dimensions.push(dimension); 
+		//console.error("There is no dimesions with "+label+" label in selectedDimensions array!");
+	},
+
+	unselectDimension: function(label) {
+		for(dimension in this.selectedDimensions.dimensions) {
+			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			if(dimension_current.label == label) {
+				delete this.selectedDimensions.dimensions[dimension];
+				this.selectedDimensions.dimensions = this.cleanUpArray(this.selectedDimensions.dimensions);
+				return;
+			}
+		}
+		console.error("There is no dimesions with "+label+" label in selectedDimensions array!");
+	},
+	
+	selectMeasure: function(measure) {
+		this.selectedMeasures.measures.push(measure); 
+	},
+	
+	unselectMeasure: function(label) {
+		for(measure in this.selectedMeasures.measures) {
+			var measure_current = this.selectedMeasures.measures[measure];
+			if(measure_current.label == label) {
+				delete this.selectedMeasures.measures[measure]; 
+				this.selectedMeasures.measures = this.cleanUpArray(this.selectedMeasures.measures);
+				return;
+			}
+		}
+		console.error("There is no measures with "+label+" label in selectedMeasures array!");
+	},
+	
+	selectDimensionComponent: function(component) {
+		this.selectedDimensionComponents.selectedDimensionComponents.push(component); 
+	},
+	
+	unselectDimensionComponent: function(url) {
+		for(component in this.selectedDimensionComponents.selectedDimensionComponents) {
+			var component_current = this.selectedDimensionComponents.selectedDimensionComponents[component];
+			if(component_current.property == url) {
+				delete this.selectedDimensionComponents.selectedDimensionComponents[component]; 
+				this.selectedDimensionComponents.selectedDimensionComponents = this.cleanUpArray(this.selectedDimensionComponents.selectedDimensionComponents);
+				return;
+			}
+		}
+		console.error("There is no dimension component "+url+" in selectedDimensionComponents array!");
+	},
+	
+	cleanUpArray: function(arr) {
+		var newArr = new Array();for (var k in arr) if(arr[k]) newArr.push(arr[k]);
+		return newArr;
+	},
+	
 });

@@ -82,7 +82,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	
 	processRetrievedDimensions: function(retrievedDimensions, selectedDimensions) {
 		var processedDimensions = [];
-		
+				
 		//set defaults
 		var retrievedDimensions_length = retrievedDimensions.length;
 		while(retrievedDimensions_length--) {

@@ -34,10 +34,9 @@ $(function() {
 							 CubeViz_Options_Measure_Template,
 							 CubeViz_Adapter_Module);
 						   
-	
 	CubeViz_Main_Module.setControlElements();					     
 	CubeViz_Main_Module.registerUiEvents();
-
+	
 	/*********************
 	 * UI event handling *
 	 *********************/
@@ -58,6 +57,15 @@ $(function() {
 		var label_current = elementClass[3];
 		
 		CubeViz_Main_Module.recalculateSelectedElementsCount(label_current);
+		
+		var isComponentSelected = $(event.target).attr('checked');
+		var url = $(event.target).val();
+		if(isComponentSelected) {
+			var component = CubeViz_Main_Module.getDimensionComponentByUrl(url);
+			CubeViz_Main_Module.selectDimensionComponent(component);
+		} else {
+			CubeViz_Main_Module.unselectDimensionComponent(url);
+		}
 	});		           
 	
 	$(body).bind("dialogMaxDimensionComponentsExceeded.CubeViz", function(event) {
@@ -78,13 +86,13 @@ $(function() {
 	$(body).bind("dataStructureDefinitionClicked.CubeViz", function(event) {
 		var newDSD = {"url": $(event.target).find(":selected").val(),
 					       "label": $(event.target).find(":selected").text() };
-		CubeViz_Main_Module.setDSD(newDSD);
+		CubeViz_Main_Module.selectDSD(newDSD);
 	});		      
 	
 	$(body).bind("dataSetClicked.CubeViz", function(event) {
 		var newDS = {"url": $(event.target).find(":selected").val(),
 					  "label": $(event.target).find(":selected").text() };
-		CubeViz_Main_Module.setDS(newDS);
+		CubeViz_Main_Module.selectDS(newDS);
 	});		          
 	
 	$(body).bind("optionsDimensionOpened.CubeViz", function(event) {
@@ -105,7 +113,8 @@ $(function() {
 		var newOrderDirection = $(event.target).val();
 		var newDimension = CubeViz_Main_Module.getDimensionByLabel(label_current);
 		newDimension.orderDirection = newOrderDirection;
-		CubeViz_Main_Module.setDimension(newDimension);
+		CubeViz_Main_Module.updateDimension(newDimension);
+		CubeViz_Main_Module.updateSelectedDimension(newDimension);
 	});
 	
 	$(body).bind("optionsDimensionChartAxisClicked.CubeViz", function(event) {
@@ -115,8 +124,8 @@ $(function() {
 		var newChartAxis = $(event.target).val();
 		var newDimension = CubeViz_Main_Module.getDimensionByLabel(label_current);
 		newDimension.chartAxis = newChartAxis;
-		CubeViz_Main_Module.setDimension(newDimension);
-	
+		CubeViz_Main_Module.updateDimension(newDimension);
+		CubeViz_Main_Module.updateSelectedDimension(newDimension);
 	});
 	
 	$(body).bind("optionsMeasureOpened.CubeViz", function(event) {
@@ -138,7 +147,8 @@ $(function() {
 		var newAggregationMethod = $(event.target).val();
 		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
 		newMeasure.aggregationMethod = newAggregationMethod;
-		CubeViz_Main_Module.setMeasure(newMeasure);
+		CubeViz_Main_Module.updateMeasure(newMeasure);
+		CubeViz_Main_Module.updateSelectedMeasure(newMeasure);
 	});
 	
 	$(body).bind("optionsMeasureOrderDirectionClicked.CubeViz", function(event) {
@@ -148,7 +158,8 @@ $(function() {
 		var newOrderDirection = $(event.target).val();
 		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
 		newMeasure.orderDirection = newOrderDirection;
-		CubeViz_Main_Module.setMeasure(newMeasure);
+		CubeViz_Main_Module.updateMeasure(newMeasure);
+		CubeViz_Main_Module.updateSelectedMeasure(newMeasure);
 	});
 	
 	$(body).bind("optionsMeasureRoundValuesClicked.CubeViz", function(event) {
@@ -158,22 +169,41 @@ $(function() {
 		var newRoundValues = $(event.target).val();
 		var newMeasure = CubeViz_Main_Module.getMeasureByLabel(label_current);
 		newMeasure.roundValues = newRoundValues;
-		CubeViz_Main_Module.setMeasure(newMeasure);
+		CubeViz_Main_Module.updateMeasure(newMeasure);
+		CubeViz_Main_Module.updateSelectedMeasure(newMeasure);
 	});
 	
 	$(body).bind("dimensionCheckBoxClicked.CubeViz", function(event) {
 		var elementId = $(event.target).attr("id").split("-");
 		var label_current = elementId[6];
 		
+		var isDimensionSelected = $(event.target).attr('checked');
+		if(isDimensionSelected) {
+			var dimension = CubeViz_Main_Module.getDimensionByLabel(label_current);
+			CubeViz_Main_Module.selectDimension(dimension);
+		} else {
+			CubeViz_Main_Module.unselectDimension(label_current);
+		}
+		
+		console.log(CubeViz_Main_Module.selectedDimensions);
 	});
 	
 	$(body).bind("measureCheckBoxClicked.CubeViz", function(event) {
 		var elementId = $(event.target).attr("id").split("-");
 		var label_current = elementId[6];
+		
+		var isMeasureSelected = $(event.target).attr('checked');
+		if(isMeasureSelected) {
+			var measure = CubeViz_Main_Module.getMeasureByLabel(label_current);
+			CubeViz_Main_Module.selectMeasure(measure);
+		} else {
+			CubeViz_Main_Module.unselectMeasure(label_current);
+		}
+		
+		console.log(CubeViz_Main_Module.selectedMeasures);
 	});
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
-		CubeViz_Main_Module.checkSelectedData();
 		var config = CubeViz_Main_Module.makeConfig();
 		console.log(config);
 	});
