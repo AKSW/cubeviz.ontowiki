@@ -1,4 +1,5 @@
 <!-- Libraries -->
+<script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/libraries/highcharts/highcharts.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/libraries/json2.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/libraries/namespacedotjs/Namespace.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/libraries/json-template.min.js"></script>
@@ -28,27 +29,40 @@
 		modelUrl: "<?php echo $this->modelUrl_index; ?>",
 		cubevizPath: <?php echo json_encode($this->cubevizPath_index); ?>,
 		backend: <?php echo json_encode($this->backend_index); ?>,
-		chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"]
+		chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"],
+        visualizationContainer: "container"
 	}
+    
+    // Examples for a raw output from the backend
+    var example = {
+        "observation1": [
+            {
+                "year": [
+                    2008
+                ],
+                "country": [
+                    "Germany"
+                ],
+                "measure": [
+                    8.5
+                ]
+            },
+            {
+                "year": [
+                    2009
+                ],
+                "country": [
+                    "Germany"
+                ],
+                "measure": [
+                    15
+                ]
+            }
+        ]
+    };
+    
+    
 	
 </script>
 
-<div id="wrapper">
-	<div id="content-wrapper">
-	    <div id="site-overlay">&nbsp;</div>
-	</div>
-</div>
-
-<!-- If model is not selected does not charts icon set-->
-<div id="chart-selection">
-    <div id="chart-selection-container">
-        <!-- If you add new chart option, please, redefine org.aksw.cubeViz.Index.Main.availableChartTypes
-             in index.js file-->
-        <img id="chart-selection-bar" src="<?php echo $this->basePath_index; ?>images/bars.png"/>
-        <img id="chart-selection-line" src="<?php echo $this->basePath_index; ?>images/lines.png"/>
-        <img id="chart-selection-area" src="<?php echo $this->basePath_index; ?>images/areas.png"/>
-        <img id="chart-selection-splines" src="<?php echo $this->basePath_index; ?>images/splines.png"/>
-        <img id="chart-selection-table" src="<?php echo $this->basePath_index; ?>images/table.png"/>
-        <input type="hidden" id="chart-selection-selected-chart" value="bars">
-    </div>
-</div>
+<div id="container"></div>
