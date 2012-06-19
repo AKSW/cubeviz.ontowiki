@@ -1,19 +1,34 @@
 $(document).ready(function(){
-	
-	//console.log(CubeViz_Parameters);
-    // AJAX call to get observations
-    
-    // dummy data retrieval
-    
-    // initialize the chart.js
-    
-    
+	    
     // Include neccessary namespaces
     Namespacedotjs.include('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart');	
     
     // Instanciate objects
     var barChart = org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart;
-    var barChartInput = barChart.getChartInput ();
     
-    var chart = new Highcharts.Chart(barChartInput);
+    barChart.init (
+    
+        // dimension assignment
+        ["country", "indicator", "year"], 
+        
+        // measure assignment
+        ["measure"], 
+        
+        // datafilter
+        {},
+        
+        // visualization filter
+        {}
+    );
+    
+    try {
+        // Generate HighChart configuration object for a BarChart
+        var barChartInput = barChart.getChartInput (exampleData);
+        
+        // Visualize it
+        var chart = new Highcharts.Chart(barChartInput);
+        
+    } catch ( e ) {
+        alert ( e.message );
+    }
 });
