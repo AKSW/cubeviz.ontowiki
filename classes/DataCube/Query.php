@@ -232,6 +232,7 @@ class DataCube_Query {
         $internalNameTable = array ();       
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
 
+		// change to CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . ?s a qb:Observation . }
         $sparqlSelect = 'SELECT ';
         $sparqlWhere  = ' WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'> .

@@ -56,12 +56,6 @@ class CubevizModule extends OntoWiki_Module
 		// get chartType from the browser link
         $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'pie';
 		
-		if($this->isChartTypeSupported($chartType)) {
-			// everything okay
-		} else {
-			throw new CubeViz_Exception ('Chart type is not supported!');
-		}
-		
 		// get lC from the browser link - pointing to the file
 		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
 		
@@ -73,7 +67,7 @@ class CubevizModule extends OntoWiki_Module
 		$this->view->modelUrl = $_REQUEST['m'];
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
-		
+				
         $content = $this->render('static/pages/CubeVizModule');
         return $content;
     }
@@ -82,26 +76,6 @@ class CubevizModule extends OntoWiki_Module
         return "inline";
     }
     
-    /**
-     * Check if $chartType is supported by application
-     * Supported chartTypes are located at config/charttypes/
-     * example of chartType file filename: pie.json
-     */
-    private function isChartTypeSupported($chartType) {
-		//get available chart types
-		$DataCubeChart = new DataCube_Chart();
-		$availableChartTypes = $DataCubeChart->getAvailableChartTypes();
-		
-		//look for chartType in availableChartTypes array()
-		$availableChartTypes_length = sizeof($availableChartTypes);
-		while($availableChartTypes_length--) {
-			if($chartType == $availableChartTypes[$availableChartTypes_length]) {
-				return true;
-			}			
-		}
-		return false;
-	}
-
 }
 
 
