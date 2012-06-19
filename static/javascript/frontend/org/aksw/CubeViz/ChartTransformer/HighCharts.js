@@ -1,7 +1,7 @@
 Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts', {
     
     /**
-     * Represents an Exceptions, especially for HighCharts
+     * Represents an Exception for HighCharts
      */
     Exception: function (message) {
         this.name = "HighCharts Exception";

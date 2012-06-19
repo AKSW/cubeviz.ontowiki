@@ -1,5 +1,7 @@
 Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     
+    rawData: {},
+    
     /**
      * Default configuration for a BarChart (HighChart)
      */
@@ -23,30 +25,92 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
      * This contains an adapted version of the defaultHighChartConfig variable
      * and will be modify during getChartInput function.
      */
-    activeHighChartConfig: {
-    },
+    activeHighChartConfig: {},
     
     /**
      * 
      */
     configuration: {
-        'dimensions': [],
-        'measures': []
+        "dimensions": [],
+        "measures": [],
+        "xAxisAssignment": "measure",
+        "yAxisAssignment": "multipleDimension"
     },
     
     /**
-     * @param configuration Contains information about what are the dimensions and measures.
-     * @param dataFilter
-     * @param visualizationFilter
+     * @param 
      */
-    init: function (dimensionsAssignment, measuresAssignment, dataFilter, visualizationFilter) {
+    init: function (rawData, renderToContainer, dimensionsAssignment, measuresAssignment, 
+                     xAxisAssignment, yAxisAssignment) {
+        
+        // Reset activeHighChartConfig to defaultHighChartConfig
+        this.activeHighChartConfig = this.defaultHighChartConfig;
+        
+        this.activeHighChartConfig.chart.renderTo = renderToContainer || "container";
+        
+        
+        this.rawData = rawData;
         
         // Set dimensions assignment
         this.configuration.dimensions = dimensionsAssignment || this.configuration.dimensions;
         
         // Set measure assignment
         this.configuration.measures = measuresAssignment || this.configuration.measures;
+        
+        // Set x axis assignment
+        this.setXAxisAssignment ( xAxisAssignment );
+        
+        // Set y axis assignment
+        this.setYAxisAssignment ( yAxisAssignment );
     },    
+    
+    /**
+     * 
+     */
+    setXAxisAssignment: function (assignment) {
+        if ( "measure" == assignment || "multipleDimension" == assignment ) {
+            
+            this.configuration.xAxisAssignment = assignment;
+            this.configuration.yAxisAssignment = "measure" == assignment 
+                ? "multipleDimension" : "measure";
+                
+            this.activeHighChartConfig.chart.inverted = "measure" == assignment
+                ? true : false;
+            
+            return true;
+        } 
+        
+        Namespacedotjs.include('org.aksw.CubeViz.ChartTransformer.HighCharts');
+        var HighCharts = org.aksw.CubeViz.ChartTransformer.HighCharts;
+        throw new HighCharts.Exception (
+            "Invalid x axis assignment, valid are measure and multipleDimension! " +
+            "But i got " + assignment 
+        );
+    },
+    
+    /**
+     * 
+     */
+    setYAxisAssignment: function (assignment) {
+        if ( "measure" == assignment || "multipleDimension" == assignment ) {
+            
+            this.configuration.yAxisAssignment = assignment;
+            this.configuration.xAxisAssignment = "measure" == assignment 
+                ? "multipleDimension" : "measure";
+                
+            this.activeHighChartConfig.chart.inverted = "measure" == assignment
+                ? false : true;
+                
+            return true;
+        } 
+        
+        Namespacedotjs.include('org.aksw.CubeViz.ChartTransformer.HighCharts');
+        var HighCharts = org.aksw.CubeViz.ChartTransformer.HighCharts;
+        throw new HighCharts.Exception (
+            "Invalid y axis assignment, valid are measure and multipleDimension! " +
+            "But i got " + assignment 
+        );
+    },
     
     /**
      * Check if everything is ok for execute getChartInput
@@ -70,21 +134,97 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     },
     
     /**
+     * Extracts all dimensions which appears two times and more
+     * @return array List of dimension names which appears two times and more
+     */
+    getMultipleDimensions: function () {
+        
+        var i = 0;
+        var checkObservation = null;
+        var multipleDimensions = [];
+        
+        for (var currentObservation in this.rawData) {
+            if (null == checkObservation) {
+                checkObservation = this.rawData [currentObservation];
+            } else {
+                
+                currentObservation = this.rawData [currentObservation];              
+                
+                // now we are in second iteration
+                for (var key in checkObservation) {
+                    // check all properties of both observation objects
+                    // add to multipleDimensions list all of them 
+                    // which differs for the same key
+                    if(currentObservation[key] != checkObservation [key] && 
+                       -1 == $.inArray(key, this.configuration.measures) ) {
+                        multipleDimensions.push (key);
+                    }                
+                }                
+            }
+            if ( 2 == ++i ) break;
+        }
+        
+        return multipleDimensions;
+    },
+    
+    /**
+     * Will set activeHighChartConfig.xAxis.categories entry and it depends on configuration.xAxisAssignment
+     */
+    setXAxis: function () {
+        
+        this.activeHighChartConfig.xAxis.categories = [];
+        
+        var multipleDimensions = this.getMultipleDimensions ();
+            
+        for (var currentObservation in this.rawData) {
+            currentObservation = this.rawData [currentObservation];
+            
+            // iterate over dimensions and measures
+            for ( var key in currentObservation ) {
+                if(-1 != $.inArray(key, multipleDimensions)) {
+                    this.activeHighChartConfig.xAxis.categories.push ( 
+                        currentObservation [key]
+                    );
+                }
+            } 
+        }  
+    },
+    
+    /**
+     * Will set activeHighChartConfig.series entry and it depends on configuration.yAxisAssignment
+     */
+    setYAxis: function () {
+        
+        this.activeHighChartConfig.series = [{data:[]}];
+        
+        for (var currentObservation in this.rawData) {
+            currentObservation = this.rawData [currentObservation];
+            
+            // iterate over dimensions and measures
+            for ( var key in currentObservation ) {
+                if(-1 != $.inArray(key, this.configuration.measures)){
+                    this.activeHighChartConfig.series[0].data.push (
+                        currentObservation [key]
+                    );
+                }
+            } 
+        }   
+    },
+    
+    /**
      * @param rawData JSON object from server (result of an SPARQL query)
      * @throw org.aksw.CubeViz.ChartTransformer.HighCharts.Exception
      * @return
      */
-    getChartInput: function (rawData) {
+    getChartInput: function () {
              
+        // Check if everything is fine and we can start to build the chart input
         this._check ();
              
-        for (var currentObservation in rawData) {
-            currentObservation = rawData [currentObservation];
-            
-            // iterate over dimensions and measures
-            for ( var key in currentObservation ) {
-                console.log ( key + ": " + currentObservation [key] );
-            } 
-        }   
+        this.setXAxis ();
+        
+        this.setYAxis ();
+        
+        return this.activeHighChartConfig;
     }
 });
