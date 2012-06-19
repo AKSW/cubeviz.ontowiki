@@ -134,8 +134,8 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     },
     
     /**
-     * Extracts all dimensions which appears two times and more
-     * @return array List of dimension names which appears two times and more
+     * Extracts all dimensions which appears two or more times
+     * @return array List of dimension names which appears two or more times
      */
     getMultipleDimensions: function () {
         
@@ -168,47 +168,40 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     },
     
     /**
-     * Will set activeHighChartConfig.xAxis.categories entry and it depends on configuration.xAxisAssignment
+     * 
      */
-    setXAxis: function () {
+    setAxes: function () {
         
+        // Reset particular properties of highchart config
         this.activeHighChartConfig.xAxis.categories = [];
-        
-        var multipleDimensions = this.getMultipleDimensions ();
-            
-        for (var currentObservation in this.rawData) {
-            currentObservation = this.rawData [currentObservation];
-            
-            // iterate over dimensions and measures
-            for ( var key in currentObservation ) {
-                if(-1 != $.inArray(key, multipleDimensions)) {
-                    this.activeHighChartConfig.xAxis.categories.push ( 
-                        currentObservation [key]
-                    );
-                }
-            } 
-        }  
-    },
-    
-    /**
-     * Will set activeHighChartConfig.series entry and it depends on configuration.yAxisAssignment
-     */
-    setYAxis: function () {
-        
         this.activeHighChartConfig.series = [{data:[]}];
         
+        // Get and save all dimensions which appears two or more times
+        var multipleDimensions = this.getMultipleDimensions ();
+        
         for (var currentObservation in this.rawData) {
+            
+            // shortcut 
             currentObservation = this.rawData [currentObservation];
             
             // iterate over dimensions and measures
             for ( var key in currentObservation ) {
+                
+                // set y-Axis value, if key is a measure
                 if(-1 != $.inArray(key, this.configuration.measures)){
                     this.activeHighChartConfig.series[0].data.push (
                         currentObservation [key]
                     );
                 }
+                
+                // set x-Axis value, if key is one of the multipleDimensions
+                else if(-1 != $.inArray(key, multipleDimensions)) {
+                    this.activeHighChartConfig.xAxis.categories.push ( 
+                        currentObservation [key]
+                    );
+                }
             } 
-        }   
+        } 
     },
     
     /**
@@ -221,9 +214,7 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         // Check if everything is fine and we can start to build the chart input
         this._check ();
              
-        this.setXAxis ();
-        
-        this.setYAxis ();
+        this.setAxes ();
         
         return this.activeHighChartConfig;
     }
