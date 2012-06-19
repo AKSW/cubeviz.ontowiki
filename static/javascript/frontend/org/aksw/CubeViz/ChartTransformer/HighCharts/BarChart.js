@@ -34,14 +34,15 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         "dimensions": [],
         "measures": [],
         "xAxisAssignment": "measure",
-        "yAxisAssignment": "multipleDimension"
+        "yAxisAssignment": "multipleDimension",
+        "captionEntrySeparator": ", "
     },
     
     /**
      * @param 
      */
     init: function (rawData, renderToContainer, dimensionsAssignment, measuresAssignment, 
-                     xAxisAssignment, yAxisAssignment) {
+                     xAxisAssignment, yAxisAssignment, captionEntrySeparator) {
         
         // Reset activeHighChartConfig to defaultHighChartConfig
         this.activeHighChartConfig = this.defaultHighChartConfig;
@@ -62,6 +63,9 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         
         // Set y axis assignment
         this.setYAxisAssignment ( yAxisAssignment );
+        
+        // Set separator for the chart caption
+        this.configuration.captionEntrySeparator = captionEntrySeparator || this.configuration.captionEntrySeparator;
     },    
     
     /**
@@ -173,6 +177,8 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     setAxes: function () {
         
         // Reset particular properties of highchart config
+        // xAxis.categories:    captions for the multiple dimensions
+        // series:              values for the measure
         this.activeHighChartConfig.xAxis.categories = [];
         this.activeHighChartConfig.series = [{data:[]}];
         
@@ -205,6 +211,45 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     },
     
     /**
+     *
+     */
+    setCaption: function () {
+        
+        // Reset caption
+        this.activeHighChartConfig.title = {text:""};
+        
+        // Get and save all dimensions which appears two or more times
+        var multipleDimensions = this.getMultipleDimensions ();
+        
+        var firstEntry = true;
+        
+        for (var currentObservation in this.rawData) {
+            // shortcut 
+            currentObservation = this.rawData [currentObservation];
+            
+            // iterate over dimensions and measures
+            for ( var key in currentObservation ) {
+                // set x-Axis value, if key is one of the multipleDimensions
+                if(-1 == $.inArray(key, multipleDimensions) && 
+                   -1 == $.inArray(key, this.configuration.measures)) {
+                    
+                    if (false == firstEntry) {
+                        this.activeHighChartConfig.title.text += this.configuration.captionEntrySeparator;
+                    }
+                    
+                    this.activeHighChartConfig.title.text += currentObservation [key];
+                        
+                    firstEntry = false;
+                }
+            }
+            
+            // We can break now, because we only use dimension with fixed values
+            // and in next iteration there are no more new valus
+            break;
+        }
+    },
+    
+    /**
      * @param rawData JSON object from server (result of an SPARQL query)
      * @throw org.aksw.CubeViz.ChartTransformer.HighCharts.Exception
      * @return
@@ -215,6 +260,8 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         this._check ();
              
         this.setAxes ();
+        
+        this.setCaption ();
         
         return this.activeHighChartConfig;
     }

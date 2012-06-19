@@ -24,7 +24,10 @@ $(document).ready(function(){
         "measure",
         
         // y axis assignment
-        "multipleDimension"
+        "multipleDimension",
+        
+        // caption entry separator
+        ", "
     );
     
     try {
