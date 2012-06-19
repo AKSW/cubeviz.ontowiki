@@ -110,16 +110,34 @@ class CubevizController extends OntoWiki_Controller_Component {
 	/**
 	 * 
 	 */
-	public function getcomponentelementsAction() {
+	public function savelinktofileAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
-		$componentProperty = $this->_request->getParam('cP'); // Data Structure Definition
-				
+		//$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+		//$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
+		//$dimensions = json_decode($this->_request->getParam('dimensions'), true); // Data Structure Definition
+		$config['sparqlEndpoint'] = $this->_request->getParam('sparqlEndpoint');
+		$config['selectedGraph'] = $this->_request->getParam('modelUrl');
+		$config['selectedDSD'] = $this->_request->getParam('selectedDSD');
+		$config['selectedDS'] = $this->_request->getParam('selectedDS');
+		$config['selectedMeasures'] = $this->_request->getParam('selectedMeasures');
+		$config['selectedDimensions'] = $this->_request->getParam('selectedDimensions');
+		$config['selectedDimensionComponents'] = $this->_request->getParam('selectedDimensionComponents');
+		$config['selectedChartType'] = $this->_request->getParam('selectedChartType');
+
+		$configuration = new CubeViz_ConfigurationLink();
+		$result = $configuration->writeToFile($config);
+		
+		/*
 		$query = new DataCube_Query($model);
-				
-        $this->_response->setBody(json_encode($query->getComponentElements($dsUrl, $componentProperty)));
+		$result = array();
+		
+		$dimensions_length = sizeof($dimensions["dimensions"]);
+		for($i = 0; $i < $dimensions_length; $i++) {
+			$dim_cur = $dimensions["dimensions"][$i];
+			$result[$dim_cur["label"]] = $query->getComponentElements($dsUrl, $dim_cur["type"]);
+		}		*/      
+        $this->_response->setBody(json_encode($result));
 	}
 }

@@ -20,7 +20,7 @@ class DataCube_VocabularyTerms_DimensionFactory extends ArrayObject
 		$selectedDimensions_length = sizeof($selectedDimensions["dimensions"]);
 		while($selectedDimensions_length--) {
 			$current_dimension = $selectedDimensions["dimensions"][$selectedDimensions_length];
-			$dimension = new DataCube_VocabularyTerms_Dimension($current_dimension['url'], $current_dimension['md5'], $current_dimension['label'], 
+			$dimension = new DataCube_VocabularyTerms_Dimension($current_dimension['url'], $current_dimension['url_md5'], $current_dimension['label'], 
 										    $current_dimension['type'], $current_dimension['order'], $current_dimension['chartAxis'],
 										    $current_dimension['orderDirection'], $current_dimension['elementCount'], 
 										    $current_dimension['selectedElementCount']);

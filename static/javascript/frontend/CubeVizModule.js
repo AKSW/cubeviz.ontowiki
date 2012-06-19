@@ -204,8 +204,8 @@ $(function() {
 	});
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
-		var config = CubeViz_Main_Module.makeConfig();
-		console.log(config);
+		var config = CubeViz_Main_Module.makeLink();
+		CubeViz_Ajax_Module.saveLinkToFile(config);
 	});
 	
 	/******************************

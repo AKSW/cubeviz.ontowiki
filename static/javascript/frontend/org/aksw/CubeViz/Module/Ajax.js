@@ -66,170 +66,26 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 		}, this));
 	},
 	
-	// not using this function
-	getComponentElements: function(ds, component) {
-		var action = "getcomponentelements";
-		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsUrl="+ds.url+"&cP="+component.type, $.proxy(function(json) {
-			this.retrievedComponentElements = json;
-		}, this));
-	},
-	
-	/**
-	 * Input: [ number: uri ] array
-	 * Come from: sidebarLeftDataSelectionSubmitbtnClick - Step 2
-	 * Chained to: makeConfig
-	 * Side Action: set labels to the global namespace vars
-	 * Action: forward to the config save function
-	 * Output: no output
-	 */
-	requestLabelsFor: function (uris) {
-		actionName = "getlabelsfor";
-		$.ajax({
-			type: "POST",
-			url: this.cubevizPath + actionName + "/",
-			data: "uris="+ $.toJSON(uris) +
-				"&modelUri="+this.modelUri,
-			success: function(data){
-				var labels = JSON.parse(data);				
-				org.aksw.cubeViz.Index.Main.selectedDSD = {label: labels[org.aksw.cubeViz.Index.Main.selectedDSD], 
-														   uri:org.aksw.cubeViz.Index.Main.selectedDSD};
-				org.aksw.cubeViz.Index.Main.selectedDS = {label: labels[org.aksw.cubeViz.Index.Main.selectedDS], 
-														   uri:org.aksw.cubeViz.Index.Main.selectedDS};		
-						
-				var config = org.aksw.cubeViz.Index.Main.makeConfig();
-				org.aksw.cubeViz.Index.Main.saveConfigurationToFile(config);
-			}
-		});
-	},
-	
 	/**
 	 * Input: configuration string with POST variables
 	 * usually initialized after sidebarLeftDataSelectionSubmitbtnClick
 	 * Action: redirect user to the new visualization
 	 * Output: no output
 	 */	
-	saveConfigurationToFile: function(configuration) {
-		actionName = "saveconfiguration";
+	saveLinkToFile: function(link) {
+		actionName = "savelinktofile";
         
 		$.ajax({
 			type: "POST",
 			url: this.cubevizPath + actionName + "/",
-			data: configuration,
+			data: link,
 			success: function(uri){
-				var uri_full = uri+"&chartType="+org.aksw.cubeViz.Index.Main.chartType;
-				window.location.replace(uri_full);	
+				//var uri_full = uri+"&chartType="+org.aksw.cubeViz.Index.Main.chartType;
+				//window.location.replace(uri_full);	
 			}
 		});
-	},
+	}, 
 	
-	/**
-	 * Input: Data Structure URI (string)
-	 * Action: Retrieve Data Sets for specific Data Structure from DB
-	 * and append it to the Data Set container (reload it)
-	 * Output: no output
-	 */
-	reloadDataSetList: function(dataStructureUri) {
-		actionName = "getdatasets";
-		$.ajax({
-			type: "POST",
-			url: this.cubevizPath + actionName + "/",
-			data: "dataStructure="+dataStructureUri,
-			success: function(jsonObject){
-				var dataSets = JSON.parse(jsonObject);
-				dataSets = createDataSetObjects(dataSets);
-				
-				//empty container
-				$("#sidebar-left-data-selection-sets").empty();
-								
-				//Append item to container
-				containerId = "sidebar-left-data-selection-sets";
-				org.aksw.cubeViz.Index.Main.addItem(containerId, dataSets);
-				
-				//check if only one dataSet exists
-				if($("#sidebar-left-data-selection-sets").children().length == 1) {
-					org.aksw.cubeViz.Index.Main.reloadDimensionsAndMeasuresList($("#sidebar-left-data-selection-sets").val());
-				}
-			}
-		});
-		
-		function createDataSetObjects(dataSets) {
-			dss_temp = new Array();
-			for(ds in dataSets) {
-				var dataSet = {
-					label: dataSets[ds],
-					uri: ds
-				};
-				dss_temp.push(dataSet);
-			}
-			// Suppose that we have only one data set now
-			return dss_temp[0];
-		}
-	},  
-	
-	/**
-	 * Input: dataset URI
-	 * Action: retrieve dimensions and measures from the DB
-	 * and show it in the lists (reload)
-	 * Output: no output
-	 */
-	reloadDimensionsAndMeasuresList: function(dataSetUri) {
-		actionName = "getdimensionsandmeasures";
-		$.ajax({
-			type: "POST",
-			url: this.cubevizPath + actionName + "/",
-			data: "dataSet="+dataSetUri+"&dataStructure="+this.selectedDSD.uri,
-			success: function(jsonObject){
-				var temp = JSON.parse(jsonObject);
-				var dimensions = {"dimensions": temp["dimensions"]};
-				org.aksw.cubeViz.Index.Main.allDimensions = dimensions;
-				var measures = {"measures": temp["measures"]};
-				org.aksw.cubeViz.Index.Main.allMeasures = measures;
-				
-				// TODO: wrap templates in the its own namespace (?)
-				//Append dimensions to the container
-				$("#sidebar-left-data-selection-dims-boxes").html(dimensionsTemplate.expand(dimensions));
-				org.aksw.cubeViz.Index.Main.initSelectElementLink(dimensions);
-				org.aksw.cubeViz.Index.Main.initOptionsDimensionLink(dimensions);
-				//Append measures to the container
-				$("#sidebar-left-data-selection-meas-boxes").html(measuresTemplate.expand(measures));
-				org.aksw.cubeViz.Index.Main.initOptionsMeasureLink(measures);
-				
-				//check checkboxes
-				org.aksw.cubeViz.Index.Main.markSelectedDimensionsAndMeasures();
-				
-				//load dialogs (!)
-				//get all labels!
-				var dims = dimensions.dimensions;
-				for(var dim in dims) {
-					org.aksw.cubeViz.Index.Main.reloadDimensionComponentDialog(dims[dim].label);
-				}
-			}
-		});
-	},
-	
-	/**
-	 * Input: dimention label - we assume that label is unique
-	 * Action: get dimension components from backend and
-	 * forward them to the renderDialogsForDimensions
-	 * Output: no output
-	 */
-	reloadDimensionComponentDialog: function (dimensionLabel) {		
-		actionName = "getcomponentelements";
-		$.ajax({
-			type: "POST",
-			url: this.cubevizPath + actionName + "/",
-			data: "dimensionLabel="+dimensionLabel+
-				  "&dataSet="+this.selectedDS.uri+
-				  "&dataStructure="+this.selectedDSD.uri+
-				  "&m="+this.modelUri,
-			success: function(jsonObject){
-				var specificDimensions = JSON.parse(jsonObject);			
-								
-				org.aksw.cubeViz.Index.Main.renderDialogsForDimensions(specificDimensions);
-			}
-		});
-	},
-		
 	/**
 	 * Input: number of selected dimensions and measures
 	 * Action: sends AJAX request to server to get list of possible chart

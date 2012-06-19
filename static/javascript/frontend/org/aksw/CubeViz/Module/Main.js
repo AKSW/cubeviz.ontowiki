@@ -503,8 +503,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 * Notice: should be run after requestLabelsFor function
 	 */
 	
-	makeConfig: function() {
-        
+	makeLink: function() {
+
 		return  "?foo=&" +
                 "modelUrl="+'"'+this.modelUrl+'"'+
                 "&sparqlEndpoint=" + '"' + this.sparqlEndpoint + '"' + 
@@ -513,7 +513,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
                 "&selectedDS=" + $.toJSON(this.selectedDS) +
                 "&selectedMeasures=" + $.toJSON(this.selectedMeasures) +
                 "&selectedDimensions=" + $.toJSON(this.selectedDimensions) +
-                "&selectedDimensionComponents=" + $.toJSON(this.selectedDimensionComponents) +
+                "&selectedDimensionComponents=" + $.toJSON(this.selectedDimensionComponents.selectedDimensionComponents) +
                 "&selectedChartType=" + this.chartType;
 	},
 	
