@@ -19,8 +19,29 @@ class CubevizController extends OntoWiki_Controller_Component {
      * 
      */
     public function indexAction () {
-        // 
-    }
+        
+		//http://localhost/extensions/cubeviz/
+		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
+        $this->view->cubevizPath_index = $cubeVizExtensionURL_controller;
+        $this->view->basePath_index = $this->_config->staticUrlBase . "extensions/cubeviz/";
+        // send backend information to the view
+        $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
+        $this->view->backend_index = $ontowikiBackend;
+		// get chartType from the browser link
+        $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'pie';
+		
+		// get lC from the browser link - pointing to the file
+		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
+		
+		// initialize links handle and read configuration
+		$configuration = new CubeViz_ConfigurationLink();
+		$configuration->initFromLink($linkCode);
+													
+		$this->view->links_index = json_encode($configuration->getLinks());
+		$this->view->modelUrl_index = $_REQUEST['m'];
+		// TODO: get backend from OntoWiki config
+		$this->view->backend_index = "virtuoso";
+	}
     
     /**
      * 
