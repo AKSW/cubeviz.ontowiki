@@ -28,7 +28,7 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     activeHighChartConfig: {},
     
     /**
-     * 
+     * It contains general configuration for BarChart itself
      */
     configuration: {
         "dimensions": [],
