@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * 
+ */
 class CubevizController extends OntoWiki_Controller_Component {
     
     public function init () {
@@ -16,15 +19,7 @@ class CubevizController extends OntoWiki_Controller_Component {
      * 
      */
     public function indexAction () {
-        //
-    }
-    
-    /**
-     * 
-     */
-    public function sayhelloAction () {
-        // disable autorendering for this action only
-        $this->_helper->viewRenderer->setNoRender();
+        // 
     }
     
     /**
