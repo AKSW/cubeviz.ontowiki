@@ -9,19 +9,28 @@
 
 <> foaf:primaryTopic :cubeviz .
 :cubeviz a doap:Project ;
-  doap:name "CubeViz" ;
-  owconfig:privateNamespace <https://github.com/AKSW/cubeviz/raw/master/doap.n3#> ;
-  owconfig:enabled "true"^^xsd:boolean ;
-  rdfs:label "CubeViz" ;
-  doap:description "" ;
-  owconfig:authorLabel "" ;
+
   doap:release :v1-0 ;
-  owconfig:hasModule :Default .
+  doap:description "" ;
+  doap:name "CubeViz" ;
+
+  owconfig:authorLabel "" ;
+  owconfig:enabled "true"^^xsd:boolean ;
+  owconfig:hasModule :Default ;
+  owconfig:privateNamespace <https://github.com/AKSW/cubeviz/raw/master/doap.n3#> ;
+  owconfig:templates "static/templates" ;
+
+  rdfs:label "CubeViz" .
+
 :Default a owconfig:Module ;
+
   rdfs:label "Default" ;
+
   owconfig:caching "true"^^xsd:boolean ;
   owconfig:priority "30" ;
   owconfig:context "main.sidewindows" .
+
 :cubeviz doap:release :v1-0 .
+
 :v1-0 a doap:Version ;
   doap:revision "1.0" .
