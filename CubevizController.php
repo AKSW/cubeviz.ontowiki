@@ -38,7 +38,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$configuration->initFromLink($linkCode);
 													
 		$this->view->links_index = json_encode($configuration->getLinks());
-		$this->view->modelUrl_index = $_REQUEST['m'];
+		$this->view->modelUrl_index = $this->_owApp->selectedModel;
 		// TODO: get backend from OntoWiki config
 		$this->view->backend_index = "virtuoso";
 	}
