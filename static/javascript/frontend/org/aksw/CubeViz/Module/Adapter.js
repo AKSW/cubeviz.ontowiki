@@ -18,8 +18,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	packDimensionComponentsForTemplate: function(selectedDimensionComponents) {
 		var packedDimensionComponents = [];
 		var i = 0;
+		var dimcomp_current = null;
 		for(dimensionComponent in selectedDimensionComponents.selectedDimensionComponents) {
-			var dimcomp_current = selectedDimensionComponents.selectedDimensionComponents[dimensionComponent];
+			dimcomp_current = selectedDimensionComponents.selectedDimensionComponents[dimensionComponent];
 			
 			if(packedDimensionComponents[dimcomp_current.label] == undefined) {
 				packedDimensionComponents[dimcomp_current.label] = [];
@@ -51,13 +52,15 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	 */
 	extractOptionsFromSelectedDimensions: function(selectedDimensions) {
 		var options = [];
+		var label_current = null;
+		var dimension_current = null;
 		for(dimension in selectedDimensions.dimensions) {
-			current_label = selectedDimensions.dimensions[dimension].label;
-			current_dimension = selectedDimensions.dimensions[dimension];
-			options[current_label] = [];
-			options[current_label]["chartAxis"] = current_dimension.chartAxis;
-			options[current_label]["label"] = current_label;
-			options[current_label]["orderDirection"] = current_dimension.orderDirection;
+			dimension_current = selectedDimensions.dimensions[dimension];
+			
+			options[label_current] = [];
+			options[label_current]["chartAxis"] = dimension_current.chartAxis;
+			options[label_current]["label"] = dimension_current.label;
+			options[label_current]["orderDirection"] = dimension_current.orderDirection;
 		}
 		return options;
 	},
@@ -67,15 +70,16 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	 */
 	extractOptionsFromSelectedMeasures: function(selectedMeasures) {
 		var options = [];
+		var label_current = null;
+		var measure_current = null;
 		for(measure in selectedMeasures.measures) {
-			current_measure = selectedMeasures.measures[measure];
-			current_label = current_measure.label;
+			measure_current = selectedMeasures.measures[measure];
 						
-			options[current_label] = [];
-			options[current_label]["roundValues"] = current_measure.roundValues;
-			options[current_label]["label"] = current_label;
-			options[current_label]["orderDirection"] = current_measure.orderDirection;
-			options[current_label]["aggregationMethod"] = current_measure.aggregationMethod;
+			options[label_current] = [];
+			options[label_current]["roundValues"] = measure_current.roundValues;
+			options[label_current]["label"] = measure_current.label;
+			options[label_current]["orderDirection"] = measure_current.orderDirection;
+			options[label_current]["aggregationMethod"] = measure_current.aggregationMethod;
 		}
 		return options;
 	},
@@ -85,8 +89,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 				
 		//set defaults
 		var retrievedDimensions_length = retrievedDimensions.length;
+		var dimension_current = null;
 		while(retrievedDimensions_length--) {
-			var dimension_current = retrievedDimensions[retrievedDimensions_length];
+			dimension_current = retrievedDimensions[retrievedDimensions_length];
 			//dimension_current.label;
 			//dimension_current.url_md5;
 			//dimension_current.url;
@@ -101,11 +106,14 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		
 		//look if there any dimensions exists in selectedDimensions
 		var processedDimensions_length = processedDimensions.length;
+		var dimension_current = null;
+		var seldimension_current = null;
+		var selectedDimension_length = null;
 		while(processedDimensions_length--) {
-			var dimension_current = processedDimensions[processedDimensions_length];
-			var selectedDimension_length = selectedDimensions.dimensions.length;
+			dimension_current = processedDimensions[processedDimensions_length];
+			selectedDimension_length = selectedDimensions.dimensions.length;
 			while(selectedDimension_length--) {
-				var seldimension_current = selectedDimensions.dimensions[selectedDimension_length];
+				seldimension_current = selectedDimensions.dimensions[selectedDimension_length];
 							
 				if(seldimension_current.url == dimension_current.url) {
 					processedDimensions[processedDimensions_length] = seldimension_current;
@@ -122,8 +130,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		
 		//set defaults
 		var retrievedMeasures_length = retrievedMeasures.length;
+		var measure_current = null;
 		while(retrievedMeasures_length--) {
-			var measure_current = retrievedMeasures[retrievedMeasures_length];
+			measure_current = retrievedMeasures[retrievedMeasures_length];
 			//measure_current.label;
 			//measure_current.url_md5;
 			//measure_current.url;
@@ -137,11 +146,14 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		
 		//look if there any measures exists in selectedMeasures
 		var processedMeasures_length = processedMeasures.length;
+		var measure_current = null;
+		var selectedMeasure_length = null;
+		var selmeasure_current = null;
 		while(processedMeasures_length--) {
-			var measure_current = processedMeasures[processedMeasures_length];
-			var selectedMeasure_length = selectedMeasures.measures.length;
+			measure_current = processedMeasures[processedMeasures_length];
+			selectedMeasure_length = selectedMeasures.measures.length;
 			while(selectedMeasure_length--) {
-				var selmeasure_current = selectedMeasures.measures[selectedMeasure_length];
+				selmeasure_current = selectedMeasures.measures[selectedMeasure_length];
 							
 				if(selmeasure_current.url == measure_current.url) {
 					processedMeasures[processedMeasures_length] = selmeasure_current;
@@ -156,9 +168,11 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 	processRetrievedDimensionComponents: function(retrievedDimComps, selectedDimComps) {
 		var result = [];
 		
+		var label_current = null;
+		var dimension_current = null;
 		for(dimCompLabel in retrievedDimComps) {
-			var label_current = dimCompLabel;
-			var dimension_current = retrievedDimComps[label_current];
+			label_current = dimCompLabel;
+			dimension_current = retrievedDimComps[label_current];
 			
 			for(component in dimension_current) {
 				result.push( { "property_label": dimension_current[component].property_label,

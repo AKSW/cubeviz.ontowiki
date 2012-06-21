@@ -99,23 +99,12 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	setControlElements: function() {
 		this.setDialogCheckBoxes();
 		this.setDimensionsMeasuresCheckBoxes();
-		
-		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
-			
-			
-		}
-		
-		for(measure in this.selectedMeasures.measures) {
-			var measure_current = this.selectedMeasures.measures[measure];
-			
-		}
-		
 	}, 
 	
 	registerUiEvents: function() {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			
 			this.registerOpenDialog(dimension_current.label);
 			this.registerCloseDialog(dimension_current.label);
@@ -127,8 +116,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.registerDimensionCheckBox(dimension_current.label);
 		}
 		
+		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
-			var measure_current = this.allMeasures.measures[measure];
+			measure_current = this.allMeasures.measures[measure];
 			
 			this.registerOptionsMeasureOpen(measure_current.label);
 			this.registerOptionsMeasureClose(measure_current.label);
@@ -148,16 +138,18 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 *****************************************************/
 	 
 	registerDimensions: function() {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			
 			this.registerDimensionCheckBox(dimension_current.label);
 		}
 	},
 	
 	registerDimensionDialogs: function() {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 						
 			this.registerOpenDialog(dimension_current.label);
 			this.registerCloseDialog(dimension_current.label);
@@ -166,8 +158,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	registerDimensionOptions: function() {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			
 			this.registerOptionsDimensionOpen(dimension_current.label);
 			this.registerOptionsDimensionClose(dimension_current.label);
@@ -177,16 +170,18 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	registerMeasures: function() {
+		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
-			var measure_current = this.allMeasures.measures[measure];
+			measure_current = this.allMeasures.measures[measure];
 			
 			this.registerMeasureCheckBox(measure_current.label);
 		}
 	},
 	
 	registerMeasureOptions: function() {
+		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
-			var measure_current = this.allMeasures.measures[measure];
+			measure_current = this.allMeasures.measures[measure];
 			
 			this.registerOptionsMeasureOpen(measure_current.label);
 			this.registerOptionsMeasureClose(measure_current.label);
@@ -409,8 +404,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	renderOptionsForDimensions: function(dimensions, CubeViz_Options_Dimension_Template) {
+		var dimension_current = null;
 		for(dimension in dimensions.dimensions) {
-			var dimension_current = dimensions.dimensions[dimension];
+			dimension_current = dimensions.dimensions[dimension];
 			$("#dialog-options-dimension-"+dimension_current.label).remove();
 			$("#wrapper").append(CubeViz_Options_Dimension_Template.expand(dimension_current));
 			$("#dialog-options-dimension-"+dimension_current.label).hide();
@@ -422,8 +418,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	renderOptionsForMeasures: function(measures, CubeViz_Options_Measure_Template) {
+		var measure_current = null;
 		for(measure in measures.measures) {
-			var measure_current = measures.measures[measure];
+			measure_current = measures.measures[measure];
 			$("#dialog-options-measure-"+measure_current.label).remove();
 			$("#wrapper").append(CubeViz_Options_Measure_Template.expand(measure_current));
 			$("#dialog-options-measure-"+measure_current.label).hide();
@@ -537,8 +534,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		var selectedElements = $(dialog_current).find("input:checked").length;
 		
 		// set selectedElements to the selectedDimensions object
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimension_current.label == dimensionLabel) {
 				this.allDimensions.dimensions[dimension].selectedElementCount = selectedElements;
 			}
@@ -552,8 +550,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateDimensionElementCount: function(dimensionLabel) {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimensionLabel == dimension_current.label) {
 				var selectedElements = dimension_current.selectedElementCount + "/";
 				$("#dialog-" + dimensionLabel + "-selected-items").html (selectedElements);
@@ -585,7 +584,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	setDialogCheckBoxes: function() {
-		//TODO: change bruteforce method to some smart algo here				
+		//TODO: change bruteforce method to some smart algo here		
+		var dimComp_current = null;		
 		for(dimComp in this.selectedDimensionComponents.selectedDimensionComponents) {
 			dimComp_current = this.selectedDimensionComponents.selectedDimensionComponents[dimComp];
 			
@@ -606,8 +606,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 *********************************************************/
 		 
 	getDimensionByLabel: function(label) {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			if(dimension_current.label == label) {
 				return dimension_current;
 			}
@@ -616,8 +617,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateDimension: function(newDimension) {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
-			var dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current = this.allDimensions.dimensions[dimension];
 			
 			if(dimension_current.label == newDimension.label) {
 				this.allDimensions.dimensions[dimension] = newDimension;
@@ -629,8 +631,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateSelectedDimension: function(newDimension) {
+		var dimension_current = null;
 		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			dimension_current = this.selectedDimensions.dimensions[dimension];
 			
 			if(dimension_current.label == newDimension.label) {
 				this.selectedDimensions.dimensions[dimension] = newDimension;
@@ -642,8 +645,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	getMeasureByLabel: function(label) {
+		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
-			var measure_current = this.allMeasures.measures[measure];
+			measure_current = this.allMeasures.measures[measure];
 			if(measure_current.label == label) {
 				return measure_current;
 			}
@@ -652,9 +656,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateMeasure: function(newMeasure) {
+		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
-			var measure_current = this.allMeasures.measures[measure];
-			
+			measure_current = this.allMeasures.measures[measure];
 			if(measure_current.label == newMeasure.label) {
 				this.allMeasures.measures[measure] = newMeasure;
 				return;
@@ -665,8 +669,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	updateSelectedMeasure: function(newMeasure) {
+		var measure_current = null;
 		for(measure in this.selectedMeasures.measures) {
-			var measure_current = this.selectedMeasures.measures[measure];
+			measure_current = this.selectedMeasures.measures[measure];
 			
 			if(measure_current.label == newMeasure.label) {
 				this.selectedMeasures.measures[measure] = newMeasure;
@@ -678,6 +683,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	setDimensionElementCount: function(dimensionComponents) {
+		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
 			dimension_current = this.allDimensions.dimensions[dimension];
 			for(comp in dimensionComponents) {
@@ -689,8 +695,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	getDimensionComponentByUrl: function(url) {
+		var component_current = null;
 		for(component in this.allDimensionComponents.selectedDimensionComponents) {
-			var component_current = this.allDimensionComponents.selectedDimensionComponents[component];
+			component_current = this.allDimensionComponents.selectedDimensionComponents[component];
 			if(component_current.property == url) {
 				return component_current;
 			}
@@ -707,8 +714,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 **************************************/
 		
 	setDimensionsOptionRadioButtons: function(dimensions) {
+		var dim_current = null;
 		for(dim in dimensions.dimensions) {
-			var dim_current = dimensions.dimensions[dim];
+			dim_current = dimensions.dimensions[dim];
 						
 			var orderDirectionRadio = $(".dialog-options-dimension-items-order-direction-"+dim_current.label);
 			this.setRadioButtonIn(orderDirectionRadio, dim_current.orderDirection);
@@ -719,8 +727,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	setMeasuresOptionRadioButtons: function(measures) {
+		var meas_current = null;
 		for(meas in measures.measures) {
-			var meas_current = measures.measures[meas];
+			meas_current = measures.measures[meas];
 			
 			var aggregationMethodRadio = $(".dialog-options-measure-items-aggregation-method-"+meas_current.label);
 			this.setRadioButtonIn(aggregationMethodRadio, meas_current.aggregationMethod);
@@ -749,11 +758,13 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	setDimensionsMeasuresCheckBoxes: function() {
 		var dimensions = $("#sidebar-left-data-selection-dims-boxes").children(); 
 		var selectedDimensions = this.selectedDimensions.dimensions;
+		var checkbox_current = null;
+		var dimension_current = null;
 		$.each(dimensions, function() {
-			var checkbox_current = $(this).find(".sidebar-left-data-selection-dims-box");
+			checkbox_current = $(this).find(".sidebar-left-data-selection-dims-box");
 			var dimensionUrl = checkbox_current.val();
 			for(selectedDimension in selectedDimensions) {
-				var dimension_current = selectedDimensions[selectedDimension];
+				dimension_current = selectedDimensions[selectedDimension];
 				if(dimension_current.url == dimensionUrl) {
 					checkbox_current.attr('checked','checked');
 				}
@@ -762,11 +773,13 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		
 		var measures = $("#sidebar-left-data-selection-meas-boxes").children(); 
 		var selectedMeasures = this.selectedMeasures.measures;
+		var checkbox_current = null;
+		var measure_current = null;
 		$.each(measures, function() {
-			var checkbox_current = $(this).find(".sidebar-left-data-selection-meas-box");
+			checkbox_current = $(this).find(".sidebar-left-data-selection-meas-box");
 			var measureUrl = checkbox_current.val();
 			for(selectedMeasure in selectedMeasures) {
-				var measure_current = selectedMeasures[selectedMeasure];
+				measure_current = selectedMeasures[selectedMeasure];
 				if(measure_current.url == measureUrl) {
 					checkbox_current.attr('checked','checked');
 				}
@@ -792,8 +805,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 
 	unselectDimension: function(label) {
+		var dimension_current = null;
 		for(dimension in this.selectedDimensions.dimensions) {
-			var dimension_current = this.selectedDimensions.dimensions[dimension];
+			dimension_current = this.selectedDimensions.dimensions[dimension];
 			if(dimension_current.label == label) {
 				delete this.selectedDimensions.dimensions[dimension];
 				this.selectedDimensions.dimensions = this.cleanUpArray(this.selectedDimensions.dimensions);
@@ -808,8 +822,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	unselectMeasure: function(label) {
+		var measure_current = null;
 		for(measure in this.selectedMeasures.measures) {
-			var measure_current = this.selectedMeasures.measures[measure];
+			measure_current = this.selectedMeasures.measures[measure];
 			if(measure_current.label == label) {
 				delete this.selectedMeasures.measures[measure]; 
 				this.selectedMeasures.measures = this.cleanUpArray(this.selectedMeasures.measures);
@@ -824,8 +839,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	unselectDimensionComponent: function(url) {
+		var component_current = null;
 		for(component in this.selectedDimensionComponents.selectedDimensionComponents) {
-			var component_current = this.selectedDimensionComponents.selectedDimensionComponents[component];
+			component_current = this.selectedDimensionComponents.selectedDimensionComponents[component];
 			if(component_current.property == url) {
 				delete this.selectedDimensionComponents.selectedDimensionComponents[component]; 
 				this.selectedDimensionComponents.selectedDimensionComponents = this.cleanUpArray(this.selectedDimensionComponents.selectedDimensionComponents);
