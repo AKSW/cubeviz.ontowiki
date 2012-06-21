@@ -42,6 +42,24 @@ class CubevizController extends OntoWiki_Controller_Component {
 		// TODO: get backend from OntoWiki config
 		$this->view->backend_index = "virtuoso";
 	}
+	
+	public function getresultobservationsAction() {
+		$this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();        
+		
+		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+		$linkCode = $this->_request->getParam('lC');
+		
+		$configuration = new CubeViz_ConfigurationLink();
+		$configuration->initFromLink($linkCode);
+		$links = $configuration->getLinks();
+				
+		$query = new DataCube_Query($model);
+		
+		//$resultObservations = $query->getResultObservations($links['default']);
+						
+		$this->_response->setBody();
+	}
     
     /**
      * 
