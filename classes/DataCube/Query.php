@@ -214,6 +214,15 @@ class DataCube_Query {
     
     /**
      * 
+     */
+    public function getResultObservationsFromLink($link) {
+		
+		
+		return $this->getResultObservations();
+	}
+    
+    /**
+     * 
      * @param $dsUri Data Set URI
      * @param $dimensions Array of dimension URI's
      * @param $dimensionElements Array of dimension URI's
