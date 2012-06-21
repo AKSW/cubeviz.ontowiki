@@ -91,7 +91,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.renderOptionsForMeasures(this.allMeasures, CubeViz_Options_Measure_Template);
 			
 		} catch(error) {
-			throw error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.";
+			throw (error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.");
 		}
 	
 	},
@@ -613,7 +613,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return dimension_current;
 			}
 		}
-		throw "There is no dimesions with "+label+" label in allDimensions array!";
+		throw ("There is no dimesions with "+label+" label in allDimensions array!");
 	},
 	
 	updateDimension: function(newDimension) {
@@ -627,7 +627,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			} 
 		}
 		
-		console.error("No dimension with label "+newDimension.label+" found in allDimensions array. Can't update.");	
+		throw ("No dimension with label "+newDimension.label+" found in allDimensions array. Can't update.");	
 	},
 	
 	updateSelectedDimension: function(newDimension) {
@@ -641,7 +641,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			} 
 		}
 		
-		console.error("No dimension with label "+newDimension.label+" found in selectedDimensions array. Can't update.");	
+		throw ("No dimension with label "+newDimension.label+" found in selectedDimensions array. Can't update.");	
 	},
 	
 	getMeasureByLabel: function(label) {
@@ -652,7 +652,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return measure_current;
 			}
 		}
-		console.error( "There is no measures with "+label+" label in selectedMeasures array!");
+		throw ("There is no measures with "+label+" label in selectedMeasures array!");
 	},
 	
 	updateMeasure: function(newMeasure) {
@@ -665,7 +665,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			} 
 		}
 		
-		console.error("No measure with label "+newMeasure.label+" found in allMeasures array. Can't update.");	
+		throw ("No measure with label "+newMeasure.label+" found in allMeasures array. Can't update.");	
 	},
 	
 	updateSelectedMeasure: function(newMeasure) {
@@ -679,7 +679,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			} 
 		}
 		
-		console.error("No measure with label "+newMeasure.label+" found in selectedMeasures array. Can't update.");	
+		throw ("No measure with label "+newMeasure.label+" found in selectedMeasures array. Can't update.");	
 	},
 	
 	setDimensionElementCount: function(dimensionComponents) {
@@ -702,7 +702,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return component_current;
 			}
 		}
-		console.error( "There is no dimension component "+url+" in allDimensionComponents array!");
+		throw ( "There is no dimension component "+url+" in allDimensionComponents array!");
 	},
 	
 	/*******************************************************
@@ -801,7 +801,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	selectDimension: function(dimension) {
 		this.selectedDimensions.dimensions.push(dimension); 
-		//console.error("There is no dimesions with "+label+" label in selectedDimensions array!");
 	},
 
 	unselectDimension: function(label) {
@@ -814,7 +813,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return;
 			}
 		}
-		console.error("There is no dimesions with "+label+" label in selectedDimensions array!");
+		throw ("There is no dimesions with "+label+" label in selectedDimensions array!");
 	},
 	
 	selectMeasure: function(measure) {
@@ -831,7 +830,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return;
 			}
 		}
-		console.error("There is no measures with "+label+" label in selectedMeasures array!");
+		throw ("There is no measures with "+label+" label in selectedMeasures array!");
 	},
 	
 	selectDimensionComponent: function(component) {
@@ -848,7 +847,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 				return;
 			}
 		}
-		console.error("There is no dimension component "+url+" in selectedDimensionComponents array!");
+		throw ("There is no dimension component "+url+" in selectedDimensionComponents array!");
 	},
 	
 	cleanUpArray: function(arr) {
