@@ -13,13 +13,16 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts', {
      */
     getSuitableGraphs: function (rawData, dimensionAssignment, measureAssignment) {
         
-        var availableGraphs = ["BarChart"],//, "PieChart"],
+        var availableGraphs = ["bar", "pie"],
             suitableGraphs = [],
             graph = null;
         
         for ( var currentGraphName in availableGraphs ) {
             
+            // Adapt graph name > first letter upper case and add Chart at the end
+            sourceGraphName = availableGraphs [currentGraphName];
             currentGraphName = availableGraphs [currentGraphName];
+            currentGraphName = currentGraphName.charAt(0).toUpperCase() + currentGraphName.slice(1) + "Chart";
             
             // Include necessary namespace
             Namespacedotjs.include("org.aksw.CubeViz.ChartTransformer.HighCharts." + currentGraphName);
@@ -28,10 +31,9 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts', {
             graph = org.aksw.CubeViz.ChartTransformer.HighCharts[currentGraphName];
             
             graph.init (rawData, null, dimensionAssignment, measureAssignment);
-            console.log (graph);
             
             if (true == graph.isSuitable ()) {
-                suitableGraphs.push (currentGraphName);
+                suitableGraphs.push (sourceGraphName);
             }
         }      
         

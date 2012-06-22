@@ -24,7 +24,12 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
         $this->view->cubevizPath_index = $cubeVizExtensionURL_controller;
         $this->view->basePath_index = $this->_config->staticUrlBase . "extensions/cubeviz/";
-        // send backend information to the view
+        $this->view->basePath_images = $this->view->basePath_index ."static/images/";
+        
+	// TODO delete this because its a hack
+	$this->view->chartType = $this->_request->getParam ("chartType");
+        
+	// send backend information to the view
         $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
         $this->view->backend_index = $ontowikiBackend;
 		// get chartType from the browser link

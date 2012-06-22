@@ -127,16 +127,12 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
     
     /**
      * Checks if this graph type is suitable visualize the given data.
-     * @param rawData
      * @return Boolean True if suitable, otherwise false.
      */
     isSuitable: function () {        
         
-        console.log ( this.getMultipleDimensions (this.rawData).length );
-        console.log ( this.restrictions.maximumMultipleDimensions );
-        
         // Compares number of multiple dimensions in rawdata with class restriction
-        if (this.getMultipleDimensions (this.rawData).length == this.restrictions.maximumMultipleDimensions) {
+        if (this.getMultipleDimensions (this.rawData).length <= this.restrictions.maximumMultipleDimensions) {
             return true;
         }
         

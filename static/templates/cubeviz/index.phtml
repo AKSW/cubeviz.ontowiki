@@ -5,36 +5,48 @@
 <script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/libraries/json-template.min.js"></script>
 
 <script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/frontend/CubeVizIndex.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath_index; ?>static/javascript/frontend/CubeVizChartSelection.js"></script>
 
+<style type="text/css">
+    @import url("<?php echo $this->basePath_index; ?>static/css/main.css");
+</style>
 
 <script>
-	/*************************************
-	 * Importing Server-Side System Info *
-	 *************************************/
-	Namespacedotjs.baseUri = <?php echo json_encode($this->basePath_index . 'static/javascript/frontend/'); ?>;
+    /*************************************
+     * Importing Server-Side System Info *
+     *************************************/
+    Namespacedotjs.baseUri = <?php echo json_encode($this->basePath_index . 'static/javascript/frontend/'); ?>;
 
-	var CubeViz_Links = <?php echo $this->links_index; ?>;
-	
-	// choose default config for the start
-	var CubeViz_Link_Chosen = 'default';
-			
-	var CubeViz_Parameters = {
-		sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
-		selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
-		selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
-		selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
-		selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
-		selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
-		selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
-		modelUrl: "<?php echo $this->modelUrl_index; ?>",
-		cubevizPath: <?php echo json_encode($this->cubevizPath_index); ?>,
-		backend: <?php echo json_encode($this->backend_index); ?>,
-		chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"],
-        visualizationContainer: "container"
-	}
+    var CubeViz_Links = <?php echo $this->links_index; ?>;
+    
+    // choose default config for the start
+    var CubeViz_Link_Chosen = 'default';
+		    
+    var CubeViz_Parameters = {
+	    sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
+	    selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
+	    selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
+	    selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
+	    selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
+	    selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
+	    selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
+	    modelUrl: "<?php echo $this->modelUrl_index; ?>",
+	    cubevizPath: <?php echo json_encode($this->cubevizPath_index); ?>,
+	    cubevizImagesPath: "<?php echo $this->basePath_images; ?>",
+	    backend: <?php echo json_encode($this->backend_index); ?>,
+	    chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"],
+	    visualizationContainer: "container"
+    }
+    
+    
+    /**
+     * TODO: ADAPT THIS! Its still a simple hack
+     * It needs to read dynamicly
+     */
+    CubeViz_Parameters.chartType = "<?php echo $this->chartType; ?>";
     
     // Examples for a raw output from the backend
-    var exampleData = {
+    var rawData = {
         "observation1": {
             "year": "April",
             "country": "Cubeviz",
@@ -55,6 +67,10 @@
         }
     };
     
+    var dimensions = ["country", "indicator", "year"];
+    
+    var measures = ["measure"];
+    
     // var chartType = "pie"; // pie, bar
     
     // !!!
@@ -64,4 +80,7 @@
     
 </script>
 
-<div id="container"></div>
+<div id="wrapper">
+    <div id="container"></div>
+    <div id="chart-selection"></div>
+</div>
