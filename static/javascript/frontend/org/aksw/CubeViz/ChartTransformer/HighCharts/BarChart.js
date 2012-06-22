@@ -31,18 +31,25 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
      * It contains general configuration for BarChart itself
      */
     configuration: {
-        "dimensions": [],
-        "measures": [],
-        "xAxisAssignment": "measure",
-        "yAxisAssignment": "multipleDimension",
-        "captionEntrySeparator": ", "
+        dimensions: [],
+        measures: [],
+        xAxisAssignment: "measure",
+        yAxisAssignment: "multipleDimension",
+        captionEntrySeparator: ", "
+    },
+    
+    /**
+     * 
+     */
+    restrictions: {
+        maximumMultipleDimensions: 1
     },
     
     /**
      * @param 
      */
     init: function (rawData, renderToContainer, dimensionsAssignment, measuresAssignment, 
-                     xAxisAssignment, yAxisAssignment, captionEntrySeparator) {
+                    xAxisAssignment, yAxisAssignment, captionEntrySeparator) {
         
         // Reset activeHighChartConfig to defaultHighChartConfig
         this.activeHighChartConfig = this.defaultHighChartConfig;
@@ -59,9 +66,11 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         this.configuration.measures = measuresAssignment || this.configuration.measures;
         
         // Set x axis assignment
+        xAxisAssignment = xAxisAssignment || "multipleDimension";
         this.setXAxisAssignment ( xAxisAssignment );
         
         // Set y axis assignment
+        yAxisAssignment = xAxisAssignment || "measure";
         this.setYAxisAssignment ( yAxisAssignment );
         
         // Set separator for the chart caption
@@ -114,6 +123,24 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
             "Invalid y axis assignment, valid are measure and multipleDimension! " +
             "But i got " + assignment 
         );
+    },
+    
+    /**
+     * Checks if this graph type is suitable visualize the given data.
+     * @param rawData
+     * @return Boolean True if suitable, otherwise false.
+     */
+    isSuitable: function () {        
+        
+        console.log ( this.getMultipleDimensions (this.rawData).length );
+        console.log ( this.restrictions.maximumMultipleDimensions );
+        
+        // Compares number of multiple dimensions in rawdata with class restriction
+        if (this.getMultipleDimensions (this.rawData).length == this.restrictions.maximumMultipleDimensions) {
+            return true;
+        }
+        
+        return false;
     },
     
     /**
