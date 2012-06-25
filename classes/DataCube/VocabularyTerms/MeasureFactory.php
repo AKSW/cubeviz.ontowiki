@@ -24,9 +24,7 @@ class DataCube_VocabularyTerms_MeasureFactory extends ArrayObject
 		$selectedMeasures_length = sizeof($selectedMeasures["measures"]);
 		while($selectedMeasures_length--) {
 			$current_measure = $selectedMeasures["measures"][$selectedMeasures_length];
-			$measure = new DataCube_VocabularyTerms_Measure($current_measure['url'], $current_measure['url_md5'], $current_measure['label'], 
-										    $current_measure['type'], $current_measure['order'], $current_measure['aggregationMethod'],
-										    $current_measure['roundValues'], $current_measure['orderDirection']);
+			$measure = new DataCube_VocabularyTerms_Measure($current_measure['url'], $current_measure['label'], $current_measure['type']);
 			array_push($this ['measures'], $measure);
 		}
 	}

@@ -74,11 +74,7 @@ class CubeViz_ConfigurationLink
             // Dimension components
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
 			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_VocabularyTerms_DimensionComponentFactory();
-			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);
-			
-            // Chart type
-            $this->_links [$linkCode] ['selectedChartType'] = json_decode(trim($parameters[7]), true);
-            
+			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);            
 		} else {
             throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
 		}
@@ -138,10 +134,7 @@ class CubeViz_ConfigurationLink
 		$selectedMeasures_strings = array();
 		$selectedMeasures_length = sizeof($selectedMeasures['measures']);
 		for($i = 0; $i < $selectedMeasures_length; $i++) {
-			$measure = $selectedMeasures['measures'][$i]['url'] . 
-					   $selectedMeasures['measures'][$i]['aggregationMethod'] . 
-					   $selectedMeasures['measures'][$i]['roundValues'] . 
-					   $selectedMeasures['measures'][$i]['orderDirection'];
+			$measure = $selectedMeasures['measures'][$i]['url'];
 			array_push($selectedMeasures_strings, $measure);
 		}
 		rsort($selectedMeasures_strings);
@@ -151,9 +144,7 @@ class CubeViz_ConfigurationLink
 		$selectedDimensions_strings = array();
 		$selectedDimensions_length = sizeof($selectedDimensions['dimensions']);
 		for($i = 0; $i < $selectedDimensions_length; $i++) {
-			$dimension = $selectedDimensions['dimensions'][$i]['url'] . 
-					   $selectedDimensions['dimensions'][$i]['chartAxis'] . 
-					   $selectedDimensions['dimensions'][$i]['orderDirection'];
+			$dimension = $selectedDimensions['dimensions'][$i]['url'];
 			array_push($selectedDimensions_strings, $dimension);
 		}
 		rsort($selectedDimensions_strings);

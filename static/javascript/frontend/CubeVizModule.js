@@ -185,7 +185,6 @@ $(function() {
 			CubeViz_Main_Module.unselectDimension(label_current);
 		}
 		
-		console.log(CubeViz_Main_Module.selectedDimensions);
 	});
 	
 	$(body).bind("measureCheckBoxClicked.CubeViz", function(event) {
@@ -200,7 +199,6 @@ $(function() {
 			CubeViz_Main_Module.unselectMeasure(label_current);
 		}
 		
-		console.log(CubeViz_Main_Module.selectedMeasures);
 	});
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
@@ -247,7 +245,6 @@ $(function() {
 																						  CubeViz_Main_Module.selectedMeasures);
 																						  
 		CubeViz_Main_Module.renderMeasures(CubeViz_Main_Module.allMeasures);
-		CubeViz_Main_Module.renderOptionsForMeasures(CubeViz_Main_Module.allMeasures, CubeViz_Options_Measure_Template);
 	});
 	
 	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function() {		
@@ -264,7 +261,6 @@ $(function() {
 		// the order is significant here!
 		CubeViz_Main_Module.setDimensionElementCount(CubeViz_Ajax_Module.retrievedDimensionComponents);	
 		CubeViz_Main_Module.renderDimensions(CubeViz_Main_Module.allDimensions);
-		CubeViz_Main_Module.renderOptionsForDimensions(CubeViz_Main_Module.allDimensions, CubeViz_Options_Dimension_Template);
 		CubeViz_Main_Module.renderDialogsForDimensions(CubeViz_Main_Module.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
 	});
 	
@@ -289,152 +285,13 @@ $(function() {
 	});
 	
 	$(body).bind("optionsDimensionRendered.CubeViz", function() {
-		CubeViz_Main_Module.registerDimensionOptions();
 	});
 	
 	$(body).bind("optionsMeasureRendered.CubeViz", function() {
-		CubeViz_Main_Module.registerMeasureOptions();
 	});
 	
 	$(body).bind("dialogsRendered.CubeViz", function() {
 		CubeViz_Main_Module.registerDimensionDialogs();
 	});
-	     		
-	/************************
-	 * Template Processing  *
-	 * Initialization stage *
-	 ************************
-	
-
-	/*
-
-
-	
-	//initialize the Options link for dimensions
-	org.aksw.cubeViz.Index.Main.initOptionsDimensionLinkOnInit(org.aksw.cubeViz.Index.Main.selectedDimensions);	
-	
-	//initialize the Options link for measures
-	org.aksw.cubeViz.Index.Main.initOptionsMeasureLinkOnInit(org.aksw.cubeViz.Index.Main.selectedMeasures);
-	
-	/*************************************************
-	 * Logic branch: if only one selection exists in *
-	 * datastructures or dataelements                *
-	 * dialog render is also here                    *
-	 *************************************************
-	
-	//check if there is only one dataStructure exist
-	if($("#sidebar-left-data-selection-strc").children().length == 1) {
-		org.aksw.cubeViz.Index.Main.selectedDSD = {
-			"label": "datastructureLabel",
-			"uri": $("#sidebar-left-data-selection-strc").val()
-			};
 		
-		org.aksw.cubeViz.Index.Main.reloadDataSetList($("#sidebar-left-data-selection-strc").val());
-		console.log("here");
-	}
-	
-	//next logic step is in the reloadDataSetList function
-	
-	/**************************
-	 * Button event listeners *
-	 **************************
-	$("#sidebar-left-data-selection-submitbtn").click(org.aksw.cubeViz.Index.Main.sidebarLeftDataSelectionSubmitbtnClick);
-		
-	/****************************
-	 * Data Selection listeners *
-	 ****************************
-	
-	// data structure
-	$("#sidebar-left-data-selection-strc").click( function() {
-		org.aksw.cubeViz.Index.Main.selectedDSD = {
-			"label": "datastructureLabel",
-			"uri": $(this).val()
-			};
-		
-		org.aksw.cubeViz.Index.Main.reloadDataSetList($(this).val());
-	});
-	
-	// data set
-	$("#sidebar-left-data-selection-sets").click( function() {
-		// get dimensions and measures from the DB and renew dimensions and measures list
-		org.aksw.cubeViz.Index.Main.reloadDimensionsAndMeasuresList($(this).val());
-	});
-	
-	/**********************************
-	 * Chart selection event listener *
-	 *      For chart icon menu       *
-	 **********************************
-	
-	$("#chart-selection-selected-chart").val(org.aksw.cubeViz.Index.Main.chartType);
-	//set the default selected chart type
-	chartType = $("#chart-selection-selected-chart").val();
-	//setting this opacity to 100%
-	$("#chart-selection-"+chartType).css("opacity","0.6");
-	// for IE8-
-	$("#chart-selection-"+chartType).css("filter","alpha(opacity=60)");
-	
-	// append event to each img id=chart-selection-arrayelement
-	var availableChartTypesLength = org.aksw.cubeViz.Index.Main.availableChartTypes.length;
-	while(availableChartTypesLength--) {
-		var currentChartType = org.aksw.cubeViz.Index.Main.availableChartTypes[availableChartTypesLength];
-		
-		$("#chart-selection-"+currentChartType).click(function() {			
-			//setting this opacity to 100%
-			$(this).css("opacity","0.6");
-			// for IE8-
-			$(this).css("filter","alpha(opacity=60)");
-			//setting old selected opacity to 60%
-			var oldChartType = $("#chart-selection-selected-chart").val();
-			$("#chart-selection-"+oldChartType).css("opacity","1.0");
-			// for IE8-
-			$("#chart-selection-"+oldChartType).css("filter","alpha(opacity=100)");
-			
-			
-			//getting the chart type from id
-			var id = $(this).attr('id');
-			id = id.split("-");
-			var chartType = id[2];
-			$("#chart-selection-selected-chart").val(chartType);
-			
-			//set chartType to the Main namespace
-			org.aksw.cubeViz.Index.Main.chartType = chartType;
-			
-			//construct URI
-			var uri_search = window.location.search.split("&");
-			var patt=/chartType/i;
-			uri_search = jQuery.grep(uri_search, function(n, i){
-				return (!patt.test(n));
-			});
-			uri_search = uri_search.join("&");
-			uri_search += "&chartType="+chartType; 
-			uri_full = window.location.href.split(window.location.search)[0] + uri_search;
-			
-			window.location.replace(uri_full);
-			//var config = org.aksw.cubeViz.Index.Main.makeConfig();
-			//org.aksw.cubeViz.Index.Main.saveConfigurationToFile(config);
-		});
-		
-		$("#chart-selection-"+currentChartType).mouseover(function() {
-			$(this).css("opacity","0.6");
-			
-			// for IE8-
-			$(this).css("filter","alpha(opacity=60)");
-		});
-		
-		$("#chart-selection-"+currentChartType).mouseout(function() {
-			// get chart type
-			var id = $(this).attr('id');
-			id = id.split("-");
-			var chartType = id[2];
-			
-			if($("#chart-selection-selected-chart").val() != chartType) {
-				$(this).css("opacity","1.0");
-			
-				//for IE8-
-				$(this).css("filter","alpha(opacity=100)");
-			}
-		});
-	}*/
-
-	
 });

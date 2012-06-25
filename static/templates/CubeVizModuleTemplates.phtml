@@ -3,7 +3,7 @@
         {.repeated section @}
             
             <div class="sidebar-left-data-selection-dims-box-seperator">
-                <input type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">
+                <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">
                 <div class="sidebar-left-data-selection-dims-box-lblabs">
                     <div class="sidebar-left-data-selection-dims-box-label">
                         <span class="sidebar-left-data-selection-dims-box-label-value">&nbsp; {label}</span> 
@@ -13,7 +13,7 @@
                         <div id="open-dialog-{label}-selector" class="open-dialog-selector">
                             <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
                         </div>
-                        <div id="open-dialog-{label}-options" class="open-dialog-options">
+                        <div style="display:none;" id="open-dialog-{label}-options" class="open-dialog-options">
                             <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>">
                         </div>
                     </div>
@@ -29,10 +29,10 @@
     {.section measures}	
         {.repeated section @}
             <div class="sidebar-left-data-selection-meas-box-seperator">
-                <input type="checkbox" name="" class="sidebar-left-data-selection-meas-box" id="sidebar-left-data-selection-meas-box-{label}" value="{url}"/>
+                <input style="display:none;" type="checkbox" name="" class="sidebar-left-data-selection-meas-box" id="sidebar-left-data-selection-meas-box-{label}" value="{url}"/>
                 <div class="sidebar-left-data-selection-meas-box-label">&nbsp; {label}</div>
                 <div class="sidebar-left-data-selection-meas-box-abstract">
-                    <div id="open-dialog-{label}-options">
+                    <div style="display:none;" id="open-dialog-{label}-options">
                         <img class="sidebar-left-data-selection-meas-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>"/>
                     </div>
                 </div>

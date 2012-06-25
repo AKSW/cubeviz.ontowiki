@@ -23,14 +23,9 @@ class DataCube_VocabularyTerms_Measure extends ArrayObject
 	 * @param $roundValues
 	 * @param $orderDirection
      */
-	public function __construct($url, $url_md5, $label, $type, $order, $aggregationMethod, $roundValues, $orderDirection) {
+	public function __construct($url, $label, $type) {
 		$this ['url'] = $url;
-		$this ['url_md5'] = $url_md5; // deleteable?!
 		$this ['label'] = $label;
 		$this ['type'] = $type;
-		$this ['order'] = $order;
-		$this ['aggregationMethod'] = $aggregationMethod;
-		$this ['roundValues'] = $roundValues;
-		$this ['orderDirection'] = $orderDirection;
 	}
 }

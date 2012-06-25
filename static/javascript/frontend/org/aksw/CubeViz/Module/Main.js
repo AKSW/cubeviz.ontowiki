@@ -19,10 +19,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	selectedDS: null,
 	allDimensions: [],	
 	selectedDimensions: [],
-	optionsDimensions: [],
 	allMeasures: [],
 	selectedMeasures: [],
-	optionsMeasures: [],
 	allDimensionComponents: [],
 	selectedDimensionComponents: [],
 	cubevizPath: null,
@@ -61,13 +59,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		this.modelUrl = CubeViz_Parameters.modelUrl; 
 		this.cubevizPath = CubeViz_Parameters.cubevizPath; 
 		this.backend = CubeViz_Parameters.backend;
-		this.chartType = CubeViz_Parameters.chartType;
-				
-		// unpack options from selectedDimensions object
-		this.optionsDimensions = CubeViz_Adapter_Module.extractOptionsFromSelectedDimensions(this.selectedDimensions);
-		
-		// unpack options from selectedMeasures object
-		this.optionsMeasures = CubeViz_Adapter_Module.extractOptionsFromSelectedMeasures(this.selectedMeasures);
 	},
 	
 	/**
@@ -86,9 +77,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.renderMeasures(this.allMeasures);
 			
 			this.renderDialogsForDimensions(this.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
-			
-			this.renderOptionsForDimensions(this.allDimensions, CubeViz_Options_Dimension_Template);
-			this.renderOptionsForMeasures(this.allMeasures, CubeViz_Options_Measure_Template);
 			
 		} catch(error) {
 			throw (error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.");
@@ -109,10 +97,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.registerOpenDialog(dimension_current.label);
 			this.registerCloseDialog(dimension_current.label);
 			this.registerCheckboxDialog(dimension_current.label);
-			this.registerOptionsDimensionOpen(dimension_current.label);
-			this.registerOptionsDimensionClose(dimension_current.label);
-			this.registerOptionsDimensionOrderDirection(dimension_current.label);
-			this.registerOptionsDimensionChartAxis(dimension_current.label);
 			this.registerDimensionCheckBox(dimension_current.label);
 		}
 		
@@ -120,11 +104,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		for(measure in this.allMeasures.measures) {
 			measure_current = this.allMeasures.measures[measure];
 			
-			this.registerOptionsMeasureOpen(measure_current.label);
-			this.registerOptionsMeasureClose(measure_current.label);
-			this.registerOptionsMeasureAggregationMethod(measure_current.label);
-			this.registerOptionsMeasureOrderDirection(measure_current.label);
-			this.registerOptionsMeasureRoundValues(measure_current.label);
 			this.registerMeasureCheckBox(measure_current.label);
 		}
 		
@@ -157,37 +136,12 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		}
 	},
 	
-	registerDimensionOptions: function() {
-		var dimension_current = null;
-		for(dimension in this.allDimensions.dimensions) {
-			dimension_current = this.allDimensions.dimensions[dimension];
-			
-			this.registerOptionsDimensionOpen(dimension_current.label);
-			this.registerOptionsDimensionClose(dimension_current.label);
-			this.registerOptionsDimensionOrderDirection(dimension_current.label);
-			this.registerOptionsDimensionChartAxis(dimension_current.label);
-		}
-	},
-	
 	registerMeasures: function() {
 		var measure_current = null;
 		for(measure in this.allMeasures.measures) {
 			measure_current = this.allMeasures.measures[measure];
 			
 			this.registerMeasureCheckBox(measure_current.label);
-		}
-	},
-	
-	registerMeasureOptions: function() {
-		var measure_current = null;
-		for(measure in this.allMeasures.measures) {
-			measure_current = this.allMeasures.measures[measure];
-			
-			this.registerOptionsMeasureOpen(measure_current.label);
-			this.registerOptionsMeasureClose(measure_current.label);
-			this.registerOptionsMeasureAggregationMethod(measure_current.label);
-			this.registerOptionsMeasureOrderDirection(measure_current.label);
-			this.registerOptionsMeasureRoundValues(measure_current.label);
 		}
 	},
 	
@@ -238,99 +192,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		// TODO: use .change event here
 		$("#sidebar-left-data-selection-sets").click( $.proxy(function(event) {
 			$(event.target).trigger("dataSetClicked.CubeViz");			
-		}, this));
-	},
-	
-	registerOptionsDimensionOpen: function(dimensionLabel) {
-		$("#open-dialog-"+dimensionLabel+"-options").click($.proxy(function(event) {
-			var elementId = $(event.target).parent().attr("id").split("-");
-			var label_current = elementId[2];
-			
-			this.closeAllDialogs();
-			$("#dialog-options-dimension-"+label_current).show();
-							
-			$(event.target).trigger("optionsDimensionOpened.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsDimensionClose: function(dimensionLabel) {
-		$("#dialog-options-dimension-btn-close-"+dimensionLabel).click($.proxy(function(event) {
-			var elementId = $(event.target).attr("id").split("-");
-			var label_current = elementId[5];
-			
-			$("#dialog-options-dimension-"+label_current).hide();
-			$("#site-overlay").hide ();
-			
-			$(event.target).trigger("optionsDimensionClosed.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsDimensionOrderDirection: function(dimensionLabel) {
-		$(".dialog-options-dimension-items-order-direction-"+dimensionLabel).click($.proxy(function(event) {
-			var elementClass = $(event.target).attr("class").split("-");
-			var label_current = elementClass[6];
-			
-			$(event.target).trigger("optionsDimensionOrderDirectionClicked.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsDimensionChartAxis: function(dimensionLabel) {
-		$(".dialog-options-dimension-items-chart-axis-"+dimensionLabel).click($.proxy(function(event) {
-			var elementClass = $(event.target).attr("class").split("-");
-			var label_current = elementClass[6];
-			
-			$(event.target).trigger("optionsDimensionChartAxisClicked.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsMeasureOpen: function(measureLabel) {
-		$("#open-dialog-"+measureLabel+"-options").click($.proxy(function(event) {
-			var elementId = $(event.target).parent().attr("id").split("-");
-			var label_current = elementId[2];
-			
-			this.closeAllDialogs();
-			$("#dialog-options-measure-"+label_current).show();
-							
-			$(event.target).trigger("optionsMeasureOpened.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsMeasureClose: function(measureLabel) {
-		$("#dialog-options-measure-btn-close-"+measureLabel).click($.proxy(function(event) {
-			var elementId = $(event.target).attr("id").split("-");
-			var label_current = elementId[5];
-			
-			$("#dialog-options-measure-"+label_current).hide();
-			$("#site-overlay").hide ();
-			
-			$(event.target).trigger("optionsMeasureClosed.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsMeasureAggregationMethod: function(measureLabel) {
-		$(".dialog-options-measure-items-aggregation-method-"+measureLabel).click($.proxy(function(event) {
-			var elementClass = $(event.target).attr("class").split("-");
-			var label_current = elementClass[6];
-			
-			$(event.target).trigger("optionsMeasureAggregationMethodClicked.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsMeasureOrderDirection: function(measureLabel) {
-		$(".dialog-options-measure-items-order-direction-"+measureLabel).click($.proxy(function(event) {
-			var elementClass = $(event.target).attr("class").split("-");
-			var label_current = elementClass[6];
-			
-			$(event.target).trigger("optionsMeasureOrderDirectionClicked.CubeViz");
-		}, this));
-	},
-	
-	registerOptionsMeasureRoundValues: function(measureLabel) {
-		$(".dialog-options-measure-items-round-values-"+measureLabel).click($.proxy(function(event) {
-			var elementClass = $(event.target).attr("class").split("-");
-			var label_current = elementClass[6];
-			
-			$(event.target).trigger("optionsMeasureRoundValuesClicked.CubeViz");
 		}, this));
 	},
 	
@@ -402,34 +263,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 		this.setDialogCheckBoxes();
 	},
-	
-	renderOptionsForDimensions: function(dimensions, CubeViz_Options_Dimension_Template) {
-		var dimension_current = null;
-		for(dimension in dimensions.dimensions) {
-			dimension_current = dimensions.dimensions[dimension];
-			$("#dialog-options-dimension-"+dimension_current.label).remove();
-			$("#wrapper").append(CubeViz_Options_Dimension_Template.expand(dimension_current));
-			$("#dialog-options-dimension-"+dimension_current.label).hide();
-		}
-		
-		$(body).trigger("optionsDimensionRendered.CubeViz");
-		
-		this.setDimensionsOptionRadioButtons(dimensions);
-	},
-	
-	renderOptionsForMeasures: function(measures, CubeViz_Options_Measure_Template) {
-		var measure_current = null;
-		for(measure in measures.measures) {
-			measure_current = measures.measures[measure];
-			$("#dialog-options-measure-"+measure_current.label).remove();
-			$("#wrapper").append(CubeViz_Options_Measure_Template.expand(measure_current));
-			$("#dialog-options-measure-"+measure_current.label).hide();
-		}
-		
-		$(body).trigger("optionsMeasureRendered.CubeViz");
-		
-		this.setMeasuresOptionRadioButtons(measures);
-	}, 
 	
 	renderDSD: function(allDSD) {
 		this.emptyDataStructureDefinitions();
@@ -712,7 +545,10 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	/**************************************
 	 * Dimension Options Dialog functions *
 	 **************************************/
-		
+	
+	/**
+	 * Options related - disabled
+	 */	
 	setDimensionsOptionRadioButtons: function(dimensions) {
 		var dim_current = null;
 		for(dim in dimensions.dimensions) {
@@ -726,6 +562,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		}
 	},
 	
+	/**
+	 * Options related - disabled
+	 */
 	setMeasuresOptionRadioButtons: function(measures) {
 		var meas_current = null;
 		for(meas in measures.measures) {
