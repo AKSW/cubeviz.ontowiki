@@ -211,14 +211,97 @@ class DataCube_Query {
 
         return count ( $this->getComponentElements ( $dsUri, $componentProperty ) );
     } 
+       
+    public function getObservations($graphUri, $dimensionComponents) {
+		
+		$dimComps = $dimensionComponents['selectedDimensionComponents'];
+		
+		$sparql = 'CONSTRUCT {?s ?p ?o} 
+			FROM <'. $graphUri .'>
+			WHERE {
+			?s ?p ?o .
+            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'>.'."\n";
+                
+        $uri_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
+        
+        $dimComps_length = sizeof($dimComps);
+        for($i = 0; $i < $dimComps_length; $i++) {
+			// check if property is URI
+			$uri = $dimComps[$i]['property'];
+			if(preg_match($uri_pattern, $uri)) {
+				$sparql .= '?s <'.$dimComps[$i]['dimension_type'].'> <'.$dimComps[$i]['property'].'> .'."\n";
+				unset($dimComps[$i]);
+			} else {
+				$sparql .= '?s <'.$dimComps[$i]['dimension_type'].'> ?comp'.$i.'.'."\n";
+			}
+		}
+		
+		$dimComps_length = sizeof($dimComps);
+        for($i = 0; $i < $dimComps_length; $i++) {
+			// check if property is URI
+			if(isset($dimComps[$i])) {
+				$sparql .= 'FILTER (?comp'.$i.'="'.$dimComps[$i]['property'].'").'."\n";
+			}
+		}
+        
+        //END of WHERE clause
+        $sparql .= '}';
+                    
+        return $sparql;
+	}
     
     /**
      * 
      */
     public function getResultObservationsFromLink($link) {
 		
+		$dsUri = $link['selectedDS']['url'];
 		
-		return $this->getResultObservations();
+		$dimensions = array();
+		$dimensionTypes = null;
+		$dimensionOptions = null;
+		$dimensionElements = null;
+		
+		for($i = 0, $dimensions_length = sizeof($link['selectedDimensions']['dimensions']); $i < $dimensions_length; $i++) {
+			$url = $link['selectedDimensions']['dimensions'][$i]["url"];
+			array_push($dimensions, $url);
+			
+			$dimensionTypes[$url] = array();
+			$dimensionTypes[$url]['url'] = $url;
+			$dimensionTypes[$url]['type'] = $link['selectedDimensions']['dimensions'][$i]["type"];
+			$dimensionTypes[$url]['elemCount'] = $link['selectedDimensions']['dimensions'][$i]["elementCount"];
+			$dimensionTypes[$url]['order'] = '-1';
+			
+			$dimensionOptions[$url] = array();
+			$dimensionOptions[$url]['order'] = "NONE";
+			
+			$dimensionElements[$url] = array();
+		}
+		
+		for($i = 0, $dimComp_length = sizeof($link['selectedDimensionComponents']['selectedDimensionComponents']); $i < $dimComp_length; $i++) {
+			$url = $link['selectedDimensionComponents']['selectedDimensionComponents'][$i]['dimension_url'];
+			array_push($dimensionElements[$url], $link['selectedDimensionComponents']['selectedDimensionComponents'][$i]['property']);
+		}
+		
+		$measures = array();
+		$measureTypes = null;
+		$measureAggregationMethods = null;
+		$measureOptions = null;
+		
+		for($i = 0, $meas_length = sizeof($link['selectedMeasures']['measures']); $i < $meas_length; $i++) {
+			$url = $link['selectedMeasures']['measures'][$i]['url'];
+			array_push($measures, $url);
+			$measureTypes[$url] = array();
+			$measureTypes[$url]['url'] = $url;
+			$measureTypes[$url]['type'] = $link['selectedMeasures']['measures'][$i]['type'];
+			$measureTypes[$url]['order'] = '-1';
+			$measureAggregationMethods[$url] = 'sum';
+			$measureOptions[$url]['order'] = 'NONE';
+		}
+
+		return $this->getResultObservations($dsUri, 
+            $dimensions, $dimensionElements, $dimensionTypes, $dimensionOptions, 
+            $measures, $measureTypes, $measureAggregationMethods, $measureOptions);
 	}
     
     /**
@@ -289,7 +372,7 @@ class DataCube_Query {
             // add constraints for the dimension element selection in the observations
             if ( true == isset($dimensionElements [$dimension]) ) {
                 
-                $dimElemList = DataCube_Query::getComponentElements ($dsUri, $dimPropertyUri);
+                //$dimElemList = DataCube_Query::getComponentElements ($dsUri, $dimPropertyUri);
                 $falseList = array_diff($dimElemList, $dimensionElements [$dimension]);
                 
                 if(count($falseList)>0) {
@@ -391,7 +474,7 @@ class DataCube_Query {
                 
             if ('' != $sparqlOrderBy)
                 $sparqlWhere .= ' ORDER BY '. $sparqlOrderBy;
-            
+                                    
             return array (
                 'observations' => $this->_model->sparqlQuery($sparqlSelect . $sparqlWhere), 
                 'nameTable' => $internalNameTable

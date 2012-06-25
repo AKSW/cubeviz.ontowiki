@@ -54,14 +54,22 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$linkCode = $this->_request->getParam('lC');
-		
+				
 		$configuration = new CubeViz_ConfigurationLink();
 		$configuration->initFromLink($linkCode);
 		$links = $configuration->getLinks();
+		
 				
 		$query = new DataCube_Query($model);
 		
-		//$resultObservations = $query->getResultObservations($links['default']);
+		$dimensions = $links[$linkCode]['selectedDimensions'];
+		$dimensionComponents = $links[$linkCode]['selectedDimensionComponents'];
+		$graphUri = $links[$linkCode]['selectedGraph'];
+				
+		$resultObservations = $query->getObservations($graphUri, $dimensionComponents);
+		
+		var_dump($resultObservations);
+		die;
 						
 		$this->_response->setBody();
 	}
