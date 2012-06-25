@@ -50,6 +50,13 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.PieChart', {
     },
     
     /**
+     * 
+     */
+    restrictions: {
+        maximumMultipleDimensions: 1
+    },
+    
+    /**
      * @param 
      */
     init: function (rawData, renderToContainer, dimensionsAssignment, measuresAssignment, 
@@ -72,6 +79,21 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.PieChart', {
         // Set separator for the chart caption
         this.configuration.captionEntrySeparator = captionEntrySeparator || this.configuration.captionEntrySeparator;
     },    
+    
+    /**
+     * Checks if this graph type is suitable visualize the given data.
+     * @param rawData
+     * @return Boolean True if suitable, otherwise false.
+     */
+    isSuitable: function () {        
+        
+        // Compares number of multiple dimensions in rawdata with class restriction
+        if (this.getMultipleDimensions (this.rawData).length <= this.restrictions.maximumMultipleDimensions) {
+            return true;
+        }
+        
+        return false;
+    },
     
     /**
      * Check if everything is ok for execute getChartInput
