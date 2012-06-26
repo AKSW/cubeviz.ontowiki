@@ -58,6 +58,7 @@ class CubevizModule extends OntoWiki_Module
 		
 		// get lC from the browser link - pointing to the file
 		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
+		$this->view->linkCode = $linkCode;
 		
 		// initialize links handle and read configuration
 		$configuration = new CubeViz_ConfigurationLink();

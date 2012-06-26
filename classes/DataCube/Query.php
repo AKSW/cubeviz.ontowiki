@@ -248,7 +248,6 @@ class DataCube_Query {
 		$triplePatterns = implode(" UNION ", $triplePatterns);
 		$where .= $triplePatterns;
 		
-		$dimComps_length = sizeof($dimComps);
         for($i = 0; $i < $dimComps_length; $i++) {
 			// check if property is URI
 			if(isset($dimComps[$i])) {
@@ -258,10 +257,10 @@ class DataCube_Query {
         
         $where .= '}';    
 		$queryObject->setWherePart($where);
-				
+		
 		$options = array(STORE_RESULTFORMAT => "json");
-        $queryResult = $this->_store->sparqlQuery($queryObject, $options);       
-               
+        $queryResult = $this->_store->sparqlQuery($queryObject, $options);
+                    
         return $queryResult;
 	}
     

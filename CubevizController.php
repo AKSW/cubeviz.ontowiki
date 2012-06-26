@@ -22,30 +22,31 @@ class CubevizController extends OntoWiki_Controller_Component {
         
 		//http://localhost/extensions/cubeviz/
 		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
-        $this->view->cubevizPath_index = $cubeVizExtensionURL_controller;
-        $this->view->basePath_index = $this->_config->staticUrlBase . "extensions/cubeviz/";
-        $this->view->basePath_images = $this->view->basePath_index ."static/images/";
+        $this->view->cubevizPath = $cubeVizExtensionURL_controller;
+        $this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
+        $this->view->basePath_images = $this->view->basePath ."static/images/";
         
 	// TODO delete this because its a hack
 	$this->view->chartType = $this->_request->getParam ("chartType");
         
 	// send backend information to the view
         $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
-        $this->view->backend_index = $ontowikiBackend;
+        $this->view->backend = $ontowikiBackend;
 		// get chartType from the browser link
         $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'pie';
 		
 		// get lC from the browser link - pointing to the file
 		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
+		$this->view->linkCode = $linkCode;
 		
 		// initialize links handle and read configuration
 		$configuration = new CubeViz_ConfigurationLink();
 		$configuration->initFromLink($linkCode);
 													
-		$this->view->links_index = json_encode($configuration->getLinks());
-		$this->view->modelUrl_index = $this->_owApp->selectedModel;
+		$this->view->links = json_encode($configuration->getLinks());
+		$this->view->modelUrl = $this->_owApp->selectedModel;
 		// TODO: get backend from OntoWiki config
-		$this->view->backend_index = "virtuoso";
+		$this->view->backend = "virtuoso";
 	}
 	
 	public function getresultobservationsAction() {
@@ -67,11 +68,8 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$graphUri = $links[$linkCode]['selectedGraph'];
 				
 		$resultObservations = $query->getObservations($graphUri, $dimensionComponents);
-		
-		var_dump($resultObservations);
-		die;
 						
-		$this->_response->setBody();
+		$this->_response->setBody($resultObservations);
 	}
     
     /**

@@ -253,8 +253,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		var selectedDimensions = this.selectedDimensions;
 		var tempDimensions = CubeViz_Adapter_Module.packDimensionComponentsForTemplate(dimensionComponents, 
 																					   selectedDimensions);
-																					   
-		console.log(tempDimensions);
+											
 		for(dimension in tempDimensions) {
 			$("#dialog-"+tempDimensions[dimension].label).remove();
 			$("#wrapper").append(CubeViz_Dialog_Template.expand(tempDimensions[dimension]));

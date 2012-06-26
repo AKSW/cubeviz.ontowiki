@@ -165,23 +165,29 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		return {"measures":processedMeasures};
 	},
 	
-	processRetrievedDimensionComponents: function(retrievedDimComps, selectedDimComps) {
+	processRetrievedDimensionComponents: function(retrievedDimComps, selectedDimComps, dimensions) {
 		var result = [];
 		
 		var label_current = null;
 		var dimension_current = null;
-		//console.log(retrievedDimComps);
+		var dimension_reference = null;
 		for(dimCompLabel in retrievedDimComps) {
 			label_current = dimCompLabel;
 			dimension_current = retrievedDimComps[label_current];
-			
+			for(dim in dimensions.dimensions) {
+				if(dimensions.dimensions[dim]['label'] == label_current) {
+					dimension_reference = dimensions.dimensions[dim];
+				}
+			}
+						
 			for(component in dimension_current) {
 				result.push( { "property_label": dimension_current[component].property_label,
 							   "property":dimension_current[component].property,
-							   "dimension_label":label_current } );
+							   "dimension_label":label_current,
+							   "dimension_url":dimension_reference.url,
+							   "dimension_type": dimension_reference.type } );
 			}
 			
-			//console.log(dimension_current);
 		}
 		return {"selectedDimensionComponents":result};
 	}	

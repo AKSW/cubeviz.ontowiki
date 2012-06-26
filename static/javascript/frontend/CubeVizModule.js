@@ -203,7 +203,6 @@ $(function() {
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
 		var config = CubeViz_Main_Module.makeLink();
-		console.log(CubeViz_Main_Module.selectedDimensionComponents);
 		CubeViz_Ajax_Module.saveLinkToFile(config);
 	});
 	
@@ -258,7 +257,8 @@ $(function() {
 	
 	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function() {
 		CubeViz_Main_Module.allDimensionComponents = CubeViz_Adapter_Module.processRetrievedDimensionComponents(CubeViz_Ajax_Module.retrievedDimensionComponents,
-																												CubeViz_Main_Module.selectedDimensionComponents);
+																												CubeViz_Main_Module.selectedDimensionComponents,
+																												CubeViz_Main_Module.allDimensions);
 		// the order is significant here!
 		CubeViz_Main_Module.setDimensionElementCount(CubeViz_Ajax_Module.retrievedDimensionComponents);	
 		CubeViz_Main_Module.renderDimensions(CubeViz_Main_Module.allDimensions);

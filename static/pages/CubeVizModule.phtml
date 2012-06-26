@@ -27,7 +27,7 @@
 	var CubeViz_Links = <?php echo $this->links; ?>;
 	
 	// choose default config for the start
-	var CubeViz_Link_Chosen = 'default';
+	var CubeViz_Link_Chosen = <?php echo json_encode($this->linkCode); ?>;
 			
 	var CubeViz_Parameters = {
 		sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
