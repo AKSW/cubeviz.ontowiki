@@ -203,6 +203,7 @@ $(function() {
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
 		var config = CubeViz_Main_Module.makeLink();
+		console.log(CubeViz_Main_Module.selectedDimensionComponents);
 		CubeViz_Ajax_Module.saveLinkToFile(config);
 	});
 	

@@ -77,7 +77,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.renderMeasures(this.allMeasures);
 			
 			this.renderDialogsForDimensions(this.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
-			
+
 		} catch(error) {
 			throw (error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.");
 		}
@@ -253,6 +253,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		var selectedDimensions = this.selectedDimensions;
 		var tempDimensions = CubeViz_Adapter_Module.packDimensionComponentsForTemplate(dimensionComponents, 
 																					   selectedDimensions);
+																					   
+		console.log(tempDimensions);
 		for(dimension in tempDimensions) {
 			$("#dialog-"+tempDimensions[dimension].label).remove();
 			$("#wrapper").append(CubeViz_Dialog_Template.expand(tempDimensions[dimension]));
@@ -422,7 +424,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		for(dimComp in this.selectedDimensionComponents.selectedDimensionComponents) {
 			dimComp_current = this.selectedDimensionComponents.selectedDimensionComponents[dimComp];
 			
-			$.each( $(".dialog-listitem-box-"+dimComp_current.label), function() {
+			$.each( $(".dialog-listitem-box-"+dimComp_current.dimension_label), function() {
 				if( $(this).val() == dimComp_current.property) {
 					$(this).attr('checked', true);
 				}

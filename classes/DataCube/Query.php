@@ -12,12 +12,14 @@
 class DataCube_Query {
     
     protected $_model = null;
+    protected $_store = null;
     
     /**
      * Constructor
      */
     public function __construct (&$model) {
         $this->_model = $model;
+        $this->_store = $model->getStore();
     }
 	
 	/**
@@ -215,39 +217,52 @@ class DataCube_Query {
     public function getObservations($graphUri, $dimensionComponents) {
 		
 		$dimComps = $dimensionComponents['selectedDimensionComponents'];
-		
-		$sparql = 'CONSTRUCT {?s ?p ?o} 
-			FROM <'. $graphUri .'>
-			WHERE {
-			?s ?p ?o .
-            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'>.'."\n";
-                
-        $uri_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
+		$uri_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
         
+		$queryObject = new Erfurt_Sparql_SimpleQuery();
+		
+		$prologuePart = //'define output:format "JSON"
+						 'CONSTRUCT {?s ?p ?o}';
+		$queryObject->setProloguePart($prologuePart);
+	
+		$fromPart[] = $graphUri;
+		$queryObject->setFrom($fromPart);
+		
+		$where = 'WHERE {
+			?s ?p ?o .
+            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n";
+        
+        $triplePatterns = array();
         $dimComps_length = sizeof($dimComps);
         for($i = 0; $i < $dimComps_length; $i++) {
 			// check if property is URI
 			$uri = $dimComps[$i]['property'];
 			if(preg_match($uri_pattern, $uri)) {
-				$sparql .= '?s <'.$dimComps[$i]['dimension_type'].'> <'.$dimComps[$i]['property'].'> .'."\n";
+				array_push($triplePatterns, '{?s <'.$dimComps[$i]['dimension_type'].'> <'.$dimComps[$i]['property'].'>}'."\n");
 				unset($dimComps[$i]);
 			} else {
-				$sparql .= '?s <'.$dimComps[$i]['dimension_type'].'> ?comp'.$i.'.'."\n";
+				$where .= '?s <'.$dimComps[$i]['dimension_type'].'> ?comp'.$i.' .'."\n";
 			}
 		}
+		
+		$triplePatterns = implode(" UNION ", $triplePatterns);
+		$where .= $triplePatterns;
 		
 		$dimComps_length = sizeof($dimComps);
         for($i = 0; $i < $dimComps_length; $i++) {
 			// check if property is URI
 			if(isset($dimComps[$i])) {
-				$sparql .= 'FILTER (?comp'.$i.'="'.$dimComps[$i]['property'].'").'."\n";
+				$where .= 'FILTER (?comp'.$i.'="'.$dimComps[$i]['property'].'") .'."\n";
 			}
 		}
         
-        //END of WHERE clause
-        $sparql .= '}';
-                    
-        return $sparql;
+        $where .= '}';    
+		$queryObject->setWherePart($where);
+				
+		$options = array(STORE_RESULTFORMAT => "json");
+        $queryResult = $this->_store->sparqlQuery($queryObject, $options);       
+               
+        return $queryResult;
 	}
     
     /**

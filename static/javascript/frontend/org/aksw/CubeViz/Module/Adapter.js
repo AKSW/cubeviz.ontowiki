@@ -22,23 +22,23 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		for(dimensionComponent in selectedDimensionComponents.selectedDimensionComponents) {
 			dimcomp_current = selectedDimensionComponents.selectedDimensionComponents[dimensionComponent];
 			
-			if(packedDimensionComponents[dimcomp_current.label] == undefined) {
-				packedDimensionComponents[dimcomp_current.label] = [];
-				packedDimensionComponents[dimcomp_current.label]["list"] = [];
+			if(packedDimensionComponents[dimcomp_current.dimension_label] == undefined) {
+				packedDimensionComponents[dimcomp_current.dimension_label] = [];
+				packedDimensionComponents[dimcomp_current.dimension_label]["list"] = [];
 				//if label changed, reset i!
 				i = 0;
 			}
-			packedDimensionComponents[dimcomp_current.label]["list"][i] = [];
+			packedDimensionComponents[dimcomp_current.dimension_label]["list"][i] = [];
 							
-			if(packedDimensionComponents[dimcomp_current.label]["label"] == undefined) {
-				packedDimensionComponents[dimcomp_current.label]["label"] = dimcomp_current.label;
+			if(packedDimensionComponents[dimcomp_current.dimension_label]["label"] == undefined) {
+				packedDimensionComponents[dimcomp_current.dimension_label]["label"] = dimcomp_current.dimension_label;
 			}
 			
-			packedDimensionComponents[dimcomp_current.label]["list"][i]["value"] = dimcomp_current.property;
+			packedDimensionComponents[dimcomp_current.dimension_label]["list"][i]["value"] = dimcomp_current.property;
 			
-			packedDimensionComponents[dimcomp_current.label]["list"][i]["label"] = dimcomp_current.property_label;
+			packedDimensionComponents[dimcomp_current.dimension_label]["list"][i]["label"] = dimcomp_current.property_label;
 			
-			packedDimensionComponents[dimcomp_current.label]["list"][i]["dimension"] = dimcomp_current.label;
+			packedDimensionComponents[dimcomp_current.dimension_label]["list"][i]["dimension"] = dimcomp_current.dimension_label;
 			
 			i++;	
 		}
@@ -170,6 +170,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		
 		var label_current = null;
 		var dimension_current = null;
+		//console.log(retrievedDimComps);
 		for(dimCompLabel in retrievedDimComps) {
 			label_current = dimCompLabel;
 			dimension_current = retrievedDimComps[label_current];
@@ -177,7 +178,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 			for(component in dimension_current) {
 				result.push( { "property_label": dimension_current[component].property_label,
 							   "property":dimension_current[component].property,
-							   "label":label_current } );
+							   "dimension_label":label_current } );
 			}
 			
 			//console.log(dimension_current);
