@@ -191,14 +191,20 @@ class DataCube_Query {
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
         
         foreach($result as $key => $element) {
-            $titleHelper->addResource($element);
+            if($this->isUrl($element)) {
+				$titleHelper->addResource($element);
+			}
 		}
 		
 		
 		//var_dump($result); die;
 		$result_with_labels = array();
 		foreach($result as $key => $element) {
-			$result_with_labels[$key]["property_label"] = $titleHelper->getTitle ( $element );
+			if($this->isUrl($element)) {
+				$result_with_labels[$key]["property_label"] = $titleHelper->getTitle ( $element );
+			} else {
+				$result_with_labels[$key]["property_label"] = $element;
+			}			
 			$result_with_labels[$key]["property"] = $element;
 		}
 		                                
@@ -217,8 +223,7 @@ class DataCube_Query {
     public function getObservations($graphUri, $dimensionComponents) {
 		
 		$dimComps = $dimensionComponents['selectedDimensionComponents'];
-		$uri_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
-        
+		 
 		$queryObject = new Erfurt_Sparql_SimpleQuery();
 		
 		$prologuePart = //'define output:format "JSON"
@@ -237,7 +242,7 @@ class DataCube_Query {
         for($i = 0; $i < $dimComps_length; $i++) {
 			// check if property is URI
 			$uri = $dimComps[$i]['property'];
-			if(preg_match($uri_pattern, $uri)) {
+			if($this->isUrl($uri)) {
 				array_push($triplePatterns, '{?s <'.$dimComps[$i]['dimension_type'].'> <'.$dimComps[$i]['property'].'>}'."\n");
 				unset($dimComps[$i]);
 			} else {
@@ -262,6 +267,11 @@ class DataCube_Query {
         $queryResult = $this->_store->sparqlQuery($queryObject, $options);
                     
         return $queryResult;
+	}
+    
+    private function isUrl($url) {
+		$url_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
+		return preg_match($url_pattern, $url);
 	}
     
     /**

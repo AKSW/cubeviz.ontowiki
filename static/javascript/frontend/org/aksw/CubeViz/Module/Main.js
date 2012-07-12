@@ -61,57 +61,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		this.backend = CubeViz_Parameters.backend;
 	},
 	
-	/**
-	 * Action: adds elements to the module
-	 */
-	load: function(CubeViz_Dimension_Template,
-				   CubeViz_Measure_Template,
-				   CubeViz_Dialog_Template,
-				   CubeViz_Options_Dimension_Template,
-				   CubeViz_Options_Measure_Template,
-				   CubeViz_Adapter_Module) {
-		try {
-			this.renderDSD(this.allDSD);
-			this.renderDS(this.allDS);
-			this.renderDimensions(this.allDimensions);
-			this.renderMeasures(this.allMeasures);
-			
-			this.renderDialogsForDimensions(this.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
-
-		} catch(error) {
-			throw (error + ":\n Failed to 'load'. Some of CubeViz_Main_Module object parameters are missing. Make sure, that you run init before loading data into the page.");
-		}
-	
-	},
-	
-	setControlElements: function() {
-		this.setDialogCheckBoxes();
-		this.setDimensionsMeasuresCheckBoxes();
-	}, 
-	
-	registerUiEvents: function() {
-		var dimension_current = null;
-		for(dimension in this.allDimensions.dimensions) {
-			dimension_current = this.allDimensions.dimensions[dimension];
-			
-			this.registerOpenDialog(dimension_current.label);
-			this.registerCloseDialog(dimension_current.label);
-			this.registerCheckboxDialog(dimension_current.label);
-			this.registerDimensionCheckBox(dimension_current.label);
-		}
-		
-		var measure_current = null;
-		for(measure in this.allMeasures.measures) {
-			measure_current = this.allMeasures.measures[measure];
-			
-			this.registerMeasureCheckBox(measure_current.label);
-		}
-		
-		this.registerDataStructureDefinition();
-		this.registerDataSet();
-		this.registerSubmitButton();
-	},
-	
 	/*****************************************************
 	 * Factory methods for after template events binding *
 	 *****************************************************/
