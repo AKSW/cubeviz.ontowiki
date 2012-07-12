@@ -105,18 +105,20 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		}
 		
 		//look if there any dimensions exists in selectedDimensions
-		var processedDimensions_length = processedDimensions.length;
-		var dimension_current = null;
-		var seldimension_current = null;
-		var selectedDimension_length = null;
-		while(processedDimensions_length--) {
-			dimension_current = processedDimensions[processedDimensions_length];
-			selectedDimension_length = selectedDimensions.dimensions.length;
-			while(selectedDimension_length--) {
-				seldimension_current = selectedDimensions.dimensions[selectedDimension_length];
-							
-				if(seldimension_current.url == dimension_current.url) {
-					processedDimensions[processedDimensions_length] = seldimension_current;
+		if(!jQuery.isEmptyObject(selectedDimensions)) {
+			var processedDimensions_length = processedDimensions.length;
+			var dimension_current = null;
+			var seldimension_current = null;
+			var selectedDimension_length = null;
+			while(processedDimensions_length--) {
+				dimension_current = processedDimensions[processedDimensions_length];
+				selectedDimension_length = selectedDimensions.dimensions.length;
+				while(selectedDimension_length--) {
+					seldimension_current = selectedDimensions.dimensions[selectedDimension_length];
+								
+					if(seldimension_current.url == dimension_current.url) {
+						processedDimensions[processedDimensions_length] = seldimension_current;
+					}
 				}
 			}
 		}
@@ -138,25 +140,26 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 			//measure_current.url;
 			//measure_current.type;
 			//measure_current.order;
-			measure_current.aggregationMethod = "sum";
-			measure_current.orderDirection = "None";
-			measure_current.roundValues = "no";
 			processedMeasures.push(measure_current);
 		}
 		
 		//look if there any measures exists in selectedMeasures
-		var processedMeasures_length = processedMeasures.length;
-		var measure_current = null;
-		var selectedMeasure_length = null;
-		var selmeasure_current = null;
-		while(processedMeasures_length--) {
-			measure_current = processedMeasures[processedMeasures_length];
-			selectedMeasure_length = selectedMeasures.measures.length;
-			while(selectedMeasure_length--) {
-				selmeasure_current = selectedMeasures.measures[selectedMeasure_length];
-							
-				if(selmeasure_current.url == measure_current.url) {
-					processedMeasures[processedMeasures_length] = selmeasure_current;
+		if(!jQuery.isEmptyObject(selectedMeasures)) {
+			
+			var processedMeasures_length = processedMeasures.length;
+			var measure_current = null;
+			var selectedMeasure_length = null;
+			var selmeasure_current = null;		
+			while(processedMeasures_length--) {
+				measure_current = processedMeasures[processedMeasures_length];
+				selectedMeasure_length = selectedMeasures.measures.length;
+						
+				while(selectedMeasure_length--) {
+					selmeasure_current = selectedMeasures.measures[selectedMeasure_length];
+								
+					if(selmeasure_current.url == measure_current.url) {
+						processedMeasures[processedMeasures_length] = selmeasure_current;
+					}
 				}
 			}
 		}

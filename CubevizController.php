@@ -112,7 +112,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 		$dsUrl = $this->_request->getParam('dsUrl'); // Data Set
 		$componentType = $this->_request->getParam('cT'); // can be  DataCube_UriOf::Dimension or DataCube_UriOf::Measure
-		
+				
 		if($componentType == "measure") {
 			$componentType = DataCube_UriOf::Measure;
 		} else if($componentType == "dimension") {

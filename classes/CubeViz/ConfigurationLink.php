@@ -104,7 +104,8 @@ class CubeViz_ConfigurationLink
 			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_VocabularyTerms_DimensionComponentFactory();
 			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);            
 		} else {
-            throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
+            //throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
+			return false;
 		}
 		return true;
 	}

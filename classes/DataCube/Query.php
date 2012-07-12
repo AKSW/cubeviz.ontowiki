@@ -102,6 +102,7 @@ class DataCube_Query {
      */
 	public function getComponents($dsdUri, $dsUri, $componentType) {
                 
+              
         if ( $componentType != DataCube_UriOf::Dimension && 
              $componentType != DataCube_UriOf::Measure ) {
             throw new CubeViz_Exception (
@@ -123,7 +124,7 @@ class DataCube_Query {
         ORDER BY ASC(?order);';
 
         $queryresultComp = $this->_model->sparqlQuery($sparql);
-        
+                
         $result = array();
         
         // iterate through all found results
@@ -179,6 +180,7 @@ class DataCube_Query {
         $sparql .= 0 < $limit && 0 <= $offset ? ' OFFSET '. $offset .';' : '';
         
         $queryResultElements = $this->_model->sparqlQuery($sparql);
+		
 		
         $result = array();
         

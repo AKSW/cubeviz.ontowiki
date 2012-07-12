@@ -27,7 +27,7 @@ $(function() {
 	CubeViz_Ajax_Module.init(CubeViz_Parameters);
 	
 	CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
-	
+		
 	/*********************
 	 * UI event handling *
 	 *********************/
@@ -153,10 +153,7 @@ $(function() {
 	 
 	//on load get all DSD for chosen model
 	CubeViz_Ajax_Module.getDataStructureDefinitions();
-	console.log(CubeViz_Main_Module);
-	if(typeof CubeViz_Main_Module.selectedDSD === "undefined" || CubeViz_Main_Module.selectedDSD === null) {
-		console.log(123);
-	} else {
+	if(!jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
 		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
 		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
 		CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
@@ -173,8 +170,10 @@ $(function() {
 		
 		CubeViz_Main_Module.renderDSD(CubeViz_Main_Module.allDSD);
 		
-		if(CubeViz_Main_Module.allDSD.length == 1) {
-			CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.allDSD[0]);
+		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
+			var last_element = CubeViz_Main_Module.allDSD.length - 1;
+			CubeViz_Main_Module.selectDSD(CubeViz_Main_Module.allDSD[last_element]);
+			CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.allDSD[last_element]);
 		}
 	});
 	
@@ -182,10 +181,12 @@ $(function() {
 		CubeViz_Main_Module.allDS = CubeViz_Ajax_Module.retrievedDS;
 				
 		CubeViz_Main_Module.renderDS(CubeViz_Main_Module.allDS);
-				
-		if(CubeViz_Main_Module.allDS.length == 1) {
-			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[0]);
-			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[0]);
+			
+		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDS)) {
+			var last_element = CubeViz_Main_Module.allDS.length - 1;
+			CubeViz_Main_Module.selectDS(CubeViz_Main_Module.allDS[last_element]);
+			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
+			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
 		}		
 
 	});
@@ -202,6 +203,8 @@ $(function() {
 		
 		CubeViz_Main_Module.allDimensions = CubeViz_Adapter_Module.processRetrievedDimensions(CubeViz_Ajax_Module.retrievedDimensions,
 																							  CubeViz_Main_Module.selectedDimensions);
+																							  
+		CubeViz_Main_Module.resetSelectedDimensionComponents();
 		
 		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
 	});

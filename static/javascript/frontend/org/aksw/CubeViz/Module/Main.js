@@ -488,6 +488,16 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		throw ( "There is no dimension component "+url+" in allDimensionComponents array!");
 	},
 	
+	resetSelectedDimensionComponents: function() {
+		this.selectedDimensionComponents.selectedDimensionComponents = [];
+		this.setDialogCheckBoxes();
+		var dimension_current = null;
+		for(dimension in this.allDimensions.dimensions) {
+			dimension_current = this.allDimensions.dimensions[dimension];
+			dimension_current.selectedElementCount = 0;
+		}
+	},
+	
 	/*******************************************************
 	 * ENDOF: Check if I can merge four functions into two *
 	 *******************************************************/

@@ -44,7 +44,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	
 	getMeasures: function(dsd, ds) {
 		var action = "getcomponents";
-		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url+"&ds="+ds.url+"&cT=measure", $.proxy(function(json) {
+		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url+"&dsUrl="+ds.url+"&cT=measure", $.proxy(function(json) {
 			this.retrievedMeasures = json;
 			$(body).trigger("AjaxMeasuresRetrieved.CubeViz");
 		}, this));
@@ -52,7 +52,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	
 	getDimensions: function(dsd, ds) {
 		var action = "getcomponents";
-		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url+"&ds="+ds.url+"&cT=dimension", $.proxy(function(json) {
+		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url+"&dsUrl="+ds.url+"&cT=dimension", $.proxy(function(json) {
 			this.retrievedDimensions = json;
 			$(body).trigger("AjaxDimensionsRetrieved.CubeViz");
 		}, this));

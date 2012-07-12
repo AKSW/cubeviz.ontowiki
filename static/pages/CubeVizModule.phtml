@@ -28,19 +28,34 @@
 	
 	// choose default config for the start
 	var CubeViz_Link_Chosen = <?php echo json_encode($this->linkCode); ?>;
-			
-	var CubeViz_Parameters = {
-		sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
-		selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
-		selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
-		selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
-		selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
-		selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
-		selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
-		modelUrl: "<?php echo $this->modelUrl; ?>",
-		cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
-		backend: <?php echo json_encode($this->backend); ?>
+		
+	if(typeof CubeViz_Links[CubeViz_Link_Chosen] === "undefined" || CubeViz_Links[CubeViz_Link_Chosen] === null) {
+		var CubeViz_Parameters = {
+			sparqlEndpoint: null,
+			selectedGraph: null,
+			selectedDSD: {},
+			selectedDS: {},
+			selectedMeasures: {},
+			selectedDimensions: {},
+			selectedDimensionComponents: {},
+		}
+	} else {
+		var CubeViz_Parameters = {
+			sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
+			selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
+			selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
+			selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
+			selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
+			selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
+			selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
+		}	
 	}
+	
+	CubeViz_Parameters.modelUrl = "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Parameters.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
+	CubeViz_Parameters.backend = <?php echo json_encode($this->backend); ?>;		
+			
+	
 	
 </script>
 

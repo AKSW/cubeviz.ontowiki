@@ -63,6 +63,7 @@ class CubevizModule extends OntoWiki_Module
 		
 		//linkCode
 		$linkCode = $this->_request->getParam ("lC");
+		$linkCode = "fijef";
 		if(NULL == $linkCode) {
 			$linkCode = "default";
 		}
