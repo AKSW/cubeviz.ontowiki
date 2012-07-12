@@ -25,7 +25,7 @@
     width: 100%; 
     margin: 0px; 
     padding: 0px;
-    min-height: 450px;
+    /*min-height: 450px;*/
 }
 
 
@@ -106,10 +106,10 @@
 .dialog {
 	z-index: 1000;
     position: absolute;
-    top: 170px;
+    top: 0px;
     left: 300px;
-    height: 60%;
-    width: 60%;
+    height: 300px;
+    width: 450px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 15px;
@@ -322,7 +322,7 @@
  */
  
 #sidebar-left {
-    margin-top: 30px;
+    margin-top: 5px;
 }
 
 #sidebar-left-data-selection-dims-boxes {
