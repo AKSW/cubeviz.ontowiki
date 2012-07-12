@@ -24,13 +24,41 @@ class CubeViz_ConfigurationLink
     protected $_links = null;
     
     /**
+     * points to the directory /data/links/sparqlEndpoint
+     */
+    protected $_sparqlEndpoint = '';
+    
+    /**
+     * points to the directory /data/links/sparqlEndpoint/graphUrl
+     */
+    protected $_graphUrl = '';
+    
+    /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct($sparqlEndpoint, $graphUrl) {
         $ds = DIRECTORY_SEPARATOR;        
-		$this->_linksFolder = dirname (__FILE__) . $ds . '..' . $ds . '..' . $ds . 'data' . $ds . 'links/';
-        
+        $this->_sparqlEndpoint = $this->urlToPath($sparqlEndpoint);
+        $this->_graphUrl = $this->urlToPath($graphUrl);
+        $this->_linksFolder = dirname (__FILE__) . $ds . '..' . $ds . '..' . $ds . 'data' . $ds . 'links' . $ds . $this->_sparqlEndpoint . $ds . $this->_graphUrl . $ds;
+                
         $this->_links = array ();
+	}
+	
+	private function urlToPath($url) {
+		$pattern_separator = "#:#";
+		$pattern_slash = "#/#";
+		$replacement = ".";
+		
+		$path = preg_replace($pattern_separator, $replacement, $url);
+		$path = preg_replace($pattern_slash, $replacement, $path);
+		
+		return $path;
+	}
+	
+	private function checkUrlVsPath($url, $path) {
+		$pattern = "#" . $path . "#";
+        return preg_match($pattern, $url);
 	}
 	
 	/**

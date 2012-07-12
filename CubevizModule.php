@@ -53,19 +53,25 @@ class CubevizModule extends OntoWiki_Module
         // send backend information to the view
         $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
         $this->view->backend = $ontowikiBackend;
-		// get chartType from the browser link
-        $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'pie';
 		
-		// get lC from the browser link - pointing to the file
-		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
+		//endpoint is local now!
+		$sparqlEndpoint = "local";
+		
+		//model
+		$this->view->modelUrl =  $this->_owApp->selectedModel;
+		$graphUrl = $this->_owApp->selectedModel->getModelIri();
+		
+		//linkCode
+		$linkCode = $this->_request->getParam ("lC");
+		if(NULL == $linkCode) {
+			$linkCode = "default";
+		}
 		$this->view->linkCode = $linkCode;
-		
-		// initialize links handle and read configuration
-		$configuration = new CubeViz_ConfigurationLink();
-		$configuration->initFromLink($linkCode);
-													
+		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
+		$configuration->initFromLink($linkCode);		
 		$this->view->links = json_encode($configuration->getLinks());
-		$this->view->modelUrl =  $this->_owApp->selectedModel; // $_REQUEST['m'];
+													
+		 // $_REQUEST['m'];
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
 				
