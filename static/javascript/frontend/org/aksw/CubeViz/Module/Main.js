@@ -131,15 +131,13 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	registerDataStructureDefinition: function() {
-		// TODO: use .change event here
-		$("#sidebar-left-data-selection-strc").click( $.proxy(function(event) {
+		$("#sidebar-left-data-selection-strc").change( $.proxy(function(event) {
 			$(event.target).trigger("dataStructureDefinitionClicked.CubeViz");			
 		}, this));
 	},
 	
 	registerDataSet: function() {
-		// TODO: use .change event here
-		$("#sidebar-left-data-selection-sets").click( $.proxy(function(event) {
+		$("#sidebar-left-data-selection-sets").change( $.proxy(function(event) {
 			$(event.target).trigger("dataSetClicked.CubeViz");			
 		}, this));
 	},
@@ -222,8 +220,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.addItem("sidebar-left-data-selection-strc",allDSD[allDSD_length]);
 		}
 		
-		$("sidebar-left-data-selection-strc").trigger("dsdRendered.CubeViz");
-		
+		$("#sidebar-left-data-selection-strc").trigger("dsdRendered.CubeViz");
 		this.setSelectedDSD();
 	},
 	
@@ -245,7 +242,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 			this.addItem("sidebar-left-data-selection-sets",allDS[allDS_length]);
 		}
 		
-		$("sidebar-left-data-selection-sets").trigger("dsRendered.CubeViz");
+		$("#sidebar-left-data-selection-sets").trigger("dsRendered.CubeViz");
 		
 		this.setSelectedDS();
 	},

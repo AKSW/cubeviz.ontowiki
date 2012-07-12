@@ -77,8 +77,7 @@ $(function() {
 	$(body).bind("dataStructureDefinitionClicked.CubeViz", function(event) {
 		var newDSD = {"url": $(event.target).find(":selected").val(),
 					       "label": $(event.target).find(":selected").text() };
-		CubeViz_Main_Module.selectDSD(newDSD);
-				
+		CubeViz_Main_Module.selectDSD(newDSD);	
 		//receive DS for this DSD
 		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
 	});		      
@@ -147,20 +146,6 @@ $(function() {
 		}*/
 	});
 	
-	/******************************
-	 * DataBase interaction logic *
-	 ******************************/
-	 
-	//on load get all DSD for chosen model
-	CubeViz_Ajax_Module.getDataStructureDefinitions();
-	if(!jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
-		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
-		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
-		CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
-	}
-	
-	
-
 	/****************************
 	 * AJAX routine starts here *
 	 ****************************/
@@ -232,6 +217,7 @@ $(function() {
 	});
 	
 	$(body).bind("dsdRendered.CubeViz", function() {
+		console.log(123);
 		CubeViz_Main_Module.registerDataStructureDefinition();
 	});
 	
@@ -248,5 +234,17 @@ $(function() {
 	$(body).bind("dialogsRendered.CubeViz", function() {
 		CubeViz_Main_Module.registerDimensionDialogs();
 	});
+	
+	/******************************
+	 * DataBase interaction logic *
+	 ******************************/
+	 
+	//on load get all DSD for chosen model
+	CubeViz_Ajax_Module.getDataStructureDefinitions();
+	if(!jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
+		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
+		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
+		CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
+	}
 		
 });
