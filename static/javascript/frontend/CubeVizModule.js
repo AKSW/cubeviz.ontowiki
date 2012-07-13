@@ -27,6 +27,7 @@ $(function() {
 	CubeViz_Ajax_Module.init(CubeViz_Parameters);
 	
 	CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
+	CubeViz_Main_Module.registerStaticUI();
 		
 	/*********************
 	 * UI event handling *
@@ -120,20 +121,17 @@ $(function() {
 	});
 	
 	$(body).bind("submitButtonClicked.CubeViz", function(event) {
-		var config = CubeViz_Main_Module.makeLink();
-		CubeViz_Ajax_Module.saveLinkToFile(config);
-		/*
-		var dimension_current = null;
-		var okay = [];
-		for(dimension in CubeViz_Main_Module.allDimensions.dimensions) {
-			dimension_current = CubeViz_Main_Module.allDimensions.dimensions[dimension];
-			if(dimension_current.selectedElementCount == 0) {
-				alert("Please, select elements for dimension "+dimension_current.label);
-				okay.push(false);
-			} else {
-				okay.push(true);
-			}
+		var emptyDimensions = CubeViz_Main_Module.checkDimensionElementCount();
+		if(emptyDimensions.length != 0) {
+			CubeViz_Main_Module.showEmptyDimensionsWarning(emptyDimensions);
+		} else {
+			
 		}
+		console.log(emptyDimensions);
+		//var config = CubeViz_Main_Module.makeLink();
+		//CubeViz_Ajax_Module.saveLinkToFile(config);
+		/*
+		
 		
 		var everything_okay = true;
 		for(var i = 0, okay_length = okay.length; i < okay_length; i++) {
@@ -203,6 +201,8 @@ $(function() {
 		CubeViz_Main_Module.allDimensionComponents = CubeViz_Adapter_Module.processRetrievedDimensionComponents(CubeViz_Ajax_Module.retrievedDimensionComponents,
 																												CubeViz_Main_Module.selectedDimensionComponents,
 																												CubeViz_Main_Module.allDimensions);
+		//TODO: if no Dimension Components selected - select first N for each dimension
+		
 		// the order is significant here!
 		CubeViz_Main_Module.setDimensionElementCount(CubeViz_Ajax_Module.retrievedDimensionComponents);	
 		CubeViz_Main_Module.renderDimensions(CubeViz_Main_Module.allDimensions);
@@ -222,7 +222,6 @@ $(function() {
 	});
 	
 	$(body).bind("dsdRendered.CubeViz", function(event) {
-		console.log(123);
 		CubeViz_Main_Module.registerDataStructureDefinition();
 	});
 	

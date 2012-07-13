@@ -64,6 +64,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	/*****************************************************
 	 * Factory methods for after template events binding *
 	 *****************************************************/
+	registerStaticUI: function() {
+		this.registerSubmitButton();
+	},
 	 
 	registerDimensions: function() {
 		var dimension_current = null;
@@ -487,6 +490,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	resetSelectedDimensionComponents: function() {
 		this.selectedDimensionComponents.selectedDimensionComponents = [];
+		
 		this.setDialogCheckBoxes();
 		var dimension_current = null;
 		for(dimension in this.allDimensions.dimensions) {
@@ -650,5 +654,28 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		var newArr = new Array();for (var k in arr) if(arr[k]) newArr.push(arr[k]);
 		return newArr;
 	},
+	
+	/******************************************
+	 * Checks before submitting selected data *
+	 ******************************************/
+	 
+	checkDimensionElementCount: function() {
+		var dimension_current = null;
+		var dimensions_empty = [];
+		for(dimension in this.allDimensions.dimensions) {
+			dimension_current = this.allDimensions.dimensions[dimension];
+			if(dimension_current.selectedElementCount == 0) {
+				dimensions_empty.push(dimension_current);
+			}
+		}
+		
+		return dimensions_empty;
+	},
+	
+	showEmptyDimensionsWarning: function(emptyDimensions) {
+		for(var i = 0, emptyDimensions_length = emptyDimensions.length; i < emptyDimensions_length; i++) {
+			alert( "Please, specify at least one element for dimension " + emptyDimensions[i].label);
+		}
+	}
 	
 });
