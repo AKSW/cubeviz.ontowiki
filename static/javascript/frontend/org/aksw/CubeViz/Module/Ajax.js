@@ -34,11 +34,11 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	 * @param: m = this.modelUrl
 	 * @param: dsdUrl = this.retrievedDSD.url
 	 */
-	getDataSets: function(dsd) {
+	getDataSets: function(dsd, element) {
 		var action = "getdatasets";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url, $.proxy(function(json) {
 			this.retrievedDS = json;
-			$(body).trigger("AjaxDSRetrieved.CubeViz");
+			$(body).trigger("AjaxDSRetrieved.CubeViz", element);
 		}, this));
 	},
 	

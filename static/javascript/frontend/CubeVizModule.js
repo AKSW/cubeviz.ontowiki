@@ -78,8 +78,8 @@ $(function() {
 		var newDSD = {"url": $(event.target).find(":selected").val(),
 					       "label": $(event.target).find(":selected").text() };
 		CubeViz_Main_Module.selectDSD(newDSD);	
-		//receive DS for this DSD
-		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
+
+		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD, $(event.target));
 	});		      
 	
 	$(body).bind("dataSetClicked.CubeViz", function(event) {
@@ -150,7 +150,7 @@ $(function() {
 	 * AJAX routine starts here *
 	 ****************************/
 		
-	$(body).bind("AjaxDSDRetrieved.CubeViz", function() {
+	$(body).bind("AjaxDSDRetrieved.CubeViz", function(event) {
 		CubeViz_Main_Module.allDSD = CubeViz_Ajax_Module.retrievedDSD;
 		
 		CubeViz_Main_Module.renderDSD(CubeViz_Main_Module.allDSD);
@@ -158,25 +158,30 @@ $(function() {
 		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
 			var last_element = CubeViz_Main_Module.allDSD.length - 1;
 			CubeViz_Main_Module.selectDSD(CubeViz_Main_Module.allDSD[last_element]);
-			CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.allDSD[last_element]);
+			CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.allDSD[last_element], $(event.target));
 		}
 	});
 	
-	$(body).bind("AjaxDSRetrieved.CubeViz", function() {
+	$(body).bind("AjaxDSRetrieved.CubeViz", function(event, element) {
 		CubeViz_Main_Module.allDS = CubeViz_Ajax_Module.retrievedDS;
+		var last_element = CubeViz_Main_Module.allDS.length - 1;
 				
 		CubeViz_Main_Module.renderDS(CubeViz_Main_Module.allDS);
 			
 		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDS)) {
-			var last_element = CubeViz_Main_Module.allDS.length - 1;
 			CubeViz_Main_Module.selectDS(CubeViz_Main_Module.allDS[last_element]);
 			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
 			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
-		}		
-
+		}
+		
+		if( $(element).attr('id') == "sidebar-left-data-selection-strc") {
+			CubeViz_Main_Module.selectDS(CubeViz_Main_Module.allDS[last_element]);
+			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
+			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
+		}
 	});
 	
-	$(body).bind("AjaxMeasuresRetrieved.CubeViz", function() {
+	$(body).bind("AjaxMeasuresRetrieved.CubeViz", function(event) {
 		
 		CubeViz_Main_Module.allMeasures = CubeViz_Adapter_Module.processRetrievedMeasures(CubeViz_Ajax_Module.retrievedMeasures,
 																						  CubeViz_Main_Module.selectedMeasures);
@@ -184,7 +189,7 @@ $(function() {
 		CubeViz_Main_Module.renderMeasures(CubeViz_Main_Module.allMeasures);
 	});
 	
-	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function() {		
+	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function(event) {		
 		
 		CubeViz_Main_Module.allDimensions = CubeViz_Adapter_Module.processRetrievedDimensions(CubeViz_Ajax_Module.retrievedDimensions,
 																							  CubeViz_Main_Module.selectedDimensions);
@@ -194,7 +199,7 @@ $(function() {
 		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
 	});
 	
-	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function() {
+	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function(event) {
 		CubeViz_Main_Module.allDimensionComponents = CubeViz_Adapter_Module.processRetrievedDimensionComponents(CubeViz_Ajax_Module.retrievedDimensionComponents,
 																												CubeViz_Main_Module.selectedDimensionComponents,
 																												CubeViz_Main_Module.allDimensions);
@@ -208,30 +213,30 @@ $(function() {
 	 * Hooks for binding events after template processing *
 	 ******************************************************/
 	 
-	$(body).bind("dimensionsRendered.CubeViz", function() {
+	$(body).bind("dimensionsRendered.CubeViz", function(event) {
 		CubeViz_Main_Module.registerDimensions();
 	});
 	
-	$(body).bind("measuresRendered.CubeViz", function() {
+	$(body).bind("measuresRendered.CubeViz", function(event) {
 		CubeViz_Main_Module.registerMeasures();
 	});
 	
-	$(body).bind("dsdRendered.CubeViz", function() {
+	$(body).bind("dsdRendered.CubeViz", function(event) {
 		console.log(123);
 		CubeViz_Main_Module.registerDataStructureDefinition();
 	});
 	
-	$(body).bind("dsRendered.CubeViz", function() {
+	$(body).bind("dsRendered.CubeViz", function(event) {
 		CubeViz_Main_Module.registerDataSet();
 	});
 	
-	$(body).bind("optionsDimensionRendered.CubeViz", function() {
+	$(body).bind("optionsDimensionRendered.CubeViz", function(event) {
 	});
 	
-	$(body).bind("optionsMeasureRendered.CubeViz", function() {
+	$(body).bind("optionsMeasureRendered.CubeViz", function(event) {
 	});
 	
-	$(body).bind("dialogsRendered.CubeViz", function() {
+	$(body).bind("dialogsRendered.CubeViz", function(event) {
 		CubeViz_Main_Module.registerDimensionDialogs();
 	});
 	
@@ -242,7 +247,7 @@ $(function() {
 	//on load get all DSD for chosen model
 	CubeViz_Ajax_Module.getDataStructureDefinitions();
 	if(!jQuery.isEmptyObject(CubeViz_Main_Module.selectedDSD)) {
-		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD);
+		CubeViz_Ajax_Module.getDataSets(CubeViz_Main_Module.selectedDSD, $(document));
 		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
 		CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
 	}
