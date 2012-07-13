@@ -286,8 +286,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	makeLink: function() {
 
 		return  "?foo=&" +
-                "modelUrl="+'"'+this.modelUrl+'"'+
-                "&sparqlEndpoint=" + '"' + this.sparqlEndpoint + '"' + 
+                "modelUrl="+this.modelUrl+
+                "&sparqlEndpoint=" + this.sparqlEndpoint + 
                 "&selectedGraph=" + $.toJSON(this.selectedGraph) +
                 "&selectedDSD=" + $.toJSON(this.selectedDSD) +
                 "&selectedDS=" + $.toJSON(this.selectedDS) +
@@ -657,6 +657,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	/******************************************
 	 * Checks before submitting selected data *
+	 * And other checks -)                    *
 	 ******************************************/
 	 
 	checkDimensionElementCount: function() {
@@ -676,6 +677,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		for(var i = 0, emptyDimensions_length = emptyDimensions.length; i < emptyDimensions_length; i++) {
 			alert( "Please, specify at least one element for dimension " + emptyDimensions[i].label);
 		}
-	}
+	},
 	
+	isCurrentPageCubeviz: function() {
+		
+	}
 });

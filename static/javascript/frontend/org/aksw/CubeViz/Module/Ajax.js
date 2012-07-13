@@ -80,6 +80,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 			url: this.cubevizPath + actionName + "/",
 			data: link,
 			success: function(uri){
+				console.log(uri);
 				//var uri_full = uri+"&chartType="+org.aksw.cubeViz.Index.Main.chartType;
 				//window.location.replace(uri_full);	
 			}

@@ -170,8 +170,8 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$config['selectedDimensions'] = $this->_request->getParam('selectedDimensions');
 		$config['selectedDimensionComponents'] = $this->_request->getParam('selectedDimensionComponents');
 		$config['selectedChartType'] = $this->_request->getParam('selectedChartType');
-
-		$configuration = new CubeViz_ConfigurationLink();
+		
+		$configuration = new CubeViz_ConfigurationLink($config['sparqlEndpoint'], $config['selectedGraph']);
 		$result = $configuration->writeToFile($config);
 		
 		/*
