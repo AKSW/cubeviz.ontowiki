@@ -680,6 +680,35 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	isCurrentPageCubeviz: function() {
+		var expr = new RegExp('/cubeviz/', 'ig');
+		var isCubeviz = expr.test(document.URL);
+		return isCubeviz;
+		//var qs = $.deparam.querystring();
+		//qs.chartType = chartType;
 		
+	},
+	
+	/**
+	 * takes current URL and add new params to it
+	 * current url: http://ontowiki/model/info/?m=model
+	 * example params: [ {"m": "other_model"}, {"lC": "someLinkCode"}]
+	 * example output: ?m=other_model&lC=someLinkCode
+	 */
+	addParamsToQueryString: function(params) {
+		var qs = $.deparam.querystring();
+		for(var i = 0, params_length = params.length; i < params_length; i++) {
+			for (var key in params[i]) {
+				qs[key] = params[i][key];
+			}				
+		}
+		return qs;
+	},
+	
+	/**
+	 * params should be an jquery bbq object
+	 */
+	redirectToCubevizPage: function(params) {
+		var url = $.param.querystring( this.cubevizPath, params );			
+		window.location = url;
 	}
 });

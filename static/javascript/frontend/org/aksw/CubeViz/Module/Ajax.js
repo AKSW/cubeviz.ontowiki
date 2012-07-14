@@ -12,6 +12,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	retrievedMeasures: null,
 	retrievedDimensions: null,
 	retrievedDimensionComponents: null,
+	retrievedLinkCode: null,
 	
 	
 	init: function(CubeViz_Parameters) {
@@ -79,8 +80,10 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 			type: "POST",
 			url: this.cubevizPath + actionName + "/",
 			data: link,
+			context: this,
 			success: function(uri){
-				console.log(uri);
+				this.retrievedLinkCode = JSON.parse(uri);
+				$(body).trigger("AjaxLinkCodeRetrieved.CubeViz");
 				//var uri_full = uri+"&chartType="+org.aksw.cubeViz.Index.Main.chartType;
 				//window.location.replace(uri_full);	
 			}

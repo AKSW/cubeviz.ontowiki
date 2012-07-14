@@ -126,11 +126,22 @@ $(function() {
 			CubeViz_Main_Module.showEmptyDimensionsWarning(emptyDimensions);
 		} else {
 			var config = CubeViz_Main_Module.makeLink();
-			var newLinkCode = CubeViz_Ajax_Module.saveLinkToFile(config);
-			
-			// check if we are already on the cubeviz page (!)
+			CubeViz_Ajax_Module.saveLinkToFile(config);
 		}
-		
+	});
+	
+	$(body).bind("AjaxLinkCodeRetrieved.CubeViz", function(event) {
+		// check if we are already on the cubeviz page (!)
+		var isCubeviz = CubeViz_Main_Module.isCurrentPageCubeviz();
+		if(isCubeviz) {
+			//send an AJAX to get new observations
+		} else {
+			//redirect to the cubeviz page
+			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];
+			params = CubeViz_Main_Module.addParamsToQueryString(params);
+			CubeViz_Main_Module.redirectToCubevizPage(params);
+			//window.location = newUrl;
+		}
 	});
 	
 	/****************************
