@@ -48,7 +48,7 @@ $(function() {
 		var elementClass = $(event.target).attr('class').split("-");
 		var label_current = elementClass[3];
 		
-		CubeViz_Main_Module.recalculateSelectedElementsCount(label_current);
+		CubeViz_Main_Module.maximumComponentsWarning(label_current);
 		
 		var isComponentSelected = $(event.target).attr('checked');
 		var url = $(event.target).val();
@@ -89,7 +89,7 @@ $(function() {
 		CubeViz_Main_Module.selectDS(newDS);
 		
 		CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
-		CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS);
+		CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.selectedDS, $(event.target));
 	});		          
 	
 	$(body).bind("dimensionCheckBoxClicked.CubeViz", function(event) {
@@ -140,7 +140,6 @@ $(function() {
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];
 			params = CubeViz_Main_Module.addParamsToQueryString(params);
 			CubeViz_Main_Module.redirectToCubevizPage(params);
-			//window.location = newUrl;
 		}
 	});
 	
@@ -166,16 +165,11 @@ $(function() {
 				
 		CubeViz_Main_Module.renderDS(CubeViz_Main_Module.allDS);
 			
-		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDS)) {
+		if(jQuery.isEmptyObject(CubeViz_Main_Module.selectedDS) || 
+		   $(element).attr('id') == "sidebar-left-data-selection-strc") {
 			CubeViz_Main_Module.selectDS(CubeViz_Main_Module.allDS[last_element]);
 			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
-			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
-		}
-		
-		if( $(element).attr('id') == "sidebar-left-data-selection-strc") {
-			CubeViz_Main_Module.selectDS(CubeViz_Main_Module.allDS[last_element]);
-			CubeViz_Ajax_Module.getMeasures(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
-			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element]);
+			CubeViz_Ajax_Module.getDimensions(CubeViz_Main_Module.selectedDSD,CubeViz_Main_Module.allDS[last_element], $(element));
 		}
 	});
 	
@@ -187,26 +181,33 @@ $(function() {
 		CubeViz_Main_Module.renderMeasures(CubeViz_Main_Module.allMeasures);
 	});
 	
-	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function(event) {		
+	$(body).bind("AjaxDimensionsRetrieved.CubeViz", function(event, element) {		
 		
 		CubeViz_Main_Module.allDimensions = CubeViz_Adapter_Module.processRetrievedDimensions(CubeViz_Ajax_Module.retrievedDimensions,
 																							  CubeViz_Main_Module.selectedDimensions);
 																							  
 		CubeViz_Main_Module.resetSelectedDimensionComponents();
+		console.log(CubeViz_Main_Module.allDimensions.dimensions);
+		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions, $(element));
 		
-		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions);
+		
 	});
 	
-	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function(event) {
+	$(body).bind("AjaxAllDimensionsComponentsRetrieved.CubeViz", function(event, element) {
 		CubeViz_Main_Module.allDimensionComponents = CubeViz_Adapter_Module.processRetrievedDimensionComponents(CubeViz_Ajax_Module.retrievedDimensionComponents,
 																												CubeViz_Main_Module.selectedDimensionComponents,
 																												CubeViz_Main_Module.allDimensions);
-		//TODO: if no Dimension Components selected - select first N for each dimension
+		if( ($(element).attr("id") == "sidebar-left-data-selection-sets") ||
+		    ($(element).attr("id") == "sidebar-left-data-selection-strc")) {
+			//if DSD or DS was clicked - choose first N dimension components
+			CubeViz_Main_Module.selectFirstDimensionComponents();
+		}
 		
-		// the order is significant here!
 		CubeViz_Main_Module.setDimensionElementCount(CubeViz_Ajax_Module.retrievedDimensionComponents);	
 		CubeViz_Main_Module.renderDimensions(CubeViz_Main_Module.allDimensions);
-		CubeViz_Main_Module.renderDialogsForDimensions(CubeViz_Main_Module.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);
+		CubeViz_Main_Module.renderDialogsForDimensions(CubeViz_Main_Module.allDimensionComponents, CubeViz_Adapter_Module, CubeViz_Dialog_Template);	
+		
+		
 	});
 	
 	/******************************************************
@@ -222,11 +223,11 @@ $(function() {
 	});
 	
 	$(body).bind("dsdRendered.CubeViz", function(event) {
-		CubeViz_Main_Module.registerDataStructureDefinition();
+		
 	});
 	
 	$(body).bind("dsRendered.CubeViz", function(event) {
-		CubeViz_Main_Module.registerDataSet();
+		
 	});
 	
 	$(body).bind("optionsDimensionRendered.CubeViz", function(event) {

@@ -192,6 +192,17 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 			}
 			
 		}
+		
+		function compare(a,b) {
+			if (a.dimension_label < b.dimension_label)
+				return -1;
+			if (a.dimension_label > b.dimension_label)
+				return 1;
+			return 0;
+		}
+		
+		result.sort(compare);
+		
 		return {"selectedDimensionComponents":result};
 	}	
 });

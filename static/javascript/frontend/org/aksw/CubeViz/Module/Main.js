@@ -66,6 +66,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 *****************************************************/
 	registerStaticUI: function() {
 		this.registerSubmitButton();
+		this.registerDataStructureDefinition();
+		this.registerDataSet();
 	},
 	 
 	registerDimensions: function() {
@@ -239,7 +241,6 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	
 	renderDS: function(allDS) {
 		this.emptyDataSets();
-		
 		var allDS_length = allDS.length;
 		while(allDS_length--) {
 			this.addItem("sidebar-left-data-selection-sets",allDS[allDS_length]);
@@ -312,19 +313,11 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 * Dialog interactions *
 	 ***********************/
 	 
-	recalculateSelectedElementsCount: function(dimensionLabel) {
+	maximumComponentsWarning: function(dimensionLabel) {
 		var dialog_current = $("#dialog-"+dimensionLabel);
+		
 		var selectedElements = $(dialog_current).find("input:checked").length;
-		
-		// set selectedElements to the selectedDimensions object
-		var dimension_current = null;
-		for(dimension in this.allDimensions.dimensions) {
-			dimension_current = this.allDimensions.dimensions[dimension];
-			if(dimension_current.label == dimensionLabel) {
-				this.allDimensions.dimensions[dimension].selectedElementCount = selectedElements;
-			}
-		}
-		
+				
 		if(selectedElements == this.dimensionElementsLimit) {
 			$(dialog_current).trigger("dialogMaxDimensionComponentsExceeded.CubeViz");
 		} else {
@@ -633,8 +626,36 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		throw ("There is no measures with "+label+" label in selectedMeasures array!");
 	},
 	
+	selectFirstDimensionComponents: function() {
+		var borderKeys = [0];
+		for(var i = 0, dimcomp_length = this.allDimensionComponents.selectedDimensionComponents.length;
+		    i < dimcomp_length;
+		    i++) 
+		{
+			if( 'undefined' != typeof this.allDimensionComponents.selectedDimensionComponents[i+1] &&
+			    (this.allDimensionComponents.selectedDimensionComponents[i].dimension_label != 
+			     this.allDimensionComponents.selectedDimensionComponents[i+1].dimension_label) ) {
+				   borderKeys.push(i+1);
+			   }
+		}
+		
+		var dimKey_current = null;
+		var firstNDimensionComponents = 3;
+		for(var i = 0, borderKeys_length = borderKeys.length; i < borderKeys_length; i++) {
+			dimKey_current = borderKeys[i];
+			for(var j = dimKey_current; j < (dimKey_current + firstNDimensionComponents); j++) {
+				if('undefined' != typeof this.allDimensionComponents.selectedDimensionComponents[j]) {
+					this.selectDimensionComponent(this.allDimensionComponents.selectedDimensionComponents[j]);
+				}
+			}
+		}
+	},
+	
 	selectDimensionComponent: function(component) {
 		this.selectedDimensionComponents.selectedDimensionComponents.push(component); 
+		//renew selected dim components count
+		var dimension = this.getDimensionByLabel(component.dimension_label);
+		dimension.selectedElementCount++;
 	},
 	
 	unselectDimensionComponent: function(url) {
@@ -642,6 +663,10 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		for(component in this.selectedDimensionComponents.selectedDimensionComponents) {
 			component_current = this.selectedDimensionComponents.selectedDimensionComponents[component];
 			if(component_current.property == url) {
+				
+				var dimension = this.getDimensionByLabel(component_current.dimension_label);
+				dimension.selectedElementCount--;
+				
 				delete this.selectedDimensionComponents.selectedDimensionComponents[component]; 
 				this.selectedDimensionComponents.selectedDimensionComponents = this.cleanUpArray(this.selectedDimensionComponents.selectedDimensionComponents);
 				return;

@@ -39,7 +39,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 		var action = "getdatasets";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url, $.proxy(function(json) {
 			this.retrievedDS = json;
-			$(body).trigger("AjaxDSRetrieved.CubeViz", element);
+			$(body).trigger("AjaxDSRetrieved.CubeViz", $(element));
 		}, this));
 	},
 	
@@ -51,19 +51,19 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 		}, this));
 	},
 	
-	getDimensions: function(dsd, ds) {
+	getDimensions: function(dsd, ds, element) {
 		var action = "getcomponents";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsdUrl="+dsd.url+"&dsUrl="+ds.url+"&cT=dimension", $.proxy(function(json) {
 			this.retrievedDimensions = json;
-			$(body).trigger("AjaxDimensionsRetrieved.CubeViz");
+			$(body).trigger("AjaxDimensionsRetrieved.CubeViz", $(element));
 		}, this));
 	},
 	
-	getAllDimensionsComponents: function(ds, dimensions) {
+	getAllDimensionsComponents: function(ds, dimensions, element) {
 		var action = "getalldimensionselements";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsUrl="+ds.url+"&dimensions="+$.toJSON(dimensions), $.proxy(function(json) {
 			this.retrievedDimensionComponents = json;
-			$(body).trigger("AjaxAllDimensionsComponentsRetrieved.CubeViz");
+			$(body).trigger("AjaxAllDimensionsComponentsRetrieved.CubeViz", element);
 		}, this));
 	},
 	
