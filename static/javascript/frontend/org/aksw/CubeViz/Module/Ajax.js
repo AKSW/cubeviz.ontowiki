@@ -15,9 +15,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	retrievedLinkCode: null,
 	
 	
-	init: function(CubeViz_Parameters) {
-		this.cubevizPath = CubeViz_Parameters.cubevizPath;
-		this.modelUrl = CubeViz_Parameters.modelUrl;
+	init: function(CubeViz_Parameters_Module) {
+		this.cubevizPath = CubeViz_Parameters_Module.cubevizPath;
+		this.modelUrl = CubeViz_Parameters_Module.modelUrl;
 	},
 	
 	/**

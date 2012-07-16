@@ -25,13 +25,13 @@
 	 *************************************/
 	Namespacedotjs.baseUri = <?php echo json_encode($this->moduleUrl . 'static/javascript/frontend/'); ?>;
 
-	var CubeViz_Links = <?php echo $this->links; ?>;
+	var CubeViz_Links_Module = <?php echo $this->links; ?>;
 	
 	// choose default config for the start
-	var CubeViz_Link_Chosen = <?php echo json_encode($this->linkCode); ?>;
+	var CubeViz_Link_Chosen_Module = <?php echo json_encode($this->linkCode); ?>;
 		
-	if(typeof CubeViz_Links[CubeViz_Link_Chosen] === "undefined" || CubeViz_Links[CubeViz_Link_Chosen] === null) {
-		var CubeViz_Parameters = {
+	if(typeof CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === "undefined" || CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === null) {
+		var CubeViz_Parameters_Module = {
 			sparqlEndpoint: null,
 			selectedGraph: null,
 			selectedDSD: {},
@@ -41,20 +41,20 @@
 			selectedDimensionComponents: {},
 		}
 	} else {
-		var CubeViz_Parameters = {
-			sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
-			selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
-			selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
-			selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
-			selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
-			selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
-			selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
+		var CubeViz_Parameters_Module = {
+			sparqlEndpoint: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["sparqlEndpoint"],
+			selectedGraph: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedGraph"],
+			selectedDSD: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDSD"],
+			selectedDS: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDS"],
+			selectedMeasures: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedMeasures"],
+			selectedDimensions: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensions"],
+			selectedDimensionComponents: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensionComponents"],
 		}	
 	}
 	
-	CubeViz_Parameters.modelUrl = "<?php echo $this->modelUrl; ?>";		
-	CubeViz_Parameters.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
-	CubeViz_Parameters.backend = <?php echo json_encode($this->backend); ?>;		
+	CubeViz_Parameters_Module.modelUrl = "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Parameters_Module.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
+	CubeViz_Parameters_Module.backend = <?php echo json_encode($this->backend); ?>;		
 			
 	
 	

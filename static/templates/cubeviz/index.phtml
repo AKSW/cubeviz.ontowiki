@@ -17,24 +17,24 @@
      *************************************/
     Namespacedotjs.baseUri = <?php echo json_encode($this->basePath . 'static/javascript/frontend/'); ?>;
 
-    var CubeViz_Links = <?php echo $this->links; ?>;
+    var CubeViz_Links_Index = <?php echo $this->links; ?>;
     
     // choose default config for the start
-    var CubeViz_Link_Chosen = <?php echo json_encode($this->linkCode); ?>;
+    var CubeViz_Link_Chosen_Index = <?php echo json_encode($this->linkCode); ?>;
 		    
-    var CubeViz_Parameters = {
-	    sparqlEndpoint: CubeViz_Links[CubeViz_Link_Chosen]["sparqlEndpoint"],
-	    selectedGraph: CubeViz_Links[CubeViz_Link_Chosen]["selectedGraph"],
-	    selectedDSD: CubeViz_Links[CubeViz_Link_Chosen]["selectedDSD"],
-	    selectedDS: CubeViz_Links[CubeViz_Link_Chosen]["selectedDS"],
-	    selectedMeasures: CubeViz_Links[CubeViz_Link_Chosen]["selectedMeasures"],
-	    selectedDimensions: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensions"],
-	    selectedDimensionComponents: CubeViz_Links[CubeViz_Link_Chosen]["selectedDimensionComponents"],
+    var CubeViz_Parameters_Index = {
+	    sparqlEndpoint: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["sparqlEndpoint"],
+	    selectedGraph: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedGraph"],
+	    selectedDSD: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDSD"],
+	    selectedDS: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDS"],
+	    selectedMeasures: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedMeasures"],
+	    selectedDimensions: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensions"],
+	    selectedDimensionComponents: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensionComponents"],
 	    modelUrl: "<?php echo $this->modelUrl; ?>",
 	    cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
 	    cubevizImagesPath: "<?php echo $this->basePath_images; ?>",
 	    backend: <?php echo json_encode($this->backend); ?>,
-	    chartType: CubeViz_Links[CubeViz_Link_Chosen]["selectedChartType"],
+	    chartType: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedChartType"],
 	    visualizationContainer: "container"
     }
     
@@ -43,7 +43,7 @@
      * TODO: ADAPT THIS! Its still a simple hack
      * It needs to read dynamicly
      */
-    CubeViz_Parameters.chartType = "<?php echo $this->chartType; ?>";
+    CubeViz_Parameters_Index.chartType = "bar";
     
     // Examples for a raw output from the backend
     var rawData = {

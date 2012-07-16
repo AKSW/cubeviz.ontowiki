@@ -20,31 +20,33 @@ class CubevizController extends OntoWiki_Controller_Component {
      */
     public function indexAction () {
         
-		//http://localhost/extensions/cubeviz/
+		// set URL for cubeviz extension folder
 		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
         $this->view->cubevizPath = $cubeVizExtensionURL_controller;
-        $this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
-        $this->view->basePath_images = $this->view->basePath ."static/images/";
-        
-	// TODO delete this because its a hack
-	$this->view->chartType = $this->_request->getParam ("chartType");
-        
-	// send backend information to the view
+        // send backend information to the view
         $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
         $this->view->backend = $ontowikiBackend;
-		// get chartType from the browser link
-        $chartType = true == isset ( $_REQUEST ['chartType'] ) ? $_REQUEST ['chartType'] : 'pie';
 		
-		// get lC from the browser link - pointing to the file
-		$linkCode = true == isset ( $_REQUEST ['lC'] ) ? $_REQUEST ['lC'] : 'default';
+		$this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
+		$this->view->basePath_images = $this->_config->staticUrlBase . "extensions/cubeviz/static/images/";
+		
+		//endpoint is local now!
+		$sparqlEndpoint = "local";
+		
+		//model
+		$this->view->modelUrl =  $this->_owApp->selectedModel;
+		$graphUrl = $this->_owApp->selectedModel->getModelIri();
+		
+		//linkCode
+		$linkCode = $this->_request->getParam ("lC");
+		if(NULL == $linkCode) {
+			$linkCode = "default";
+		}
 		$this->view->linkCode = $linkCode;
-		
-		// initialize links handle and read configuration
-		$configuration = new CubeViz_ConfigurationLink();
-		$configuration->initFromLink($linkCode);
-													
+		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
+		$configuration->initFromLink($linkCode);		
 		$this->view->links = json_encode($configuration->getLinks());
-		$this->view->modelUrl = $this->_owApp->selectedModel;
+											
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
 	}

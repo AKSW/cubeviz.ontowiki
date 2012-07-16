@@ -43,22 +43,22 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	/**
 	 * Input: CubeViz_Parameters object
 	 */
-	init: function(CubeViz_Parameters, CubeViz_Adapter_Module) {		
-		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint; 
-		this.selectedGraph = CubeViz_Parameters.selectedGraph; 
-		this.selectedDSD = CubeViz_Parameters.selectedDSD; 
-		this.allDSD = [CubeViz_Parameters.selectedDSD]; 
-		this.selectedDS = CubeViz_Parameters.selectedDS; 
-		this.allDS = [CubeViz_Parameters.selectedDS]; 
-		this.selectedMeasures = CubeViz_Parameters.selectedMeasures; 
-		this.allMeasures = CubeViz_Parameters.selectedMeasures; 
-		this.selectedDimensions = CubeViz_Parameters.selectedDimensions; 
-		this.allDimensions = CubeViz_Parameters.selectedDimensions; 
-		this.selectedDimensionComponents = CubeViz_Parameters.selectedDimensionComponents; 
-		this.allDimensionComponents = CubeViz_Parameters.selectedDimensionComponents; 
-		this.modelUrl = CubeViz_Parameters.modelUrl; 
-		this.cubevizPath = CubeViz_Parameters.cubevizPath; 
-		this.backend = CubeViz_Parameters.backend;
+	init: function(CubeViz_Parameters_Module, CubeViz_Adapter_Module) {		
+		this.sparqlEndpoint = CubeViz_Parameters_Module.sparqlEndpoint; 
+		this.selectedGraph = CubeViz_Parameters_Module.selectedGraph; 
+		this.selectedDSD = CubeViz_Parameters_Module.selectedDSD; 
+		this.allDSD = [CubeViz_Parameters_Module.selectedDSD]; 
+		this.selectedDS = CubeViz_Parameters_Module.selectedDS; 
+		this.allDS = [CubeViz_Parameters_Module.selectedDS]; 
+		this.selectedMeasures = CubeViz_Parameters_Module.selectedMeasures; 
+		this.allMeasures = CubeViz_Parameters_Module.selectedMeasures; 
+		this.selectedDimensions = CubeViz_Parameters_Module.selectedDimensions; 
+		this.allDimensions = CubeViz_Parameters_Module.selectedDimensions; 
+		this.selectedDimensionComponents = CubeViz_Parameters_Module.selectedDimensionComponents; 
+		this.allDimensionComponents = CubeViz_Parameters_Module.selectedDimensionComponents; 
+		this.modelUrl = CubeViz_Parameters_Module.modelUrl; 
+		this.cubevizPath = CubeViz_Parameters_Module.cubevizPath; 
+		this.backend = CubeViz_Parameters_Module.backend;
 	},
 	
 	/*****************************************************

@@ -24,9 +24,9 @@ $(function() {
 	var CubeViz_Adapter_Module = org.aksw.CubeViz.Module.Adapter;
 	var CubeViz_Ajax_Module = org.aksw.CubeViz.Module.Ajax;
 	
-	CubeViz_Ajax_Module.init(CubeViz_Parameters);
+	CubeViz_Ajax_Module.init(CubeViz_Parameters_Module);
 	
-	CubeViz_Main_Module.init(CubeViz_Parameters, CubeViz_Adapter_Module);
+	CubeViz_Main_Module.init(CubeViz_Parameters_Module, CubeViz_Adapter_Module);
 	CubeViz_Main_Module.registerStaticUI();
 		
 	/*********************

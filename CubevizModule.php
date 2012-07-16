@@ -43,9 +43,6 @@ class CubevizModule extends OntoWiki_Module
      * Returns the content
      */
     public function getContents() {
-		
-		// set URL for cubeviz extension folder
-		// use $this->view->moduleUrl for the basePath (OntoWiki var);
 
 		// set URL for cubeviz extension folder
 		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
