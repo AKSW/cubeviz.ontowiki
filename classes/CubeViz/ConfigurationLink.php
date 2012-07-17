@@ -73,9 +73,9 @@ class CubeViz_ConfigurationLink
 			
             $parameters = file($this->_linksFolder . $linkCode);
 						
-            $this->_links [$linkCode] ['sparqlEndpoint'] = trim($parameters[0]);
+            $this->_links [$linkCode] ['sparqlEndpoint'] = json_decode(trim($parameters[0]));
             
-			$this->_links [$linkCode] ['selectedGraph'] = trim($parameters[1]);
+			$this->_links [$linkCode] ['selectedGraph'] = json_decode(trim($parameters[1]));
 			
             // Data Structure Definition
             $selectedDSD = json_decode(trim($parameters[2]), true);

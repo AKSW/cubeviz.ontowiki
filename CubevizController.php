@@ -45,6 +45,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->view->linkCode = $linkCode;
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
 		$configuration->initFromLink($linkCode);		
+		
 		$this->view->links = json_encode($configuration->getLinks());
 		
 		//var_dump($configuration->getLinks()); die;

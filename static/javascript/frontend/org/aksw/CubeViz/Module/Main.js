@@ -292,8 +292,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
                 "&selectedGraph=" + $.toJSON(this.selectedGraph) +
                 "&selectedDSD=" + $.toJSON(this.selectedDSD) +
                 "&selectedDS=" + $.toJSON(this.selectedDS) +
-                "&selectedMeasures=" + $.toJSON(this.selectedMeasures) +
-                "&selectedDimensions=" + $.toJSON(this.selectedDimensions) +
+                "&selectedMeasures=" + $.toJSON(this.allMeasures) +
+                "&selectedDimensions=" + $.toJSON(this.allDimensions) +
                 "&selectedDimensionComponents=" + $.toJSON(this.selectedDimensionComponents.selectedDimensionComponents) +
                 "&selectedChartType=" + this.chartType;
 	},
