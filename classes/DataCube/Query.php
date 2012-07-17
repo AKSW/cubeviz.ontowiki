@@ -225,7 +225,7 @@ class DataCube_Query {
     public function getObservations($graphUri, $dimensionComponents) {
 		
 		$dimComps = $dimensionComponents['selectedDimensionComponents'];
-		 
+				 
 		$queryObject = new Erfurt_Sparql_SimpleQuery();
 		
 		$prologuePart = //'define output:format "JSON"
@@ -238,6 +238,30 @@ class DataCube_Query {
 		$where = 'WHERE {
 			?s ?p ?o .
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n";
+        
+        //unite all the triple patterns of the same dimension_type
+        usort($dimComps, array('DataCube_Query','compareDimensionLabels'));	
+        $dimComps_length = sizeof($dimComps);
+        $borderKeys = $this->getBorderKeys($dimComps, $dimComps_length);
+        $borderKeys_length = sizeof($borderKeys);
+        for($i = 0; $i < $borderKeys_length; $i++) {
+			var_dump($borderKeys[$i]);
+			//var_dump(isset($borderKeys[$i+1]));
+			
+			if(isset($borderKeys[$i+1])) {
+				var_dump("Next section");
+				var_dump($borderKeys[$i]);
+				$sectionEnd = $borderKeys[$i] + $borderKeys[$i+1];
+				//for($j = $borderKeys[$i]; $j < $sectionEnd; $i++) {
+				//	var_dump($dimComps[$j]);
+				//}
+			}/* else {
+				var_dump("Last section");
+				for($j = $borderKeys[$i]; $j < $dimComps_length; $i++) {
+					var_dump($dimComps[$j]);
+				}
+			}*/
+		}
         
         $triplePatterns = array();
         $dimComps_length = sizeof($dimComps);
@@ -276,6 +300,21 @@ class DataCube_Query {
     private function isUrl($url) {
 		$url_pattern = "#((http|https|ftp)://(\S*?\.\S*?))(\s|\;|\)|\]|\[|\{|\}|,|\"|'|:|\<|$|\.\s)#ie";
 		return preg_match($url_pattern, $url);
+	}
+	
+	private static function compareDimensionLabels($a, $b) {
+		return strnatcmp($a['dimension_type'], $b['dimension_type']);
+	}
+	
+	private function getBorderKeys($dimComps, $dimComps_length) {
+		$borderKeys = array(0);
+		for($i = 0; $i < $dimComps_length; $i++) {
+			if(isset($dimComps[$i+1]) &&
+			   $dimComps[$i]["dimension_label"] != $dimComps[$i+1]["dimension_label"]) {
+				   array_push($borderKeys, $i+1);
+			   }
+		}
+		return $borderKeys;
 	}
     
     /**

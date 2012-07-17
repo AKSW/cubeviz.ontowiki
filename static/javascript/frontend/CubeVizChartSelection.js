@@ -16,9 +16,9 @@ $(document).ready(function(){
         var chart = null,
             chartName = null;
         
-        if (1 < suitableGraphs.length && 0 < CubeViz_Parameters_Index.chartType.length) {
-            chartName = CubeViz_Parameters_Index.chartType.charAt(0).toUpperCase() 
-                        + CubeViz_Parameters_Index.chartType.slice(1) + "Chart";
+        if (1 < suitableGraphs.length && 0 < CubeViz_Parameters_Component.chartType.length) {
+            chartName = CubeViz_Parameters_Component.chartType.charAt(0).toUpperCase() 
+                        + CubeViz_Parameters_Component.chartType.slice(1) + "Chart";
         } else {
             chartName = suitableGraphs [0].charAt(0).toUpperCase() + suitableGraphs [0].slice(1) + "Chart";
         }
@@ -104,7 +104,7 @@ $(document).ready(function(){
             
             $("#chart-selection").append (
                 '<a href="?chartType=' + suitableGraph + '">' + 
-                    '<img src="' + CubeViz_Parameters_Index.cubevizImagesPath + suitableGraph + '.png">' + 
+                    '<img src="' + CubeViz_Parameters_Component.cubevizImagesPath + suitableGraph + '.png">' + 
                 '</a>'
             );
         }
