@@ -21,29 +21,42 @@
     
     // choose default config for the start
     var CubeViz_Link_Chosen_Index = <?php echo json_encode($this->linkCode); ?>;
-		    
-    var CubeViz_Parameters_Index = {
-	    sparqlEndpoint: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["sparqlEndpoint"],
-	    selectedGraph: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedGraph"],
-	    selectedDSD: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDSD"],
-	    selectedDS: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDS"],
-	    selectedMeasures: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedMeasures"],
-	    selectedDimensions: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensions"],
-	    selectedDimensionComponents: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensionComponents"],
-	    modelUrl: "<?php echo $this->modelUrl; ?>",
-	    cubevizPath: <?php echo json_encode($this->cubevizPath); ?>,
-	    cubevizImagesPath: "<?php echo $this->basePath_images; ?>",
-	    backend: <?php echo json_encode($this->backend); ?>,
-	    chartType: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedChartType"],
-	    visualizationContainer: "container"
-    }
     
+    console.log();
+		
+	if(typeof CubeViz_Links_Index[CubeViz_Link_Chosen_Index] === "undefined" || CubeViz_Links_Index[CubeViz_Link_Chosen_Index] === null) {
+		var CubeViz_Parameters_Index = {
+			sparqlEndpoint: null,
+			selectedGraph: null,
+			selectedDSD: {},
+			selectedDS: {},
+			selectedMeasures: {},
+			selectedDimensions: {},
+			selectedDimensionComponents: {},
+		}
+	} else {
+		var CubeViz_Parameters_Index = {
+			sparqlEndpoint: JSON.parse(CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["sparqlEndpoint"]),
+			selectedGraph: JSON.parse(CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedGraph"]),
+			selectedDSD: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDSD"],
+			selectedDS: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDS"],
+			selectedMeasures: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedMeasures"],
+			selectedDimensions: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensions"],
+			selectedDimensionComponents: CubeViz_Links_Index[CubeViz_Link_Chosen_Index]["selectedDimensionComponents"]
+		}	
+	}
+	
+	CubeViz_Parameters_Index.modelUrl = "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Parameters_Index.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
+	CubeViz_Parameters_Index.cubevizImagesPath = "<?php echo $this->basePath_images; ?>";		
+	CubeViz_Parameters_Index.backend = <?php echo json_encode($this->backend); ?>;		
+	CubeViz_Parameters_Index.visualizationContainer = "container";		
+    CubeViz_Parameters_Index.chartType = "bar";
     
     /**
      * TODO: ADAPT THIS! Its still a simple hack
      * It needs to read dynamicly
      */
-    CubeViz_Parameters_Index.chartType = "bar";
     
     // Examples for a raw output from the backend
     var rawData = {

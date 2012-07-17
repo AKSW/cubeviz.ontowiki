@@ -126,6 +126,7 @@ $(function() {
 			CubeViz_Main_Module.showEmptyDimensionsWarning(emptyDimensions);
 		} else {
 			var config = CubeViz_Main_Module.makeLink();
+			console.log(config);
 			CubeViz_Ajax_Module.saveLinkToFile(config);
 		}
 	});
