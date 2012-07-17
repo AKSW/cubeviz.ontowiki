@@ -27,6 +27,7 @@
     font-weight: bold;
     height: 25px;
     width: 75px;
+    cursor: pointer;
 }
 
 /* main container which contains all the content */
@@ -402,3 +403,11 @@
 }
 
 
+#sidebar-left-loader {
+    position: absolute;
+    width: 255px;
+    height: 82%;
+    background-color: #F3F3F3;
+    opacity: 0.9;
+    text-align: center;
+}

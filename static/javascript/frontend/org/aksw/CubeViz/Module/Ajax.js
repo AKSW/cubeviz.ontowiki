@@ -61,9 +61,11 @@ Namespacedotjs('org.aksw.CubeViz.Module.Ajax', {
 	
 	getAllDimensionsComponents: function(ds, dimensions, element) {
 		var action = "getalldimensionselements";
+        $("#sidebar-left-loader").show();
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&dsUrl="+ds.url+"&dimensions="+$.toJSON(dimensions), $.proxy(function(json) {
 			this.retrievedDimensionComponents = json;
 			$(body).trigger("AjaxAllDimensionsComponentsRetrieved.CubeViz", element);
+            $("#sidebar-left-loader").hide();
 		}, this));
 	},
 	
