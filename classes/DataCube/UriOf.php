@@ -22,7 +22,7 @@ class DataCube_UriOf
 	const DimensionProperty = "http://purl.org/linked-data/cube#DimensionProperty";
 	const MeasureProperty = "http://purl.org/linked-data/cube#MeasureProperty";
 	const AttributeProperty = "http://purl.org/linked-data/cube#AttributeProperty";
-	const DataSet = "http://purl.org/linked-data/cube#DataSet";
+	const DataSet = "http://purl.org/linked-data/cube#dataset";
 	const Observation = "http://purl.org/linked-data/cube#Observation";
 
 	//cube properties

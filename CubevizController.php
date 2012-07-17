@@ -61,6 +61,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$graphUrl = $this->_request->getParam ('m');
 		$linkCode = $this->_request->getParam('lC');
+		$dataSetUrl = $this->_request->getParam('datasetUrl');
 		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
 				
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
@@ -71,10 +72,11 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		$dimensions = $links[$linkCode]['selectedDimensions'];
 		$dimensionComponents = $links[$linkCode]['selectedDimensionComponents'];
-		$graphUrl = $links[$linkCode]['selectedGraph'];		
-				
-		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents);
-						
+		$graphUrl = $links[$linkCode]['selectedGraph'];
+		$dataSetUrl = $links[$linkCode]['selectedDS']['url'];		
+			
+		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents, $dataSetUrl);
+		var_dump($resultObservations); die;				
 		$this->_response->setBody($resultObservations);
 	}
     

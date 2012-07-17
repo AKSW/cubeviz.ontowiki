@@ -222,7 +222,7 @@ class DataCube_Query {
         return count ( $this->getComponentElements ( $dsUri, $componentProperty ) );
     } 
        
-    public function getObservations($graphUri, $dimensionComponents) {
+    public function getObservations($graphUri, $dimensionComponents, $dataSetUri) {
 		
 		$dimComps = $dimensionComponents['selectedDimensionComponents'];
 				 
@@ -237,60 +237,52 @@ class DataCube_Query {
 		
 		$where = 'WHERE {
 			?s ?p ?o .
-            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n";
+            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n" .
+            '?s <'. DataCube_UriOf::DataSet .'> <'.$dataSetUri.'> .'."\n";
         
-        //unite all the triple patterns of the same dimension_type
+		//unite all the triple patterns of the same dimension_type
         usort($dimComps, array('DataCube_Query','compareDimensionLabels'));	
         $dimComps_length = sizeof($dimComps);
         $borderKeys = $this->getBorderKeys($dimComps, $dimComps_length);
         $borderKeys_length = sizeof($borderKeys);
-        for($i = 0; $i < $borderKeys_length; $i++) {
-			var_dump($borderKeys[$i]);
-			//var_dump(isset($borderKeys[$i+1]));
-			
-			if(isset($borderKeys[$i+1])) {
-				var_dump("Next section");
-				var_dump($borderKeys[$i]);
-				$sectionEnd = $borderKeys[$i] + $borderKeys[$i+1];
-				//for($j = $borderKeys[$i]; $j < $sectionEnd; $i++) {
-				//	var_dump($dimComps[$j]);
-				//}
-			}/* else {
-				var_dump("Last section");
-				for($j = $borderKeys[$i]; $j < $dimComps_length; $i++) {
-					var_dump($dimComps[$j]);
-				}
-			}*/
-		}
-        
+        $filters = array();
         $triplePatterns = array();
-        $dimComps_length = sizeof($dimComps);
-        for($i = 0; $i < $dimComps_length; $i++) {
-			// check if property is URI
-			$uri = $dimComps[$i]['property'];
-			if($this->isUrl($uri)) {
-				array_push($triplePatterns, '{?s <'.$dimComps[$i]['dimension_type'].'> <'.$dimComps[$i]['property'].'>}'."\n");
-				unset($dimComps[$i]);
+        for($i = 0; $i < $borderKeys_length; $i++) {
+			$filters[$i] = array();
+			array_push($triplePatterns, '?s ' . '<' . $dimComps[$borderKeys[$i]]['dimension_type'] . '>' . ' ?d' . $i . ' .');		
+			if(isset($borderKeys[$i+1])) {
+				$sectionEnd = $borderKeys[$i] + $borderKeys[$i+1];
+				for($j = $borderKeys[$i]; $j < $sectionEnd; $j++) {
+					if($this->isUrl($dimComps[$j]['property'])) {
+						array_push($filters[$i], '?d'. $i .' = <' . $dimComps[$j]['property'] . '>');
+					} else {
+						array_push($filters[$i], '?d'. $i .' = ' .'"'. $dimComps[$j]['property'].'"');
+					}
+				}
 			} else {
-				$where .= '?s <'.$dimComps[$i]['dimension_type'].'> ?comp'.$i.' .'."\n";
+				for($j = $borderKeys[$i]; $j < $dimComps_length; $j++) {
+					if($this->isUrl($dimComps[$j]['property'])) {
+						array_push($filters[$i], '?d'. $i .' = '.'<' . $dimComps[$j]['property'] . '>');
+					} else {
+						array_push($filters[$i], '?d'. $i .' = '.'"'.$dimComps[$j]['property'].'"');
+					}
+				}
 			}
 		}
-		
-		$triplePatterns = implode(" UNION ", $triplePatterns);
+		        
+        $triplePatterns = implode("\n", $triplePatterns);
 		$where .= $triplePatterns;
+		$where .= "\n";
 		
-        for($i = 0; $i < $dimComps_length; $i++) {
-			// check if property is URI
-			if(isset($dimComps[$i])) {
-				$where .= 'FILTER (?comp'.$i.'="'.$dimComps[$i]['property'].'") .'."\n";
-			}
+		for($i = 0; $i < $borderKeys_length; $i++) {
+			$where .= 'FILTER (' . implode(" OR ",$filters[$i]) .')' . "\n";
 		}
+		$where .= "\n";
+			
         
         $where .= '}';    
 		$queryObject->setWherePart($where);
-		
-		var_dump((string) $queryObject); die;
-		
+				
 		$options = array(STORE_RESULTFORMAT => "json");
         $queryResult = $this->_store->sparqlQuery($queryObject, $options);
                     
