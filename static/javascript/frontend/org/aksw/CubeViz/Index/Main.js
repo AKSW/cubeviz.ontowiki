@@ -9,10 +9,9 @@ Namespacedotjs('org.aksw.CubeViz.Index.Main', {
 	retrievedResultObservations: null,
 	
 	init: function(CubeViz_Parameters) {
-		
-		console.log(CubeViz_Parameters);
 		this.CubeViz_Parameters = CubeViz_Parameters;
 		this.modelUrl = CubeViz_Parameters.modelUrl;
+		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint;
 		this.cubevizPath = CubeViz_Parameters.cubevizPath;
 		this.dimensions = CubeViz_Parameters.selectedDimensions;
 		this.measures = CubeViz_Parameters.selectedMeasures;
@@ -20,7 +19,7 @@ Namespacedotjs('org.aksw.CubeViz.Index.Main', {
 		
 	getResultObservations: function(linkCode) {
 		var action = "getresultobservations";
-		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&lC="+linkCode, $.proxy(function(json) {
+		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&lC="+linkCode+"&sparqlEndpoint="+this.sparqlEndpoint, $.proxy(function(json) {
 			this.retrievedResultObservations = json;
 			$(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
 		}, this));
@@ -36,7 +35,7 @@ Namespacedotjs('org.aksw.CubeViz.Index.Main', {
 			
 		}
 		
-		console.log(this.retrievedResultObservations);
-		console.log(this.dimensions);
+		//console.log(this.retrievedResultObservations);
+		//console.log(this.dimensions);
 	}
 });

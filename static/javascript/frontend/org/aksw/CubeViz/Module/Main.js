@@ -45,7 +45,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	 */
 	init: function(CubeViz_Parameters_Module, CubeViz_Adapter_Module) {		
 		this.sparqlEndpoint = CubeViz_Parameters_Module.sparqlEndpoint; 
-		this.selectedGraph = CubeViz_Parameters_Module.selectedGraph; 
+		this.selectedGraph = CubeViz_Parameters_Module.selectedGraph;
 		this.selectedDSD = CubeViz_Parameters_Module.selectedDSD; 
 		this.allDSD = [CubeViz_Parameters_Module.selectedDSD]; 
 		this.selectedDS = CubeViz_Parameters_Module.selectedDS; 
@@ -287,8 +287,8 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	makeLink: function() {
 
 		return  "?foo=&" +
-                "modelUrl="+this.modelUrl+
-                "&sparqlEndpoint=" + this.sparqlEndpoint + 
+                "modelUrl="+$.toJSON(this.modelUrl)+
+                "&sparqlEndpoint=" + $.toJSON(this.sparqlEndpoint) + 
                 "&selectedGraph=" + $.toJSON(this.selectedGraph) +
                 "&selectedDSD=" + $.toJSON(this.selectedDSD) +
                 "&selectedDS=" + $.toJSON(this.selectedDS) +

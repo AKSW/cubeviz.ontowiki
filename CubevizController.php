@@ -56,20 +56,21 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();        
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+		$graphUrl = $this->_request->getParam ('m');
 		$linkCode = $this->_request->getParam('lC');
+		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
 				
-		$configuration = new CubeViz_ConfigurationLink();
+		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
 		$configuration->initFromLink($linkCode);
 		$links = $configuration->getLinks();
-		
-				
+						
 		$query = new DataCube_Query($model);
 		
 		$dimensions = $links[$linkCode]['selectedDimensions'];
 		$dimensionComponents = $links[$linkCode]['selectedDimensionComponents'];
-		$graphUri = $links[$linkCode]['selectedGraph'];
+		$graphUrl = $links[$linkCode]['selectedGraph'];		
 				
-		$resultObservations = $query->getObservations($graphUri, $dimensionComponents);
+		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents);
 						
 		$this->_response->setBody($resultObservations);
 	}
@@ -173,7 +174,10 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$config['selectedDimensionComponents'] = $this->_request->getParam('selectedDimensionComponents');
 		$config['selectedChartType'] = $this->_request->getParam('selectedChartType');
 		
-		$configuration = new CubeViz_ConfigurationLink($config['sparqlEndpoint'], $config['selectedGraph']);
+		$sparqlEndpoint = json_decode($config['sparqlEndpoint']);
+		$model = json_decode($config['selectedGraph']);
+		
+		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $model);
 		$result = $configuration->writeToFile($config);
 		
 		/*

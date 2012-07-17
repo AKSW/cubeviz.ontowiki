@@ -42,8 +42,8 @@
 		}
 	} else {
 		var CubeViz_Parameters_Module = {
-			sparqlEndpoint: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["sparqlEndpoint"],
-			selectedGraph: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedGraph"],
+			sparqlEndpoint: JSON.parse(CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["sparqlEndpoint"]),
+			selectedGraph: JSON.parse(CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedGraph"]),
 			selectedDSD: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDSD"],
 			selectedDS: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDS"],
 			selectedMeasures: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedMeasures"],

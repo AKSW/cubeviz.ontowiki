@@ -72,10 +72,10 @@ class CubeViz_ConfigurationLink
 		if(file_exists($this->_linksFolder . $linkCode)) {
 			
             $parameters = file($this->_linksFolder . $linkCode);
-			
-            $this->_links [$linkCode] ['sparqlEndpoint'] = json_decode(trim($parameters[0]), true);
+						
+            $this->_links [$linkCode] ['sparqlEndpoint'] = trim($parameters[0]);
             
-			$this->_links [$linkCode] ['selectedGraph'] = json_decode(trim($parameters[1]), true);
+			$this->_links [$linkCode] ['selectedGraph'] = trim($parameters[1]);
 			
             // Data Structure Definition
             $selectedDSD = json_decode(trim($parameters[2]), true);
@@ -116,13 +116,14 @@ class CubeViz_ConfigurationLink
 	
 	public function writeToFile($config) {
 		$fileName = $this->generateHashCodeFor($config);
-		
+				
 		$filePath = $this->_linksFolder . $fileName;
 				
 		if( false == file_exists($filePath) && true == isset ( $config['selectedGraph'] ) ) {
             
             if ( false === ( $fh = fopen($filePath, 'w') ) ) {
                 // can't open the file
+                var_dump("No write permission oO"); die;
                 return null;
             }
 			

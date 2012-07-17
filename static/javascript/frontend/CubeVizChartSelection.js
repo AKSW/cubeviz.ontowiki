@@ -83,10 +83,7 @@ $(document).ready(function(){
                 
             default: break;
         }
-        
-        console.log ( chartName );
-        
-        
+               
         // Generate HighChart configuration object for a chart
         var chartInput = chart.getChartInput ();
             
