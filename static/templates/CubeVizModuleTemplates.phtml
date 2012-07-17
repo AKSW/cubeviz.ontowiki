@@ -2,11 +2,10 @@
     {.section dimensions}
         {.repeated section @}
             
-            <div class="sidebar-left-data-selection-dims-box-seperator">
-                <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">
+            <div class="sidebar-left-data-selection-dims-box-seperator" style="margin-left: 1px; margin-top: 3px;">
                 <div class="sidebar-left-data-selection-dims-box-lblabs">
-                    <div class="sidebar-left-data-selection-dims-box-label">
-                        <span class="sidebar-left-data-selection-dims-box-label-value">&nbsp; {label}</span> 
+                    <div class="sidebar-left-data-selection-dims-box-label" style="float: left;">
+                        <span class="sidebar-left-data-selection-dims-box-label-value">{label}</span> 
                         (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
                     </div>
                     <div class="sidebar-left-data-selection-dims-box-abstract">
@@ -18,6 +17,7 @@
                         </div>
                     </div>
                 </div>
+                <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">
             </div>     
                           
         {.end}    
