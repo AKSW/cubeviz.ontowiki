@@ -103,9 +103,9 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
-				
+						
 		$query = new DataCube_Query($model);
-				
+						
         $this->_response->setBody(json_encode($query->getDataSets($dsdUrl)));
 	}
 	
