@@ -45,9 +45,14 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
         maximumMultipleDimensions: 1
     },
     
+    init: function(retrievedResultObservations, CubeViz_Parameters_Component) {
+		console.log(retrievedResultObservations);
+		console.log(CubeViz_Parameters_Component);
+	},
+    
     /**
      * @param 
-     */
+     *
     init: function (rawData, renderToContainer, dimensionsAssignment, measuresAssignment, 
                     xAxisAssignment, yAxisAssignment, captionEntrySeparator) {
         
@@ -75,7 +80,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
         
         // Set separator for the chart caption
         this.configuration.captionEntrySeparator = captionEntrySeparator || this.configuration.captionEntrySeparator;
-    },    
+    },   */ 
     
     /**
      * 
