@@ -2,7 +2,7 @@
 //Namespace('org.aksw.cubeViz.GUI');
 
 // creates or use a namespace and fill it with the specified properties
-Namespacedotjs('org.aksw.CubeViz.Index.Main', {
+Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 	
 	modelUrl: null,
 	cubevizPath: null,
@@ -23,19 +23,5 @@ Namespacedotjs('org.aksw.CubeViz.Index.Main', {
 			this.retrievedResultObservations = json;
 			$(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
 		}, this));
-	},
-	
-	processRetrievedObservations: function() {
-		
-		var observations = [];
-		
-		var observation_current = null;
-		for(observation in this.retrievedResultObservations) {
-			observation_current = this.retrievedResultObservations[observation];
-			
-		}
-		
-		//console.log(this.retrievedResultObservations);
-		//console.log(this.dimensions);
 	}
 });

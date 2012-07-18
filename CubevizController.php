@@ -75,8 +75,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$graphUrl = $links[$linkCode]['selectedGraph'];
 		$dataSetUrl = $links[$linkCode]['selectedDS']['url'];		
 			
-		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents, $dataSetUrl);
-		var_dump($resultObservations); die;				
+		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents, $dataSetUrl);	
 		$this->_response->setBody($resultObservations);
 	}
     

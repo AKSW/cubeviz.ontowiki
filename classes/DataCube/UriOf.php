@@ -31,6 +31,6 @@ class DataCube_UriOf
 	const Dimension = "http://purl.org/linked-data/cube#dimension";
 	const Attribute = "http://purl.org/linked-data/cube#attribute";
 	const Order = "http://purl.org/linked-data/cube#order";
-	const DataSetRelation = "http://purl.org/linked-data/cube#dataset";
+	const DataSetRelation = "http://purl.org/linked-data/cube#dataSet";
 	const Structure = "http://purl.org/linked-data/cube#structure";
 }

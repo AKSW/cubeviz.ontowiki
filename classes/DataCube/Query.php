@@ -238,7 +238,8 @@ class DataCube_Query {
 		$where = 'WHERE {
 			?s ?p ?o .
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n" .
-            '?s <'. DataCube_UriOf::DataSet .'> <'.$dataSetUri.'> .'."\n";
+            //TODO: Tell Micha to correct "dataset" to "DataSet"!
+            '?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'> .'."\n";
         
 		//unite all the triple patterns of the same dimension_type
         usort($dimComps, array('DataCube_Query','compareDimensionLabels'));	
