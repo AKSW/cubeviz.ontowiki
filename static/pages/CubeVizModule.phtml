@@ -72,22 +72,38 @@
 <div id="wrapper"></div>
 
 <div id="sidebar-left">
+    <div id="sidebar-left-loader"><div style="margin-top:30%;">
+        <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
+    </div></div>
 	<div id="sidebar-left-data-selection">
 		<div id="sidebar-left-data-selection-wrapper">
-			<div id="sidebar-left-data-selection-dims">
-				<h3><?php echo $this->_translate->_('Dimensions'); ?></h3>
+            
+            <!-- Select data structure-->
+            <div style="clear:both;">
+                <div style="width:110px; float:left;"><?php echo $this->_translate->_('Data Structures'); ?>:</div> 
+                <div><select name="datastructures" id="sidebar-left-data-selection-strc"></select></div>
+            </div>
+            
+            <!-- Select data set -->
+            <div style="clear:both;">
+                <div style="width:110px; float:left;"><?php echo $this->_translate->_('Data Sets'); ?>:</div>
+                <div><select name="datasets" id="sidebar-left-data-selection-sets"></select></div>
+            </div>
+			
+            <!-- Visual seperator -->
+            <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
+            
+            <div id="sidebar-left-data-selection-dims">
+				<div class="cubeViz-h2-light"><?php echo $this->_translate->_('Dimensions'); ?></div>
+                <br/>
 				<div id="sidebar-left-data-selection-dims-boxes"></div>
 			</div>
-			<div id="sidebar-left-data-selection-meas">
+			<div id="sidebar-left-data-selection-meas" style="display:none;">
 				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
 				<div id="sidebar-left-data-selection-meas-boxes"></div>
 			</div>
-			<div id="sidebar-left-data-selection-strcsets">
-				<h3><?php echo $this->_translate->_('Data Structure and Sets'); ?></h3>
-			</div>
-			<select name="datastructures" id="sidebar-left-data-selection-strc"></select>
-			<select name="datasets" id="sidebar-left-data-selection-sets"></select>
-			<div id="sidebar-left-data-selection-submitbtn-box">
+            <br/>
+            <div id="sidebar-left-data-selection-submitbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
 				<input type="submit" value="<?php echo $this->_translate->_('Select Data'); ?>" id="sidebar-left-data-selection-submitbtn"/>
 			</div>
 		</div>

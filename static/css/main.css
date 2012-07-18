@@ -19,6 +19,16 @@
     cursor: pointer;
 }
 
+#sidebar-left-data-selection-submitbtn {
+    border: 1px solid #1E1E1E;
+    background: #E3E3E3;
+    padding: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    height: 25px;
+    width: 75px;
+    cursor: pointer;
+}
 
 /* main container which contains all the content */
 #wrapper { 
@@ -97,6 +107,11 @@
     filter:alpha(opacity=100); /* For IE8 and earlier */
 }
 
+.cubeViz-h2-light {
+    font-size: 14px;
+    font-weight: bold;
+    color: #9E9E9E;
+}
 
 
 /**
@@ -330,7 +345,8 @@
 }
 
 .sidebar-left-data-selection-dims-box-seperator {
-    margin-top: 40px;
+    float: left;
+    width: 120px;
 } 
  
 .sidebar-left-data-selection-dims-box {
@@ -338,6 +354,8 @@
 } 
 
 .sidebar-left-data-selection-dims-box-label {
+    font-size: 11px;
+    font-weight: bold;
 }
 
 .sidebar-left-data-selection-dims-box-label-value {
@@ -348,19 +366,18 @@
 }
 
 #sidebar-left-data-selection-strc {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
+    width: 137px;
+    min-width: 137px;
+    max-width: 137px;
 }
 
 #sidebar-left-data-selection-sets {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
+    width: 137px;
+    min-width: 137px;
+    max-width: 137px;
 }
 
 #sidebar-left-data-selection-strcsets {
-    margin-top: 45px;
 }
  
 .open-dialog-selector {
@@ -371,10 +388,9 @@
 
 .sidebar-left-data-selection-dims-box-abstract-img,
  .sidebar-left-data-selection-meas-box-abstract-img {
-    width: 15px;
-    float: left;
-    margin-top: 5px;
+    width: 12px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 #sidebar-left-data-selection-meas {
@@ -387,3 +403,11 @@
 }
 
 
+#sidebar-left-loader {
+    position: absolute;
+    width: 255px;
+    height: 82%;
+    background-color: #F3F3F3;
+    opacity: 0.9;
+    text-align: center;
+}
