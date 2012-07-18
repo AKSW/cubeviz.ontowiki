@@ -136,7 +136,7 @@ $(function() {
 		var isCubeviz = CubeViz_Main_Module.isCurrentPageCubeviz();
 		if(isCubeviz) {
 			//send an AJAX to get new observations
-
+			console.log("do nothing");
 		} else {
 			//redirect to the cubeviz page
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];

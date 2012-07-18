@@ -23,5 +23,35 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 			this.retrievedResultObservations = json;
 			$(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
 		}, this));
+	},
+	
+	/**
+     * Extracts all dimensions which appears two or more times
+     * @return array List of dimension names which appears two or more times
+     */
+    getMultipleDimensions: function (CubeViz_Parameters_Component) {
+        
+        var i = 0;
+        var multipleDimensions = [];
+        var dimensions = CubeViz_Parameters_Component.selectedDimensions.dimensions;
+        var dimensions_length = dimensions.length;
+        
+        for(i; i < dimensions_length; i++) {
+			if(dimensions[i].selectedElementCount > 1) {
+				multipleDimensions.push(dimensions[i].type);
+			}
+		}
+        
+        return multipleDimensions;
+    },
+    
+    getSuitableChartTypes: function(multipleDimensions, CubeViz_ChartConfig) {
+		var numberOfMultipleDimensions = multipleDimensions.length;
+		
+		return CubeViz_ChartConfig[numberOfMultipleDimensions];
+	},
+	
+	renderChart: function(renderedChart) {
+		
 	}
 });

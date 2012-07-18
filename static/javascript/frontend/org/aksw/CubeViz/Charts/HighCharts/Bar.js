@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
     
     rawData: {},
     
@@ -287,5 +287,9 @@ Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.BarChart', {
         this.setCaption ();
         
         return this.activeHighChartConfig;
-    }
+    },
+    
+    getRenderResult: function() {
+		
+	}
 });
