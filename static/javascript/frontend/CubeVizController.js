@@ -1,6 +1,10 @@
 $(document).ready(function(){
 	Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
     var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
+    
+    /****************************************************************
+     * On simple load - redirect from the other page or page reload *
+     ****************************************************************/
         
     CubeViz_Controller_Main.init(CubeViz_Parameters_Component);
     CubeViz_Controller_Main.getResultObservations(CubeViz_Link_Chosen_Component);
@@ -8,6 +12,10 @@ $(document).ready(function(){
     var suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(multipleDimensions, CubeViz_ChartConfig);
     // TODO check if it is enabled
     // pick the first one
+    
+    /*********************************
+     * On "Select Data" button click *
+     *********************************/
     
     $(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {
 		
