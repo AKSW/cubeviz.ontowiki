@@ -32,7 +32,7 @@ class CubeViz_ConfigurationLink
      * points to the directory /data/links/sparqlEndpoint/graphUrl
      */
     protected $_graphUrl = '';
-    
+        
     /**
      * Constructor
      */
@@ -116,6 +116,9 @@ class CubeViz_ConfigurationLink
 	
 	public function writeToFile($config) {
 		$fileName = $this->generateHashCodeFor($config);
+		
+		//TODO: check the existence of the folders and make folders available
+		//set permissions 0777 for the folders!
 				
 		$filePath = $this->_linksFolder . $fileName;
 				
