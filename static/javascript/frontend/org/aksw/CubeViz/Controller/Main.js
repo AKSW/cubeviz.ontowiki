@@ -63,5 +63,21 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 	
 	showChart: function(renderedChart) {
 		new Highcharts.Chart(renderedChart);
+	},
+	
+	sortObservations: function(observations) {
+		var sortedObservations = {};
+		
+		var indexArray = [];
+		var i;
+		for (i in observations) {
+			indexArray.push(i);   // collect all indexes
+		}
+		indexArray.sort();  
+		for (i = 0; i < indexArray.length; i++) {
+			sortedObservations[indexArray[i]] = observations[indexArray[i]];
+		}
+		
+		return sortedObservations;
 	}
 });

@@ -77,7 +77,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 	},
 
     getRenderResult: function() {
-		console.log(this.series);
 		var chart;
 		chart = {
 			chart: {
@@ -115,10 +114,8 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 			},
 			legend: {
 				layout: 'vertical',
-				align: 'right',
-				verticalAlign: 'top',
 				x: -10,
-				y: 100,
+				y: 20,
 				borderWidth: 0
 			},
 			series: this.series

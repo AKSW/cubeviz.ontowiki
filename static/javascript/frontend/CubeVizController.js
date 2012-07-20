@@ -23,6 +23,7 @@ $(document).ready(function(){
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
+		var CubeViz_sortedObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_multipleDimensions);
 				
 		if(CubeViz_suitableCharts.charts.length == 0) {
 			return;
@@ -31,7 +32,7 @@ $(document).ready(function(){
 			Namespacedotjs.include(CubeViz_suitableCharts.charts[0].class);
 			eval('var chart = '+CubeViz_suitableCharts.charts[0].class+';');
 			
-			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
+			chart.init(CubeViz_sortedObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.showChart(renderedChart);
 		}	
