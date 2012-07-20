@@ -1,7 +1,56 @@
 Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
+	
+	/**
+	 * Notes:
+	 * In this class multipleDimensions ALWAYS has got only one element
+	 */
+	
+	observations: null,
+	parameters: null,
+	nDimension: null,
 
-	init: function() {
+	init: function(observations, parameters, multipleDimensions) {
+		this.observations = observations;
+		this.parameters = parameters;
+		this.nDimension = multipleDimensions[0];
 		
+		this.categories = this.getCategories(observations, parameters, this.nDimension);
+		this.mainTitle = this.getMainTitle(parameters);
+		this.series = this.getSeries(observations, parameters, this.nDimension);
+		
+	},
+	
+	getCategories: function(observations, parameters, nDimension) {
+		var categories = [];
+		var observation_current = null;
+		var object_current = null;
+		for(observation in observations) {
+			observation_current = observations[observation];
+			for(property in observation_current) {
+				object_current = observation_current[property];
+				if(property == nDimension) {
+					categories.push(object_current[0].value);
+				}
+			}
+		}
+		return categories;
+	},
+	
+	getSeries: function(observations, parameters, nDimension) {
+		//console.log(observations);
+		//console.log(parameters);
+		//console.log(parameters.selectedDimensionComponents.selectedDimensionComponents);
+		var dimComp_length = parameters.selectedDimensionComponents.selectedDimensionComponents.length;
+		var dimComp_current = null;
+		var i = 0;
+		for(i; i < dimComp_length; i++) {
+			dimComp_current = parameters.selectedDimensionComponents.selectedDimensionComponents[i];
+			console.log(dimComp_current);
+		}		
+	},
+	
+	getMainTitle: function(parameters) {
+		return parameters.selectedDSD.label +', '+ parameters.selectedDS.label;
 	},
 
     getRenderResult: function() {
@@ -14,11 +63,11 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 				marginBottom: 25
 			},
 			title: {
-				text: 'Monthly Average Temperature',
+				text: this.mainTitle,
 				x: -20 //center
 			},
 			subtitle: {
-				text: 'Source: WorldClimate.com',
+				text: '',
 				x: -20
 			},
 			xAxis: {

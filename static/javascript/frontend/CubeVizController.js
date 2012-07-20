@@ -21,17 +21,17 @@ $(document).ready(function(){
 	$(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {
 		
 		//check if there is suitable charts
-		var multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
-		var suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(multipleDimensions, CubeViz_ChartConfig);
-		
-		if(suitableCharts.charts.length == 0) {
+		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
+		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
+				
+		if(CubeViz_suitableCharts.charts.length == 0) {
 			return;
 		} else {
 			//pick the first suitable chart type
-			Namespacedotjs.include(suitableCharts.charts[0].class);
-			eval('var chart = '+suitableCharts.charts[0].class+';');
+			Namespacedotjs.include(CubeViz_suitableCharts.charts[0].class);
+			eval('var chart = '+CubeViz_suitableCharts.charts[0].class+';');
 			
-			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component, multipleDimensions);
+			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.showChart(renderedChart);
 		}		
