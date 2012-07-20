@@ -32,6 +32,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		//endpoint is local now!
 		$sparqlEndpoint = "local";
+		$this->view->sparqlEndpoint = json_encode($sparqlEndpoint);
 		
 		//model
 		$this->view->modelUrl =  $this->_owApp->selectedModel;
@@ -54,6 +55,22 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->view->backend = "virtuoso";
 	}
 	
+	public function getparametersfromlinkAction() {
+		$this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();     
+		
+		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+		$graphUrl = $this->_request->getParam ('m');
+		$linkCode = $this->_request->getParam('lC');
+		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
+				
+		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
+		$configuration->initFromLink($linkCode);
+		$links = $configuration->getLinks();
+				
+		$this->_response->setBody(json_encode($links[$linkCode]));	
+	}
+	
 	public function getresultobservationsAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();        
@@ -61,7 +78,6 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$graphUrl = $this->_request->getParam ('m');
 		$linkCode = $this->_request->getParam('lC');
-		$dataSetUrl = $this->_request->getParam('datasetUrl');
 		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
 				
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);

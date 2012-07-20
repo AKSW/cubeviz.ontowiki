@@ -9,12 +9,14 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 	retrievedResultObservations: null,
 	
 	init: function(CubeViz_Parameters) {
-		this.CubeViz_Parameters = CubeViz_Parameters;
-		this.modelUrl = CubeViz_Parameters.modelUrl;
-		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint;
-		this.cubevizPath = CubeViz_Parameters.cubevizPath;
-		this.dimensions = CubeViz_Parameters.selectedDimensions;
-		this.measures = CubeViz_Parameters.selectedMeasures;
+		//only static parameters here!
+		this.modelUrl = CubeViz_Parameters.modelUrl;		
+		this.sparqlEndpoint = CubeViz_Parameters.sparqlEndpoint;		
+		this.cubevizPath = CubeViz_Parameters.cubevizPath;		
+		this.cubevizImagesPath = CubeViz_Parameters.cubevizImagesPath;		
+		this.backend = CubeViz_Parameters.backend;		
+		this.visualizationContainer = CubeViz_Parameters.visualizationContainer;		
+		this.chartType = CubeViz_Parameters.chartType;
 	},
 		
 	getResultObservations: function(linkCode) {
@@ -24,6 +26,14 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 			$(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
 		}, this));
 	},
+	
+	getParametersFromLink: function(linkCode) {
+		var action = "getparametersfromlink";
+		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&lC="+linkCode+"&sparqlEndpoint="+this.sparqlEndpoint, $.proxy(function(json) {
+			this.retrievedCubeVizParameters = json;
+			$(body).trigger("AjaxCubeVizParametersRetrieved.CubeViz");
+		}, this));
+	},	
 	
 	/**
      * Extracts all dimensions which appears two or more times
