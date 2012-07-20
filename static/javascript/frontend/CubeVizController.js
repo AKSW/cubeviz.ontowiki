@@ -11,11 +11,12 @@ $(document).ready(function(){
      * Event Handlers *
      ******************/
      
-    $(body).bind("AjaxCubeVizParametersRetrieved.CubeViz", function(event) {
+    $(body).bind("AjaxCubeVizParametersRetrieved.CubeViz", function(event, CubeViz_Link_Chosen) {
+		
 		//set parameters to global array
 		CubeViz_Parameters_Component = CubeViz_Controller_Main.retrievedCubeVizParameters;
 		//get observations for the retrieved parameters
-		CubeViz_Controller_Main.getResultObservations(CubeViz_Link_Chosen_Component);
+		CubeViz_Controller_Main.getResultObservations(CubeViz_Link_Chosen);
 	});
 	
 	$(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {

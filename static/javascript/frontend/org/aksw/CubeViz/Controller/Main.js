@@ -31,7 +31,7 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 		var action = "getparametersfromlink";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&lC="+linkCode+"&sparqlEndpoint="+this.sparqlEndpoint, $.proxy(function(json) {
 			this.retrievedCubeVizParameters = json;
-			$(body).trigger("AjaxCubeVizParametersRetrieved.CubeViz");
+			$(body).trigger("AjaxCubeVizParametersRetrieved.CubeViz", linkCode);
 		}, this));
 	},	
 	
