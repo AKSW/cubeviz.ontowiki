@@ -61,7 +61,7 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 		return CubeViz_ChartConfig[numberOfMultipleDimensions];
 	},
 	
-	renderChart: function(renderedChart) {
-		
+	showChart: function(renderedChart) {
+		new Highcharts.Chart(renderedChart);
 	}
 });

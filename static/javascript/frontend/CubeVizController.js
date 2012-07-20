@@ -33,7 +33,7 @@ $(document).ready(function(){
 			
 			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component);
 			var renderedChart = chart.getRenderResult();
-			CubeViz_Controller_Main.renderChart(renderedChart);
+			CubeViz_Controller_Main.showChart(renderedChart);
 		}		
 	});
         

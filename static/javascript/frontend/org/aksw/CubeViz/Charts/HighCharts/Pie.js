@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.ChartTransformer.HighCharts.PieChart', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie', {
     
     rawData: {},
     
