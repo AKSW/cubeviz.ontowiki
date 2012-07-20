@@ -37,16 +37,39 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 	},
 	
 	getSeries: function(observations, parameters, nDimension) {
-		//console.log(observations);
-		//console.log(parameters);
-		//console.log(parameters.selectedDimensionComponents.selectedDimensionComponents);
+		var series = {name: "", data: []};
 		var dimComp_length = parameters.selectedDimensionComponents.selectedDimensionComponents.length;
 		var dimComp_current = null;
+		var observation_current = null;
+		var object_current = null;
 		var i = 0;
 		for(i; i < dimComp_length; i++) {
 			dimComp_current = parameters.selectedDimensionComponents.selectedDimensionComponents[i];
-			console.log(dimComp_current);
-		}		
+			if(dimComp_current.property != nDimension) {
+				series.name += dimComp_current.property_label + " ";
+			}
+		}
+		
+		//get measure(s)
+		var meas_length = parameters.selectedMeasures.measures.length;
+		var meas_current = null;
+		var measures = [];
+		for(i = 0; i < meas_length; i++) {
+			meas_current = parameters.selectedMeasures.measures[i].type;
+			
+			for(observation in observations) {
+				observation_current = observations[observation];
+				for(property in observation_current) {
+					object_current = observation_current[property];
+					if(property == meas_current) {
+						series.data.push(object_current[0].value);
+					}
+				}
+			}
+			
+		}
+		
+		return [series];
 	},
 	
 	getMainTitle: function(parameters) {
@@ -54,6 +77,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 	},
 
     getRenderResult: function() {
+		console.log(this.series);
 		var chart;
 		chart = {
 			chart: {
@@ -71,8 +95,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 				x: -20
 			},
 			xAxis: {
-				categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-					'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+				categories: this.categories
 			},
 			yAxis: {
 				title: {
@@ -98,19 +121,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 				y: 100,
 				borderWidth: 0
 			},
-			series: [{
-				name: 'Tokyo',
-				data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-			}, {
-				name: 'New York',
-				data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
-			}, {
-				name: 'Berlin',
-				data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-			}, {
-				name: 'London',
-				data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-			}]
+			series: this.series
 		};
 		
 		return chart;
