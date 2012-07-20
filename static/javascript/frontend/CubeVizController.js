@@ -19,12 +19,18 @@ $(document).ready(function(){
     
     $(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {
 		
-		//pick the first suitable chart type
-		Namespacedotjs.include(suitableCharts.charts[0].class);
-		eval('var chart = '+suitableCharts.charts[0].class+';');
-		
-		chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component);
-		var renderedChart = chart.getRenderResult();
-		CubeViz_Controller_Main.renderChart(renderedChart);
+        if ( 0 < suitableCharts.charts.length) {
+            
+            //pick the first suitable chart type
+            Namespacedotjs.include(suitableCharts.charts[0].class);
+            eval('var chart = '+suitableCharts.charts[0].class+';');
+            
+            // init chart instance
+            chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component);
+        
+            var renderedChart = chart.getRenderResult();
+            
+            CubeViz_Controller_Main.renderChart(renderedChart);
+        }
 	});
 });
