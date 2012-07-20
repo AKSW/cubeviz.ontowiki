@@ -3,6 +3,13 @@ var CubeViz_ChartConfig =
 		"1": {
 			"charts": [
 				{
+					"label": "splines",
+					"class": "org.aksw.CubeViz.Charts.HighCharts.Splines",
+					"libraryLabel": "HighCharts",
+					"enabled": true,
+					"icon": "/static/images/splines.png"
+				},
+				{
 					"label": "bar",
 					"class": "org.aksw.CubeViz.Charts.HighCharts.Bar",
 					"libraryLabel": "HighCharts",

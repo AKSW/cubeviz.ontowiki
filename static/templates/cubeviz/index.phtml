@@ -18,82 +18,24 @@
      *************************************/
     Namespacedotjs.baseUri = <?php echo json_encode($this->basePath . 'static/javascript/frontend/'); ?>;
 
-    var CubeViz_Links_Component = <?php echo $this->links; ?>;
-    
-    // choose default config for the start
     var CubeViz_Link_Chosen_Component = <?php echo json_encode($this->linkCode); ?>;
     
-    console.log();
-		
-	if(typeof CubeViz_Links_Component[CubeViz_Link_Chosen_Component] === "undefined" || CubeViz_Links_Component[CubeViz_Link_Chosen_Component] === null) {
-		var CubeViz_Parameters_Component = {
-			sparqlEndpoint: null,
-			selectedGraph: null,
-			selectedDSD: {},
-			selectedDS: {},
-			selectedMeasures: {},
-			selectedDimensions: {},
-			selectedDimensionComponents: {},
-		}
-	} else {
-		var CubeViz_Parameters_Component = {
-			sparqlEndpoint: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["sparqlEndpoint"],
-			selectedGraph: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedGraph"],
-			selectedDSD: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedDSD"],
-			selectedDS: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedDS"],
-			selectedMeasures: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedMeasures"],
-			selectedDimensions: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedDimensions"],
-			selectedDimensionComponents: CubeViz_Links_Component[CubeViz_Link_Chosen_Component]["selectedDimensionComponents"]
-		}	
+    var CubeViz_Parameters_Component = {
+		sparqlEndpoint: <?php echo $this->sparqlEndpoint; ?>,
+		selectedGraph: null,
+		selectedDSD: {},
+		selectedDS: {},
+		selectedMeasures: {},
+		selectedDimensions: {},
+		selectedDimensionComponents: {}
 	}
-	
+		
 	CubeViz_Parameters_Component.modelUrl = "<?php echo $this->modelUrl; ?>";		
 	CubeViz_Parameters_Component.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
 	CubeViz_Parameters_Component.cubevizImagesPath = "<?php echo $this->basePath_images; ?>";		
 	CubeViz_Parameters_Component.backend = <?php echo json_encode($this->backend); ?>;		
 	CubeViz_Parameters_Component.visualizationContainer = "container";		
-    CubeViz_Parameters_Component.chartType = "bar";
-    
-    console.log(CubeViz_Parameters_Component);
-    
-    /**
-     * TODO: ADAPT THIS! Its still a simple hack
-     * It needs to read dynamicly
-     */
-    
-    // Examples for a raw output from the backend
-    var rawData = {
-        "observation1": {
-            "year": "April",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 3
-        },
-        "observation2": {
-            "year": "May",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 5
-        },
-        "observation3": {
-            "year": "June",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 20
-        }
-    };
-    
-    var dimensions = ["country", "indicator", "year"];
-    
-    var measures = ["measure"];
-    
-    // var chartType = "pie"; // pie, bar
-    
-    // !!!
-    // for detailed overview about the configuration of the chart 
-    // look into CubeVizIndex.js
-    // !!!
-    
+    CubeViz_Parameters_Component.preferredChartType = "bar";   
 </script>
 
 <div id="wrapper">

@@ -33,7 +33,6 @@ $(function() {
 	 * UI event handling *
 	 *********************/
 	$(body).bind("dialogOpened.CubeViz", function(event) {
-		//console.log($(event.target));
 	});		
 	
 	$(body).bind("dialogClosed.CubeViz", function(event) {
@@ -126,7 +125,6 @@ $(function() {
 			CubeViz_Main_Module.showEmptyDimensionsWarning(emptyDimensions);
 		} else {
 			var config = CubeViz_Main_Module.makeLink();
-			console.log(config);
 			CubeViz_Ajax_Module.saveLinkToFile(config);
 		}
 	});
@@ -135,9 +133,12 @@ $(function() {
 		// check if we are already on the cubeviz page (!)
 		var isCubeviz = CubeViz_Main_Module.isCurrentPageCubeviz();
 		if(isCubeviz) {
-			CubeViz_Ajax_Module.retrievedLinkCode
-			//send an AJAX to get new observations
-			console.log("do nothing");
+			//CubeViz Controller should be initialized
+			//TODO: optimize the code below
+			Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
+			var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
+			CubeViz_Controller_Main.getParametersFromLink(CubeViz_Ajax_Module.retrievedLinkCode); 
+			
 		} else {
 			//redirect to the cubeviz page
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];
@@ -190,7 +191,6 @@ $(function() {
 																							  CubeViz_Main_Module.selectedDimensions);
 																							  
 		CubeViz_Main_Module.resetSelectedDimensionComponents();
-		console.log(CubeViz_Main_Module.allDimensions.dimensions);
 		CubeViz_Ajax_Module.getAllDimensionsComponents(CubeViz_Main_Module.selectedDS, CubeViz_Main_Module.allDimensions, $(element));
 		
 		
