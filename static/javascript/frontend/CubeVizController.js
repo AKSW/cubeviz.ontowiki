@@ -31,7 +31,7 @@ $(document).ready(function(){
 			Namespacedotjs.include(suitableCharts.charts[0].class);
 			eval('var chart = '+suitableCharts.charts[0].class+';');
 			
-			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component);
+			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component, multipleDimensions);
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.showChart(renderedChart);
 		}		
