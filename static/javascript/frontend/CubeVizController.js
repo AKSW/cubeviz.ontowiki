@@ -19,7 +19,6 @@ $(document).ready(function(){
 	});
 	
 	$(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {
-		
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
@@ -34,7 +33,7 @@ $(document).ready(function(){
 			chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.showChart(renderedChart);
-		}		
+		}	
 	});
         
     //init controller
