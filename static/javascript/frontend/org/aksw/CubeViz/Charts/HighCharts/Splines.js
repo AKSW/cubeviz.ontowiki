@@ -28,6 +28,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 			observation_current = observations[observation];
 			for(property in observation_current) {
 				object_current = observation_current[property];
+				 
 				if(property == nDimension) {
 					categories.push(object_current[0].value);
 				}

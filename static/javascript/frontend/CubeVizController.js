@@ -12,7 +12,6 @@ $(document).ready(function(){
      ******************/
      
     $(body).bind("AjaxCubeVizParametersRetrieved.CubeViz", function(event, CubeViz_Link_Chosen) {
-		
 		//set parameters to global array
 		CubeViz_Parameters_Component = CubeViz_Controller_Main.retrievedCubeVizParameters;
 		//get observations for the retrieved parameters
@@ -20,10 +19,13 @@ $(document).ready(function(){
 	});
 	
 	$(body).bind("AjaxResultObservationsRetrieved.CubeViz", function(event) {
+		
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
 		var CubeViz_sortedObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_multipleDimensions);
+				
+		console.log(CubeViz_sortedObservations);		
 				
 		if(CubeViz_suitableCharts.charts.length == 0) {
 			return;
@@ -33,6 +35,7 @@ $(document).ready(function(){
 			eval('var chart = '+CubeViz_suitableCharts.charts[0].class+';');
 			
 			chart.init(CubeViz_sortedObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
+			
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.showChart(renderedChart);
 		}	
