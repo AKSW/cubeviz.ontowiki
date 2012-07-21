@@ -132,16 +132,15 @@ $(function() {
 	$(body).bind("AjaxLinkCodeRetrieved.CubeViz", function(event) {
 		// check if we are already on the cubeviz page (!)
 		var isCubeviz = CubeViz_Main_Module.isCurrentPageCubeviz();
-		if(isCubeviz) {
+		if(true == isCubeviz) {
 			//CubeViz Controller should be initialized
 			//TODO: optimize the code below
 			Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
 			var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
 			CubeViz_Controller_Main.getParametersFromLink(CubeViz_Ajax_Module.retrievedLinkCode); 
         
-			// CubeViz_Ajax_Module.retrievedLinkCode
-			//send an AJAX to get new observations
-			console.log("do nothing");
+			// send an AJAX to get new observations
+            CubeViz_Controller_Main.getResultObservations (CubeViz_Link_Chosen_Component);
 		} else {
 			//redirect to the cubeviz page
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];

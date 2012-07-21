@@ -37,7 +37,7 @@ $(document).ready(function(){
 			//pick the first suitable chart type
 			Namespacedotjs.include(CubeViz_suitableCharts.charts[0].class);
 			eval('var chart = '+CubeViz_suitableCharts.charts[0].class+';');
-			
+            
 			// init chart instance
             chart.init (
                 retrievedResultObservations, 
