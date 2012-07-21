@@ -112,6 +112,7 @@
     margin-left: 10px;
     opacity:1.0;
     filter:alpha(opacity=100); /* For IE8 and earlier */
+    cursor: pointer;
 }
 
 .cubeViz-h2-light {
