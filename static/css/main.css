@@ -88,27 +88,27 @@
     width: 90%;
 }
 
-#chart-selection {
+#chartSelection {
     position: absolute;
     right:0px;
     top: 40px;
     bottom: 0px;
-    width: 64px;
+    width: 56px;
     height: 90%;
     border-left: 1px solid #D8D8D8;
 }
 
-#chart-selection-container {
+#chartSelection-container {
     position: absolute;
     right:5px;
     top: 20px;
     width: 50px;
 }
 
-#chart-selection img {
+.chartSelectionItem {
     float: none;
-    width: 30px;
-    margin: 10px;
+    width: 35px;
+    margin-top: 20px;
     margin-left: 10px;
     opacity:1.0;
     filter:alpha(opacity=100); /* For IE8 and earlier */

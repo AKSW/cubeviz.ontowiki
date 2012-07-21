@@ -1,7 +1,7 @@
 Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
     
     /**
-     * Standard configuration object for a bar chart
+     * Standard configuration object for a chart
      */
     config: {
         chart: {
@@ -23,7 +23,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
     },
     
     /**
-     * Initialize the bar chart object
+     * Initialize the chart object
      * @param resultObservations
      * @param componentParameter
      */

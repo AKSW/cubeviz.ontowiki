@@ -1,7 +1,3 @@
-// https://github.com/smith/namespacedotjs
-//Namespace('org.aksw.cubeViz.GUI');
-
-// creates or use a namespace and fill it with the specified properties
 Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 	
 	modelUrl: null,
@@ -56,9 +52,7 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
     },
     
     getSuitableChartTypes: function(multipleDimensions, CubeViz_ChartConfig) {
-		var numberOfMultipleDimensions = multipleDimensions.length;
-		
-		return CubeViz_ChartConfig[numberOfMultipleDimensions];
+		return CubeViz_ChartConfig[multipleDimensions.length];
 	},
 	
 	/**

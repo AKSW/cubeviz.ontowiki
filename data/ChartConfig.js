@@ -8,6 +8,13 @@
 var CubeViz_ChartConfig = {
     "1": {
         "charts": [
+            {
+                "label": "pie",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "pie.png"
+            },
         ]	
     },
     "2": {
@@ -17,14 +24,14 @@ var CubeViz_ChartConfig = {
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Bar",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "/static/images/bar.png"
+                "icon": "bar.png"
             },
             {
                 "label": "scatterplot",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Scatterplot",
                 "libraryLabel": "HighCharts",
                 "enabled": false,
-                "icon": "/static/images/scatterplot.png"
+                "icon": "scatterplot.png"
             }
         ]
     }
