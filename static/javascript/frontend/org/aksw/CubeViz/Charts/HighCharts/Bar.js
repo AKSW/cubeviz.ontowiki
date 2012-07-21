@@ -54,7 +54,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
         console.log ( "" );
         console.log ( "getEntireLengthOfDimensionLabels" );
         
-        //this.config.title.text  = chart.getTitle ( resultObservations, componentParameter, nDimensions ); 
+        this.config.title.text = chart.getTitle ( resultObservations, componentParameter, nDimensions ); 
     },
     
     /**
