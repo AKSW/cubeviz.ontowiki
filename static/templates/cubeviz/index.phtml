@@ -22,8 +22,6 @@
     
     // choose default config for the start
     var CubeViz_Link_Chosen_Component = <?php echo json_encode($this->linkCode); ?>;
-    
-    console.log();
 		
 	if(typeof CubeViz_Links_Component[CubeViz_Link_Chosen_Component] === "undefined" || CubeViz_Links_Component[CubeViz_Link_Chosen_Component] === null) {
 		var CubeViz_Parameters_Component = {
@@ -54,49 +52,9 @@
 	CubeViz_Parameters_Component.visualizationContainer = "container";		
     CubeViz_Parameters_Component.chartType = "bar";
     
-    console.log(CubeViz_Parameters_Component);
-    
-    /**
-     * TODO: ADAPT THIS! Its still a simple hack
-     * It needs to read dynamicly
-     */
-    
-    // Examples for a raw output from the backend
-    var rawData = {
-        "observation1": {
-            "year": "April",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 3
-        },
-        "observation2": {
-            "year": "May",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 5
-        },
-        "observation3": {
-            "year": "June",
-            "country": "Cubeviz",
-            "indicator": "Wasting time due misunderstandings in communication :-P",
-            "measure": 20
-        }
-    };
-    
-    var dimensions = ["country", "indicator", "year"];
-    
-    var measures = ["measure"];
-    
-    // var chartType = "pie"; // pie, bar
-    
-    // !!!
-    // for detailed overview about the configuration of the chart 
-    // look into CubeVizIndex.js
-    // !!!
-    
 </script>
 
-<div id="wrapper">
+<div id="wrapper-index">
     <div id="container"></div>
     <div id="chart-selection"></div>
 </div>

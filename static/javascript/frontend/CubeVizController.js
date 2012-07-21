@@ -25,8 +25,14 @@ $(document).ready(function(){
             Namespacedotjs.include(suitableCharts.charts[0].class);
             eval('var chart = '+suitableCharts.charts[0].class+';');
             
+            var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
+            
             // init chart instance
-            chart.init(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_Parameters_Component);
+            chart.init (
+                CubeViz_Controller_Main.retrievedResultObservations, 
+                CubeViz_Parameters_Component,
+                CubeViz_multipleDimensions
+            );
         
             var renderedChart = chart.getRenderResult();
             
