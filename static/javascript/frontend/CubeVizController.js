@@ -34,10 +34,15 @@ $(document).ready(function(){
 			Namespacedotjs.include(CubeViz_suitableCharts.charts[0].class);
 			eval('var chart = '+CubeViz_suitableCharts.charts[0].class+';');
 			
-			chart.init(CubeViz_sortedObservations, CubeViz_Parameters_Component, CubeViz_multipleDimensions);
+			// init chart instance
+            chart.init (
+                CubeViz_Controller_Main.retrievedResultObservations, 
+                CubeViz_Parameters_Component,
+                CubeViz_multipleDimensions
+            );
 			
 			var renderedChart = chart.getRenderResult();
-			CubeViz_Controller_Main.showChart(renderedChart);
+			CubeViz_Controller_Main.renderChart(renderedChart);
 		}	
 	});
         
@@ -45,5 +50,4 @@ $(document).ready(function(){
     CubeViz_Controller_Main.init(CubeViz_Parameters_Component);
     //get the parameters for the link
     CubeViz_Controller_Main.getParametersFromLink(CubeViz_Link_Chosen_Component);    
-    
 });

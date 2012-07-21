@@ -138,7 +138,10 @@ $(function() {
 			Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
 			var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
 			CubeViz_Controller_Main.getParametersFromLink(CubeViz_Ajax_Module.retrievedLinkCode); 
-			
+        
+			// CubeViz_Ajax_Module.retrievedLinkCode
+			//send an AJAX to get new observations
+			console.log("do nothing");
 		} else {
 			//redirect to the cubeviz page
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];

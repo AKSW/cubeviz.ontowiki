@@ -61,10 +61,9 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 		return CubeViz_ChartConfig[numberOfMultipleDimensions];
 	},
 	
-	showChart: function(renderedChart) {
-		new Highcharts.Chart(renderedChart);
-	},
-	
+	/**
+     * 
+     */
 	sortObservations: function(observations) {
 		var sortedObservations = {};
 		
@@ -79,5 +78,12 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 		}
 		
 		return sortedObservations;
+    },
+    
+    /**
+     * Renders HighCharts
+     */
+	renderChart: function(renderedChart) {
+		new Highcharts.Chart(renderedChart);
 	}
 });

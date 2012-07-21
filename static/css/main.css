@@ -30,12 +30,19 @@
     cursor: pointer;
 }
 
-/* main container which contains all the content */
+/* main container for module */
 #wrapper { 
     width: 100%; 
     margin: 0px; 
     padding: 0px;
     /*min-height: 450px;*/
+}
+
+#wrapper-index {
+    width: 100%; 
+    margin: 0px; 
+    padding-top: 10px;
+    min-height: 450px;
 }
 
 
