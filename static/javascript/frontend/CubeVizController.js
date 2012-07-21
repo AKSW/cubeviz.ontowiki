@@ -23,10 +23,14 @@ $(document).ready(function(){
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
-		var CubeViz_sortedObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations, CubeViz_multipleDimensions);
+		var retrievedResultObservations = [];
 				
-		console.log(CubeViz_sortedObservations);		
-				
+        // Transform JSON object (with observations) into an array
+        // Neccessary, because we need to sort this later depends on the xAxis value
+        $.each ( CubeViz_Controller_Main.retrievedResultObservations, function (i, ele) {
+            retrievedResultObservations.push ( ele );
+        });
+                
 		if(CubeViz_suitableCharts.charts.length == 0) {
 			return;
 		} else {
@@ -36,7 +40,7 @@ $(document).ready(function(){
 			
 			// init chart instance
             chart.init (
-                CubeViz_Controller_Main.retrievedResultObservations, 
+                retrievedResultObservations, 
                 CubeViz_Parameters_Component,
                 CubeViz_multipleDimensions
             );

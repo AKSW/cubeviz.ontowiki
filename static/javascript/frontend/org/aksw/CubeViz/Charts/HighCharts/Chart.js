@@ -84,13 +84,9 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart', {
             return [];
         }
         
-		console.log(observations);
-		console.log(parameters);
-		console.log(multipleDimensions);
-        console.log ( "------------------");
-        
         // http://www.w3.org/2000/01/rdf-schema#label
         var numberOfMultipleDimensions = multipleDimensions.length;
+        var dimensionLengths = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions);
 		var series = [];
         var i = 0;
         
@@ -104,23 +100,29 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart', {
             
             var data = [];
             
-            var dimensionForSeriesGroup = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions) [1].dimension;
+            var dimensionForSeriesGroup = dimensionLengths [1].dimension;
+            
+            observations.sort (function(a, b){                
+                if (a [dimensionLengths [1].dimension] [0].value > b [dimensionLengths [1].dimension] [0].value) 
+                    return 1;
+                else 
+                    return -1;
+            });
             
             var selectedComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
             
             $.each ( selectedComponents, function ( componentIndex, componentElement ) {
                 if ( componentElement ["dimension_type"] == dimensionForSeriesGroup ) {
-                    // console.log (componentElement);
+                    
                     componentElementLabel = componentElement [ "property_label" ];
-                    componentElement = componentElement [ "property" ];
+                    componentElementUri = componentElement [ "property" ];
                     
                     data = [];
                     
                     $.each ( observations, function ( observationIndex, observationElement ) {
-                        // console.log ( "check " + componentElement + "==" + observationElement [dimensionForSeriesGroup][0].value );
-                        if ( componentElement == observationElement [dimensionForSeriesGroup][0].value ) {
+                        
+                        if ( componentElementUri == observationElement [dimensionForSeriesGroup][0].value ) {
                             // TODO: find a way to extract proerties/value dynamically!
-                            // console.log ( componentElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value);
                             data.push (observationElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value);
                         }
                     });

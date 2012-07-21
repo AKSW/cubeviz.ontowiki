@@ -35,9 +35,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
         
         // set x-axis
         this.config.xAxis.categories  = chart.getCategories ( resultObservations, componentParameter, nDimensions );
-        console.log ( "" );
-        console.log ( "Categories" );
-        console.log ( this.config.xAxis.categories );
         
         // set values itself
         this.config.series = chart.getSeries ( 
@@ -46,13 +43,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar', {
             nDimensions, 
             this.config.xAxis.categories 
         );
-        
-        console.log ( "" );
-        console.log ( "Series" );
-        console.log ( this.config.series );
-        
-        console.log ( "" );
-        console.log ( "getEntireLengthOfDimensionLabels" );
         
         this.config.title.text = chart.getTitle ( resultObservations, componentParameter, nDimensions ); 
     },
