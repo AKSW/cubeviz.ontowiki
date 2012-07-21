@@ -48,8 +48,6 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$configuration->initFromLink($linkCode);		
 		
 		$this->view->links = json_encode($configuration->getLinks());
-		
-		//var_dump($configuration->getLinks()); die;
 											
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
