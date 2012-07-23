@@ -34,6 +34,20 @@ var CubeViz_ChartConfig = {
                 "icon": "splines.png"
             },
             {
+                "label": "lines",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Lines",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "lines.png"
+            },
+            {
+                "label": "area",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Area",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "area.png"
+            },
+            {
                 "label": "scatterplot",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Scatterplot",
                 "libraryLabel": "HighCharts",

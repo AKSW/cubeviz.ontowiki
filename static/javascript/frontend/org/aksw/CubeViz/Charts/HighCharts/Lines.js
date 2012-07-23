@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Lines', {
 	
 	/**
 	 * Notes:
@@ -11,7 +11,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Splines', {
 	config: {
 		chart: {
 			renderTo: 'container',
-			type: 'spline'
+			type: 'line'
 		},
 		title: {
 			text: ''
