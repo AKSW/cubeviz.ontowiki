@@ -46,7 +46,7 @@ $(document).ready(function(){
         $.each ( CubeViz_Controller_Main.retrievedResultObservations, function (i, ele) {
             retrievedResultObservations.push ( ele );
         });
-                
+		                        
 		if(CubeViz_suitableCharts.charts.length == 0) {
 			return;
 		} else {

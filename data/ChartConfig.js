@@ -27,6 +27,13 @@ var CubeViz_ChartConfig = {
                 "icon": "bar.png"
             },
             {
+                "label": "splines",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Splines",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "splines.png"
+            },
+            {
                 "label": "scatterplot",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Scatterplot",
                 "libraryLabel": "HighCharts",
