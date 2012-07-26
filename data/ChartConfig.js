@@ -21,7 +21,7 @@ var CubeViz_ChartConfig = {
         "charts": [
             {
                 "label": "bar",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "bar.png"

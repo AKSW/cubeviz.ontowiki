@@ -57,7 +57,9 @@ $(document).ready(function(){
 			
             Namespacedotjs.include(useChartClass);
             
+            console.log(useChartClass);
 			eval('var chart = ' + useChartClass + ';');
+            
             
 			// init chart instance
             chart.init (
