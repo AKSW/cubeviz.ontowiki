@@ -106,40 +106,44 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 				return -1;
 		});
 		
-		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents,
-            stillEmpty = false,
-            elementsPerEntry = 0,
-            countElements = true;
+		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents;
 		
 		$.each ( selectedComponents, function ( componentIndex, componentElement ) {
 			if ( componentElement ["dimension_type"] == dimensionForSeriesGroup ) {
 				
 				componentElementLabel = componentElement [ "property_label" ];
 				componentElementUri = componentElement [ "property" ];
+                
+                /*
+				console.log ( "" );
+				console.log ( "**********************" );
+				console.log ( componentElementLabel );
+				console.log ( componentElementUri );
+                */
 				
-				data = [];
-                stillEmpty = true;
+                data = [];
                 i = 0;
 				
 				$.each ( resultObservations, function ( observationIndex, observationElement ) {
 					
 					if ( componentElementUri == observationElement [dimensionForSeriesGroup][0].value ) {
 						// TODO: find a way to extract proerties/value dynamically!
-						data.push (observationElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value);
+                        value = observationElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value;
+                        // console.log ( observationElement [dimensionForSeriesGroup][0].value + " > " + value );
+						data.push (undefined != value ? value : 0);
                         
-                        if ( true == countElements ) {
-                            ++elementsPerEntry;
-                        }
-                        
-                        stillEmpty = false;
-					}
+                        // console.log ( "    > " + observationElement [dimensionForSeriesGroup][0].value );
+					} else 
+                    {
+                        // console.log ( "NOOOOOOOOOOOOOOT " + observationElement [dimensionForSeriesGroup][0].value );
+                    }
 				});
                 
                 // TODO Solve the case if you have no elements counted before and countElements==true
                 countElements = false;
                 
-                if ( true == stillEmpty ) {
-                    for ( i = 0; i < elementsPerEntry; ++i ) {
+                if ( data.length < categories.length ) {
+                    for ( i = data.length; i < categories.length; ++i ) {
                         data.push (0);
                     };
                 }
