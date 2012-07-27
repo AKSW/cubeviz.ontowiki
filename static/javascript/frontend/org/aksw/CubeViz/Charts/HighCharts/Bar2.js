@@ -83,6 +83,8 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
      */
 	getSeries: function(resultObservations, componentParameter, nDimensions, categories) {
         
+        console.log ( resultObservations );
+        
         // Make sure, that categories are available
         if ( 0 == categories.length ) {
             return [];
@@ -104,7 +106,10 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 				return -1;
 		});
 		
-		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents;
+		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents,
+            stillEmpty = false,
+            elementsPerEntry = 0,
+            countElements = true;
 		
 		$.each ( selectedComponents, function ( componentIndex, componentElement ) {
 			if ( componentElement ["dimension_type"] == dimensionForSeriesGroup ) {
@@ -113,14 +118,31 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 				componentElementUri = componentElement [ "property" ];
 				
 				data = [];
+                stillEmpty = true;
+                i = 0;
 				
 				$.each ( resultObservations, function ( observationIndex, observationElement ) {
 					
 					if ( componentElementUri == observationElement [dimensionForSeriesGroup][0].value ) {
 						// TODO: find a way to extract proerties/value dynamically!
 						data.push (observationElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value);
+                        
+                        if ( true == countElements ) {
+                            ++elementsPerEntry;
+                        }
+                        
+                        stillEmpty = false;
 					}
 				});
+                
+                // TODO Solve the case if you have no elements counted before and countElements==true
+                countElements = false;
+                
+                if ( true == stillEmpty ) {
+                    for ( i = 0; i < elementsPerEntry; ++i ) {
+                        data.push (0);
+                    };
+                }
 				
 				series.push ({
 					name:componentElementLabel, 
@@ -135,12 +157,12 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 	/**
      * 
      */
-    getEntireLengthOfDimensionLabels: function (parameters, multipleDimensions) {
-		var selectedComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
+    getEntireLengthOfDimensionLabels: function (componentParameter, nDimensions) {
+		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents;
 		var dimensionLabelLengths = [];
 		var entry = {};
 		
-		$.each ( multipleDimensions, function ( dimensionIndex, dimensionElement ) {
+		$.each ( nDimensions, function ( dimensionIndex, dimensionElement ) {
 			
 			entry = { 
 				dimension: dimensionElement, 

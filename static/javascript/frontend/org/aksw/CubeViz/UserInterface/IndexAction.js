@@ -41,5 +41,52 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         });
         
         $(body).trigger ("UserInterface.IndexAction.ChartSelectionComplete");
+    },
+    
+    /**
+     * Builds a table which contains retrieved results.
+     * @param xAxisContent
+     * @param yAxisContent
+     */
+	fillPanelTable: function (xAxisContent, yAxisContent) {
+        
+        $("#panel-table").html ("");
+        
+        console.log ( xAxisContent );
+        console.log ( yAxisContent );
+        
+        /**
+         * Build and fill the table
+         */        
+        $("#panel-table").append ('<div class="row">');
+        $("#panel-table").append ('<div class="row-top-left-corner">&nbsp;</div>');
+        
+        // Build the column heads 
+        for ( var i in xAxisContent ) {
+            $("#panel-table").append ('<div class="column-head">' + xAxisContent [i] + '</div>');
+        }
+        
+        $("#panel-table").append ('</div>');
+        
+        var numberOfElements = 0,
+            index = 0;
+        
+        // Fill in the values itself
+        for ( i in yAxisContent ) {
+            
+            $("#panel-table").append ('<div class="row">');
+            
+            $("#panel-table").append ('<div class="row-head">' + yAxisContent [i].name.substring (0, 30) + ' ... </div>');
+            
+            numberOfElements = yAxisContent [i].data.length;
+            
+            for ( index = 0; index < numberOfElements; ++index ) {
+                $("#panel-table").append ('<div class="column">' + (yAxisContent [i].data [index] + "").substring (0,5) + '</div>');
+            }
+            
+            $("#panel-table").append ('</div>');
+        }
+        
+        // $(body).trigger ("UserInterface.IndexAction.ChartSelectionComplete");
     }
 });
