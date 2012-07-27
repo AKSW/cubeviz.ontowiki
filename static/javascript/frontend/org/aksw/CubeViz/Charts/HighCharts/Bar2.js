@@ -57,17 +57,17 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
     /**
      * 
      */
-    getCategories: function(observations, parameters, multipleDimensions) {
+    getCategories: function(resultObservations, componentParameter, nDimensions) {
         
 		var series = [];
         var i = 0;
         
-		var dimensionForXAxis = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions) [0].dimension;
+		var dimensionForXAxis = this.getEntireLengthOfDimensionLabels (componentParameter, nDimensions) [0].dimension;
 		
 		var categories = [];
 		
 		// get all selected components for first dimension
-		$.each ( observations, function ( index, element ) {
+		$.each ( resultObservations, function ( index, element ) {
 			element = element [ dimensionForXAxis ] [0].value;
 			if(-1 == $.inArray(element, categories))
 				categories.push (element);
@@ -81,7 +81,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 	/**
      * 
      */
-	getSeries: function(observations, parameters, multipleDimensions, categories) {
+	getSeries: function(resultObservations, componentParameter, nDimensions, categories) {
         
         // Make sure, that categories are available
         if ( 0 == categories.length ) {
@@ -89,7 +89,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
         }
         
         // http://www.w3.org/2000/01/rdf-schema#label
-        var dimensionLengths = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions);
+        var dimensionLengths = this.getEntireLengthOfDimensionLabels (componentParameter, nDimensions);
 		var series = [];
         var i = 0;
                     
@@ -97,14 +97,14 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 		
 		var dimensionForSeriesGroup = dimensionLengths [1].dimension;
 		
-		observations.sort (function(a, b){                
+		resultObservations.sort (function(a, b){                
 			if (a [dimensionLengths [1].dimension] [0].value > b [dimensionLengths [1].dimension] [0].value) 
 				return 1;
 			else 
 				return -1;
 		});
 		
-		var selectedComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
+		var selectedComponents = componentParameter.selectedDimensionComponents.selectedDimensionComponents;
 		
 		$.each ( selectedComponents, function ( componentIndex, componentElement ) {
 			if ( componentElement ["dimension_type"] == dimensionForSeriesGroup ) {
@@ -114,7 +114,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 				
 				data = [];
 				
-				$.each ( observations, function ( observationIndex, observationElement ) {
+				$.each ( resultObservations, function ( observationIndex, observationElement ) {
 					
 					if ( componentElementUri == observationElement [dimensionForSeriesGroup][0].value ) {
 						// TODO: find a way to extract proerties/value dynamically!
