@@ -69,22 +69,26 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         $("#panel-table").append ('</div>');
         
         var numberOfElements = 0,
-            index = 0;
+            index = 0,
+            row = null;
         
         // Fill in the values itself
         for ( i in yAxisContent ) {
             
-            $("#panel-table").append ('<div class="row">');
+            row = $('<div class="row"></div>');
             
-            $("#panel-table").append ('<div class="row-head">' + yAxisContent [i].name.substring (0, 30) + ' ... </div>');
+            row.append ('<div class="row-head">' + yAxisContent [i].name.substring (0, 30) + ' ... </div>');
             
             numberOfElements = yAxisContent [i].data.length;
             
             for ( index = 0; index < numberOfElements; ++index ) {
-                $("#panel-table").append ('<div class="column">' + (yAxisContent [i].data [index] + "").substring (0,5) + '</div>');
+                fullValue = yAxisContent [i].data [index] + "";
+                shortenValue = fullValue.substring (0,5);
+                
+                row.append ('<div class="column" title="' + fullValue + '">' + shortenValue + '</div>');
             }
             
-            $("#panel-table").append ('</div>');
+            $("#panel-table").append ( row );
         }
         
         // $(body).trigger ("UserInterface.IndexAction.ChartSelectionComplete");
