@@ -77,13 +77,13 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
             
             row = $('<div class="row"></div>');
             
-            row.append ('<div class="row-head">' + yAxisContent [i].name.substring (0, 30) + ' ... </div>');
+            row.append ('<div class="row-head">' + yAxisContent [i].name.substring (0, 40) + ' ... </div>');
             
             numberOfElements = yAxisContent [i].data.length;
             
             for ( index = 0; index < numberOfElements; ++index ) {
                 fullValue = yAxisContent [i].data [index] + "";
-                shortenValue = fullValue.substring (0,5);
+                shortenValue = "0" != fullValue ? "~ " + fullValue.substring (0,5) : "0";
                 
                 row.append ('<div class="column" title="' + fullValue + '">' + shortenValue + '</div>');
             }
