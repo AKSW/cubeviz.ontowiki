@@ -39,19 +39,10 @@ $(document).ready(function(){
         // UI: update chart selection field
         CubeViz_UserInterface_IndexAction.updateChartSelection ( CubeViz_suitableCharts );
         
-		var retrievedResultObservations = [];
-				
-        // Transform JSON object (with observations) into an array
-        // Neccessary, because we need to sort this later depends on the xAxis value
-        $.each ( CubeViz_Controller_Main.retrievedResultObservations, function (i, ele) {
-            retrievedResultObservations.push ( ele );
-        });
-		                        
-		if(CubeViz_suitableCharts.charts.length == 0) {
-			return;
-		} else {
-			
-            //pick the first suitable chart type if no chart was selected
+		CubeViz_Controller_Main.retrievedResultObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations);
+				                        
+		if(CubeViz_suitableCharts.charts.length != 0) {
+			//pick the first suitable chart type if no chart was selected
             var useChartClass = CubeViz_Controller_Main.selectedChartClass || 
                 CubeViz_suitableCharts.charts[0].class;
 			
@@ -63,13 +54,17 @@ $(document).ready(function(){
             
 			// init chart instance
             chart.init (
-                retrievedResultObservations, 
+                CubeViz_Controller_Main.retrievedResultObservations, 
                 CubeViz_Parameters_Component,
                 CubeViz_multipleDimensions
             );
 			
 			var renderedChart = chart.getRenderResult();
 			CubeViz_Controller_Main.renderChart(renderedChart);
+		} else {
+			//TODO: notify user that there is no suitable charts
+			return;
+            
 		}	
 	});
 	

@@ -1,4 +1,7 @@
 Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
+	
+	aDimension: {},
+	bDimension: {},
     
     /**
      * Standard configuration object for a chart
@@ -27,25 +30,48 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
      * @param resultObservations
      * @param componentParameter
      */
-    init: function (resultObservations, componentParameter, nDimensions) {
+    init: function (observations, parameters, nDimensions) {
         
         // Include org.aksw.CubeViz.Charts.HighCharts.Chart
         Namespacedotjs.include ('org.aksw.CubeViz.Charts.HighCharts.Chart');
         var chart = org.aksw.CubeViz.Charts.HighCharts.Chart;
+        this.config.title.text = chart.getTitle ( observations, parameters, nDimensions ); 
         
-        // set x-axis
-        this.config.xAxis.categories  = this.getCategories ( resultObservations, componentParameter, nDimensions );
+        this.aDimension = this.initDimension(observations, parameters, nDimensions[0]);
+        this.bDimension = this.initDimension(observations, parameters, nDimensions[1]);
+        
+        if(this.aDimension.overallLabelLength > this.bDimension.overallLabelLength) {
+			this.config.xAxis.categories = this.aDimension.categories;
+			this.config.series = this.bDimension.series;
+		} else {
+			this.config.xAxis.categories = this.bDimension.categories;
+			this.config.series = this.aDimension.series;
+		}
+        
         
         // set values itself
-        this.config.series = this.getSeries ( 
-            resultObservations, 
-            componentParameter, 
-            nDimensions, 
-            this.config.xAxis.categories 
-        );
-        
-        this.config.title.text = chart.getTitle ( resultObservations, componentParameter, nDimensions ); 
+        // this.config.series = this.getSeries ( observations, parameters, nDimensions );
+
     },
+    
+    initDimension: function(observations, parameters, dimensionUri) {
+		dimension = {};
+		dimension.uri = dimensionUri;        
+        dimension.elements = this.getElements ( observations, parameters, dimensionUri);
+        dimension.distinctElements = dimension.elements.slice(0);
+        dimension.distinctElements = this.getDistinctElements(dimension.distinctElements);
+        dimension.elementLabels = this.getLabelsForElements ( dimension.distinctElements, parameters );
+        dimension.overallLabelLength = this.calculateLabelLength(dimension.elementLabels);
+        dimension.categories = this.getCategories(dimension.elementLabels);
+        dimension.measures = this.getMeasures(parameters);
+        dimension.values = this.getElements(observations, parameters, dimension.measures[0]);
+        dimension.series = this.getSeries(dimension.elements, 
+										  dimension.distinctElements, 
+										  dimension.elementLabels,
+										  dimension.values);
+        
+        return dimension;
+	},
     
     /**
      * Calling different function to compute an object which represents a barchart
@@ -55,112 +81,118 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
     },
     
     /**
-     * 
-     */
-    getCategories: function(observations, parameters, multipleDimensions) {
-        
-		var series = [];
-        var i = 0;
-        
-		var dimensionForXAxis = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions) [0].dimension;
-		
-		var categories = [];
-		
-		// get all selected components for first dimension
-		$.each ( observations, function ( index, element ) {
-			element = element [ dimensionForXAxis ] [0].value;
-			if(-1 == $.inArray(element, categories))
-				categories.push (element);
-		});
-		
-		categories.sort ();
-        
-        return categories;
-	},
-	
-	/**
-     * 
-     */
-	getSeries: function(observations, parameters, multipleDimensions, categories) {
-        
-        // Make sure, that categories are available
-        if ( 0 == categories.length ) {
-            return [];
-        }
-        
-        // http://www.w3.org/2000/01/rdf-schema#label
-        var dimensionLengths = this.getEntireLengthOfDimensionLabels (parameters, multipleDimensions);
-		var series = [];
-        var i = 0;
-                    
-		var data = [];
-		
-		var dimensionForSeriesGroup = dimensionLengths [1].dimension;
-		
-		observations.sort (function(a, b){                
-			if (a [dimensionLengths [1].dimension] [0].value > b [dimensionLengths [1].dimension] [0].value) 
-				return 1;
-			else 
-				return -1;
-		});
-		
-		var selectedComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
-		
-		$.each ( selectedComponents, function ( componentIndex, componentElement ) {
-			if ( componentElement ["dimension_type"] == dimensionForSeriesGroup ) {
-				
-				componentElementLabel = componentElement [ "property_label" ];
-				componentElementUri = componentElement [ "property" ];
-				
-				data = [];
-				
-				$.each ( observations, function ( observationIndex, observationElement ) {
-					
-					if ( componentElementUri == observationElement [dimensionForSeriesGroup][0].value ) {
-						// TODO: find a way to extract proerties/value dynamically!
-						data.push (observationElement ["http://data.lod2.eu/scoreboard/properties/value"] [0].value);
-					}
-				});
-				
-				series.push ({
-					name:componentElementLabel, 
-					data:data
-				});
+     * return URIs
+     */    
+	getElements: function(observations, parameters, dimensionUri) {
+		var elements = [];
+		var observation_current = null;
+		var object_current = null;
+		for(observation in observations) {
+			observation_current = observations[observation];
+			for(property in observation_current) {
+				object_current = observation_current[property];
+				if(property == dimensionUri) {
+					elements.push(object_current[0].value);
+				}
 			}
-		});
-        
-        return series;
+		}
+		return elements;
 	},
 	
 	/**
-     * 
+	 * Notice: elements have to be sorted
+	 */
+	getDistinctElements: function(elements) {
+		var elements_length = elements.length;
+		var i = 0, j;
+		var deleteThese = [];
+		for(i; i < elements_length; i++) {
+			for(j = i + 1; j < elements_length; j++) {
+				if(elements[i] == elements[j]) {
+					deleteThese.push(j);
+				}
+			}
+		}
+		
+		var deleteThere_length = deleteThese.length;
+		for(i = 0; i < deleteThere_length; i++) {
+			delete elements[deleteThese[i]];
+		}
+		
+		elements = this.cleanUpArray(elements);
+		
+		return elements;
+	},
+	
+	getLabelsForElements: function(elements, parameters) {
+		var labels = [];
+		var dimensionComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
+		var dimensionComponents_length = dimensionComponents.length;
+		var elements_length = elements.length;
+		var i = 0, j;
+		
+		for(i; i < elements_length; i++) {
+			for(j = 0; j < dimensionComponents_length; j++) {
+				if(elements[i] == dimensionComponents[j].property) {
+					labels.push(dimensionComponents[j].property_label);
+				}
+			}
+		}		
+		return labels;
+	},
+	
+	calculateLabelLength: function(labels) {
+		var overallLabelLength = 0;
+		var labels_length = labels.length;
+		var i = 0;
+		for(i; i < labels_length; i++) {
+			overallLabelLength += labels[i].length;
+		}
+		
+		return overallLabelLength;
+	},
+	
+	getCategories: function(elementLabels) {
+		var i = 0;
+		var categories = [];
+		var elementLabels_length = elementLabels.length;
+		for(i; i < elementLabels_length; i++) {
+			categories.push(elementLabels[i]);
+		}
+		return categories;
+	},
+	
+	/**
+	 * We suppose that there is only one measure
+	 */
+	getMeasures: function(parameters) {
+		return [parameters.selectedMeasures.measures[0].type];
+	},
+	
+	/**
+     * TODO!!! get the series
      */
-    getEntireLengthOfDimensionLabels: function (parameters, multipleDimensions) {
-		var selectedComponents = parameters.selectedDimensionComponents.selectedDimensionComponents;
-		var dimensionLabelLengths = [];
-		var entry = {};
-		
-		$.each ( multipleDimensions, function ( dimensionIndex, dimensionElement ) {
-			
-			entry = { 
-				dimension: dimensionElement, 
-				entireLength: 0
-			};
-			
-			$.each ( selectedComponents, function ( componentIndex, componentElement ) {
-				
-				if ( dimensionElement == componentElement ["dimension_type"] )
-					entry.entireLength += componentElement ["property_label"].length;
-			});
-			
-			dimensionLabelLengths.push ( entry );
-		});
-		
-		// sort array by entireLengths
-		dimensionLabelLengths.sort ( function (a, b) {
-			return b.entireLength < a.entireLength ? 1 : -1;
-		});
-		
-		return dimensionLabelLengths;
-    },
+	getSeries: function(elements, distinctElements, labels, values) {
+		var i = 0, j;
+		var distinctElements_length = distinctElements.length;
+		var elements_length = elements.length;
+		var series = [];
+		var serie = {name: '', data: []};
+		for (i; i < distinctElements_length; i++) {
+			serie.name = labels[i];
+			for(j = 0; j < elements_length; j++) {
+				if(elements[j] == distinctElements[i]) {
+					serie.data.push(values[j]);
+				}
+			}
+			series.push(serie);
+			serie = {name: '', data: []};
+		}
+		return series;
+	},
+    
+    cleanUpArray: function(arr) {
+		var newArr = new Array();for (var k in arr) if(arr[k]) newArr.push(arr[k]);
+		return newArr;
+	},
 });

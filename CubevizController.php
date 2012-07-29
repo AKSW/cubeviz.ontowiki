@@ -193,6 +193,10 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$config['selectedChartType'] = $this->_request->getParam('selectedChartType');
 		
 		$sparqlEndpoint = json_decode($config['sparqlEndpoint']);
+		if(NULL === $sparqlEndpoint) {
+			$sparqlEndpoint = "local";
+		}
+		
 		$model = json_decode($config['selectedGraph']);
 		
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $model);
