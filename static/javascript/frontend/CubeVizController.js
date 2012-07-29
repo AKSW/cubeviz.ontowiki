@@ -1,5 +1,14 @@
 $(document).ready(function(){
 	
+    // Prevent you for getting:
+    // > event.layerX and event.layerY are broken and deprecated in WebKit. 
+    // > They will be removed from the engine in the near future.
+    $.event.props = ['altKey', 'attrChange', 'attrName', 'bubbles', 'button', 'cancelable', 'charCode', 'clientX', 'clientY', 'ctrlKey', 'currentTarget', 'data', 'detail', 'eventPhase', 'fromElement', 'handler', 'keyCode', 'layerX', 'layerY', 'metaKey', 'newValue', 'offsetX', 'offsetY', 'pageX', 'pageY', 'prevValue', 'relatedNode', 'relatedTarget', 'screenX', 'screenY', 'shiftKey', 'srcElement', 'target', 'toElement', 'view', 'wheelDelta', 'which'];
+    // remove layerX and layerY
+    if ($.event.props[17] == 'layerX') {
+      $.event.props.splice(17, 2);
+    }
+        
 	/************
 	 * Includes *
 	 ************/
@@ -60,6 +69,10 @@ $(document).ready(function(){
             );
 			
 			var renderedChart = chart.getRenderResult();
+            
+            // fill panel table
+            CubeViz_UserInterface_IndexAction.fillPanelTable ( renderedChart.xAxis.categories, renderedChart.series );
+            
 			CubeViz_Controller_Main.renderChart(renderedChart);
 		} else {
 			//TODO: notify user that there is no suitable charts

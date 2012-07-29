@@ -113,7 +113,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 				}
 			}
 		}
-		
+				
 		var deleteThere_length = deleteThese.length;
 		for(i = 0; i < deleteThere_length; i++) {
 			delete elements[deleteThese[i]];
@@ -169,9 +169,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
 		return [parameters.selectedMeasures.measures[0].type];
 	},
 	
-	/**
-     * TODO!!! get the series
-     */
 	getSeries: function(elements, distinctElements, labels, values) {
 		var i = 0, j;
 		var distinctElements_length = distinctElements.length;
@@ -194,5 +191,5 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
     cleanUpArray: function(arr) {
 		var newArr = new Array();for (var k in arr) if(arr[k]) newArr.push(arr[k]);
 		return newArr;
-	},
+	}
 });
