@@ -40,7 +40,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
         this.aDimension = this.initDimension(observations, parameters, nDimensions[0]);
         this.bDimension = this.initDimension(observations, parameters, nDimensions[1]);
         
-        if(this.aDimension.overallLabelLength > this.bDimension.overallLabelLength) {
+        if(this.aDimension.overallLabelLength < this.bDimension.overallLabelLength) {
 			this.config.xAxis.categories = this.aDimension.categories;
 			this.config.series = this.bDimension.series;
 		} else {
