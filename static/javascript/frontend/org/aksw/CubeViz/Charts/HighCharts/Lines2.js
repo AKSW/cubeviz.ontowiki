@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Lines2', {
 	
 	aDimension: {},
 	bDimension: {},
@@ -9,7 +9,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar2', {
     config: {
         chart: {
             renderTo: 'container',
-            type: 'column'
+            type: 'lines'
         },
         title: {
             text: ''
