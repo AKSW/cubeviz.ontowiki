@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Lines2', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Area2', {
 	
 	aDimension: {},
 	bDimension: {},
@@ -9,7 +9,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Lines2', {
     config: {
         chart: {
             renderTo: 'container',
-            type: 'lines'
+            type: 'area'
         },
         title: {
             text: ''
@@ -40,7 +40,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Lines2', {
         this.aDimension = chart.initDimension(observations, parameters, nDimensions[0]);
         this.bDimension = chart.initDimension(observations, parameters, nDimensions[1]);
         
-        if(this.aDimension.overallLabelLength > this.bDimension.overallLabelLength) {
+        if(this.bDimension.overallLabelLength > this.aDimension.overallLabelLength) {
 			this.config.xAxis.categories = this.aDimension.categories;
 			this.config.series = this.bDimension.series;
 		} else {

@@ -28,10 +28,24 @@ var CubeViz_ChartConfig = {
             },
             {
                 "label": "lines",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Lines2",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Line2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "lines.png"
+                "icon": "line.png"
+            },
+            {
+                "label": "area",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Area2",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "area.png"
+            },
+            {
+                "label": "spline",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Spline2",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "spline.png"
             },
             {
                 "label": "scatterplot",
