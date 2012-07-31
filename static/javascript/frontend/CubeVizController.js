@@ -87,6 +87,9 @@ $(document).ready(function(){
 	$(body).bind("UserInterface.IndexAction.ChartSelectionComplete", function(event) {
 		CubeViz_UserInterface_IndexAction.setupChartSelectionEvent ();
 	});
+    
+    // Setup user interface elements
+    CubeViz_UserInterface_IndexAction.initUserInterfaceElements ();
         
     //init controller
     CubeViz_Controller_Main.init(CubeViz_Parameters_Component);
