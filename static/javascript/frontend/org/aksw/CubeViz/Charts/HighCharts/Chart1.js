@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart1', {
     
 
     /**

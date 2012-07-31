@@ -33,8 +33,8 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Spline2', {
     init: function (observations, parameters, nDimensions) {
         
         // Include org.aksw.CubeViz.Charts.HighCharts.Chart
-        Namespacedotjs.include ('org.aksw.CubeViz.Charts.HighCharts.Chart');
-        var chart = org.aksw.CubeViz.Charts.HighCharts.Chart;
+        Namespacedotjs.include ('org.aksw.CubeViz.Charts.HighCharts.Chart2');
+        var chart = org.aksw.CubeViz.Charts.HighCharts.Chart2;
         this.config.title.text = chart.getTitle ( observations, parameters, nDimensions ); 
         
         this.aDimension = chart.initDimension(observations, parameters, nDimensions[0]);

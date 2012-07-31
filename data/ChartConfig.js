@@ -10,7 +10,7 @@ var CubeViz_ChartConfig = {
         "charts": [
             {
                 "label": "pie",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "pie.png"
