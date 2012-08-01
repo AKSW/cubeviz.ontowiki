@@ -49,7 +49,7 @@ $(document).ready(function(){
         CubeViz_UserInterface_IndexAction.updateChartSelection ( CubeViz_suitableCharts );
         
 		CubeViz_Controller_Main.retrievedResultObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations);
-				                        
+		
 		if(CubeViz_suitableCharts.charts.length != 0) {
 			//pick the first suitable chart type if no chart was selected
             var useChartClass = CubeViz_Controller_Main.selectedChartClass || 

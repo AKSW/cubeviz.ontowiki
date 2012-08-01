@@ -55,6 +55,17 @@ var CubeViz_ChartConfig = {
                 "icon": "scatterplot.png"
             }
         ]
+    },
+    "3": {
+        "charts": [
+            {
+                "label": "bar",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar3",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+        ]	
     }
 };
 
