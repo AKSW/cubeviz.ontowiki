@@ -254,10 +254,12 @@ class DataCube_Query {
 			if(isset($borderKeys[$i+1])) {
 				$sectionEnd = $borderKeys[$i] + $borderKeys[$i+1];
 				for($j = $borderKeys[$i]; $j < $sectionEnd; $j++) {
-					if($this->isUrl($dimComps[$j]['property'])) {
+					if(isset($dimComps[$j]) && $this->isUrl($dimComps[$j]['property'])) {
 						array_push($filters[$i], '?d'. $i .' = <' . $dimComps[$j]['property'] . '>');
 					} else {
-						array_push($filters[$i], '?d'. $i .' = ' .'"'. $dimComps[$j]['property'].'"');
+						if(isset($dimComps[$j])) {
+							array_push($filters[$i], '?d'. $i .' = ' .'"'. $dimComps[$j]['property'].'"');
+						}
 					}
 				}
 			} else {
