@@ -69,8 +69,6 @@ $(document).ready(function(){
             );
 			
 			var renderedChart = chart.getRenderResult();
-            // fill panel table
-            CubeViz_UserInterface_IndexAction.fillPanelTable ( renderedChart.xAxis.categories, renderedChart.series );
             
 			CubeViz_Controller_Main.renderChart(renderedChart);
 		} else {
