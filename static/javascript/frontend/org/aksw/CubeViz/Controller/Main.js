@@ -16,9 +16,11 @@ Namespacedotjs('org.aksw.CubeViz.Controller.Main', {
 	},
 		
 	getResultObservations: function(linkCode) {
+		
 		var action = "getresultobservations";
 		$.getJSON(this.cubevizPath + action + "/", "m="+this.modelUrl+"&lC="+linkCode+"&sparqlEndpoint="+this.sparqlEndpoint, $.proxy(function(json) {
 			this.retrievedResultObservations = json;
+			console.log(json);
 			$(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
 		}, this));
 	},

@@ -50,6 +50,8 @@ $(document).ready(function(){
         
 		CubeViz_Controller_Main.retrievedResultObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations);
 		
+		console.log(CubeViz_suitableCharts);
+		
 		if(CubeViz_suitableCharts.charts.length != 0) {
 			//pick the first suitable chart type if no chart was selected
             var useChartClass = CubeViz_Controller_Main.selectedChartClass || 
