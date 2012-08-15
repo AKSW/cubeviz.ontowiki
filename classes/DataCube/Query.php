@@ -286,7 +286,7 @@ class DataCube_Query {
         $where .= '}';    
 		$queryObject->setWherePart($where);
 				
-		$options = array(STORE_RESULTFORMAT => "json");
+		$options = array('result_format' => 'json');
         $queryResult = $this->_store->sparqlQuery($queryObject, $options);
                     
         return $queryResult;
