@@ -20,6 +20,8 @@ class CubevizController extends OntoWiki_Controller_Component {
      */
     public function indexAction () {
         
+        $this->view->placeholder('main.window.title')->set('Visualization for '. $this->_owApp->selectedModel );
+        
 		// set URL for cubeviz extension folder
 		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
         $this->view->cubevizPath = $cubeVizExtensionURL_controller;
@@ -35,7 +37,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->view->sparqlEndpoint = json_encode($sparqlEndpoint);
 		
 		//model
-		$this->view->modelUrl =  $this->_owApp->selectedModel;
+		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
 		//linkCode
