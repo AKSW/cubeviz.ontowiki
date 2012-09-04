@@ -121,6 +121,10 @@ class CubeViz_ConfigurationLink
 		//set permissions 0777 for the folders!
 				
 		$filePath = $this->_linksFolder . $fileName;
+		
+		if( false == file_exists($this->_linksFolder)) {
+			mkdir($this->_linksFolder);
+		}
 				
 		if( false == file_exists($filePath) && true == isset ( $config['selectedGraph'] ) ) {
             
