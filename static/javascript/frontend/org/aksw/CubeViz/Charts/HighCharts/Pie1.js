@@ -70,6 +70,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie1', {
         dimension.elementLabels = this.getLabelsForElements ( dimension.distinctElements, parameters );
         dimension.measures = this.getMeasures(parameters);
         dimension.values = this.getElements(observations, parameters, dimension.measures[0]);
+        dimension.values = this.convertToNum(dimension.values);
         dimension.series = this.getSeries(dimension.elements, 
 										  dimension.distinctElements, 
 										  dimension.elementLabels,
@@ -180,6 +181,14 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie1', {
 			}
 		}
 		
+	},
+	
+	convertToNum: function(array) {
+		i = array.length;
+		while(i--) {
+			array[i] = parseFloat(array[i]);
+		}
+		return array;
 	},
     
     cleanUpArray: function(arr) {
