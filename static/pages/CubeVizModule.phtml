@@ -1,0 +1,109 @@
+<!--
+ * OntoWiki cubeviz "select data" template
+-->
+
+<!-- Libraries -->
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/namespacedotjs/Namespace.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json-template.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery_plugins/jquery.ba-bbq.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery.alerts-1.1/jquery.alerts.js"></script>
+
+<!-- CubeViz related javascript -->
+<!--script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizInterface.js"></script-->
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizModule.js"></script>
+
+<script type="text/javascript">
+    
+	/*************************************
+	 * Importing Server-Side System Info *
+	 *************************************/
+	Namespacedotjs.baseUri = <?php echo json_encode($this->moduleUrl . 'static/javascript/frontend/'); ?>;
+
+	var CubeViz_Links_Module = <?php echo $this->links; ?>;
+	// choose default config for the start
+	var CubeViz_Link_Chosen_Module = <?php echo json_encode($this->linkCode); ?>;
+		
+	if(typeof CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === "undefined" || CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === null) {
+		var CubeViz_Parameters_Module = {
+			sparqlEndpoint: null,
+			selectedGraph: null,
+			selectedDSD: {},
+			selectedDS: {},
+			selectedMeasures: {},
+			selectedDimensions: {},
+			selectedDimensionComponents: {}
+		}
+	} else {
+		var CubeViz_Parameters_Module = {
+			sparqlEndpoint: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["sparqlEndpoint"],
+			selectedGraph: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedGraph"],
+			selectedDSD: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDSD"],
+			selectedDS: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDS"],
+			selectedMeasures: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedMeasures"],
+			selectedDimensions: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensions"],
+			selectedDimensionComponents: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensionComponents"]
+		}	
+	}
+	
+	CubeViz_Parameters_Module.modelUrl = "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Parameters_Module.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
+	CubeViz_Parameters_Module.backend = <?php echo json_encode($this->backend); ?>;		
+			
+	
+	
+</script>
+
+<!-- Include index json-templates for instance the dialogs. -->
+<?php include ("extensions/cubeviz/static/templates/CubeVizModuleTemplates.phtml"); ?>
+
+<style type="text/css">
+	@import url("<?php echo $this->moduleUrl; ?>static/css/main.css");
+	@import url("<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery.alerts-1.1/jquery.alerts.css");
+</style>
+
+<!-- Selection data routine -->
+
+<div id="wrapper"></div>
+
+<div id="sidebar-left">
+    <div id="sidebar-left-loader"><div style="margin-top:30%; position: absolute; background-color:#ffffff;left:100px;top:50px;">
+        <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
+    </div></div>
+	<div id="sidebar-left-data-selection">
+		<div id="sidebar-left-data-selection-wrapper">
+            
+            <!-- Select data structure-->
+            <div style="margin-top: 15px; clear:both;">
+                <div style="float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Structures'); ?></div> 
+                <div><select name="datastructures" id="sidebar-left-data-selection-strc"></select></div>
+            </div>
+            
+            <!-- Select data set -->
+            <div style="margin-top: 15px; clear:both;">
+                <div style="width:110px; float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Sets'); ?></div>
+                <div><select name="datasets" id="sidebar-left-data-selection-sets"></select></div>
+            </div>
+			
+            <!-- Visual seperator -->
+            <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
+            
+            <div id="sidebar-left-data-selection-dims">
+				<div class="cubeViz-h2-light"><?php echo $this->_translate->_('Dimensions'); ?></div>
+				<div id="sidebar-left-data-selection-dims-boxes"></div>
+			</div>
+			<div id="sidebar-left-data-selection-meas" style="display:none;">
+				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
+				<div id="sidebar-left-data-selection-meas-boxes"></div>
+			</div>
+            <br/>
+            <div id="sidebar-left-data-selection-submitbtn-box" style="margin-top: 15px; margin-bottom: 5px; text-align:center;">
+				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn"/>
+			</div>
+<!--			<div id="sidebar-left-data-selection-getlinkbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
+				<input type="submit" value="<?php echo $this->_translate->_('Get Permalink'); ?>" id="sidebar-left-data-selection-getlinkbtn"/>
+			</div>
+-->
+		</div>
+	</div>
+</div>
