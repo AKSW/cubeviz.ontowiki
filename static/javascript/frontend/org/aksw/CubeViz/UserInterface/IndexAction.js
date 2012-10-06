@@ -7,6 +7,12 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
      * 
      */
     initUserInterfaceElements: function () {
+        
+        /**
+         * Set height of container div
+         */
+        $("#container").css ( "height", ( screen.height - 185 ) );
+        $("#wrapper-index").css ( "height", ( screen.height - 180 ) );
     },
     
     /**
