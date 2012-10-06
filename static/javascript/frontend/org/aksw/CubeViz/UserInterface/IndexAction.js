@@ -13,6 +13,8 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
          */
         $("#container").css ( "height", ( screen.height - 185 ) );
         $("#wrapper-index").css ( "height", ( screen.height - 180 ) );
+        
+        $('.tabs').html ("");
     },
     
     /**
