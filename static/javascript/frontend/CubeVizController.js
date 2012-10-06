@@ -106,4 +106,10 @@ $(document).ready(function(){
     CubeViz_Controller_Main.init(CubeViz_Parameters_Component);
     //get the parameters for the link
     CubeViz_Controller_Main.getParametersFromLink(CubeViz_Link_Chosen_Component);    
+    
+    /**
+     * Set height of container div
+     */
+    $("#container").css ( "height", ( screen.height - 185 ) );
+    $("#wrapper-index").css ( "height", ( screen.height - 180 ) );
 });

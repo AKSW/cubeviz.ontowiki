@@ -52,10 +52,9 @@
 }
 
 #wrapper-index {
-    width: 80%;
-    margin-left: 224px; 
-    padding-top: 10px;
-    min-height: 560px;
+    width: 100%;
+    margin-left: 0px; 
+    min-height: 650px;    
     border-left: 1px solid #DADADA;
 }
 
@@ -100,9 +99,9 @@
 #container {
     position: absolute;
     top: 10px;
-    left: 225px;
-    height: 90%;
-    width: 77%;
+    left: 0px;
+    height: 98%;
+    width: 95%;
 }
 
 #chartSelection {
