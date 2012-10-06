@@ -1,12 +1,6 @@
-<?php
-
-/**
+<!--
  * OntoWiki cubeviz "select data" template
- *
- */
-
-//var_dump($this->basePath); die;
-?>
+-->
 
 <!-- Libraries -->
 <script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json2.js"></script>
@@ -73,7 +67,7 @@
 <div id="wrapper"></div>
 
 <div id="sidebar-left">
-    <div id="sidebar-left-loader"><div style="margin-top:30%; position: absolute; background-color:#ffffff;left:150px;top:200px;">
+    <div id="sidebar-left-loader"><div style="margin-top:30%; position: absolute; background-color:#ffffff;left:100px;top:50px;">
         <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
     </div></div>
 	<div id="sidebar-left-data-selection">
@@ -96,7 +90,6 @@
             
             <div id="sidebar-left-data-selection-dims">
 				<div class="cubeViz-h2-light"><?php echo $this->_translate->_('Dimensions'); ?></div>
-                <br/>
 				<div id="sidebar-left-data-selection-dims-boxes"></div>
 			</div>
 			<div id="sidebar-left-data-selection-meas" style="display:none;">
@@ -104,7 +97,7 @@
 				<div id="sidebar-left-data-selection-meas-boxes"></div>
 			</div>
             <br/>
-            <div id="sidebar-left-data-selection-submitbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
+            <div id="sidebar-left-data-selection-submitbtn-box" style="margin-top: 15px; margin-bottom: 5px; text-align:center;">
 				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn"/>
 			</div>
 <!--			<div id="sidebar-left-data-selection-getlinkbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
