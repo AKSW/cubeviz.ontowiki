@@ -68,6 +68,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 		this.registerSubmitButton();
 		this.registerDataStructureDefinition();
 		this.registerDataSet();
+		this.registerPermalinkButton();
 	},
 	 
 	registerDimensions: function() {
@@ -168,6 +169,12 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	registerSubmitButton: function() {
 		$("#sidebar-left-data-selection-submitbtn").click($.proxy(function(event) {
 			$(event.target).trigger("submitButtonClicked.CubeViz");
+		}, this));
+	},
+	
+	registerPermalinkButton: function() {
+		$("#sidebar-left-data-selection-getlinkbtn").click($.proxy(function(event) {
+			$(event.target).trigger("getPermalinkButtonClicked.CubeViz");
 		}, this));
 	},
 	
@@ -705,7 +712,7 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	},
 	
 	isCurrentPageCubeviz: function() {
-		var expr = new RegExp('/cubeviz/', 'ig');
+		var expr = new RegExp(this.cubevizPath, '');
 		var isCubeviz = expr.test(document.URL);
 		return isCubeviz;
 		//var qs = $.deparam.querystring();

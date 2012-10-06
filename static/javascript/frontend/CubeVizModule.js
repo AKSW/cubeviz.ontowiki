@@ -1,4 +1,10 @@
 $(function() {
+	
+	/*************************
+	 * For IE7 compatibility *
+	 *************************/
+	if (!window.console) console = {log: function() {}};
+	
 	/************************
 	 * Initialize templates *
 	 ************************/
@@ -16,6 +22,7 @@ $(function() {
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Main');	
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Adapter');	
 	Namespacedotjs.include('org.aksw.CubeViz.Module.Ajax');	
+	Namespacedotjs.include('org.aksw.CubeViz.UserInterface.LanguageDropDown');
 	
 	/************************
 	 * Initializing objects *
@@ -23,6 +30,9 @@ $(function() {
 	var CubeViz_Main_Module = org.aksw.CubeViz.Module.Main;
 	var CubeViz_Adapter_Module = org.aksw.CubeViz.Module.Adapter;
 	var CubeViz_Ajax_Module = org.aksw.CubeViz.Module.Ajax;
+	
+	var CubeViz_UI = org.aksw.CubeViz.UserInterface.LanguageDropDown;
+	CubeViz_UI.initUserInterface();
 	
 	CubeViz_Ajax_Module.init(CubeViz_Parameters_Module);
 	
@@ -129,6 +139,20 @@ $(function() {
 		}
 	});
 	
+	$(body).bind("getPermalinkButtonClicked.CubeViz", function(event) {
+		var permalink = null;
+		if(CubeViz_Ajax_Module.retrievedLinkCode == null) {
+			//var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];
+			var url = CubeViz_Main_Module.cubevizPath + window.location.search;
+		} else {
+			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];
+			params = CubeViz_Main_Module.addParamsToQueryString(params);
+			var url = $.param.querystring( CubeViz_Main_Module.cubevizPath, params );
+		}
+		jPrompt('Your permalink is:', url, 'Press Ctrl+C and Enter to copy to clipboard', function(r) {});
+	});
+	
+	
 	$(body).bind("AjaxLinkCodeRetrieved.CubeViz", function(event) {
 		// check if we are already on the cubeviz page (!)
 		var isCubeviz = CubeViz_Main_Module.isCurrentPageCubeviz();
@@ -138,9 +162,6 @@ $(function() {
 			Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
 			var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
 			CubeViz_Controller_Main.getParametersFromLink(CubeViz_Ajax_Module.retrievedLinkCode); 
-        
-			// send an AJAX to get new observations
-            CubeViz_Controller_Main.getResultObservations (CubeViz_Link_Chosen_Component);
 		} else {
 			//redirect to the cubeviz page
 			var params = [{"lC":CubeViz_Ajax_Module.retrievedLinkCode}];

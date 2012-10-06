@@ -27,7 +27,18 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart3', {
 			}
 		}
 		
-		title = dsdPart + ' , ' + dsPart + ' , ' + dimCompsLabels.join(' ');
+		if(typeof dsdPart !== 'undefined')
+			if(dsdPart != null)
+				title += dsdPart;
+		
+		if(typeof dsPart !== 'undefined')
+			if(dsPart != null)
+				title += " - "+dsPart;
+		
+		if(typeof dimCompsLabels !== 'undefined')
+			if(dimCompsLabels.length > 0)
+				title += " - "+dimCompsLabels.join(' ');
+				
         return title;
     },
 });

@@ -20,7 +20,6 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
             Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
             var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
             
-            console.log(event.target.name);
             CubeViz_Controller_Main.selectedChartClass = event.target.name;
             $(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
         });

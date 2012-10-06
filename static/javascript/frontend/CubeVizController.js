@@ -44,22 +44,34 @@ $(document).ready(function(){
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
+        var c = null;
         
         // UI: update chart selection field
         CubeViz_UserInterface_IndexAction.updateChartSelection ( CubeViz_suitableCharts );
         
 		CubeViz_Controller_Main.retrievedResultObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations);
 		
-		console.log(CubeViz_suitableCharts);
-		
 		if(CubeViz_suitableCharts.charts.length != 0) {
+			
+			//check if selected chart type is in the suitable charts array
+			var isInTheList = false;
+			var chart = null;
+			for(i = 0; i < CubeViz_suitableCharts.charts.length; i++) {
+				chart = CubeViz_suitableCharts.charts[i];
+				if(chart['class'] == CubeViz_Controller_Main.selectedChartClass)
+					isInTheList = true;
+			}
+			
 			//pick the first suitable chart type if no chart was selected
-            var useChartClass = CubeViz_Controller_Main.selectedChartClass || 
-                CubeViz_suitableCharts.charts[0].class;
+            if(CubeViz_Controller_Main.selectedChartClass && isInTheList) {
+				useChartClass = CubeViz_Controller_Main.selectedChartClass;
+			} else {
+				var chart = CubeViz_suitableCharts.charts[0];
+				useChartClass = chart['class'];
+			}
 			
             Namespacedotjs.include(useChartClass);
             
-            console.log(useChartClass);
 			eval('var chart = ' + useChartClass + ';');
             
             
