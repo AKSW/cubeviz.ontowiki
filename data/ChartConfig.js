@@ -46,13 +46,6 @@ var CubeViz_ChartConfig = {
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "spline.png"
-            },
-            {
-                "label": "scatterplot",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Scatterplot",
-                "libraryLabel": "HighCharts",
-                "enabled": false,
-                "icon": "scatterplot.png"
             }
         ]
     },
@@ -62,7 +55,7 @@ var CubeViz_ChartConfig = {
                 "label": "bar",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Bar3",
                 "libraryLabel": "HighCharts",
-                "enabled": true,
+                "enabled": false,
                 "icon": "bar.png"
             },
         ]	
@@ -80,10 +73,12 @@ function CubeViz_ChartConfig_filterOutDisabled(CubeViz_ChartConfig) {
 		element_current = CubeViz_ChartConfig[element]['charts'];
 		i = 0;
 		element_length = element_current.length;
-		for(i; i < element_length; ++i) {
-			if(!element_current[i]['enabled']) {
-				delete CubeViz_ChartConfig[element]['charts'][i]; 
-				CubeViz_ChartConfig[element]['charts'] = CubeViz_ChartConfig_cleanUpArray(CubeViz_ChartConfig[element]['charts']);
+		for(i; i < element_length; ++i) {			
+			if(typeof element_current[i] != 'undefined') {
+                if(typeof element_current[i]['enabled'] != 'undefined') {
+                    delete CubeViz_ChartConfig[element]['charts'][i]; 
+                    CubeViz_ChartConfig[element]['charts'] = CubeViz_ChartConfig_cleanUpArray(CubeViz_ChartConfig[element]['charts']);
+                }
 			}
 		}
 	}
