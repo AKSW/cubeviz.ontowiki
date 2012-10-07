@@ -92,7 +92,7 @@
 
 #container {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 0px;
     height: 98%;
     width: 100%;
@@ -100,15 +100,15 @@
 
 #chartSelection {
     position: absolute;
-    right:10px;
-    top: 10px;
-    bottom: 0px;
+    right:1px;
+    top: 1px;
     width: auto;
     height: 25px;
     border: 1px solid #000000;
     padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 5px;
+    background-color: #FFFFFF;
 }
 
 #chartSelection-container {
