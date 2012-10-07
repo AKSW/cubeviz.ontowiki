@@ -46,6 +46,13 @@ var CubeViz_ChartConfig = {
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "pie.png"
+            },
+            {
+                "label": "line",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Line1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "line.png"
             }
         ]	
     },
