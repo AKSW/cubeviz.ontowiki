@@ -6,6 +6,31 @@
  * which has maximum number of two is also able to display only one dimension.
  */
 var CubeViz_ChartConfig = {
+    "0": {
+        "charts": [
+            {
+                "label": "pie",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie0",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "pie.png"
+            },
+            {
+                "label": "bar",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar0",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "lines",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Line0",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "line.png"
+            }
+        ]	
+    },
     "1": {
         "charts": [
             {
