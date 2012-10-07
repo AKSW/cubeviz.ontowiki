@@ -63,9 +63,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie0', {
         dimensionUri = parameters.selectedMeasures.measures [0];
         dimensionUri = dimensionUri.type;
         
-        console.log ( "initDimension ..." );
-        console.log ( dimensionUri );
-        
         dimension = {};
         
         /**
@@ -85,20 +82,11 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie0', {
         
         dimension.values = this.getElements(observations, parameters, dimension.measures[0]);
         
-        console.log ( "dimension.values:" );
-        console.log ( dimension.values );
-        
         dimension.values = this.convertToNum(dimension.values);
-        
-        console.log ( "convertToNum" );
-        console.log ( dimension.values );
         
         dimension.series = this.getSeries(dimension.elements, 
 										  dimension.elementLabels,
 										  dimension.values);
-        
-        console.log ( "initDimension > dimension: " );
-        console.log ( dimension );
         
         return dimension;
 	},
@@ -169,12 +157,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie0', {
 	
 	getSeries: function(elements, labels, values) {
         
-        console.log ( "" );
-        console.log ( "getSeries" );
-        console.log ( elements );
-        console.log ( labels );
-        console.log ( values );
-        
         this.config.series = [
             {
                 type: "pie",
@@ -184,8 +166,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Pie0', {
                 ]
             }
         ];
-        
-        console.log ( this.config.series );
         
 		return this.config.series;
 	},
