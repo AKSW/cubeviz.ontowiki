@@ -44,14 +44,13 @@ $(document).ready(function(){
 		//check if there is suitable charts
 		var CubeViz_multipleDimensions = CubeViz_Controller_Main.getMultipleDimensions(CubeViz_Parameters_Component);
 		var CubeViz_suitableCharts = CubeViz_Controller_Main.getSuitableChartTypes(CubeViz_multipleDimensions, CubeViz_ChartConfig);
-        var c = null;
         
         // UI: update chart selection field
         CubeViz_UserInterface_IndexAction.updateChartSelection ( CubeViz_suitableCharts );
         
 		CubeViz_Controller_Main.retrievedResultObservations = CubeViz_Controller_Main.sortObservations(CubeViz_Controller_Main.retrievedResultObservations);
 		
-		if(CubeViz_suitableCharts.charts.length != 0) {
+		if(CubeViz_suitableCharts.charts.length > 0) {
 			
 			//check if selected chart type is in the suitable charts array
 			var isInTheList = false;
