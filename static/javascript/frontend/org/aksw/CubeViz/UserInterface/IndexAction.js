@@ -11,8 +11,8 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         /**
          * Set height of container div
          */
-        $("#container").css ( "height", ( screen.height - 185 ) );
-        $("#wrapper-index").css ( "height", ( screen.height - 180 ) );
+        $("#container").css ( "height", ( screen.height - 205 ) );
+        $("#wrapper-index").css ( "height", ( screen.height - 205 ) );
         
         $('.tabs').html ("");
     },

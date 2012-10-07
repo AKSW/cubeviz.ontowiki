@@ -32,9 +32,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart0', {
 		
 		if(dimCompsLabels.length > 0)
 			title += " - " + dimCompsLabels.join(', ');
-				
-        console.log ( "getTitle Ergebnis: " );
-        console.log ( title );
             
         return title;
     },
@@ -130,17 +127,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart0', {
 		
 		return overallLabelLength;
 	},
-	
-	getCategories: function(elementLabels) {
-		var i = 0;
-		var categories = [];
-		var elementLabels_length = elementLabels.length;
-		for(i; i < elementLabels_length; i++) {
-			categories.push(elementLabels[i]);
-		}
-		return categories;
-	},
-	
+    
 	/**
 	 * We suppose that there is only one measure
 	 */
