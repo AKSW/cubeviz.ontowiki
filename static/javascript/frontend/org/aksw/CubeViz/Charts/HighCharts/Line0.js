@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar0', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Line0', {
 	
 	aDimension: {},
     
@@ -8,14 +8,14 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar0', {
     config: {
         chart: {
             renderTo: 'container',
-            type: 'column'
+            type: 'line'
         },
         title: {
             text: ''
         },
         tooltip: {
             formatter: function() {
-                return ' ';
+                return '_';
             }
         },
         xAxis: {
@@ -162,7 +162,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar0', {
             {
                 name: labels [0],
                 data: [
-                    values [0]
+                    0, values [0]
                 ]
             }
         ];
