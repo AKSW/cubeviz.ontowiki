@@ -73,7 +73,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Line0', {
          * List of values
          * in this case its only one element
          */
-        dimension.elements = this.getElements ( observations, parameters, dimensionUri);
+        dimension.elements = this.getElements ( observations, parameters, dimension.uri);
         
         dimension.elementLabels = this.getLabelsForElements ( observations );
         
