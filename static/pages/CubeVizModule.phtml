@@ -73,8 +73,10 @@
 	<div id="sidebar-left-data-selection">
 		<div id="sidebar-left-data-selection-wrapper">
             
+            <br/>
+            
             <!-- Select data structure-->
-            <div style="margin-top: 15px; clear:both;">
+            <div style="margin-top: 0px; clear:both;">
                 <div style="float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Structures'); ?></div> 
                 <div><select name="datastructures" id="sidebar-left-data-selection-strc"></select></div>
             </div>
@@ -96,10 +98,10 @@
 				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
 				<div id="sidebar-left-data-selection-meas-boxes"></div>
 			</div>
-            <br/>
-            <div id="sidebar-left-data-selection-submitbtn-box" style="margin-top: 15px; margin-bottom: 5px; text-align:center;">
-				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn"/>
+            <div style="text-align: center; clear:both;">
+				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
 			</div>
+            <br/>
 <!--			<div id="sidebar-left-data-selection-getlinkbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
 				<input type="submit" value="<?php echo $this->_translate->_('Get Permalink'); ?>" id="sidebar-left-data-selection-getlinkbtn"/>
 			</div>
