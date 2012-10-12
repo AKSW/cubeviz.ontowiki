@@ -6,6 +6,24 @@
  * which has maximum number of two is also able to display only one dimension.
  */
 var CubeViz_ChartConfig = {
+    "0": {
+        "charts": [
+            {
+                "label": "bar",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar0",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "pie",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie0",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "pie.png"
+            }
+        ]	
+    },
     "1": {
         "charts": [
             {
@@ -15,6 +33,13 @@ var CubeViz_ChartConfig = {
                 "enabled": true,
                 "icon": "pie.png"
             },
+            {
+                "label": "line",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Line1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "line.png"
+            }
         ]	
     },
     "2": {
@@ -57,7 +82,7 @@ var CubeViz_ChartConfig = {
                 "libraryLabel": "HighCharts",
                 "enabled": false,
                 "icon": "bar.png"
-            },
+            }
         ]	
     }
 };
@@ -69,13 +94,15 @@ function CubeViz_ChartConfig_filterOutDisabled(CubeViz_ChartConfig) {
 	var element_current = null;
     var i = 0;
     var element_length = null;
+    var enabled;
 	for(element in CubeViz_ChartConfig) {
 		element_current = CubeViz_ChartConfig[element]['charts'];
 		i = 0;
 		element_length = element_current.length;
 		for(i; i < element_length; ++i) {			
 			if(typeof element_current[i] != 'undefined') {
-                if(typeof element_current[i]['enabled'] != 'undefined') {
+                enabled = element_current[i]['enabled'];                
+                if(typeof enabled != 'undefined' && enabled == false ) {
                     delete CubeViz_ChartConfig[element]['charts'][i]; 
                     CubeViz_ChartConfig[element]['charts'] = CubeViz_ChartConfig_cleanUpArray(CubeViz_ChartConfig[element]['charts']);
                 }
