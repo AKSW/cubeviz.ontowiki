@@ -49,12 +49,16 @@
             <div id="dialog-btn-close-{label}" class="dialog-btn-close"><?php echo $this->_translate->_('Save'); ?></div>
         </div>
         <div class="dialog-components">
+            <ul>
             {.repeated section list}
-                <div class="dialog-listitem">
-                    <input type="checkbox" name="" class="dialog-listitem-box-{dimension}" value="{value}"/>
-                    <label class="dialog-listitem-value">{label}</label>
-                </div>
+                <li>
+                    <div class="dialog-listitem">
+                        <input type="checkbox" name="" class="dialog-listitem-box-{dimension}" value="{value}"/>
+                        <label class="dialog-listitem-value">{label}</label>
+                    </div>
+                </li>
             {.end}
+            </ul>
         </div>
     </div>
 </div>

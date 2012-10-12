@@ -127,10 +127,11 @@
 .dialog {
 	z-index: 1000;
     position: absolute;
-    top: 0px;
-    left: 300px;
-    height: 300px;
-    width: 450px;
+    top: -150px;
+    left: 350px;
+    height: 500px;
+    width: auto;
+    min-width: 600px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 15px;
@@ -182,10 +183,10 @@
 .dialog-btn-close {
     float:right;
     margin-top: 3px;
-    border: 1px solid #BFBFBF;
+    margin-bottom: 4px;
+    border: 1px solid #888888;
     font-weight: bold;
-    background-color: #FFFFFF;
-    padding: 5px;
+    padding: 3px;
     cursor: pointer;
     /* CSS3 (Webkit) */
     border-top-left-radius: 10px 5px;
@@ -209,7 +210,9 @@
 
 .dialog-components ul {
     list-style-type: none;
-    margin-left: -5px; 
+    margin-left: 4px; 
+    margin-top: 4px; 
+    margin-bottom: 2px; 
 }
 
 .dialog-components li {
