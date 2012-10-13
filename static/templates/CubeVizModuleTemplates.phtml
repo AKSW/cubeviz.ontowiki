@@ -46,7 +46,9 @@
     <div class="dialog" id="dialog-{label}">
         <div class="dialog-header">
             <div class="dialog-header-label">{label}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
-            <div id="dialog-btn-close-{label}" class="dialog-btn-close"><?php echo $this->_translate->_('Save'); ?></div>
+            <div style="float:right;">
+                <input type="button" id="dialog-btn-close-{label}" class="minibutton submit" value="<?php echo $this->_translate->_('Save'); ?>">
+            </div>
         </div>
         <div class="dialog-components">
             <ul>
