@@ -43,7 +43,6 @@
     width: 100%;
     margin-left: 0px; 
     min-height: 650px;    
-    border-left: 1px solid #DADADA;
 }
 
 
@@ -127,7 +126,7 @@
 .dialog {
 	z-index: 1000;
     position: absolute;
-    top: -150px;
+    top: 100px;
     left: 350px;
     height: 500px;
     width: auto;
