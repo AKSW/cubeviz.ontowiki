@@ -26,12 +26,19 @@ var CubeViz_ChartConfig = {
     },
     "1": {
         "charts": [
-            {
-                "label": "pie",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie1",
+            /*{
+                "label": "area",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Area1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "pie.png"
+                "icon": "area.png"
+            },*/
+            {
+                "label": "bar",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Bar1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
             },
             {
                 "label": "line",
@@ -39,6 +46,13 @@ var CubeViz_ChartConfig = {
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "line.png"
+            },
+            {
+                "label": "pie",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Pie1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "pie.png"
             }
         ]	
     },
