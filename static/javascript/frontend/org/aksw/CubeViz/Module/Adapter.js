@@ -194,9 +194,9 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 		}
 		
 		function compare(a,b) {
-			if (a.dimension_label < b.dimension_label)
+			if (a.property_label < b.property_label)
 				return -1;
-			if (a.dimension_label > b.dimension_label)
+			if (a.property_label > b.property_label)
 				return 1;
 			return 0;
 		}
