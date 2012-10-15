@@ -193,13 +193,27 @@ Namespacedotjs('org.aksw.CubeViz.Module.Adapter', {
 			
 		}
 		
+    function compare(a,b) {
+			if (a.dimension_label < b.dimension_label)
+				return -1;
+			if (a.dimension_label > b.dimension_label)
+				return 1;
+			return 0;
+		}
+    
+    /**
+     * TODO: Konrad, please, fix your commit.
+     * I get the next error with this code:
+     * uncaught exception: [object Object]
+     * reverted to the previous version of the compare function
+     * To reproduce the error, just switch to the "Per Year" DSD
 		function compare(a,b) {
             
             a = a.property_label.toString ().toLowerCase();
             b = b.property_label.toString ().toLowerCase();
             
             return (a<b?-1:(a>b?1:0));
-		}
+		}*/
 		
 		result.sort(compare);
 		
