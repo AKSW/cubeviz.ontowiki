@@ -40,11 +40,14 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Area2', {
         this.aDimension = chart.initDimension(observations, parameters, nDimensions[0]);
         this.bDimension = chart.initDimension(observations, parameters, nDimensions[1]);
         
+        this.aDimension.series = chart.getSeries(this.aDimension, this.bDimension);
+        this.bDimension.series = chart.getSeries(this.bDimension, this.aDimension);
+        
         if(this.bDimension.overallLabelLength > this.aDimension.overallLabelLength) {
-			this.config.xAxis.categories = this.aDimension.categories;
+			this.config.xAxis.categories = this.bDimension.categories;
 			this.config.series = this.bDimension.series;
 		} else {
-			this.config.xAxis.categories = this.bDimension.categories;
+			this.config.xAxis.categories = this.aDimension.categories;
 			this.config.series = this.aDimension.series;
 		}
         

@@ -52,10 +52,6 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart2', {
         dimension.categories = this.getCategories(dimension.elementLabels);
         dimension.measures = this.getMeasures(parameters);
         dimension.values = this.getElements(observations, parameters, dimension.measures[0]);
-        dimension.series = this.getSeries(dimension.elements, 
-										  dimension.distinctElements, 
-										  dimension.elementLabels,
-										  dimension.values);
         
         return dimension;
 	},
@@ -150,26 +146,49 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Chart2', {
 		return [parameters.selectedMeasures.measures[0].type];
 	},
 	
-	getSeries: function(elements, distinctElements, labels, values) {
-		var i = 0, j;
-		var distinctElements_length = distinctElements.length;
-		var elements_length = elements.length;
-		var series = [];
+	getSeries: function(thisDimension, otherDimension) {
+		// initialize counters
+    var serie_name, serie_data, k;
+		// initialize series
+    var series = [];
 		var serie = {name: '', data: []};
-		for (i; i < distinctElements_length; i++) {
-			serie.name = labels[i];
-			for(j = 0; j < elements_length; j++) {
-				if(elements[j] == distinctElements[i]) {
-					serie.data.push(values[j]);
-				}
-			}
-			series.push(serie);
-			serie = {name: '', data: []};
-		}
+    //take other distinct
+    var otherDistinct = otherDimension.distinctElements;
+    var otherLabels = otherDimension.elementLabels;
+    var otherElements = otherDimension.elements;
+    var thisDistinct = thisDimension.distinctElements;
+    var thisElements = thisDimension.elements;
+    var thisValue = thisDimension.values;
+    for(serie_name = 0; serie_name < otherDistinct.length; serie_name++) {
+      serie.name = otherLabels[serie_name];
+      otherData = otherDistinct[serie_name];
+      //take each this distinct
+      for(serie_data = 0; serie_data < thisDistinct.length; serie_data++) {
+        //if value got otherDistinct and thisDistinct as elements - put it in the series
+        for(var k = 0; k < thisElements.length; k++) {
+          if(thisElements[k] == thisDistinct[serie_data] &&
+            otherElements[k] == otherData) {
+              serie.data[serie_data] = thisValue[k];
+            }
+        }
+      }
+      
+      for(k = 0; k < serie.data.length; k++) {
+        if(typeof serie.data[k] === "undefined") {
+          serie.data[k] = 0;
+        }
+      }
+      
+      series.push(serie);
+      serie = {name: '', data: []};
+    }
+        
 		return series;
 	},
+  
+  
     
-    cleanUpArray: function(arr) {
+  cleanUpArray: function(arr) {
 		var newArr = new Array();for (var k in arr) if(arr[k]) newArr.push(arr[k]);
 		return newArr;
 	}
