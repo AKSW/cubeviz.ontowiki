@@ -18,11 +18,12 @@
      */
 	var CubeViz_Link_Chosen_Module = <?php echo json_encode($this->linkCode); ?>;
     CubeViz_Links_Module = CubeViz_Links_Module [CubeViz_Link_Chosen_Module];	
-	CubeViz_Links_Module.loadedComponents = [];
-	CubeViz_Links_Module.loadedComponentElements = [];
-	CubeViz_Links_Module.modelUrl = "<?php echo $this->modelUrl; ?>";		
-	CubeViz_Links_Module.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
-	CubeViz_Links_Module.backend = <?php echo json_encode($this->backend); ?>;		
+    CubeViz_Links_Module ["linkCode"] = CubeViz_Link_Chosen_Module;
+	CubeViz_Links_Module ["loadedComponents"] = [];
+	CubeViz_Links_Module ["loadedComponentElements"] = [];
+	CubeViz_Links_Module ["modelUrl"] = "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Links_Module ["cubevizPath"] = <?php echo json_encode($this->cubevizPath); ?>;		
+	CubeViz_Links_Module ["backend"] = <?php echo json_encode($this->backend); ?>;		
 	
     CubeViz_Config = {
         "context": "development" // possible: development, production

@@ -95,6 +95,18 @@ var DataSet = (function () {
 })();
 var Observation = (function () {
     function Observation() { }
+    Observation.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
+            data: {
+                m: CubeViz_Links_Module["modelUrl"],
+                lC: CubeViz_Links_Module["linkCode"],
+                sparqlEndpoint: "local"
+            }
+        }).done(function (entries) {
+            Component.prepareLoadedComponents(entries, callback);
+        });
+    }
     return Observation;
 })();
 var System = (function () {
