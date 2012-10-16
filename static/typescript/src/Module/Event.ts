@@ -112,24 +112,23 @@ class Module_Event {
      * 
      */
     static onComplete_LoadDataSets (entries) {
-        var dataSets:any = $.parseJSON (entries);
         
         /**
          * Build select box
          */
-        Module_Main.buildDataSetBox (dataSets);
+        Module_Main.buildDataSetBox (entries);
         
         // if at least one data structure definition, than load data sets for first one
-        if ( 0 == dataSets.length ) {
+        if ( 0 == entries.length ) {
             // todo: handle case that no data sets were loaded
             CubeViz_Parameters_Module.selectedDS = {};
             
-        } else if ( 1 <= dataSets.length ) {
+        } else if ( 1 <= entries.length ) {
             
-            CubeViz_Parameters_Module.selectedDS = dataSets [0].url;
+            CubeViz_Parameters_Module.selectedDS = entries [0].url;
             
             // loaded components for certain data structure definition and data set
-            Component.loadAll ( CubeViz_Parameters_Module.selectedDSD.url, dataSets [0].url, 
+            Component.loadAll ( CubeViz_Parameters_Module.selectedDSD.url, entries [0].url, 
                 Module_Event.onComplete_LoadComponents 
             );
         }

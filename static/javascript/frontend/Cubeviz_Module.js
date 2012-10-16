@@ -20,6 +20,9 @@ var Component = (function () {
             entries[i].elementCount = entries[i].elementCount || 0;
             entries[i].selectedElementCount = entries[i].elementCount || 0;
         }
+        entries.sort(function (a, b) {
+            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        });
         entries = {
             "dimensions": entries
         };
@@ -50,7 +53,16 @@ var DataSet = (function () {
                 m: CubeViz_Config.selectedModel,
                 dsdUrl: dsdUrl
             }
-        }).done(callback);
+        }).done(function (entries) {
+            DataSet.prepareLoadedDataSets(entries, callback);
+        });
+    }
+    DataSet.prepareLoadedDataSets = function prepareLoadedDataSets(entries, callback) {
+        entries = $.parseJSON(entries);
+        entries.sort(function (a, b) {
+            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        });
+        callback(entries);
     }
     return DataSet;
 })();
@@ -123,15 +135,14 @@ var Module_Event = (function () {
         CubeViz_Parameters_Module.selectedDimensionComponents = entries;
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
-        var dataSets = $.parseJSON(entries);
-        Module_Main.buildDataSetBox(dataSets);
-        if(0 == dataSets.length) {
+        Module_Main.buildDataSetBox(entries);
+        if(0 == entries.length) {
             CubeViz_Parameters_Module.selectedDS = {
             };
         } else {
-            if(1 <= dataSets.length) {
-                CubeViz_Parameters_Module.selectedDS = dataSets[0].url;
-                Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, dataSets[0].url, Module_Event.onComplete_LoadComponents);
+            if(1 <= entries.length) {
+                CubeViz_Parameters_Module.selectedDS = entries[0].url;
+                Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, entries[0].url, Module_Event.onComplete_LoadComponents);
             }
         }
     }
