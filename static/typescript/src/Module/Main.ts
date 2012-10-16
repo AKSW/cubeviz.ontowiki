@@ -70,6 +70,7 @@ class Module_Main {
      * Build dialog to select / unselect certain elements
      */
     static buildDimensionDialog ( dimension:string, loadedComponentElements:any ) {
+        
         try {            
             // Prepare jsontemplate
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
@@ -83,7 +84,7 @@ class Module_Main {
             
             $("#dimensionDialogContainer").fadeIn (1000);
         } catch ( e ) {
-            System.out ( "buildDimensionDialog1 error" );
+            System.out ( "buildDimensionDialog error" );
             System.out ( e );
         }
     }

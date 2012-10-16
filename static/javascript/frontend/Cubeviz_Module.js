@@ -148,7 +148,7 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
         var dimension = $(this).attr("dimension").toString();
-        Module_Main.buildDimensionDialog(dimension, CubeViz_Parameters_Module.loadedComponentElements);
+        Module_Main.buildDimensionDialog(dimension, CubeViz_Links_Module.loadedComponentElements);
         Module_Event.setupDialogSelectorCloseButton(dimension);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
@@ -290,7 +290,7 @@ var Module_Main = (function () {
             }));
             $("#dimensionDialogContainer").fadeIn(1000);
         } catch (e) {
-            System.out("buildDimensionDialog1 error");
+            System.out("buildDimensionDialog error");
             System.out(e);
         }
     }

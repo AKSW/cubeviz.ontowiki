@@ -92,7 +92,7 @@ class Module_Event {
         var dimension:string = $(this).attr ( "dimension" ).toString ();
         
         // 
-        Module_Main.buildDimensionDialog (dimension, CubeViz_Parameters_Module.loadedComponentElements);
+        Module_Main.buildDimensionDialog (dimension, CubeViz_Links_Module.loadedComponentElements);
         
         /**
          * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
