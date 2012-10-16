@@ -24,7 +24,7 @@ var Component = (function () {
         callback(entries);
     }
     Component.updateSelectedDimensionComponents = function updateSelectedDimensionComponents(entries) {
-        var tmpDimensionComponents = CubeViz_Parameters_Module.selectedDimensionComponents;
+        var tmpDimensionComponents = CubeViz_Links_Module.loadedComponents;
         for(var dimension in entries) {
             for(var i in tmpDimensionComponents) {
                 if(dimension == tmpDimensionComponents[i]["label"]) {
@@ -32,7 +32,7 @@ var Component = (function () {
                 }
             }
         }
-        CubeViz_Parameters_Module.selectedDimensionComponents = tmpDimensionComponents;
+        CubeViz_Links_Module.loadedComponents = tmpDimensionComponents;
     }
     return Component;
 })();
@@ -155,22 +155,22 @@ var Module_Event = (function () {
     }
     Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
         Module_Main.buildComponentSelection(entries);
-        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
         if(0 == entries.length) {
             CubeViz_Links_Module.selectedDimensions = [];
             System.out("onComplete_LoadComponents");
             System.out("no components were loaded");
         } else {
             if(1 <= entries.length) {
+                CubeViz_Links_Module.loadedComponents = entries;
                 CubeViz_Links_Module.selectedDimensions = entries;
-                Observation.loadAll(CubeViz_Links_Module.selectedDS.url, CubeViz_Parameters_Module.selectedDimensionComponents, Module_Event.onComplete_LoadObservations);
+                Observation.loadAll(CubeViz_Links_Module.selectedDS.url, CubeViz_Links_Module.loadedComponents, Module_Event.onComplete_LoadObservations);
             }
         }
     }
     Module_Event.onComplete_LoadObservations = function onComplete_LoadObservations(entries) {
-        CubeViz_Parameters_Module.loadedObservations = entries;
+        CubeViz_Links_Module.loadedObservations = entries;
         Component.updateSelectedDimensionComponents(entries);
-        Module_Main.buildComponentSelection(CubeViz_Parameters_Module.selectedDimensionComponents);
+        Module_Main.buildComponentSelection(CubeViz_Links_Module.loadedComponents);
         Module_Event.setupDialogSelector();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
@@ -245,6 +245,7 @@ var Module_Main = (function () {
             options = {
                 "dimensions": options
             };
+            console.log(options);
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html(tpl.expand(options));
         } catch (e) {
@@ -290,6 +291,7 @@ var Module_Main = (function () {
             async: true,
             cache: false,
             crossDomain: true,
+            dataType: "json",
             dataType: "json",
             type: "POST"
         });

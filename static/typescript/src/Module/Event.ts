@@ -37,6 +37,21 @@ class Module_Event {
         System.out ( "" );*/
         System.out ( "CubeViz_Links_Module:" );
         System.out ( CubeViz_Links_Module );
+        
+        /*
+        console.log ( JSON.stringify ({
+            "Year": [
+                CubeViz_Links_Module.selectedDimensionComponents [0],
+                CubeViz_Links_Module.selectedDimensionComponents [1],
+                CubeViz_Links_Module.selectedDimensionComponents [2]
+            ],
+            "Indicator": [
+                CubeViz_Links_Module.selectedDimensionComponents [3],
+                CubeViz_Links_Module.selectedDimensionComponents [4],
+                CubeViz_Links_Module.selectedDimensionComponents [5],
+            ]
+        }));*/
+        
         System.out ( "" );
         /*System.out ( "CubeViz_Link_Chosen_Module:" );
         System.out ( CubeViz_Link_Chosen_Module );
@@ -104,8 +119,6 @@ class Module_Event {
          */
         Module_Main.buildComponentSelection (entries);
         
-        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
-        
         if ( 0 == entries.length ) {
             CubeViz_Links_Module.selectedDimensions = [];
             System.out ( "onComplete_LoadComponents" );
@@ -113,12 +126,14 @@ class Module_Event {
             
         } else if ( 1 <= entries.length ) {
             
+            CubeViz_Links_Module.loadedComponents = entries;
+            
             // loaded dimensions
             CubeViz_Links_Module.selectedDimensions = entries;
             
             // load observations
             Observation.loadAll ( CubeViz_Links_Module.selectedDS.url, 
-                CubeViz_Parameters_Module.selectedDimensionComponents, 
+                CubeViz_Links_Module.loadedComponents, 
                 Module_Event.onComplete_LoadObservations );
         }
     }
@@ -131,17 +146,17 @@ class Module_Event {
         /**
          * Save loaded observations
          */
-        CubeViz_Parameters_Module.loadedObservations = entries;
+        CubeViz_Links_Module.loadedObservations = entries;
         
         /**
-         * Update CubeViz_Parameters_Module.selectedDimensionComponents with new entries
+         * Update CubeViz_Links_Module.selectedDimensionComponents with new entries
          */
         Component.updateSelectedDimensionComponents ( entries );
         
         /**
          * Update component selection
          */
-        Module_Main.buildComponentSelection ( CubeViz_Parameters_Module.selectedDimensionComponents );
+        Module_Main.buildComponentSelection ( CubeViz_Links_Module.loadedComponents );
         
         /**
          * Dimensions button to select / unselect elements

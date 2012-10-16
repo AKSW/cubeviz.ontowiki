@@ -45,7 +45,7 @@ class Component {
      * 
      */
     static updateSelectedDimensionComponents (entries) {
-        var tmpDimensionComponents = CubeViz_Parameters_Module.selectedDimensionComponents;
+        var tmpDimensionComponents = CubeViz_Links_Module.loadedComponents;
         
         // if particular dimension was found, set elementCount 
         for ( var dimension in entries ) {    
@@ -58,6 +58,6 @@ class Component {
         }
         
         // update global variable
-        CubeViz_Parameters_Module.selectedDimensionComponents = tmpDimensionComponents;
+        CubeViz_Links_Module.loadedComponents = tmpDimensionComponents;
     }
 }

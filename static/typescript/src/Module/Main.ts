@@ -13,6 +13,9 @@ class Module_Main {
         
         try {
             options = { "dimensions": options };
+            
+            console.log ( options );
+            
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(options) );
         } catch ( e ) {
@@ -93,6 +96,7 @@ class Module_Main {
             async: true,
             cache: false,
             crossDomain: true,
+            dataType: "json",
             dataType: "json",
             type: "POST"
         });

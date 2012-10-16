@@ -102,7 +102,8 @@ class CubeViz_ConfigurationLink
             // Dimension components
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
 			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_VocabularyTerms_DimensionComponentFactory();
-			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents);            
+			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents); 
+            $this->_links [$linkCode] ['selectedDimensionComponents'] = $this->_links [$linkCode] ['selectedDimensionComponents']['selectedDimensionComponents'];           
 		} else {
             //throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
 			return false;
