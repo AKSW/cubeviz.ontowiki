@@ -46,6 +46,11 @@ class Module_Event {
          */
          
         /**
+         * Selectbox with data set
+         */
+        Module_Event.setupDataSetBox ();
+         
+        /**
          * Selectbox with data structure definitions
          */
         Module_Event.setupDataStructureDefinitionBox ();
@@ -54,6 +59,29 @@ class Module_Event {
     /**
      * EVENTS
      */
+     
+    /**
+     * 
+     */
+    static onChange_DataStructureDefinitionBox () {
+        
+        // extract value and label from selected data structure definition
+        var selectedElement:any = $($("#sidebar-left-data-selection-strc option:selected") [0]),
+            dsdLabel:string = selectedElement.text (),
+            dsdUrl:string = selectedElement.attr ("value");
+        
+        // set new selected data structure definition
+        CubeViz_Parameters_Module.selectedDSD = { "label": dsdLabel, "url": dsdUrl};
+        
+        DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
+    }
+     
+    /**
+     * 
+     */
+    static onChange_DataSetBox () {
+        
+    }
      
     /**
      * 
@@ -82,7 +110,7 @@ class Module_Event {
         // if at least one data structure definition, than load data sets for first one
         if ( 0 == dataSets.length ) {
             // todo: handle case that no data sets were loaded
-            CubeViz_Parameters_Module.selectedDS = dataSets;
+            CubeViz_Parameters_Module.selectedDS = {};
             
         } else if ( 1 <= dataSets.length ) {
             
@@ -111,7 +139,7 @@ class Module_Event {
         if ( 0 == entries.length ) {
             // todo: handle case that no data structure definition were loaded
             
-            CubeViz_Parameters_Module.selectedDSD = entries;
+            CubeViz_Parameters_Module.selectedDSD = {};
             
         } else if ( 1 <= entries.length ) {
             
@@ -131,6 +159,19 @@ class Module_Event {
      * 
      */
     static setupDataStructureDefinitionBox () {
+        
         DataStructureDefinition.loadAll (Module_Event.onComplete_LoadDataStructureDefinitions);
+        
+        // set event for onChange
+        $("#sidebar-left-data-selection-strc").change ( Module_Event.onChange_DataStructureDefinitionBox );
+    }
+    
+    /**
+     * 
+     */
+    static setupDataSetBox () {
+        
+        // set event for onChange
+        $("#sidebar-left-data-selection-sets").change ( Module_Event.onChange_DataSetBox );
     }
 }

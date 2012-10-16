@@ -34,10 +34,7 @@ class Component {
             entries [i].selectedElementCount = entries [i].elementCount || 0;
         }
         
-        entries = { "dimensions": entries };        
-        
-        console.log ( "prepareLoadedComponents" );
-        console.log ( entries );
+        entries = { "dimensions": entries };       
         
         // call callback function with prepared entries
         callback ( entries );

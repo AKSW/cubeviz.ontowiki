@@ -23,8 +23,6 @@ var Component = (function () {
         entries = {
             "dimensions": entries
         };
-        console.log("prepareLoadedComponents");
-        console.log(entries);
         callback(entries);
     }
     return Component;
@@ -95,7 +93,21 @@ $(document).ready(function () {
 var Module_Event = (function () {
     function Module_Event() { }
     Module_Event.ready = function ready() {
+        Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
+    }
+    Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
+        var selectedElement = $($("#sidebar-left-data-selection-strc option:selected")[0]);
+        var dsdLabel = selectedElement.text();
+        var dsdUrl = selectedElement.attr("value");
+
+        CubeViz_Parameters_Module.selectedDSD = {
+            "label": dsdLabel,
+            "url": dsdUrl
+        };
+        DataSet.loadAll(dsdUrl, Module_Event.onComplete_LoadDataSets);
+    }
+    Module_Event.onChange_DataSetBox = function onChange_DataSetBox() {
     }
     Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
         Module_Main.buildComponentSelection(entries);
@@ -105,7 +117,8 @@ var Module_Event = (function () {
         var dataSets = $.parseJSON(entries);
         Module_Main.buildDataSetBox(dataSets);
         if(0 == dataSets.length) {
-            CubeViz_Parameters_Module.selectedDS = dataSets;
+            CubeViz_Parameters_Module.selectedDS = {
+            };
         } else {
             if(1 <= dataSets.length) {
                 CubeViz_Parameters_Module.selectedDS = dataSets[0].url;
@@ -117,7 +130,8 @@ var Module_Event = (function () {
         entries = $.parseJSON(entries);
         Module_Main.buildDataStructureDefinitionBox(entries);
         if(0 == entries.length) {
-            CubeViz_Parameters_Module.selectedDSD = entries;
+            CubeViz_Parameters_Module.selectedDSD = {
+            };
         } else {
             if(1 <= entries.length) {
                 CubeViz_Parameters_Module.selectedDSD = entries[0];
@@ -127,20 +141,22 @@ var Module_Event = (function () {
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
+        $("#sidebar-left-data-selection-strc").change(Module_Event.onChange_DataStructureDefinitionBox);
+    }
+    Module_Event.setupDataSetBox = function setupDataSetBox() {
+        $("#sidebar-left-data-selection-sets").change(Module_Event.onChange_DataSetBox);
     }
     return Module_Event;
 })();
 var Module_Main = (function () {
     function Module_Main() { }
     Module_Main.buildComponentSelection = function buildComponentSelection(options) {
-        console.log("buildComponentSelection options");
-        console.log(options);
-        var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
         try  {
+            var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html(tpl.expand(options));
         } catch (e) {
-            console.log("buildComponentSelection error");
-            console.log(e);
+            System.out("buildComponentSelection error");
+            System.out(e);
         }
     }
     Module_Main.buildDataSetBox = function buildDataSetBox(options) {

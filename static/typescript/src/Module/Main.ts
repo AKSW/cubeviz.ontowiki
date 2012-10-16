@@ -11,15 +11,12 @@ class Module_Main {
      */
     static buildComponentSelection ( options ) {
         
-        console.log ( "buildComponentSelection options" );
-        console.log ( options );
-        var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
-                
         try {
+            var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(options) );
         } catch ( e ) {
-            console.log ( "buildComponentSelection error" );
-            console.log ( e );
+            System.out ( "buildComponentSelection error" );
+            System.out ( e );
         }
     }
     
