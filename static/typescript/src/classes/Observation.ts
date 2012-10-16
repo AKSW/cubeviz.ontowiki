@@ -8,7 +8,6 @@ class Observation {
     static loadAll (dsUrl, dimensions, callback) {
 
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getalldimensionselements/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -24,9 +23,7 @@ class Observation {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedObservations ( entries, callback ) {
-        
-        entries = $.parseJSON ( entries );
-        
+    
         // set standard values
         // nothing yet
         

@@ -7,7 +7,6 @@ class DataSet {
      */
     static loadAll (dsdUrl, callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getdatasets/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -22,8 +21,6 @@ class DataSet {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedDataSets ( entries, callback ) {
-        
-        entries = $.parseJSON ( entries );
         
         // set standard values
         // nothing yet

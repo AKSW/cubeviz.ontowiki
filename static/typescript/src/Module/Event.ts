@@ -42,6 +42,8 @@ class Module_Event {
         System.out ( CubeViz_Link_Chosen_Module );
         System.out ( "" );*/
         
+        Module_Main.setupAjax ();
+        
         /**
          * Setup User Interface
          */
@@ -171,7 +173,7 @@ class Module_Event {
         CubeViz_Links_Module.selectedDS = { "label": dsLabel, "url": dsUrl};
         
         // re-load data set box
-        Component.loadAll ( CubeViz_Parameters_Module.selectedDSD.url, dsUrl, 
+        Component.loadAll ( CubeViz_Links_Module.selectedDSD.url, dsUrl, 
             Module_Event.onComplete_LoadComponents );
     }
      

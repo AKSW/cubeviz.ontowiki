@@ -84,4 +84,17 @@ class Module_Main {
             System.out ( e );
         }
     }
+    
+    /**
+     * 
+     */
+    static setupAjax () {
+        $.ajaxSetup({
+            async: true,
+            cache: false,
+            crossDomain: true,
+            dataType: "json",
+            type: "POST"
+        });
+    }
 }

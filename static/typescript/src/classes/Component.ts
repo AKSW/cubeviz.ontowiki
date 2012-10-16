@@ -8,7 +8,6 @@ class Component {
      */
     static loadAll (dsdUrl, dsUrl, callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getcomponents/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -26,7 +25,7 @@ class Component {
      */
     static prepareLoadedComponents ( entries, callback ) {
         
-        entries = $.parseJSON ( entries );
+        console.log ( entries );
         
         // set standard values
         for ( var i in entries ) {

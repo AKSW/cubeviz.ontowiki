@@ -2,7 +2,6 @@ var Component = (function () {
     function Component() { }
     Component.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getcomponents/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -15,7 +14,7 @@ var Component = (function () {
         });
     }
     Component.prepareLoadedComponents = function prepareLoadedComponents(entries, callback) {
-        entries = $.parseJSON(entries);
+        console.log(entries);
         for(var i in entries) {
             entries[i].elementCount = entries[i].elementCount || 0;
             entries[i].selectedElementCount = entries[i].elementCount || 0;
@@ -42,7 +41,6 @@ var DataStructureDefinition = (function () {
     function DataStructureDefinition() { }
     DataStructureDefinition.loadAll = function loadAll(callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getdatastructuredefinitions/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl
@@ -52,7 +50,6 @@ var DataStructureDefinition = (function () {
         });
     }
     DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
-        entries = $.parseJSON(entries);
         entries.sort(function (a, b) {
             return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
@@ -64,7 +61,6 @@ var DataSet = (function () {
     function DataSet() { }
     DataSet.loadAll = function loadAll(dsdUrl, callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getdatasets/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -75,7 +71,6 @@ var DataSet = (function () {
         });
     }
     DataSet.prepareLoadedDataSets = function prepareLoadedDataSets(entries, callback) {
-        entries = $.parseJSON(entries);
         entries.sort(function (a, b) {
             return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
@@ -87,7 +82,6 @@ var Observation = (function () {
     function Observation() { }
     Observation.loadAll = function loadAll(dsUrl, dimensions, callback) {
         $.ajax({
-            type: "POST",
             url: CubeViz_Parameters_Module.cubevizPath + "getalldimensionselements/",
             data: {
                 m: CubeViz_Parameters_Module.modelUrl,
@@ -99,7 +93,6 @@ var Observation = (function () {
         });
     }
     Observation.prepareLoadedObservations = function prepareLoadedObservations(entries, callback) {
-        entries = $.parseJSON(entries);
         callback(entries);
     }
     return Observation;
@@ -145,6 +138,7 @@ $(document).ready(function () {
 var Module_Event = (function () {
     function Module_Event() { }
     Module_Event.ready = function ready() {
+        Module_Main.setupAjax();
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
     }
@@ -193,7 +187,7 @@ var Module_Event = (function () {
             "label": dsLabel,
             "url": dsUrl
         };
-        Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadComponents);
+        Component.loadAll(CubeViz_Links_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadComponents);
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
         Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
@@ -278,6 +272,15 @@ var Module_Main = (function () {
             System.out("buildDimensionDialog1 error");
             System.out(e);
         }
+    }
+    Module_Main.setupAjax = function setupAjax() {
+        $.ajaxSetup({
+            async: true,
+            cache: false,
+            crossDomain: true,
+            dataType: "json",
+            type: "POST"
+        });
     }
     return Module_Main;
 })();
