@@ -11,6 +11,20 @@ var DataStructureDefinition = (function () {
     }
     return DataStructureDefinition;
 })();
+var DataSet = (function () {
+    function DataSet() { }
+    DataSet.loadAll = function loadAll(dsdUrl, callback) {
+        $.ajax({
+            type: "POST",
+            url: CubeViz_Config.cubevizPath + "getdatasets/",
+            data: {
+                m: CubeViz_Config.selectedModel,
+                dsdUrl: dsdUrl
+            }
+        }).done(callback);
+    }
+    return DataSet;
+})();
 var System = (function () {
     function System() { }
     System.out = function out(output) {
@@ -58,12 +72,26 @@ var Module_Event = (function () {
         System.out("");
         Module_Event.setupDataStructureDefinitionBox();
     }
+    Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(options) {
+        options = $.parseJSON(options);
+        console.log(options);
+        var entry = null;
+        $("#sidebar-left-data-selection-sets").empty();
+        for(var i in options) {
+            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            $("#sidebar-left-data-selection-sets").append(entry);
+        }
+    }
     Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(options) {
         options = $.parseJSON(options);
+        var entry = null;
         $("#sidebar-left-data-selection-strc").empty();
         for(var i in options) {
-            options[i] = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
-            $("#sidebar-left-data-selection-strc").append(options[i]);
+            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            $("#sidebar-left-data-selection-strc").append(entry);
+        }
+        if(1 <= options.length) {
+            DataSet.loadAll(options[0].url, Module_Event.onComplete_LoadDataSets);
         }
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {

@@ -1,17 +1,17 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
-class DataStructureDefinitions {
+class DataSet {
     
     /**
      * 
      */
-    static load (callback) {
-        
+    static loadAll (dsdUrl, callback) {
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getdatastructuredefinitions/",
+            url: CubeViz_Config.cubevizPath + "getdatasets/",
             data: {
-                m: CubeViz_Config.selectedModel
+                m: CubeViz_Config.selectedModel,
+                dsdUrl: dsdUrl
             }
         }).done( callback );
     }

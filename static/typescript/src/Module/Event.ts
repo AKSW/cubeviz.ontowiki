@@ -44,14 +44,39 @@ class Module_Event {
     /**
      * 
      */
+    static onComplete_LoadDataSets (options) {
+        options = $.parseJSON ( options );
+        console.log ( options );
+        var entry = null;
+        
+        $("#sidebar-left-data-selection-sets").empty ();
+        
+        for ( var i in options ) {
+            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            $("#sidebar-left-data-selection-sets").append ( entry );
+        }
+    }
+     
+    /**
+     * 
+     */
     static onComplete_LoadDataStructureDefinitions (options) {
         options = $.parseJSON ( options );
+        var entry = null;
         
+        /**
+         * Fill data structure definitions selectbox 
+         */
         $("#sidebar-left-data-selection-strc").empty ();
         
-        for ( var i in options ) {            
-            options [i] = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
-            $("#sidebar-left-data-selection-strc").append ( options [i] );
+        for ( var i in options ) {
+            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            $("#sidebar-left-data-selection-strc").append ( entry );
+        }
+        
+        // if at least one data structure definition, than load data sets for first one
+        if ( 1 <= options.length ) {
+            DataSet.loadAll ( options [0].url, Module_Event.onComplete_LoadDataSets );
         }
     }
     

@@ -1,4 +1,5 @@
 static/typescript/src/classes/DataStructureDefinition.ts
+static/typescript/src/classes/DataSet.ts
 static/typescript/src/classes/System.ts
 
 static/typescript/src/Module/Event.ts
