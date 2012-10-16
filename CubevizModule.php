@@ -55,7 +55,7 @@ class CubevizModule extends OntoWiki_Module
 		$sparqlEndpoint = "local";
 		
 		//model
-		$this->view->modelUrl =  $this->_owApp->selectedModel;
+		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
 		//linkCode
@@ -68,7 +68,6 @@ class CubevizModule extends OntoWiki_Module
 		$configuration->initFromLink($linkCode);		
 		$this->view->links = json_encode($configuration->getLinks());
 													
-		 // $_REQUEST['m'];
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
 				

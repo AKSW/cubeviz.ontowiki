@@ -1,27 +1,21 @@
-<!--
- * OntoWiki cubeviz "select data" template
--->
-
-<!-- Libraries -->
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json2.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/namespacedotjs/Namespace.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json-template.min.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery_plugins/jquery.ba-bbq.min.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery.alerts-1.1/jquery.alerts.js"></script>
-
-<!-- CubeViz related javascript -->
-<!--script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizInterface.js"></script-->
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/CubeVizModule.js"></script>
-
 <script type="text/javascript">
+    /**
+     * CUBEVIZ MODULE
+     */
     
 	/*************************************
 	 * Importing Server-Side System Info *
 	 *************************************/
-	Namespacedotjs.baseUri = <?php echo json_encode($this->moduleUrl . 'static/javascript/frontend/'); ?>;
-
-	var CubeViz_Links_Module = <?php echo $this->links; ?>;
-	// choose default config for the start
+    
+    /**
+     * Contains loaded configuration for given hashcode
+     * default is "default" configuration
+     */
+    var CubeViz_Links_Module = <?php echo $this->links; ?>;
+	
+    /**
+     * Name of choosen config; default is "default"
+     */
 	var CubeViz_Link_Chosen_Module = <?php echo json_encode($this->linkCode); ?>;
 		
 	if(typeof CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === "undefined" || CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === null) {
@@ -49,17 +43,21 @@
 	CubeViz_Parameters_Module.modelUrl = "<?php echo $this->modelUrl; ?>";		
 	CubeViz_Parameters_Module.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
 	CubeViz_Parameters_Module.backend = <?php echo json_encode($this->backend); ?>;		
+	CubeViz_Config = {
+        "context": "development", // possible: development, production
+        "cubevizPath": "<?php echo $this->cubevizPath; ?>",
+        "selectedModel": selectedGraph.URI // = m = selected model uri
+    };
 			
-	
-	
 </script>
+
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/Cubeviz_Module.js"></script>
 
 <!-- Include index json-templates for instance the dialogs. -->
 <?php include ("extensions/cubeviz/static/templates/CubeVizModuleTemplates.phtml"); ?>
 
 <style type="text/css">
 	@import url("<?php echo $this->moduleUrl; ?>static/css/main.css");
-	@import url("<?php echo $this->moduleUrl; ?>static/javascript/libraries/jquery.alerts-1.1/jquery.alerts.css");
 </style>
 
 <!-- Selection data routine -->
@@ -67,7 +65,7 @@
 <div id="wrapper"></div>
 
 <div id="sidebar-left">
-    <div id="sidebar-left-loader"><div style="margin-top:30%; position: absolute; background-color:#ffffff;left:100px;top:50px;">
+    <div id="sidebar-left-loader"><div style="display:none;margin-top:30%; position: absolute; background-color:#ffffff;left:100px;top:50px;">
         <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
     </div></div>
 	<div id="sidebar-left-data-selection">
@@ -101,10 +99,6 @@
             <div style="text-align: center; clear:both;">
 				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
 			</div>
-<!--			<div id="sidebar-left-data-selection-getlinkbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
-				<input type="submit" value="<?php echo $this->_translate->_('Get Permalink'); ?>" id="sidebar-left-data-selection-getlinkbtn"/>
-			</div>
--->
 		</div>
 	</div>
 </div>

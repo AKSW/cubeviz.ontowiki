@@ -4,9 +4,9 @@
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/namespacedotjs/Namespace.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/json-template.min.js"></script>
 
-<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/frontend/CubeVizController.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/frontend/Cubeviz_Chart.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/frontend/Cubeviz_Module.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>data/ChartConfig.js"></script>
-<!-- script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/frontend/CubeVizChartSelection.js"></script-->
 
 <style type="text/css">
     @import url("<?php echo $this->basePath; ?>static/css/main.css");
@@ -16,8 +16,6 @@
     /*************************************
      * Importing Server-Side System Info *
      *************************************/
-    Namespacedotjs.baseUri = <?php echo json_encode($this->basePath . 'static/javascript/frontend/'); ?>;
-
     var CubeViz_Link_Chosen_Component = <?php echo json_encode($this->linkCode); ?>;
     
     var CubeViz_Parameters_Component = {
