@@ -146,6 +146,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 			$componentType = DataCube_UriOf::Dimension;
 		} else {
             // stop execution, because it is not a $componentType that i understand
+            $this->_response->setBody("Unknown cT parameter! Given was: " . $componentType);
             return;
         }
 		
