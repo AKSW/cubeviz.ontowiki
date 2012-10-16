@@ -7,9 +7,9 @@ class DataStructureDefinition {
      */
     static loadAll (callback) {
         $.ajax({
-            url: CubeViz_Parameters_Module.cubevizPath + "getdatastructuredefinitions/",
+            url: CubeViz_Links_Module.cubevizPath + "getdatastructuredefinitions/",
             data: {
-                m: CubeViz_Parameters_Module.modelUrl
+                m: CubeViz_Links_Module.modelUrl
             }
         }).done( function (entries) { 
             DataStructureDefinition.prepareLoadedDataStructureDefinitions (entries, callback); 

@@ -9,9 +9,9 @@ class Component {
     static loadAll (dsdUrl, dsUrl, callback) {
         
         $.ajax({
-            url: CubeViz_Parameters_Module.cubevizPath + "getcomponents/",
+            url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
             data: {
-                m: CubeViz_Parameters_Module.modelUrl,
+                m: CubeViz_Links_Module.modelUrl,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
                 cT: "dimension" // possible: dimension, measure

@@ -69,7 +69,7 @@ class Module_Main {
     /**
      * Build dialog to select / unselect certain elements
      */
-    static buildDimensionDialog ( dimension:string, loadedObservations:any ) {
+    static buildDimensionDialog ( dimension:string, loadedComponentElements:any ) {
         try {            
             // Prepare jsontemplate
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
@@ -78,7 +78,7 @@ class Module_Main {
             $("#dimensionDialogContainer").html ( tpl.expand({ 
                 "dimension": dimension,
                 "label": dimension,
-                "list": loadedObservations [dimension]
+                "list": loadedComponentElements [dimension]
             }));
             
             $("#dimensionDialogContainer").fadeIn (1000);

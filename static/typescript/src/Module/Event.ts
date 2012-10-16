@@ -72,6 +72,11 @@ class Module_Event {
          * Selectbox with data structure definitions
          */
         Module_Event.setupDataStructureDefinitionBox ();
+         
+        /**
+         * Button to show visualization
+         */
+        Module_Event.setupShowVisualizationButton ();
     }
     
     /**
@@ -87,7 +92,7 @@ class Module_Event {
         var dimension:string = $(this).attr ( "dimension" ).toString ();
         
         // 
-        Module_Main.buildDimensionDialog (dimension, CubeViz_Parameters_Module.loadedObservations);
+        Module_Main.buildDimensionDialog (dimension, CubeViz_Parameters_Module.loadedComponentElements);
         
         /**
          * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
@@ -107,6 +112,14 @@ class Module_Event {
         
         // clean content of shown dialog box
         $("#dimensionDialogContainer").fadeOut (500).html ("");
+    }
+     
+    /**
+     * 
+     */
+    static onClick_ShowVisualizationButton () {
+        
+        window.location.href = CubeViz_Links_Module ["cubevizPath"];
     }
     
     /**
@@ -146,7 +159,7 @@ class Module_Event {
         /**
          * Save loaded observations
          */
-        CubeViz_Links_Module.loadedObservations = entries;
+        CubeViz_Links_Module.loadedComponentElements = entries;
         
         /**
          * Update CubeViz_Links_Module.selectedDimensionComponents with new entries
@@ -298,5 +311,14 @@ class Module_Event {
         
         // set event for onChange
         $("#dialog-btn-close-" + dimension ).click (Module_Event.onClick_DialogSelectorCloseButton);
+    }
+    
+    /**
+     * 
+     */
+    static setupShowVisualizationButton () {
+        
+        // set event for onChange
+        $("#sidebar-left-data-selection-submitbtn").click (Module_Event.onClick_ShowVisualizationButton);
     }
 }

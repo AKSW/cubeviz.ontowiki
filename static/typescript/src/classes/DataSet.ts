@@ -7,9 +7,9 @@ class DataSet {
      */
     static loadAll (dsdUrl, callback) {
         $.ajax({
-            url: CubeViz_Parameters_Module.cubevizPath + "getdatasets/",
+            url: CubeViz_Links_Module.cubevizPath + "getdatasets/",
             data: {
-                m: CubeViz_Parameters_Module.modelUrl,
+                m: CubeViz_Links_Module.modelUrl,
                 dsdUrl: dsdUrl
             }
         }).done( function (entries) { 
