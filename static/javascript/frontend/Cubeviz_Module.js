@@ -3,9 +3,9 @@ var Component = (function () {
     Component.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getcomponents/",
+            url: CubeViz_Parameters_Module.cubevizPath + "getcomponents/",
             data: {
-                m: CubeViz_Config.selectedModel,
+                m: CubeViz_Parameters_Module.modelUrl,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
                 cT: "dimension"
@@ -43,9 +43,9 @@ var DataStructureDefinition = (function () {
     DataStructureDefinition.loadAll = function loadAll(callback) {
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getdatastructuredefinitions/",
+            url: CubeViz_Parameters_Module.cubevizPath + "getdatastructuredefinitions/",
             data: {
-                m: CubeViz_Config.selectedModel
+                m: CubeViz_Parameters_Module.modelUrl
             }
         }).done(function (entries) {
             DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
@@ -65,9 +65,9 @@ var DataSet = (function () {
     DataSet.loadAll = function loadAll(dsdUrl, callback) {
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getdatasets/",
+            url: CubeViz_Parameters_Module.cubevizPath + "getdatasets/",
             data: {
-                m: CubeViz_Config.selectedModel,
+                m: CubeViz_Parameters_Module.modelUrl,
                 dsdUrl: dsdUrl
             }
         }).done(function (entries) {
@@ -86,17 +86,11 @@ var DataSet = (function () {
 var Observation = (function () {
     function Observation() { }
     Observation.loadAll = function loadAll(dsUrl, dimensions, callback) {
-        console.log("Observation loadAll");
-        console.log({
-            m: CubeViz_Config.selectedModel,
-            dsUrl: dsUrl,
-            dimensions: dimensions
-        });
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getalldimensionselements/",
+            url: CubeViz_Parameters_Module.cubevizPath + "getalldimensionselements/",
             data: {
-                m: CubeViz_Config.selectedModel,
+                m: CubeViz_Parameters_Module.modelUrl,
                 dsUrl: dsUrl,
                 dimensions: dimensions
             }
@@ -169,7 +163,7 @@ var Module_Event = (function () {
         if(0 == entries.length) {
         } else {
             if(1 <= entries.length) {
-                Observation.loadAll(CubeViz_Parameters_Module.selectedDS.url, CubeViz_Parameters_Module.selectedDimensionComponents, Module_Event.onComplete_LoadObservations);
+                Observation.loadAll(CubeViz_Links_Module.selectedDS.url, CubeViz_Parameters_Module.selectedDimensionComponents, Module_Event.onComplete_LoadObservations);
             }
         }
     }
@@ -184,7 +178,7 @@ var Module_Event = (function () {
         var dsdLabel = selectedElement.text();
         var dsdUrl = selectedElement.attr("value");
 
-        CubeViz_Parameters_Module.selectedDSD = {
+        CubeViz_Links_Module.selectedDSD = {
             "label": dsdLabel,
             "url": dsdUrl
         };
@@ -195,21 +189,20 @@ var Module_Event = (function () {
         var dsLabel = selectedElement.text();
         var dsUrl = selectedElement.attr("value");
 
-        CubeViz_Parameters_Module.selectedDS = {
+        CubeViz_Links_Module.selectedDS = {
             "label": dsLabel,
             "url": dsUrl
         };
         Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadComponents);
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
-        Module_Main.buildDataSetBox(entries);
+        Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
         if(0 == entries.length) {
             CubeViz_Parameters_Module.selectedDS = {
             };
         } else {
             if(1 <= entries.length) {
-                CubeViz_Parameters_Module.selectedDS = entries[0];
-                Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, entries[0].url, Module_Event.onComplete_LoadComponents);
+                Component.loadAll(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadComponents);
             }
         }
     }
@@ -220,8 +213,7 @@ var Module_Event = (function () {
             };
         } else {
             if(1 <= entries.length) {
-                CubeViz_Parameters_Module.selectedDSD = entries[0];
-                DataSet.loadAll(entries[0].url, Module_Event.onComplete_LoadDataSets);
+                DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, Module_Event.onComplete_LoadDataSets);
             }
         }
     }
@@ -254,11 +246,14 @@ var Module_Main = (function () {
             System.out(e);
         }
     }
-    Module_Main.buildDataSetBox = function buildDataSetBox(options) {
+    Module_Main.buildDataSetBox = function buildDataSetBox(options, selectedDataSetUrl) {
         var entry = null;
         $("#sidebar-left-data-selection-sets").empty();
         for(var i in options) {
             entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            if(selectedDataSetUrl == options[i].url) {
+                entry.attr("selected", "selected");
+            }
             $("#sidebar-left-data-selection-sets").append(entry);
         }
     }

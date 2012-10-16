@@ -6,17 +6,12 @@ class Observation {
      * 
      */
     static loadAll (dsUrl, dimensions, callback) {
-        console.log ( "Observation loadAll" );
-        console.log ( {
-                m: CubeViz_Config.selectedModel,
-                dsUrl: dsUrl,
-                dimensions: dimensions
-            } );
+
         $.ajax({
             type: "POST",
-            url: CubeViz_Config.cubevizPath + "getalldimensionselements/",
+            url: CubeViz_Parameters_Module.cubevizPath + "getalldimensionselements/",
             data: {
-                m: CubeViz_Config.selectedModel,
+                m: CubeViz_Parameters_Module.modelUrl,
                 dsUrl: dsUrl,
                 dimensions: dimensions
             }

@@ -27,13 +27,18 @@ class Module_Main {
      * Called by:
      * - onComplete_LoadDataSets
      */
-    static buildDataSetBox ( options ) {
+    static buildDataSetBox ( options, selectedDataSetUrl:string ) {
         var entry = null;
         
         $("#sidebar-left-data-selection-sets").empty ();
         
         for ( var i in options ) {
-            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");  
+            
+            if ( selectedDataSetUrl == options [i].url ) {
+                entry.attr ( "selected", "selected" );
+            }
+                      
             $("#sidebar-left-data-selection-sets").append ( entry );
         }
     }

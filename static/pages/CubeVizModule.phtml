@@ -17,6 +17,7 @@
      * Name of choosen config; default is "default"
      */
 	var CubeViz_Link_Chosen_Module = <?php echo json_encode($this->linkCode); ?>;
+    CubeViz_Links_Module = CubeViz_Links_Module [CubeViz_Link_Chosen_Module];
 		
 	if(typeof CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === "undefined" || CubeViz_Links_Module[CubeViz_Link_Chosen_Module] === null) {
 		var CubeViz_Parameters_Module = {
@@ -47,9 +48,7 @@
 	CubeViz_Parameters_Module.backend = <?php echo json_encode($this->backend); ?>;		
 	
     CubeViz_Config = {
-        "context": "development", // possible: development, production
-        "cubevizPath": "<?php echo $this->cubevizPath; ?>",
-        "selectedModel": selectedGraph.URI // = m = selected model uri
+        "context": "development" // possible: development, production
     };
 			
 </script>
