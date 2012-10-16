@@ -1,4 +1,5 @@
-/// <reference path="DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\jsontemplate.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
 var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
 var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {};
@@ -24,14 +25,44 @@ class Module_Event {
         System.out ( "" );
         System.out ( "CubeViz_Link_Chosen_Module:" );
         System.out ( CubeViz_Link_Chosen_Module );
+        System.out ( "" );
         
-        Data.loadDataStructureDefinitions (Module_Event.onComplete_DataStructureDefinitions);
+        /**
+         * Setup User Interface
+         */
+         
+        /**
+         * Selectbox with data structure definitions
+         */
+        Module_Event.setupDataStructureDefinitionBox ();
     }
+    
+    /**
+     * EVENTS
+     */
+     
+    /**
+     * 
+     */
+    static onComplete_LoadDataStructureDefinitions (options) {
+        options = $.parseJSON ( options );
+        
+        $("#sidebar-left-data-selection-strc").empty ();
+        
+        for ( var i in options ) {            
+            options [i] = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            $("#sidebar-left-data-selection-strc").append ( options [i] );
+        }
+    }
+    
+    /**
+     * SETUP FUNCTIONS
+     */
     
     /**
      * 
      */
-    static onComplete_DataStructureDefinitions (response) {
-        System.out ( response );
+    static setupDataStructureDefinitionBox () {
+        DataStructureDefinition.loadAll (Module_Event.onComplete_LoadDataStructureDefinitions);
     }
 }

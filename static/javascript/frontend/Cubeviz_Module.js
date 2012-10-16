@@ -1,7 +1,6 @@
-var Data = (function () {
-    function Data() { }
-    Data.loadDataStructureDefinitions = function loadDataStructureDefinitions(callback) {
-        System.out(CubeViz_Config.cubevizPath + "getdatastructuredefinitions/");
+var DataStructureDefinition = (function () {
+    function DataStructureDefinition() { }
+    DataStructureDefinition.loadAll = function loadAll(callback) {
         $.ajax({
             type: "POST",
             url: CubeViz_Config.cubevizPath + "getdatastructuredefinitions/",
@@ -10,7 +9,7 @@ var Data = (function () {
             }
         }).done(callback);
     }
-    return Data;
+    return DataStructureDefinition;
 })();
 var System = (function () {
     function System() { }
@@ -56,10 +55,19 @@ var Module_Event = (function () {
         System.out("");
         System.out("CubeViz_Link_Chosen_Module:");
         System.out(CubeViz_Link_Chosen_Module);
-        Data.loadDataStructureDefinitions(Module_Event.onComplete_DataStructureDefinitions);
+        System.out("");
+        Module_Event.setupDataStructureDefinitionBox();
     }
-    Module_Event.onComplete_DataStructureDefinitions = function onComplete_DataStructureDefinitions(response) {
-        System.out(response);
+    Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(options) {
+        options = $.parseJSON(options);
+        $("#sidebar-left-data-selection-strc").empty();
+        for(var i in options) {
+            options[i] = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            $("#sidebar-left-data-selection-strc").append(options[i]);
+        }
+    }
+    Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
+        DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
     }
     return Module_Event;
 })();

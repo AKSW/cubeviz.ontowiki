@@ -1,11 +1,11 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
-class Data {
+class DataStructureDefinitions {
     
     /**
      * 
      */
-    static loadDataStructureDefinitions (callback) {
+    static load (callback) {
         
         $.ajax({
             type: "POST",
