@@ -22,7 +22,7 @@ class Component {
     }
     
     /**
-     * Set default values etc.
+     * Set default values, sort objects by label etc.
      */
     static prepareLoadedComponents ( entries, callback ) {
         
@@ -33,6 +33,11 @@ class Component {
             entries [i].elementCount = entries [i].elementCount || 0;
             entries [i].selectedElementCount = entries [i].elementCount || 0;
         }
+        
+        // sort objects by label, ascending
+        entries.sort(function(a, b) {
+           return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        })
         
         entries = { "dimensions": entries };       
         
