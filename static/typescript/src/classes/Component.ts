@@ -7,6 +7,7 @@ class Component {
      * and component type.
      */
     static loadAll (dsdUrl, dsUrl, callback) {
+        
         $.ajax({
             url: CubeViz_Parameters_Module.cubevizPath + "getcomponents/",
             data: {
@@ -24,8 +25,6 @@ class Component {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedComponents ( entries, callback ) {
-        
-        console.log ( entries );
         
         // set standard values
         for ( var i in entries ) {

@@ -14,7 +14,6 @@ var Component = (function () {
         });
     }
     Component.prepareLoadedComponents = function prepareLoadedComponents(entries, callback) {
-        console.log(entries);
         for(var i in entries) {
             entries[i].elementCount = entries[i].elementCount || 0;
             entries[i].selectedElementCount = entries[i].elementCount || 0;
@@ -138,6 +137,9 @@ $(document).ready(function () {
 var Module_Event = (function () {
     function Module_Event() { }
     Module_Event.ready = function ready() {
+        System.out("CubeViz_Links_Module:");
+        System.out(CubeViz_Links_Module);
+        System.out("");
         Module_Main.setupAjax();
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
@@ -155,8 +157,12 @@ var Module_Event = (function () {
         Module_Main.buildComponentSelection(entries);
         CubeViz_Parameters_Module.selectedDimensionComponents = entries;
         if(0 == entries.length) {
+            CubeViz_Links_Module.selectedDimensions = [];
+            System.out("onComplete_LoadComponents");
+            System.out("no components were loaded");
         } else {
             if(1 <= entries.length) {
+                CubeViz_Links_Module.selectedDimensions = entries;
                 Observation.loadAll(CubeViz_Links_Module.selectedDS.url, CubeViz_Parameters_Module.selectedDimensionComponents, Module_Event.onComplete_LoadObservations);
             }
         }
@@ -176,6 +182,7 @@ var Module_Event = (function () {
             "label": dsdLabel,
             "url": dsdUrl
         };
+        CubeViz_Links_Module.selectedDS = null;
         DataSet.loadAll(dsdUrl, Module_Event.onComplete_LoadDataSets);
     }
     Module_Event.onChange_DataSetBox = function onChange_DataSetBox() {
@@ -190,12 +197,15 @@ var Module_Event = (function () {
         Component.loadAll(CubeViz_Links_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadComponents);
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
-        Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
         if(0 == entries.length) {
-            CubeViz_Parameters_Module.selectedDS = {
-            };
+            System.out("onComplete_LoadDataSets");
+            System.out("no data sets were loaded");
         } else {
             if(1 <= entries.length) {
+                if(null == CubeViz_Links_Module.selectedDS) {
+                    CubeViz_Links_Module.selectedDS = entries[0];
+                }
+                Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
                 Component.loadAll(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadComponents);
             }
         }
@@ -205,6 +215,8 @@ var Module_Event = (function () {
         if(0 == entries.length) {
             CubeViz_Parameters_Module.selectedDSD = {
             };
+            System.out("onComplete_LoadDataStructureDefinitions");
+            System.out("no data structure definitions were loaded");
         } else {
             if(1 <= entries.length) {
                 DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, Module_Event.onComplete_LoadDataSets);
