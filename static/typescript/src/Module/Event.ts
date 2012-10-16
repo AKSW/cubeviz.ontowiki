@@ -144,17 +144,17 @@ class Module_Event {
             // loaded dimensions
             CubeViz_Links_Module.selectedDimensions = entries;
             
-            // load observations
-            Observation.loadAll ( CubeViz_Links_Module.selectedDS.url, 
+            // load all dimension elements
+            Component.loadAllDimensionElements ( CubeViz_Links_Module.selectedDS.url, 
                 CubeViz_Links_Module.loadedComponents, 
-                Module_Event.onComplete_LoadObservations );
+                Module_Event.onComplete_LoadAllDimensionElements );
         }
     }
     
     /**
      * 
      */
-    static onComplete_LoadObservations (entries) {
+    static onComplete_LoadAllDimensionElements (entries) {
         
         /**
          * Save loaded observations
