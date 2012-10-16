@@ -53,6 +53,7 @@ class Component {
                 
                 if ( dimension == tmpDimensionComponents [i]["label"] ) {                    
                     tmpDimensionComponents [i]["elementCount"] = entries [ dimension ] ["length"];
+                    tmpDimensionComponents [i]["selectedElementCount"] = CubeViz_Links_Module ["selectedDimensionComponents"] [ dimension ] ["length"];
                 }
             }
         }

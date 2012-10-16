@@ -29,6 +29,7 @@ var Component = (function () {
             for(var i in tmpDimensionComponents) {
                 if(dimension == tmpDimensionComponents[i]["label"]) {
                     tmpDimensionComponents[i]["elementCount"] = entries[dimension]["length"];
+                    tmpDimensionComponents[i]["selectedElementCount"] = CubeViz_Links_Module["selectedDimensionComponents"][dimension]["length"];
                 }
             }
         }
