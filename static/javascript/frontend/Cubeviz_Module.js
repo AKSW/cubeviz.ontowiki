@@ -108,6 +108,15 @@ var Module_Event = (function () {
         DataSet.loadAll(dsdUrl, Module_Event.onComplete_LoadDataSets);
     }
     Module_Event.onChange_DataSetBox = function onChange_DataSetBox() {
+        var selectedElement = $($("#sidebar-left-data-selection-sets option:selected")[0]);
+        var dsLabel = selectedElement.text();
+        var dsUrl = selectedElement.attr("value");
+
+        CubeViz_Parameters_Module.selectedDS = {
+            "label": dsLabel,
+            "url": dsUrl
+        };
+        Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadComponents);
     }
     Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
         Module_Main.buildComponentSelection(entries);

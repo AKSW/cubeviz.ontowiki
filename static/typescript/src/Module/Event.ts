@@ -73,6 +73,7 @@ class Module_Event {
         // set new selected data structure definition
         CubeViz_Parameters_Module.selectedDSD = { "label": dsdLabel, "url": dsdUrl};
         
+        // re-load data set box
         DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
     }
      
@@ -81,6 +82,17 @@ class Module_Event {
      */
     static onChange_DataSetBox () {
         
+        // extract value and label from selected data structure definition
+        var selectedElement:any = $($("#sidebar-left-data-selection-sets option:selected") [0]),
+            dsLabel:string = selectedElement.text (),
+            dsUrl:string = selectedElement.attr ("value");
+        
+        // set new selected data set
+        CubeViz_Parameters_Module.selectedDS = { "label": dsLabel, "url": dsUrl};
+        
+        // re-load data set box
+        Component.loadAll ( CubeViz_Parameters_Module.selectedDSD.url, dsUrl, 
+            Module_Event.onComplete_LoadComponents );
     }
      
     /**
