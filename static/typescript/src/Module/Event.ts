@@ -61,18 +61,13 @@ class Module_Event {
      * 
      */
     static onComplete_LoadDataStructureDefinitions (options) {
+        
         options = $.parseJSON ( options );
-        var entry = null;
         
         /**
-         * Fill data structure definitions selectbox 
+         * Build select box
          */
-        $("#sidebar-left-data-selection-strc").empty ();
-        
-        for ( var i in options ) {
-            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
-            $("#sidebar-left-data-selection-strc").append ( entry );
-        }
+        Module_Main.buildDataStructureDefinitionBox (options);
         
         // if at least one data structure definition, than load data sets for first one
         if ( 1 <= options.length ) {

@@ -138,13 +138,16 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 		$dsUrl = $this->_request->getParam('dsUrl'); // Data Set
-		$componentType = $this->_request->getParam('cT'); // can be  DataCube_UriOf::Dimension or DataCube_UriOf::Measure
+		$componentType = $this->_request->getParam('cT'); // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
 				
 		if($componentType == "measure") {
 			$componentType = DataCube_UriOf::Measure;
 		} else if($componentType == "dimension") {
 			$componentType = DataCube_UriOf::Dimension;
-		}
+		} else {
+            // stop execution, because it is not a $componentType that i understand
+            return;
+        }
 		
 		$query = new DataCube_Query($model);
 				

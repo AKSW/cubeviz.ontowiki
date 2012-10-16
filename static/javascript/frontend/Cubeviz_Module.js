@@ -1,3 +1,18 @@
+var Component = (function () {
+    function Component() { }
+    Component.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
+        $.ajax({
+            type: "POST",
+            url: CubeViz_Config.cubevizPath + "getcomponents/",
+            data: {
+                m: CubeViz_Config.selectedModel,
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl
+            }
+        }).done(callback);
+    }
+    return Component;
+})();
 var DataStructureDefinition = (function () {
     function DataStructureDefinition() { }
     DataStructureDefinition.loadAll = function loadAll(callback) {
@@ -14,6 +29,8 @@ var DataStructureDefinition = (function () {
 var DataSet = (function () {
     function DataSet() { }
     DataSet.loadAll = function loadAll(dsdUrl, callback) {
+        console.log(CubeViz_Config.cubevizPath + "getdatasets/");
+        console.log(dsdUrl);
         $.ajax({
             type: "POST",
             url: CubeViz_Config.cubevizPath + "getdatasets/",
@@ -84,12 +101,7 @@ var Module_Event = (function () {
     }
     Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(options) {
         options = $.parseJSON(options);
-        var entry = null;
-        $("#sidebar-left-data-selection-strc").empty();
-        for(var i in options) {
-            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
-            $("#sidebar-left-data-selection-strc").append(entry);
-        }
+        Module_Main.buildDataStructureDefinitionBox(options);
         if(1 <= options.length) {
             DataSet.loadAll(options[0].url, Module_Event.onComplete_LoadDataSets);
         }
@@ -101,5 +113,13 @@ var Module_Event = (function () {
 })();
 var Module_Main = (function () {
     function Module_Main() { }
+    Module_Main.buildDataStructureDefinitionBox = function buildDataStructureDefinitionBox(options) {
+        var entry = null;
+        $("#sidebar-left-data-selection-strc").empty();
+        for(var i in options) {
+            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            $("#sidebar-left-data-selection-strc").append(entry);
+        }
+    }
     return Module_Main;
 })();
