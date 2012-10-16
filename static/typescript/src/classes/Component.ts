@@ -12,7 +12,8 @@ class Component {
             data: {
                 m: CubeViz_Config.selectedModel,
                 dsdUrl: dsdUrl,
-                dsUrl: dsUrl
+                dsUrl: dsUrl,
+                cT: "dimension" // dimension, measure
             }
         }).done( callback );
     }

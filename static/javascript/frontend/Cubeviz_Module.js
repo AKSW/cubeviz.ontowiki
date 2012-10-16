@@ -7,7 +7,8 @@ var Component = (function () {
             data: {
                 m: CubeViz_Config.selectedModel,
                 dsdUrl: dsdUrl,
-                dsUrl: dsUrl
+                dsUrl: dsUrl,
+                cT: "dimension"
             }
         }).done(callback);
     }
@@ -29,8 +30,6 @@ var DataStructureDefinition = (function () {
 var DataSet = (function () {
     function DataSet() { }
     DataSet.loadAll = function loadAll(dsdUrl, callback) {
-        console.log(CubeViz_Config.cubevizPath + "getdatasets/");
-        console.log(dsdUrl);
         $.ajax({
             type: "POST",
             url: CubeViz_Config.cubevizPath + "getdatasets/",
@@ -63,13 +62,15 @@ var System = (function () {
     }
     return System;
 })();
-var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
+var CubeViz_Config = CubeViz_Config || {
 };
 var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {
 };
 var CubeViz_Links_Module = CubeViz_Links_Module || {
 };
-var CubeViz_Config = CubeViz_Config || {
+var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
+};
+var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {
 };
 $(document).ready(function () {
     Module_Event.ready();
@@ -77,33 +78,32 @@ $(document).ready(function () {
 var Module_Event = (function () {
     function Module_Event() { }
     Module_Event.ready = function ready() {
-        System.out("");
-        System.out("CubeViz_Parameters_Component:");
-        System.out(CubeViz_Parameters_Component);
-        System.out("");
-        System.out("CubeViz_Links_Module:");
-        System.out(CubeViz_Links_Module);
-        System.out("");
-        System.out("CubeViz_Link_Chosen_Module:");
-        System.out(CubeViz_Link_Chosen_Module);
-        System.out("");
         Module_Event.setupDataStructureDefinitionBox();
     }
-    Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(options) {
-        options = $.parseJSON(options);
-        console.log(options);
-        var entry = null;
-        $("#sidebar-left-data-selection-sets").empty();
-        for(var i in options) {
-            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
-            $("#sidebar-left-data-selection-sets").append(entry);
+    Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
+        entries = $.parseJSON(entries);
+        Module_Main.buildComponentSelection(entries);
+    }
+    Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
+        var dataSets = $.parseJSON(entries);
+        Module_Main.buildDataSetBox(dataSets);
+        if(0 == dataSets.length) {
+        } else {
+            if(1 <= dataSets.length) {
+                CubeViz_Parameters_Module.selectedDS = dataSets[0].url;
+                Component.loadAll(CubeViz_Parameters_Module.selectedDSD.url, dataSets[0].url, Module_Event.onComplete_LoadComponents);
+            }
         }
     }
-    Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(options) {
-        options = $.parseJSON(options);
-        Module_Main.buildDataStructureDefinitionBox(options);
-        if(1 <= options.length) {
-            DataSet.loadAll(options[0].url, Module_Event.onComplete_LoadDataSets);
+    Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(entries) {
+        entries = $.parseJSON(entries);
+        Module_Main.buildDataStructureDefinitionBox(entries);
+        if(0 == entries.length) {
+        } else {
+            if(1 <= entries.length) {
+                CubeViz_Parameters_Module.selectedDSD = entries[0];
+                DataSet.loadAll(entries[0].url, Module_Event.onComplete_LoadDataSets);
+            }
         }
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
@@ -113,6 +113,18 @@ var Module_Event = (function () {
 })();
 var Module_Main = (function () {
     function Module_Main() { }
+    Module_Main.buildComponentSelection = function buildComponentSelection(options) {
+        console.log("buildComponentSelection:");
+        console.log(options);
+    }
+    Module_Main.buildDataSetBox = function buildDataSetBox(options) {
+        var entry = null;
+        $("#sidebar-left-data-selection-sets").empty();
+        for(var i in options) {
+            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
+            $("#sidebar-left-data-selection-sets").append(entry);
+        }
+    }
     Module_Main.buildDataStructureDefinitionBox = function buildDataStructureDefinitionBox(options) {
         var entry = null;
         $("#sidebar-left-data-selection-strc").empty();

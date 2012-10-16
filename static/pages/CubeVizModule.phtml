@@ -43,7 +43,8 @@
 	CubeViz_Parameters_Module.modelUrl = "<?php echo $this->modelUrl; ?>";		
 	CubeViz_Parameters_Module.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
 	CubeViz_Parameters_Module.backend = <?php echo json_encode($this->backend); ?>;		
-	CubeViz_Config = {
+	
+    CubeViz_Config = {
         "context": "development", // possible: development, production
         "cubevizPath": "<?php echo $this->cubevizPath; ?>",
         "selectedModel": selectedGraph.URI // = m = selected model uri
