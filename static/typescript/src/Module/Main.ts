@@ -12,6 +12,7 @@ class Module_Main {
     static buildComponentSelection ( options ) {
         
         try {
+            options = { "dimensions": options };
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(options) );
         } catch ( e ) {

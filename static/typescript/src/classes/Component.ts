@@ -39,9 +39,27 @@ class Component {
            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         })
         
-        entries = { "dimensions": entries };       
-        
         // call callback function with prepared entries
         callback ( entries );
+    }
+    
+    /**
+     * 
+     */
+    static updateSelectedDimensionComponents (entries) {
+        var tmpDimensionComponents = CubeViz_Parameters_Module.selectedDimensionComponents;
+        
+        // if particular dimension was found, set elementCount 
+        for ( var dimension in entries ) {    
+            for ( var i in tmpDimensionComponents ) {
+                
+                if ( dimension == tmpDimensionComponents [i]["label"] ) {                    
+                    tmpDimensionComponents [i]["elementCount"] = entries [ dimension ] ["length"];
+                }
+            }
+        }
+        
+        // update global variable
+        CubeViz_Parameters_Module.selectedDimensionComponents = tmpDimensionComponents;
     }
 }

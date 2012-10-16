@@ -60,6 +60,45 @@ class Module_Event {
      * EVENTS
      */
      
+    
+    /**
+     * 
+     */
+    static onComplete_LoadComponents (entries) {
+        
+        /**
+         * Build select box
+         */
+        Module_Main.buildComponentSelection (entries);
+        
+        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
+        
+        if ( 0 == entries.length ) {
+            
+        } else if ( 1 <= entries.length ) {
+            
+            Observation.loadAll ( CubeViz_Parameters_Module.selectedDS.url, 
+                CubeViz_Parameters_Module.selectedDimensionComponents, 
+                Module_Event.onComplete_LoadObservations );
+        }
+    }
+    
+    /**
+     * 
+     */
+    static onComplete_LoadObservations (entries) {
+        
+        /**
+         * Update CubeViz_Parameters_Module.selectedDimensionComponents with new entries
+         */
+        Component.updateSelectedDimensionComponents ( entries );
+        
+        /**
+         * Update component selection
+         */
+        Module_Main.buildComponentSelection ( CubeViz_Parameters_Module.selectedDimensionComponents );
+    }
+     
     /**
      * 
      */
@@ -98,21 +137,7 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadComponents (entries) {
-        
-        /**
-         * Build select box
-         */
-        Module_Main.buildComponentSelection (entries);
-        
-        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
-    }
-     
-    /**
-     * 
-     */
     static onComplete_LoadDataSets (entries) {
-        
         /**
          * Build select box
          */
@@ -125,7 +150,7 @@ class Module_Event {
             
         } else if ( 1 <= entries.length ) {
             
-            CubeViz_Parameters_Module.selectedDS = entries [0].url;
+            CubeViz_Parameters_Module.selectedDS = entries [0];
             
             // loaded components for certain data structure definition and data set
             Component.loadAll ( CubeViz_Parameters_Module.selectedDSD.url, entries [0].url, 
