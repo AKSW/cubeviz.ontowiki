@@ -12,6 +12,27 @@ class DataStructureDefinition {
             data: {
                 m: CubeViz_Config.selectedModel
             }
-        }).done(callback);
+        }).done( function (entries) { 
+            DataStructureDefinition.prepareLoadedDataStructureDefinitions (entries, callback); 
+        });
+    }
+    
+    /**
+     * Set default values, sort objects by label etc.
+     */
+    static prepareLoadedDataStructureDefinitions ( entries, callback ) {
+        
+        entries = $.parseJSON ( entries );
+        
+        // set standard values
+        // nothing yet
+        
+        // sort objects by label, ascending
+        entries.sort(function(a, b) {
+           return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        });
+        
+        // call callback function with prepared entries
+        callback ( entries );
     }
 }

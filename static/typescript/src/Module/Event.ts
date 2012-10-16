@@ -139,8 +139,6 @@ class Module_Event {
      */
     static onComplete_LoadDataStructureDefinitions (entries) {
         
-        entries = $.parseJSON ( entries );
-        
         /**
          * Build select box
          */

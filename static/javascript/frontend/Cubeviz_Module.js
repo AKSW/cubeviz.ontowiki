@@ -39,7 +39,16 @@ var DataStructureDefinition = (function () {
             data: {
                 m: CubeViz_Config.selectedModel
             }
-        }).done(callback);
+        }).done(function (entries) {
+            DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
+        });
+    }
+    DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
+        entries = $.parseJSON(entries);
+        entries.sort(function (a, b) {
+            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        });
+        callback(entries);
     }
     return DataStructureDefinition;
 })();
@@ -147,7 +156,6 @@ var Module_Event = (function () {
         }
     }
     Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(entries) {
-        entries = $.parseJSON(entries);
         Module_Main.buildDataStructureDefinitionBox(entries);
         if(0 == entries.length) {
             CubeViz_Parameters_Module.selectedDSD = {
