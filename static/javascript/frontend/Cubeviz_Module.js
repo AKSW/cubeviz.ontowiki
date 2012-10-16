@@ -10,7 +10,22 @@ var Component = (function () {
                 dsUrl: dsUrl,
                 cT: "dimension"
             }
-        }).done(callback);
+        }).done(function (entries) {
+            Component.prepareLoadedComponents(entries, callback);
+        });
+    }
+    Component.prepareLoadedComponents = function prepareLoadedComponents(entries, callback) {
+        entries = $.parseJSON(entries);
+        for(var i in entries) {
+            entries[i].elementCount = entries[i].elementCount || 0;
+            entries[i].selectedElementCount = entries[i].elementCount || 0;
+        }
+        entries = {
+            "dimensions": entries
+        };
+        console.log("prepareLoadedComponents");
+        console.log(entries);
+        callback(entries);
     }
     return Component;
 })();
@@ -72,6 +87,8 @@ var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
 };
 var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {
 };
+var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {
+};
 $(document).ready(function () {
     Module_Event.ready();
 });
@@ -81,13 +98,14 @@ var Module_Event = (function () {
         Module_Event.setupDataStructureDefinitionBox();
     }
     Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
-        entries = $.parseJSON(entries);
         Module_Main.buildComponentSelection(entries);
+        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
         var dataSets = $.parseJSON(entries);
         Module_Main.buildDataSetBox(dataSets);
         if(0 == dataSets.length) {
+            CubeViz_Parameters_Module.selectedDS = dataSets;
         } else {
             if(1 <= dataSets.length) {
                 CubeViz_Parameters_Module.selectedDS = dataSets[0].url;
@@ -99,6 +117,7 @@ var Module_Event = (function () {
         entries = $.parseJSON(entries);
         Module_Main.buildDataStructureDefinitionBox(entries);
         if(0 == entries.length) {
+            CubeViz_Parameters_Module.selectedDSD = entries;
         } else {
             if(1 <= entries.length) {
                 CubeViz_Parameters_Module.selectedDSD = entries[0];
@@ -114,8 +133,15 @@ var Module_Event = (function () {
 var Module_Main = (function () {
     function Module_Main() { }
     Module_Main.buildComponentSelection = function buildComponentSelection(options) {
-        console.log("buildComponentSelection:");
+        console.log("buildComponentSelection options");
         console.log(options);
+        var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
+        try  {
+            $("#sidebar-left-data-selection-dims-boxes").html(tpl.expand(options));
+        } catch (e) {
+            console.log("buildComponentSelection error");
+            console.log(e);
+        }
     }
     Module_Main.buildDataSetBox = function buildDataSetBox(options) {
         var entry = null;

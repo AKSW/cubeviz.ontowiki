@@ -10,8 +10,17 @@ class Module_Main {
      * - onComplete_LoadDataSets
      */
     static buildComponentSelection ( options ) {
-        console.log ( "buildComponentSelection:" );
+        
+        console.log ( "buildComponentSelection options" );
         console.log ( options );
+        var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
+                
+        try {
+            $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(options) );
+        } catch ( e ) {
+            console.log ( "buildComponentSelection error" );
+            console.log ( e );
+        }
     }
     
     /**

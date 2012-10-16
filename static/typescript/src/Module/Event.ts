@@ -14,6 +14,9 @@ var CubeViz_Links_Module = CubeViz_Links_Module || {};
 var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
 var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {};
 
+// templates
+var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {};
+
 
 /**
  * Event section
@@ -56,12 +59,13 @@ class Module_Event {
      * 
      */
     static onComplete_LoadComponents (entries) {
-        entries = $.parseJSON (entries);
         
         /**
          * Build select box
          */
         Module_Main.buildComponentSelection (entries);
+        
+        CubeViz_Parameters_Module.selectedDimensionComponents = entries;
     }
      
     /**
@@ -78,6 +82,7 @@ class Module_Event {
         // if at least one data structure definition, than load data sets for first one
         if ( 0 == dataSets.length ) {
             // todo: handle case that no data sets were loaded
+            CubeViz_Parameters_Module.selectedDS = dataSets;
             
         } else if ( 1 <= dataSets.length ) {
             
@@ -105,6 +110,8 @@ class Module_Event {
         // if at least one data structure definition, than load data sets for first one
         if ( 0 == entries.length ) {
             // todo: handle case that no data structure definition were loaded
+            
+            CubeViz_Parameters_Module.selectedDSD = entries;
             
         } else if ( 1 <= entries.length ) {
             
