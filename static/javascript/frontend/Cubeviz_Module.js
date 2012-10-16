@@ -141,6 +141,8 @@ var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
 };
 var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {
 };
+var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {
+};
 var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {
 };
 $(document).ready(function () {
@@ -151,6 +153,15 @@ var Module_Event = (function () {
     Module_Event.ready = function ready() {
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
+    }
+    Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
+        var dimension = $(this).attr("dimension").toString();
+        Module_Main.buildDimensionDialog(dimension, CubeViz_Parameters_Module.loadedObservations);
+        Module_Event.setupDialogSelectorCloseButton(dimension);
+    }
+    Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
+        var dimension = $(this).attr("dimension").toString();
+        $("#dimensionDialogContainer").fadeOut(500).html("");
     }
     Module_Event.onComplete_LoadComponents = function onComplete_LoadComponents(entries) {
         Module_Main.buildComponentSelection(entries);
@@ -163,8 +174,10 @@ var Module_Event = (function () {
         }
     }
     Module_Event.onComplete_LoadObservations = function onComplete_LoadObservations(entries) {
+        CubeViz_Parameters_Module.loadedObservations = entries;
         Component.updateSelectedDimensionComponents(entries);
         Module_Main.buildComponentSelection(CubeViz_Parameters_Module.selectedDimensionComponents);
+        Module_Event.setupDialogSelector();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
         var selectedElement = $($("#sidebar-left-data-selection-strc option:selected")[0]);
@@ -219,6 +232,12 @@ var Module_Event = (function () {
     Module_Event.setupDataSetBox = function setupDataSetBox() {
         $("#sidebar-left-data-selection-sets").change(Module_Event.onChange_DataSetBox);
     }
+    Module_Event.setupDialogSelector = function setupDialogSelector() {
+        $(".open-dialog-selector").click(Module_Event.onClick_DialogSelector);
+    }
+    Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimension) {
+        $("#dialog-btn-close-" + dimension).click(Module_Event.onClick_DialogSelectorCloseButton);
+    }
     return Module_Event;
 })();
 var Module_Main = (function () {
@@ -249,6 +268,20 @@ var Module_Main = (function () {
         for(var i in options) {
             entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
             $("#sidebar-left-data-selection-strc").append(entry);
+        }
+    }
+    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimension, loadedObservations) {
+        try  {
+            var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
+            $("#dimensionDialogContainer").html(tpl.expand({
+                "dimension": dimension,
+                "label": dimension,
+                "list": loadedObservations[dimension]
+            }));
+            $("#dimensionDialogContainer").fadeIn(1000);
+        } catch (e) {
+            System.out("buildDimensionDialog1 error");
+            System.out(e);
         }
     }
     return Module_Main;

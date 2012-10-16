@@ -26,7 +26,8 @@
 			selectedDS: {},
 			selectedMeasures: {},
 			selectedDimensions: {},
-			selectedDimensionComponents: {}
+			selectedDimensionComponents: {},
+            loadedObservations: {}
 		}
 	} else {
 		var CubeViz_Parameters_Module = {
@@ -36,7 +37,8 @@
 			selectedDS: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDS"],
 			selectedMeasures: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedMeasures"],
 			selectedDimensions: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensions"],
-			selectedDimensionComponents: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensionComponents"]
+			selectedDimensionComponents: CubeViz_Links_Module[CubeViz_Link_Chosen_Module]["selectedDimensionComponents"],
+			loadedObservations: {}
 		}	
 	}
 	
@@ -104,3 +106,5 @@
 		</div>
 	</div>
 </div>
+
+<div id="dimensionDialogContainer" style="display:none;"></div>

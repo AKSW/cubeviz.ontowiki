@@ -44,7 +44,7 @@ class Module_Main {
      * Called by:
      * - onComplete_LoadDataStructureDefinitions
      */
-    static buildDataStructureDefinitionBox ( options ) {
+    static buildDataStructureDefinitionBox ( options:any ) {
         var entry = null;
         
         /**
@@ -55,6 +55,28 @@ class Module_Main {
         for ( var i in options ) {
             entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
             $("#sidebar-left-data-selection-strc").append ( entry );
+        }
+    }
+    
+    /**
+     * Build dialog to select / unselect certain elements
+     */
+    static buildDimensionDialog ( dimension:string, loadedObservations:any ) {
+        try {            
+            // Prepare jsontemplate
+            var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
+            
+            // fill template placeholders with data
+            $("#dimensionDialogContainer").html ( tpl.expand({ 
+                "dimension": dimension,
+                "label": dimension,
+                "list": loadedObservations [dimension]
+            }));
+            
+            $("#dimensionDialogContainer").fadeIn (1000);
+        } catch ( e ) {
+            System.out ( "buildDimensionDialog1 error" );
+            System.out ( e );
         }
     }
 }

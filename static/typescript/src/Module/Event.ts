@@ -15,6 +15,7 @@ var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
 var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {};
 
 // templates
+var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {};
 var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {};
 
 
@@ -60,6 +61,36 @@ class Module_Event {
      * EVENTS
      */
      
+    /**
+     * 
+     */
+    static onClick_DialogSelector () {
+        
+        // get dimension from clicked dialog selector
+        var dimension:string = $(this).attr ( "dimension" ).toString ();
+        
+        // 
+        Module_Main.buildDimensionDialog (dimension, CubeViz_Parameters_Module.loadedObservations);
+        
+        /**
+         * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
+         */
+        Module_Event.setupDialogSelectorCloseButton (dimension);
+    }
+     
+    /**
+     * 
+     */
+    static onClick_DialogSelectorCloseButton () {
+        
+        // get dimension from clicked dialog selector
+        var dimension:string = $(this).attr ( "dimension" ).toString ();
+        
+        // ...
+        
+        // clean content of shown dialog box
+        $("#dimensionDialogContainer").fadeOut (500).html ("");
+    }
     
     /**
      * 
@@ -89,6 +120,11 @@ class Module_Event {
     static onComplete_LoadObservations (entries) {
         
         /**
+         * Save loaded observations
+         */
+        CubeViz_Parameters_Module.loadedObservations = entries;
+        
+        /**
          * Update CubeViz_Parameters_Module.selectedDimensionComponents with new entries
          */
         Component.updateSelectedDimensionComponents ( entries );
@@ -97,6 +133,11 @@ class Module_Event {
          * Update component selection
          */
         Module_Main.buildComponentSelection ( CubeViz_Parameters_Module.selectedDimensionComponents );
+        
+        /**
+         * Dimensions button to select / unselect elements
+         */
+        Module_Event.setupDialogSelector ();
     }
      
     /**
@@ -207,5 +248,23 @@ class Module_Event {
         
         // set event for onChange
         $("#sidebar-left-data-selection-sets").change ( Module_Event.onChange_DataSetBox );
+    }
+    
+    /**
+     * 
+     */
+    static setupDialogSelector () {
+        
+        // set event for onChange
+        $(".open-dialog-selector").click (Module_Event.onClick_DialogSelector);
+    }
+    
+    /**
+     * 
+     */
+    static setupDialogSelectorCloseButton (dimension:string) {
+        
+        // set event for onChange
+        $("#dialog-btn-close-" + dimension ).click (Module_Event.onClick_DialogSelectorCloseButton);
     }
 }
