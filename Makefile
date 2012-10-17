@@ -21,6 +21,7 @@ build-javascript:
 	
 install:
 	chmod 0777 data/links
+	cp ChartConfig.js.dist ChartConfig.js
 	
 install-phpunit:
 	sudo apt-get install php-pear
