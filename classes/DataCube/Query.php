@@ -280,10 +280,35 @@ class DataCube_Query {
         $queryObject->setWherePart($where);
         
         // send query, return result as JSON
-        return $this->_store->sparqlQuery (
+        $result = json_decode ( $this->_store->sparqlQuery (
             $queryObject, 
             array('result_format' => 'json')
-        );
+        ), true );
+        
+        $tmp = array ();
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
+        
+        foreach ( $result as $entry ) {
+            $count = count ( $entry );
+            foreach ( $entry as $key => $ele ) { 
+                if ( 'uri' == $entry [$key] [0]['type'] ) {
+                    $titleHelper->addResource ( $ele [0]['value'] );
+                }
+            }
+        }
+        
+        foreach ( $result as $entry ) {
+            $count = count ( $entry );
+            $tmpEntry = $entry;
+            foreach ( $entry as $key => $ele ) {
+                if ( 'uri' == $entry [$key] [0]['type'] ) {
+                    $tmpEntry [$key][0]['label'] = $titleHelper->getTitle ( $ele [0]['value'] );
+                }
+            }
+            $tmp [] = $tmpEntry;
+        }
+        
+        return json_encode ( $tmp );
 	}
     
     private function isUrl($url) {
