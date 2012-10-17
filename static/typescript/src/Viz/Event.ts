@@ -10,9 +10,7 @@ var CubeViz_Links_Module = CubeViz_Links_Module || {};
 var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
 var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {};
 
-// REMOVE!!
-var Charts = Charts || {};
-
+var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
 /**
  * Event section
@@ -34,46 +32,23 @@ class Viz_Event {
     }
     
     /**
-     * Extracts all dimensions which appears two or more times
-     * @return array List of dimension names which appears two or more times
-     */
-    static getMultipleDimensions (selectedComponentDimensions) {
-        
-        var i = 0;
-        var multipleDimensions = [];
-        var dimensions = selectedComponentDimensions;
-        var dimensions_length = dimensions.length;
-        
-        for(var i in selectedComponentDimensions) {
-            console.log ( i );
-			if( selectedComponentDimensions [i]["elements"].length >= 1) {
-				multipleDimensions.push(selectedComponentDimensions [i].type);
-			}
-		}
-        
-        return multipleDimensions;
-    }
-    
-    /**
      * 
      */
     static onComplete_LoadResultObservations (entries) {
         
-        console.log ( "" );
-        console.log ( "onComplete_LoadResultObservations" );
-        console.log ( entries );
-        
-        var chart = Charts ["HighCharts"]["Bar2"];
+        var chart = HighCharts.loadChart ( "Bar2" );
             
         // init chart instance
-        chart.init (
-            entries,
-            CubeViz_Links_Module,
-            Viz_Event.getMultipleDimensions (CubeViz_Links_Module.selectedComponents.dimensions)
+        chart.init ( 
+            entries, 
+            CubeViz_Links_Module, 
+            CubeViz_ChartConfig ["2"][0]["types"][0].config 
         );
         
         var renderedChart = chart.getRenderResult();
         
+        console.log ( "" );
+        console.log ( "renderedChart" );
         console.log ( renderedChart );
         
         new Highcharts.Chart(renderedChart);
