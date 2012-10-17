@@ -91,19 +91,19 @@ class CubeViz_ConfigurationLink
 			
             // Measures
             $selectedMeasures = json_decode(trim($parameters[4]), true);
-			$this->_links [$linkCode] ['selectedMeasures'] = new DataCube_VocabularyTerms_MeasureFactory();
-			$this->_links [$linkCode] ['selectedMeasures']->initFromArray($selectedMeasures);
+			$this->_links [$linkCode]['selectedComponents']['measures'] = 
+                DataCube_VocabularyTerms_MeasureFactory::extract ($selectedMeasures);
 			
             // Dimensions
             $selectedDimensions = json_decode(trim($parameters[5]), true);
-			$this->_links [$linkCode]['selectedDimensions'] = new DataCube_VocabularyTerms_DimensionFactory();
-			$this->_links [$linkCode]['selectedDimensions']->initFromArray($selectedDimensions);
+			// $this->_links [$linkCode]['selectedDimensions'] = 
+            //    DataCube_VocabularyTerms_DimensionFactory::extract ( $selectedDimensions );
             
-            // Dimension components
+            // Components: dimension
 			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
-			$this->_links [$linkCode] ['selectedDimensionComponents'] = new DataCube_VocabularyTerms_DimensionComponentFactory();
-			$this->_links [$linkCode] ['selectedDimensionComponents']->initFromArray($selectedDimensionComponents); 
-            $this->_links [$linkCode] ['selectedDimensionComponents'] = $this->_links [$linkCode] ['selectedDimensionComponents']['selectedDimensionComponents'];           
+			$this->_links [$linkCode]['selectedComponents']['dimensions'] = 
+                DataCube_VocabularyTerms_DimensionComponentFactory::extract ( $selectedDimensions, $selectedDimensionComponents );
+                
 		} else {
             //throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
 			return false;

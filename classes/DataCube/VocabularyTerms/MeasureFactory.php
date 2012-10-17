@@ -10,22 +10,34 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_VocabularyTerms_MeasureFactory extends ArrayObject
-{    
-	public function __construct() {
-		$this ['measures'] = array ();
-	}
-	
+class DataCube_VocabularyTerms_MeasureFactory
+{    	
     /**
      * @param $selectedMeasures 
      * @todo change selectedMeasures -> measures 
      */
-	public function initFromArray($selectedMeasures) {
-		$selectedMeasures_length = sizeof($selectedMeasures["measures"]);
-		while($selectedMeasures_length--) {
-			$current_measure = $selectedMeasures["measures"][$selectedMeasures_length];
-			$measure = new DataCube_VocabularyTerms_Measure($current_measure['url'], $current_measure['label'], $current_measure['type']);
-			array_push($this ['measures'], $measure);
-		}
+	public static function extract ($selectedMeasures) {
+		
+        $return = array ();
+        $selectedMeasures = $selectedMeasures["measures"];
+        
+        // get all dimension labels
+        $labels = array ();
+        foreach ( $selectedMeasures as $measure ) {
+            $labels [] = $measure ['label'];
+        }
+        
+        // set array entry to certain dimension
+        foreach ( $labels as $measureLabel ) {
+            foreach ( $selectedMeasures as $measure ) {
+                if ( $measure ['label'] == $measureLabel ) {
+                    $return [ $measureLabel ] = new DataCube_VocabularyTerms_Measure(
+                        $measure['url'], $measure['label'], $measure['type']
+                    );
+                }
+            }
+        }
+        
+        return $return;
 	}
 }
