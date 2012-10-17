@@ -155,7 +155,6 @@ var Module_Event = (function () {
     Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries, resetSelectedComponents) {
         if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
         if(true == resetSelectedComponents) {
-            CubeViz_Links_Module.selectedComponents.dimensions = [];
             CubeViz_Links_Module.selectedComponents.dimensions = Component.getDefaultSelectedDimensions(entries.dimensions);
         } else {
         }
@@ -241,19 +240,6 @@ var Module_Main = (function () {
             "dimensions": []
         };
 
-        console.log("");
-        console.log("");
-        console.log("");
-        console.log("");
-        console.log("buildComponentSelection");
-        console.log("");
-        console.log("components");
-        console.log(components);
-        console.log("");
-        console.log("");
-        console.log("selectedComponents");
-        console.log(selectedComponents);
-        console.log("");
         for(var com in components["dimensions"]) {
             selectedComLength = selectedComponents["dimensions"][com]["elements"]["length"] || 1;
             com = components["dimensions"][com];
