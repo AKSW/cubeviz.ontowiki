@@ -4,7 +4,7 @@ class Observation {
     
     /**
      * 
-     *
+     */
     static loadAll (dsdUrl, dsUrl, callback) {
         
         $.ajax({
@@ -15,7 +15,16 @@ class Observation {
                 sparqlEndpoint: "local"
             }
         }).done( function (entries) { 
-            Component.prepareLoadedComponents (entries, callback); 
+            Observation.prepareLoadedResultObservations (entries, callback); 
         });
-    }*/
+    }
+    
+    /**
+     * 
+     */
+    static prepareLoadedResultObservations (entries, callback) {
+        
+        callback ( $.parseJSON ( entries ) );
+    }
+    
 }

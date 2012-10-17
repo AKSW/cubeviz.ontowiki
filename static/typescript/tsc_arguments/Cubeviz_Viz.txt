@@ -1,2 +1,4 @@
+static/typescript/src/classes/Observation.ts
+
 static/typescript/src/Viz/Event.ts
 static/typescript/src/Viz/Main.ts

@@ -85,6 +85,21 @@ var DataSet = (function () {
 })();
 var Observation = (function () {
     function Observation() { }
+    Observation.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
+            data: {
+                m: CubeViz_Links_Module["modelUrl"],
+                lC: CubeViz_Links_Module["linkCode"],
+                sparqlEndpoint: "local"
+            }
+        }).done(function (entries) {
+            Observation.prepareLoadedResultObservations(entries, callback);
+        });
+    }
+    Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries, callback) {
+        callback($.parseJSON(entries));
+    }
     return Observation;
 })();
 var System = (function () {
