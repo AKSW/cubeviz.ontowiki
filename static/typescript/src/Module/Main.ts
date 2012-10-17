@@ -9,15 +9,36 @@ class Module_Main {
      * Called by:
      * - onComplete_LoadDataSets
      */
-    static buildComponentSelection ( options ) {
+    static buildComponentSelection ( components, selectedComponents ) {
         
+        console.log ( "" );
+        console.log ( "components" );
+        console.log ( components );
+        console.log ( "" );
+        
+        console.log ( "" );
+        console.log ( "selectedComponents" );
+        console.log ( selectedComponents );
+        console.log ( "" );
+    
+        var tplEntries = {"dimensions":[]};
+        
+        for ( var com in selectedComponents ["dimensions"] ) {
+            
+            com = selectedComponents ["dimensions"][com];
+            com ["selectedElementCount"] = com ["elements"]["length"];
+            com ["elementCount"] = components ["dimensions"][com ["label"]]["elements"]["length"];
+            tplEntries ["dimensions"].push (com);
+        }
+        
+        console.log ( "" );
+        console.log ( "tplEntries" );
+        console.log ( tplEntries );
+        console.log ( "" );
+    
         try {
-            options = { "dimensions": options };
-            
-            console.log ( options );
-            
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
-            $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(options) );
+            $("#sidebar-left-data-selection-dims-boxes").html ( tpl.expand(tplEntries) );
         } catch ( e ) {
             System.out ( "buildComponentSelection error" );
             System.out ( e );
@@ -52,7 +73,7 @@ class Module_Main {
      * Called by:
      * - onComplete_LoadDataStructureDefinitions
      */
-    static buildDataStructureDefinitionBox ( options:any ) {
+    static buildDataStructureDefinitionBox (options:any, selectedDsdUrl:string) {
         var entry = null;
         
         /**
@@ -62,6 +83,11 @@ class Module_Main {
         
         for ( var i in options ) {
             entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            
+            if ( options [i].url == selectedDsdUrl ) {
+                entry.attr ("selected", "selected");
+            }
+            
             $("#sidebar-left-data-selection-strc").append ( entry );
         }
     }

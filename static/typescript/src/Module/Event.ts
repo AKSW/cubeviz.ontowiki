@@ -125,58 +125,36 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadComponents (entries) {
-        
-        /**
-         * Build select box
-         */
-        Module_Main.buildComponentSelection (entries);
-        
-        if ( 0 == entries.length ) {
-            CubeViz_Links_Module.selectedDimensions = [];
-            System.out ( "onComplete_LoadComponents" );
-            System.out ( "no components were loaded" );
-            
-        } else if ( 1 <= entries.length ) {
-            
-            CubeViz_Links_Module.loadedComponents = entries;
-            
-            // loaded dimensions
-            CubeViz_Links_Module.selectedDimensions = entries;
-            
-            // load all dimension elements
-            Component.loadAllDimensionElements ( CubeViz_Links_Module.selectedDS.url, 
-                CubeViz_Links_Module.loadedComponents, 
-                Module_Event.onComplete_LoadAllDimensionElements );
-        }
-    }
+    static onComplete_LoadAllComponentDimensions (entries) {
     
-    /**
-     * 
-     */
-    static onComplete_LoadAllDimensionElements (entries) {
+        // save pulled component dimensions
+        CubeViz_Links_Module.components = entries;
         
-        /**
-         * Save loaded observations
-         */
-        CubeViz_Links_Module.loadedComponentElements = entries;
-        
+        console.log ( "" );
+        console.log ( "" );
+        console.log ( "onComplete_LoadAllComponentDimensions" );
+        console.log ( CubeViz_Links_Module.components );
+        console.log ( "" );
+        console.log ( "" );
+                    
         /**
          * Update CubeViz_Links_Module.selectedDimensionComponents with new entries
          */
-        Component.updateSelectedDimensionComponents ( entries );
+        // Component.updateSelectedDimensionComponents ( CubeViz_Links_Module.components );
         
         /**
          * Update component selection
          */
-        Module_Main.buildComponentSelection ( CubeViz_Links_Module.loadedComponents );
+        Module_Main.buildComponentSelection ( 
+            CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents 
+        );
         
         /**
          * Dimensions button to select / unselect elements
          */
         Module_Event.setupDialogSelector ();
     }
-     
+    
     /**
      * 
      */
@@ -211,8 +189,10 @@ class Module_Event {
         CubeViz_Links_Module.selectedDS = { "label": dsLabel, "url": dsUrl};
         
         // re-load data set box
-        Component.loadAll ( CubeViz_Links_Module.selectedDSD.url, dsUrl, 
-            Module_Event.onComplete_LoadComponents );
+        Component.loadAllDimensions ( 
+            CubeViz_Links_Module.selectedDSD.url, dsUrl, 
+            Module_Event.onComplete_LoadAllComponentDimensions 
+        );
     }
      
     /**
@@ -238,11 +218,11 @@ class Module_Event {
              */
             Module_Main.buildDataSetBox (entries, CubeViz_Links_Module.selectedDS.url);
                         
-            // loaded components for certain data structure definition and data set
-            Component.loadAll ( 
+            // will load all component dimensions for certain data structure definition and data set
+            Component.loadAllDimensions ( 
                 CubeViz_Links_Module.selectedDSD.url, 
                 CubeViz_Links_Module.selectedDS.url, 
-                Module_Event.onComplete_LoadComponents 
+                Module_Event.onComplete_LoadAllComponentDimensions 
             );
         }
     }
@@ -255,7 +235,7 @@ class Module_Event {
         /**
          * Build select box
          */
-        Module_Main.buildDataStructureDefinitionBox (entries);
+        Module_Main.buildDataStructureDefinitionBox (entries, CubeViz_Links_Module.selectedDSD.url);
         
         // if at least one data structure definition, than load data sets for first one
         if ( 0 == entries.length ) {
@@ -267,7 +247,7 @@ class Module_Event {
         } else if ( 1 <= entries.length ) {
             
             // if more than one data structure definition, load for the first one its data sets
-            DataSet.loadAll ( CubeViz_Links_Module.selectedDSD.url, Module_Event.onComplete_LoadDataSets );
+            DataSet.loadAll (CubeViz_Links_Module ["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
         }
     }
     

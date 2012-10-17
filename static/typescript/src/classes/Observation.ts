@@ -4,7 +4,7 @@ class Observation {
     
     /**
      * 
-     */
+     *
     static loadAll (dsdUrl, dsUrl, callback) {
         
         $.ajax({
@@ -17,5 +17,5 @@ class Observation {
         }).done( function (entries) { 
             Component.prepareLoadedComponents (entries, callback); 
         });
-    }
+    }*/
 }
