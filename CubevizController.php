@@ -76,26 +76,26 @@ class CubevizController extends OntoWiki_Controller_Component {
 	}
 	
 	public function getresultobservationsAction() {
-		$this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();        
 		
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$graphUrl = $this->_request->getParam ('m');
 		$linkCode = $this->_request->getParam('lC');
 		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
-				
+        		
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
 		$configuration->initFromLink($linkCode);
 		$links = $configuration->getLinks();
 						
 		$query = new DataCube_Query($model);
 		
-		$dimensions = $links[$linkCode]['selectedDimensions'];
-		$dimensionComponents = $links[$linkCode]['selectedDimensionComponents'];
+		$selectedComponents = $links[$linkCode]['selectedComponents'];
 		$graphUrl = $links[$linkCode]['selectedGraph'];
 		$dataSetUrl = $links[$linkCode]['selectedDS']['url'];		
-			
-		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents, $dataSetUrl);	
+        
+		$resultObservations = $query->getObservations($graphUrl, $dataSetUrl, $selectedComponents);	
 		$this->_response->setBody($resultObservations);
 	}
     
