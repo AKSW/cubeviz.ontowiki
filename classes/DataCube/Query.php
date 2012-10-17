@@ -259,8 +259,12 @@ class DataCube_Query {
                 $filter = array ();
             
                 foreach ( $dimElements as $element ) {
+                    
+                    // If property is an URL
                     if ( true == $this->isUrl ( $element ['property'] ) ) {
                         $filter [] = ' ?d'. $i .' = <'. $element ['property'] .'> ';
+                        
+                    // If property is NOT an URL
                     } else {
                         $filter [] = ' ?d'. $i .' = "'. $element ['property'] .'" ';
                     }
