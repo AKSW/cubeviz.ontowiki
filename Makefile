@@ -15,6 +15,9 @@ build-javascript:
 	@echo "Build static/javascript/Cubeviz_Module.js ... "
 	tsc --out static/javascript/frontend/Cubeviz_Module.js @static/typescript/tsc_arguments/Cubeviz_Module.txt
 	@echo " "
+	@echo "Build static/javascript/Cubeviz_Viz.js ... "
+	tsc --out static/javascript/frontend/Cubeviz_Viz.js @static/typescript/tsc_arguments/Cubeviz_Viz.txt
+	@echo " "
 	
 install:
 	chmod 0777 data/links
