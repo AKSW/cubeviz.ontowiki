@@ -1,3 +1,6 @@
+/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\JSON.d.ts" />
+
 class System {
     static out ( output: any ) : void {
         if ( typeof console !== "undefined" 
@@ -25,5 +28,13 @@ class System {
      */
     static rand () {
         return Math.floor(Math.random() * (2147483647 + 1));
+    }
+    
+    /**
+     * 
+     */
+    static deepCopy ( elementToCopy ) {
+        var newElement = $.parseJSON ( JSON.stringify ( elementToCopy ) );
+        return newElement;
     }
 }

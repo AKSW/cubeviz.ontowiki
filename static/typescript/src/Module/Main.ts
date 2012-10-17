@@ -10,31 +10,20 @@ class Module_Main {
      * - onComplete_LoadDataSets
      */
     static buildComponentSelection ( components, selectedComponents ) {
-        
-        console.log ( "" );
-        console.log ( "components" );
-        console.log ( components );
-        console.log ( "" );
-        
-        console.log ( "" );
-        console.log ( "selectedComponents" );
-        console.log ( selectedComponents );
-        console.log ( "" );
     
-        var tplEntries = {"dimensions":[]};
-        
-        for ( var com in selectedComponents ["dimensions"] ) {
+        var selectedComLength:number = 1,
+            tplEntries = {"dimensions":[]};
             
-            com = selectedComponents ["dimensions"][com];
-            com ["selectedElementCount"] = com ["elements"]["length"];
-            com ["elementCount"] = components ["dimensions"][com ["label"]]["elements"]["length"];
+        for ( var com in components ["dimensions"] ) {
+            
+            selectedComLength = selectedComponents ["dimensions"][com]["elements"]["length"] || 1;
+            
+            com = components ["dimensions"][com];
+
+            com ["selectedElementCount"] = selectedComLength;
+            com ["elementCount"] = com ["elements"]["length"];
             tplEntries ["dimensions"].push (com);
         }
-        
-        console.log ( "" );
-        console.log ( "tplEntries" );
-        console.log ( tplEntries );
-        console.log ( "" );
     
         try {
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
@@ -95,7 +84,7 @@ class Module_Main {
     /**
      * Build dialog to select / unselect certain elements
      */
-    static buildDimensionDialog ( dimension:string, loadedComponentElements:any ) {
+    static buildDimensionDialog ( dimension:string, componentDimensionElements:any ) {
         
         try {            
             // Prepare jsontemplate
@@ -105,7 +94,7 @@ class Module_Main {
             $("#dimensionDialogContainer").html ( tpl.expand({ 
                 "dimension": dimension,
                 "label": dimension,
-                "list": loadedComponentElements [dimension]
+                "list": componentDimensionElements
             }));
             
             $("#dimensionDialogContainer").fadeIn (1000);

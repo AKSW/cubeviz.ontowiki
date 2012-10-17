@@ -1,6 +1,7 @@
 var Component = (function () {
     function Component() { }
-    Component.loadAllDimensions = function loadAllDimensions(dsdUrl, dsUrl, callback) {
+    Component.loadAllDimensions = function loadAllDimensions(dsdUrl, dsUrl, callback, resetSelectedComponents) {
+        if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
         $.ajax({
             url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
             data: {
@@ -10,10 +11,11 @@ var Component = (function () {
                 cT: "dimension"
             }
         }).done(function (entries) {
-            Component.prepareLoadedAllDimensions(entries, callback);
+            Component.prepareLoadedAllDimensions(entries, callback, resetSelectedComponents);
         });
     }
-    Component.prepareLoadedAllDimensions = function prepareLoadedAllDimensions(entries, callback) {
+    Component.prepareLoadedAllDimensions = function prepareLoadedAllDimensions(entries, callback, resetSelectedComponents) {
+        if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
         entries.sort(function (a, b) {
             return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
@@ -24,7 +26,19 @@ var Component = (function () {
         }
         callback({
             "dimensions": tmpEntries
-        });
+        }, resetSelectedComponents);
+    }
+    Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
+        componentDimensions = System.deepCopy(componentDimensions);
+        var result = {
+        };
+        for(var dimensionLabel in componentDimensions) {
+            result[dimensionLabel] = componentDimensions[dimensionLabel];
+            result[dimensionLabel].elements = [
+                result[dimensionLabel].elements[0]
+            ];
+        }
+        return result;
     }
     return Component;
 })();
@@ -92,6 +106,10 @@ var System = (function () {
     System.rand = function rand() {
         return Math.floor(Math.random() * (2147483647 + 1));
     }
+    System.deepCopy = function deepCopy(elementToCopy) {
+        var newElement = $.parseJSON(JSON.stringify(elementToCopy));
+        return newElement;
+    }
     return System;
 })();
 var CubeViz_Config = CubeViz_Config || {
@@ -124,7 +142,7 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
         var dimension = $(this).attr("dimension").toString();
-        Module_Main.buildDimensionDialog(dimension, CubeViz_Links_Module.loadedComponentElements);
+        Module_Main.buildDimensionDialog(dimension, CubeViz_Links_Module.components["dimensions"][dimension]["elements"]);
         Module_Event.setupDialogSelectorCloseButton(dimension);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
@@ -134,14 +152,14 @@ var Module_Event = (function () {
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
         window.location.href = CubeViz_Links_Module["cubevizPath"];
     }
-    Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries) {
+    Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries, resetSelectedComponents) {
+        if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
+        if(true == resetSelectedComponents) {
+            CubeViz_Links_Module.selectedComponents.dimensions = [];
+            CubeViz_Links_Module.selectedComponents.dimensions = Component.getDefaultSelectedDimensions(entries.dimensions);
+        } else {
+        }
         CubeViz_Links_Module.components = entries;
-        console.log("");
-        console.log("");
-        console.log("onComplete_LoadAllComponentDimensions");
-        console.log(CubeViz_Links_Module.components);
-        console.log("");
-        console.log("");
         Module_Main.buildComponentSelection(CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents);
         Module_Event.setupDialogSelector();
     }
@@ -174,11 +192,13 @@ var Module_Event = (function () {
             System.out("no data sets were loaded");
         } else {
             if(1 <= entries.length) {
+                var resetSelectedComponents = false;
                 if(null == CubeViz_Links_Module.selectedDS) {
                     CubeViz_Links_Module.selectedDS = entries[0];
+                    resetSelectedComponents = true;
                 }
                 Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
-                Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadAllComponentDimensions);
+                Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadAllComponentDimensions, resetSelectedComponents);
             }
         }
     }
@@ -216,6 +236,16 @@ var Module_Event = (function () {
 var Module_Main = (function () {
     function Module_Main() { }
     Module_Main.buildComponentSelection = function buildComponentSelection(components, selectedComponents) {
+        var selectedComLength = 1;
+        var tplEntries = {
+            "dimensions": []
+        };
+
+        console.log("");
+        console.log("");
+        console.log("");
+        console.log("");
+        console.log("buildComponentSelection");
         console.log("");
         console.log("components");
         console.log(components);
@@ -224,19 +254,13 @@ var Module_Main = (function () {
         console.log("selectedComponents");
         console.log(selectedComponents);
         console.log("");
-        var tplEntries = {
-            "dimensions": []
-        };
-        for(var com in selectedComponents["dimensions"]) {
-            com = selectedComponents["dimensions"][com];
-            com["selectedElementCount"] = com["elements"]["length"];
-            com["elementCount"] = components["dimensions"][com["label"]]["elements"]["length"];
+        for(var com in components["dimensions"]) {
+            selectedComLength = selectedComponents["dimensions"][com]["elements"]["length"] || 1;
+            com = components["dimensions"][com];
+            com["selectedElementCount"] = selectedComLength;
+            com["elementCount"] = com["elements"]["length"];
             tplEntries["dimensions"].push(com);
         }
-        console.log("");
-        console.log("tplEntries");
-        console.log(tplEntries);
-        console.log("");
         try  {
             var tpl = jsontemplate.Template(CubeViz_Dimension_Template);
             $("#sidebar-left-data-selection-dims-boxes").html(tpl.expand(tplEntries));
@@ -267,13 +291,13 @@ var Module_Main = (function () {
             $("#sidebar-left-data-selection-strc").append(entry);
         }
     }
-    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimension, loadedComponentElements) {
+    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimension, componentDimensionElements) {
         try  {
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
             $("#dimensionDialogContainer").html(tpl.expand({
                 "dimension": dimension,
                 "label": dimension,
-                "list": loadedComponentElements[dimension]
+                "list": componentDimensionElements
             }));
             $("#dimensionDialogContainer").fadeIn(1000);
         } catch (e) {

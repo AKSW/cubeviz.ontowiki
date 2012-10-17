@@ -87,12 +87,17 @@ class Module_Event {
      * 
      */
     static onClick_DialogSelector () {
-        
+                
         // get dimension from clicked dialog selector
         var dimension:string = $(this).attr ( "dimension" ).toString ();
         
         // 
-        Module_Main.buildDimensionDialog (dimension, CubeViz_Links_Module.loadedComponentElements);
+        Module_Main.buildDimensionDialog (
+            dimension, // current dimension
+            
+            // component->dimension->elements to build a list with checkboxes to select / unselect
+            CubeViz_Links_Module.components ["dimensions"] [dimension]["elements"] 
+        );
         
         /**
          * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
@@ -125,23 +130,20 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadAllComponentDimensions (entries) {
+    static onComplete_LoadAllComponentDimensions (entries, resetSelectedComponents:bool = false) {
+        
+        if ( true == resetSelectedComponents ) {
+            
+            // set default values for selected component dimensions list
+            // for each componentDimension first entry will be selected
+            // e.g. Year (2003), Country (Germany)
+            CubeViz_Links_Module.selectedComponents.dimensions =
+                Component.getDefaultSelectedDimensions ( entries.dimensions );
+        } else { }
     
         // save pulled component dimensions
         CubeViz_Links_Module.components = entries;
-        
-        console.log ( "" );
-        console.log ( "" );
-        console.log ( "onComplete_LoadAllComponentDimensions" );
-        console.log ( CubeViz_Links_Module.components );
-        console.log ( "" );
-        console.log ( "" );
-                    
-        /**
-         * Update CubeViz_Links_Module.selectedDimensionComponents with new entries
-         */
-        // Component.updateSelectedDimensionComponents ( CubeViz_Links_Module.components );
-        
+            
         /**
          * Update component selection
          */
@@ -209,8 +211,15 @@ class Module_Event {
             
         } else if ( 1 <= entries.length ) {
             
+            var resetSelectedComponents = false;
+            
             if ( null == CubeViz_Links_Module.selectedDS ) {
                 CubeViz_Links_Module.selectedDS = entries [0];
+                
+                // reset selectedComponents
+                resetSelectedComponents = true;
+                                
+                // TODO: CubeViz_Links_Module.selectedComponents.measures = {};
             }
             
             /**
@@ -222,7 +231,8 @@ class Module_Event {
             Component.loadAllDimensions ( 
                 CubeViz_Links_Module.selectedDSD.url, 
                 CubeViz_Links_Module.selectedDS.url, 
-                Module_Event.onComplete_LoadAllComponentDimensions 
+                Module_Event.onComplete_LoadAllComponentDimensions,
+                resetSelectedComponents
             );
         }
     }
