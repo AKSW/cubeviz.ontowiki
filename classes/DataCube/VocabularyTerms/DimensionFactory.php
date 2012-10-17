@@ -28,9 +28,7 @@ class DataCube_VocabularyTerms_DimensionFactory
             foreach ( $selectedDimensions as $dimension ) {
                 if ( $dimension ['label'] == $dimensionLabel ) {
                     $return [ $dimensionLabel ] = new DataCube_VocabularyTerms_Dimension(
-                        $dimension['url'], $dimension['label'], 
-                        $dimension['type'], $dimension['elementCount'], 
-                        $dimension['selectedElementCount']
+                        $dimension['url'], $dimension['label'], $dimension['type']
                     );
                 }
             }

@@ -138,21 +138,13 @@ class DataCube_Query {
         foreach($queryresultComp as $comp) {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
-                $entry = array ( 
-                    'url'   => $comp['comp'],
-                    'url_md5'   => md5($comp['comp']),
-                    'type'  => $comp['comptype'],
+                $result [] = array ( 
+                    'label' => $titleHelper->getTitle($comp['comp']),
                     'order' => isset($comp['order']) ? $comp['order'] : -1,
-                    'label' => $titleHelper->getTitle($comp['comp'])
+                    'url'   => $comp['comp'],
+                    'type'  => $comp['comptype'],
+                    'elements' => $this->getComponentElements($dsUri, $comp['comptype'])
                 );
-
-                if($componentType == 'dimension'){
-                    $entry ['elementCount'] = $this->getComponentElementCount(
-                        $dsUri, $entry['type']
-                    );
-                }
-                    
-                array_push($result, $entry);
             }
         }
         

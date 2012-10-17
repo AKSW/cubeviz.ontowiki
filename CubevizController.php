@@ -162,7 +162,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 	
 	/**
 	 * 
-	 */
+	 *
 	public function getalldimensionselementsAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
@@ -181,7 +181,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		}		
 		       
         $this->_response->setBody(json_encode($result));
-	}
+	}*/
 	
 	/**
 	 * 
