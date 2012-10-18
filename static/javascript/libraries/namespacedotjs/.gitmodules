@@ -1,3 +1,0 @@
-[submodule "vendor/jsunittest"]
-	path = vendor/jsunittest
-	url = git://github.com/drnic/jsunittest.git
