@@ -43,12 +43,6 @@ class Viz_Event {
      */
     static onComplete_LoadResultObservations (entries) {
                 
-        console.log ( "" );
-        console.log ( "" );
-        console.log ( "onComplete_LoadResultObservations" );
-        console.log ( entries );
-        console.log ( "" );
-                
         var chart = HighCharts.loadChart ( "Bar2" );
             
         // init chart instance

@@ -187,11 +187,6 @@ var Viz_Event = (function () {
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
-        console.log("");
-        console.log("");
-        console.log("onComplete_LoadResultObservations");
-        console.log(entries);
-        console.log("");
         var chart = HighCharts.loadChart("Bar2");
         chart.init(entries, CubeViz_Links_Module, CubeViz_ChartConfig["2"][0]["types"][0].config);
         var renderedChart = chart.getRenderResult();
