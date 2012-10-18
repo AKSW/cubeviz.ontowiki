@@ -45,33 +45,25 @@ class CubevizModule extends OntoWiki_Module
     public function getContents() {
 
 		// set URL for cubeviz extension folder
-		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
-        $this->view->cubevizPath = $cubeVizExtensionURL_controller;
+        $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
+        
         // send backend information to the view
-        $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
-        $this->view->backend = $ontowikiBackend;
-		
-		//endpoint is local now!
-		$sparqlEndpoint = "local";
-		
-		//model
+        $this->view->backend = $this->_owApp->getConfig()->store->backend;
+				
+		// model
 		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
-		//linkCode
-		$linkCode = $this->_request->getParam ("lC");
-		if(NULL == $linkCode) {
-			$linkCode = "default";
-		}
-		$this->view->linkCode = $linkCode;
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
-		$configuration->initFromLink($linkCode);		
-        $this->view->links = $configuration->getLinks();
-		$this->view->links = json_encode($this->view->links ["default"]);
-													
-		// TODO: get backend from OntoWiki config
-		$this->view->backend = "virtuoso";
-				
+		// linkCode (default value: "default" )
+		$this->view->linkCode = $this->_request->getParam ("lC");
+		if(NULL == $this->view->linkCode) { $this->view->linkCode = "default"; }
+        
+        // load configuration which is associated with given linkCode
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+        $configuration = $configuration->read ($this->view->linkCode);
+		$this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
+		$this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
+                                        
         $content = $this->render('static/pages/CubeVizModule');
         return $content;
     }

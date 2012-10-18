@@ -11,7 +11,7 @@
      * Contains loaded configuration for given hashcode
      * default is "default" configuration
      */
-    var CubeViz_Links_Module = <?php echo $this->links; ?>;
+    var CubeViz_Links_Module = <?php echo $this->linkConfiguration; ?>;
 	
     // Name of choosen config; default is "default"
     CubeViz_Links_Module ["linkCode"] = <?php echo json_encode($this->linkCode); ?>; 
@@ -27,8 +27,7 @@
         "context": "development"   // possible: development, production
     };
     
-    var cubeVizUIChartConfig = {
-    };
+    var cubeVizUIChartConfig = <?php echo $this->cubeVizUIChartConfig; ?>;
 			
 </script>
 

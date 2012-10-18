@@ -24,95 +24,25 @@ class CubeViz_ConfigurationLink
     protected $_links = null;
     
     /**
-     * points to the directory /data/links/sparqlEndpoint
-     */
-    protected $_sparqlEndpoint = '';
-    
-    /**
-     * points to the directory /data/links/sparqlEndpoint/graphUrl
-     */
-    protected $_graphUrl = '';
-        
-    /**
      * Constructor
      */
-    public function __construct($sparqlEndpoint, $graphUrl) {
+    public function __construct($cubeVizDir) {
         $ds = DIRECTORY_SEPARATOR;        
-        $this->_sparqlEndpoint = $this->urlToPath($sparqlEndpoint);
-        $this->_graphUrl = $this->urlToPath($graphUrl);
-        $this->_linksFolder = dirname (__FILE__) . $ds . '..' . $ds . '..' . $ds . 'data' . $ds . 'links' . $ds . $this->_sparqlEndpoint . $ds . $this->_graphUrl . $ds;
-                
+        $this->_linksFolder = $cubeVizDir . $ds . 'data' . $ds . 'links' . $ds;
         $this->_links = array ();
 	}
-	
-	private function urlToPath($url) {
-		$pattern_separator = "#:#";
-		$pattern_slash = "#/#";
-		$replacement = ".";
-		
-		$path = preg_replace($pattern_separator, $replacement, $url);
-		$path = preg_replace($pattern_slash, $replacement, $path);
-		
-		return $path;
-	}
-	
-	private function checkUrlVsPath($url, $path) {
-		$pattern = "#" . $path . "#";
-        return preg_match($pattern, $url);
-	}
-	
+    
 	/**
 	 * Read configuration from a json file in links folder
      * @param $linkCode Name of the file (name = hash code)
-     * @return true
-     * @throws CubeViz_Exception
+     * @return boolean
 	 */
-	public function initFromLink($linkCode) {
-		
-		if(file_exists($this->_linksFolder . $linkCode)) {
-			
-            $parameters = file($this->_linksFolder . $linkCode);
-						
-            $this->_links [$linkCode] ['sparqlEndpoint'] = json_decode(trim($parameters[0]));
-            
-			$this->_links [$linkCode] ['selectedGraph'] = json_decode(trim($parameters[1]));
-			
-            // Data Structure Definition
-            $selectedDSD = json_decode(trim($parameters[2]), true);
-			$this->_links [$linkCode] ['selectedDSD'] = new DataCube_VocabularyTerms_DataStructureDefinition (
-                $selectedDSD['url'], $selectedDSD['label']
-            );
-			
-            // Data Set
-            $selectedDS = json_decode(trim($parameters[3]), true);
-			$this->_links [$linkCode] ['selectedDS'] = new DataCube_VocabularyTerms_DataSet(
-                $selectedDS['url'],$selectedDS['label']
-            );
-			
-            // Measures
-            $selectedMeasures = json_decode(trim($parameters[4]), true);
-			$this->_links [$linkCode]['selectedComponents']['measures'] = 
-                DataCube_VocabularyTerms_MeasureFactory::extract ($selectedMeasures);
-			
-            // Dimensions
-            $selectedDimensions = json_decode(trim($parameters[5]), true);
-			// $this->_links [$linkCode]['selectedDimensions'] = 
-            //    DataCube_VocabularyTerms_DimensionFactory::extract ( $selectedDimensions );
-            
-            // Components: dimension
-			$selectedDimensionComponents = json_decode(trim($parameters[6]), true);
-			$this->_links [$linkCode]['selectedComponents']['dimensions'] = 
-                DataCube_VocabularyTerms_DimensionComponentFactory::extract ( $selectedDimensions, $selectedDimensionComponents );
-                
-		} else {
-            //throw new CubeViz_Exception ('Link you specified does not exist! Please, check '. $this->_linksFolder .' folder.');
-			return false;
+	public function read($linkCode) {
+        
+		if (true === file_exists($this->_linksFolder . $linkCode) ) {
+            return file($this->_linksFolder . $linkCode);
 		}
-		return true;
-	}
-	
-	public function getLinks() {
-		return $this->_links;
+		return false;
 	}
 	
 	public function writeToFile($config) {
