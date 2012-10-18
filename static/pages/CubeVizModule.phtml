@@ -78,11 +78,22 @@
 				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
 				<div id="sidebar-left-data-selection-meas-boxes"></div>
 			</div>
-            <div style="text-align: center; clear:both;">
-				<input type="submit" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
+            <div style="clear:both;">
+                <br/>
+                <br/>
+                <br/>
+				<div style="position:absolute;left:20px;bottom:18px;font-size:11px;">
+                    <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
+                </div>
+                <div id="permaLinkMenu" style="display:none;position:absolute;left:23px;bottom:50px;border:1px solid #C2C2C2; padding-left: 3px; padding-right:3px;">
+                    <span id="permaLink"></span>
+                </div>
+				<div style="position:absolute;right:30px;bottom:15px;">
+                    <input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
+                </div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div id="dimensionDialogContainer" style="display:none;"></div>
+<div id="dimensionDialogContainer"></div>

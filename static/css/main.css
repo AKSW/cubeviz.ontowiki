@@ -123,11 +123,15 @@
  * Dialogs -------------------------------------------------------------
  */
  
+#dimensionDialogContainer {
+    display:none;
+    position:absolute;
+    top:35px;
+    left:290px;
+}
+ 
 .dialog {
 	z-index: 1000;
-    position: absolute;
-    top: 100px;
-    left: 350px;
     height: 500px;
     width: auto;
     min-width: 600px;

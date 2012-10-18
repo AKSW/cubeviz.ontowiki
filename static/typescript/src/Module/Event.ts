@@ -54,6 +54,11 @@ class Module_Event {
          * Button to show visualization
          */
         Module_Event.setupShowVisualizationButton ();
+         
+        /**
+         * Button to show perma link menu
+         */
+        Module_Event.setupPermaLinkButton ();
     }
     
     /**
@@ -139,6 +144,22 @@ class Module_Event {
         
         // clean content of shown dialog box
         $("#dimensionDialogContainer").fadeOut (500).html ("");
+    }
+     
+    /**
+     * 
+     */
+    static onClick_PermaLinkButton () {
+        
+        var url = $("<a></a>");
+        url
+            .attr ( "href", CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"] )
+            .attr ( "target", "_blank" )
+            .html ( "Link" );
+            
+        $("#permaLink").html ( url );
+        
+        $("#permaLinkMenu").slideToggle ( 'slow' );
     }
      
     /**
@@ -345,6 +366,15 @@ class Module_Event {
         
         // set event for onChange
         $("#dialog-btn-close-" + dimensionLabel ).click (Module_Event.onClick_DialogSelectorCloseButton);
+    }
+    
+    /**
+     * 
+     */
+    static setupPermaLinkButton () {
+        
+        // set event for onClick
+        $("#permaLinkButton" ).click (Module_Event.onClick_PermaLinkButton);
     }
     
     /**

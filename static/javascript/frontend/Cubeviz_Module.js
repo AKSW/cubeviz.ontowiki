@@ -173,6 +173,7 @@ var Module_Event = (function () {
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
         Module_Event.setupShowVisualizationButton();
+        Module_Event.setupPermaLinkButton();
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
@@ -206,6 +207,12 @@ var Module_Event = (function () {
         CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
         ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
         $("#dimensionDialogContainer").fadeOut(500).html("");
+    }
+    Module_Event.onClick_PermaLinkButton = function onClick_PermaLinkButton() {
+        var url = $("<a></a>");
+        url.attr("href", CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"]).attr("target", "_blank").html("Link");
+        $("#permaLink").html(url);
+        $("#permaLinkMenu").slideToggle('slow');
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
         if("undefined" == typeof Viz_Event) {
@@ -291,6 +298,9 @@ var Module_Event = (function () {
     }
     Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimensionLabel) {
         $("#dialog-btn-close-" + dimensionLabel).click(Module_Event.onClick_DialogSelectorCloseButton);
+    }
+    Module_Event.setupPermaLinkButton = function setupPermaLinkButton() {
+        $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.setupShowVisualizationButton = function setupShowVisualizationButton() {
         $("#sidebar-left-data-selection-submitbtn").click(Module_Event.onClick_ShowVisualizationButton);
