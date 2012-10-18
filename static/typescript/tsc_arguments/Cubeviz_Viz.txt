@@ -1,3 +1,4 @@
+static/typescript/src/classes/ConfigurationLink.ts
 static/typescript/src/classes/Observation.ts
 static/typescript/src/classes/System.ts
 

@@ -1,3 +1,18 @@
+var ConfigurationLink = (function () {
+    function ConfigurationLink() { }
+    ConfigurationLink.saveToServerFile = function saveToServerFile(cubeVizLinksModule, cubeVizUIChartConfig, callback) {
+        $.ajax({
+            url: CubeViz_Links_Module["cubevizPath"] + "savelinktofile/",
+            data: {
+                "cubeVizLinksModule": cubeVizLinksModule,
+                "cubeVizUIChartConfig": cubeVizUIChartConfig
+            }
+        }).done(function (result) {
+            callback(result);
+        });
+    }
+    return ConfigurationLink;
+})();
 var Observation = (function () {
     function Observation() { }
     Observation.loadAll = function loadAll(modelUrl, linkCode, sparqlEndpoint, callback) {
@@ -147,13 +162,9 @@ var HighCharts_Bar2 = (function (_super) {
 })(HighCharts_Chart);
 var CubeViz_Config = CubeViz_Config || {
 };
-var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {
-};
 var CubeViz_Links_Module = CubeViz_Links_Module || {
 };
-var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
-};
-var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {
+var cubeVizUIChartConfig = cubeVizUIChartConfig || {
 };
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {
 };
@@ -164,6 +175,8 @@ var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
         $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
+        console.log(JSON.stringify(CubeViz_Links_Module));
+        console.log(JSON.stringify(CubeViz_Links_Module));
         Observation.loadAll(CubeViz_Links_Module["modelUrl"], CubeViz_Links_Module["linkCode"], "local", Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

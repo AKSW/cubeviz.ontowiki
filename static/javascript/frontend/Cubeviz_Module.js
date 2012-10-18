@@ -42,6 +42,21 @@ var Component = (function () {
     }
     return Component;
 })();
+var ConfigurationLink = (function () {
+    function ConfigurationLink() { }
+    ConfigurationLink.saveToServerFile = function saveToServerFile(cubeVizLinksModule, cubeVizUIChartConfig, callback) {
+        $.ajax({
+            url: CubeViz_Links_Module["cubevizPath"] + "savelinktofile/",
+            data: {
+                "cubeVizLinksModule": cubeVizLinksModule,
+                "cubeVizUIChartConfig": cubeVizUIChartConfig
+            }
+        }).done(function (result) {
+            callback(result);
+        });
+    }
+    return ConfigurationLink;
+})();
 var DataStructureDefinition = (function () {
     function DataStructureDefinition() { }
     DataStructureDefinition.loadAll = function loadAll(callback) {
@@ -129,13 +144,9 @@ var System = (function () {
 })();
 var CubeViz_Config = CubeViz_Config || {
 };
-var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {
-};
 var CubeViz_Links_Module = CubeViz_Links_Module || {
 };
-var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {
-};
-var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {
+var cubeVizUIChartConfig = cubeVizUIChartConfig || {
 };
 var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {
 };
@@ -184,6 +195,7 @@ var Module_Event = (function () {
             }
         });
         CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
+        ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
         $("#dimensionDialogContainer").fadeOut(500).html("");
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
@@ -241,7 +253,7 @@ var Module_Event = (function () {
     Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(entries) {
         Module_Main.buildDataStructureDefinitionBox(entries, CubeViz_Links_Module.selectedDSD.url);
         if(0 == entries.length) {
-            CubeViz_Parameters_Module.selectedDSD = {
+            CubeViz_Links_Module["selectedDSD"] = {
             };
             System.out("onComplete_LoadDataStructureDefinitions");
             System.out("no data structure definitions were loaded");
@@ -250,6 +262,10 @@ var Module_Event = (function () {
                 DataSet.loadAll(CubeViz_Links_Module["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
             }
         }
+    }
+    Module_Event.onComplete_SaveConfigurationAfterChangeElements = function onComplete_SaveConfigurationAfterChangeElements(result) {
+        console.log("onComplete_SaveConfigurationAfterChangeElements");
+        console.log(result);
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);

@@ -9,10 +9,8 @@
  * Make variables accessible for TypeScript
  */
 var CubeViz_Config = CubeViz_Config || {};
-var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {};
 var CubeViz_Links_Module = CubeViz_Links_Module || {};
-var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
-var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {};
+var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 
 // templates
 var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {};
@@ -130,6 +128,12 @@ class Module_Event {
         
         // save new dimensional elements list
         CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
+        
+        ConfigurationLink.saveToServerFile ( 
+            CubeViz_Links_Module,
+            cubeVizUIChartConfig,
+            Module_Event.onComplete_SaveConfigurationAfterChangeElements
+        );
         
         // clean content of shown dialog box
         $("#dimensionDialogContainer").fadeOut (500).html ("");
@@ -266,7 +270,7 @@ class Module_Event {
         // if at least one data structure definition, than load data sets for first one
         if ( 0 == entries.length ) {
             // todo: handle case that no data structure definition were loaded
-            CubeViz_Parameters_Module.selectedDSD = {};
+            CubeViz_Links_Module["selectedDSD"] = {};
             System.out ( "onComplete_LoadDataStructureDefinitions" );
             System.out ( "no data structure definitions were loaded" );
             
@@ -275,6 +279,15 @@ class Module_Event {
             // if more than one data structure definition, load for the first one its data sets
             DataSet.loadAll (CubeViz_Links_Module ["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
         }
+    }
+     
+    /**
+     * 
+     */
+    static onComplete_SaveConfigurationAfterChangeElements (result) {
+        
+        console.log ( "onComplete_SaveConfigurationAfterChangeElements" );
+        console.log ( result );
     }
     
     /**

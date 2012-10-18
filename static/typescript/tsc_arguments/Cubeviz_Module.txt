@@ -1,4 +1,5 @@
 static/typescript/src/classes/Component.ts
+static/typescript/src/classes/ConfigurationLink.ts
 static/typescript/src/classes/DataStructureDefinition.ts
 static/typescript/src/classes/DataSet.ts
 static/typescript/src/classes/Observation.ts

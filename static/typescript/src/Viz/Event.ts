@@ -1,3 +1,4 @@
+/// <reference path="..\DeclarationSourceFiles\JSON.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\Highcharts.d.ts" />
 
@@ -5,10 +6,8 @@
  * Make variables accessible for TypeScript
  */
 var CubeViz_Config = CubeViz_Config || {};
-var CubeViz_Link_Chosen_Module = CubeViz_Link_Chosen_Module || {};
 var CubeViz_Links_Module = CubeViz_Links_Module || {};
-var CubeViz_Parameters_Component = CubeViz_Parameters_Component || {};
-var CubeViz_Parameters_Module = CubeViz_Parameters_Module || {};
+var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
@@ -29,6 +28,9 @@ class Viz_Event {
         $("#sidebar-left-data-selection-submitbtn").attr ( 
             "value", "Update visualization"
         );
+        
+        console.log ( JSON.stringify ( CubeViz_Links_Module ) );
+        console.log ( JSON.stringify ( CubeViz_Links_Module ) );
         
         /**
          * Load observations based on pre-configured data structure definition and data set.

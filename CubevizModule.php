@@ -66,7 +66,8 @@ class CubevizModule extends OntoWiki_Module
 		$this->view->linkCode = $linkCode;
 		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
 		$configuration->initFromLink($linkCode);		
-		$this->view->links = json_encode($configuration->getLinks());
+        $this->view->links = $configuration->getLinks();
+		$this->view->links = json_encode($this->view->links ["default"]);
 													
 		// TODO: get backend from OntoWiki config
 		$this->view->backend = "virtuoso";
