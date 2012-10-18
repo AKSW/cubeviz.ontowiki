@@ -3,6 +3,7 @@
  */ 
 /// <reference path="..\DeclarationSourceFiles\jsontemplate.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\Viz_Event.d.ts" />
 
 
 /**
@@ -145,7 +146,21 @@ class Module_Event {
      */
     static onClick_ShowVisualizationButton () {
         
-        window.location.href = CubeViz_Links_Module ["cubevizPath"];
+        // Case 1: Only CubeViz module was loaded
+        if ( "undefined" == typeof Viz_Event ) {
+           // refresh page and show visualization for the latest linkCode
+            window.location.href = CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"];
+        
+        // Case 2: CubeViz module and visualization part was loaded
+        // Load observations based on pre-configured data structure definition and data set.
+        } else {
+            Observation.loadAll ( 
+                CubeViz_Links_Module ["linkCode"],
+                
+                // Call an event of the visualization part
+                Viz_Event.onComplete_LoadResultObservations
+            );
+        }
     }
     
     /**
@@ -286,9 +301,8 @@ class Module_Event {
      * 
      */
     static onComplete_SaveConfigurationAfterChangeElements (result) {
-        
-        console.log ( "onComplete_SaveConfigurationAfterChangeElements" );
-        console.log ( result );
+        // Save new generated linkCode
+        CubeViz_Links_Module ["linkCode"] = result;
     }
     
     /**

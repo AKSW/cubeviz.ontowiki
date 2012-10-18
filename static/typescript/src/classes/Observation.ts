@@ -5,17 +5,18 @@ class Observation {
     /**
      * 
      */
-    static loadAll (modelUrl:string, linkCode:string, sparqlEndpoint:string, callback) {
-        
+    static loadAll (linkCode:string, callback) {
+        console.log ( CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/" );
+        console.log ( {
+                lC: linkCode
+            } );
         $.ajax({
             url: CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/",
             data: {
-                m: modelUrl,
-                lC: linkCode,
-                sparqlEndpoint: sparqlEndpoint
+                lC: linkCode
             }
         }).done( function (entries) { 
-            Observation.prepareLoadedResultObservations (entries, callback); 
+            Observation.prepareLoadedResultObservations ( entries, callback );
         });
     }
     
@@ -23,7 +24,12 @@ class Observation {
      * 
      */
     static prepareLoadedResultObservations (entries, callback) {
-        callback ( $.parseJSON ( entries ) );
+        var parse = $.parseJSON ( entries );
+        if ( null == parse ) {
+            callback ( entries );
+        } else {
+            callback ( parse );
+        }
     }
     
 }

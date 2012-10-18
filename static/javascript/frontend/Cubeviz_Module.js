@@ -51,6 +51,8 @@ var ConfigurationLink = (function () {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
+        }).error(function (result) {
+            System.out(result.responseText);
         }).done(function (result) {
             callback(result);
         });
@@ -100,20 +102,27 @@ var DataSet = (function () {
 })();
 var Observation = (function () {
     function Observation() { }
-    Observation.loadAll = function loadAll(modelUrl, linkCode, sparqlEndpoint, callback) {
+    Observation.loadAll = function loadAll(linkCode, callback) {
+        console.log(CubeViz_Links_Module["cubevizPath"] + "getresultobservations/");
+        console.log({
+            lC: linkCode
+        });
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {
-                m: modelUrl,
-                lC: linkCode,
-                sparqlEndpoint: sparqlEndpoint
+                lC: linkCode
             }
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);
         });
     }
     Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries, callback) {
-        callback($.parseJSON(entries));
+        var parse = $.parseJSON(entries);
+        if(null == parse) {
+            callback(entries);
+        } else {
+            callback(parse);
+        }
     }
     return Observation;
 })();
@@ -199,7 +208,11 @@ var Module_Event = (function () {
         $("#dimensionDialogContainer").fadeOut(500).html("");
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
-        window.location.href = CubeViz_Links_Module["cubevizPath"];
+        if("undefined" == typeof Viz_Event) {
+            window.location.href = CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"];
+        } else {
+            Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
+        }
     }
     Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries, resetSelectedComponents) {
         if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
@@ -264,8 +277,7 @@ var Module_Event = (function () {
         }
     }
     Module_Event.onComplete_SaveConfigurationAfterChangeElements = function onComplete_SaveConfigurationAfterChangeElements(result) {
-        console.log("onComplete_SaveConfigurationAfterChangeElements");
-        console.log(result);
+        CubeViz_Links_Module["linkCode"] = result;
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);

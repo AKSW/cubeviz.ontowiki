@@ -8,7 +8,7 @@ var ConfigurationLink = (function () {
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
         }).error(function (result) {
-            console.log(result.responseText);
+            System.out(result.responseText);
         }).done(function (result) {
             callback(result);
         });
@@ -17,20 +17,27 @@ var ConfigurationLink = (function () {
 })();
 var Observation = (function () {
     function Observation() { }
-    Observation.loadAll = function loadAll(modelUrl, linkCode, sparqlEndpoint, callback) {
+    Observation.loadAll = function loadAll(linkCode, callback) {
+        console.log(CubeViz_Links_Module["cubevizPath"] + "getresultobservations/");
+        console.log({
+            lC: linkCode
+        });
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {
-                m: modelUrl,
-                lC: linkCode,
-                sparqlEndpoint: sparqlEndpoint
+                lC: linkCode
             }
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);
         });
     }
     Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries, callback) {
-        callback($.parseJSON(entries));
+        var parse = $.parseJSON(entries);
+        if(null == parse) {
+            callback(entries);
+        } else {
+            callback(parse);
+        }
     }
     return Observation;
 })();
@@ -177,9 +184,14 @@ var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
         $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
-        Observation.loadAll(CubeViz_Links_Module["modelUrl"], CubeViz_Links_Module["linkCode"], "local", Viz_Event.onComplete_LoadResultObservations);
+        Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
+        console.log("");
+        console.log("");
+        console.log("onComplete_LoadResultObservations");
+        console.log(entries);
+        console.log("");
         var chart = HighCharts.loadChart("Bar2");
         chart.init(entries, CubeViz_Links_Module, CubeViz_ChartConfig["2"][0]["types"][0].config);
         var renderedChart = chart.getRenderResult();

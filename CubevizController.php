@@ -120,8 +120,12 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 						
 		$query = new DataCube_Query($model);
-						
-        $this->_response->setBody(json_encode($query->getDataSets($dsdUrl)));
+
+        $this->_response
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
+            ->setBody(json_encode($query->getDataSets($dsdUrl)));
 	}
 	
 	/**

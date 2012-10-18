@@ -33,9 +33,7 @@ class Viz_Event {
          * Load observations based on pre-configured data structure definition and data set.
          */
         Observation.loadAll ( 
-            CubeViz_Links_Module ["modelUrl"],
             CubeViz_Links_Module ["linkCode"],
-            "local", // = sparqlEndpoint
             Viz_Event.onComplete_LoadResultObservations
         );
     }
@@ -44,7 +42,13 @@ class Viz_Event {
      * 
      */
     static onComplete_LoadResultObservations (entries) {
-        
+                
+        console.log ( "" );
+        console.log ( "" );
+        console.log ( "onComplete_LoadResultObservations" );
+        console.log ( entries );
+        console.log ( "" );
+                
         var chart = HighCharts.loadChart ( "Bar2" );
             
         // init chart instance
