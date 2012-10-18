@@ -12,8 +12,10 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
          * Set height of container div
          */
          
-        var containerHeight = $("#container").offset(); 
-        containerHeight = ( screen.height - containerHeight.top - 85 );
+        var container = $("#container").offset();
+        var viewPort = $(window).height();
+        var containerHeight = 0; 
+        containerHeight = ( viewPort - container.top );
          
         $("#container").css ( "height", containerHeight );
         $("#wrapper-index").css ( "height", containerHeight );
