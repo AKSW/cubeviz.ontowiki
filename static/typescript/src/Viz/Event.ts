@@ -47,10 +47,6 @@ class Viz_Event {
         
         var renderedChart = chart.getRenderResult();
         
-        console.log ( "" );
-        console.log ( "renderedChart" );
-        console.log ( renderedChart );
-        
         new Highcharts.Chart(renderedChart);
     }
 }

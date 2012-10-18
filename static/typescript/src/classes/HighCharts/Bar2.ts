@@ -23,18 +23,6 @@ class HighCharts_Bar2 extends HighCharts_Chart {
      */
     public init ( entries:any, cubeVizConfig:Object, chartConfig:any ) : void {
         
-        console.log ("");
-        console.log ("entries");
-        console.log (entries);
-        
-        console.log ("");
-        console.log ("cubeVizConfig");
-        console.log (cubeVizConfig);
-        
-        console.log ("");
-        console.log ("chartConfig");
-        console.log (chartConfig);
-        
         var dimensionLabels:string[] = [""];
         var forXAxis = null;
         var forSeries = null;
@@ -78,9 +66,6 @@ class HighCharts_Bar2 extends HighCharts_Chart {
                 "data": seriesData [ forSeries ["elements"][i]["property"] ]
             });
         }
-        
-        console.log ( "this.series" );
-        console.log ( this.series );
     }
     
     /**
@@ -108,12 +93,7 @@ class HighCharts_Bar2 extends HighCharts_Chart {
         
         var seriesData = {};
         var dimensionType = forSeries.type; // e.g. http://data.lod2.eu/scoreboard/properties/year
-        
-        console.log ( "entries" );
-        console.log ( entries );
-        console.log ( "" );
-        console.log ( "" );
-        
+    
         for ( var mainIndex in entries ) {
             for ( var propertyUri in entries [mainIndex] ) {
                 if ( propertyUri == dimensionType ) {

@@ -31,31 +31,9 @@ class Module_Event {
      * After document is ready
      */
     static ready () {
-        /*System.out ( "" );
-        System.out ( "CubeViz_Parameters_Component:" );
-        System.out ( CubeViz_Parameters_Component );
-        System.out ( "" );*/
+        
         System.out ( "CubeViz_Links_Module:" );
         System.out ( CubeViz_Links_Module );
-        
-        /*
-        console.log ( JSON.stringify ({
-            "Year": [
-                CubeViz_Links_Module.selectedDimensionComponents [0],
-                CubeViz_Links_Module.selectedDimensionComponents [1],
-                CubeViz_Links_Module.selectedDimensionComponents [2]
-            ],
-            "Indicator": [
-                CubeViz_Links_Module.selectedDimensionComponents [3],
-                CubeViz_Links_Module.selectedDimensionComponents [4],
-                CubeViz_Links_Module.selectedDimensionComponents [5],
-            ]
-        }));*/
-        
-        System.out ( "" );
-        /*System.out ( "CubeViz_Link_Chosen_Module:" );
-        System.out ( CubeViz_Link_Chosen_Module );
-        System.out ( "" );*/
         
         Module_Main.setupAjax ();
         
@@ -84,25 +62,28 @@ class Module_Event {
      */
      
     /**
-     * 
+     * Opens a dialog, filled with elements of the selected dimension
      */
     static onClick_DialogSelector () {
                 
         // get dimension from clicked dialog selector
-        var dimension:string = $(this).attr ( "dimension" ).toString ();
+        var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();
+        var dimensionUrl:string = $(this).attr ( "dimensionUrl" ).toString ();
         
         // 
         Module_Main.buildDimensionDialog (
-            dimension, // current dimension
+            dimensionLabel, // current dimension label
+            
+            dimensionUrl, // current dimension url
             
             // component->dimension->elements to build a list with checkboxes to select / unselect
-            CubeViz_Links_Module.components ["dimensions"] [dimension]["elements"] 
+            CubeViz_Links_Module.components ["dimensions"][dimensionLabel]["elements"] 
         );
         
         /**
          * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
          */
-        Module_Event.setupDialogSelectorCloseButton (dimension);
+        Module_Event.setupDialogSelectorCloseButton (dimensionLabel);
     }
      
     /**
@@ -111,7 +92,7 @@ class Module_Event {
     static onClick_DialogSelectorCloseButton () {
         
         // get dimension from clicked dialog selector
-        var dimension:string = $(this).attr ( "dimension" ).toString ();
+        var dimensionUrl:string = $(this).attr ( "dimensionLabel" ).toString ();
         
         // ...
         
@@ -297,10 +278,10 @@ class Module_Event {
     /**
      * 
      */
-    static setupDialogSelectorCloseButton (dimension:string) {
+    static setupDialogSelectorCloseButton (dimensionLabel:string) {
         
         // set event for onChange
-        $("#dialog-btn-close-" + dimension ).click (Module_Event.onClick_DialogSelectorCloseButton);
+        $("#dialog-btn-close-" + dimensionLabel ).click (Module_Event.onClick_DialogSelectorCloseButton);
     }
     
     /**

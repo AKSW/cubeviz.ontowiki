@@ -88,15 +88,6 @@ var HighCharts_Bar2 = (function (_super) {
         };
     }
     HighCharts_Bar2.prototype.init = function (entries, cubeVizConfig, chartConfig) {
-        console.log("");
-        console.log("entries");
-        console.log(entries);
-        console.log("");
-        console.log("cubeVizConfig");
-        console.log(cubeVizConfig);
-        console.log("");
-        console.log("chartConfig");
-        console.log(chartConfig);
         var dimensionLabels = [
             ""
         ];
@@ -125,8 +116,6 @@ var HighCharts_Bar2 = (function (_super) {
                 "data": seriesData[forSeries["elements"][i]["property"]]
             });
         }
-        console.log("this.series");
-        console.log(this.series);
     };
     HighCharts_Bar2.prototype.getRenderResult = function () {
         this.chartConfig["xAxis"] = this.xAxis;
@@ -142,10 +131,6 @@ var HighCharts_Bar2 = (function (_super) {
         var seriesData = {
         };
         var dimensionType = forSeries.type;
-        console.log("entries");
-        console.log(entries);
-        console.log("");
-        console.log("");
         for(var mainIndex in entries) {
             for(var propertyUri in entries[mainIndex]) {
                 if(propertyUri == dimensionType) {
@@ -184,9 +169,6 @@ var Viz_Event = (function () {
         var chart = HighCharts.loadChart("Bar2");
         chart.init(entries, CubeViz_Links_Module, CubeViz_ChartConfig["2"][0]["types"][0].config);
         var renderedChart = chart.getRenderResult();
-        console.log("");
-        console.log("renderedChart");
-        console.log(renderedChart);
         new Highcharts.Chart(renderedChart);
     }
     return Viz_Event;

@@ -84,19 +84,37 @@ class Module_Main {
     /**
      * Build dialog to select / unselect certain elements
      */
-    static buildDimensionDialog ( dimension:string, componentDimensionElements:any ) {
+    static buildDimensionDialog ( dimensionLabel:string, dimensionUrl:string, componentDimensionElements:any ) {
         
-        try {            
+        try {
+                        
             // Prepare jsontemplate
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
             
             // fill template placeholders with data
             $("#dimensionDialogContainer").html ( tpl.expand({ 
-                "dimension": dimension,
-                "label": dimension,
+                "dimensionLabel": dimensionLabel,
+                "dimensionUrl": dimensionUrl,
                 "list": componentDimensionElements
             }));
             
+            // collect urls of all selected component dimensions
+            var elements = CubeViz_Links_Module ["selectedComponents"]["dimensions"] [dimensionLabel]["elements"],
+                selectedDimensionUrls:string[] = []; 
+            for ( var index in elements ) {
+                selectedDimensionUrls.push ( elements [index].property );
+            }
+            
+            // go through the list of checkboxes and select one if its a the previously 
+            // selected component dimension
+            var elementUrl:string = "";
+            $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
+                if ( 0 <= $.inArray ( $(ele).attr ("value").toString (), selectedDimensionUrls ) ) {
+                    $(ele).attr ("checked", "checked" );
+                }
+            });
+            
+            // if rendering is complete, fade in the dialog
             $("#dimensionDialogContainer").fadeIn (1000);
         } catch ( e ) {
             System.out ( "buildDimensionDialog error" );

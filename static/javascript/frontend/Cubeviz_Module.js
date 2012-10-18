@@ -149,19 +149,19 @@ var Module_Event = (function () {
     Module_Event.ready = function ready() {
         System.out("CubeViz_Links_Module:");
         System.out(CubeViz_Links_Module);
-        System.out("");
         Module_Main.setupAjax();
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
         Module_Event.setupShowVisualizationButton();
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
-        var dimension = $(this).attr("dimension").toString();
-        Module_Main.buildDimensionDialog(dimension, CubeViz_Links_Module.components["dimensions"][dimension]["elements"]);
-        Module_Event.setupDialogSelectorCloseButton(dimension);
+        var dimensionLabel = $(this).attr("dimensionLabel").toString();
+        var dimensionUrl = $(this).attr("dimensionUrl").toString();
+        Module_Main.buildDimensionDialog(dimensionLabel, dimensionUrl, CubeViz_Links_Module.components["dimensions"][dimensionLabel]["elements"]);
+        Module_Event.setupDialogSelectorCloseButton(dimensionLabel);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
-        var dimension = $(this).attr("dimension").toString();
+        var dimensionUrl = $(this).attr("dimensionLabel").toString();
         $("#dimensionDialogContainer").fadeOut(500).html("");
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
@@ -239,8 +239,8 @@ var Module_Event = (function () {
     Module_Event.setupDialogSelector = function setupDialogSelector() {
         $(".open-dialog-selector").click(Module_Event.onClick_DialogSelector);
     }
-    Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimension) {
-        $("#dialog-btn-close-" + dimension).click(Module_Event.onClick_DialogSelectorCloseButton);
+    Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimensionLabel) {
+        $("#dialog-btn-close-" + dimensionLabel).click(Module_Event.onClick_DialogSelectorCloseButton);
     }
     Module_Event.setupShowVisualizationButton = function setupShowVisualizationButton() {
         $("#sidebar-left-data-selection-submitbtn").click(Module_Event.onClick_ShowVisualizationButton);
@@ -292,14 +292,26 @@ var Module_Main = (function () {
             $("#sidebar-left-data-selection-strc").append(entry);
         }
     }
-    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimension, componentDimensionElements) {
+    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimensionLabel, dimensionUrl, componentDimensionElements) {
         try  {
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
             $("#dimensionDialogContainer").html(tpl.expand({
-                "dimension": dimension,
-                "label": dimension,
+                "dimensionLabel": dimensionLabel,
+                "dimensionUrl": dimensionUrl,
                 "list": componentDimensionElements
             }));
+            var elements = CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"];
+            var selectedDimensionUrls = [];
+
+            for(var index in elements) {
+                selectedDimensionUrls.push(elements[index].property);
+            }
+            var elementUrl = "";
+            $(".dialog-checkbox-" + dimensionLabel).each(function (i, ele) {
+                if(0 <= $.inArray($(ele).attr("value").toString(), selectedDimensionUrls)) {
+                    $(ele).attr("checked", "checked");
+                }
+            });
             $("#dimensionDialogContainer").fadeIn(1000);
         } catch (e) {
             System.out("buildDimensionDialog error");

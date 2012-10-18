@@ -9,7 +9,7 @@
                         (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
                     </div>
                     <div class="sidebar-left-data-selection-dims-box-abstract">
-                        <div id="open-dialog-{label}-selector" class="open-dialog-selector" dimension="{label}">
+                        <div id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}">
                             <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
                         </div>
                         <div style="display:none;" id="open-dialog-{label}-options" class="open-dialog-options">
@@ -43,21 +43,19 @@
 
 
 <div id="stringContainerDialogTemplate" style="display:none;">
-    <div class="dialog" id="dialog-{label}">
+    <div class="dialog" id="dialog-{dimensionUrl}">
         <div class="dialog-header">
-            <div class="dialog-header-label">{dimension}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
+            <div class="dialog-header-label">{dimensionLabel}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
             <div style="float:right;">
-                <input type="button" id="dialog-btn-close-{dimension}" class="minibutton submit" dimension="{dimension}" value="<?php echo $this->_translate->_('Save'); ?>">
+                <input type="button" id="dialog-btn-close-{dimensionLabel}" class="minibutton submit" dimensionLabel="{dimensionLabel}" value="<?php echo $this->_translate->_('Save'); ?>">
             </div>
         </div>
         <div class="dialog-components">
             <ul>
             {.repeated section list}
                 <li>
-                    <div class="dialog-listitem">
-                        <input type="checkbox" name="" class="dialog-listitem-box-{dimension}" value="{property}"/>
-                        <label class="dialog-listitem-value">{property_label}</label>
-                    </div>
+                    <input type="checkbox" name="{dimensionUrl}" class="dialog-checkbox-{dimensionLabel}" value="{property}"/>
+                    <label class="dialog-listitem-value">{property_label}</label>
                 </li>
             {.end}
             </ul>
