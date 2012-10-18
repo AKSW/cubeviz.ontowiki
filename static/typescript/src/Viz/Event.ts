@@ -29,9 +29,6 @@ class Viz_Event {
             "value", "Update visualization"
         );
         
-        console.log ( JSON.stringify ( CubeViz_Links_Module ) );
-        console.log ( JSON.stringify ( CubeViz_Links_Module ) );
-        
         /**
          * Load observations based on pre-configured data structure definition and data set.
          */

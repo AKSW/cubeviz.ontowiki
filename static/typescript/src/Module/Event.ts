@@ -129,6 +129,7 @@ class Module_Event {
         // save new dimensional elements list
         CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
         
+        // take neccessary javascript objects and put them into configuration file on the server
         ConfigurationLink.saveToServerFile ( 
             CubeViz_Links_Module,
             cubeVizUIChartConfig,
