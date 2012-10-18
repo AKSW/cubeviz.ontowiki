@@ -9,7 +9,7 @@
                         (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
                     </div>
                     <div class="sidebar-left-data-selection-dims-box-abstract">
-                        <div id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}">
+                        <div id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}" dimensionType="{type}">
                             <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
                         </div>
                         <div style="display:none;" id="open-dialog-{label}-options" class="open-dialog-options">
@@ -47,14 +47,14 @@
         <div class="dialog-header">
             <div class="dialog-header-label">{dimensionLabel}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
             <div style="float:right;">
-                <input type="button" id="dialog-btn-close-{dimensionLabel}" class="minibutton submit" dimensionLabel="{dimensionLabel}" value="<?php echo $this->_translate->_('Save'); ?>">
+                <input type="button" id="dialog-btn-close-{dimensionLabel}" class="minibutton submit" dimensionLabel="{dimensionLabel}" dimensionType="{dimensionType}" dimensionUrl="{dimensionUrl}" value="<?php echo $this->_translate->_('Save'); ?>">
             </div>
         </div>
         <div class="dialog-components">
             <ul>
             {.repeated section list}
                 <li>
-                    <input type="checkbox" name="{dimensionUrl}" class="dialog-checkbox-{dimensionLabel}" value="{property}"/>
+                    <input type="checkbox" name="{dimensionUrl}" class="dialog-checkbox-{dimensionLabel}" value="{property}" propertyLabel="{property_label}" property="{property}"/>
                     <label class="dialog-listitem-value">{property_label}</label>
                 </li>
             {.end}

@@ -156,12 +156,34 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
+        var dimensionType = $(this).attr("dimensionType").toString();
         var dimensionUrl = $(this).attr("dimensionUrl").toString();
-        Module_Main.buildDimensionDialog(dimensionLabel, dimensionUrl, CubeViz_Links_Module.components["dimensions"][dimensionLabel]["elements"]);
+        Module_Main.buildDimensionDialog(dimensionLabel, dimensionType, dimensionUrl, CubeViz_Links_Module.components["dimensions"][dimensionLabel]["elements"]);
         Module_Event.setupDialogSelectorCloseButton(dimensionLabel);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
-        var dimensionUrl = $(this).attr("dimensionLabel").toString();
+        var elements = [];
+        var dimensionLabel = $(this).attr("dimensionLabel").toString();
+        var dimensionType = $(this).attr("dimensionType").toString();
+        var dimensionUrl = $(this).attr("dimensionUrl").toString();
+        var property = "";
+        var propertyLabel = "";
+
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = [];
+        $(".dialog-checkbox-" + dimensionLabel).each(function (i, ele) {
+            if("checked" == $(ele).attr("checked")) {
+                property = $(ele).attr("property");
+                propertyLabel = $(ele).attr("propertyLabel");
+                elements.push({
+                    "property": property,
+                    "property_label": propertyLabel,
+                    "dimension_label": dimensionLabel,
+                    "dimension_type": dimensionType,
+                    "dimension_url": dimensionUrl
+                });
+            }
+        });
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
         $("#dimensionDialogContainer").fadeOut(500).html("");
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
@@ -292,11 +314,12 @@ var Module_Main = (function () {
             $("#sidebar-left-data-selection-strc").append(entry);
         }
     }
-    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimensionLabel, dimensionUrl, componentDimensionElements) {
+    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimensionLabel, dimensionType, dimensionUrl, componentDimensionElements) {
         try  {
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
             $("#dimensionDialogContainer").html(tpl.expand({
                 "dimensionLabel": dimensionLabel,
+                "dimensionType": dimensionType,
                 "dimensionUrl": dimensionUrl,
                 "list": componentDimensionElements
             }));
@@ -306,7 +329,6 @@ var Module_Main = (function () {
             for(var index in elements) {
                 selectedDimensionUrls.push(elements[index].property);
             }
-            var elementUrl = "";
             $(".dialog-checkbox-" + dimensionLabel).each(function (i, ele) {
                 if(0 <= $.inArray($(ele).attr("value").toString(), selectedDimensionUrls)) {
                     $(ele).attr("checked", "checked");

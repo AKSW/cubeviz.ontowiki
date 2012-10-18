@@ -84,7 +84,8 @@ class Module_Main {
     /**
      * Build dialog to select / unselect certain elements
      */
-    static buildDimensionDialog ( dimensionLabel:string, dimensionUrl:string, componentDimensionElements:any ) {
+    static buildDimensionDialog ( dimensionLabel:string, dimensionType:string, dimensionUrl:string, 
+                                   componentDimensionElements:any ) {
         
         try {
                         
@@ -94,6 +95,7 @@ class Module_Main {
             // fill template placeholders with data
             $("#dimensionDialogContainer").html ( tpl.expand({ 
                 "dimensionLabel": dimensionLabel,
+                "dimensionType": dimensionType,
                 "dimensionUrl": dimensionUrl,
                 "list": componentDimensionElements
             }));
@@ -107,7 +109,6 @@ class Module_Main {
             
             // go through the list of checkboxes and select one if its a the previously 
             // selected component dimension
-            var elementUrl:string = "";
             $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
                 if ( 0 <= $.inArray ( $(ele).attr ("value").toString (), selectedDimensionUrls ) ) {
                     $(ele).attr ("checked", "checked" );

@@ -68,13 +68,14 @@ class Module_Event {
                 
         // get dimension from clicked dialog selector
         var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();
+        var dimensionType:string = $(this).attr ( "dimensionType" ).toString ();
         var dimensionUrl:string = $(this).attr ( "dimensionUrl" ).toString ();
         
         // 
         Module_Main.buildDimensionDialog (
-            dimensionLabel, // current dimension label
-            
-            dimensionUrl, // current dimension url
+            dimensionLabel, // label of current dimension            
+            dimensionType, // type of current dimension            
+            dimensionUrl, // url of current dimension
             
             // component->dimension->elements to build a list with checkboxes to select / unselect
             CubeViz_Links_Module.components ["dimensions"][dimensionLabel]["elements"] 
@@ -91,10 +92,44 @@ class Module_Event {
      */
     static onClick_DialogSelectorCloseButton () {
         
-        // get dimension from clicked dialog selector
-        var dimensionUrl:string = $(this).attr ( "dimensionLabel" ).toString ();
+        var elements:Object[] = [];
         
-        // ...
+        // get dimension information from clicked close button
+        // fixed
+        var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString (), 
+            dimensionType:string = $(this).attr ( "dimensionType" ).toString (),
+            dimensionUrl:string = $(this).attr ( "dimensionUrl" ).toString (),
+            
+        // dynamic
+            property:string = "",
+            propertyLabel:string = "";
+        
+        /**
+         * Override existing with new checked dimension elements
+         */
+        
+        // empty elements list of current dimension
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = [];
+        
+        // get dimensionUrl's over checked checkboxes
+        $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
+            if ( "checked" == $(ele).attr ("checked") ) {
+                
+                property = $(ele).attr ("property");
+                propertyLabel = $(ele).attr ("propertyLabel");
+                
+                elements.push ({ 
+                    "property": property,
+                    "property_label": propertyLabel,
+                    "dimension_label": dimensionLabel,
+                    "dimension_type": dimensionType,
+                    "dimension_url": dimensionUrl
+                });
+            }
+        });
+        
+        // save new dimensional elements list
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
         
         // clean content of shown dialog box
         $("#dimensionDialogContainer").fadeOut (500).html ("");
