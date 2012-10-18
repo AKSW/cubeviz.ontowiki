@@ -7,6 +7,8 @@ var ConfigurationLink = (function () {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
+        }).error(function (result) {
+            console.log(result.responseText);
         }).done(function (result) {
             callback(result);
         });
@@ -175,8 +177,6 @@ var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
         $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
-        console.log(JSON.stringify(CubeViz_Links_Module));
-        console.log(JSON.stringify(CubeViz_Links_Module));
         Observation.loadAll(CubeViz_Links_Module["modelUrl"], CubeViz_Links_Module["linkCode"], "local", Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

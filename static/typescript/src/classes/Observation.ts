@@ -23,7 +23,6 @@ class Observation {
      * 
      */
     static prepareLoadedResultObservations (entries, callback) {
-        
         callback ( $.parseJSON ( entries ) );
     }
     

@@ -224,23 +224,30 @@ class DataCube_Query {
     /**
      * 
      */
-    public function getObservations($graphUri, $dataSetUri, $selectedComponents) {
+    public function getObservations ($linkConfiguration) {
 		
-		$selCompDims = $selectedComponents ["dimensions"];
+        // Extract and save neccessary parameters from link configuration
+        $selectedComponents = $linkConfiguration ['selectedComponents'];
+		$graphUrl = $linkConfiguration ['selectedGraph'];
+		$dataSetUrl = $linkConfiguration ['selectedDS']['url'];		
+        $selCompDims = $linkConfiguration ['selectedComponents']['dimensions'];
         		 
+        /**
+         * Fill SimpleQuery object with live!
+         */
 		$queryObject = new Erfurt_Sparql_SimpleQuery();
 		
         // CONSTRUCT
 		$queryObject->setProloguePart('CONSTRUCT {?s ?p ?o}');
 	
         // FROM
-		$queryObject->setFrom(array ($graphUri));
+		$queryObject->setFrom(array ($graphUrl));
 		
         // WHERE
 		$where = 'WHERE { ' ."\n" .'
 			?s ?p ?o .' ."\n" .'
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
-            ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'> .' ."\n";
+            ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
         
         $i = 0;
         // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)

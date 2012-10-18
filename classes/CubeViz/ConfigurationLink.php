@@ -45,96 +45,49 @@ class CubeViz_ConfigurationLink
 		return false;
 	}
 	
-	public function writeToFile($config) {
-		$fileName = $this->generateHashCodeFor($config);
-		
-		//TODO: check the existence of the folders and make folders available
-		//set permissions 0777 for the folders!
-				
+    /**
+     * Writes a given configuration to a file
+     */
+	public function write($config) {
+        		
+        $this->checkFolderPermissions ();
+        		
+        // compute hashcode for the given configuration
+        $fileName = $this->generateHash ($config);
 		$filePath = $this->_linksFolder . $fileName;
-		
-		if( false == file_exists($this->_linksFolder)) {
-			mkdir($this->_linksFolder);
-		}
-				
-		if( false == file_exists($filePath) && true == isset ( $config['selectedGraph'] ) ) {
+        				
+		if( false == file_exists($filePath) ) {
             
             if ( false === ( $fh = fopen($filePath, 'w') ) ) {
                 // can't open the file
-                var_dump("No write permission oO"); die;
-                return null;
+                $m = "No write permissions for ". $filePath;
+                throw new CubeViz_Exception ( $m );
+                return $m;
             }
 			
             // write all parameters line by line
-			fwrite($fh, $config['sparqlEndpoint'] . "\n");
-			fwrite($fh, $config['selectedGraph'] . "\n");
-			fwrite($fh, $config['selectedDSD'] . "\n");
-			fwrite($fh, $config['selectedDS'] . "\n");
-			fwrite($fh, $config['selectedMeasures'] . "\n");
-			fwrite($fh, $config['selectedDimensions'] . "\n");
-			fwrite($fh, $config['selectedDimensionComponents'] . "\n");
-			fwrite($fh, $config['selectedChartType'] . "\n");
+			fwrite($fh, json_encode ( $config['cubeVizLinksModule'] ) . "\n"); // CubeViz_Config_Module
+			fwrite($fh, json_encode ( $config['uiChartConfig'] ) . "\n"); // cubeVizUIChartConfig
+			chmod ($filePath, 0755);
 			fclose($fh);
-			return $fileName;
-		} else {
-			return $fileName;
-		}
+		} 
+        
+        // return generated hashCode (=fileName)
+        return $fileName;
 	}
+    
+    /**
+     * 
+     */
+    public function checkFolderPermissions () {
+        $perms = substr(decoct( fileperms($this->_linksFolder) ), 2);
+        if ( 777 != $perms ) {
+            throw new CubeViz_Exception ( $this->_linksFolder . ' has 0'. $perms .', but needs 0777 (file permissions)!' );
+            return;
+        }
+    }
 	
-	private function generateHashCodeFor($config) {
-
-		$sparqlEndpoint = json_decode($config['sparqlEndpoint'], true);
-		$selectedGraph = json_decode($config['selectedGraph'], true);
-		$selectedDSD = json_decode($config['selectedDSD'], true);
-		$selectedDS = json_decode($config['selectedDS'], true);
-		$selectedMeasures = json_decode($config['selectedMeasures'], true);
-		$selectedDimensions = json_decode($config['selectedDimensions'], true);
-		$selectedDimensionComponents = json_decode($config['selectedDimensionComponents'], true);
-		
-		//just a string
-		$sparqlEndpoint = hash('md5', $sparqlEndpoint); 
-		//array - label and number (need to refactor the code to throw out number)
-		
-		$selectedGraph = hash('md5', $selectedGraph["label"]);
-		$selectedDSD = hash('md5', $selectedDSD['url']);
-		$selectedDS = hash('md5', $selectedDS['url']);
-		
-		$selectedMeasures_strings = array();
-		$selectedMeasures_length = sizeof($selectedMeasures['measures']);
-		for($i = 0; $i < $selectedMeasures_length; $i++) {
-			$measure = $selectedMeasures['measures'][$i]['url'];
-			array_push($selectedMeasures_strings, $measure);
-		}
-		rsort($selectedMeasures_strings);
-		$selectedMeasures_strings = implode($selectedMeasures_strings);
-		$selectedMeasures = hash('md5', $selectedMeasures_strings);
-		
-		$selectedDimensions_strings = array();
-		$selectedDimensions_length = sizeof($selectedDimensions['dimensions']);
-		for($i = 0; $i < $selectedDimensions_length; $i++) {
-			$dimension = $selectedDimensions['dimensions'][$i]['url'];
-			array_push($selectedDimensions_strings, $dimension);
-		}
-		rsort($selectedDimensions_strings);
-		$selectedDimensions_strings = implode($selectedDimensions_strings);
-		$selectedDimensions = hash('md5', $selectedDimensions_strings);
-		
-		$selectedDimComps_strings = array();
-		$selectedDimComps_length = sizeof($selectedDimensionComponents);
-		for($i = 0; $i < $selectedDimComps_length; $i++) {
-			$dimComp = $selectedDimensionComponents[$i]['property'];
-			array_push($selectedDimComps_strings, $dimComp);
-		}
-		rsort($selectedDimComps_strings);
-		$selectedDimComps_strings = implode($selectedDimComps_strings);
-		$selectedDimensionComponents = hash('md5', $selectedDimComps_strings);
-		
-		//concatenate all into one string
-		$hash = $sparqlEndpoint . $selectedGraph . $selectedDSD . $selectedDS .
-			    $selectedMeasures . $selectedDimensions . $selectedDimensionComponents;
-		
-		$hash = hash('md5', $hash);
-		
-		return $hash;
+	private function generateHash ($config) {		
+		return "adaptgenerateHashtoo";
 	}
 }

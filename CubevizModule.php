@@ -60,6 +60,11 @@ class CubevizModule extends OntoWiki_Module
         
         // load configuration which is associated with given linkCode
 		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+        
+        // check folder permissions
+        // throws an exception if not enough folder permissions
+        $configuration->checkFolderPermissions ();
+        
         $configuration = $configuration->read ($this->view->linkCode);
 		$this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
 		$this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information

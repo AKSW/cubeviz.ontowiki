@@ -10,27 +10,27 @@
 </style>
 
 <script>
-    /*************************************
-     * Importing Server-Side System Info *
-     *************************************/
-    var CubeViz_Link_Chosen_Component = <?php echo json_encode($this->linkCode); ?>;
+    /**
+     * Contains loaded configuration for given hashcode
+     * default is "default" configuration
+     */
+    var CubeViz_Links_Module = CubeViz_Links_Module || <?php echo $this->linkConfiguration; ?>;
+	
+    // Name of choosen config; default is "default"
+    CubeViz_Links_Module ["linkCode"] = CubeViz_Links_Module ["linkCode"] || <?php echo json_encode($this->linkCode); ?>; 
+    CubeViz_Links_Module ["backend"] = CubeViz_Links_Module ["backend"] || <?php echo json_encode($this->backend); ?>;
+    CubeViz_Links_Module ["cubevizPath"] = CubeViz_Links_Module ["cubevizPath"] || <?php echo json_encode($this->cubevizPath); ?>;		
+    CubeViz_Links_Module ["modelUrl"] = CubeViz_Links_Module ["modelUrl"] || "<?php echo $this->modelUrl; ?>";		
+	CubeViz_Links_Module ["sparqlEndpoint"] = CubeViz_Links_Module ["sparqlEndpoint"] || "local"; 
+	
+    /**
+     * Contains system information related only to CubeViz
+     */
+    var CubeViz_Config = {
+        "context": "development"   // possible: development, production
+    };
     
-    var CubeViz_Parameters_Component = {
-		sparqlEndpoint: <?php echo $this->sparqlEndpoint; ?>,
-		selectedGraph: null,
-		selectedDSD: {},
-		selectedDS: {},
-		selectedMeasures: {},
-		selectedDimensions: {},
-		selectedDimensionComponents: {}
-	}
-		
-	CubeViz_Parameters_Component.modelUrl = "<?php echo $this->modelUrl; ?>";		
-	CubeViz_Parameters_Component.cubevizPath = <?php echo json_encode($this->cubevizPath); ?>;		
-	CubeViz_Parameters_Component.cubevizImagesPath = "<?php echo $this->basePath_images; ?>";		
-	CubeViz_Parameters_Component.backend = <?php echo json_encode($this->backend); ?>;		
-	CubeViz_Parameters_Component.visualizationContainer = "container";		
-    CubeViz_Parameters_Component.preferredChartType = "bar";   
+    var cubeVizUIChartConfig = <?php echo $this->cubeVizUIChartConfig; ?>; 
 </script>
 
 <div id="wrapper-index">
