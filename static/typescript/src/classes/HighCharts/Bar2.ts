@@ -12,6 +12,11 @@ class HighCharts_Bar2 extends HighCharts_Chart {
      */
     private series = [];
     
+    /**
+     * Complete chart configuration for a certain chart
+     */
+    private chartConfig = {};
+    
     
     /**
      * 
@@ -33,6 +38,8 @@ class HighCharts_Bar2 extends HighCharts_Chart {
         var dimensionLabels:string[] = [""];
         var forXAxis = null;
         var forSeries = null;
+        
+        this.chartConfig = chartConfig;
         
         for ( var dimensionLabel in cubeVizConfig ["selectedComponents"]["dimensions"] ) {
             if ( null == forXAxis ) {
@@ -80,14 +87,9 @@ class HighCharts_Bar2 extends HighCharts_Chart {
      * 
      */
     public getRenderResult () : Object {
-        return {
-            "chart": {
-                renderTo: 'container',
-                type: 'bar'
-            },
-            "xAxis": this.xAxis,
-            "series": this.series
-        };
+        this.chartConfig ["xAxis"] = this.xAxis;
+        this.chartConfig ["series"] = this.series;
+        return this.chartConfig;
     }
     
     /**

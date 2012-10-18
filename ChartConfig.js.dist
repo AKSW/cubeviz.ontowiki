@@ -29,16 +29,24 @@ var CubeViz_ChartConfig = {
                 {   
                     "label": "bar",
                     "enabled": true,
+                    "class": "Bar2",
+                    "icon": "bar.png",
                     /**
                      * Configuration object
-                     * Here you can directly configure your HighCharts
+                     * Here you can directly configure this chart
+                     * Later this object will be used as it is.
                      */
                     "config": {
-                        "chart.type": "bar",
-                        "plotOptions.series.color": "#ff0000" 
-                    },
-                    "class": "Bar2",
-                    "icon": "bar.png"
+                        "chart": { 
+                            "renderTo": "container",
+                            "type": "bar"
+                        },
+                        "plotOptions": {
+                            "series": {
+                                "stacking": "normal"
+                            }
+                        }
+                    }
                 }
             ]
         }

@@ -84,6 +84,8 @@ var HighCharts_Bar2 = (function (_super) {
             "categories": []
         };
         this.series = [];
+        this.chartConfig = {
+        };
     }
     HighCharts_Bar2.prototype.init = function (entries, cubeVizConfig, chartConfig) {
         console.log("");
@@ -100,6 +102,7 @@ var HighCharts_Bar2 = (function (_super) {
         ];
         var forXAxis = null;
         var forSeries = null;
+        this.chartConfig = chartConfig;
         for(var dimensionLabel in cubeVizConfig["selectedComponents"]["dimensions"]) {
             if(null == forXAxis) {
                 forXAxis = cubeVizConfig["selectedComponents"]["dimensions"][dimensionLabel];
@@ -126,14 +129,9 @@ var HighCharts_Bar2 = (function (_super) {
         console.log(this.series);
     };
     HighCharts_Bar2.prototype.getRenderResult = function () {
-        return {
-            "chart": {
-                renderTo: 'container',
-                type: 'bar'
-            },
-            "xAxis": this.xAxis,
-            "series": this.series
-        };
+        this.chartConfig["xAxis"] = this.xAxis;
+        this.chartConfig["series"] = this.series;
+        return this.chartConfig;
     };
     HighCharts_Bar2.prototype.extractMeasureValue = function (cubeVizConfig) {
         for(var label in cubeVizConfig.selectedComponents.measures) {
