@@ -24,7 +24,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->placeholder('main.window.title')->set('Visualization for '. $this->_owApp->selectedModel );
         
         // disable OntoWiki's Navigation
-        $on = new OntoWiki_Navigation();
+        $on = $this->_owApp->getNavigation();
         $on->disableNavigation ();
         
 		// set URL for cubeviz extension folder
