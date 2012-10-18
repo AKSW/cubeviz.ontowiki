@@ -184,6 +184,10 @@ var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
         $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
+        var container = $("#container").offset();
+        var viewPort = $(window).height();
+        var containerHeight = 0;
+        $("#container").css("height", $(window).height() - container["top"] - 5);
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

@@ -29,6 +29,13 @@ class Viz_Event {
             "value", "Update visualization"
         );
         
+        // Dynamiclly set container height (highcharts)
+        var container = $("#container").offset();
+        var viewPort = $(window).height();
+        var containerHeight = 0; 
+        
+        $("#container").css ( "height", $(window).height() - container ["top"] - 5 );
+        
         /**
          * Load observations based on pre-configured data structure definition and data set.
          */
