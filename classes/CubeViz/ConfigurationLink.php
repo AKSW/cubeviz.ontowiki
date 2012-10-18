@@ -88,6 +88,6 @@ class CubeViz_ConfigurationLink
     }
 	
 	private function generateHash ($config) {		
-		return "adaptgenerateHashtoo";
+		return hash ( 'sha256', json_encode ( $config ) );
 	}
 }
