@@ -24,9 +24,19 @@ class Viz_Event {
      * After document is ready
      */
     static ready () {
+        
+        // set label of data selection button
+        $("#sidebar-left-data-selection-submitbtn").attr ( 
+            "value", "Update visualization"
+        );
+        
+        /**
+         * Load observations based on pre-configured data structure definition and data set.
+         */
         Observation.loadAll ( 
-            CubeViz_Links_Module.selectedDSD.url, 
-            CubeViz_Links_Module.selectedDS.url, 
+            CubeViz_Links_Module ["modelUrl"],
+            CubeViz_Links_Module ["linkCode"],
+            "local", // = sparqlEndpoint
             Viz_Event.onComplete_LoadResultObservations
         );
     }

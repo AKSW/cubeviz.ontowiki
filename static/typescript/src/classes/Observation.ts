@@ -5,14 +5,14 @@ class Observation {
     /**
      * 
      */
-    static loadAll (dsdUrl, dsUrl, callback) {
+    static loadAll (modelUrl:string, linkCode:string, sparqlEndpoint:string, callback) {
         
         $.ajax({
             url: CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/",
             data: {
-                m: CubeViz_Links_Module ["modelUrl"],
-                lC: CubeViz_Links_Module ["linkCode"],
-                sparqlEndpoint: "local"
+                m: modelUrl,
+                lC: linkCode,
+                sparqlEndpoint: sparqlEndpoint
             }
         }).done( function (entries) { 
             Observation.prepareLoadedResultObservations (entries, callback); 

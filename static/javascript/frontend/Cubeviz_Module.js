@@ -85,13 +85,13 @@ var DataSet = (function () {
 })();
 var Observation = (function () {
     function Observation() { }
-    Observation.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
+    Observation.loadAll = function loadAll(modelUrl, linkCode, sparqlEndpoint, callback) {
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {
-                m: CubeViz_Links_Module["modelUrl"],
-                lC: CubeViz_Links_Module["linkCode"],
-                sparqlEndpoint: "local"
+                m: modelUrl,
+                lC: linkCode,
+                sparqlEndpoint: sparqlEndpoint
             }
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);

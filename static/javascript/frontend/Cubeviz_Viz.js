@@ -1,12 +1,12 @@
 var Observation = (function () {
     function Observation() { }
-    Observation.loadAll = function loadAll(dsdUrl, dsUrl, callback) {
+    Observation.loadAll = function loadAll(modelUrl, linkCode, sparqlEndpoint, callback) {
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {
-                m: CubeViz_Links_Module["modelUrl"],
-                lC: CubeViz_Links_Module["linkCode"],
-                sparqlEndpoint: "local"
+                m: modelUrl,
+                lC: linkCode,
+                sparqlEndpoint: sparqlEndpoint
             }
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);
@@ -163,7 +163,8 @@ $(document).ready(function () {
 var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
-        Observation.loadAll(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Viz_Event.onComplete_LoadResultObservations);
+        $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
+        Observation.loadAll(CubeViz_Links_Module["modelUrl"], CubeViz_Links_Module["linkCode"], "local", Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         var chart = HighCharts.loadChart("Bar2");
