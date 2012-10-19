@@ -9,7 +9,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.ColumnStacked2', {
     config: {
         chart: {
             renderTo: 'container',
-            type: 'bar'
+            type: 'column'
         },
         title: {
             text: ''

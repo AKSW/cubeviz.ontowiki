@@ -20,6 +20,9 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.AreaSpline2', {
         plotOptions: {
             series: {
                 groupPadding: 0.2
+            },
+            areaspline: {
+                fillOpacity: 0.5
             }
         },
         series: []
