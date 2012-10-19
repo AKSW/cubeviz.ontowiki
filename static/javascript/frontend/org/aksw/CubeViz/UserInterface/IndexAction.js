@@ -2,6 +2,8 @@
  * 
  */
 Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
+
+	currentChart: null,
     
     /**
      * 
@@ -32,7 +34,8 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
             Namespacedotjs.include('org.aksw.CubeViz.Controller.Main');
             var CubeViz_Controller_Main = org.aksw.CubeViz.Controller.Main;
             
-            CubeViz_Controller_Main.selectedChartClass = event.target.name;
+            CubeViz_Controller_Main.selectedChartClass = event['target']['name'];
+			org.aksw.CubeViz.UserInterface.IndexAction.currentChart = event['target']['name'];
 			$(".chartSelector-item").removeClass("current");
 			$(event.target).parent().addClass("current");
             $(body).trigger("AjaxResultObservationsRetrieved.CubeViz");
@@ -43,13 +46,15 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
      * 
      */
 	updateChartSelection: function ( suiteableCharts ) {
-        if($("#chartSelection").html())
-			return;
+		console.log(org.aksw.CubeViz.UserInterface.IndexAction.currentChart);
+        $("#chartSelection").html("");
         var iconPath = "", name = "", item = "", icon = "";
         $.each(suiteableCharts.charts, function (index, element) {
             iconPath = CubeViz_Parameters_Component.cubevizImagesPath + element.icon;
             name = element ["class"];
 			item = $("<div></div>").addClass("chartSelector-item");
+			if(org.aksw.CubeViz.UserInterface.IndexAction.currentChart == name)
+				item.addClass("current");
 			icon = $("<img/>").attr({
 				"src": iconPath,
 				"name": name,
@@ -59,8 +64,8 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         });
 		$("#chartSelection").addClass("chartSelector");
         Namespacedotjs.include('org.aksw.CubeViz.UserInterface.ChartSelector');
-		ChartSelector.onItemSelect = function(nr){}
-		ChartSelector.init(0);
+//		ChartSelector.onItemSelect = function(nr){}
+//		ChartSelector.init(0);
         $(body).trigger("UserInterface.IndexAction.ChartSelectionComplete");
     }
 });
