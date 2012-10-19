@@ -30,13 +30,16 @@ class CubevizModule extends OntoWiki_Module
     }
     
     public function shouldShow(){
-		//show only for http://data.lod2.eu/scoreboard/
-		$scoreboard = "http://data.lod2.eu/scoreboard/";
-		if (isset($this->_owApp->selectedModel)) {
-            return true;
-        } else {
-            return false;
-        }
+        
+        /**
+         * Check if the current selected knowledgebase contains datacube information
+         */
+		if (true == isset($this->_owApp->selectedModel)) {
+            $q = new DataCube_Query ( $this->_owApp->selectedModel );
+            return $q->containsDataCubeInformation();
+        } 
+        
+        return false;
     }
 
     /**

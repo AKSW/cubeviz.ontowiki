@@ -582,4 +582,17 @@ class DataCube_Query {
         
         return $this->_model->sparqlQuery($sparql);
     }
+    
+    /**
+     * Check if there is at least one observation in the knowledgebase
+     */
+    public function containsDataCubeInformation () {
+        $sparql = 'SELECT ?s ?p ?o
+            WHERE {
+              ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'>.
+              ?s ?p ?o.
+            }
+            LIMIT 1';
+        return 1 == count ( $this->_model->sparqlQuery($sparql) ) ? true : false;
+    }
 }
