@@ -166,6 +166,7 @@ var Module_Event = (function () {
         System.out("CubeViz_Links_Module:");
         System.out(CubeViz_Links_Module);
         Module_Main.setupAjax();
+        Module_Main.showSidebarLoader();
         Module_Event.setupDataSetBox();
         Module_Event.setupDataStructureDefinitionBox();
         Module_Event.setupShowVisualizationButton();
@@ -228,6 +229,7 @@ var Module_Event = (function () {
         CubeViz_Links_Module.components = entries;
         Module_Main.buildComponentSelection(CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents);
         Module_Event.setupDialogSelector();
+        Module_Main.hideSidebarLoader();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
         var selectedElement = $($("#sidebar-left-data-selection-strc option:selected")[0]);
@@ -376,6 +378,9 @@ var Module_Main = (function () {
             System.out(e);
         }
     }
+    Module_Main.hideSidebarLoader = function hideSidebarLoader() {
+        $("#sidebar-left-loader").hide();
+    }
     Module_Main.setupAjax = function setupAjax() {
         $.ajaxSetup({
             async: true,
@@ -385,6 +390,9 @@ var Module_Main = (function () {
             dataType: "json",
             type: "POST"
         });
+    }
+    Module_Main.showSidebarLoader = function showSidebarLoader() {
+        $("#sidebar-left-loader").css("height", ($("#sidebar-left").css("height") + 50)).show();
     }
     return Module_Main;
 })();

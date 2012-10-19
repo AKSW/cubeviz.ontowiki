@@ -47,10 +47,16 @@
 <div id="wrapper"></div>
 
 <div id="sidebar-left">
-    <div id="sidebar-left-loader"><div style="display:none;margin-top:30%; position: absolute; background-color:#ffffff;left:100px;top:50px;">
-        <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
-    </div></div>
-	<div id="sidebar-left-data-selection">
+    <div id="sidebar-left-data-selection">
+        
+        <!-- -->
+        <div id="sidebar-left-loader">
+            <div style="margin-top: 50%;">
+                <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
+                Loading ...
+            </div>
+        </div>
+        
 		<div id="sidebar-left-data-selection-wrapper">
             
             <br/>
@@ -96,4 +102,5 @@
 	</div>
 </div>
 
+<!-- Later on, after all loading is complete, it will contain a dialog instance -->
 <div id="dimensionDialogContainer"></div>

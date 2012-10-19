@@ -41,6 +41,11 @@ class Module_Event {
          */
          
         /**
+         * Show loader to avoid that a fidgety user to click on incomplete stuff :)
+         */
+        Module_Main.showSidebarLoader ();
+         
+        /**
          * Selectbox with data set
          */
         Module_Event.setupDataSetBox ();
@@ -220,6 +225,11 @@ class Module_Event {
          * Dimensions button to select / unselect elements
          */
         Module_Event.setupDialogSelector ();
+        
+        /**
+         * 
+         */
+        Module_Main.hideSidebarLoader ();
     }
     
     /**

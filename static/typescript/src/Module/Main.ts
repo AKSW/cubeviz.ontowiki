@@ -123,6 +123,13 @@ class Module_Main {
     /**
      * 
      */
+    static hideSidebarLoader () {
+        $("#sidebar-left-loader").hide ();
+    }
+    
+    /**
+     * 
+     */
     static setupAjax () {
         $.ajaxSetup({
             async: true,
@@ -132,5 +139,15 @@ class Module_Main {
             dataType: "json",
             type: "POST"
         });
+    }
+    
+    /**
+     * 
+     */
+    static showSidebarLoader () {
+        $("#sidebar-left-loader")
+            // set height dynamicly
+            .css ( "height", ( $("#sidebar-left").css ("height") + 50 ) )
+            .show ();
     }
 }
