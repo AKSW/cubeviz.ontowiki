@@ -1,4 +1,4 @@
-Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar1', {
+Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.BarStacked1', {
 	
 	aDimension: {},
 	bDimension: {},
@@ -9,7 +9,7 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar1', {
     config: {
         chart: {
             renderTo: 'container',
-            type: 'bar'
+            type: 'column'
         },
         title: {
             text: ''
@@ -19,7 +19,8 @@ Namespacedotjs('org.aksw.CubeViz.Charts.HighCharts.Bar1', {
         },
         plotOptions: {
             series: {
-                groupPadding: 0.2
+                groupPadding: 0.2,
+                stacking: "normal"
             }
         },
         series: []

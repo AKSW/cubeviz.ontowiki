@@ -26,16 +26,37 @@ var CubeViz_ChartConfig = {
     },
     "1": {
         "charts": [
-            /*{
-                "label": "area",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Area1",
-                "libraryLabel": "HighCharts",
-                "enabled": true,
-                "icon": "area.png"
-            },*/
             {
                 "label": "bar",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Bar1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "barstacked",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "column",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Column1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "column",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.ColumnStacked1",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "barstacked",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "bar.png"
@@ -66,6 +87,27 @@ var CubeViz_ChartConfig = {
                 "icon": "bar.png"
             },
             {
+                "label": "barstacked",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked2",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "column",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.Column2",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
+                "label": "column",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.ColumnStacked2",
+                "libraryLabel": "HighCharts",
+                "enabled": true,
+                "icon": "bar.png"
+            },
+            {
                 "label": "lines",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Line2",
                 "libraryLabel": "HighCharts",
@@ -73,8 +115,8 @@ var CubeViz_ChartConfig = {
                 "icon": "line.png"
             },
             {
-                "label": "area",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Area2",
+                "label": "areaspline",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.AreaSpline2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "area.png"
