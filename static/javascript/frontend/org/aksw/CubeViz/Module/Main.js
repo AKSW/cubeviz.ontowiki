@@ -249,6 +249,13 @@ Namespacedotjs('org.aksw.CubeViz.Module.Main', {
 	renderDS: function(allDS) {
 		this.emptyDataSets();
 		var allDS_length = allDS.length;
+
+        allDS.sort(function(a, b){
+            var a1= a.label, b1= b.label;
+            if(a1== b1) return 0;
+            return a1 < b1? 1: -1;
+        });
+
 		while(allDS_length--) {
 			this.addItem("sidebar-left-data-selection-sets",allDS[allDS_length]);
 		}
