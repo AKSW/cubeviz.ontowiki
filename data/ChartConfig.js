@@ -38,7 +38,7 @@ var CubeViz_ChartConfig = {
                 "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "stackedBar.png"
+                "icon": "bar_stacked.png"
             },
             {
                 "label": "column",
@@ -52,14 +52,7 @@ var CubeViz_ChartConfig = {
                 "class": "org.aksw.CubeViz.Charts.HighCharts.ColumnStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "stackedColumn.png"
-            },
-            {
-                "label": "barstacked",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
-                "libraryLabel": "HighCharts",
-                "enabled": true,
-                "icon": "stackedBar.png"
+                "icon": "column_stacked.png"
             },
             {
                 "label": "line",
