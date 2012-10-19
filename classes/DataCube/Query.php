@@ -587,12 +587,28 @@ class DataCube_Query {
      * Check if there is at least one observation in the knowledgebase
      */
     public function containsDataCubeInformation () {
-        $sparql = 'SELECT ?s ?p ?o
-            WHERE {
-              ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation .'>.
-              ?s ?p ?o.
-            }
-            LIMIT 1';
+        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
+            ASK FROM http://data.lod2.eu/scoreboard/ 
+            {
+                ?observation a qb:Observation .
+                ?observation qb:dataSet ?dataset .
+                ?observation ?dimension ?dimelement .
+                ?observation ?measure ?value .
+
+                ?dataset a qb:DataSet .
+                ?dataset qb:structure ?datastructuredefintion .
+
+                ?datastructuredefintion a qb:DataStructureDefinition .
+                ?datastructuredefintion qb:component ?dimensionspecification .
+                ?datastructuredefintion qb:component ?measurespecification .
+
+                ?dimensionspecification a qb:ComponentSpecification .
+                ?dimensionpecification qb:dimension ?dimension .
+
+                ?measurespecification a qb:ComponentSpecification .
+                ?measurespecification qb:measure ?measure .
+            }';
+            
         return 1 == count ( $this->_model->sparqlQuery($sparql) ) ? true : false;
     }
 }
