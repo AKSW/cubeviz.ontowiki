@@ -20,7 +20,7 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         containerHeight = ( viewPort - container.top - 8);
          
         $("#container").css ( "height", containerHeight );
-        $("#wrapper-index").css ( "height", containerHeight );
+        $("#wrapper-index").css ( "height", containerHeight + 35 );
         
         $('.tabs').html ("");
     },
