@@ -38,28 +38,28 @@ var CubeViz_ChartConfig = {
                 "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "stackedBar.png"
             },
             {
                 "label": "column",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Column1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "column.png"
             },
             {
                 "label": "column",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.ColumnStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "stackedColumn.png"
             },
             {
                 "label": "barstacked",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "stackedBar.png"
             },
             {
                 "label": "line",
@@ -91,21 +91,21 @@ var CubeViz_ChartConfig = {
                 "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "bar_stacked.png"
             },
             {
                 "label": "column",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Column2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "column.png"
             },
             {
                 "label": "column",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.ColumnStacked2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
-                "icon": "bar.png"
+                "icon": "column_stacked.png"
             },
             {
                 "label": "lines",
