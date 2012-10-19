@@ -185,6 +185,8 @@ var Module_Event = (function () {
         Module_Event.setupDialogSelectorCloseButton(dimensionLabel);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
+        Module_Main.showSidebarLoader();
+        Module_Main.addEntryFromSidebarLeftQueue("onClick_DialogSelectorCloseButton");
         var elements = [];
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
         var dimensionType = $(this).attr("dimensionType").toString();
@@ -293,6 +295,8 @@ var Module_Event = (function () {
     }
     Module_Event.onComplete_SaveConfigurationAfterChangeElements = function onComplete_SaveConfigurationAfterChangeElements(result) {
         CubeViz_Links_Module["linkCode"] = result;
+        Module_Main.removeEntryFromSidebarLeftQueue("onClick_DialogSelectorCloseButton");
+        Module_Main.hideSidebarLoader();
     }
     Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
@@ -317,6 +321,9 @@ var Module_Event = (function () {
 })();
 var Module_Main = (function () {
     function Module_Main() { }
+    Module_Main.addEntryFromSidebarLeftQueue = function addEntryFromSidebarLeftQueue(entry) {
+        tmpCubeVizLeftSidebarLeftQueue.push(entry);
+    }
     Module_Main.buildComponentSelection = function buildComponentSelection(components, selectedComponents) {
         var selectedComLength = 1;
         var tplEntries = {

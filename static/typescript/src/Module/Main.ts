@@ -4,6 +4,13 @@
 class Module_Main {
     
     /**
+     * 
+     */
+    static addEntryFromSidebarLeftQueue (entry:string) {
+        tmpCubeVizLeftSidebarLeftQueue.push ( entry );
+    }
+    
+    /**
      * Build component selection, with jsontemplate
      */
     static buildComponentSelection ( components, selectedComponents ) {

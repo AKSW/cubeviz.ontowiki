@@ -107,6 +107,10 @@ class Module_Event {
      */
     static onClick_DialogSelectorCloseButton () {
         
+        // show loader
+        Module_Main.showSidebarLoader ();
+        Module_Main.addEntryFromSidebarLeftQueue ( "onClick_DialogSelectorCloseButton" );
+        
         var elements:Object[] = [];
         
         // get dimension information from clicked close button
@@ -363,6 +367,10 @@ class Module_Event {
     static onComplete_SaveConfigurationAfterChangeElements (result) {
         // Save new generated linkCode
         CubeViz_Links_Module ["linkCode"] = result;
+        
+        // hide loader after configuration was saved/changed
+        Module_Main.removeEntryFromSidebarLeftQueue ( "onClick_DialogSelectorCloseButton" );
+        Module_Main.hideSidebarLoader ();
     }
     
     /**
