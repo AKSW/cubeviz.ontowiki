@@ -144,6 +144,14 @@ class Module_Event {
         
         // clean content of shown dialog box
         $("#dimensionDialogContainer").fadeOut (500).html ("");
+        
+        // Reload component selection (with dimensions and measures)
+        Module_Main.buildComponentSelection (
+            CubeViz_Links_Module ["components"], CubeViz_Links_Module ["selectedComponents"]
+        );        
+        
+        // Dimensions button to select / unselect elements for each component
+        Module_Event.setupDialogSelector ();
     }
      
     /**

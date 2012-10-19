@@ -18,10 +18,6 @@ var ConfigurationLink = (function () {
 var Observation = (function () {
     function Observation() { }
     Observation.loadAll = function loadAll(linkCode, callback) {
-        console.log(CubeViz_Links_Module["cubevizPath"] + "getresultobservations/");
-        console.log({
-            lC: linkCode
-        });
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {

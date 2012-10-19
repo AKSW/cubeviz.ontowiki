@@ -103,10 +103,6 @@ var DataSet = (function () {
 var Observation = (function () {
     function Observation() { }
     Observation.loadAll = function loadAll(linkCode, callback) {
-        console.log(CubeViz_Links_Module["cubevizPath"] + "getresultobservations/");
-        console.log({
-            lC: linkCode
-        });
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
             data: {
@@ -207,6 +203,8 @@ var Module_Event = (function () {
         CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
         ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
         $("#dimensionDialogContainer").fadeOut(500).html("");
+        Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
+        Module_Event.setupDialogSelector();
     }
     Module_Event.onClick_PermaLinkButton = function onClick_PermaLinkButton() {
         var url = $("<a></a>");
