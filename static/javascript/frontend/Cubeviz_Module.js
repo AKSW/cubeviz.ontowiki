@@ -157,6 +157,11 @@ var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {
 };
 var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {
 };
+var tmpCubeVizLeftSidebarLeftQueue = [
+    "onComplete_LoadDataStructureDefinitions", 
+    "onComplete_LoadDataSets", 
+    "onComplete_LoadAllComponentDimensions"
+];
 $(document).ready(function () {
     Module_Event.ready();
 });
@@ -229,6 +234,7 @@ var Module_Event = (function () {
         CubeViz_Links_Module.components = entries;
         Module_Main.buildComponentSelection(CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents);
         Module_Event.setupDialogSelector();
+        Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadAllComponentDimensions");
         Module_Main.hideSidebarLoader();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
@@ -267,6 +273,7 @@ var Module_Event = (function () {
                 }
                 Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
                 Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadAllComponentDimensions, resetSelectedComponents);
+                Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadDataSets");
             }
         }
     }
@@ -279,6 +286,7 @@ var Module_Event = (function () {
             System.out("no data structure definitions were loaded");
         } else {
             if(1 <= entries.length) {
+                Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadDataStructureDefinitions");
                 DataSet.loadAll(CubeViz_Links_Module["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
             }
         }
@@ -379,7 +387,18 @@ var Module_Main = (function () {
         }
     }
     Module_Main.hideSidebarLoader = function hideSidebarLoader() {
-        $("#sidebar-left-loader").hide();
+        if(0 == tmpCubeVizLeftSidebarLeftQueue["length"]) {
+            $("#sidebar-left-loader").hide();
+        }
+    }
+    Module_Main.removeEntryFromSidebarLeftQueue = function removeEntryFromSidebarLeftQueue(entry) {
+        var newQueue = [];
+        for(var index in Module_Main.removeEntryFromSidebarLeftQueue) {
+            if(entry != Module_Main.removeEntryFromSidebarLeftQueue[index]) {
+                newQueue.push(Module_Main.removeEntryFromSidebarLeftQueue[index]);
+            }
+        }
+        tmpCubeVizLeftSidebarLeftQueue = newQueue;
     }
     Module_Main.setupAjax = function setupAjax() {
         $.ajaxSetup({

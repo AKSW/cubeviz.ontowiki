@@ -17,6 +17,12 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {};
 var CubeViz_Dimension_Template = CubeViz_Dimension_Template || {};
 
+// contains a list of still to check events
+var tmpCubeVizLeftSidebarLeftQueue = [
+    "onComplete_LoadDataStructureDefinitions",
+    "onComplete_LoadDataSets",
+    "onComplete_LoadAllComponentDimensions"
+];
 
 /**
  * Event section
@@ -227,6 +233,11 @@ class Module_Event {
         Module_Event.setupDialogSelector ();
         
         /**
+         * Remove this event entry from sidebar left queue
+         */
+        Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadAllComponentDimensions" );
+        
+        /**
          * 
          */
         Module_Main.hideSidebarLoader ();
@@ -309,6 +320,11 @@ class Module_Event {
                 Module_Event.onComplete_LoadAllComponentDimensions,
                 resetSelectedComponents
             );
+            
+            /**
+             * Remove this event entry from sidebar left queue
+             */
+            Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadDataSets" );
         }
     }
      
@@ -330,6 +346,11 @@ class Module_Event {
             System.out ( "no data structure definitions were loaded" );
             
         } else if ( 1 <= entries.length ) {
+            
+            /**
+             * Remove this event entry from sidebar left queue
+             */
+            Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadDataStructureDefinitions" );
             
             // if more than one data structure definition, load for the first one its data sets
             DataSet.loadAll (CubeViz_Links_Module ["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);

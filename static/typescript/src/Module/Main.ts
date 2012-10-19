@@ -124,7 +124,24 @@ class Module_Main {
      * 
      */
     static hideSidebarLoader () {
-        $("#sidebar-left-loader").hide ();
+        if ( 0 == tmpCubeVizLeftSidebarLeftQueue ["length"] ) {
+            $("#sidebar-left-loader").hide ();
+        }
+    }
+    
+    /**
+     * 
+     */
+    static removeEntryFromSidebarLeftQueue (entry:string) {
+        var newQueue = [];
+        
+        for ( var index in removeEntryFromSidebarLeftQueue ) {
+            if ( entry != removeEntryFromSidebarLeftQueue[index] ) {
+                newQueue.push ( removeEntryFromSidebarLeftQueue[index] );
+            }
+        }
+        
+        tmpCubeVizLeftSidebarLeftQueue = newQueue;
     }
     
     /**
