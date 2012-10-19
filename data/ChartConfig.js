@@ -26,7 +26,6 @@ var CubeViz_ChartConfig = {
     },
     "1": {
         "charts": [
-            /*
             {
                 "label": "bar",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.Bar1",
@@ -54,7 +53,7 @@ var CubeViz_ChartConfig = {
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "bar.png"
-            },*/
+            },
             {
                 "label": "barstacked",
                 "class": "org.aksw.CubeViz.Charts.HighCharts.BarStacked1",
@@ -116,8 +115,8 @@ var CubeViz_ChartConfig = {
                 "icon": "line.png"
             },
             {
-                "label": "area",
-                "class": "org.aksw.CubeViz.Charts.HighCharts.Area2",
+                "label": "areaspline",
+                "class": "org.aksw.CubeViz.Charts.HighCharts.AreaSpline2",
                 "libraryLabel": "HighCharts",
                 "enabled": true,
                 "icon": "area.png"
