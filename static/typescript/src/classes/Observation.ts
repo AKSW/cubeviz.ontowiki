@@ -6,10 +6,6 @@ class Observation {
      * 
      */
     static loadAll (linkCode:string, callback) {
-        console.log ( CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/" );
-        console.log ( {
-                lC: linkCode
-            } );
         $.ajax({
             url: CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/",
             data: {

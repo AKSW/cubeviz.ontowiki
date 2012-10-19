@@ -5,9 +5,6 @@ class Module_Main {
     
     /**
      * Build component selection, with jsontemplate
-     * 
-     * Called by:
-     * - onComplete_LoadDataSets
      */
     static buildComponentSelection ( components, selectedComponents ) {
     
