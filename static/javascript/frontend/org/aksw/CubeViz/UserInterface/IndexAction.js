@@ -15,7 +15,7 @@ Namespacedotjs('org.aksw.CubeViz.UserInterface.IndexAction', {
         var container = $("#container").offset();
         var viewPort = $(window).height();
         var containerHeight = 0; 
-        containerHeight = ( viewPort - container.top );
+        containerHeight = ( viewPort - container.top - 8);
          
         $("#container").css ( "height", containerHeight );
         $("#wrapper-index").css ( "height", containerHeight );

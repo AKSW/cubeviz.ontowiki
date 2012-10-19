@@ -77,13 +77,13 @@
             
             <!-- Select data structure-->
             <div style="margin-top: -8px; clear:both;">
-                <div style="float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Structures'); ?></div> 
+                <h5><?php echo $this->_translate->_('Data Structures'); ?></h5> 
                 <div><select name="datastructures" id="sidebar-left-data-selection-strc"></select></div>
             </div>
             
             <!-- Select data set -->
             <div style="margin-top: 15px; clear:both;">
-                <div style="width:110px; float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Sets'); ?></div>
+                <h5><?php echo $this->_translate->_('Data Sets'); ?></h5>
                 <div><select name="datasets" id="sidebar-left-data-selection-sets"></select></div>
             </div>
 			
@@ -91,15 +91,15 @@
             <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
             
             <div id="sidebar-left-data-selection-dims">
-				<div class="cubeViz-h2-light"><?php echo $this->_translate->_('Dimensions'); ?></div>
+				<h5><?php echo $this->_translate->_('Dimensions'); ?></h5>
 				<div id="sidebar-left-data-selection-dims-boxes"></div>
 			</div>
 			<div id="sidebar-left-data-selection-meas" style="display:none;">
-				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
+				<h5><?php echo $this->_translate->_('Measures'); ?></h5>
 				<div id="sidebar-left-data-selection-meas-boxes"></div>
 			</div>
-            <div style="text-align: center; clear:both;">
-				<input type="submit" value="<?php echo $this->_translate->_('Show Chart'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
+            <div style="text-align: right; clear:both;">
+				<input type="submit" value="<?php echo $this->_translate->_('Display Selection'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
 			</div>
 <!--			<div id="sidebar-left-data-selection-getlinkbtn-box" style="margin-top: 20px; margin-bottom: 5px; text-align:center;">
 				<input type="submit" value="<?php echo $this->_translate->_('Get Permalink'); ?>" id="sidebar-left-data-selection-getlinkbtn"/>
