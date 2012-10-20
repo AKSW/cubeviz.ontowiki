@@ -1,4 +1,4 @@
-class HighCharts_Bar2 extends HighCharts_Chart {
+class HighCharts_Bar extends HighCharts_Chart {
     
     /**
      * 
