@@ -216,7 +216,7 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_PermaLinkButton = function onClick_PermaLinkButton() {
         var url = $("<a></a>");
-        url.attr("href", CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"]).attr("target", "_blank").html("Link");
+        url.attr("href", CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"]).attr("target", "_self").html($("#permaLink").html());
         $("#permaLink").html(url);
         $("#permaLinkMenu").slideToggle('slow');
     }

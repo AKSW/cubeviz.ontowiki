@@ -177,8 +177,8 @@ class Module_Event {
         var url = $("<a></a>");
         url
             .attr ( "href", CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"] )
-            .attr ( "target", "_blank" )
-            .html ( "Link" );
+            .attr ( "target", "_self" )
+            .html ( $("#permaLink").html () );
             
         $("#permaLink").html ( url );
         

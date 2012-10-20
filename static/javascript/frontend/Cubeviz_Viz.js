@@ -1,3 +1,74 @@
+var ChartSelector = (function () {
+    function ChartSelector() {
+        this.callbackOnSelect_Item = null;
+        this.itemPadding = 2;
+        this.itemBorder = 2;
+        this.itemFocused = -1;
+        this.status = 0;
+    }
+    ChartSelector.prototype.onSelect_Item = function (nr) {
+        this.callbackOnSelect_Item(nr);
+    };
+    ChartSelector.prototype.onClick_Item = function () {
+        var nr = $(this).data("nr");
+        console.log("onClick_Item for " + nr);
+        this.focusItem(nr);
+    };
+    ChartSelector.prototype.init = function (nr) {
+        if(0 != this.status) {
+            System.out("ChartSelector.init: Already initialized");
+            return;
+        }
+        $(".chartSelector-options-toggle").bind("click", function () {
+            $(".chartSelector-item-options").eq(this.itemFocused).toggle();
+            $(".chartSelector-options-toggle.shut").toggle();
+            $(".chartSelector-options-toggle.copen").toggle();
+        });
+        console.log("ChartSelector -> init");
+        $(".chartSelector-item").each(function (nr) {
+            $(this).data("nr", nr).click(this.onClick_Item);
+        });
+        this.status = 1;
+        if(typeof nr == "undefined") {
+            this.itemFocused = 0;
+            this.focusItem(0);
+        } else {
+            this.focusItem(nr);
+        }
+    };
+    ChartSelector.prototype.focusItem = function (nr) {
+        if(this.status == 0) {
+            throw "ChartSelector.focusItem: Not initialized";
+        }
+        if(nr < 0) {
+            throw "ChartSelector.focusItem: Invalid item nr";
+        }
+        if(this.itemFocused == nr) {
+            return;
+        }
+        var containerOptions = $(".chartSelector-options");
+        var item = $(".chartSelector-item").eq(nr);
+        this.itemFocused = nr;
+        var optionNumber = $(".chartSelector-item-options").eq(nr).children().size();
+        if(0 < optionNumber) {
+            containerOptions.show();
+        } else {
+            containerOptions.hide();
+        }
+        $(".chartSelector-item-options").hide();
+        $(".chartSelector-options-toggle.shut").show();
+        $(".chartSelector-options-toggle.open").hide();
+        $(".chartSelector-item").removeClass("current").eq(nr).addClass("current");
+        if(this.status == 1) {
+            this.status = 2;
+        }
+        this.onSelect_Item(nr);
+    };
+    ChartSelector.prototype.setOnSelect_Item = function (callback) {
+        this.callbackOnSelect_Item = callback;
+    };
+    return ChartSelector;
+})();
 var ConfigurationLink = (function () {
     function ConfigurationLink() { }
     ConfigurationLink.saveToServerFile = function saveToServerFile(cubeVizLinksModule, cubeVizUIChartConfig, callback) {
@@ -66,13 +137,13 @@ var HighCharts = (function () {
     function HighCharts() { }
     HighCharts.loadChart = function loadChart(chartName) {
         switch(chartName) {
-            case 'Bar2': {
-                return new HighCharts_Bar2();
+            case 'Bar': {
+                return new HighCharts_Bar();
 
             }
             default: {
                 System.out("HighCharts - loadChart");
-                System.out("Invalid chartName given!");
+                System.out("Invalid chartName (" + chartName + ") given!");
                 return;
 
             }
@@ -95,9 +166,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
-var HighCharts_Bar2 = (function (_super) {
-    __extends(HighCharts_Bar2, _super);
-    function HighCharts_Bar2() {
+var HighCharts_Bar = (function (_super) {
+    __extends(HighCharts_Bar, _super);
+    function HighCharts_Bar() {
         _super.apply(this, arguments);
 
         this.xAxis = {
@@ -107,7 +178,7 @@ var HighCharts_Bar2 = (function (_super) {
         this.chartConfig = {
         };
     }
-    HighCharts_Bar2.prototype.init = function (entries, cubeVizConfig, chartConfig) {
+    HighCharts_Bar.prototype.init = function (entries, cubeVizConfig, chartConfig) {
         var dimensionLabels = [
             ""
         ];
@@ -137,17 +208,17 @@ var HighCharts_Bar2 = (function (_super) {
             });
         }
     };
-    HighCharts_Bar2.prototype.getRenderResult = function () {
+    HighCharts_Bar.prototype.getRenderResult = function () {
         this.chartConfig["xAxis"] = this.xAxis;
         this.chartConfig["series"] = this.series;
         return this.chartConfig;
     };
-    HighCharts_Bar2.prototype.extractMeasureValue = function (cubeVizConfig) {
+    HighCharts_Bar.prototype.extractMeasureValue = function (cubeVizConfig) {
         for(var label in cubeVizConfig.selectedComponents.measures) {
             return cubeVizConfig["selectedComponents"]["measures"][label]["type"];
         }
     };
-    HighCharts_Bar2.prototype.structureEntries = function (forSeries, propertiesValueUri, entries) {
+    HighCharts_Bar.prototype.structureEntries = function (forSeries, propertiesValueUri, entries) {
         var seriesData = {
         };
         var dimensionType = forSeries.type;
@@ -163,7 +234,7 @@ var HighCharts_Bar2 = (function (_super) {
         }
         return seriesData;
     };
-    return HighCharts_Bar2;
+    return HighCharts_Bar;
 })(HighCharts_Chart);
 var CubeViz_Config = CubeViz_Config || {
 };
@@ -179,22 +250,58 @@ $(document).ready(function () {
 var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
+        System.out("CubeViz_Config");
+        System.out(CubeViz_Config);
         $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
         var container = $("#container").offset();
         var viewPort = $(window).height();
         var containerHeight = 0;
         $("#container").css("height", $(window).height() - container["top"] - 5);
+        Viz_Event.setupChartSelector();
+        Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
+    }
+    Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
+        cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
+        $(".chartSelector-item").removeClass("current");
+        $(event["target"]).parent().addClass("current");
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
-        var chart = HighCharts.loadChart("Bar2");
-        chart.init(entries, CubeViz_Links_Module, CubeViz_ChartConfig["2"][0]["types"][0].config);
-        var renderedChart = chart.getRenderResult();
-        new Highcharts.Chart(renderedChart);
+    }
+    Viz_Event.setupChartSelector = function setupChartSelector() {
+        Viz_Main.updateChartSelection([
+            CubeViz_ChartConfig["2"][0]["charts"][0], 
+            CubeViz_ChartConfig["2"][0]["charts"][0]
+        ]);
+        $('.chartSelectionItem').click(Viz_Event.onClick_ChartSelectionItem);
     }
     return Viz_Event;
 })();
 var Viz_Main = (function () {
     function Viz_Main() { }
+    Viz_Main.updateChartSelection = function updateChartSelection(suiteableCharts) {
+        var iconPath = "";
+        var name = "";
+        var item = null;
+        var icon = null;
+
+        $.each(suiteableCharts, function (index, element) {
+            iconPath = CubeViz_Config["imagesPath"] + element["icon"];
+            name = element["class"];
+            item = $("<div></div>").addClass("chartSelector-item");
+            icon = $("<img/>").attr({
+                "src": iconPath,
+                "name": name,
+                "class": "chartSelectionItem"
+            }).appendTo(item);
+            item.appendTo($("#chartSelection"));
+        });
+        $("#chartSelection").addClass("chartSelector");
+        var chartSelector = new ChartSelector();
+        chartSelector.setOnSelect_Item(function (nr) {
+            console.log("onSelect_Item");
+        });
+        chartSelector.init(0);
+    }
     return Viz_Main;
 })();

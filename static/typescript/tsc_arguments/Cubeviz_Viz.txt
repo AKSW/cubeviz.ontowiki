@@ -1,10 +1,11 @@
+static/typescript/src/classes/ChartSelector.ts
 static/typescript/src/classes/ConfigurationLink.ts
 static/typescript/src/classes/Observation.ts
 static/typescript/src/classes/System.ts
 
 static/typescript/src/classes/HighCharts.ts
 static/typescript/src/classes/HighCharts/Chart.ts
-static/typescript/src/classes/HighCharts/Bar2.ts
+static/typescript/src/classes/HighCharts/Bar.ts
 
 static/typescript/src/Viz/Event.ts
 static/typescript/src/Viz/Main.ts

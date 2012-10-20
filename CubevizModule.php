@@ -49,6 +49,7 @@ class CubevizModule extends OntoWiki_Module
 
 		// set URL for cubeviz extension folder
         $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
+        $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
         
         // send backend information to the view
         $this->view->backend = $this->_owApp->getConfig()->store->backend;

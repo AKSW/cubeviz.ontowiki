@@ -32,7 +32,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         		
         // set base url paths to extension root and images folder
 		$this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
-		$this->view->basePath_images = $this->_config->staticUrlBase . "extensions/cubeviz/static/images/";
+		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
 		
 		// send backend information to the view
         $this->view->backend = $this->_owApp->getConfig()->store->backend;

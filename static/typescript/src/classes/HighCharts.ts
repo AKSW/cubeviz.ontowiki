@@ -9,12 +9,12 @@ class HighCharts {
             /**
              * Two dimensions
              */
-            case 'Bar2':
-                return new HighCharts_Bar2 ();
+            case 'Bar':
+                return new HighCharts_Bar ();
             
             default: 
                 System.out ( "HighCharts - loadChart" );
-                System.out ( "Invalid chartName given!" );
+                System.out ( "Invalid chartName (" + chartName + ") given!" );
                 return;
         }
     }

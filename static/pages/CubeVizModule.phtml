@@ -24,7 +24,8 @@
      * Contains system information related only to CubeViz
      */
     var CubeViz_Config = {
-        "context": "development"   // possible: development, production
+        "context": "development",   // possible: development, production
+        "imagesPath": <?php echo json_encode($this->cubevizImagesPath); ?>
     };
     
     var cubeVizUIChartConfig = <?php echo $this->cubeVizUIChartConfig; ?>;
