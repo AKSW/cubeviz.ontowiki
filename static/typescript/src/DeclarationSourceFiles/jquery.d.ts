@@ -704,6 +704,9 @@ interface JQuery {
      EXTENSIONS
      **********/
     tagsInput ( options:any ): void;
+    
+    
+    size (): number;
 }
 
 declare var jQuery: JQueryStatic;
