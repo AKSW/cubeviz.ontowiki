@@ -48,6 +48,9 @@ var ChartSelector = (function () {
         }
         var containerOptions = $(".chartSelector-options");
         var item = $(".chartSelector-item").eq(nr);
+        if(!item.size()) {
+            throw "ChartSelector.focusItem: Invalid item nr";
+        }
         ChartSelector.itemFocused = nr;
         var optionNumber = $(".chartSelector-item-options").eq(nr).children().size();
         if(0 < optionNumber) {

@@ -33,10 +33,9 @@ class ChartSelector {
     static onFocus_Item (nr) {}
     
     /**
-     * ??
+     * 
      */
-    static onClick_Item () {
-        
+    static onClick_Item () {        
         var nr = $(this).data("nr");
         console.log ("onClick_Item for " + nr);
         ChartSelector.focusItem(nr);
@@ -104,10 +103,10 @@ class ChartSelector {
 		var item = $(".chartSelector-item").eq(nr);
         
         // if item not found, throw exception
-		/* ???
-           if(!item.size()) {											
+		
+        if(!item.size()) {											
 			throw "ChartSelector.focusItem: Invalid item nr";
-        }*/
+        }
 
 		ChartSelector.itemFocused = nr;		
         										
