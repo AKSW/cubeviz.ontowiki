@@ -5,52 +5,50 @@ class ChartSelector {
     /**
      * 
      */
-    private callbackOnSelect_Item = null;
+    static callbackOnFocus_Item = null;
 	
     /**
      * 
      */
-    private itemPadding:number = 2;
+    static itemPadding:number = 2;
 	
     /**
      * 
      */
-    private itemBorder:number = 2;
+    static itemBorder:number = 2;
     
     /**
      * 
      */
-	private itemFocused:number = -1;
+	static itemFocused:number = -1;
     
     /**
      * 
      */
-	private status:number = 0;
+	static status:number = 0;
 	
     /**
      * Event
      */
-    public onSelect_Item (nr){
-		this.callbackOnSelect_Item ( nr );
-    }
+    static onFocus_Item (nr) {}
     
     /**
      * ??
      */
-    public onClick_Item () {
+    static onClick_Item () {
         
         var nr = $(this).data("nr");
         console.log ("onClick_Item for " + nr);
-        this.focusItem(nr);
+        ChartSelector.focusItem(nr);
     }
     
     /**
      * 
      */
-	public init (nr) {
+	static init (nr) {
         
         //  ChartSelector is already initialized
-		if(0 != this.status) {
+		if(0 != ChartSelector.status) {
 			System.out ( "ChartSelector.init: Already initialized" );
             return;
         }
@@ -62,29 +60,31 @@ class ChartSelector {
 		});
         
         console.log ( "ChartSelector -> init" );
+        
 		$(".chartSelector-item").each(function(nr){
-            $(this)
-                .data("nr", nr)
-                .click (this.onClick_Item);
+            $(this).data("nr", nr);
+            $(this).click (ChartSelector.onClick_Item);
 		});
         
-		this.status = 1;
+		ChartSelector.status = 1;
         
 		if(typeof nr == "undefined") {
-			this.itemFocused = 0;
-            this.focusItem(0);
+			ChartSelector.itemFocused = 0;
+            ChartSelector.focusItem(0);
         } else {
-			this.focusItem(nr);
+			ChartSelector.focusItem(nr);
         }
 	}
 
     /**
      * Focus item which was given by its number
      */
-	public focusItem (nr) {
+	static focusItem (nr) {
+        
+        console.log ( "focusItem" );
 		
         // if SliderBar is not initialized, throw exception
-        if(this.status == 0) {
+        if(ChartSelector.status == 0) {
 			throw "ChartSelector.focusItem: Not initialized";						
         }
 		
@@ -94,7 +94,7 @@ class ChartSelector {
         }
 		
         // if no item change, quit silently
-        if(this.itemFocused == nr) {										
+        if(ChartSelector.itemFocused == nr) {										
 			return;
         }
 
@@ -109,7 +109,7 @@ class ChartSelector {
 			throw "ChartSelector.focusItem: Invalid item nr";
         }*/
 
-		this.itemFocused = nr;		
+		ChartSelector.itemFocused = nr;		
         										
 		var optionNumber = $(".chartSelector-item-options").eq(nr).children().size();
         
@@ -127,17 +127,10 @@ class ChartSelector {
 		
         $(".chartSelector-item").removeClass("current").eq(nr).addClass("current");
 		
-        if(this.status == 1) {
-			this.status = 2;
+        if(ChartSelector.status == 1) {
+			ChartSelector.status = 2;
         }
         
-		this.onSelect_Item (nr);
+		ChartSelector.onFocus_Item (nr);
 	}
-    
-    /**
-     * 
-     */
-    public setOnSelect_Item (callback) {
-        this.callbackOnSelect_Item = callback;
-    }
 }

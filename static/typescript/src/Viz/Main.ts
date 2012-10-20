@@ -35,16 +35,12 @@ class Viz_Main {
         
         /**
          * Initialize chart selector and neccessary items
-         */
-        var chartSelector = new ChartSelector ();
-        
+         */        
         // TODO
-        chartSelector.setOnSelect_Item ( 
-            function(nr){
-                console.log ( "onSelect_Item" );
-            } 
-        );
+        ChartSelector.onFocus_Item = function(nr){
+            console.log ( "onSelect_Item for " + nr );
+        };
 		
-        chartSelector.init(0);
+        ChartSelector.init(0);
     }
 }

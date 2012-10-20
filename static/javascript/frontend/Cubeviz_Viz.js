@@ -1,21 +1,19 @@
 var ChartSelector = (function () {
-    function ChartSelector() {
-        this.callbackOnSelect_Item = null;
-        this.itemPadding = 2;
-        this.itemBorder = 2;
-        this.itemFocused = -1;
-        this.status = 0;
+    function ChartSelector() { }
+    ChartSelector.callbackOnFocus_Item = null;
+    ChartSelector.itemPadding = 2;
+    ChartSelector.itemBorder = 2;
+    ChartSelector.itemFocused = -1;
+    ChartSelector.status = 0;
+    ChartSelector.onFocus_Item = function onFocus_Item(nr) {
     }
-    ChartSelector.prototype.onSelect_Item = function (nr) {
-        this.callbackOnSelect_Item(nr);
-    };
-    ChartSelector.prototype.onClick_Item = function () {
+    ChartSelector.onClick_Item = function onClick_Item() {
         var nr = $(this).data("nr");
         console.log("onClick_Item for " + nr);
-        this.focusItem(nr);
-    };
-    ChartSelector.prototype.init = function (nr) {
-        if(0 != this.status) {
+        ChartSelector.focusItem(nr);
+    }
+    ChartSelector.init = function init(nr) {
+        if(0 != ChartSelector.status) {
             System.out("ChartSelector.init: Already initialized");
             return;
         }
@@ -26,29 +24,31 @@ var ChartSelector = (function () {
         });
         console.log("ChartSelector -> init");
         $(".chartSelector-item").each(function (nr) {
-            $(this).data("nr", nr).click(this.onClick_Item);
+            $(this).data("nr", nr);
+            $(this).click(ChartSelector.onClick_Item);
         });
-        this.status = 1;
+        ChartSelector.status = 1;
         if(typeof nr == "undefined") {
-            this.itemFocused = 0;
-            this.focusItem(0);
+            ChartSelector.itemFocused = 0;
+            ChartSelector.focusItem(0);
         } else {
-            this.focusItem(nr);
+            ChartSelector.focusItem(nr);
         }
-    };
-    ChartSelector.prototype.focusItem = function (nr) {
-        if(this.status == 0) {
+    }
+    ChartSelector.focusItem = function focusItem(nr) {
+        console.log("focusItem");
+        if(ChartSelector.status == 0) {
             throw "ChartSelector.focusItem: Not initialized";
         }
         if(nr < 0) {
             throw "ChartSelector.focusItem: Invalid item nr";
         }
-        if(this.itemFocused == nr) {
+        if(ChartSelector.itemFocused == nr) {
             return;
         }
         var containerOptions = $(".chartSelector-options");
         var item = $(".chartSelector-item").eq(nr);
-        this.itemFocused = nr;
+        ChartSelector.itemFocused = nr;
         var optionNumber = $(".chartSelector-item-options").eq(nr).children().size();
         if(0 < optionNumber) {
             containerOptions.show();
@@ -59,14 +59,11 @@ var ChartSelector = (function () {
         $(".chartSelector-options-toggle.shut").show();
         $(".chartSelector-options-toggle.open").hide();
         $(".chartSelector-item").removeClass("current").eq(nr).addClass("current");
-        if(this.status == 1) {
-            this.status = 2;
+        if(ChartSelector.status == 1) {
+            ChartSelector.status = 2;
         }
-        this.onSelect_Item(nr);
-    };
-    ChartSelector.prototype.setOnSelect_Item = function (callback) {
-        this.callbackOnSelect_Item = callback;
-    };
+        ChartSelector.onFocus_Item(nr);
+    }
     return ChartSelector;
 })();
 var ConfigurationLink = (function () {
@@ -297,11 +294,10 @@ var Viz_Main = (function () {
             item.appendTo($("#chartSelection"));
         });
         $("#chartSelection").addClass("chartSelector");
-        var chartSelector = new ChartSelector();
-        chartSelector.setOnSelect_Item(function (nr) {
-            console.log("onSelect_Item");
-        });
-        chartSelector.init(0);
+        ChartSelector.onFocus_Item = function (nr) {
+            console.log("onSelect_Item for " + nr);
+        };
+        ChartSelector.init(0);
     }
     return Viz_Main;
 })();
