@@ -357,14 +357,14 @@
 
 
 #sidebar-left-data-selection-strc  {
-    min-width: 8em;
-    width: 18em;
+    min-width: 7em;
+    width: 95%;
 
 }
 
 #sidebar-left-data-selection-sets{
-    min-width: 8em;
-    width: 18em;
+    min-width: 7em;
+    width: 95%;
 }
 
 .sidebar-left-data-selection-dims-box-label-value {
@@ -382,6 +382,7 @@
     float: right;
     margin-left: 10px;
     vertical-align: middle;
+    margin-right: 15px;
 }
 
 
@@ -432,9 +433,9 @@
 }
 
 #sidebar-left-data-selection-submitbtn {
-    padding-top: 2px;
-    padding-left: 4px;
-    padding-right: 3px;
+    padding-top: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
     padding-bottom: 4px;
     font-size: 11px;
     margin-top: 2em;
