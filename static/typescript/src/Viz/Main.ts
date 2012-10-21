@@ -6,8 +6,7 @@ class Viz_Main {
      */
 	static updateChartSelection ( suiteableCharts:Object[] ) {
         
-        // if($("#chartSelection").html())
-		//	return;
+        $("#chartSelection").html ( "" );
             
         var iconPath = "", name = "", item = null, icon = null;
         

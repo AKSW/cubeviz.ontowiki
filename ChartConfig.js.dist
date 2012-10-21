@@ -72,16 +72,7 @@ var CubeViz_ChartConfig = {
                 },
                 
                 "options": [
-                    {
-                        "labels": {
-                            "en": "Color"
-                        },
-                        "values": [
-                            "bar", "column"
-                        ],
-                        "key": "chart.type",
-                        "type": "string"
-                    }
+                    
                 ]
             }
         ]
@@ -92,47 +83,6 @@ var CubeViz_ChartConfig = {
      */
     "2": {
         "charts": [
-            {
-                "label": "bar",
-                "class": "Bar",
-                "icon": "bar.png",
-                
-                "defaultConfig": {
-                    "chart": { 
-                        "renderTo": "container",
-                        "type": "bar"
-                    },
-                    "plotOptions": {
-                        "series": {
-                            "stacking": "normal"
-                        }
-                    }
-                },
-                
-                "options": [
-                    {
-                        "labels": {
-                            "en": "Type"
-                        },
-                        "values": [
-                            "bar", "column"
-                        ],
-                        "key": "chart.type",
-                        "type": "string"
-                    },
-                    {
-                        "labels": {
-                            "en": "Stacking"
-                        },
-                        "values": [
-                            "normal",
-                            "none"
-                        ],
-                        "key": "chart.plotOptions.stacking",
-                        "type": "array"
-                    }
-                ]
-            },
             {
                 "label": "bar",
                 "class": "Bar",

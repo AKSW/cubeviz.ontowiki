@@ -19,10 +19,6 @@ var ChartSelector = (function () {
         new Highcharts.Chart(chart.getRenderResult());
     }
     ChartSelector.init = function init(nr) {
-        if(0 != ChartSelector.status) {
-            System.out("ChartSelector.init: Already initialized");
-            return;
-        }
         $(".chartSelector-options-toggle").bind("click", function () {
             $(".chartSelector-item-options").eq(this.itemFocused).toggle();
             $(".chartSelector-options-toggle.shut").toggle();
@@ -212,33 +208,16 @@ var HighCharts_Chart = (function () {
         }
     }
     HighCharts_Chart.getValueByDimensionProperties = function getValueByDimensionProperties(retrievedData, dimensionProperties, propertiesValueUri) {
-        console.log("");
-        console.log("");
-        console.log("");
-        console.log("");
-        console.log("getValueByDimensionProperties");
-        console.log("retrievedData");
-        console.log(retrievedData);
-        console.log("dimensionProperties");
-        console.log(dimensionProperties);
         var currentRetrDataValue = null;
         var dimProperty = null;
 
         for(var i in retrievedData) {
             for(var dimensionType in retrievedData[i]) {
                 for(var iDP in dimensionProperties) {
-                    console.log("checke " + dimensionProperties[iDP]["dimension_type"] + " --- " + dimensionType);
                     if(dimensionProperties[iDP]["dimension_type"] == dimensionType) {
-                        console.log("found!");
                         dimProperty = dimensionProperties[iDP]["property"];
                         currentRetrDataValue = retrievedData[i];
-                        console.log("dimPropety");
-                        console.log(dimProperty);
-                        console.log("currentRetrDataValue");
-                        console.log(currentRetrDataValue[dimensionType][0]["value"]);
                         if(dimProperty == currentRetrDataValue[dimensionType][0]["value"]) {
-                            console.log("found! return:");
-                            console.log(currentRetrDataValue[propertiesValueUri][0]["value"]);
                             return currentRetrDataValue[propertiesValueUri][0]["value"];
                         }
                     }
@@ -324,8 +303,6 @@ var HighCharts_Pie = (function (_super) {
             System.out(multipleDimensions);
             return;
         }
-        console.log("multipleDimensions");
-        console.log(multipleDimensions);
         var value = 0;
         for(var i in multipleDimensions[0]["elements"]) {
             value = HighCharts_Chart.getValueByDimensionProperties(retrievedData, [
@@ -337,7 +314,6 @@ var HighCharts_Pie = (function (_super) {
                 value
             ]);
         }
-        console.log(this["series"][0]);
     };
     HighCharts_Pie.prototype.getRenderResult = function () {
         this.chartConfig["series"] = this["series"];
@@ -397,6 +373,7 @@ var Viz_Event = (function () {
 var Viz_Main = (function () {
     function Viz_Main() { }
     Viz_Main.updateChartSelection = function updateChartSelection(suiteableCharts) {
+        $("#chartSelection").html("");
         var iconPath = "";
         var name = "";
         var item = null;

@@ -70,10 +70,10 @@ class ChartSelector {
 	static init (nr) {
         
         //  ChartSelector is already initialized
-		if(0 != ChartSelector.status) {
+		/* if(0 != ChartSelector.status) {
 			System.out ( "ChartSelector.init: Already initialized" );
             return;
-        }
+        } */
 
 		$(".chartSelector-options-toggle").bind("click",function() {
 			$(".chartSelector-item-options").eq ( this.itemFocused ).toggle();
