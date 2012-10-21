@@ -1,3 +1,6 @@
+/**
+ * Fits if you have 1 or 2 multiple dimensions.
+ */
 class HighCharts_Bar extends HighCharts_Chart {
     
     /**
@@ -21,14 +24,16 @@ class HighCharts_Bar extends HighCharts_Chart {
     /**
      * 
      */
-    public init ( entries:any, cubeVizConfig:Object, chartConfig:any ) : void {
+    public init ( entries:any, cubeVizConfig:Object, chartConfig:Object ) : void {
         
-        var dimensionLabels:string[] = [""];
-        var forXAxis = null;
-        var forSeries = null;
+        var dimensionLabels:string[] = [""],
+            forXAxis = null,
+            forSeries = null;
         
+        // save given chart config
         this.chartConfig = chartConfig;
         
+        // assign selected dimensions to xAxis and series (yAxis)
         for ( var dimensionLabel in cubeVizConfig ["selectedComponents"]["dimensions"] ) {
             if ( null == forXAxis ) {
                 forXAxis = cubeVizConfig ["selectedComponents"]["dimensions"][dimensionLabel];
@@ -36,7 +41,6 @@ class HighCharts_Bar extends HighCharts_Chart {
                 forSeries = cubeVizConfig ["selectedComponents"]["dimensions"][dimensionLabel];
             }
         }
-        
         
         /**
          * Fill x axis
@@ -51,15 +55,20 @@ class HighCharts_Bar extends HighCharts_Chart {
            return a.toString().toUpperCase().localeCompare(b.toString().toUpperCase());
         });
         
-        
         /**
          * Fill series (y axis)
          */
         this.series = [];
         
         // structure retrieved elements
-        var seriesData = this.structureEntries ( forSeries, this.extractMeasureValue (cubeVizConfig), entries );
+        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri ( 
+            forSeries ["type"], 
+            HighCharts_Chart.extractMeasureValue (CubeViz_Links_Module["selectedComponents"]["measures"]), 
+            entries 
+        );
         
+        // Use only these value from series data, which belong to the selected
+        // dimension elements
         for ( var i in forSeries ["elements"] ) {
             this.series.push ({ 
                 "name": forSeries ["elements"][i]["property_label"],
@@ -72,40 +81,8 @@ class HighCharts_Bar extends HighCharts_Chart {
      * 
      */
     public getRenderResult () : Object {
-        this.chartConfig ["xAxis"] = this.xAxis;
-        this.chartConfig ["series"] = this.series;
+        this.chartConfig ["xAxis"] = this ["xAxis"];
+        this.chartConfig ["series"] = this ["series"];
         return this.chartConfig;
-    }
-    
-    /**
-     * 
-     */
-    public extractMeasureValue ( cubeVizConfig ) {
-        for ( var label in cubeVizConfig.selectedComponents.measures ) {
-            return cubeVizConfig["selectedComponents"]["measures"][label]["type"];
-        }
-    }
-    
-    /**
-     * 
-     */
-    public structureEntries ( forSeries, propertiesValueUri:string, entries:any ) {
-        
-        var seriesData = {};
-        var dimensionType = forSeries.type; // e.g. http://data.lod2.eu/scoreboard/properties/year
-    
-        for ( var mainIndex in entries ) {
-            for ( var propertyUri in entries [mainIndex] ) {
-                if ( propertyUri == dimensionType ) {
-                    if ( "undefined" == typeof seriesData [entries [mainIndex][propertyUri][0]["value"]] ) {
-                        seriesData [entries [mainIndex][propertyUri][0]["value"]] = [];
-                    }
-                    seriesData [entries [mainIndex][propertyUri][0]["value"]].push (
-                        entries [mainIndex][propertiesValueUri][0]["value"]
-                    );
-                }
-            }
-        }
-        return seriesData;
     }
 }

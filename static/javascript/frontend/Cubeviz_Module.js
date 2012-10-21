@@ -124,26 +124,25 @@ var Observation = (function () {
 })();
 var System = (function () {
     function System() { }
-    System.out = function out(output) {
-        if(typeof console !== "undefined" && typeof console.log !== "undefined" && "development" == CubeViz_Config.context) {
-            console.log(output);
-        }
-    }
-    System.call = function call(f, param) {
-        if(typeof f !== "undefined") {
-            if(typeof param !== "undefined") {
-                eval("f (param);");
-            } else {
-                f();
+    System.countProperties = function countProperties(obj) {
+        var keyCount = 0;
+        var k = null;
+
+        for(k in obj) {
+            if(Object.prototype.hasOwnProperty.call(obj, k)) {
+                ++keyCount;
             }
         }
-    }
-    System.rand = function rand() {
-        return Math.floor(Math.random() * (2147483647 + 1));
+        return keyCount;
     }
     System.deepCopy = function deepCopy(elementToCopy) {
         var newElement = $.parseJSON(JSON.stringify(elementToCopy));
         return newElement;
+    }
+    System.out = function out(output) {
+        if(typeof console !== "undefined" && typeof console.log !== "undefined" && "development" == CubeViz_Config.context) {
+            console.log(output);
+        }
     }
     return System;
 })();

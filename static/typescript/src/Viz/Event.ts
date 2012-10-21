@@ -35,17 +35,13 @@ class Viz_Event {
             "value", "Update visualization"
         );
         
+        
         // Dynamiclly set container height (highcharts)
         var container = $("#container").offset();
         var viewPort = $(window).height();
         var containerHeight = 0; 
         
         $("#container").css ( "height", $(window).height() - container ["top"] - 5 );
-        
-        /**
-         * Setup click event for chartSelection item's
-         */
-        Viz_Event.setupChartSelector ();
         
         /**
          * Load observations based on pre-configured data structure definition and data set.
@@ -80,19 +76,37 @@ class Viz_Event {
      * 
      */
     static onComplete_LoadResultObservations (entries) {
-                
-        // var chart = HighCharts.loadChart ( "Bar" );
-            
-        // init chart instance
-        /*chart.init ( 
+        
+        // get number of multiple dimensions
+        var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions (
             entries, 
-            CubeViz_Links_Module, 
-            CubeViz_ChartConfig ["2"][0]["types"][0].config 
+            CubeViz_Links_Module ["selectedComponents"]["dimensions"],
+            CubeViz_Links_Module ["selectedComponents"]["measures"]
         );
         
+        // select first chart as default, based on multiple dimensions
+        var defaultChart = CubeViz_ChartConfig [numberOfMultipleDimensions][0]["charts"][0];
+                
+        // instantiate default chart
+        var chart = HighCharts.loadChart ( defaultChart ["class"] );
+            
+        // init chart instance
+        chart.init ( 
+            entries, 
+            CubeViz_Links_Module, 
+            defaultChart ["defaultConfig"]
+        );
+        
+        // get render result
         var renderedChart = chart.getRenderResult();
         
-        new Highcharts.Chart(renderedChart);*/
+        // show chart
+        new Highcharts.Chart(renderedChart);
+        
+        /**
+         * Setup click event for chartSelection item's
+         */
+        // Viz_Event.setupChartSelector ();
     }
     
     /**
@@ -100,9 +114,7 @@ class Viz_Event {
      */
     static setupChartSelector () {
         
-        // chartSelection = new ChartSelector ();
-        // console.log ( CubeViz_ChartConfig ["2"][0]["charts"][0] );
-        
+        // setup chart selection with given ChartConfig
         Viz_Main.updateChartSelection (
             [
                 CubeViz_ChartConfig ["2"][0]["charts"][0],

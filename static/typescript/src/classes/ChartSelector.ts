@@ -103,7 +103,6 @@ class ChartSelector {
 		var item = $(".chartSelector-item").eq(nr);
         
         // if item not found, throw exception
-		
         if(!item.size()) {											
 			throw "ChartSelector.focusItem: Invalid item nr";
         }
