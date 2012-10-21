@@ -1,10 +1,46 @@
 class HighCharts_Chart {
     
     /**
+     * 
+     */
+    public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:any ) : void { }
+    
+    /**
+     * 
+     */
+    public getRenderResult () : Object { return {}; }
+    
+    
+    
+    /**
      * Extract the uri of the measure value
      */
     static extractMeasureValue ( measures:Object[] ) : string {
         for ( var label in measures ) { return measures[label]["type"]; }
+    }
+    
+    /**
+     * @return Object[]
+     */
+    static getMultipleDimensions ( retrievedData:Object[], selectedDimensions:Object[],
+                                    measures:Object[] ) : Object [] {
+                                                
+        // assign selected dimensions to xAxis and series (yAxis)
+        var multipleDimensions:Object[] = [],
+            tmp:Object[] = [];
+            
+        for ( var dimensionLabel in selectedDimensions ) {
+                        
+            // Only put entry to multipleDimensions if it have at least 2 elements
+            if ( 1 < selectedDimensions [dimensionLabel] ["elements"]["length"] ) {
+                multipleDimensions.push ( {
+                    "dimensionLabel" : dimensionLabel,
+                    "elements" : selectedDimensions [dimensionLabel] ["elements"] 
+                } ); 
+            }
+        }
+        
+        return multipleDimensions;
     }
     
     /**
@@ -14,32 +50,11 @@ class HighCharts_Chart {
                                             selectedDimensions:Object[],
                                             measures:Object[] ) : number {
                                                 
-        // assign selected dimensions to xAxis and series (yAxis)
-        var multipleDimensions:number[] = [],
-            tmp:Object[] = [];
-            
-        for ( var dimensionLabel in selectedDimensions ) {
-                        
-            // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 < selectedDimensions [dimensionLabel] ["elements"]["length"] ) {
-                multipleDimensions.push ( 1 ); 
-            }
-        }
+        var dims = HighCharts_Chart.getMultipleDimensions (
+            retrievedData, selectedDimensions, measures
+        );
         
-        return multipleDimensions ["length"];
-    }
-    
-    /**
-     * 
-     */
-    public init ( entries:any, cubeVizConfig:Object, chartConfig:any ) : void {
-    }
-    
-    /**
-     * 
-     */
-    public getRenderResult () : Object {
-        return {};
+        return dims ["length"];
     }
     
     /**
@@ -78,5 +93,56 @@ class HighCharts_Chart {
         }
         
         return seriesData;
+    }
+    
+    /**
+     * 
+     */
+    static getFromChartConfigByClass ( className:string, charts:Object[] ) {
+        for ( var i in charts ) {
+            if ( className == charts [i]["class"] ) {
+                return charts [i];
+            }
+        }
+    }
+    
+    /**
+     * 
+     */
+    static getValueByDimensionProperties ( retrievedData:Object[], 
+                                            dimensionProperties:Object[],
+                                            propertiesValueUri:string ) : number {
+        
+        /**
+         * retrievedData [i] could looks like:
+         
+                http://data.lod2.eu/scoreboard/properties/indicator: Array[1]
+                http://data.lod2.eu/scoreboard/properties/unit: Array[1]
+                http://data.lod2.eu/scoreboard/properties/value: Array[1]
+                http://data.lod2.eu/scoreboard/properties/year: Array[1]
+                http://purl.org/linked-data/cube#dataSet: Array[1]
+                http://www.w3.org/1999/02/22-rdf-syntax-ns#type: Array[1]
+                http://www.w3.org/2000/01/rdf-schema#label: Array[1] 
+            ...
+         */
+         
+        var currentRetrDataValue = null,
+            dimProperty = null;            
+        
+        for ( var i in retrievedData ) {
+            for ( var dimensionType in retrievedData [i] ) {
+                for ( var iDP in dimensionProperties ) {
+                    if ( dimensionProperties [iDP]["dimension_type"] == dimensionType ) {
+                        
+                        dimProperty = dimensionProperties [iDP]["property"];
+                        currentRetrDataValue = retrievedData [i];
+                        
+                        if ( dimProperty == currentRetrDataValue[ dimensionType ][0]["value"] ) {
+                            return currentRetrDataValue[ propertiesValueUri ][0]["value"];
+                        }
+                    }
+                }
+            }
+        }
     }
 }

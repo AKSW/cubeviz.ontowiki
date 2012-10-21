@@ -8,9 +8,15 @@ var ChartSelector = (function () {
     ChartSelector.onFocus_Item = function onFocus_Item(nr) {
     }
     ChartSelector.onClick_Item = function onClick_Item() {
-        var nr = $(this).data("nr");
-        console.log("onClick_Item for " + nr);
-        ChartSelector.focusItem(nr);
+        ChartSelector.focusItem($(this).data("nr"));
+        var chartName = $(this).attr("className");
+        var numberOfMultDims = CubeViz_Data["numberOfMultipleDimensions"];
+        var charts = CubeViz_ChartConfig[numberOfMultDims]["charts"];
+
+        var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(chartName, charts);
+        var chart = HighCharts.loadChart(chartName);
+        chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
+        new Highcharts.Chart(chart.getRenderResult());
     }
     ChartSelector.init = function init(nr) {
         if(0 != ChartSelector.status) {
@@ -22,7 +28,6 @@ var ChartSelector = (function () {
             $(".chartSelector-options-toggle.shut").toggle();
             $(".chartSelector-options-toggle.copen").toggle();
         });
-        console.log("ChartSelector -> init");
         $(".chartSelector-item").each(function (nr) {
             $(this).data("nr", nr);
             $(this).click(ChartSelector.onClick_Item);
@@ -136,6 +141,10 @@ var HighCharts = (function () {
     function HighCharts() { }
     HighCharts.loadChart = function loadChart(chartName) {
         switch(chartName) {
+            case 'Pie': {
+                return new HighCharts_Pie();
+
+            }
             case 'Bar': {
                 return new HighCharts_Bar();
 
@@ -152,28 +161,35 @@ var HighCharts = (function () {
 })();
 var HighCharts_Chart = (function () {
     function HighCharts_Chart() { }
-    HighCharts_Chart.extractMeasureValue = function extractMeasureValue(measures) {
-        for(var label in measures) {
-            return measures[label]["type"];
-        }
-    }
-    HighCharts_Chart.getNumberOfMultipleDimensions = function getNumberOfMultipleDimensions(retrievedData, selectedDimensions, measures) {
-        var multipleDimensions = [];
-        var tmp = [];
-
-        for(var dimensionLabel in selectedDimensions) {
-            if(1 < selectedDimensions[dimensionLabel]["elements"]["length"]) {
-                multipleDimensions.push(1);
-            }
-        }
-        return multipleDimensions["length"];
-    }
-    HighCharts_Chart.prototype.init = function (entries, cubeVizConfig, chartConfig) {
+    HighCharts_Chart.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
     };
     HighCharts_Chart.prototype.getRenderResult = function () {
         return {
         };
     };
+    HighCharts_Chart.extractMeasureValue = function extractMeasureValue(measures) {
+        for(var label in measures) {
+            return measures[label]["type"];
+        }
+    }
+    HighCharts_Chart.getMultipleDimensions = function getMultipleDimensions(retrievedData, selectedDimensions, measures) {
+        var multipleDimensions = [];
+        var tmp = [];
+
+        for(var dimensionLabel in selectedDimensions) {
+            if(1 < selectedDimensions[dimensionLabel]["elements"]["length"]) {
+                multipleDimensions.push({
+                    "dimensionLabel": dimensionLabel,
+                    "elements": selectedDimensions[dimensionLabel]["elements"]
+                });
+            }
+        }
+        return multipleDimensions;
+    }
+    HighCharts_Chart.getNumberOfMultipleDimensions = function getNumberOfMultipleDimensions(retrievedData, selectedDimensions, measures) {
+        var dims = HighCharts_Chart.getMultipleDimensions(retrievedData, selectedDimensions, measures);
+        return dims["length"];
+    }
     HighCharts_Chart.groupElementsByPropertiesUri = function groupElementsByPropertiesUri(dimensionTypeUri, propertiesValueUri, entries) {
         var seriesData = [];
         for(var mainIndex in entries) {
@@ -187,6 +203,48 @@ var HighCharts_Chart = (function () {
             }
         }
         return seriesData;
+    }
+    HighCharts_Chart.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
+        for(var i in charts) {
+            if(className == charts[i]["class"]) {
+                return charts[i];
+            }
+        }
+    }
+    HighCharts_Chart.getValueByDimensionProperties = function getValueByDimensionProperties(retrievedData, dimensionProperties, propertiesValueUri) {
+        console.log("");
+        console.log("");
+        console.log("");
+        console.log("");
+        console.log("getValueByDimensionProperties");
+        console.log("retrievedData");
+        console.log(retrievedData);
+        console.log("dimensionProperties");
+        console.log(dimensionProperties);
+        var currentRetrDataValue = null;
+        var dimProperty = null;
+
+        for(var i in retrievedData) {
+            for(var dimensionType in retrievedData[i]) {
+                for(var iDP in dimensionProperties) {
+                    console.log("checke " + dimensionProperties[iDP]["dimension_type"] + " --- " + dimensionType);
+                    if(dimensionProperties[iDP]["dimension_type"] == dimensionType) {
+                        console.log("found!");
+                        dimProperty = dimensionProperties[iDP]["property"];
+                        currentRetrDataValue = retrievedData[i];
+                        console.log("dimPropety");
+                        console.log(dimProperty);
+                        console.log("currentRetrDataValue");
+                        console.log(currentRetrDataValue[dimensionType][0]["value"]);
+                        if(dimProperty == currentRetrDataValue[dimensionType][0]["value"]) {
+                            console.log("found! return:");
+                            console.log(currentRetrDataValue[propertiesValueUri][0]["value"]);
+                            return currentRetrDataValue[propertiesValueUri][0]["value"];
+                        }
+                    }
+                }
+            }
+        }
     }
     return HighCharts_Chart;
 })();
@@ -207,7 +265,7 @@ var HighCharts_Bar = (function (_super) {
         this.chartConfig = {
         };
     }
-    HighCharts_Bar.prototype.init = function (entries, cubeVizConfig, chartConfig) {
+    HighCharts_Bar.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
         var dimensionLabels = [
             ""
         ];
@@ -215,11 +273,11 @@ var HighCharts_Bar = (function (_super) {
         var forSeries = null;
 
         this.chartConfig = chartConfig;
-        for(var dimensionLabel in cubeVizConfig["selectedComponents"]["dimensions"]) {
+        for(var dimensionLabel in selectedComponentDimensions) {
             if(null == forXAxis) {
-                forXAxis = cubeVizConfig["selectedComponents"]["dimensions"][dimensionLabel];
+                forXAxis = selectedComponentDimensions[dimensionLabel];
             } else {
-                forSeries = cubeVizConfig["selectedComponents"]["dimensions"][dimensionLabel];
+                forSeries = selectedComponentDimensions[dimensionLabel];
             }
         }
         this.xAxis.categories = [];
@@ -230,7 +288,7 @@ var HighCharts_Bar = (function (_super) {
             return a.toString().toUpperCase().localeCompare(b.toString().toUpperCase());
         });
         this.series = [];
-        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(CubeViz_Links_Module["selectedComponents"]["measures"]), entries);
+        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(measures), entries);
         for(var i in forSeries["elements"]) {
             this.series.push({
                 "name": forSeries["elements"][i]["property_label"],
@@ -245,6 +303,48 @@ var HighCharts_Bar = (function (_super) {
     };
     return HighCharts_Bar;
 })(HighCharts_Chart);
+var HighCharts_Pie = (function (_super) {
+    __extends(HighCharts_Pie, _super);
+    function HighCharts_Pie() {
+        _super.apply(this, arguments);
+
+        this.series = [
+            {
+                "data": []
+            }
+        ];
+        this.chartConfig = {
+        };
+    }
+    HighCharts_Pie.prototype.init = function (retrievedData, selectedComponentDimensions, measures, chartConfig) {
+        this.chartConfig = chartConfig;
+        var multipleDimensions = HighCharts_Chart.getMultipleDimensions(retrievedData, selectedComponentDimensions, measures);
+        if(1 < multipleDimensions["length"]) {
+            System.out("Pie chart is only suitable for one dimension!");
+            System.out(multipleDimensions);
+            return;
+        }
+        console.log("multipleDimensions");
+        console.log(multipleDimensions);
+        var value = 0;
+        for(var i in multipleDimensions[0]["elements"]) {
+            value = HighCharts_Chart.getValueByDimensionProperties(retrievedData, [
+                multipleDimensions[0]["elements"][i]
+            ], HighCharts_Chart.extractMeasureValue(measures));
+            value = undefined !== value ? value : 0;
+            this["series"][0]["data"].push([
+                multipleDimensions[0]["elements"][i]["property_label"], 
+                value
+            ]);
+        }
+        console.log(this["series"][0]);
+    };
+    HighCharts_Pie.prototype.getRenderResult = function () {
+        this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return HighCharts_Pie;
+})(HighCharts_Chart);
 var CubeViz_Config = CubeViz_Config || {
 };
 var CubeViz_Links_Module = CubeViz_Links_Module || {
@@ -252,6 +352,10 @@ var CubeViz_Links_Module = CubeViz_Links_Module || {
 var cubeVizUIChartConfig = cubeVizUIChartConfig || {
 };
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {
+};
+var CubeViz_Data = {
+    "retrievedObservations": [],
+    "numberOfMultipleDimensions": 0
 };
 $(document).ready(function () {
     Viz_Event.ready();
@@ -272,13 +376,14 @@ var Viz_Event = (function () {
         cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
         $(".chartSelector-item").removeClass("current");
         $(event["target"]).parent().addClass("current");
-        Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
+        CubeViz_Data["retrievedObservations"] = entries;
         var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
+        CubeViz_Data["numberOfMultipleDimensions"] = numberOfMultipleDimensions;
         var defaultChart = CubeViz_ChartConfig[numberOfMultipleDimensions]["charts"][0];
         var chart = HighCharts.loadChart(defaultChart["class"]);
-        chart.init(entries, CubeViz_Links_Module, defaultChart["defaultConfig"]);
+        chart.init(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], defaultChart["defaultConfig"]);
         var renderedChart = chart.getRenderResult();
         new Highcharts.Chart(renderedChart);
         Viz_Event.setupChartSelector(numberOfMultipleDimensions);
@@ -300,7 +405,7 @@ var Viz_Main = (function () {
         $.each(suiteableCharts, function (index, element) {
             iconPath = CubeViz_Config["imagesPath"] + element["icon"];
             name = element["class"];
-            item = $("<div></div>").addClass("chartSelector-item");
+            item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
             icon = $("<img/>").attr({
                 "src": iconPath,
                 "name": name,

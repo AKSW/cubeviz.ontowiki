@@ -12,7 +12,10 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 // ChartConfig.js > Array which contains chart configurations for each dimensional-case
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
-// var chartSelector = chartSelector || {};
+var CubeViz_Data = {
+  "retrievedObservations" : [],
+  "numberOfMultipleDimensions" : 0  
+};
 
 /**
  * Event section
@@ -62,14 +65,6 @@ class Viz_Event {
         $(".chartSelector-item").removeClass("current");
         
         $(event["target"]).parent().addClass("current");
-        
-        /**
-         * Load observations based on pre-configured data structure definition and data set.
-         */
-        Observation.loadAll ( 
-            CubeViz_Links_Module ["linkCode"],
-            Viz_Event.onComplete_LoadResultObservations
-        );
     }
     
     /**
@@ -77,12 +72,16 @@ class Viz_Event {
      */
     static onComplete_LoadResultObservations (entries) {
         
+        CubeViz_Data ["retrievedObservations"] = entries;
+        
         // get number of multiple dimensions
         var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions (
             entries, 
             CubeViz_Links_Module ["selectedComponents"]["dimensions"],
             CubeViz_Links_Module ["selectedComponents"]["measures"]
-        );
+        ); 
+        
+        CubeViz_Data ["numberOfMultipleDimensions"] = numberOfMultipleDimensions;
         
         // select first chart as default, based on multiple dimensions
         var defaultChart = CubeViz_ChartConfig [numberOfMultipleDimensions]["charts"][0];
@@ -93,7 +92,8 @@ class Viz_Event {
         // init chart instance
         chart.init ( 
             entries, 
-            CubeViz_Links_Module, 
+            CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
+            CubeViz_Links_Module ["selectedComponents"]["measures"], 
             defaultChart ["defaultConfig"]
         );
         

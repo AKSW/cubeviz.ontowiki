@@ -36,9 +36,32 @@ class ChartSelector {
      * 
      */
     static onClick_Item () {        
-        var nr = $(this).data("nr");
-        console.log ("onClick_Item for " + nr);
-        ChartSelector.focusItem(nr);
+        
+        // focus clicked item
+        ChartSelector.focusItem($(this).data ("nr"));
+        
+        // get chart name
+        var chartName        = $(this).attr ( "className" ),
+            numberOfMultDims = CubeViz_Data ["numberOfMultipleDimensions"],
+            charts           = CubeViz_ChartConfig [numberOfMultDims]["charts"];
+        
+        // get class
+        var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+            chartName, charts
+        );
+        
+        var chart = HighCharts.loadChart ( chartName );
+            
+        // init chart instance
+        chart.init ( 
+            CubeViz_Data ["retrievedObservations"], 
+            CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
+            CubeViz_Links_Module ["selectedComponents"]["measures"], 
+            fromChartConfig ["defaultConfig"]
+        );
+        
+        // show chart
+        new Highcharts.Chart(chart.getRenderResult());
     }
     
     /**
@@ -57,8 +80,6 @@ class ChartSelector {
 			$(".chartSelector-options-toggle.shut").toggle();
 			$(".chartSelector-options-toggle.copen").toggle();
 		});
-        
-        console.log ( "ChartSelector -> init" );
         
 		$(".chartSelector-item").each(function(nr){
             $(this).data("nr", nr);

@@ -24,7 +24,7 @@ class HighCharts_Bar extends HighCharts_Chart {
     /**
      * 
      */
-    public init ( entries:any, cubeVizConfig:Object, chartConfig:Object ) : void {
+    public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:Object ) : void {
         
         var dimensionLabels:string[] = [""],
             forXAxis = null,
@@ -34,11 +34,11 @@ class HighCharts_Bar extends HighCharts_Chart {
         this.chartConfig = chartConfig;
         
         // assign selected dimensions to xAxis and series (yAxis)
-        for ( var dimensionLabel in cubeVizConfig ["selectedComponents"]["dimensions"] ) {
+        for ( var dimensionLabel in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
-                forXAxis = cubeVizConfig ["selectedComponents"]["dimensions"][dimensionLabel];
+                forXAxis = selectedComponentDimensions[dimensionLabel];
             } else {
-                forSeries = cubeVizConfig ["selectedComponents"]["dimensions"][dimensionLabel];
+                forSeries = selectedComponentDimensions[dimensionLabel];
             }
         }
         
@@ -63,7 +63,7 @@ class HighCharts_Bar extends HighCharts_Chart {
         // structure retrieved elements
         var seriesData = HighCharts_Chart.groupElementsByPropertiesUri ( 
             forSeries ["type"], 
-            HighCharts_Chart.extractMeasureValue (CubeViz_Links_Module["selectedComponents"]["measures"]), 
+            HighCharts_Chart.extractMeasureValue ( measures ), 
             entries 
         );
         

@@ -18,7 +18,9 @@ class Viz_Main {
             name = element ["class"];
 			
             // create div for chart image
-            item = $("<div></div>").addClass("chartSelector-item");
+            item = $("<div></div>")
+                .addClass("chartSelector-item")
+                .attr ( "className", name );
 			
             // create image and set its values, after that, append it to its own div
             icon = $("<img/>").attr({

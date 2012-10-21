@@ -7,7 +7,13 @@ class HighCharts {
         switch ( chartName ) {
             
             /**
-             * Two dimensions
+             * ONE dimension
+             */
+            case 'Pie':
+                return new HighCharts_Pie ();
+            
+            /**
+             * TWO dimensions
              */
             case 'Bar':
                 return new HighCharts_Bar ();
