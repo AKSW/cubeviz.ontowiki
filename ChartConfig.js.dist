@@ -10,108 +10,170 @@ var CubeViz_ChartConfig = {
     /**
      * No multiple dimensions
      */
-    "0": [        
-    ],
+    "0": {
+    },
     
     /**
      * One multiple dimensions
      */
-    "1": [
-    ],
+    "1": {
+        "charts": [
+            {
+                "label": "bar",
+                "class": "Bar",
+                "icon": "bar.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "bar"
+                    },
+                    "plotOptions": {
+                        "series": {
+                            "stacking": "normal"
+                        }
+                    }
+                },
+                
+                "options": [
+                    {
+                        "labels": {
+                            "en": "Type"
+                        },
+                        "values": [
+                            "bar", "column"
+                        ],
+                        "key": "chart.type",
+                        "type": "string"
+                    },
+                    {
+                        "labels": {
+                            "en": "Stacking"
+                        },
+                        "values": [
+                            "normal",
+                            "none"
+                        ],
+                        "key": "chart.plotOptions.stacking",
+                        "type": "array"
+                    }
+                ]
+            },
+            {
+                "label": "pie",
+                "class": "Pie",
+                "icon": "pie.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "pie"
+                    }
+                },
+                
+                "options": [
+                    {
+                        "labels": {
+                            "en": "Color"
+                        },
+                        "values": [
+                            "bar", "column"
+                        ],
+                        "key": "chart.type",
+                        "type": "string"
+                    }
+                ]
+            }
+        ]
+    },
     
     /**
      * Two multiple dimensions
      */
-    "2": [
-        {
-            "charts": [
-                {
-                    "label": "bar",
-                    "class": "Bar",
-                    "icon": "bar.png",
-                    
-                    "defaultConfig": {
-                        "chart": { 
-                            "renderTo": "container",
-                            "type": "bar"
-                        },
-                        "plotOptions": {
-                            "series": {
-                                "stacking": "normal"
-                            }
-                        }
+    "2": {
+        "charts": [
+            {
+                "label": "bar",
+                "class": "Bar",
+                "icon": "bar.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "bar"
                     },
-                    
-                    "options": [
-                        {
-                            "labels": {
-                                "de": "Typ",
-                                "en": "Type"
-                            },
-                            "values": [
-                                "bar", "column"
-                            ],
-                            "key": "chart.type",
-                            "type": "string"
-                        },
-                        {
-                            "labels": {
-                                "de": "Aufeinanderaufbauend",
-                                "en": "Stacking"
-                            },
-                            "values": [
-                                "normal",
-                                "none"
-                            ],
-                            "key": "chart.plotOptions.stacking",
-                            "type": "array"
+                    "plotOptions": {
+                        "series": {
+                            "stacking": "normal"
                         }
-                    ]
+                    }
                 },
-                {
-                    "label": "bar",
-                    "class": "Bar",
-                    "icon": "bar.png",
-                    
-                    "defaultConfig": {
-                        "chart": { 
-                            "renderTo": "container",
-                            "type": "bar"
+                
+                "options": [
+                    {
+                        "labels": {
+                            "en": "Type"
                         },
-                        "plotOptions": {
-                            "series": {
-                                "stacking": "normal"
-                            }
-                        }
+                        "values": [
+                            "bar", "column"
+                        ],
+                        "key": "chart.type",
+                        "type": "string"
                     },
-                    
-                    "options": [
-                        {
-                            "labels": {
-                                "de": "Typ",
-                                "en": "Type"
-                            },
-                            "values": [
-                                "bar", "column"
-                            ],
-                            "key": "chart.type",
-                            "type": "string"
+                    {
+                        "labels": {
+                            "en": "Stacking"
                         },
-                        {
-                            "labels": {
-                                "de": "Aufeinanderaufbauend",
-                                "en": "Stacking"
-                            },
-                            "values": [
-                                "normal",
-                                "none"
-                            ],
-                            "key": "chart.plotOptions.stacking",
-                            "type": "array"
+                        "values": [
+                            "normal",
+                            "none"
+                        ],
+                        "key": "chart.plotOptions.stacking",
+                        "type": "array"
+                    }
+                ]
+            },
+            {
+                "label": "bar",
+                "class": "Bar",
+                "icon": "bar.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "bar"
+                    },
+                    "plotOptions": {
+                        "series": {
+                            "stacking": "normal"
                         }
-                    ]
-                }
-            ]
-        }
-    ]
+                    }
+                },
+                
+                "options": [
+                    {
+                        "labels": {
+                            "en": "Type"
+                        },
+                        "values": [
+                            "bar", "column"
+                        ],
+                        "key": "chart.type",
+                        "type": "string"
+                    },
+                    {
+                        "labels": {
+                            "en": "Stacking"
+                        },
+                        "values": [
+                            "normal",
+                            "none"
+                        ],
+                        "key": "chart.plotOptions.stacking",
+                        "type": "array"
+                    }
+                ]
+            }
+        ]
+    }
 };

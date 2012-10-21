@@ -276,17 +276,15 @@ var Viz_Event = (function () {
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
-        var defaultChart = CubeViz_ChartConfig[numberOfMultipleDimensions][0]["charts"][0];
+        var defaultChart = CubeViz_ChartConfig[numberOfMultipleDimensions]["charts"][0];
         var chart = HighCharts.loadChart(defaultChart["class"]);
         chart.init(entries, CubeViz_Links_Module, defaultChart["defaultConfig"]);
         var renderedChart = chart.getRenderResult();
         new Highcharts.Chart(renderedChart);
+        Viz_Event.setupChartSelector(numberOfMultipleDimensions);
     }
-    Viz_Event.setupChartSelector = function setupChartSelector() {
-        Viz_Main.updateChartSelection([
-            CubeViz_ChartConfig["2"][0]["charts"][0], 
-            CubeViz_ChartConfig["2"][0]["charts"][0]
-        ]);
+    Viz_Event.setupChartSelector = function setupChartSelector(numberOfMultipleDimensions) {
+        Viz_Main.updateChartSelection(CubeViz_ChartConfig[numberOfMultipleDimensions]["charts"]);
         $('.chartSelectionItem').click(Viz_Event.onClick_ChartSelectionItem);
     }
     return Viz_Event;

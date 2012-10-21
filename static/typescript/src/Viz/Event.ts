@@ -85,7 +85,7 @@ class Viz_Event {
         );
         
         // select first chart as default, based on multiple dimensions
-        var defaultChart = CubeViz_ChartConfig [numberOfMultipleDimensions][0]["charts"][0];
+        var defaultChart = CubeViz_ChartConfig [numberOfMultipleDimensions]["charts"][0];
                 
         // instantiate default chart
         var chart = HighCharts.loadChart ( defaultChart ["class"] );
@@ -106,20 +106,17 @@ class Viz_Event {
         /**
          * Setup click event for chartSelection item's
          */
-        // Viz_Event.setupChartSelector ();
+        Viz_Event.setupChartSelector (numberOfMultipleDimensions);
     }
     
     /**
      * Setup click event for chartSelection item's
      */
-    static setupChartSelector () {
+    static setupChartSelector (numberOfMultipleDimensions:number) : void {
         
         // setup chart selection with given ChartConfig
         Viz_Main.updateChartSelection (
-            [
-                CubeViz_ChartConfig ["2"][0]["charts"][0],
-                CubeViz_ChartConfig ["2"][0]["charts"][0]
-            ]
+            CubeViz_ChartConfig [numberOfMultipleDimensions]["charts"]
         );
         
         $('.chartSelectionItem').click ( Viz_Event.onClick_ChartSelectionItem );
