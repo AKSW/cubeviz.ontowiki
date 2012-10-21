@@ -20,6 +20,8 @@ class Observation {
      * 
      */
     static prepareLoadedResultObservations (entries, callback) {
+        // TODO: fix it, because sometimes you got JSON from server, 
+        // sometimes not, than you have to parse it
         var parse = $.parseJSON ( entries );
         if ( null == parse ) {
             callback ( entries );
