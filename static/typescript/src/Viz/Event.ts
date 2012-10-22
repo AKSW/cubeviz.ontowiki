@@ -59,12 +59,64 @@ class Viz_Event {
      * After click on an item in chartSelection, reload the chart
      */
     static onClick_ChartSelectionItem (event:any) {
+                
+        var currentNr = $(event["target"]).parent ().attr ( "nr" );
+        var lastUsedNr = $("#chartSelection").attr ( "lastSelection" );
         
-        cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];
+        // If nothing was set or you clicked on another item as before
+        if ( null == lastUsedNr || currentNr != lastUsedNr ) {
+            
+            $("#chartSelectionMenu").animate ( { "height": 0 }, 400 );
+            
+            // focus clicked item => neccessary?
+            ChartSelector.focusItem( currentNr );
+            
+            // get chart name
+            var chartName        = $(this).parent ().attr ( "className" ),
+                numberOfMultDims = CubeViz_Data ["numberOfMultipleDimensions"],
+                charts           = CubeViz_ChartConfig [numberOfMultDims]["charts"];
+            
+            // get class
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+                chartName, charts
+            );
+            
+            var chart = HighCharts.loadChart ( chartName );
+                
+            // init chart instance
+            chart.init ( 
+                CubeViz_Data ["retrievedObservations"], 
+                CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
+                CubeViz_Links_Module ["selectedComponents"]["measures"], 
+                fromChartConfig ["defaultConfig"]
+            );
+            
+            // show chart
+            new Highcharts.Chart(chart.getRenderResult());
+            
+            cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];
         
-        $(".chartSelector-item").removeClass("current");
+            $(".chartSelector-item").removeClass("current");
+            
+            // add class current to div container which surrounds clicked item
+            $(event["target"]).parent().addClass("current");
+            
+            $("#chartSelection").attr ( "lastSelection", currentNr );
+            
+        // If you clicked the same item AGAIN
+        } else {
+            var container = $("#container").offset();
         
-        $(event["target"]).parent().addClass("current");
+            // fill #chartSelectionMenu
+            $("#chartSelectionMenu").html ( "fff" );
+        
+            $("#chartSelectionMenu")
+                .css ( "top", container ["top"] - 40 )
+                .css ( "left", event.pageX - container ["left"] - 195 )
+                .show ()
+                .animate ( { "height": 30 }, 400 );
+                
+        }
     }
     
     /**

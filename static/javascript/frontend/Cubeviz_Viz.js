@@ -7,27 +7,19 @@ var ChartSelector = (function () {
     ChartSelector.status = 0;
     ChartSelector.onFocus_Item = function onFocus_Item(nr) {
     }
-    ChartSelector.onClick_Item = function onClick_Item() {
-        ChartSelector.focusItem($(this).data("nr"));
-        var chartName = $(this).attr("className");
-        var numberOfMultDims = CubeViz_Data["numberOfMultipleDimensions"];
-        var charts = CubeViz_ChartConfig[numberOfMultDims]["charts"];
-
-        var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(chartName, charts);
-        var chart = HighCharts.loadChart(chartName);
-        chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
-        new Highcharts.Chart(chart.getRenderResult());
+    ChartSelector.onClick_Item = function onClick_Item(event) {
     }
     ChartSelector.init = function init(nr) {
-        $(".chartSelector-options-toggle").bind("click", function () {
+        $(".chartSelector-options-toggle").click(function () {
             $(".chartSelector-item-options").eq(this.itemFocused).toggle();
             $(".chartSelector-options-toggle.shut").toggle();
             $(".chartSelector-options-toggle.copen").toggle();
         });
         $(".chartSelector-item").each(function (nr) {
-            $(this).data("nr", nr);
+            $(this).attr("nr", nr);
             $(this).click(ChartSelector.onClick_Item);
         });
+        $("#chartSelection").attr("lastSelection", 0);
         ChartSelector.status = 1;
         if(typeof nr == "undefined") {
             ChartSelector.itemFocused = 0;
@@ -349,9 +341,32 @@ var Viz_Event = (function () {
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
-        cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
-        $(".chartSelector-item").removeClass("current");
-        $(event["target"]).parent().addClass("current");
+        var currentNr = $(event["target"]).parent().attr("nr");
+        var lastUsedNr = $("#chartSelection").attr("lastSelection");
+        if(null == lastUsedNr || currentNr != lastUsedNr) {
+            $("#chartSelectionMenu").animate({
+                "height": 0
+            }, 400);
+            ChartSelector.focusItem(currentNr);
+            var chartName = $(this).parent().attr("className");
+            var numberOfMultDims = CubeViz_Data["numberOfMultipleDimensions"];
+            var charts = CubeViz_ChartConfig[numberOfMultDims]["charts"];
+
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(chartName, charts);
+            var chart = HighCharts.loadChart(chartName);
+            chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
+            new Highcharts.Chart(chart.getRenderResult());
+            cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
+            $(".chartSelector-item").removeClass("current");
+            $(event["target"]).parent().addClass("current");
+            $("#chartSelection").attr("lastSelection", currentNr);
+        } else {
+            var container = $("#container").offset();
+            $("#chartSelectionMenu").html("fff");
+            $("#chartSelectionMenu").css("top", container["top"] - 40).css("left", event.pageX - container["left"] - 195).show().animate({
+                "height": 30
+            }, 400);
+        }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         CubeViz_Data["retrievedObservations"] = entries;
@@ -378,6 +393,7 @@ var Viz_Main = (function () {
         var name = "";
         var item = null;
         var icon = null;
+        var nr = 0;
 
         $.each(suiteableCharts, function (index, element) {
             iconPath = CubeViz_Config["imagesPath"] + element["icon"];
@@ -387,13 +403,13 @@ var Viz_Main = (function () {
                 "src": iconPath,
                 "name": name,
                 "class": "chartSelectionItem"
-            }).appendTo(item);
+            }).data("nr", nr++).appendTo(item);
             item.appendTo($("#chartSelection"));
         });
         $("#chartSelection").addClass("chartSelector");
         ChartSelector.onFocus_Item = function (nr) {
-            console.log("onSelect_Item for " + nr);
         };
+        ChartSelector.onClick_Item = Viz_Event.onClick_ChartSelectionItem;
         ChartSelector.init(0);
     }
     return Viz_Main;

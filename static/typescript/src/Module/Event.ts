@@ -80,8 +80,6 @@ class Module_Event {
      * Opens a dialog, filled with elements of the selected dimension
      */
     static onClick_DialogSelector () {
-        
-        console.log ( $(this));
                 
         // get dimension from clicked dialog selector
         var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();

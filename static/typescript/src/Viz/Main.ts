@@ -8,7 +8,7 @@ class Viz_Main {
         
         $("#chartSelection").html ( "" );
             
-        var iconPath = "", name = "", item = null, icon = null;
+        var iconPath = "", name = "", item = null, icon = null, nr = 0;
         
         // go through all suitableCharts
         $.each(suiteableCharts, function (index, element) {            
@@ -22,11 +22,16 @@ class Viz_Main {
                 .attr ( "className", name );
 			
             // create image and set its values, after that, append it to its own div
-            icon = $("<img/>").attr({
-				"src": iconPath,
-				"name": name,
-				"class": "chartSelectionItem"
-			}).appendTo(item);
+            icon = $("<img/>")
+                .attr({
+                    "src": iconPath,
+                    "name": name,
+                    "class": "chartSelectionItem"
+                })
+                
+                .data ("nr", nr++)
+            
+                .appendTo(item);
             
             // in the end, append div to #chartSelection div
 			item.appendTo ( $("#chartSelection") );
@@ -38,9 +43,8 @@ class Viz_Main {
          * Initialize chart selector and neccessary items
          */        
         // TODO
-        ChartSelector.onFocus_Item = function(nr){
-            console.log ( "onSelect_Item for " + nr );
-        };
+        ChartSelector.onFocus_Item = function(nr){};
+        ChartSelector.onClick_Item = Viz_Event.onClick_ChartSelectionItem;
 		
         ChartSelector.init(0);
     }

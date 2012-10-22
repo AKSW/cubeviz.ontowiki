@@ -177,7 +177,6 @@ var Module_Event = (function () {
         Module_Event.setupPermaLinkButton();
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
-        console.log($(this));
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
         var dimensionType = $(this).attr("dimensionType").toString();
         var dimensionUrl = $(this).attr("dimensionUrl").toString();

@@ -445,6 +445,14 @@
     width: 50px;
 }
 
+#chartSelectionMenu {
+    display: none;
+    position: absolute;
+    border: 1px solid #565656;
+    width: 200px;
+    height: auto;
+}
+
 .chartSelectionItem {
     float: left;
     width: 25px;
