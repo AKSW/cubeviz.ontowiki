@@ -132,7 +132,8 @@ class Module_Main {
      */
     static hideSidebarLoader () {
         if ( 0 == tmpCubeVizLeftSidebarLeftQueue ["length"] ) {
-            $("#sidebar-left-loader").hide ();
+            $("#sidebar-left-loader")
+                .fadeOut ( 400 );
         }
     }
     
@@ -169,9 +170,12 @@ class Module_Main {
      * 
      */
     static showSidebarLoader () {
+        
+        console.log ( $("#sidebar-left").css ("height") );
+        
         $("#sidebar-left-loader")
+            .fadeIn ( 1000 )
             // set height dynamicly
-            .css ( "height", ( $("#sidebar-left").css ("height") + 50 ) )
-            .show ();
+            .css ( "height", ( $("#sidebar-left").css ("height") ) );
     }
 }

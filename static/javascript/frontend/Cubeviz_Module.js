@@ -410,7 +410,7 @@ var Module_Main = (function () {
     }
     Module_Main.hideSidebarLoader = function hideSidebarLoader() {
         if(0 == tmpCubeVizLeftSidebarLeftQueue["length"]) {
-            $("#sidebar-left-loader").hide();
+            $("#sidebar-left-loader").fadeOut(400);
         }
     }
     Module_Main.removeEntryFromSidebarLeftQueue = function removeEntryFromSidebarLeftQueue(entry) {
@@ -433,7 +433,8 @@ var Module_Main = (function () {
         });
     }
     Module_Main.showSidebarLoader = function showSidebarLoader() {
-        $("#sidebar-left-loader").css("height", ($("#sidebar-left").css("height") + 50)).show();
+        console.log($("#sidebar-left").css("height"));
+        $("#sidebar-left-loader").fadeIn(1000).css("height", ($("#sidebar-left").css("height")));
     }
     return Module_Main;
 })();
