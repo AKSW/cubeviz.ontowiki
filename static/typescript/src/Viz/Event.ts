@@ -60,61 +60,53 @@ class Viz_Event {
      */
     static onClick_ChartSelectionItem (event:any) {
                 
-        var currentNr = $(event["target"]).parent ().attr ( "nr" );
-        var lastUsedNr = $("#chartSelection").attr ( "lastSelection" );
+        var currentNr:number = parseInt ( $(event["target"]).parent ().attr ( "nr" ) );
+        var lastUsedNr:number = parseInt ( $("#chartSelection").attr ( "lastSelection" ) );
         
         // If nothing was set or you clicked on another item as before
         if ( null == lastUsedNr || currentNr != lastUsedNr ) {
             
-            $("#chartSelectionMenu").animate ( { "height": 0 }, 400 );
+            ChartSelector.itemClicked = currentNr;		
+                        
+            $(".chartSelector-item")
+                .removeClass("current")
+                .eq(currentNr)
+                .addClass("current");
             
-            // focus clicked item => neccessary?
-            ChartSelector.focusItem( currentNr );
-            
-            // get chart name
-            var chartName        = $(this).parent ().attr ( "className" ),
-                numberOfMultDims = CubeViz_Data ["numberOfMultipleDimensions"],
-                charts           = CubeViz_ChartConfig [numberOfMultDims]["charts"];
-            
-            // get class
-            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
-                chartName, charts
+            /**
+             * Render chart for given class name
+             */
+            Viz_Main.renderChart ( 
+                $(this).attr ( "className" )
             );
-            
-            var chart = HighCharts.loadChart ( chartName );
-                
-            // init chart instance
-            chart.init ( 
-                CubeViz_Data ["retrievedObservations"], 
-                CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
-                CubeViz_Links_Module ["selectedComponents"]["measures"], 
-                fromChartConfig ["defaultConfig"]
-            );
-            
-            // show chart
-            new Highcharts.Chart(chart.getRenderResult());
             
             cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];
+        
+            $("#chartSelection").attr ( "lastSelection", currentNr );
         
             $(".chartSelector-item").removeClass("current");
             
             // add class current to div container which surrounds clicked item
             $(event["target"]).parent().addClass("current");
             
-            $("#chartSelection").attr ( "lastSelection", currentNr );
+            $("#chartSelectionMenu")
+                .fadeOut ( 500 );
             
         // If you clicked the same item AGAIN
         } else {
-            var container = $("#container").offset();
-        
+            
+            var offset = $(this).offset();
+            var containerOffset = $("#container").offset ();
+            var menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") );
+            var leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 30;
+            var topPosition = offset["top"] - 40;
+
             // fill #chartSelectionMenu
             $("#chartSelectionMenu").html ( "fff" );
         
             $("#chartSelectionMenu")
-                .css ( "top", container ["top"] - 40 )
-                .css ( "left", event.pageX - container ["left"] - 195 )
-                .show ()
-                .animate ( { "height": 30 }, 400 );
+                .css ( "left", leftPosition ).css ( "top", topPosition )
+                .fadeIn ( 500 );
                 
         }
     }
@@ -127,50 +119,25 @@ class Viz_Event {
         CubeViz_Data ["retrievedObservations"] = entries;
         
         // get number of multiple dimensions
-        var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions (
+        CubeViz_Data ["numberOfMultipleDimensions"] = HighCharts_Chart.getNumberOfMultipleDimensions (
             entries, 
             CubeViz_Links_Module ["selectedComponents"]["dimensions"],
             CubeViz_Links_Module ["selectedComponents"]["measures"]
         ); 
         
-        CubeViz_Data ["numberOfMultipleDimensions"] = numberOfMultipleDimensions;
-        
-        // select first chart as default, based on multiple dimensions
-        var defaultChart = CubeViz_ChartConfig [numberOfMultipleDimensions]["charts"][0];
-                
-        // instantiate default chart
-        var chart = HighCharts.loadChart ( defaultChart ["class"] );
-            
-        // init chart instance
-        chart.init ( 
-            entries, 
-            CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
-            CubeViz_Links_Module ["selectedComponents"]["measures"], 
-            defaultChart ["defaultConfig"]
+        /**
+         * Render chart with the given data
+         */
+        Viz_Main.renderChart ( 
+            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"][0]["class"] 
         );
-        
-        // get render result
-        var renderedChart = chart.getRenderResult();
-        
-        // show chart
-        new Highcharts.Chart(renderedChart);
         
         /**
          * Setup click event for chartSelection item's
          */
-        Viz_Event.setupChartSelector (numberOfMultipleDimensions);
-    }
-    
-    /**
-     * Setup click event for chartSelection item's
-     */
-    static setupChartSelector (numberOfMultipleDimensions:number) : void {
-        
-        // setup chart selection with given ChartConfig
-        Viz_Main.updateChartSelection (
-            CubeViz_ChartConfig [numberOfMultipleDimensions]["charts"]
+        ChartSelector.init ( 
+            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
+            Viz_Event.onClick_ChartSelectionItem
         );
-        
-        $('.chartSelectionItem').click ( Viz_Event.onClick_ChartSelectionItem );
     }
 }

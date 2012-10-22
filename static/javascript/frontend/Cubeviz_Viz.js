@@ -1,15 +1,26 @@
 var ChartSelector = (function () {
     function ChartSelector() { }
-    ChartSelector.callbackOnFocus_Item = null;
-    ChartSelector.itemPadding = 2;
-    ChartSelector.itemBorder = 2;
-    ChartSelector.itemFocused = -1;
-    ChartSelector.status = 0;
-    ChartSelector.onFocus_Item = function onFocus_Item(nr) {
-    }
-    ChartSelector.onClick_Item = function onClick_Item(event) {
-    }
-    ChartSelector.init = function init(nr) {
+    ChartSelector.itemClicked = -1;
+    ChartSelector.init = function init(suiteableCharts, onClick_Function) {
+        $("#chartSelection").html("");
+        var iconPath = "";
+        var name = "";
+        var item = null;
+        var icon = null;
+        var nr = 0;
+
+        $.each(suiteableCharts, function (index, element) {
+            iconPath = CubeViz_Config["imagesPath"] + element["icon"];
+            name = element["class"];
+            item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
+            icon = $("<img/>").attr({
+                "src": iconPath,
+                "name": name,
+                "class": "chartSelectionItem"
+            }).data("nr", nr++).appendTo(item);
+            item.appendTo($("#chartSelection"));
+        });
+        $("#chartSelection").addClass("chartSelector");
         $(".chartSelector-options-toggle").click(function () {
             $(".chartSelector-item-options").eq(this.itemFocused).toggle();
             $(".chartSelector-options-toggle.shut").toggle();
@@ -17,48 +28,9 @@ var ChartSelector = (function () {
         });
         $(".chartSelector-item").each(function (nr) {
             $(this).attr("nr", nr);
-            $(this).click(ChartSelector.onClick_Item);
+            $(this).click(onClick_Function);
         });
         $("#chartSelection").attr("lastSelection", 0);
-        ChartSelector.status = 1;
-        if(typeof nr == "undefined") {
-            ChartSelector.itemFocused = 0;
-            ChartSelector.focusItem(0);
-        } else {
-            ChartSelector.focusItem(nr);
-        }
-    }
-    ChartSelector.focusItem = function focusItem(nr) {
-        console.log("focusItem");
-        if(ChartSelector.status == 0) {
-            throw "ChartSelector.focusItem: Not initialized";
-        }
-        if(nr < 0) {
-            throw "ChartSelector.focusItem: Invalid item nr";
-        }
-        if(ChartSelector.itemFocused == nr) {
-            return;
-        }
-        var containerOptions = $(".chartSelector-options");
-        var item = $(".chartSelector-item").eq(nr);
-        if(!item.size()) {
-            throw "ChartSelector.focusItem: Invalid item nr";
-        }
-        ChartSelector.itemFocused = nr;
-        var optionNumber = $(".chartSelector-item-options").eq(nr).children().size();
-        if(0 < optionNumber) {
-            containerOptions.show();
-        } else {
-            containerOptions.hide();
-        }
-        $(".chartSelector-item-options").hide();
-        $(".chartSelector-options-toggle.shut").show();
-        $(".chartSelector-options-toggle.open").hide();
-        $(".chartSelector-item").removeClass("current").eq(nr).addClass("current");
-        if(ChartSelector.status == 1) {
-            ChartSelector.status = 2;
-        }
-        ChartSelector.onFocus_Item(nr);
     }
     return ChartSelector;
 })();
@@ -341,76 +313,43 @@ var Viz_Event = (function () {
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
     Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
-        var currentNr = $(event["target"]).parent().attr("nr");
-        var lastUsedNr = $("#chartSelection").attr("lastSelection");
+        var currentNr = parseInt($(event["target"]).parent().attr("nr"));
+        var lastUsedNr = parseInt($("#chartSelection").attr("lastSelection"));
         if(null == lastUsedNr || currentNr != lastUsedNr) {
-            $("#chartSelectionMenu").animate({
-                "height": 0
-            }, 400);
-            ChartSelector.focusItem(currentNr);
-            var chartName = $(this).parent().attr("className");
-            var numberOfMultDims = CubeViz_Data["numberOfMultipleDimensions"];
-            var charts = CubeViz_ChartConfig[numberOfMultDims]["charts"];
-
-            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(chartName, charts);
-            var chart = HighCharts.loadChart(chartName);
-            chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
-            new Highcharts.Chart(chart.getRenderResult());
+            ChartSelector.itemClicked = currentNr;
+            $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
+            Viz_Main.renderChart($(this).attr("className"));
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
+            $("#chartSelection").attr("lastSelection", currentNr);
             $(".chartSelector-item").removeClass("current");
             $(event["target"]).parent().addClass("current");
-            $("#chartSelection").attr("lastSelection", currentNr);
+            $("#chartSelectionMenu").fadeOut(500);
         } else {
-            var container = $("#container").offset();
+            var offset = $(this).offset();
+            var containerOffset = $("#container").offset();
+            var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
+            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 30;
+            var topPosition = offset["top"] - 40;
             $("#chartSelectionMenu").html("fff");
-            $("#chartSelectionMenu").css("top", container["top"] - 40).css("left", event.pageX - container["left"] - 195).show().animate({
-                "height": 30
-            }, 400);
+            $("#chartSelectionMenu").css("left", leftPosition).css("top", topPosition).fadeIn(500);
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         CubeViz_Data["retrievedObservations"] = entries;
-        var numberOfMultipleDimensions = HighCharts_Chart.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
-        CubeViz_Data["numberOfMultipleDimensions"] = numberOfMultipleDimensions;
-        var defaultChart = CubeViz_ChartConfig[numberOfMultipleDimensions]["charts"][0];
-        var chart = HighCharts.loadChart(defaultChart["class"]);
-        chart.init(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], defaultChart["defaultConfig"]);
-        var renderedChart = chart.getRenderResult();
-        new Highcharts.Chart(renderedChart);
-        Viz_Event.setupChartSelector(numberOfMultipleDimensions);
-    }
-    Viz_Event.setupChartSelector = function setupChartSelector(numberOfMultipleDimensions) {
-        Viz_Main.updateChartSelection(CubeViz_ChartConfig[numberOfMultipleDimensions]["charts"]);
-        $('.chartSelectionItem').click(Viz_Event.onClick_ChartSelectionItem);
+        CubeViz_Data["numberOfMultipleDimensions"] = HighCharts_Chart.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
+        Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
+        ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
     }
     return Viz_Event;
 })();
 var Viz_Main = (function () {
     function Viz_Main() { }
-    Viz_Main.updateChartSelection = function updateChartSelection(suiteableCharts) {
-        $("#chartSelection").html("");
-        var iconPath = "";
-        var name = "";
-        var item = null;
-        var icon = null;
-        var nr = 0;
-
-        $.each(suiteableCharts, function (index, element) {
-            iconPath = CubeViz_Config["imagesPath"] + element["icon"];
-            name = element["class"];
-            item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
-            icon = $("<img/>").attr({
-                "src": iconPath,
-                "name": name,
-                "class": "chartSelectionItem"
-            }).data("nr", nr++).appendTo(item);
-            item.appendTo($("#chartSelection"));
-        });
-        $("#chartSelection").addClass("chartSelector");
-        ChartSelector.onFocus_Item = function (nr) {
-        };
-        ChartSelector.onClick_Item = Viz_Event.onClick_ChartSelectionItem;
-        ChartSelector.init(0);
+    Viz_Main.renderChart = function renderChart(className) {
+        var charts = CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"];
+        var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, charts);
+        var chart = HighCharts.loadChart(className);
+        chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
+        new Highcharts.Chart(chart.getRenderResult());
     }
     return Viz_Main;
 })();
