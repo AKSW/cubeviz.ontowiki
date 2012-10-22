@@ -171,10 +171,11 @@ var Module_Event = (function () {
         System.out(CubeViz_Links_Module);
         Module_Main.setupAjax();
         Module_Main.showSidebarLoader();
-        Module_Event.setupDataSetBox();
-        Module_Event.setupDataStructureDefinitionBox();
-        Module_Event.setupShowVisualizationButton();
-        Module_Event.setupPermaLinkButton();
+        $("#sidebar-left-data-selection-sets").change(Module_Event.onChange_DataSetBox);
+        DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
+        $("#sidebar-left-data-selection-strc").change(Module_Event.onChange_DataStructureDefinitionBox);
+        $("#showUpdateVisualizationButton").click(Module_Event.onClick_ShowVisualizationButton);
+        $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
@@ -312,24 +313,11 @@ var Module_Event = (function () {
         Module_Main.removeEntryFromSidebarLeftQueue("onClick_DialogSelectorCloseButton");
         Module_Main.hideSidebarLoader();
     }
-    Module_Event.setupDataStructureDefinitionBox = function setupDataStructureDefinitionBox() {
-        DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
-        $("#sidebar-left-data-selection-strc").change(Module_Event.onChange_DataStructureDefinitionBox);
-    }
-    Module_Event.setupDataSetBox = function setupDataSetBox() {
-        $("#sidebar-left-data-selection-sets").change(Module_Event.onChange_DataSetBox);
-    }
     Module_Event.setupDialogSelector = function setupDialogSelector() {
         $(".open-dialog-selector").click(Module_Event.onClick_DialogSelector);
     }
     Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimensionLabel) {
         $("#dialog-btn-close-" + dimensionLabel).click(Module_Event.onClick_DialogSelectorCloseButton);
-    }
-    Module_Event.setupPermaLinkButton = function setupPermaLinkButton() {
-        $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
-    }
-    Module_Event.setupShowVisualizationButton = function setupShowVisualizationButton() {
-        $("#showUpdateVisualizationButton").click(Module_Event.onClick_ShowVisualizationButton);
     }
     return Module_Event;
 })();
@@ -423,16 +411,15 @@ var Module_Main = (function () {
     }
     Module_Main.setupAjax = function setupAjax() {
         $.ajaxSetup({
-            async: true,
-            cache: false,
-            crossDomain: true,
-            dataType: "json",
-            dataType: "json",
-            type: "POST"
+            "async": true,
+            "cache": false,
+            "crossDomain": true,
+            "dataType": "json",
+            "dataType": "json",
+            "type": "POST"
         });
     }
     Module_Main.showSidebarLoader = function showSidebarLoader() {
-        console.log($("#sidebar-left").css("height"));
         $("#sidebar-left-loader").fadeIn(1000).css("height", ($("#sidebar-left").css("height")));
     }
     return Module_Main;

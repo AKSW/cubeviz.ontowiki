@@ -153,26 +153,24 @@ class Module_Main {
     }
     
     /**
-     * 
+     * Setup AJAX to save paperwork later on
      */
-    static setupAjax () {
+    static setupAjax () : void {
         $.ajaxSetup({
-            async: true,
-            cache: false,
-            crossDomain: true,
-            dataType: "json",
-            dataType: "json",
-            type: "POST"
+            "async": true,
+            "cache": false,
+            "crossDomain": true,
+            "dataType": "json",
+            "dataType": "json",
+            "type": "POST"
         });
     }
     
     /**
      * 
      */
-    static showSidebarLoader () {
-        
-        console.log ( $("#sidebar-left").css ("height") );
-        
+    static showSidebarLoader () : void {
+                
         $("#sidebar-left-loader")
             .fadeIn ( 1000 )
             // set height dynamicly

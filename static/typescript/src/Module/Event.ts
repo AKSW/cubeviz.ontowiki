@@ -54,22 +54,24 @@ class Module_Event {
         /**
          * Selectbox with data set
          */
-        Module_Event.setupDataSetBox ();
+        $("#sidebar-left-data-selection-sets").change ( Module_Event.onChange_DataSetBox );
          
         /**
          * Selectbox with data structure definitions
+         * Set event for onChange
          */
-        Module_Event.setupDataStructureDefinitionBox ();
+        DataStructureDefinition.loadAll (Module_Event.onComplete_LoadDataStructureDefinitions);
+        $("#sidebar-left-data-selection-strc").change ( Module_Event.onChange_DataStructureDefinitionBox );
          
         /**
          * Button to show visualization
          */
-        Module_Event.setupShowVisualizationButton ();
+        $("#showUpdateVisualizationButton").click (Module_Event.onClick_ShowVisualizationButton);
          
         /**
          * Button to show perma link menu
          */
-        Module_Event.setupPermaLinkButton ();
+        $("#permaLinkButton" ).click (Module_Event.onClick_PermaLinkButton);
     }
     
     /**
@@ -406,30 +408,6 @@ class Module_Event {
     }
     
     /**
-     * SETUP FUNCTIONS
-     */
-    
-    /**
-     * 
-     */
-    static setupDataStructureDefinitionBox () {
-        
-        DataStructureDefinition.loadAll (Module_Event.onComplete_LoadDataStructureDefinitions);
-        
-        // set event for onChange
-        $("#sidebar-left-data-selection-strc").change ( Module_Event.onChange_DataStructureDefinitionBox );
-    }
-    
-    /**
-     * 
-     */
-    static setupDataSetBox () {
-        
-        // set event for onChange
-        $("#sidebar-left-data-selection-sets").change ( Module_Event.onChange_DataSetBox );
-    }
-    
-    /**
      * 
      */
     static setupDialogSelector () {
@@ -445,23 +423,5 @@ class Module_Event {
         
         // set event for onChange
         $("#dialog-btn-close-" + dimensionLabel ).click (Module_Event.onClick_DialogSelectorCloseButton);
-    }
-    
-    /**
-     * 
-     */
-    static setupPermaLinkButton () {
-        
-        // set event for onClick
-        $("#permaLinkButton" ).click (Module_Event.onClick_PermaLinkButton);
-    }
-    
-    /**
-     * 
-     */
-    static setupShowVisualizationButton () {
-        
-        // set event for onChange
-        $("#showUpdateVisualizationButton").click (Module_Event.onClick_ShowVisualizationButton);
     }
 }
