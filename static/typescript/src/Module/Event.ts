@@ -80,6 +80,8 @@ class Module_Event {
      * Opens a dialog, filled with elements of the selected dimension
      */
     static onClick_DialogSelector () {
+        
+        console.log ( $(this));
                 
         // get dimension from clicked dialog selector
         var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();
@@ -174,15 +176,47 @@ class Module_Event {
      */
     static onClick_PermaLinkButton () {
         
-        var url = $("<a></a>");
-        url
-            .attr ( "href", CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"] )
-            .attr ( "target", "_self" )
-            .html ( $("#permaLink").html () );
+        // Open perma link menu and show link
+        if ( undefined == $("#permaLinkButton").data ( "oldValue" ) ) {
             
-        $("#permaLink").html ( url );
+            $("#permaLinkButton")
+                .data ( "oldValue", $("#permaLinkButton").attr ("value").toString() )
+                .attr ( "value", ">>")
+                .animate(
+                    { width: 24 }, 
+                    400, 
+                    "linear",
+                    function() {                        
+                        var position = $("#permaLinkButton").position();
+                
+                        $("#permaLinkMenu")
+                            .css ( "top", position.top + 2 )
+                            .css ( "left", position.left + 32 );
+                            
+                        var url = $("<a></a>")
+                            .attr ( "href", CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"] )
+                            .attr ( "target", "_self" )
+                            .html ( $("#permaLink").html () );
+                            
+                        $("#permaLinkMenu").animate({width:'toggle'},400);
+                        
+                        $("#permaLink").html ( url );
+                    }
+                );        
         
-        $("#permaLinkMenu").slideToggle ( 'slow' );
+        // Close perma link menu
+        } else {
+            
+            $("#permaLinkMenu").fadeOut ( 
+                400,
+                function () {
+                    $("#permaLinkButton")
+                        .animate({width:59}, 400)
+                        .attr ( "value", $("#permaLinkButton").data ("oldValue").toString())
+                        .data ( "oldValue", null );
+                }
+            );
+        }
     }
      
     /**
@@ -430,6 +464,6 @@ class Module_Event {
     static setupShowVisualizationButton () {
         
         // set event for onChange
-        $("#sidebar-left-data-selection-submitbtn").click (Module_Event.onClick_ShowVisualizationButton);
+        $("#showUpdateVisualizationButton").click (Module_Event.onClick_ShowVisualizationButton);
     }
 }

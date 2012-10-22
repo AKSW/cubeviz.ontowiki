@@ -177,6 +177,7 @@ var Module_Event = (function () {
         Module_Event.setupPermaLinkButton();
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
+        console.log($(this));
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
         var dimensionType = $(this).attr("dimensionType").toString();
         var dimensionUrl = $(this).attr("dimensionUrl").toString();
@@ -214,10 +215,25 @@ var Module_Event = (function () {
         Module_Event.setupDialogSelector();
     }
     Module_Event.onClick_PermaLinkButton = function onClick_PermaLinkButton() {
-        var url = $("<a></a>");
-        url.attr("href", CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"]).attr("target", "_self").html($("#permaLink").html());
-        $("#permaLink").html(url);
-        $("#permaLinkMenu").slideToggle('slow');
+        if(undefined == $("#permaLinkButton").data("oldValue")) {
+            $("#permaLinkButton").data("oldValue", $("#permaLinkButton").attr("value").toString()).attr("value", ">>").animate({
+                width: 24
+            }, 400, "linear", function () {
+                var position = $("#permaLinkButton").position();
+                $("#permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
+                var url = $("<a></a>").attr("href", CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"]).attr("target", "_self").html($("#permaLink").html());
+                $("#permaLinkMenu").animate({
+                    width: 'toggle'
+                }, 400);
+                $("#permaLink").html(url);
+            });
+        } else {
+            $("#permaLinkMenu").fadeOut(400, function () {
+                $("#permaLinkButton").animate({
+                    width: 59
+                }, 400).attr("value", $("#permaLinkButton").data("oldValue").toString()).data("oldValue", null);
+            });
+        }
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
         if("undefined" == typeof Viz_Event) {
@@ -314,7 +330,7 @@ var Module_Event = (function () {
         $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.setupShowVisualizationButton = function setupShowVisualizationButton() {
-        $("#sidebar-left-data-selection-submitbtn").click(Module_Event.onClick_ShowVisualizationButton);
+        $("#showUpdateVisualizationButton").click(Module_Event.onClick_ShowVisualizationButton);
     }
     return Module_Event;
 })();

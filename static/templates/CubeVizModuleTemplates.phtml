@@ -2,23 +2,14 @@
     {.section dimensions}
         {.repeated section @}
             
-            <div class="sidebar-left-data-selection-dims-box-seperator" style="margin-left: 1px; margin-top: 10px;">
-                <div class="sidebar-left-data-selection-dims-box-lblabs">
-                    <div class="sidebar-left-data-selection-dims-box-label" style="float: left;">
-                        <span class="sidebar-left-data-selection-dims-box-label-value">{label}</span> 
-                        (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
-                    </div>
-                    <div class="sidebar-left-data-selection-dims-box-abstract">
-                        <div id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}" dimensionType="{type}">
-                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
-                        </div>
-                        <div style="display:none;" id="open-dialog-{label}-options" class="open-dialog-options">
-                            <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/settings.png" title="<?php echo $this->_translate->_('Options'); ?>">
-                        </div>
-                    </div>
-                </div>
-                <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">
-            </div>     
+            <div class="sidebar-left-data-selection-dims-box-label-value">
+               <span>{label}</span> 
+               (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
+                <span id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}" dimensionType="{type}">
+                    <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
+                </span>
+            </div>
+            <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">     
                           
         {.end}    
     {.or}{.end}
@@ -45,7 +36,7 @@
 <div id="stringContainerDialogTemplate" style="display:none;">
     <div class="dialog" id="dialog-{dimensionLabel}">
         <div class="dialog-header">
-            <div class="dialog-header-label">{dimensionLabel}</div><div class="dialog-header-label-warning">Only 10 elements are selectable at the same time.</div>
+            <div class="dialog-header-label">{dimensionLabel}</div>
             <div style="float:right;">
                 <input type="button" id="dialog-btn-close-{dimensionLabel}" class="minibutton submit" dimensionLabel="{dimensionLabel}" dimensionType="{dimensionType}" dimensionUrl="{dimensionUrl}" value="<?php echo $this->_translate->_('Save'); ?>">
             </div>

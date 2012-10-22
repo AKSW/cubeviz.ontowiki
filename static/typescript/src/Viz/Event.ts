@@ -34,7 +34,7 @@ class Viz_Event {
         System.out ( CubeViz_Config );
         
         // set label of data selection button
-        $("#sidebar-left-data-selection-submitbtn").attr ( 
+        $("#showUpdateVisualizationButton").attr ( 
             "value", "Update visualization"
         );
         

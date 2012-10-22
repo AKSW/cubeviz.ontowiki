@@ -341,7 +341,7 @@ var Viz_Event = (function () {
     Viz_Event.ready = function ready() {
         System.out("CubeViz_Config");
         System.out(CubeViz_Config);
-        $("#sidebar-left-data-selection-submitbtn").attr("value", "Update visualization");
+        $("#showUpdateVisualizationButton").attr("value", "Update visualization");
         var container = $("#container").offset();
         var viewPort = $(window).height();
         var containerHeight = 0;

@@ -63,41 +63,33 @@
             <br/>
             
             <!-- Select data structure-->
-            <div style="margin-top: -8px; clear:both;">
-                <div style="float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Structures'); ?></div> 
+            <div style="margin-top: -10px; margin-left: 2px; clear:both;">
+                <div style="float:left; font-size: 12px; font-weight:bold; margin-bottom:2px;"><?php echo $this->_translate->_('Data Structures'); ?></div> 
                 <div><select name="datastructures" id="sidebar-left-data-selection-strc"></select></div>
             </div>
             
             <!-- Select data set -->
-            <div style="margin-top: 15px; clear:both;">
-                <div style="width:110px; float:left; font-size: 12px;"><?php echo $this->_translate->_('Data Sets'); ?></div>
+            <div style="margin-top: 15px; margin-left: 2px; clear:both;">
+                <div style="width:110px; float:left; font-size: 12px; font-weight:bold; margin-bottom:2px;"><?php echo $this->_translate->_('Data Sets'); ?></div>
                 <div><select name="datasets" id="sidebar-left-data-selection-sets"></select></div>
             </div>
 			
             <!-- Visual seperator -->
             <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
             
-            <div id="sidebar-left-data-selection-dims">
-				<div class="cubeViz-h2-light"><?php echo $this->_translate->_('Dimensions'); ?></div>
+            <div style="margin-left: 3px;">
+				<div style="width:110px; font-size: 12px; font-weight:bold;">
+                    <?php echo $this->_translate->_('Dimensions'); ?></div>
 				<div id="sidebar-left-data-selection-dims-boxes"></div>
 			</div>
-			<div id="sidebar-left-data-selection-meas" style="display:none;">
-				<h3><?php echo $this->_translate->_('Measures'); ?></h3>
-				<div id="sidebar-left-data-selection-meas-boxes"></div>
-			</div>
-            <div style="clear:both;">
-                <br/>
-                <br/>
-                <br/>
-				<div style="position:absolute;left:20px;bottom:18px;font-size:11px;">
-                    <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
+            
+            <div style="float:none; clear:both; margin-top: 15px; margin-left: 0px; margin-bottom: 5px;">				
+                <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
+                
+                <div id="permaLinkMenu">
+                    <span id="permaLink">Link</span>
                 </div>
-                <div id="permaLinkMenu" style="display:none;position:absolute;left:23px;bottom:50px;border:1px solid #C2C2C2; padding-left: 3px; padding-right:3px;">
-                    <span id="permaLink">Reload with new link code</span>
-                </div>
-				<div style="position:absolute;right:30px;bottom:15px;">
-                    <input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="sidebar-left-data-selection-submitbtn" class="minibutton submit"/>
-                </div>
+				<input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="showUpdateVisualizationButton" class="minibutton submit"/>
 			</div>
 		</div>
 	</div>
