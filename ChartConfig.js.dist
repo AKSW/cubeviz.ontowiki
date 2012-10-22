@@ -37,22 +37,19 @@ var CubeViz_ChartConfig = {
                 
                 "options": [
                     {
-                        "labels": {
-                            "en": "Type"
-                        },
+                        "label": "Type",
                         "values": [
                             "bar", "column"
                         ],
                         "key": "chart.type",
-                        "type": "string"
+                        "type": "array"
                     },
                     {
-                        "labels": {
-                            "en": "Stacking"
-                        },
+                        "label": "Stacking",
                         "values": [
                             "normal",
-                            "none"
+                            "none",
+                            "percentage"
                         ],
                         "key": "chart.plotOptions.stacking",
                         "type": "array"

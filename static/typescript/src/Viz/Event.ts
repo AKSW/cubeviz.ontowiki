@@ -17,6 +17,9 @@ var CubeViz_Data = {
   "numberOfMultipleDimensions" : 0  
 };
 
+// Templates
+var ChartSelector_Array = ChartSelector_Array || {};
+
 /**
  * Event section
  */
@@ -92,19 +95,25 @@ class Viz_Event {
             $("#chartSelectionMenu")
                 .fadeOut ( 500 );
             
-        // If you clicked the same item AGAIN
+        // If you clicked the same item AGAIN > show the menu
         } else {
             
-            var offset = $(this).offset();
-            var containerOffset = $("#container").offset ();
-            var menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") );
-            var leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 30;
-            var topPosition = offset["top"] - 40;
+            var offset = $(this).offset(),
+                containerOffset = $("#container").offset (),
+                menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
+                leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 18,
+                topPosition = offset["top"] - 40,
+                className = $(event["target"]).parent ().attr ( "className" );
 
-            // fill #chartSelectionMenu
-            $("#chartSelectionMenu").html ( "fff" );
+            // get class
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+                className,
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
+            );    
         
+            // fill #chartSelectionMenu; when its done, fade it in!
             $("#chartSelectionMenu")
+                .html ( ChartSelector.buildMenu ( fromChartConfig ["options"] ) )
                 .css ( "left", leftPosition ).css ( "top", topPosition )
                 .fadeIn ( 500 );
                 

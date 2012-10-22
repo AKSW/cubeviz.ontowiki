@@ -1,6 +1,38 @@
 var ChartSelector = (function () {
     function ChartSelector() { }
     ChartSelector.itemClicked = -1;
+    ChartSelector.buildMenu = function buildMenu(options) {
+        try  {
+            var finalHtml = "";
+            var tpl = {
+            };
+            var chartSelectorArrays = {
+                "entries": []
+            };
+
+            for(var index in options) {
+                switch(options[index]["type"]) {
+                    case "array": {
+                        console.log(options[index]);
+                        chartSelectorArrays["entries"].push(options[index]);
+                        break;
+
+                    }
+                    default: {
+                        continue;
+                        break;
+
+                    }
+                }
+            }
+            tpl = jsontemplate.Template(ChartSelector_Array);
+            finalHtml += tpl.expand(chartSelectorArrays);
+            return finalHtml;
+        } catch (e) {
+            System.out("buildComponentSelection error");
+            System.out(e);
+        }
+    }
     ChartSelector.init = function init(suiteableCharts, onClick_Function) {
         $("#chartSelection").html("");
         var iconPath = "";
@@ -297,6 +329,8 @@ var CubeViz_Data = {
     "retrievedObservations": [],
     "numberOfMultipleDimensions": 0
 };
+var ChartSelector_Array = ChartSelector_Array || {
+};
 $(document).ready(function () {
     Viz_Event.ready();
 });
@@ -328,10 +362,12 @@ var Viz_Event = (function () {
             var offset = $(this).offset();
             var containerOffset = $("#container").offset();
             var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
-            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 30;
+            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
             var topPosition = offset["top"] - 40;
-            $("#chartSelectionMenu").html("fff");
-            $("#chartSelectionMenu").css("left", leftPosition).css("top", topPosition).fadeIn(500);
+            var className = $(event["target"]).parent().attr("className");
+
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
+            $("#chartSelectionMenu").html(ChartSelector.buildMenu(fromChartConfig["options"])).css("left", leftPosition).css("top", topPosition).fadeIn(500);
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

@@ -448,8 +448,10 @@
 #chartSelectionMenu {
     display: none;
     position: absolute;
-    border: 1px solid #565656;
-    width: 200px;
+    border: 1px solid #868686;
+    background-color: #F5F5F5;
+    padding: 6px;
+    width: 250px;
     height: auto;
 }
 

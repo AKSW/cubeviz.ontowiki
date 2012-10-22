@@ -1,3 +1,4 @@
+/// <reference path="..\DeclarationSourceFiles\jsontemplate.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
 class ChartSelector {
@@ -6,7 +7,47 @@ class ChartSelector {
      * 
      */
 	static itemClicked:number = -1;
-    	        
+    	
+    /**
+     * Build menu based on jsontemplate and returns HTML
+     */
+    static buildMenu ( options:Object[] ) : string {
+        try {
+            
+            var finalHtml:string = "",
+                tpl:any = {},
+                chartSelectorArrays:Object = {"entries":[]};
+            
+            // Separate different types, because each type has its own template
+            for ( var index in options ) {
+                switch ( options [index] ["type"] ) {
+                    
+                    case "array": 
+                        console.log ( options [index] );
+                        chartSelectorArrays ["entries"].push ( options [index] );
+                        break;
+                    
+                    default: 
+                        continue;
+                        break;
+                }
+            }
+            
+            /**
+             * Handle type: array
+             */
+            tpl = jsontemplate.Template(ChartSelector_Array);
+            finalHtml += tpl.expand(chartSelectorArrays);
+            
+            // return generated HTML
+            return finalHtml;
+            
+        } catch ( e ) {
+            System.out ( "buildComponentSelection error" );
+            System.out ( e );
+        }
+    }
+                
     /**
      * 
      */

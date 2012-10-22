@@ -1,7 +1,6 @@
 /**
  * Declaration Source Files
  */ 
-/// <reference path="..\DeclarationSourceFiles\jsontemplate.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\Viz_Event.d.ts" />
 
