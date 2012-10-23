@@ -1,6 +1,10 @@
 class HighCharts_Chart {
     
     /**
+     * Following functions will be implemented by EACH chart subclass!
+     */
+    
+    /**
      * 
      */
     public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:any ) : void { }
@@ -10,7 +14,15 @@ class HighCharts_Chart {
      */
     public getRenderResult () : Object { return {}; }
     
+    /**
+     * 
+     */
+    public updateRenderResult (newDefaultConfig:Object) : Object { return {}; }
     
+    
+    /**
+     * ---------------------------------------------------------------
+     */
     
     /**
      * Extract the uri of the measure value
@@ -142,6 +154,17 @@ class HighCharts_Chart {
                         }
                     }
                 }
+            }
+        }
+    }    
+    
+    /**
+     * 
+     */
+    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) {
+        for ( var i in charts ) {
+            if ( className == charts [i]["class"] ) {
+                charts [i] = newValue;
             }
         }
     }
