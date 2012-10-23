@@ -13,12 +13,7 @@ class HighCharts_Chart {
      * 
      */
     public getRenderResult () : Object { return {}; }
-    
-    /**
-     * 
-     */
-    public updateRenderResult (newDefaultConfig:Object) : Object { return {}; }
-    
+        
     
     /**
      * ---------------------------------------------------------------

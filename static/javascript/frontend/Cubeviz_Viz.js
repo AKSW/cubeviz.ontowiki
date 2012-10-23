@@ -169,10 +169,6 @@ var HighCharts_Chart = (function () {
         return {
         };
     };
-    HighCharts_Chart.prototype.updateRenderResult = function (newDefaultConfig) {
-        return {
-        };
-    };
     HighCharts_Chart.extractMeasureValue = function extractMeasureValue(measures) {
         for(var label in measures) {
             return measures[label]["type"];
@@ -269,8 +265,6 @@ var HighCharts_Bar = (function (_super) {
         var forSeries = null;
 
         this.chartConfig = chartConfig;
-        console.log("selectedComponentDimensions");
-        console.log(selectedComponentDimensions);
         for(var dimensionLabel in selectedComponentDimensions) {
             if(null == forXAxis) {
                 forXAxis = selectedComponentDimensions[dimensionLabel];
@@ -297,10 +291,6 @@ var HighCharts_Bar = (function (_super) {
     HighCharts_Bar.prototype.getRenderResult = function () {
         this.chartConfig["xAxis"] = this["xAxis"];
         this.chartConfig["series"] = this["series"];
-        return this.chartConfig;
-    };
-    HighCharts_Bar.prototype.updateRenderResult = function (newDefaultConfig) {
-        console.log(newDefaultConfig);
         return this.chartConfig;
     };
     return HighCharts_Bar;
@@ -386,8 +376,6 @@ var Viz_Event = (function () {
             System.setObjectProperty(newDefaultConfig, key, ".", value);
         }
         cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
-        console.log("newDefaultConfig");
-        console.log(newDefaultConfig);
         HighCharts_Chart.setChartConfigClassEntry(cubeVizUIChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], cubeVizUIChartConfig["selectedChartConfig"]);
         Viz_Main.renderChart(cubeVizUIChartConfig["selectedChartConfig"]["class"]);
     }

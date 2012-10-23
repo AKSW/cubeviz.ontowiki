@@ -80,9 +80,6 @@ class Viz_Event {
         
         cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
         
-        console.log ( "newDefaultConfig" );
-        console.log ( newDefaultConfig );
-        
         HighCharts_Chart.setChartConfigClassEntry (
             cubeVizUIChartConfig ["selectedChartConfig"]["class"],
             CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
