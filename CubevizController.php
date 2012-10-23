@@ -20,6 +20,11 @@ class CubevizController extends OntoWiki_Controller_Component {
      */
     public function indexAction () {
         
+        // In case no model was selected, it redirect to the root url of OntoWiki
+        if ( null == $this->_owApp->selectedModel ) {
+            $this->_helper->redirector->gotoUrl('');
+        }
+        
         // fill title-field
         $this->view->placeholder('main.window.title')->set('Visualization for '. $this->_owApp->selectedModel );
         
