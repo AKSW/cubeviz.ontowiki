@@ -6,17 +6,14 @@ class HighCharts {
     static loadChart (chartName:string) : HighCharts_Chart {
         switch ( chartName ) {
             
-            /**
-             * ONE dimension
-             */
-            case 'Pie':
-                return new HighCharts_Pie ();
-            
-            /**
-             * TWO dimensions
-             */
             case 'Bar':
                 return new HighCharts_Bar ();
+            
+            case 'Line':
+                return new HighCharts_Line ();
+            
+            case 'Pie':
+                return new HighCharts_Pie ();
             
             default: 
                 System.out ( "HighCharts - loadChart" );

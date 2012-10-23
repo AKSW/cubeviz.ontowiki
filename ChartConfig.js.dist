@@ -50,6 +50,39 @@ var CubeViz_ChartConfig = {
                 ]
             },
             {
+                "label": "line",
+                "class": "Line",
+                "icon": "line.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "line"
+                    }
+                },
+                
+                "options": [
+                    {
+                        "label": "Type",
+                        "values": [
+                            "line", "spline", "area", "areaspline",
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Stacking",
+                        "values": [
+                            "normal",
+                            "null", // TODO default: null
+                            "percentage"
+                        ],
+                        "key": "plotOptions.series.stacking",
+                        "type": "array"
+                    }
+                ]
+            },
+            {
                 "label": "pie",
                 "class": "Pie",
                 "icon": "pie.png",
@@ -103,10 +136,10 @@ var CubeViz_ChartConfig = {
                         "label": "Stacking",
                         "values": [
                             "normal",
-                            "none",
+                            "",
                             "percentage"
                         ],
-                        "key": "plotOptions.stacking",
+                        "key": "plotOptions.series.stacking",
                         "type": "array"
                     },
                     {

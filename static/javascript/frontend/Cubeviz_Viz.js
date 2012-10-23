@@ -143,12 +143,16 @@ var HighCharts = (function () {
     function HighCharts() { }
     HighCharts.loadChart = function loadChart(chartName) {
         switch(chartName) {
-            case 'Pie': {
-                return new HighCharts_Pie();
-
-            }
             case 'Bar': {
                 return new HighCharts_Bar();
+
+            }
+            case 'Line': {
+                return new HighCharts_Line();
+
+            }
+            case 'Pie': {
+                return new HighCharts_Pie();
 
             }
             default: {
@@ -294,6 +298,56 @@ var HighCharts_Bar = (function (_super) {
         return this.chartConfig;
     };
     return HighCharts_Bar;
+})(HighCharts_Chart);
+var HighCharts_Line = (function (_super) {
+    __extends(HighCharts_Line, _super);
+    function HighCharts_Line() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    HighCharts_Line.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
+        var dimensionLabels = [
+            ""
+        ];
+        var forXAxis = null;
+        var forSeries = null;
+
+        this.chartConfig = chartConfig;
+        for(var dimensionLabel in selectedComponentDimensions) {
+            if(null == forXAxis) {
+                forXAxis = selectedComponentDimensions[dimensionLabel];
+            } else {
+                forSeries = selectedComponentDimensions[dimensionLabel];
+            }
+        }
+        this.xAxis.categories = [];
+        for(var i in forXAxis["elements"]) {
+            this.xAxis.categories.push(forXAxis["elements"][i]["property_label"]);
+        }
+        this.xAxis.categories.sort(function (a, b) {
+            return a.toString().toUpperCase().localeCompare(b.toString().toUpperCase());
+        });
+        this.series = [];
+        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(measures), entries);
+        for(var i in forSeries["elements"]) {
+            this.series.push({
+                "name": forSeries["elements"][i]["property_label"],
+                "data": seriesData[forSeries["elements"][i]["property"]]
+            });
+        }
+    };
+    HighCharts_Line.prototype.getRenderResult = function () {
+        this.chartConfig["xAxis"] = this["xAxis"];
+        this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return HighCharts_Line;
 })(HighCharts_Chart);
 var HighCharts_Pie = (function (_super) {
     __extends(HighCharts_Pie, _super);
