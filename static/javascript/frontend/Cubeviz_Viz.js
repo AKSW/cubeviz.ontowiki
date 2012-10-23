@@ -127,6 +127,16 @@ var System = (function () {
             console.log(output);
         }
     }
+    System.setObjectProperty = function setObjectProperty(obj, key, separator, value) {
+        var keyList = key.split(separator);
+        var call = "obj ";
+
+        for(var i in keyList) {
+            call += '["' + keyList[i] + '"]';
+            eval(call + " = " + call + " || {};");
+        }
+        eval(call + " = value;");
+    }
     return System;
 })();
 var HighCharts = (function () {
@@ -156,6 +166,10 @@ var HighCharts_Chart = (function () {
     HighCharts_Chart.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
     };
     HighCharts_Chart.prototype.getRenderResult = function () {
+        return {
+        };
+    };
+    HighCharts_Chart.prototype.updateRenderResult = function (newDefaultConfig) {
         return {
         };
     };
@@ -221,6 +235,13 @@ var HighCharts_Chart = (function () {
             }
         }
     }
+    HighCharts_Chart.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
+        for(var i in charts) {
+            if(className == charts[i]["class"]) {
+                charts[i] = newValue;
+            }
+        }
+    }
     return HighCharts_Chart;
 })();
 var __extends = this.__extends || function (d, b) {
@@ -248,6 +269,8 @@ var HighCharts_Bar = (function (_super) {
         var forSeries = null;
 
         this.chartConfig = chartConfig;
+        console.log("selectedComponentDimensions");
+        console.log(selectedComponentDimensions);
         for(var dimensionLabel in selectedComponentDimensions) {
             if(null == forXAxis) {
                 forXAxis = selectedComponentDimensions[dimensionLabel];
@@ -274,6 +297,10 @@ var HighCharts_Bar = (function (_super) {
     HighCharts_Bar.prototype.getRenderResult = function () {
         this.chartConfig["xAxis"] = this["xAxis"];
         this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    HighCharts_Bar.prototype.updateRenderResult = function (newDefaultConfig) {
+        console.log(newDefaultConfig);
         return this.chartConfig;
     };
     return HighCharts_Bar;
@@ -346,6 +373,24 @@ var Viz_Event = (function () {
         $("#container").css("height", $(window).height() - container["top"] - 5);
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
     }
+    Viz_Event.onClick_chartSelectionMenuButton = function onClick_chartSelectionMenuButton(event) {
+        var newDefaultConfig = cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"];
+        var key = "";
+        var menuItems = $.makeArray($('*[name*="chartMenuItem"]'));
+        var length = menuItems["length"];
+        var value = "";
+
+        for(var i = 1; i < length; ++i) {
+            key = $(menuItems[i]).attr("key");
+            value = $(menuItems[i]).attr("value");
+            System.setObjectProperty(newDefaultConfig, key, ".", value);
+        }
+        cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
+        console.log("newDefaultConfig");
+        console.log(newDefaultConfig);
+        HighCharts_Chart.setChartConfigClassEntry(cubeVizUIChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], cubeVizUIChartConfig["selectedChartConfig"]);
+        Viz_Main.renderChart(cubeVizUIChartConfig["selectedChartConfig"]["class"]);
+    }
     Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
         var currentNr = parseInt($(event["target"]).parent().attr("nr"));
         var lastUsedNr = parseInt($("#chartSelection").attr("lastSelection"));
@@ -354,6 +399,7 @@ var Viz_Event = (function () {
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
             Viz_Main.renderChart($(this).attr("className"));
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
+            ; ;
             $("#chartSelection").attr("lastSelection", currentNr);
             $(".chartSelector-item").removeClass("current");
             $(event["target"]).parent().addClass("current");
@@ -367,7 +413,12 @@ var Viz_Event = (function () {
             var className = $(event["target"]).parent().attr("className");
 
             var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
-            $("#chartSelectionMenu").html(ChartSelector.buildMenu(fromChartConfig["options"])).css("left", leftPosition).css("top", topPosition).fadeIn(500);
+            cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
+            cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
+            var generatedHtml = ChartSelector.buildMenu(fromChartConfig["options"]);
+            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
+            $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
+            $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

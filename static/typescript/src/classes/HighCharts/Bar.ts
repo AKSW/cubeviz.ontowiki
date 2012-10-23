@@ -85,4 +85,14 @@ class HighCharts_Bar extends HighCharts_Chart {
         this.chartConfig ["series"] = this ["series"];
         return this.chartConfig;
     }
+    
+    /**
+     * 
+     */
+    public updateRenderResult (newDefaultConfig:Object) : Object {
+        
+        console.log ( newDefaultConfig );
+        
+        return this.chartConfig;
+    }
 }

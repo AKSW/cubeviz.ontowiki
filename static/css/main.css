@@ -451,8 +451,15 @@
     border: 1px solid #868686;
     background-color: #F5F5F5;
     padding: 6px;
-    width: 250px;
+    width: 220px;
     height: auto;
+}
+
+#chartSelectionMenuButton {
+    font-size: 11px;
+    clear: both;
+    float: right;
+    margin-top: 5px;
 }
 
 .chartSelectionItem {

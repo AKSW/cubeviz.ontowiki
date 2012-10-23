@@ -3,11 +3,11 @@
     
         {.repeated section @}
         
-            <div style="clear:both;">
+            <div class="chartMenuItem" style="clear:both;">
                 <div style="float:left; font-size:13px; font-weight:bold;">{label}</div>
             
                 <div style="float:right">
-                    <select style="width: 100px; min-width: 100px; max-width: 100px; ">
+                    <select name="chartMenuItem_{key}" key="{key}" style="width: 100px; min-width: 100px; max-width: 100px; ">
                     {.repeated section values}
                     <option value="{@}">{@}</option>        
                     {.end}

@@ -12,7 +12,7 @@ class Viz_Main {
         );
         
         var chart = HighCharts.loadChart ( className );
-            
+                    
         // init chart instance
         chart.init ( 
             CubeViz_Data ["retrievedObservations"], 

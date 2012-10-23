@@ -59,7 +59,41 @@ class Viz_Event {
     }
     
     /**
-     * After click on an item in chartSelection, reload the chart
+     * After clicking menu button, update showing chart with new configuration options.
+     */
+    static onClick_chartSelectionMenuButton (event:any) {
+        
+        var newDefaultConfig = cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"],
+            key = "",
+            menuItems:Object[] = $.makeArray ( $('*[name*="chartMenuItem"]') ),
+            length:number = menuItems ["length"],
+            value = "";
+
+        // start from the second item, because the first one is the template entry
+        for ( var i=1; i < length; ++i ) {
+            key = $(menuItems [i]).attr ( "key" );
+            value = $(menuItems [i]).attr ( "value" );
+            System.setObjectProperty ( 
+                newDefaultConfig, key, ".", value 
+            );
+        }
+        
+        cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
+        
+        console.log ( "newDefaultConfig" );
+        console.log ( newDefaultConfig );
+        
+        HighCharts_Chart.setChartConfigClassEntry (
+            cubeVizUIChartConfig ["selectedChartConfig"]["class"],
+            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
+            cubeVizUIChartConfig ["selectedChartConfig"]
+        );
+        
+        Viz_Main.renderChart ( cubeVizUIChartConfig ["selectedChartConfig"]["class"] );
+    }
+    
+    /**
+     * After click on an item in chartSelection, reload the chart or show menu
      */
     static onClick_ChartSelectionItem (event:any) {
                 
@@ -83,7 +117,8 @@ class Viz_Event {
                 $(this).attr ( "className" )
             );
             
-            cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];
+            // cubeVizUIChartConfig ["selectedChartClass"] = $(this).attr ( "className" );
+            cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];;
         
             $("#chartSelection").attr ( "lastSelection", currentNr );
         
@@ -98,6 +133,8 @@ class Viz_Event {
         // If you clicked the same item AGAIN > show the menu
         } else {
             
+            // TODO avoid reexecute this stuff again and again
+            
             var offset = $(this).offset(),
                 containerOffset = $("#container").offset (),
                 menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
@@ -110,13 +147,27 @@ class Viz_Event {
                 className,
                 CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
             );    
-        
+            
+            cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
+            cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
+            
+            var generatedHtml = ChartSelector.buildMenu ( fromChartConfig ["options"] );
+            
+            var menuButton = $("<input/>")
+                .attr ( "id", "chartSelectionMenuButton" )
+                .attr ( "type", "button" )
+                .attr ( "class", "minibutton submit" )
+                .attr ( "type", "button" )
+                .attr ( "value", "update chart" );
+                    
             // fill #chartSelectionMenu; when its done, fade it in!
             $("#chartSelectionMenu")
-                .html ( ChartSelector.buildMenu ( fromChartConfig ["options"] ) )
+                .html ( generatedHtml )
+                .append ( menuButton )
                 .css ( "left", leftPosition ).css ( "top", topPosition )
                 .fadeIn ( 500 );
                 
+            $("#chartSelectionMenuButton").click (Viz_Event.onClick_chartSelectionMenuButton);
         }
     }
     

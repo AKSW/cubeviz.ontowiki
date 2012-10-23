@@ -159,7 +159,7 @@ class HighCharts_Chart {
     }    
     
     /**
-     * 
+     * Update ChartConfig entry with new value. Required e.g. for chart selection menu.
      */
     static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) {
         for ( var i in charts ) {

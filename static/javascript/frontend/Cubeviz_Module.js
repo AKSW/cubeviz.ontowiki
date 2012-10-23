@@ -144,6 +144,16 @@ var System = (function () {
             console.log(output);
         }
     }
+    System.setObjectProperty = function setObjectProperty(obj, key, separator, value) {
+        var keyList = key.split(separator);
+        var call = "obj ";
+
+        for(var i in keyList) {
+            call += '["' + keyList[i] + '"]';
+            eval(call + " = " + call + " || {};");
+        }
+        eval(call + " = value;");
+    }
     return System;
 })();
 var CubeViz_Config = CubeViz_Config || {
