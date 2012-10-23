@@ -155,6 +155,10 @@ var HighCharts = (function () {
                 return new HighCharts_Pie();
 
             }
+            case 'Polar': {
+                return new HighCharts_Polar();
+
+            }
             default: {
                 System.out("HighCharts - loadChart");
                 System.out("Invalid chartName (" + chartName + ") given!");
@@ -387,6 +391,55 @@ var HighCharts_Pie = (function (_super) {
         return this.chartConfig;
     };
     return HighCharts_Pie;
+})(HighCharts_Chart);
+var HighCharts_Polar = (function (_super) {
+    __extends(HighCharts_Polar, _super);
+    function HighCharts_Polar() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    HighCharts_Polar.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
+        var dimensionLabels = [
+            ""
+        ];
+        var forXAxis = null;
+        var forSeries = null;
+
+        this.chartConfig = chartConfig;
+        for(var dimensionLabel in selectedComponentDimensions) {
+            if(null == forXAxis) {
+                forXAxis = selectedComponentDimensions[dimensionLabel];
+            } else {
+                forSeries = selectedComponentDimensions[dimensionLabel];
+            }
+        }
+        this.xAxis.categories = [];
+        for(var i = 0; i < 100; ++i) {
+            this.xAxis.categories.push("");
+        }
+        this.series = [];
+        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(measures), entries);
+        for(var i in forSeries["elements"]) {
+            this.series.push({
+                "type": "area",
+                "name": forSeries["elements"][i]["property_label"],
+                "data": seriesData[forSeries["elements"][i]["property"]]
+            });
+        }
+    };
+    HighCharts_Polar.prototype.getRenderResult = function () {
+        this.chartConfig["xAxis"] = this["xAxis"];
+        this.chartConfig["series"] = this["series"];
+        console.log(this.chartConfig);
+        return this.chartConfig;
+    };
+    return HighCharts_Polar;
 })(HighCharts_Chart);
 var CubeViz_Config = CubeViz_Config || {
 };

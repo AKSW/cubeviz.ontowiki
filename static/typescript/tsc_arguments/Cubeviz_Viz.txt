@@ -8,6 +8,7 @@ static/typescript/src/classes/HighCharts/Chart.ts
 static/typescript/src/classes/HighCharts/Bar.ts
 static/typescript/src/classes/HighCharts/Line.ts
 static/typescript/src/classes/HighCharts/Pie.ts
+static/typescript/src/classes/HighCharts/Polar.ts
 
 static/typescript/src/Viz/Event.ts
 static/typescript/src/Viz/Main.ts

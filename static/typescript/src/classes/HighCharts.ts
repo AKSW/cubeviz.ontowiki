@@ -15,6 +15,9 @@ class HighCharts {
             case 'Pie':
                 return new HighCharts_Pie ();
             
+            case 'Polar':
+                return new HighCharts_Polar ();
+            
             default: 
                 System.out ( "HighCharts - loadChart" );
                 System.out ( "Invalid chartName (" + chartName + ") given!" );
