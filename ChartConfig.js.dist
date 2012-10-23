@@ -27,11 +27,6 @@ var CubeViz_ChartConfig = {
                     "chart": { 
                         "renderTo": "container",
                         "type": "bar"
-                    },
-                    "plotOptions": {
-                        "series": {
-                            "stacking": "normal"
-                        }
                     }
                 },
                 
@@ -45,15 +40,13 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
-                        "label": "Stacking",
+                        "label": "Color",
                         "values": [
-                            "normal",
-                            "none",
-                            "percentage"
+                            "none", "red", "yellow", "green"
                         ],
-                        "key": "chart.plotOptions.stacking",
+                        "key": "plotOptions.series.color",
                         "type": "array"
-                    }
+                    }                    
                 ]
             },
             {
@@ -99,26 +92,31 @@ var CubeViz_ChartConfig = {
                 
                 "options": [
                     {
-                        "labels": {
-                            "en": "Type"
-                        },
+                        "label": "Type",
                         "values": [
                             "bar", "column"
                         ],
                         "key": "chart.type",
-                        "type": "string"
+                        "type": "array"
                     },
                     {
-                        "labels": {
-                            "en": "Stacking"
-                        },
+                        "label": "Stacking",
                         "values": [
                             "normal",
-                            "none"
+                            "none",
+                            "percentage"
                         ],
-                        "key": "chart.plotOptions.stacking",
+                        "key": "plotOptions.stacking",
                         "type": "array"
-                    }
+                    },
+                    {
+                        "label": "Color",
+                        "values": [
+                            "none", "red", "yellow", "green"
+                        ],
+                        "key": "plotOptions.series.color",
+                        "type": "array"
+                    }                    
                 ]
             }
         ]
