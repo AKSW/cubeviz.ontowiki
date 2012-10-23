@@ -11,6 +11,27 @@ var CubeViz_ChartConfig = {
      * No multiple dimensions
      */
     "0": {
+        "charts": [
+        
+            /**
+             * -----------------------------------------------------------------
+             */
+            {
+                "label": "bar",
+                "class": "Bar",
+                "icon": "bar.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "type": "column"
+                    }
+                },
+                
+                "options": [
+                ]
+            }
+        ]
     },
     
     /**
