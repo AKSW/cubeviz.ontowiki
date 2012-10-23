@@ -19,7 +19,7 @@ class System {
     /**
      * Copy an given element, but renew the reference so there is no connection to the old one.
      */
-    static deepCopy ( elementToCopy ) {
+    static deepCopy ( elementToCopy : Object ) : any {
         var newElement = $.parseJSON ( JSON.stringify ( elementToCopy ) );
         return newElement;
     }
@@ -34,5 +34,19 @@ class System {
               && "development" == CubeViz_Config.context ) {
             console.log ( output );
         }
+    }
+    
+    /**
+     * Split a given key into units, build a chain and set the given value.
+     * For instance: key=foo.bar.foobar will be transformed and evaled as obj[foo][bar][foobar] = value;
+     */
+    static setObjectProperty ( obj:Object, key:string, separator:string, value:any ) : void {
+        var keyList = key.split ( separator ),
+            call = "obj ";
+        for ( var i in keyList ) {
+            call += '["' + keyList [i] + '"]';
+            eval ( call + " = " + call + " || {};" );
+        }
+        eval ( call + " = value;" ); 
     }
 }
