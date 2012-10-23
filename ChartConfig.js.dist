@@ -38,15 +38,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "chart.type",
                         "type": "array"
-                    },
-                    {
-                        "label": "Color",
-                        "values": [
-                            "none", "red", "yellow", "green"
-                        ],
-                        "key": "plotOptions.series.color",
-                        "type": "array"
-                    }                    
+                    }             
                 ]
             },
             {
@@ -65,7 +57,10 @@ var CubeViz_ChartConfig = {
                     {
                         "label": "Type",
                         "values": [
-                            "line", "spline", "area", "areaspline",
+                            { "label": "Line", "value": "line" },
+                            { "label": "Spline", "value": "spline" },
+                            { "label": "Area", "value": "area" },
+                            { "label": "AreaSpline", "value": "areaspline" }
                         ],
                         "key": "chart.type",
                         "type": "array"
@@ -73,9 +68,9 @@ var CubeViz_ChartConfig = {
                     {
                         "label": "Stacking",
                         "values": [
-                            "normal",
-                            "null", // TODO default: null
-                            "percentage"
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "None", "value": "" },
+                            { "label": "Percentage", "value": "percentage" }
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"
@@ -127,7 +122,8 @@ var CubeViz_ChartConfig = {
                     {
                         "label": "Type",
                         "values": [
-                            "bar", "column"
+                            { "label": "Bar", "value": "bar" }, 
+                            { "label": "Column", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
@@ -135,21 +131,13 @@ var CubeViz_ChartConfig = {
                     {
                         "label": "Stacking",
                         "values": [
-                            "normal",
-                            "",
-                            "percentage"
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "None", "value": "" },
+                            { "label": "Percentage", "value": "percentage" }
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"
-                    },
-                    {
-                        "label": "Color",
-                        "values": [
-                            "none", "red", "yellow", "green"
-                        ],
-                        "key": "plotOptions.series.color",
-                        "type": "array"
-                    }                    
+                    }          
                 ]
             },
             {
@@ -195,6 +183,41 @@ var CubeViz_ChartConfig = {
                 },
                 
                 "options": [                    
+                ]
+            },
+            {
+                "label": "line",
+                "class": "Line",
+                "icon": "line.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container"
+                    }
+                },
+                
+                "options": [   
+                    {
+                        "label": "Type",
+                        "values": [
+                            { "label": "Line", "value": "line" },
+                            { "label": "Spline", "value": "spline" },
+                            { "label": "Area", "value": "area" },
+                            { "label": "AreaSpline", "value": "areaspline" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Stacking",
+                        "values": [
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "None", "value": "" },
+                            { "label": "Percentage", "value": "percentage" }
+                        ],
+                        "key": "plotOptions.series.stacking",
+                        "type": "array"
+                    } 
                 ]
             }
         ]
