@@ -151,6 +151,51 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     }                    
                 ]
+            },
+            {
+                "label": "polar",
+                "class": "Polar",
+                "icon": "polar.png",
+                
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "container",
+                        "polar": "true"
+                    },
+                    "pane": {
+                        "startAngle": 0,
+                        "endAngle": 360
+                    },
+                
+                    "xAxis": {
+                        "tickInterval": 45,
+                        "min": 0,
+                        "max": 360,
+                        "labels": {
+                            "formatter": function () {
+                                return this.value + '°';
+                            }
+                        }
+                    },
+                        
+                    "yAxis": {
+                        "min": 0
+                    },
+                    
+                    "plotOptions": {
+                        "series": {
+                            "pointStart": 0,
+                            "pointInterval": 10
+                        },
+                        "column": {
+                            "pointPadding": 0,
+                            "groupPadding": 0
+                        }
+                    }
+                },
+                
+                "options": [                    
+                ]
             }
         ]
     }
