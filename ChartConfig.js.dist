@@ -18,6 +18,10 @@ var CubeViz_ChartConfig = {
      */
     "1": {
         "charts": [
+        
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "bar",
                 "class": "Bar",
@@ -33,14 +37,19 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "values": [
-                            "bar", "column"
+                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
+                        "values": [ 
+                            { "label": "Label", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     }             
                 ]
             },
+            
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "line",
                 "class": "Line",
@@ -56,8 +65,8 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
+                        "defaultValue" : [{ "label": "Line", "value": "line" }],
                         "values": [
-                            { "label": "Line", "value": "line" },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" }
@@ -67,9 +76,9 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Stacking",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
                             { "label": "Normal", "value": "normal" },
-                            { "label": "None", "value": "" },
                             { "label": "Percentage", "value": "percentage" }
                         ],
                         "key": "plotOptions.series.stacking",
@@ -77,6 +86,10 @@ var CubeViz_ChartConfig = {
                     }
                 ]
             },
+            
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "pie",
                 "class": "Pie",
@@ -101,6 +114,10 @@ var CubeViz_ChartConfig = {
      */
     "2": {
         "charts": [
+            
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "bar",
                 "class": "Bar",
@@ -121,25 +138,29 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
+                        "defaultValue": [ { "label": "Column", "value": "column" } ],
                         "values": [
-                            { "label": "Bar", "value": "bar" }, 
-                            { "label": "Column", "value": "column" }
+                            { "label": "Bar", "value": "bar" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     },
                     {
                         "label": "Stacking",
+                        "defaultValue": [ { "label": "Percentage", "value": "percentage" } ],
                         "values": [
                             { "label": "Normal", "value": "normal" },
-                            { "label": "None", "value": "" },
-                            { "label": "Percentage", "value": "percentage" }
+                            { "label": "None", "value": "" }
                         ],
                         "key": "plotOptions.series.stacking",
-                        "type": "array"
+                        "type": "array"                        
                     }          
                 ]
             },
+            
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "polar",
                 "class": "Polar",
@@ -182,9 +203,13 @@ var CubeViz_ChartConfig = {
                     }
                 },
                 
-                "options": [                    
+                "options": [           
                 ]
             },
+            
+            /**
+             * -----------------------------------------------------------------
+             */
             {
                 "label": "line",
                 "class": "Line",
@@ -199,8 +224,8 @@ var CubeViz_ChartConfig = {
                 "options": [   
                     {
                         "label": "Type",
+                        "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
-                            { "label": "Line", "value": "line" },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" }
@@ -210,9 +235,9 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Stacking",
+                        "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
                             { "label": "Normal", "value": "normal" },
-                            { "label": "None", "value": "" },
                             { "label": "Percentage", "value": "percentage" }
                         ],
                         "key": "plotOptions.series.stacking",
