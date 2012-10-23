@@ -510,10 +510,12 @@ var Viz_Event = (function () {
             var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
             cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
             cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
-            var generatedHtml = ChartSelector.buildMenu(fromChartConfig["options"]);
-            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
-            $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
-            $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
+            if(0 < fromChartConfig["options"]["length"]) {
+                var generatedHtml = ChartSelector.buildMenu(fromChartConfig["options"]);
+                var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
+                $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
+                $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
+            }
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
