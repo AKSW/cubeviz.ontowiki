@@ -52,7 +52,7 @@
         
         <!-- -->
         <div id="sidebar-left-loader">
-            <div style="margin-top: 90px;">
+            <div style="margin-top: 90px; height: 220px;">
                 <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
                 Loading ...
             </div>
@@ -82,15 +82,18 @@
                     <?php echo $this->_translate->_('Dimensions'); ?></div>
 				<div id="sidebar-left-data-selection-dims-boxes"></div>
 			</div>
+            <div style="float:none; clear:both; margin-top: 25px; margin-left: 0px; margin-bottom: 5px; margin-right: 0px; padding:0px; width: 100%; min-width: 100%; max-width:100%;">				
+                <span style="float:left;">
+                    <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
+                    <span id="permaLinkMenu">
+                        <span id="permaLink">Link</span>
+                    </span>
+                </span>
+                <span style="float:right;">
+                    <input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="showUpdateVisualizationButton" class="minibutton submit"/>
+                </span>
+            </div>
             
-            <div style="float:none; clear:both; margin-top: 15px; margin-left: 0px; margin-bottom: 5px;">				
-                <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
-                
-                <div id="permaLinkMenu">
-                    <span id="permaLink">Link</span>
-                </div>
-				<input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="showUpdateVisualizationButton" class="minibutton submit"/>
-			</div>
 		</div>
 	</div>
 </div>

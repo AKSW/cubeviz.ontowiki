@@ -167,6 +167,10 @@ var System = (function () {
         });
         $.support.cors = true;
     }
+    System.toType = function toType(ele) {
+        return ({
+        }).toString.call(ele).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+    }
     return System;
 })();
 var HighCharts = (function () {

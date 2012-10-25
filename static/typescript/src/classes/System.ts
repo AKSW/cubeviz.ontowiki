@@ -86,4 +86,22 @@ class System {
         
         $.support.cors = true;
     }
+    
+    /**
+     * Copied from http://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
+     * 
+     * Has return for following parameters:
+            ## Parameter ##                         ## Returns ## 
+            Undefined	                            undefined
+            Null	                                object
+            Boolean	                                boolean
+            Number	                                number
+            String	                                string
+            Object (native and not callable)	    object
+            Object (native or host and callable)	function
+            Object (host and not callable)	        Implementation-defined
+     */
+    static toType( ele ) {
+        return ({}).toString.call(ele).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+    }
 }
