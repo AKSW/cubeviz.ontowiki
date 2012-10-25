@@ -3,14 +3,13 @@
         {.repeated section @}
             
             <div class="sidebar-left-data-selection-dims-box-label-value">
-               <span>{label}</span> 
-               (<span id="dialog-{label}-selected-items">{selectedElementCount}/</span>{elementCount})
-                <span id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}" dimensionType="{type}">
+               <span style="float:left;">{label}</span> 
+               <span style="float:left;" id="dialog-{label}-selected-items">&nbsp;({selectedElementCount} / {elementCount})</span>
+                <span style="float:right;" id="open-dialog-{label}-selector" class="open-dialog-selector" dimensionLabel="{label}" dimensionUrl="{url}" dimensionType="{type}">
                     <img class="sidebar-left-data-selection-dims-box-abstract-img" src="<?php echo $this->moduleUrl; ?>static/images/check_book.png" title="<?php echo $this->_translate->_('Select some elements'); ?>">
                 </span>
             </div>
-            <input style="display:none;" type="checkbox" class="sidebar-left-data-selection-dims-box" id="sidebar-left-data-selection-dims-box-{label}" name="" value="{url}">     
-                          
+                
         {.end}    
     {.or}{.end}
 </div>
