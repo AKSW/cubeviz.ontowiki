@@ -12,7 +12,13 @@ class DataSet {
                 m: CubeViz_Links_Module.modelUrl,
                 dsdUrl: dsdUrl
             }
-        }).done( function (entries) { 
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            System.out ( "DataSet > loadAll > error" );
+            System.out ( "response text: " + xhr.responseText );
+            System.out ( "error: " + thrownError );
+        })
+        .done( function (entries) { 
             DataSet.prepareLoadedDataSets (entries, callback); 
         });
     }

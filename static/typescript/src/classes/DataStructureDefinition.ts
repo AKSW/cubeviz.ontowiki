@@ -11,7 +11,13 @@ class DataStructureDefinition {
             data: {
                 m: CubeViz_Links_Module.modelUrl
             }
-        }).done( function (entries) { 
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            System.out ( "DataStructureDefinition > loadAll > error" );
+            System.out ( "response text: " + xhr.responseText );
+            System.out ( "error: " + thrownError );
+        })
+        .done( function (entries) { 
             DataStructureDefinition.prepareLoadedDataStructureDefinitions (entries, callback); 
         });
     }
@@ -20,10 +26,7 @@ class DataStructureDefinition {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedDataStructureDefinitions ( entries, callback ) {
-        
-        // set standard values
-        // nothing yet
-        
+                
         // sort objects by label, ascending
         entries.sort(function(a, b) {
            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());

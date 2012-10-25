@@ -153,20 +153,6 @@ class Module_Main {
     }
     
     /**
-     * Setup AJAX to save paperwork later on
-     */
-    static setupAjax () : void {
-        $.ajaxSetup({
-            "async": true,
-            "cache": false,
-            "crossDomain": true,
-            "dataType": "json",
-            "dataType": "json",
-            "type": "POST"
-        });
-    }
-    
-    /**
      * 
      */
     static showSidebarLoader () : void {

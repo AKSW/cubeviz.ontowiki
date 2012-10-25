@@ -19,7 +19,13 @@ class Component {
                 dsUrl: dsUrl,
                 cT: "dimension" // possible: dimension, measure
             }
-        }).done( function (entries) { 
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            System.out ( "Component > loadAll > error" );
+            System.out ( "response text: " + xhr.responseText );
+            System.out ( "error: " + thrownError );
+        })
+        .done( function (entries) { 
             Component.prepareLoadedAllDimensions (entries, callback, resetSelectedComponents); 
         });
     }

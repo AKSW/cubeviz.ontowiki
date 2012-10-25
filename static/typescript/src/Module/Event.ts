@@ -39,7 +39,7 @@ class Module_Event {
         System.out ( "CubeViz_Links_Module:" );
         System.out ( CubeViz_Links_Module );
         
-        Module_Main.setupAjax ();
+        System.setupAjax ();
         
         /**
          * Setup User Interface

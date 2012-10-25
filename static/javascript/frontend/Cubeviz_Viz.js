@@ -75,8 +75,10 @@ var ConfigurationLink = (function () {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
-        }).error(function (result) {
-            System.out(result.responseText);
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("ConfigurationLink > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (result) {
             callback(result);
         });
@@ -91,6 +93,10 @@ var Observation = (function () {
             data: {
                 lC: linkCode
             }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("Observation > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);
         });
@@ -124,7 +130,21 @@ var System = (function () {
     }
     System.out = function out(output) {
         if(typeof console !== "undefined" && typeof console.log !== "undefined" && "development" == CubeViz_Config.context) {
-            console.log(output);
+            if($.browser && $.browser.msie) {
+                if("object" != typeof output && "array" != typeof output) {
+                    console.log(output);
+                } else {
+                    $.each(output, function (i, val) {
+                        if("object" == typeof val) {
+                            System.out(val);
+                        } else {
+                            console.log(i + ": " + val);
+                        }
+                    });
+                }
+            } else {
+                console.log(output);
+            }
         }
     }
     System.setObjectProperty = function setObjectProperty(obj, key, separator, value) {
@@ -136,6 +156,16 @@ var System = (function () {
             eval(call + " = " + call + " || {};");
         }
         eval(call + " = value;");
+    }
+    System.setupAjax = function setupAjax() {
+        $.ajaxSetup({
+            "async": true,
+            "cache": false,
+            "crossDomain": true,
+            "dataType": "json",
+            "type": "POST"
+        });
+        $.support.cors = true;
     }
     return System;
 })();

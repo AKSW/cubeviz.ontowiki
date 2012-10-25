@@ -12,9 +12,11 @@ class ConfigurationLink {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
-        }).
-        error( function (result) { 
-            System.out ( result.responseText );
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            System.out ( "ConfigurationLink > loadAll > error" );
+            System.out ( "response text: " + xhr.responseText );
+            System.out ( "error: " + thrownError );
         })
         .done( function (result) { 
             callback ( result );

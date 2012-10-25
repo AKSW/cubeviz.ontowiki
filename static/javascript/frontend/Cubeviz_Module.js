@@ -10,6 +10,10 @@ var Component = (function () {
                 dsUrl: dsUrl,
                 cT: "dimension"
             }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("Component > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (entries) {
             Component.prepareLoadedAllDimensions(entries, callback, resetSelectedComponents);
         });
@@ -51,8 +55,10 @@ var ConfigurationLink = (function () {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
-        }).error(function (result) {
-            System.out(result.responseText);
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("ConfigurationLink > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (result) {
             callback(result);
         });
@@ -67,6 +73,10 @@ var DataStructureDefinition = (function () {
             data: {
                 m: CubeViz_Links_Module.modelUrl
             }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("DataStructureDefinition > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (entries) {
             DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
         });
@@ -88,6 +98,10 @@ var DataSet = (function () {
                 m: CubeViz_Links_Module.modelUrl,
                 dsdUrl: dsdUrl
             }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("DataSet > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (entries) {
             DataSet.prepareLoadedDataSets(entries, callback);
         });
@@ -108,6 +122,10 @@ var Observation = (function () {
             data: {
                 lC: linkCode
             }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            System.out("Observation > loadAll > error");
+            System.out("response text: " + xhr.responseText);
+            System.out("error: " + thrownError);
         }).done(function (entries) {
             Observation.prepareLoadedResultObservations(entries, callback);
         });
@@ -141,7 +159,21 @@ var System = (function () {
     }
     System.out = function out(output) {
         if(typeof console !== "undefined" && typeof console.log !== "undefined" && "development" == CubeViz_Config.context) {
-            console.log(output);
+            if($.browser && $.browser.msie) {
+                if("object" != typeof output && "array" != typeof output) {
+                    console.log(output);
+                } else {
+                    $.each(output, function (i, val) {
+                        if("object" == typeof val) {
+                            System.out(val);
+                        } else {
+                            console.log(i + ": " + val);
+                        }
+                    });
+                }
+            } else {
+                console.log(output);
+            }
         }
     }
     System.setObjectProperty = function setObjectProperty(obj, key, separator, value) {
@@ -153,6 +185,16 @@ var System = (function () {
             eval(call + " = " + call + " || {};");
         }
         eval(call + " = value;");
+    }
+    System.setupAjax = function setupAjax() {
+        $.ajaxSetup({
+            "async": true,
+            "cache": false,
+            "crossDomain": true,
+            "dataType": "json",
+            "type": "POST"
+        });
+        $.support.cors = true;
     }
     return System;
 })();
@@ -179,7 +221,7 @@ var Module_Event = (function () {
     Module_Event.ready = function ready() {
         System.out("CubeViz_Links_Module:");
         System.out(CubeViz_Links_Module);
-        Module_Main.setupAjax();
+        System.setupAjax();
         Module_Main.showSidebarLoader();
         $("#sidebar-left-data-selection-sets").change(Module_Event.onChange_DataSetBox);
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
@@ -418,16 +460,6 @@ var Module_Main = (function () {
             }
         }
         tmpCubeVizLeftSidebarLeftQueue = newQueue;
-    }
-    Module_Main.setupAjax = function setupAjax() {
-        $.ajaxSetup({
-            "async": true,
-            "cache": false,
-            "crossDomain": true,
-            "dataType": "json",
-            "dataType": "json",
-            "type": "POST"
-        });
     }
     Module_Main.showSidebarLoader = function showSidebarLoader() {
         $("#sidebar-left-loader").fadeIn(1000).css("height", ($("#sidebar-left").css("height")));
