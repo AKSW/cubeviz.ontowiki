@@ -32,7 +32,29 @@ class System {
         if ( typeof console !== "undefined" 
               && typeof console.log !== "undefined" 
               && "development" == CubeViz_Config.context ) {
-            console.log ( output );
+            
+            // If your browser is IE, ...
+            if( $.browser && $.browser.msie) {
+                
+                // output non-object directly
+                if ( "object" != typeof output && "array" != typeof output ) {
+                    console.log ( output );
+                    
+                // output objects property by property
+                } else {
+                    $.each ( output, function ( i, val ) {
+                        if ( "object" == typeof val ) {
+                            System.out ( val );
+                        } else {
+                            console.log ( i + ": " + val );
+                        }
+                    } );
+                }
+            
+            // If your browser is modern, ...
+            } else {
+                console.log ( output );
+            }
         }
     }
     
@@ -48,5 +70,20 @@ class System {
             eval ( call + " = " + call + " || {};" );
         }
         eval ( call + " = value;" ); 
+    }
+    
+    /**
+     * Setup AJAX to save paperwork later on
+     */
+    static setupAjax () : void {
+        $.ajaxSetup({
+            "async": true,
+            "cache": false,
+            "crossDomain": true,
+            "dataType": "json",
+            "type": "POST"
+        });
+        
+        $.support.cors = true;
     }
 }
