@@ -32,7 +32,7 @@ class HighCharts_Polar extends HighCharts_Chart {
         
         // save given chart config
         this.chartConfig = chartConfig;
-        
+        //System.out ( JSON.stringify (selectedComponentDimensions));
         // assign selected dimensions to xAxis and series (yAxis)
         for ( var dimensionLabel in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
@@ -46,8 +46,8 @@ class HighCharts_Polar extends HighCharts_Chart {
          * Fill x axis with empty entries, so there will no text around the polar-circle
          */
         this.xAxis.categories = [];
-        for ( var i = 0; i < 100; ++i ) {
-            this.xAxis.categories.push ("");
+        for ( var i in forXAxis ["elements"] ) {
+            this.xAxis.categories.push (forXAxis ["elements"][i]["property_label"]);
         }
         
         /**
@@ -66,7 +66,6 @@ class HighCharts_Polar extends HighCharts_Chart {
         // dimension elements
         for ( var i in forSeries ["elements"] ) {
             this.series.push ({ 
-                "type": "area",
                 "name": forSeries ["elements"][i]["property_label"],
                 "data": seriesData [ forSeries ["elements"][i]["property"] ]
             });
