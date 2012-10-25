@@ -29,8 +29,26 @@ var CubeViz_ChartConfig = {
                 },
                 
                 "options": [
+                    {
+                        "label": "Type",
+                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
+                        "values": [
+                            { "label": "Column", "value": "column" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    }  
                 ]
-            }
+            },
         ]
     },
     
@@ -73,7 +91,28 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
-                    }            
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }              
                 ]
             },
             
@@ -121,8 +160,28 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "chart.inverted",
                         "type": "array"
-                    }   
-
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }      
                 ]
             },
             
@@ -155,8 +214,7 @@ var CubeViz_ChartConfig = {
                     },
                 },
                 
-                "options": [
-                    
+                "options": [                   
                 ]
             }
         ]
@@ -216,7 +274,28 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"                        
-                    }        
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30", "value": "-30" },
+                            { "label": "45", "value": "-45" },
+                            { "label": "60", "value": "-60" },
+                            { "label": "90", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }          
                 ]
             },
             
@@ -257,7 +336,16 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"
-                    }      
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }        
                 ]
             },
             
@@ -315,8 +403,28 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "chart.inverted",
                         "type": "array"
-                    }   
-
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }      
                 ]
             }
         ]
