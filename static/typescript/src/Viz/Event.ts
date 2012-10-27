@@ -124,20 +124,15 @@ class Viz_Event {
             // add class current to div container which surrounds clicked item
             $(event["target"]).parent().addClass("current");
             
-            $("#chartSelectionMenu")
-                .fadeOut ( 500 );
+            
+            Viz_Main.closeChartSelectionMenu ();
             
         // If you clicked the same item AGAIN > show the menu
         } else {
             
             // TODO avoid reexecute this stuff again and again
             
-            var offset = $(this).offset(),
-                containerOffset = $("#container").offset (),
-                menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
-                leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 18,
-                topPosition = offset["top"] - 40,
-                className = $(event["target"]).parent ().attr ( "className" );
+            var className = $(event["target"]).parent ().attr ( "className" );
 
             // get class
             var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
@@ -148,26 +143,11 @@ class Viz_Event {
             cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
             cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
             
-            if ( 0 < fromChartConfig ["options"]["length"] ) {
             
-                var generatedHtml = ChartSelector.buildMenu ( fromChartConfig ["options"] );
-                
-                var menuButton = $("<input/>")
-                    .attr ( "id", "chartSelectionMenuButton" )
-                    .attr ( "type", "button" )
-                    .attr ( "class", "minibutton submit" )
-                    .attr ( "type", "button" )
-                    .attr ( "value", "update chart" );
-                        
-                // fill #chartSelectionMenu; when its done, fade it in!
-                $("#chartSelectionMenu")
-                    .html ( generatedHtml )
-                    .append ( menuButton )
-                    .css ( "left", leftPosition ).css ( "top", topPosition )
-                    .fadeIn ( 500 );
-                    
-                $("#chartSelectionMenuButton").click (Viz_Event.onClick_chartSelectionMenuButton);
-            }
+            Viz_Main.openChartSelectionMenu ( 
+                fromChartConfig ["options"], 
+                $(this).offset() 
+            );
         }
     }
     

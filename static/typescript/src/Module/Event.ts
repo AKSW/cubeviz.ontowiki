@@ -3,6 +3,7 @@
  */ 
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\Viz_Event.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\Viz_Main.d.ts" />
 
 
 /**
@@ -81,6 +82,10 @@ class Module_Event {
      * Opens a dialog, filled with elements of the selected dimension
      */
     static onClick_DialogSelector () {
+        
+        if ( "undefined" != System.toType ( Viz_Main ) ) {
+            Viz_Main.closeChartSelectionMenu ();
+        }
                 
         // get dimension from clicked dialog selector
         var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();
@@ -231,6 +236,11 @@ class Module_Event {
         // Case 2: CubeViz module and visualization part was loaded
         // Load observations based on pre-configured data structure definition and data set.
         } else {
+            
+            if ( "undefined" != System.toType ( Viz_Main ) ) {
+                Viz_Main.closeChartSelectionMenu ();
+            }
+            
             Observation.loadAll ( 
                 CubeViz_Links_Module ["linkCode"],
                 
@@ -298,6 +308,10 @@ class Module_Event {
         
         // re-load data set box
         DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
+        
+        if ( "undefined" != System.toType ( Viz_Main ) ) {
+            Viz_Main.closeChartSelectionMenu ();
+        }
     }
      
     /**
@@ -318,6 +332,10 @@ class Module_Event {
             CubeViz_Links_Module.selectedDSD.url, dsUrl, 
             Module_Event.onComplete_LoadAllComponentDimensions 
         );
+        
+        if ( "undefined" != System.toType ( Viz_Main ) ) {
+            Viz_Main.closeChartSelectionMenu ();
+        }
     }
      
     /**

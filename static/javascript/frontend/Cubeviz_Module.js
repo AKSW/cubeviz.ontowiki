@@ -234,6 +234,9 @@ var Module_Event = (function () {
         $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
+        if("undefined" != System.toType(Viz_Main)) {
+            Viz_Main.closeChartSelectionMenu();
+        }
         var dimensionLabel = $(this).attr("dimensionLabel").toString();
         var dimensionType = $(this).attr("dimensionType").toString();
         var dimensionUrl = $(this).attr("dimensionUrl").toString();
@@ -295,6 +298,9 @@ var Module_Event = (function () {
         if("undefined" == typeof Viz_Event) {
             window.location.href = CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"];
         } else {
+            if("undefined" != System.toType(Viz_Main)) {
+                Viz_Main.closeChartSelectionMenu();
+            }
             Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
         }
     }
@@ -321,6 +327,9 @@ var Module_Event = (function () {
         };
         CubeViz_Links_Module.selectedDS = null;
         DataSet.loadAll(dsdUrl, Module_Event.onComplete_LoadDataSets);
+        if("undefined" != System.toType(Viz_Main)) {
+            Viz_Main.closeChartSelectionMenu();
+        }
     }
     Module_Event.onChange_DataSetBox = function onChange_DataSetBox() {
         var selectedElement = $($("#sidebar-left-data-selection-sets option:selected")[0]);
@@ -332,6 +341,9 @@ var Module_Event = (function () {
             "url": dsUrl
         };
         Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadAllComponentDimensions);
+        if("undefined" != System.toType(Viz_Main)) {
+            Viz_Main.closeChartSelectionMenu();
+        }
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
         if(0 == entries.length) {

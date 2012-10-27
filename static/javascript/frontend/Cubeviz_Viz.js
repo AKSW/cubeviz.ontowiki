@@ -454,14 +454,13 @@ var HighCharts_Polar = (function (_super) {
             }
         }
         this.xAxis.categories = [];
-        for(var i = 0; i < 100; ++i) {
-            this.xAxis.categories.push("");
+        for(var i in forXAxis["elements"]) {
+            this.xAxis.categories.push(forXAxis["elements"][i]["property_label"]);
         }
         this.series = [];
         var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(measures), entries);
         for(var i in forSeries["elements"]) {
             this.series.push({
-                "type": "area",
                 "name": forSeries["elements"][i]["property_label"],
                 "data": seriesData[forSeries["elements"][i]["property"]]
             });
@@ -532,24 +531,13 @@ var Viz_Event = (function () {
             $("#chartSelection").attr("lastSelection", currentNr);
             $(".chartSelector-item").removeClass("current");
             $(event["target"]).parent().addClass("current");
-            $("#chartSelectionMenu").fadeOut(500);
+            Viz_Main.closeChartSelectionMenu();
         } else {
-            var offset = $(this).offset();
-            var containerOffset = $("#container").offset();
-            var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
-            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
-            var topPosition = offset["top"] - 40;
             var className = $(event["target"]).parent().attr("className");
-
             var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
             cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
             cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
-            if(0 < fromChartConfig["options"]["length"]) {
-                var generatedHtml = ChartSelector.buildMenu(fromChartConfig["options"]);
-                var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
-                $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
-                $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
-            }
+            Viz_Main.openChartSelectionMenu(fromChartConfig["options"], $(this).offset());
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
@@ -562,6 +550,22 @@ var Viz_Event = (function () {
 })();
 var Viz_Main = (function () {
     function Viz_Main() { }
+    Viz_Main.closeChartSelectionMenu = function closeChartSelectionMenu() {
+        $("#chartSelectionMenu").fadeOut(500);
+    }
+    Viz_Main.openChartSelectionMenu = function openChartSelectionMenu(options, offset) {
+        if(0 < options["length"]) {
+            var containerOffset = $("#container").offset();
+            var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
+            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
+            var topPosition = offset["top"] - 40;
+            var generatedHtml = ChartSelector.buildMenu(options);
+            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
+
+            $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
+            $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
+        }
+    }
     Viz_Main.renderChart = function renderChart(className) {
         var charts = CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"];
         var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, charts);
