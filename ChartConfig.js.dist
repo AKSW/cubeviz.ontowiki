@@ -29,8 +29,26 @@ var CubeViz_ChartConfig = {
                 },
                 
                 "options": [
+                    {
+                        "label": "Type",
+                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
+                        "values": [
+                            { "label": "Column", "value": "column" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    }  
                 ]
-            }
+            },
         ]
     },
     
@@ -59,52 +77,111 @@ var CubeViz_ChartConfig = {
                     {
                         "label": "Type",
                         "defaultValue": [ { "label": "Bar", "value": "bar" } ],
-                        "values": [ 
-                            { "label": "Label", "value": "column" }
+                        "values": [
+                            { "label": "Column", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
-                    }             
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }              
                 ]
             },
             
             /**
              * -----------------------------------------------------------------
              */
-            {
+           {
                 "label": "line",
                 "class": "Line",
                 "icon": "line.png",
                 
                 "defaultConfig": {
                     "chart": { 
-                        "renderTo": "container",
-                        "type": "line"
+                        "renderTo": "container"
                     }
                 },
                 
-                "options": [
+                "options": [   
                     {
                         "label": "Type",
-                        "defaultValue" : [{ "label": "Line", "value": "line" }],
+                        "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
-                            { "label": "AreaSpline", "value": "areaspline" }
+                            { "label": "AreaSpline", "value": "areaspline" },
+                            { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     },
                     {
-                        "label": "Stacking",
+                        "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Normal", "value": "normal" },
-                            { "label": "Percentage", "value": "percentage" }
+                            { "label": "Yes", "value": "true" },
                         ],
-                        "key": "plotOptions.series.stacking",
+                        "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
-                    }
+                    },   
+                    {
+                        "label": "Inverted",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "chart.inverted",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }      
                 ]
             },
             
@@ -119,12 +196,25 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container",
-                        "type": "pie"
-                    }
+                        "type": "pie",
+                        "plotShadow": "true",
+                    },
+                    "tooltip": {
+                    	"percentageDecimals": "1"
+                    },
+                    "plotOptions": {
+                        "pie": {
+                            "allowPointSelect": "true",
+                            "cursor": "pointer",
+                            "dataLabels": {
+                                "enabled": "false"
+                            },
+                            "showInLegend": "false"
+                        }
+                    },
                 },
                 
-                "options": [
-                    
+                "options": [                   
                 ]
             }
         ]
@@ -159,22 +249,52 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Column", "value": "column" } ],
+                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
                         "values": [
-                            { "label": "Bar", "value": "bar" }
+                            { "label": "Column", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     },
                     {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
                         "label": "Stacking",
-                        "defaultValue": [ { "label": "Percentage", "value": "percentage" } ],
+                        "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
                             { "label": "Normal", "value": "normal" },
-                            { "label": "None", "value": "" }
+                            { "label": "Percentage", "value": "percent" }
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"                        
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30", "value": "-30" },
+                            { "label": "45", "value": "-45" },
+                            { "label": "60", "value": "-60" },
+                            { "label": "90", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
                     }          
                 ]
             },
@@ -190,41 +310,42 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container",
-                        "polar": "true"
-                    },
-                    "pane": {
-                        "startAngle": 0,
-                        "endAngle": 360
-                    },
-                
-                    "xAxis": {
-                        "tickInterval": 45,
-                        "min": 0,
-                        "max": 360,
-                        "labels": {
-                            "formatter": function () {
-                                return this.value + '°';
-                            }
-                        }
-                    },
-                        
-                    "yAxis": {
-                        "min": 0
-                    },
-                    
-                    "plotOptions": {
-                        "series": {
-                            "pointStart": 0,
-                            "pointInterval": 10
-                        },
-                        "column": {
-                            "pointPadding": 0,
-                            "groupPadding": 0
-                        }
+                        "polar": "true",
                     }
                 },
-                
-                "options": [           
+                "options": [
+                    {
+                        "label": "Type",
+                        "defaultValue": [ { "label": "Line", "value": "line" } ],
+                        "values": [
+                            { "label": "Spline", "value": "spline" },
+                            { "label": "Area", "value": "area" },
+                            { "label": "AreaSpline", "value": "areaspline" },
+                            { "label": "Column", "value": "column" },
+                            { "label": "Scatter", "value": "scatter" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Stacking",
+                        "defaultValue": [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "Percentage", "value": "percent" }
+                        ],
+                        "key": "plotOptions.series.stacking",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }        
                 ]
             },
             
@@ -249,7 +370,8 @@ var CubeViz_ChartConfig = {
                         "values": [
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
-                            { "label": "AreaSpline", "value": "areaspline" }
+                            { "label": "AreaSpline", "value": "areaspline" },
+                            { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
                         "type": "array"
@@ -259,11 +381,50 @@ var CubeViz_ChartConfig = {
                         "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
                             { "label": "Normal", "value": "normal" },
-                            { "label": "Percentage", "value": "percentage" }
+                            { "label": "Percentage", "value": "percent" }
                         ],
                         "key": "plotOptions.series.stacking",
                         "type": "array"
-                    } 
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },   
+                    {
+                        "label": "Inverted",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" },
+                        ],
+                        "key": "chart.inverted",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" },
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Rotate Labels",
+                        "defaultValue" : [ { "label": "Default", "value": "" } ],
+                        "values": [
+                            { "label": "30°", "value": "-30" },
+                            { "label": "45°", "value": "-45" },
+                            { "label": "60°", "value": "-60" },
+                            { "label": "90°", "value": "-90" },
+                        ],
+                        "key": "xAxis.labels.rotation",
+                        "type": "array"
+                    }      
                 ]
             }
         ]
