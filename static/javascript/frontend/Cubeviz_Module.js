@@ -220,6 +220,8 @@ var tmpCubeVizLeftSidebarLeftQueue = [
     "onComplete_LoadDataSets", 
     "onComplete_LoadAllComponentDimensions"
 ];
+var Viz_Main = Viz_Main || undefined;
+var Viz_Event = Viz_Event || undefined;
 $(document).ready(function () {
     Module_Event.ready();
 });

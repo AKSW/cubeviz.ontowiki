@@ -24,6 +24,9 @@ var tmpCubeVizLeftSidebarLeftQueue = [
     "onComplete_LoadAllComponentDimensions"
 ];
 
+var Viz_Main = Viz_Main || undefined;
+var Viz_Event = Viz_Event || undefined;
+
 /**
  * Event section
  */
