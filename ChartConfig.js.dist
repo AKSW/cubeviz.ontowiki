@@ -42,7 +42,7 @@ var CubeViz_ChartConfig = {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
@@ -87,7 +87,7 @@ var CubeViz_ChartConfig = {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
@@ -96,7 +96,7 @@ var CubeViz_ChartConfig = {
                         "label": "Scale",
                         "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
-                            { "label": "Logarithmic", "value": "logarithmic" },
+                            { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
                         "type": "array"
@@ -108,7 +108,7 @@ var CubeViz_ChartConfig = {
                             { "label": "30°", "value": "-30" },
                             { "label": "45°", "value": "-45" },
                             { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" },
+                            { "label": "90°", "value": "-90" }
                         ],
                         "key": "xAxis.labels.rotation",
                         "type": "array"
@@ -147,7 +147,7 @@ var CubeViz_ChartConfig = {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
@@ -156,7 +156,7 @@ var CubeViz_ChartConfig = {
                         "label": "Inverted",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "chart.inverted",
                         "type": "array"
@@ -165,7 +165,7 @@ var CubeViz_ChartConfig = {
                         "label": "Scale",
                         "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
-                            { "label": "Logarithmic", "value": "logarithmic" },
+                            { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
                         "type": "array"
@@ -177,7 +177,7 @@ var CubeViz_ChartConfig = {
                             { "label": "30°", "value": "-30" },
                             { "label": "45°", "value": "-45" },
                             { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" },
+                            { "label": "90°", "value": "-90" }
                         ],
                         "key": "xAxis.labels.rotation",
                         "type": "array"
@@ -260,7 +260,7 @@ var CubeViz_ChartConfig = {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
@@ -279,7 +279,7 @@ var CubeViz_ChartConfig = {
                         "label": "Scale",
                         "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
-                            { "label": "Logarithmic", "value": "logarithmic" },
+                            { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
                         "type": "array"
@@ -291,7 +291,7 @@ var CubeViz_ChartConfig = {
                             { "label": "30", "value": "-30" },
                             { "label": "45", "value": "-45" },
                             { "label": "60", "value": "-60" },
-                            { "label": "90", "value": "-90" },
+                            { "label": "90", "value": "-90" }
                         ],
                         "key": "xAxis.labels.rotation",
                         "type": "array"
@@ -341,7 +341,7 @@ var CubeViz_ChartConfig = {
                         "label": "Scale",
                         "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
-                            { "label": "Logarithmic", "value": "logarithmic" },
+                            { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
                         "type": "array"
@@ -390,7 +390,7 @@ var CubeViz_ChartConfig = {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
@@ -399,7 +399,7 @@ var CubeViz_ChartConfig = {
                         "label": "Inverted",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
-                            { "label": "Yes", "value": "true" },
+                            { "label": "Yes", "value": "true" }
                         ],
                         "key": "chart.inverted",
                         "type": "array"
@@ -408,7 +408,7 @@ var CubeViz_ChartConfig = {
                         "label": "Scale",
                         "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
-                            { "label": "Logarithmic", "value": "logarithmic" },
+                            { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
                         "type": "array"
@@ -420,7 +420,7 @@ var CubeViz_ChartConfig = {
                             { "label": "30°", "value": "-30" },
                             { "label": "45°", "value": "-45" },
                             { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" },
+                            { "label": "90°", "value": "-90" }
                         ],
                         "key": "xAxis.labels.rotation",
                         "type": "array"
