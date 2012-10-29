@@ -164,20 +164,29 @@ class Viz_Event {
             CubeViz_Links_Module ["selectedComponents"]["dimensions"],
             CubeViz_Links_Module ["selectedComponents"]["measures"]
         ); 
-        
-        /**
-         * Render chart with the given data
-         */
-        Viz_Main.renderChart ( 
-            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"][0]["class"] 
-        );
-        
-        /**
-         * Setup click event for chartSelection item's
-         */
-        ChartSelector.init ( 
-            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
-            Viz_Event.onClick_ChartSelectionItem
-        );
+                
+        try {
+            /**
+             * Render chart with the given data
+             */
+            Viz_Main.renderChart ( 
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"][0]["class"] 
+            );
+            
+            /**
+             * Setup click event for chartSelection item's
+             */
+            ChartSelector.init ( 
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
+                Viz_Event.onClick_ChartSelectionItem
+            );
+        } catch ( e ) {
+            System.out ( "CubeViz_ChartConfig:" );
+            System.out ( CubeViz_ChartConfig );
+            
+            System.out ( "" );
+            System.out ( "Thrown exception:" );
+            System.out ( e );
+        }
     }
 }

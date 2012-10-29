@@ -197,7 +197,7 @@ var CubeViz_ChartConfig = {
                     "chart": { 
                         "renderTo": "container",
                         "type": "pie",
-                        "plotShadow": "true",
+                        "plotShadow": "true"
                     },
                     "tooltip": {
                     	"percentageDecimals": "1"
@@ -211,9 +211,9 @@ var CubeViz_ChartConfig = {
                             },
                             "showInLegend": "false"
                         }
-                    },
+                    }
                 },
-                
+                                
                 "options": [                   
                 ]
             }
@@ -310,7 +310,7 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container",
-                        "polar": "true",
+                        "polar": "true"
                     }
                 },
                 "options": [

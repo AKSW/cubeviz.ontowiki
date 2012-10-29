@@ -543,8 +543,16 @@ var Viz_Event = (function () {
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         CubeViz_Data["retrievedObservations"] = entries;
         CubeViz_Data["numberOfMultipleDimensions"] = HighCharts_Chart.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
-        Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
-        ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
+        try  {
+            Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
+            ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
+        } catch (e) {
+            System.out("CubeViz_ChartConfig:");
+            System.out(CubeViz_ChartConfig);
+            System.out("");
+            System.out("Thrown exception:");
+            System.out(e);
+        }
     }
     return Viz_Event;
 })();
