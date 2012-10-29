@@ -65,7 +65,5 @@ class Viz_Main {
         
         // show chart
         new Highcharts.Chart(chart.getRenderResult());
-        //System.out(chart.getRenderResult());
-        //System.out ( JSON.stringify (chart.getRenderResult()));
     }
 }

@@ -42,8 +42,12 @@ class System {
                     
                 // output objects property by property
                 } else {
+                    console.log ( " " );
+                    
                     $.each ( output, function ( i, val ) {
                         if ( "object" == typeof val ) {
+                            console.log ( " " );
+                            console.log ( "subobject" );
                             System.out ( val );
                         } else {
                             console.log ( i + ": " + val );
@@ -51,7 +55,7 @@ class System {
                     } );
                 }
             
-            // If your browser is modern, ...
+            // If your browser a modern one simply output
             } else {
                 console.log ( output );
             }

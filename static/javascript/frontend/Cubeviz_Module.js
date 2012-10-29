@@ -163,8 +163,11 @@ var System = (function () {
                 if("object" != typeof output && "array" != typeof output) {
                     console.log(output);
                 } else {
+                    console.log(" ");
                     $.each(output, function (i, val) {
                         if("object" == typeof val) {
+                            console.log(" ");
+                            console.log("subobject");
                             System.out(val);
                         } else {
                             console.log(i + ": " + val);

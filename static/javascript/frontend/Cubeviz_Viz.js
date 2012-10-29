@@ -13,7 +13,6 @@ var ChartSelector = (function () {
             for(var index in options) {
                 switch(options[index]["type"]) {
                     case "array": {
-                        console.log(options[index]);
                         chartSelectorArrays["entries"].push(options[index]);
                         break;
 
@@ -25,6 +24,9 @@ var ChartSelector = (function () {
                     }
                 }
             }
+            console.log("chartSelectorArrays");
+            System.out(chartSelectorArrays);
+            console.log("");
             tpl = jsontemplate.Template(ChartSelector_Array);
             finalHtml += tpl.expand(chartSelectorArrays);
             return finalHtml;
@@ -134,8 +136,11 @@ var System = (function () {
                 if("object" != typeof output && "array" != typeof output) {
                     console.log(output);
                 } else {
+                    console.log(" ");
                     $.each(output, function (i, val) {
                         if("object" == typeof val) {
+                            console.log(" ");
+                            console.log("subobject");
                             System.out(val);
                         } else {
                             console.log(i + ": " + val);
@@ -469,7 +474,6 @@ var HighCharts_Polar = (function (_super) {
     HighCharts_Polar.prototype.getRenderResult = function () {
         this.chartConfig["xAxis"] = this["xAxis"];
         this.chartConfig["series"] = this["series"];
-        console.log(this.chartConfig);
         return this.chartConfig;
     };
     return HighCharts_Polar;

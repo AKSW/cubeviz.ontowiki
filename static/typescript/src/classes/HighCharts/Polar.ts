@@ -32,7 +32,7 @@ class HighCharts_Polar extends HighCharts_Chart {
         
         // save given chart config
         this.chartConfig = chartConfig;
-        //System.out ( JSON.stringify (selectedComponentDimensions));
+        
         // assign selected dimensions to xAxis and series (yAxis)
         for ( var dimensionLabel in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
@@ -78,7 +78,6 @@ class HighCharts_Polar extends HighCharts_Chart {
     public getRenderResult () : Object {
         this.chartConfig ["xAxis"] = this ["xAxis"];
         this.chartConfig ["series"] = this ["series"];
-        console.log ( this.chartConfig );
         return this.chartConfig;
     }
 }

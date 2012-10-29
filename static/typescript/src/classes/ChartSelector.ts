@@ -23,7 +23,6 @@ class ChartSelector {
                 switch ( options [index] ["type"] ) {
                     
                     case "array": 
-                        console.log ( options [index] );
                         chartSelectorArrays ["entries"].push ( options [index] );
                         break;
                     
@@ -36,6 +35,10 @@ class ChartSelector {
             /**
              * Handle type: array
              */
+            console.log ( "chartSelectorArrays" );
+            System.out ( chartSelectorArrays );
+            console.log ( "" );
+             
             tpl = jsontemplate.Template(ChartSelector_Array);
             finalHtml += tpl.expand(chartSelectorArrays);
             
