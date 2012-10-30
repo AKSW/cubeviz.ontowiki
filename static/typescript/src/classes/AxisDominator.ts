@@ -16,7 +16,7 @@ class AxisDominator {
     /**
      * 
      */
-    public extractSelectedDimensionUris ( elements:Object[] ) : string[] {
+    private extractSelectedDimensionUris ( elements:Object[] ) : string[] {
         var resultList:string[] = [];        
         for ( var i in elements ) {
             resultList.push ( elements [i]["type"] );
@@ -39,7 +39,7 @@ class AxisDominator {
         // save uri's of selected component dimensions
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
                 
-        var dimensionValues = {}, measureObj = {};
+        var dimensionValues = {}, measureObj = {}, selecDimUri = "", selecDimVal = "";
         
         // create an array for each selected dimension uri and save given values
         for ( var mainIndex in entries ) {        
@@ -63,36 +63,33 @@ class AxisDominator {
             // generate temporary list of selected dimension values in the current entry
             for ( var i in this["_selectedDimensionUris"] ) {
                 
-                dimensionValues [ this["_selectedDimensionUris"] [i] ] = 
-                    entries [mainIndex] [this["_selectedDimensionUris"] [i]][0]["value"];
+                // save current selected dimension, to save space
+                selecDimUri = this["_selectedDimensionUris"][i];
+                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                
+                dimensionValues [ selecDimUri ] = selecDimVal;
                     
-                if ( "undefined" == System.toType ( this ["_axes"] [this["_selectedDimensionUris"] [i]] ) ) {
-                    this ["_axes"] [this["_selectedDimensionUris"] [i]] = {};
+                if ( "undefined" == System.toType ( this ["_axes"] [selecDimUri] ) ) {
+                    this ["_axes"] [selecDimUri] = {};
                 }
                     
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
                 //                uri                     value
-                if ( "undefined" == System.toType ( this ["_axes"] [this["_selectedDimensionUris"] [i]] 
-                    [dimensionValues [ this["_selectedDimensionUris"] [i] ]] ) ) {
-                    this ["_axes"] [this["_selectedDimensionUris"] [i]] 
-                        [dimensionValues [ this["_selectedDimensionUris"] [i] ]] = [];
+                if ( "undefined" == System.toType ( this ["_axes"][selecDimUri][selecDimVal]) ) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
                 }
                 
                 measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
                 
                 // set references for current dimension                
                 this.addAxisEntryPointsTo (
-                    this["_selectedDimensionUris"] [i],
-                    dimensionValues [ this["_selectedDimensionUris"] [i] ],
-                    measureObj
+                    this["_selectedDimensionUris"] [i], selecDimVal, measureObj
                 );
             }
             
             // fill pointsTo array for measure value
             this.addAxisEntryPointsTo ( 
-                measureUri, 
-                entries[mainIndex][measureUri][0]["value"],
-                dimensionValues
+                measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues
             );            
         }
         
@@ -127,7 +124,7 @@ class AxisDominator {
     /**
      * 
      */
-    public existsPointsToEntry ( uri:string, value:any, dimensionValues:Object ) : bool {
+    private existsPointsToEntry ( uri:string, value:any, dimensionValues:Object ) : bool {
         
         var pointsTo = null, allTheSame = false;
         

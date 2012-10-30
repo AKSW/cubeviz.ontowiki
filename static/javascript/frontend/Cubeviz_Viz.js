@@ -26,6 +26,8 @@ var AxisDominator = (function () {
         };
         var measureObj = {
         };
+        var selecDimUri = "";
+        var selecDimVal = "";
 
         for(var mainIndex in entries) {
             dimensionValues = {
@@ -37,16 +39,18 @@ var AxisDominator = (function () {
             }
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
-                dimensionValues[this["_selectedDimensionUris"][i]] = entries[mainIndex][this["_selectedDimensionUris"][i]][0]["value"];
-                if("undefined" == System.toType(this["_axes"][this["_selectedDimensionUris"][i]])) {
-                    this["_axes"][this["_selectedDimensionUris"][i]] = {
+                selecDimUri = this["_selectedDimensionUris"][i];
+                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                dimensionValues[selecDimUri] = selecDimVal;
+                if("undefined" == System.toType(this["_axes"][selecDimUri])) {
+                    this["_axes"][selecDimUri] = {
                     };
                 }
-                if("undefined" == System.toType(this["_axes"][this["_selectedDimensionUris"][i]][dimensionValues[this["_selectedDimensionUris"][i]]])) {
-                    this["_axes"][this["_selectedDimensionUris"][i]][dimensionValues[this["_selectedDimensionUris"][i]]] = [];
+                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
                 }
                 measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
-                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], dimensionValues[this["_selectedDimensionUris"][i]], measureObj);
+                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
             }
             this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
         }
