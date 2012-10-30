@@ -181,32 +181,6 @@ class Viz_Event {
                 Viz_Event.onClick_ChartSelectionItem
             );
             
-            try {
-                var aD = new AxisDominator ();
-                
-                aD.initialize (
-                    CubeViz_Links_Module ["selectedComponents"]["dimensions"],
-                    entries, 
-                    HighCharts_Chart.extractMeasureValue ( 
-                        CubeViz_Links_Module ["selectedComponents"]["measures"] 
-                    )
-                )                
-                .sortAxis ( 
-                    CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"], 
-                    //HighCharts_Chart.extractMeasureValue ( CubeViz_Links_Module ["selectedComponents"]["measures"] ),
-                    "ascending"  );
-                
-                console.log ( 
-                    aD.getAxisElements ( 
-                        CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"]
-                        //HighCharts_Chart.extractMeasureValue ( CubeViz_Links_Module ["selectedComponents"]["measures"] )
-                    )
-                );
-            }
-            catch ( e ) {
-                console.log ( e );
-            }
-            
         } catch ( e ) {
             System.out ( "CubeViz_ChartConfig:" );
             System.out ( CubeViz_ChartConfig );

@@ -1,151 +1,3 @@
-var Axis = (function () {
-    function Axis() {
-    }
-    return Axis;
-})();
-var AxisDominator = (function () {
-    function AxisDominator() {
-        this._axes = {
-        };
-        this._selectedDimensionUris = [];
-    }
-    AxisDominator.prototype.addAxisEntryPointsTo = function (uri, value, dimensionValues) {
-        if(false == this.existsPointsToEntry(uri, value, dimensionValues)) {
-            for(var dimensionUri in dimensionValues) {
-                dimensionValues[dimensionUri] = {
-                    "value": dimensionValues[dimensionUri],
-                    "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
-                };
-            }
-            this["_axes"][uri][value].push(dimensionValues);
-        }
-    };
-    AxisDominator.prototype.extractSelectedDimensionUris = function (elements) {
-        var resultList = [];
-        for(var i in elements) {
-            resultList.push(elements[i]["type"]);
-        }
-        return resultList;
-    };
-    AxisDominator.prototype.existsPointsToEntry = function (uri, value, dimensionValues) {
-        var pointsTo = null;
-        var allTheSame = false;
-
-        if(1 > this["_axes"][uri][value]["length"]) {
-            return false;
-        }
-        for(var pointsToIndex in this["_axes"][uri][value]) {
-            pointsTo = this["_axes"][uri][value][pointsToIndex];
-            for(var i in pointsTo) {
-                allTheSame = false;
-                for(var dimensionUri in dimensionValues) {
-                    if(pointsTo[i]["value"] == dimensionValues[dimensionUri]) {
-                        allTheSame = true;
-                    } else {
-                        allTheSame = false;
-                        break;
-                    }
-                }
-                if(true == allTheSame) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-    AxisDominator.prototype.getAxisElements = function (axisUri) {
-        if("undefined" != System.toType(this["_axes"][axisUri])) {
-            return this["_axes"][axisUri];
-        } else {
-            System.out("\nNo elements found given axisUri: " + axisUri);
-            return [];
-        }
-    };
-    AxisDominator.prototype.initialize = function (selectedComponentDimensions, entries, measureUri) {
-        if("array" != System.toType(entries) || 0 == entries["length"]) {
-            System.out("\nEntries is empty or not an array!");
-            return;
-        }
-        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
-        var dimensionValues = {
-        };
-        var measureObj = {
-        };
-        var selecDimUri = "";
-        var selecDimVal = "";
-
-        for(var mainIndex in entries) {
-            dimensionValues = {
-            };
-            measureObj = {
-            };
-            if("undefined" == System.toType(this["_axes"][measureUri])) {
-                this["_axes"][measureUri] = {
-                };
-            }
-            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
-            for(var i in this["_selectedDimensionUris"]) {
-                selecDimUri = this["_selectedDimensionUris"][i];
-                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
-                dimensionValues[selecDimUri] = selecDimVal;
-                if("undefined" == System.toType(this["_axes"][selecDimUri])) {
-                    this["_axes"][selecDimUri] = {
-                    };
-                }
-                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
-                }
-                measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
-                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
-            }
-            this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
-        }
-        console.log(this["_axes"]);
-        return this;
-    };
-    AxisDominator.prototype.sortAxis = function (axisUri, mode) {
-        var mode = "undefined" == System.toType(mode) ? "ascending" : mode;
-        var sortedKeys = [];
-        var sortedObj = {
-        };
-
-        for(var i in this["_axes"][axisUri]) {
-            sortedKeys.push(i);
-        }
-        switch(mode) {
-            case "descending": {
-                sortedKeys.sort(function (a, b) {
-                    a = a.toString().toLowerCase();
-                    b = b.toString().toLowerCase();
-                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
-                });
-                break;
-
-            }
-            default: {
-                sortedKeys.sort(function (a, b) {
-                    a = a.toString().toLowerCase();
-                    b = b.toString().toLowerCase();
-                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-                });
-                break;
-
-            }
-        }
-        console.log("mode : " + mode);
-        console.log("sorted key list : ");
-        console.log(sortedKeys);
-        for(var i in sortedKeys) {
-            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
-        }
-        this["_axes"][axisUri] = sortedObj;
-        for(var j in this["_axes"][axisUri]) {
-            console.log(j);
-        }
-        return this;
-    };
-    return AxisDominator;
-})();
 var ChartSelector = (function () {
     function ChartSelector() { }
     ChartSelector.itemClicked = -1;
@@ -236,7 +88,106 @@ var ConfigurationLink = (function () {
     return ConfigurationLink;
 })();
 var Observation = (function () {
-    function Observation() { }
+    function Observation() {
+        this._axes = {
+        };
+        this._selectedDimensionUris = [];
+    }
+    Observation.prototype.addAxisEntryPointsTo = function (uri, value, dimensionValues) {
+        if(false == this.existsPointsToEntry(uri, value, dimensionValues)) {
+            for(var dimensionUri in dimensionValues) {
+                dimensionValues[dimensionUri] = {
+                    "value": dimensionValues[dimensionUri],
+                    "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
+                };
+            }
+            this["_axes"][uri][value].push(dimensionValues);
+        }
+    };
+    Observation.prototype.extractSelectedDimensionUris = function (elements) {
+        var resultList = [];
+        for(var i in elements) {
+            resultList.push(elements[i]["type"]);
+        }
+        return resultList;
+    };
+    Observation.prototype.existsPointsToEntry = function (uri, value, dimensionValues) {
+        var pointsTo = null;
+        var allTheSame = false;
+
+        if(1 > this["_axes"][uri][value]["length"]) {
+            return false;
+        }
+        for(var pointsToIndex in this["_axes"][uri][value]) {
+            pointsTo = this["_axes"][uri][value][pointsToIndex];
+            for(var i in pointsTo) {
+                allTheSame = false;
+                for(var dimensionUri in dimensionValues) {
+                    if(pointsTo[i]["value"] == dimensionValues[dimensionUri]) {
+                        allTheSame = true;
+                    } else {
+                        allTheSame = false;
+                        break;
+                    }
+                }
+                if(true == allTheSame) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    Observation.prototype.getAxisElements = function (axisUri) {
+        if("undefined" != System.toType(this["_axes"][axisUri])) {
+            return this["_axes"][axisUri];
+        } else {
+            System.out("\nNo elements found given axisUri: " + axisUri);
+            return [];
+        }
+    };
+    Observation.prototype.initialize = function (entries, selectedComponentDimensions, measureUri) {
+        if("array" != System.toType(entries) || 0 == entries["length"]) {
+            System.out("\nEntries is empty or not an array!");
+            return;
+        }
+        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
+        var dimensionValues = {
+        };
+        var measureObj = {
+        };
+        var selecDimUri = "";
+        var selecDimVal = "";
+
+        console.log("entries");
+        console.log(entries);
+        for(var mainIndex in entries) {
+            dimensionValues = {
+            };
+            measureObj = {
+            };
+            if("undefined" == System.toType(this["_axes"][measureUri])) {
+                this["_axes"][measureUri] = {
+                };
+            }
+            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
+            for(var i in this["_selectedDimensionUris"]) {
+                selecDimUri = this["_selectedDimensionUris"][i];
+                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                dimensionValues[selecDimUri] = selecDimVal;
+                if("undefined" == System.toType(this["_axes"][selecDimUri])) {
+                    this["_axes"][selecDimUri] = {
+                    };
+                }
+                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
+                }
+                measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
+                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
+            }
+            this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
+        }
+        return this;
+    };
     Observation.loadAll = function loadAll(linkCode, callback) {
         $.ajax({
             url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
@@ -259,6 +210,41 @@ var Observation = (function () {
             callback(parse);
         }
     }
+    Observation.prototype.sortAxis = function (axisUri, mode) {
+        var mode = "undefined" == System.toType(mode) ? "ascending" : mode;
+        var sortedKeys = [];
+        var sortedObj = {
+        };
+
+        for(var i in this["_axes"][axisUri]) {
+            sortedKeys.push(i);
+        }
+        switch(mode) {
+            case "descending": {
+                sortedKeys.sort(function (a, b) {
+                    a = a.toString().toLowerCase();
+                    b = b.toString().toLowerCase();
+                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+                });
+                break;
+
+            }
+            default: {
+                sortedKeys.sort(function (a, b) {
+                    a = a.toString().toLowerCase();
+                    b = b.toString().toLowerCase();
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                break;
+
+            }
+        }
+        for(var i in sortedKeys) {
+            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
+        }
+        this["_axes"][axisUri] = sortedObj;
+        return this;
+    };
     return Observation;
 })();
 var System = (function () {
@@ -466,34 +452,45 @@ var HighCharts_Bar = (function (_super) {
         ];
         var forXAxis = null;
         var forSeries = null;
+        var measureUri = HighCharts_Chart.extractMeasureValue(measures);
+        var observation = new Observation();
 
-        this.chartConfig = chartConfig;
+        this["chartConfig"] = chartConfig;
         for(var dimensionLabel in selectedComponentDimensions) {
             if(null == forXAxis) {
-                forXAxis = selectedComponentDimensions[dimensionLabel];
+                forXAxis = selectedComponentDimensions[dimensionLabel]["type"];
             } else {
-                forSeries = selectedComponentDimensions[dimensionLabel];
+                forSeries = selectedComponentDimensions[dimensionLabel]["type"];
             }
         }
-        this.xAxis.categories = [];
-        for(var i in forXAxis["elements"]) {
-            this.xAxis.categories.push(forXAxis["elements"][i]["property_label"]);
+        observation.initialize(entries, selectedComponentDimensions, measureUri);
+        var xAxisElements = observation.sortAxis(forXAxis, "descending").getAxisElements(forXAxis);
+        for(var value in xAxisElements) {
+            this["xAxis"]["categories"].push(value);
         }
-        this.xAxis.categories.sort(function (a, b) {
-            return a.toString().toUpperCase().localeCompare(b.toString().toUpperCase());
-        });
-        this.series = [];
-        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri(forSeries["type"], HighCharts_Chart.extractMeasureValue(measures), entries);
-        for(var i in forSeries["elements"]) {
-            this.series.push({
-                "name": forSeries["elements"][i]["property_label"],
-                "data": seriesData[forSeries["elements"][i]["property"]]
-            });
+        var seriesElements = observation.getAxisElements(forSeries);
+        var obj = {
+        };
+
+        for(var value in seriesElements) {
+            obj = {
+            };
+            obj["name"] = value;
+            obj["data"] = [];
+            for(var i in xAxisElements) {
+                for(var j in xAxisElements[i]) {
+                    if(value == xAxisElements[i][j][measureUri]["ref"][0][forSeries]["value"]) {
+                        obj["data"].push(xAxisElements[i][j][measureUri]["value"]);
+                    }
+                }
+            }
+            this["series"].push(obj);
         }
     };
     HighCharts_Bar.prototype.getRenderResult = function () {
-        this.chartConfig["xAxis"] = this["xAxis"];
-        this.chartConfig["series"] = this["series"];
+        this["chartConfig"]["xAxis"] = this["xAxis"];
+        this["chartConfig"]["series"] = this["series"];
+        console.log(JSON.stringify(this.chartConfig));
         return this.chartConfig;
     };
     return HighCharts_Bar;
@@ -706,13 +703,6 @@ var Viz_Event = (function () {
         try  {
             Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
             ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
-            try  {
-                var aD = new AxisDominator();
-                aD.initialize(CubeViz_Links_Module["selectedComponents"]["dimensions"], entries, HighCharts_Chart.extractMeasureValue(CubeViz_Links_Module["selectedComponents"]["measures"])).sortAxis(CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"], "ascending");
-                console.log(aD.getAxisElements(CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"]));
-            } catch (e) {
-                console.log(e);
-            }
         } catch (e) {
             System.out("CubeViz_ChartConfig:");
             System.out(CubeViz_ChartConfig);
