@@ -3,6 +3,11 @@
 
 class System {
     
+    static contains (haystack:string, needle:string) : bool {
+        return -1 === System.strpos ( haystack, needle )
+            ? false : true;
+    }
+    
     /**
      * Counts number of an given object.
      */
@@ -89,6 +94,13 @@ class System {
         });
         
         $.support.cors = true;
+    }
+    
+    /**
+     * Copied from http://phpjs.org/functions/strpos
+     */
+    static strpos (haystack:string, needle:string) : number {
+        return (haystack + '').indexOf (needle, 0);
     }
     
     /**

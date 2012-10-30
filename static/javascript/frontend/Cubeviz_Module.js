@@ -142,6 +142,9 @@ var Observation = (function () {
 })();
 var System = (function () {
     function System() { }
+    System.contains = function contains(haystack, needle) {
+        return -1 === System.strpos(haystack, needle) ? false : true;
+    }
     System.countProperties = function countProperties(obj) {
         var keyCount = 0;
         var k = null;
@@ -198,6 +201,9 @@ var System = (function () {
             "type": "POST"
         });
         $.support.cors = true;
+    }
+    System.strpos = function strpos(haystack, needle) {
+        return (haystack + '').indexOf(needle, 0);
     }
     System.toType = function toType(ele) {
         return ({

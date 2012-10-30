@@ -190,6 +190,17 @@ class Viz_Event {
                     HighCharts_Chart.extractMeasureValue ( 
                         CubeViz_Links_Module ["selectedComponents"]["measures"] 
                     )
+                )                
+                .sortAxis ( 
+                    CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"], 
+                    //HighCharts_Chart.extractMeasureValue ( CubeViz_Links_Module ["selectedComponents"]["measures"] ),
+                    "ascending"  );
+                
+                console.log ( 
+                    aD.getAxisElements ( 
+                        CubeViz_Links_Module["selectedComponents"]["dimensions"]["Country"]["type"]
+                        //HighCharts_Chart.extractMeasureValue ( CubeViz_Links_Module ["selectedComponents"]["measures"] )
+                    )
                 );
             }
             catch ( e ) {
