@@ -18,14 +18,10 @@ var AxisDominator = (function () {
     };
     AxisDominator.prototype.initialize = function (selectedComponentDimensions, entries, measureUri) {
         if("array" != System.toType(entries) || 0 == entries["length"]) {
-            System.out("");
-            System.out("Entries is empty or not an array!");
+            System.out("\nEntries is empty or not an array!");
             return;
         }
-        console.log("entries");
-        console.log(entries);
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
-        console.log(this["_selectedDimensionUris"]);
         var dimensionValues = {
         };
         var measureObj = {
@@ -54,7 +50,6 @@ var AxisDominator = (function () {
             }
             this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
         }
-        console.log("_axes");
         console.log(this["_axes"]);
         return this;
     };
@@ -81,10 +76,11 @@ var AxisDominator = (function () {
             for(var i in pointsTo) {
                 allTheSame = false;
                 for(var dimensionUri in dimensionValues) {
-                    if(pointsTo[i][dimensionUri] == dimensionValues[dimensionUri]) {
+                    if(pointsTo[i]["value"] == dimensionValues[dimensionUri]) {
                         allTheSame = true;
                     } else {
                         allTheSame = false;
+                        break;
                     }
                 }
                 if(true == allTheSame) {

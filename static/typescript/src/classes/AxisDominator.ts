@@ -32,19 +32,13 @@ class AxisDominator {
                          measureUri:string ) : AxisDominator {
         
         if ( "array" != System.toType ( entries ) || 0 == entries ["length"] ) {
-            System.out ("");
-            System.out ("Entries is empty or not an array!");
+            System.out ("\nEntries is empty or not an array!");
             return;
         }
         
-        console.log ( "entries" );
-        console.log ( entries );
-        
         // save uri's of selected component dimensions
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
-        
-        console.log ( this["_selectedDimensionUris"] );
-        
+                
         var dimensionValues = {}, measureObj = {};
         
         // create an array for each selected dimension uri and save given values
@@ -102,8 +96,7 @@ class AxisDominator {
             );            
         }
         
-        console.log ( "_axes" );
-        console.log ( this["_axes"] );
+        console.log ( this ["_axes"]);
         
         return this;
     }
@@ -113,23 +106,16 @@ class AxisDominator {
      */
     private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void {
         
-        /*
-        console.log ( "" );
-        console.log ( "uri : " + uri );
-        console.log ( "value : " + value );
-        console.log ( "uri| : " );
-        console.log ( this ["_axes"][uri] );
-        console.log ( "uri|value : " )
-        console.log ( this ["_axes"][uri][value] );*/
-        
         if ( false == this.existsPointsToEntry ( uri, value, dimensionValues ) ) {
                         
             for ( var dimensionUri in dimensionValues ) {
                 
-                // Set reference to axes dimension element
-                //                                e.g. ["_axes"] ["http://.../country"] ["Germany"]
+                // Set current value and reference to axes dimension element
                 dimensionValues [dimensionUri] = { 
+                    // e.g. value: "Germany"
                     "value" : dimensionValues [dimensionUri],
+                    
+                    // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
                     "ref" : this ["_axes"][dimensionUri][dimensionValues [dimensionUri]]
                 };
             }
@@ -144,15 +130,6 @@ class AxisDominator {
     public existsPointsToEntry ( uri:string, value:any, dimensionValues:Object ) : bool {
         
         var pointsTo = null, allTheSame = false;
-        /*
-        console.log ( "" );
-        console.log ( "+++++++++++++++++++++++++++++++" );
-        console.log ( "Given: " + uri + ", " + value );
-        console.log ( dimensionValues );
-        console.log ( "" );
-        console.log ( "axes > uri > value" );
-        console.log ( this ["_axes"][uri][value] );
-        console.log ( System.toType ( this ["_axes"][uri][value] ) );*/
         
         if ( 1 > this ["_axes"][uri][value]["length"] ) {
             return false;
@@ -166,18 +143,13 @@ class AxisDominator {
             for ( var i in pointsTo ) {
                 
                 allTheSame = false;
-                /*
-                console.log ( "" );
-                console.log ( i );*/
                 
                 for ( var dimensionUri in dimensionValues ) {
-                    
-                    // console.log ( "checke " + pointsTo[i][dimensionUri] + " --- " + dimensionValues [dimensionUri] );
-                    
-                    if ( pointsTo[i][dimensionUri] == dimensionValues [dimensionUri] ) {
+                    if ( pointsTo[i]["value"] == dimensionValues [dimensionUri] ) {
                         allTheSame = true;
                     } else {
                         allTheSame = false;
+                        break;
                     }
                 }
                 
