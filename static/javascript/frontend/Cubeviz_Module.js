@@ -177,6 +177,8 @@ var Observation = (function () {
             System.out("\nEntries is empty or not an array!");
             return;
         }
+        console.log("entries");
+        console.log(entries);
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
         var dimensionValues = {
         };
@@ -185,8 +187,6 @@ var Observation = (function () {
         var selecDimUri = "";
         var selecDimVal = "";
 
-        console.log("entries");
-        console.log(entries);
         for(var mainIndex in entries) {
             dimensionValues = {
             };

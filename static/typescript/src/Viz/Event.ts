@@ -182,12 +182,7 @@ class Viz_Event {
             );
             
         } catch ( e ) {
-            System.out ( "CubeViz_ChartConfig:" );
-            System.out ( CubeViz_ChartConfig );
-            
-            System.out ( "" );
-            System.out ( "Thrown exception:" );
-            System.out ( e );
+            console.log ( e );
         }
     }
 }

@@ -17,14 +17,11 @@ class HighCharts_Pie extends HighCharts_Chart {
     /**
      * 
      */
-    public init ( retrievedData:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:Object ) : void {
-        
-        // save given chart config
-        this.chartConfig = chartConfig;
-        
+    public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:Object ) : void {
+                
         // this array MUST contains only ONE entry!
         var multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
-            retrievedData, selectedComponentDimensions, measures
+            entries, selectedComponentDimensions, measures
         );
             
         // stop execution, if it contains more than one entry
@@ -34,21 +31,29 @@ class HighCharts_Pie extends HighCharts_Chart {
             return;
         }
         
-        var value:number = 0;
+        var data = [],
+            forXAxis = multipleDimensions [0]["elements"][0]["dimension_type"],
+            measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
+            observation = new Observation (); 
         
-        for ( var i in multipleDimensions [0]["elements"] ) {
-            
-            value = HighCharts_Chart.getValueByDimensionProperties ( 
-                retrievedData, 
-                [multipleDimensions [0]["elements"][i]], 
-                HighCharts_Chart.extractMeasureValue ( measures )
-            ); value = undefined !== value ? value : 0;
-            
-            this ["series"][0]["data"].push ( [ 
-                multipleDimensions [0]["elements"][i]["property_label"],
-                value
-            ] );
+        // save given chart config
+        this ["chartConfig"] = chartConfig;
+                
+        observation.initialize ( entries, selectedComponentDimensions, measureUri );
+        
+        var xAxisElements = observation
+            .sortAxis ( forXAxis, "ascending" )
+            .getAxisElements ( forXAxis );
+        
+        data.push ({ "type": "pie", name: "TODO", "data": [] });
+                    
+        for ( var value in xAxisElements ) {
+            data[0]["data"].push ([
+                value, xAxisElements[value][0][measureUri]["value"]
+            ]);
         }
+        
+        this["series"] = data;
     }
     
     /**

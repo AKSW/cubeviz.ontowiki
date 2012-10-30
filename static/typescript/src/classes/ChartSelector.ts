@@ -34,11 +34,7 @@ class ChartSelector {
             
             /**
              * Handle type: array
-             */
-            console.log ( "chartSelectorArrays" );
-            System.out ( chartSelectorArrays );
-            console.log ( "" );
-             
+             */             
             tpl = jsontemplate.Template(ChartSelector_Array);
             finalHtml += tpl.expand(chartSelectorArrays);
             

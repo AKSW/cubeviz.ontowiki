@@ -26,49 +26,49 @@ class HighCharts_Polar extends HighCharts_Chart {
      */
     public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:Object ) : void {
         
-        var dimensionLabels:string[] = [""],
-            forXAxis = null,
-            forSeries = null;
+        var forXAxis = null,
+            forSeries = null,
+            measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
+            observation = new Observation (); 
         
         // save given chart config
-        this.chartConfig = chartConfig;
+        this ["chartConfig"] = chartConfig;
         
+
         // assign selected dimensions to xAxis and series (yAxis)
         for ( var dimensionLabel in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
-                forXAxis = selectedComponentDimensions[dimensionLabel];
+                forXAxis = selectedComponentDimensions[dimensionLabel]["type"];
             } else {
-                forSeries = selectedComponentDimensions[dimensionLabel];
+                forSeries = selectedComponentDimensions[dimensionLabel]["type"];
             }
         }
         
-        /**
-         * Fill x axis with empty entries, so there will no text around the polar-circle
-         */
-        this.xAxis.categories = [];
-        for ( var i in forXAxis ["elements"] ) {
-            this.xAxis.categories.push (forXAxis ["elements"][i]["property_label"]);
+        observation.initialize ( entries, selectedComponentDimensions, measureUri );
+        var xAxisElements = observation
+            .sortAxis ( forXAxis, "ascending" )
+            .getAxisElements ( forXAxis );
+        
+        for ( var value in xAxisElements ) {
+            this ["xAxis"]["categories"].push ( value );
         }
         
-        /**
-         * Fill series (y axis)
-         */
-        this.series = [];
-        
-        // structure retrieved elements
-        var seriesData = HighCharts_Chart.groupElementsByPropertiesUri ( 
-            forSeries ["type"], 
-            HighCharts_Chart.extractMeasureValue ( measures ), 
-            entries 
-        );
-        
-        // Use only these value from series data, which belong to the selected
-        // dimension elements
-        for ( var i in forSeries ["elements"] ) {
-            this.series.push ({ 
-                "name": forSeries ["elements"][i]["property_label"],
-                "data": seriesData [ forSeries ["elements"][i]["property"] ]
-            });
+        var seriesElements = observation.getAxisElements ( forSeries ),
+            obj = {};
+            
+        for ( var value in seriesElements ) {
+            obj = {};
+            obj ["name"] = value;
+            obj ["data"] = [];
+            
+            for ( var i in xAxisElements ) {
+                for ( var j in xAxisElements [i] ) {                    
+                    if ( value == xAxisElements[i][j][measureUri]["ref"][0][forSeries]["value"] )
+                        obj ["data"].push ( xAxisElements[i][j][measureUri]["value"] );
+                }
+            }
+            
+            this["series"].push (obj);
         }
     }
     

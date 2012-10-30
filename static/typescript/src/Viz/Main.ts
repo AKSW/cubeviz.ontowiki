@@ -62,7 +62,7 @@ class Viz_Main {
             CubeViz_Links_Module ["selectedComponents"]["measures"], 
             fromChartConfig ["defaultConfig"]
         );
-        
+                
         // show chart
         new Highcharts.Chart(chart.getRenderResult());
     }

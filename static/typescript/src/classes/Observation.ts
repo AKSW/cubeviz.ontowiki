@@ -107,13 +107,13 @@ class Observation {
             return;
         }
         
+        console.log ( "entries" );
+        console.log ( entries );
+        
         // save uri's of selected component dimensions
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
                 
         var dimensionValues = {}, measureObj = {}, selecDimUri = "", selecDimVal = "";
-        
-        console.log ( "entries" );
-        console.log ( entries );
         
         // create an array for each selected dimension uri and save given values
         for ( var mainIndex in entries ) {        
