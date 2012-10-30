@@ -1,3 +1,49 @@
+var Axis = (function () {
+    function Axis() {
+    }
+    return Axis;
+})();
+var AxisDominator = (function () {
+    function AxisDominator() {
+        this._axes = {
+        };
+        this._selectedDimensionUris = [];
+    }
+    AxisDominator.prototype.initialize = function (selectedComponentDimensions, entries) {
+        if("array" != System.toType(entries) || 0 == entries["length"]) {
+            System.out("");
+            System.out("Entries is empty or not an array!");
+            return;
+        }
+        console.log("entries");
+        console.log(entries);
+        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
+        console.log(this["_selectedDimensionUris"]);
+        for(var mainIndex in entries) {
+            for(var propertyUri in entries[mainIndex]) {
+                if(0 <= $.inArray(propertyUri, this["_selectedDimensionUris"])) {
+                    if("undefined" == System.toType(this["_axes"][propertyUri])) {
+                        this["_axes"][propertyUri] = [];
+                    }
+                    if(-1 == $.inArray(entries[mainIndex][propertyUri][0]["value"], this["_axes"][propertyUri])) {
+                        this["_axes"][propertyUri].push(entries[mainIndex][propertyUri][0]["value"]);
+                    }
+                }
+            }
+        }
+        console.log("_axes");
+        console.log(this["_axes"]);
+        return this;
+    };
+    AxisDominator.prototype.extractSelectedDimensionUris = function (elements) {
+        var resultList = [];
+        for(var i in elements) {
+            resultList.push(elements[i]["type"]);
+        }
+        return resultList;
+    };
+    return AxisDominator;
+})();
 var ChartSelector = (function () {
     function ChartSelector() { }
     ChartSelector.itemClicked = -1;
@@ -550,6 +596,12 @@ var Viz_Event = (function () {
         try  {
             Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
             ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
+            try  {
+                var aD = new AxisDominator();
+                aD.initialize(CubeViz_Links_Module["selectedComponents"]["dimensions"], entries);
+            } catch (e) {
+                console.log(e);
+            }
         } catch (e) {
             System.out("CubeViz_ChartConfig:");
             System.out(CubeViz_ChartConfig);

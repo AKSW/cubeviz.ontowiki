@@ -180,6 +180,19 @@ class Viz_Event {
                 CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
                 Viz_Event.onClick_ChartSelectionItem
             );
+            
+            try {
+                var aD = new AxisDominator ();
+                
+                aD.initialize (
+                    CubeViz_Links_Module ["selectedComponents"]["dimensions"],
+                    entries
+                );
+            }
+            catch ( e ) {
+                console.log ( e );
+            }
+            
         } catch ( e ) {
             System.out ( "CubeViz_ChartConfig:" );
             System.out ( CubeViz_ChartConfig );

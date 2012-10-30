@@ -84,7 +84,7 @@ class HighCharts_Chart {
                 if ( propertyUri == dimensionTypeUri ) {
                     
                     // if seriesData [ certain dimension element uri ] is not set
-                    // examples for certain dimension element uri:
+                    // examples for    certain dimension element uri:
                     // - 2010
                     // - http://data.lod2.eu/scoreboard/indicators/FOA_cit_Country_ofpubs
                     if ( undefined === seriesData [entries [mainIndex][propertyUri][0]["value"]] ) {
@@ -98,6 +98,9 @@ class HighCharts_Chart {
                 }
             }
         }
+        
+        console.log ( "seriesData" );
+        console.log ( seriesData );
         
         return seriesData;
     }

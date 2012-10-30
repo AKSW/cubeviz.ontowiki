@@ -1,3 +1,5 @@
+static/typescript/src/classes/Axis.ts
+static/typescript/src/classes/AxisDominator.ts
 static/typescript/src/classes/ChartSelector.ts
 static/typescript/src/classes/ConfigurationLink.ts
 static/typescript/src/classes/Observation.ts

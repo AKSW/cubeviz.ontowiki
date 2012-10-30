@@ -19,7 +19,7 @@ class System {
     /**
      * Copy an given element, but renew the reference so there is no connection to the old one.
      */
-    static deepCopy ( elementToCopy : Object ) : any {
+    static deepCopy ( elementToCopy : any ) : any {
         var newElement = $.parseJSON ( JSON.stringify ( elementToCopy ) );
         return newElement;
     }
@@ -97,6 +97,7 @@ class System {
      * Has return for following parameters:
             ## Parameter ##                         ## Returns ## 
             Undefined	                            undefined
+            Array	                                array
             Null	                                object
             Boolean	                                boolean
             Number	                                number
