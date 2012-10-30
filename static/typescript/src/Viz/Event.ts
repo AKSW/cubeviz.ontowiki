@@ -154,7 +154,7 @@ class Viz_Event {
     /**
      * 
      */
-    static onComplete_LoadResultObservations (entries) {
+    static onComplete_LoadResultObservations (entries:Object[]) : void {
         
         CubeViz_Data ["retrievedObservations"] = entries;
         
@@ -186,7 +186,10 @@ class Viz_Event {
                 
                 aD.initialize (
                     CubeViz_Links_Module ["selectedComponents"]["dimensions"],
-                    entries
+                    entries, 
+                    HighCharts_Chart.extractMeasureValue ( 
+                        CubeViz_Links_Module ["selectedComponents"]["measures"] 
+                    )
                 );
             }
             catch ( e ) {
