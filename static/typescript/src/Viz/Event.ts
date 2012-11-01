@@ -12,9 +12,9 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 // ChartConfig.js > Array which contains chart configurations for each dimensional-case
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
-var CubeViz_Data = {
-  "retrievedObservations" : [],
-  "numberOfMultipleDimensions" : 0  
+var CubeViz_Data = CubeViz_Data || {
+    "retrievedObservations" : [],
+    "numberOfMultipleDimensions" : 0  
 };
 
 // Templates

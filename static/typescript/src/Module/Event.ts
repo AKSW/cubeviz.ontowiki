@@ -24,6 +24,11 @@ var tmpCubeVizLeftSidebarLeftQueue = [
     "onComplete_LoadAllComponentDimensions"
 ];
 
+var CubeViz_Data = CubeViz_Data || {
+    "retrievedObservations" : [],
+    "numberOfMultipleDimensions" : 0  
+};
+
 var Viz_Main = Viz_Main || undefined;
 var Viz_Event = Viz_Event || undefined;
 
@@ -258,39 +263,67 @@ class Module_Event {
      */
     static onComplete_LoadAllComponentDimensions (entries, resetSelectedComponents:bool = false) {
         
+        // reset the existing component configuration
         if ( true == resetSelectedComponents ) {
             
             // set default values for selected component dimensions list
             // for each componentDimension first entry will be selected
             // e.g. Year (2003), Country (Germany)
-            CubeViz_Links_Module.selectedComponents.dimensions =
-                Component.getDefaultSelectedDimensions ( entries.dimensions );
-        } else { }
+            CubeViz_Links_Module["selectedComponents"]["dimensions"] =
+                Component.getDefaultSelectedDimensions ( entries ["dimensions"] );
+                
+            // Adapt existing linkCode, ask the server about a new one
+            ConfigurationLink.saveToServerFile ( 
+                CubeViz_Links_Module,
+                cubeVizUIChartConfig,
+                
+                // callback: called after the server (hopefully) generated a new link code
+                function ( newLinkCode ) {
+                    
+                    // Save new generated linkCode
+                    CubeViz_Links_Module ["linkCode"] = newLinkCode;
+                    
+                    /**
+                     * Force to reload the observations
+                     */
+                    Observation.loadAll ( 
+                        CubeViz_Links_Module ["linkCode"],                        
+                        function (newObservations){
+                            // at this point, new observations loaded
+                        }
+                    );
+                }
+            );
+        } 
+        
+        // you start with a fresh component configuration
+        else { 
     
-        // save pulled component dimensions
-        CubeViz_Links_Module.components = entries;
+            // save pulled component dimensions
+            CubeViz_Links_Module ["components"] = entries;
+                
+            /**
+             * Update component selection
+             */
+            Module_Main.buildComponentSelection ( 
+                CubeViz_Links_Module ["components"], CubeViz_Links_Module ["selectedComponents"]
+            );
             
-        /**
-         * Update component selection
-         */
-        Module_Main.buildComponentSelection ( 
-            CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents 
-        );
-        
-        /**
-         * Dimensions button to select / unselect elements
-         */
-        Module_Event.setupDialogSelector ();
-        
-        /**
-         * Remove this event entry from sidebar left queue
-         */
-        Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadAllComponentDimensions" );
-        
-        /**
-         * 
-         */
-        Module_Main.hideSidebarLoader ();
+            /**
+             * Dimensions button to select / unselect elements
+             */
+            Module_Event.setupDialogSelector ();
+            
+            /**
+             * Remove this event entry from sidebar left queue
+             */
+            Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadAllComponentDimensions" );
+            
+            /**
+             * 
+             */
+            Module_Main.hideSidebarLoader ();
+        }
     }
     
     /**
@@ -333,7 +366,9 @@ class Module_Event {
         // re-load data set box
         Component.loadAllDimensions ( 
             CubeViz_Links_Module.selectedDSD.url, dsUrl, 
-            Module_Event.onComplete_LoadAllComponentDimensions 
+            function ( entries ) {
+                Module_Event.onComplete_LoadAllComponentDimensions ( entries, true );
+            }
         );
         
         if ( "undefined" != System.toType ( Viz_Main ) ) {

@@ -360,6 +360,10 @@ var tmpCubeVizLeftSidebarLeftQueue = [
     "onComplete_LoadDataSets", 
     "onComplete_LoadAllComponentDimensions"
 ];
+var CubeViz_Data = CubeViz_Data || {
+    "retrievedObservations": [],
+    "numberOfMultipleDimensions": 0
+};
 var Viz_Main = Viz_Main || undefined;
 var Viz_Event = Viz_Event || undefined;
 $(document).ready(function () {
@@ -452,14 +456,21 @@ var Module_Event = (function () {
     Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries, resetSelectedComponents) {
         if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
         if(true == resetSelectedComponents) {
-            CubeViz_Links_Module.selectedComponents.dimensions = Component.getDefaultSelectedDimensions(entries.dimensions);
+            CubeViz_Links_Module["selectedComponents"]["dimensions"] = Component.getDefaultSelectedDimensions(entries["dimensions"]);
+            ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, function (newLinkCode) {
+                CubeViz_Links_Module["linkCode"] = newLinkCode;
+                Observation.loadAll(CubeViz_Links_Module["linkCode"], function (entries) {
+                    console.log("event > obsss");
+                    console.log(entries);
+                });
+            });
         } else {
+            CubeViz_Links_Module["components"] = entries;
+            Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
+            Module_Event.setupDialogSelector();
+            Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadAllComponentDimensions");
+            Module_Main.hideSidebarLoader();
         }
-        CubeViz_Links_Module.components = entries;
-        Module_Main.buildComponentSelection(CubeViz_Links_Module.components, CubeViz_Links_Module.selectedComponents);
-        Module_Event.setupDialogSelector();
-        Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadAllComponentDimensions");
-        Module_Main.hideSidebarLoader();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
         var selectedElement = $($("#sidebar-left-data-selection-strc option:selected")[0]);
@@ -485,7 +496,9 @@ var Module_Event = (function () {
             "label": dsLabel,
             "url": dsUrl
         };
-        Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, dsUrl, Module_Event.onComplete_LoadAllComponentDimensions);
+        Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, dsUrl, function (entries) {
+            Module_Event.onComplete_LoadAllComponentDimensions(entries, true);
+        });
         if("undefined" != System.toType(Viz_Main)) {
             Viz_Main.closeChartSelectionMenu();
         }

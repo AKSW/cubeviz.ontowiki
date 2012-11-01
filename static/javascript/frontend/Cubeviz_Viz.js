@@ -365,7 +365,7 @@ var HighCharts_Chart = (function () {
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         for(var value in xAxisElements) {
-            this["xAxis"]["categories"].push(value);
+            this["xAxis"]["categories"].push(this.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions));
         }
         var seriesElements = observation.getAxisElements(forSeries);
         var obj = {
@@ -430,17 +430,9 @@ var HighCharts_Chart = (function () {
     HighCharts_Chart.prototype.getLabelForPropertyUri = function (propertyUri, dimensionType, selectedDimensions) {
         var dim = {
         };
-        console.log("");
-        console.log("getLabelForPropertyUri");
-        console.log("propertyUri");
-        console.log(propertyUri);
-        console.log("dimensionType");
-        console.log(dimensionType);
         for(var dimensionLabel in selectedDimensions) {
             dim = selectedDimensions[dimensionLabel];
-            console.log(dim);
             if(dim["type"] == dimensionType) {
-                console.log(dim["type"] + " == " + dimensionType);
                 for(var i in dim["elements"]) {
                     if(dim["elements"][i]["property"] == propertyUri) {
                         return dim["elements"][i]["property_label"];
@@ -576,7 +568,7 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {
 };
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {
 };
-var CubeViz_Data = {
+var CubeViz_Data = CubeViz_Data || {
     "retrievedObservations": [],
     "numberOfMultipleDimensions": 0
 };
