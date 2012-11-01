@@ -1,16 +1,37 @@
 class HighCharts_Chart {
     
     /**
-     * Following functions will be implemented by EACH chart subclass!
+     * Returns the chart title for the given data.
      */
+    public buildChartTitle ( cubeVizLinksModule:Object, retrievedObservations:Object[] ) : string {
+        
+        var dsdLabel = cubeVizLinksModule ["selectedDSD"]["label"],
+            dsLabel = cubeVizLinksModule ["selectedDS"]["label"],
+            
+            oneElementDimensions = HighCharts_Chart.getOneElementDimensions (
+                retrievedObservations, 
+                cubeVizLinksModule ["selectedComponents"]["dimensions"],
+                cubeVizLinksModule ["selectedComponents"]["measures"]
+            ),
+            // build first part of chart title
+            builtTitle = dsdLabel + " - " + dsLabel;
+        
+        for ( var i in oneElementDimensions ) {
+            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["property_label"];
+        }
+        
+        return builtTitle;
+    }
     
     /**
      * 
      */
-    public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:any ) : void { 
+    public init ( entries:any, cubeVizLinksModule:Object, chartConfig:any ) : void { 
     
         var forXAxis = null,
             forSeries = null,
+            selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
+            measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
             measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
             multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
                 entries, selectedComponentDimensions, measures
@@ -20,6 +41,10 @@ class HighCharts_Chart {
         // save given chart config
         this ["chartConfig"] = chartConfig;
         
+        /**
+         * Build chart title
+         */
+        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries);        
 
         // assign selected dimensions to xAxis and series (yAxis)
         for ( var dimensionLabel in selectedComponentDimensions ) {
@@ -30,6 +55,8 @@ class HighCharts_Chart {
             }
         }
         
+        // initializing observation handling instance with given elements
+        // after init, sorting the x axis elements ascending
         observation.initialize ( entries, selectedComponentDimensions, measureUri );
         var xAxisElements = observation
             .sortAxis ( forXAxis, "ascending" )
@@ -41,6 +68,7 @@ class HighCharts_Chart {
             );
         }
         
+        // now we will care about the series
         var seriesElements = observation.getAxisElements ( forSeries ),
             obj = {};
             
@@ -74,6 +102,8 @@ class HighCharts_Chart {
             this["series"].push (obj);
         }
         
+        System.out ( "generated series:" );
+        System.out ( this["series"] );
     }
     
     /**
@@ -91,6 +121,30 @@ class HighCharts_Chart {
      */
     static extractMeasureValue ( measures:Object[] ) : string {
         for ( var label in measures ) { return measures[label]["type"]; }
+    }
+        
+    /**
+     * @return Object[]
+     */
+    static getOneElementDimensions ( retrievedData:Object[], selectedDimensions:Object[],
+                                      measures:Object[] ) : Object [] {
+                                                
+        // assign selected dimensions to xAxis and series (yAxis)
+        var oneElementDimensions:Object[] = [],
+            tmp:Object[] = [];
+            
+        for ( var dimensionLabel in selectedDimensions ) {
+                        
+            // Only put entry to multipleDimensions if it have at least 2 elements
+            if ( 1 == selectedDimensions [dimensionLabel] ["elements"]["length"] ) {
+                oneElementDimensions.push ( {
+                    "dimensionLabel" : dimensionLabel,
+                    "elements" : selectedDimensions [dimensionLabel] ["elements"] 
+                } ); 
+            }
+        }
+        
+        return oneElementDimensions;
     }
     
     /**

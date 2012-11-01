@@ -166,10 +166,6 @@ var Observation = (function () {
                 this["_axes"][measureUri] = {
                 };
             }
-            console.log("measureUri ... ");
-            console.log(measureUri);
-            console.log(entries[mainIndex][measureUri][0]);
-            console.log(entries[mainIndex][measureUri][0]["value"]);
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
@@ -351,15 +347,28 @@ var HighCharts = (function () {
 })();
 var HighCharts_Chart = (function () {
     function HighCharts_Chart() { }
-    HighCharts_Chart.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
-        console.log(measures);
+    HighCharts_Chart.prototype.buildChartTitle = function (cubeVizLinksModule, retrievedObservations) {
+        var dsdLabel = cubeVizLinksModule["selectedDSD"]["label"];
+        var dsLabel = cubeVizLinksModule["selectedDS"]["label"];
+        var oneElementDimensions = HighCharts_Chart.getOneElementDimensions(retrievedObservations, cubeVizLinksModule["selectedComponents"]["dimensions"], cubeVizLinksModule["selectedComponents"]["measures"]);
+        var builtTitle = dsdLabel + " - " + dsLabel;
+
+        for(var i in oneElementDimensions) {
+            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["property_label"];
+        }
+        return builtTitle;
+    };
+    HighCharts_Chart.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {
         var forXAxis = null;
         var forSeries = null;
+        var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
+        var measures = cubeVizLinksModule["selectedComponents"]["measures"];
         var measureUri = HighCharts_Chart.extractMeasureValue(measures);
         var multipleDimensions = HighCharts_Chart.getMultipleDimensions(entries, selectedComponentDimensions, measures);
         var observation = new Observation();
 
         this["chartConfig"] = chartConfig;
+        this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
         for(var dimensionLabel in selectedComponentDimensions) {
             if(null == forXAxis) {
                 forXAxis = selectedComponentDimensions[dimensionLabel]["type"];
@@ -397,6 +406,8 @@ var HighCharts_Chart = (function () {
             }
             this["series"].push(obj);
         }
+        System.out("generated series:");
+        System.out(this["series"]);
     };
     HighCharts_Chart.prototype.getRenderResult = function () {
         return {
@@ -406,6 +417,20 @@ var HighCharts_Chart = (function () {
         for(var label in measures) {
             return measures[label]["type"];
         }
+    }
+    HighCharts_Chart.getOneElementDimensions = function getOneElementDimensions(retrievedData, selectedDimensions, measures) {
+        var oneElementDimensions = [];
+        var tmp = [];
+
+        for(var dimensionLabel in selectedDimensions) {
+            if(1 == selectedDimensions[dimensionLabel]["elements"]["length"]) {
+                oneElementDimensions.push({
+                    "dimensionLabel": dimensionLabel,
+                    "elements": selectedDimensions[dimensionLabel]["elements"]
+                });
+            }
+        }
+        return oneElementDimensions;
     }
     HighCharts_Chart.getMultipleDimensions = function getMultipleDimensions(retrievedData, selectedDimensions, measures) {
         var multipleDimensions = [];
@@ -512,8 +537,11 @@ var HighCharts_Pie = (function (_super) {
         this.chartConfig = {
         };
     }
-    HighCharts_Pie.prototype.init = function (entries, selectedComponentDimensions, measures, chartConfig) {
+    HighCharts_Pie.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {
+        var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
+        var measures = cubeVizLinksModule["selectedComponents"]["measures"];
         var multipleDimensions = HighCharts_Chart.getMultipleDimensions(entries, selectedComponentDimensions, measures);
+
         if(1 < multipleDimensions["length"]) {
             System.out("Pie chart is only suitable for one dimension!");
             System.out(multipleDimensions);
@@ -525,6 +553,7 @@ var HighCharts_Pie = (function (_super) {
         var observation = new Observation();
 
         this["chartConfig"] = chartConfig;
+        this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         data.push({
@@ -539,6 +568,8 @@ var HighCharts_Pie = (function (_super) {
             ]);
         }
         this["series"] = data;
+        System.out("generated series:");
+        System.out(this["series"]);
     };
     HighCharts_Pie.prototype.getRenderResult = function () {
         this.chartConfig["series"] = this["series"];
@@ -659,15 +690,9 @@ var Viz_Main = (function () {
     }
     Viz_Main.renderChart = function renderChart(className) {
         var charts = CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"];
-        console.log("className:");
-        console.log(className);
-        console.log("charts:");
-        console.log(charts);
         var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, charts);
-        console.log("fromChartConfig");
-        console.log(fromChartConfig);
         var chart = HighCharts.loadChart(className);
-        chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"], fromChartConfig["defaultConfig"]);
+        chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module, fromChartConfig["defaultConfig"]);
         new Highcharts.Chart(chart.getRenderResult());
     }
     return Viz_Main;

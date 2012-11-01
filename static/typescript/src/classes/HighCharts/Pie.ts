@@ -17,12 +17,14 @@ class HighCharts_Pie extends HighCharts_Chart {
     /**
      * 
      */
-    public init ( entries:any, selectedComponentDimensions:Object[], measures:Object[], chartConfig:Object ) : void {
+    public init ( entries:any, cubeVizLinksModule:Object, chartConfig:Object ) : void {
                 
         // this array MUST contains only ONE entry!
-        var multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
-            entries, selectedComponentDimensions, measures
-        );
+        var selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
+            measures = cubeVizLinksModule ["selectedComponents"]["measures"],
+            multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
+                entries, selectedComponentDimensions, measures
+            );            
             
         // stop execution, if it contains more than one entry
         if ( 1 < multipleDimensions ["length"] ) {
@@ -38,6 +40,11 @@ class HighCharts_Pie extends HighCharts_Chart {
         
         // save given chart config
         this ["chartConfig"] = chartConfig;
+        
+        /**
+         * Build chart title
+         */
+        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries); 
                 
         observation.initialize ( entries, selectedComponentDimensions, measureUri );
         
@@ -54,6 +61,9 @@ class HighCharts_Pie extends HighCharts_Chart {
         }
         
         this["series"] = data;
+        
+        System.out ( "generated series:" );
+        System.out ( this["series"] );
     }
     
     /**

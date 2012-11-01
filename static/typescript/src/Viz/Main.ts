@@ -58,8 +58,7 @@ class Viz_Main {
         // init chart instance
         chart.init ( 
             CubeViz_Data ["retrievedObservations"], 
-            CubeViz_Links_Module ["selectedComponents"]["dimensions"], 
-            CubeViz_Links_Module ["selectedComponents"]["measures"], 
+            CubeViz_Links_Module,
             fromChartConfig ["defaultConfig"]
         );
                 

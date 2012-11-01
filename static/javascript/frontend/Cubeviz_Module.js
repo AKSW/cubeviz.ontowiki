@@ -196,10 +196,6 @@ var Observation = (function () {
                 this["_axes"][measureUri] = {
                 };
             }
-            console.log("measureUri ... ");
-            console.log(measureUri);
-            console.log(entries[mainIndex][measureUri][0]);
-            console.log(entries[mainIndex][measureUri][0]["value"]);
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
