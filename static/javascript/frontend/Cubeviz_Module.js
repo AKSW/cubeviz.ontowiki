@@ -71,11 +71,11 @@ var DataStructureDefinition = (function () {
         $.ajax({
             url: CubeViz_Links_Module.cubevizPath + "getdatastructuredefinitions/",
             data: {
-                m: CubeViz_Links_Module.modelUrl
+                m: CubeViz_Links_Module["modelUrl"]
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             System.out("DataStructureDefinition > loadAll > error");
-            System.out("response text: " + xhr.responseText);
+            System.out("response text: " + xhr["responseText"]);
             System.out("error: " + thrownError);
         }).done(function (entries) {
             DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
@@ -83,7 +83,7 @@ var DataStructureDefinition = (function () {
     }
     DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
         entries.sort(function (a, b) {
-            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+            return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
         });
         callback(entries);
     }
@@ -196,6 +196,10 @@ var Observation = (function () {
                 this["_axes"][measureUri] = {
                 };
             }
+            console.log("measureUri ... ");
+            console.log(measureUri);
+            console.log(entries[mainIndex][measureUri][0]);
+            console.log(entries[mainIndex][measureUri][0]["value"]);
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
@@ -453,35 +457,36 @@ var Module_Event = (function () {
             Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
         }
     }
-    Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(entries, resetSelectedComponents) {
-        if (typeof resetSelectedComponents === "undefined") { resetSelectedComponents = false; }
-        if(true == resetSelectedComponents) {
-            CubeViz_Links_Module["selectedComponents"]["dimensions"] = Component.getDefaultSelectedDimensions(entries["dimensions"]);
+    Module_Event.onComplete_LoadAllComponentDimensions = function onComplete_LoadAllComponentDimensions(compDimensions) {
+        var regenerateLinkCode = false;
+        CubeViz_Links_Module["components"] = compDimensions;
+        if(null == CubeViz_Links_Module["selectedComponents"]["dimensions"]) {
+            CubeViz_Links_Module["selectedComponents"]["dimensions"] = Component.getDefaultSelectedDimensions(compDimensions["dimensions"]);
+            regenerateLinkCode = true;
+        }
+        Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
+        if(true == regenerateLinkCode) {
+            CubeViz_Links_Module["linkCode"] = null;
+            console.log("lets generate a new link code for: ");
+            console.log(CubeViz_Links_Module);
             ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, function (newLinkCode) {
                 CubeViz_Links_Module["linkCode"] = newLinkCode;
-                Observation.loadAll(CubeViz_Links_Module["linkCode"], function (entries) {
-                    console.log("event > obsss");
-                    console.log(entries);
-                });
             });
-        } else {
-            CubeViz_Links_Module["components"] = entries;
-            Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
-            Module_Event.setupDialogSelector();
-            Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadAllComponentDimensions");
-            Module_Main.hideSidebarLoader();
         }
+        Module_Event.setupDialogSelector();
+        Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadAllComponentDimensions");
+        Module_Main.hideSidebarLoader();
     }
     Module_Event.onChange_DataStructureDefinitionBox = function onChange_DataStructureDefinitionBox() {
         var selectedElement = $($("#sidebar-left-data-selection-strc option:selected")[0]);
         var dsdLabel = selectedElement.text();
         var dsdUrl = selectedElement.attr("value");
 
-        CubeViz_Links_Module.selectedDSD = {
+        Module_Main.resetModuleParts();
+        CubeViz_Links_Module["selectedDSD"] = {
             "label": dsdLabel,
             "url": dsdUrl
         };
-        CubeViz_Links_Module.selectedDS = null;
         DataSet.loadAll(dsdUrl, Module_Event.onComplete_LoadDataSets);
         if("undefined" != System.toType(Viz_Main)) {
             Viz_Main.closeChartSelectionMenu();
@@ -492,43 +497,44 @@ var Module_Event = (function () {
         var dsLabel = selectedElement.text();
         var dsUrl = selectedElement.attr("value");
 
-        CubeViz_Links_Module.selectedDS = {
+        Module_Main.resetModuleParts([
+            "selectedDSD"
+        ]);
+        CubeViz_Links_Module["selectedDS"] = {
             "label": dsLabel,
             "url": dsUrl
         };
-        Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, dsUrl, function (entries) {
-            Module_Event.onComplete_LoadAllComponentDimensions(entries, true);
-        });
+        Component.loadAllDimensions(CubeViz_Links_Module["selectedDSD"]["url"], dsUrl, Module_Event.onComplete_LoadAllComponentDimensions);
         if("undefined" != System.toType(Viz_Main)) {
             Viz_Main.closeChartSelectionMenu();
         }
     }
     Module_Event.onComplete_LoadDataSets = function onComplete_LoadDataSets(entries) {
-        if(0 == entries.length) {
+        if(0 == entries["length"]) {
             System.out("onComplete_LoadDataSets");
             System.out("no data sets were loaded");
         } else {
-            if(1 <= entries.length) {
+            if(1 <= entries["length"]) {
                 var resetSelectedComponents = false;
-                if(null == CubeViz_Links_Module.selectedDS) {
-                    CubeViz_Links_Module.selectedDS = entries[0];
-                    resetSelectedComponents = true;
+                if(null == CubeViz_Links_Module["selectedDS"]) {
+                    CubeViz_Links_Module["selectedDS"] = entries[0];
+                } else {
                 }
-                Module_Main.buildDataSetBox(entries, CubeViz_Links_Module.selectedDS.url);
-                Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, Module_Event.onComplete_LoadAllComponentDimensions, resetSelectedComponents);
+                Module_Main.buildDataSetBox(entries, CubeViz_Links_Module["selectedDS"]["url"]);
+                Component.loadAllDimensions(CubeViz_Links_Module["selectedDSD"]["url"], CubeViz_Links_Module["selectedDS"]["url"], Module_Event.onComplete_LoadAllComponentDimensions, resetSelectedComponents);
                 Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadDataSets");
             }
         }
     }
-    Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(entries) {
-        Module_Main.buildDataStructureDefinitionBox(entries, CubeViz_Links_Module.selectedDSD.url);
-        if(0 == entries.length) {
+    Module_Event.onComplete_LoadDataStructureDefinitions = function onComplete_LoadDataStructureDefinitions(dataStructureDefinitions) {
+        Module_Main.buildDataStructureDefinitionBox(dataStructureDefinitions, CubeViz_Links_Module["selectedDSD"]["url"]);
+        if(0 == dataStructureDefinitions["length"]) {
             CubeViz_Links_Module["selectedDSD"] = {
             };
             System.out("onComplete_LoadDataStructureDefinitions");
             System.out("no data structure definitions were loaded");
         } else {
-            if(1 <= entries.length) {
+            if(1 <= dataStructureDefinitions["length"]) {
                 Module_Main.removeEntryFromSidebarLeftQueue("onComplete_LoadDataStructureDefinitions");
                 DataSet.loadAll(CubeViz_Links_Module["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
             }
@@ -588,8 +594,8 @@ var Module_Main = (function () {
         var entry = null;
         $("#sidebar-left-data-selection-strc").empty();
         for(var i in options) {
-            entry = $("<option value=\"" + options[i].url + "\">" + options[i].label + "</option>");
-            if(options[i].url == selectedDsdUrl) {
+            entry = $("<option value=\"" + options[i]["url"] + "\">" + options[i]["label"] + "</option>");
+            if(options[i]["url"] == selectedDsdUrl) {
                 entry.attr("selected", "selected");
             }
             $("#sidebar-left-data-selection-strc").append(entry);
@@ -634,6 +640,24 @@ var Module_Main = (function () {
             }
         }
         tmpCubeVizLeftSidebarLeftQueue = newQueue;
+    }
+    Module_Main.resetModuleParts = function resetModuleParts(exceptOf) {
+        if (typeof exceptOf === "undefined") { exceptOf = []; }
+        if(-1 == $.inArray("selectedDSD", exceptOf)) {
+            CubeViz_Links_Module["selectedDSD"] = null;
+        }
+        if(-1 == $.inArray("selectedDS", exceptOf)) {
+            CubeViz_Links_Module["selectedDS"] = null;
+        }
+        if(-1 == $.inArray("linkCode", exceptOf)) {
+            CubeViz_Links_Module["linkCode"] = null;
+        }
+        if(-1 == $.inArray("selectedComponents.dimensions", exceptOf)) {
+            CubeViz_Links_Module["selectedComponents"]["dimensions"] = null;
+        }
+        if(-1 == $.inArray("components.dimensions", exceptOf)) {
+            CubeViz_Links_Module["components"]["dimensions"] = null;
+        }
     }
     Module_Main.showSidebarLoader = function showSidebarLoader() {
         $("#sidebar-left-loader").fadeIn(1000).css("height", ($("#sidebar-left").css("height")));

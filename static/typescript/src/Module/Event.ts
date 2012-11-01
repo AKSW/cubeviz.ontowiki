@@ -261,69 +261,65 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadAllComponentDimensions (entries, resetSelectedComponents:bool = false) {
+    static onComplete_LoadAllComponentDimensions (compDimensions) {
+        
+        var regenerateLinkCode:bool = false;
+        
+        // save pulled component dimensions
+        CubeViz_Links_Module ["components"] = compDimensions;
         
         // reset the existing component configuration
-        if ( true == resetSelectedComponents ) {
+        if ( null == CubeViz_Links_Module["selectedComponents"]["dimensions"] ) {
             
             // set default values for selected component dimensions list
             // for each componentDimension first entry will be selected
             // e.g. Year (2003), Country (Germany)
             CubeViz_Links_Module["selectedComponents"]["dimensions"] =
-                Component.getDefaultSelectedDimensions ( entries ["dimensions"] );
+                Component.getDefaultSelectedDimensions ( compDimensions ["dimensions"] );
                 
-            // Adapt existing linkCode, ask the server about a new one
+            regenerateLinkCode = true;
+        }
+            
+        /**
+         * Update component selection
+         */
+        Module_Main.buildComponentSelection ( 
+            CubeViz_Links_Module ["components"], CubeViz_Links_Module ["selectedComponents"]
+        );
+        
+        // if selectedComponents.dimension was null, there must be an change event
+        // for DSD or DS, so force recreation of a new linkcode
+        if ( true == regenerateLinkCode ) {
+            
+            CubeViz_Links_Module ["linkCode"] = null;
+            
+            console.log ( "lets generate a new link code for: " );
+            console.log ( CubeViz_Links_Module );
+            
             ConfigurationLink.saveToServerFile ( 
                 CubeViz_Links_Module,
                 cubeVizUIChartConfig,
-                
-                // callback: called after the server (hopefully) generated a new link code
                 function ( newLinkCode ) {
-                    
                     // Save new generated linkCode
                     CubeViz_Links_Module ["linkCode"] = newLinkCode;
-                    
-                    /**
-                     * Force to reload the observations
-                     */
-                    Observation.loadAll ( 
-                        CubeViz_Links_Module ["linkCode"],                        
-                        function (newObservations){
-                            // at this point, new observations loaded
-                        }
-                    );
                 }
-            );
-        } 
-        
-        // you start with a fresh component configuration
-        else { 
-    
-            // save pulled component dimensions
-            CubeViz_Links_Module ["components"] = entries;
-                
-            /**
-             * Update component selection
-             */
-            Module_Main.buildComponentSelection ( 
-                CubeViz_Links_Module ["components"], CubeViz_Links_Module ["selectedComponents"]
-            );
-            
-            /**
-             * Dimensions button to select / unselect elements
-             */
-            Module_Event.setupDialogSelector ();
-            
-            /**
-             * Remove this event entry from sidebar left queue
-             */
-            Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadAllComponentDimensions" );
-            
-            /**
-             * 
-             */
-            Module_Main.hideSidebarLoader ();
+            );            
         }
+        
+        /**
+         * Dimensions button to select / unselect elements
+         */
+        Module_Event.setupDialogSelector ();
+        
+        /**
+         * Remove this event entry from sidebar left queue
+         */
+        Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadAllComponentDimensions" );
+        
+        /**
+         * 
+         */
+        Module_Main.hideSidebarLoader ();
     }
     
     /**
@@ -336,15 +332,14 @@ class Module_Event {
             dsdLabel:string = selectedElement.text (),
             dsdUrl:string = selectedElement.attr ("value");
         
+        // TODO: remember previous selection
+        
+        // reset all module parts, such as dataset etc., because the data structure 
+        // definition was changed, so you have to reload all the stuff again
+        Module_Main.resetModuleParts ();
+        
         // set new selected data structure definition
         CubeViz_Links_Module ["selectedDSD"] = { "label": dsdLabel, "url": dsdUrl};
-        
-        // reset data set
-        CubeViz_Links_Module ["selectedDS"] = null;
-        
-        CubeViz_Links_Module ["linkCode"] = "";
-        
-        CubeViz_Links_Module ["components"] = [];
         
         // re-load data set box
         DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
@@ -364,15 +359,18 @@ class Module_Event {
             dsLabel:string = selectedElement.text (),
             dsUrl:string = selectedElement.attr ("value");
         
+        // TODO: remember previous selection
+        
+        // 
+        Module_Main.resetModuleParts ( ["selectedDSD"] );
+        
         // set new selected data set
-        CubeViz_Links_Module.selectedDS = { "label": dsLabel, "url": dsUrl};
+        CubeViz_Links_Module["selectedDS"] = { "label": dsLabel, "url": dsUrl};
         
         // re-load data set box
         Component.loadAllDimensions ( 
-            CubeViz_Links_Module.selectedDSD.url, dsUrl, 
-            function ( entries ) {
-                Module_Event.onComplete_LoadAllComponentDimensions ( entries, true );
-            }
+            CubeViz_Links_Module["selectedDSD"]["url"], dsUrl, 
+            Module_Event.onComplete_LoadAllComponentDimensions
         );
         
         if ( "undefined" != System.toType ( Viz_Main ) ) {
@@ -396,13 +394,11 @@ class Module_Event {
             
             var resetSelectedComponents = false;
             
-            if ( null == CubeViz_Links_Module.selectedDS ) {
+            if ( null == CubeViz_Links_Module ["selectedDS"] ) {
                 CubeViz_Links_Module["selectedDS"] = entries [0];
                 
-                // reset selectedComponents
-                resetSelectedComponents = true;
-                                
-                // TODO: CubeViz_Links_Module.selectedComponents.measures = {};
+            } else {
+                // Data set is already set, so use it
             }
             
             /**
@@ -428,21 +424,24 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadDataStructureDefinitions (entries) {
+    static onComplete_LoadDataStructureDefinitions (dataStructureDefinitions) {
         
         /**
          * Build select box
          */
-        Module_Main.buildDataStructureDefinitionBox (entries, CubeViz_Links_Module.selectedDSD.url);
+        Module_Main.buildDataStructureDefinitionBox (
+            dataStructureDefinitions, 
+            CubeViz_Links_Module["selectedDSD"]["url"]
+        );
         
         // if at least one data structure definition, than load data sets for first one
-        if ( 0 == entries.length ) {
+        if ( 0 == dataStructureDefinitions["length"] ) {
             // todo: handle case that no data structure definition were loaded
             CubeViz_Links_Module["selectedDSD"] = {};
             System.out ( "onComplete_LoadDataStructureDefinitions" );
             System.out ( "no data structure definitions were loaded" );
             
-        } else if ( 1 <= entries.length ) {
+        } else if ( 1 <= dataStructureDefinitions["length"] ) {
             
             /**
              * Remove this event entry from sidebar left queue
@@ -450,7 +449,10 @@ class Module_Event {
             Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadDataStructureDefinitions" );
             
             // if more than one data structure definition, load for the first one its data sets
-            DataSet.loadAll (CubeViz_Links_Module ["selectedDSD"]["url"], Module_Event.onComplete_LoadDataSets);
+            DataSet.loadAll (
+                CubeViz_Links_Module ["selectedDSD"]["url"], 
+                Module_Event.onComplete_LoadDataSets
+            );
         }
     }
      

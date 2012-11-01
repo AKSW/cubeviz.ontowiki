@@ -61,10 +61,7 @@ class Module_Main {
     }
     
     /**
-     * Build selectbox for data structure definitions
-     * 
-     * Called by:
-     * - onComplete_LoadDataStructureDefinitions
+     * Build selectbox for data structure definitions.
      */
     static buildDataStructureDefinitionBox (options:any, selectedDsdUrl:string) {
         var entry = null;
@@ -75,9 +72,9 @@ class Module_Main {
         $("#sidebar-left-data-selection-strc").empty ();
         
         for ( var i in options ) {
-            entry = $("<option value=\"" + options [i].url +"\">" + options [i].label + "</option>");            
+            entry = $("<option value=\"" + options[i]["url"] +"\">" + options[i]["label"] + "</option>");            
             
-            if ( options [i].url == selectedDsdUrl ) {
+            if ( options [i]["url"] == selectedDsdUrl ) {
                 entry.attr ("selected", "selected");
             }
             
@@ -150,6 +147,45 @@ class Module_Main {
         }
         
         tmpCubeVizLeftSidebarLeftQueue = newQueue;
+    }
+    
+    /**
+     * Reset all module parts, except this ones in exceptOf parameter
+     */
+    static resetModuleParts ( exceptOf:string[] = [] ) : void {
+    
+        if ( -1 == $.inArray ("selectedDSD", exceptOf) ) {
+            CubeViz_Links_Module ["selectedDSD"] = null;
+        }
+    
+        if ( -1 == $.inArray ("selectedDS", exceptOf) ) {
+            CubeViz_Links_Module ["selectedDS"] = null;
+        }
+        
+        if ( -1 == $.inArray ("linkCode", exceptOf) ) {
+            CubeViz_Links_Module ["linkCode"] = null;
+        }
+        
+        if ( -1 == $.inArray ("selectedComponents.dimensions", exceptOf) ) {
+            CubeViz_Links_Module ["selectedComponents"]["dimensions"] = null;
+        }
+        
+        /*
+        Leave measure stuff untouched as long as there is only one of it
+        if ( -1 == $.inArray ("selectedComponents.measures", exceptOf) ) {
+            CubeViz_Links_Module ["selectedComponents"]["measures"] = null;
+        }
+        */
+        
+        if ( -1 == $.inArray ("components.dimensions", exceptOf) ) {
+            CubeViz_Links_Module ["components"]["dimensions"] = null;
+        }
+        
+        /*
+        Leave measure stuff untouched as long as there is only one of it
+        if ( -1 == $.inArray ("components.measures", exceptOf) ) {
+            CubeViz_Links_Module ["components"]["measures"] = null;
+        }*/
     }
     
     /**
