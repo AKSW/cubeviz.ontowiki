@@ -36,7 +36,9 @@ class HighCharts_Chart {
             .getAxisElements ( forXAxis );
         
         for ( var value in xAxisElements ) {
-            this ["xAxis"]["categories"].push ( value );
+            this ["xAxis"]["categories"].push (
+                this.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
+            );
         }
         
         var seriesElements = observation.getAxisElements ( forSeries ),
