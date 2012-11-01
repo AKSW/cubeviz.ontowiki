@@ -337,10 +337,14 @@ class Module_Event {
             dsdUrl:string = selectedElement.attr ("value");
         
         // set new selected data structure definition
-        CubeViz_Links_Module.selectedDSD = { "label": dsdLabel, "url": dsdUrl};
+        CubeViz_Links_Module ["selectedDSD"] = { "label": dsdLabel, "url": dsdUrl};
         
         // reset data set
-        CubeViz_Links_Module.selectedDS = null;
+        CubeViz_Links_Module ["selectedDS"] = null;
+        
+        CubeViz_Links_Module ["linkCode"] = "";
+        
+        CubeViz_Links_Module ["components"] = [];
         
         // re-load data set box
         DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
@@ -382,18 +386,18 @@ class Module_Event {
     static onComplete_LoadDataSets (entries) {
         
         // if at least one data structure definition, than load data sets for first one
-        if ( 0 == entries.length ) {
+        if ( 0 == entries["length"] ) {
             // todo: handle case that no data sets were loaded
             // CubeViz_Parameters_Module.selectedDS = {};
             System.out ( "onComplete_LoadDataSets" );
             System.out ( "no data sets were loaded" );
             
-        } else if ( 1 <= entries.length ) {
+        } else if ( 1 <= entries["length"] ) {
             
             var resetSelectedComponents = false;
             
             if ( null == CubeViz_Links_Module.selectedDS ) {
-                CubeViz_Links_Module.selectedDS = entries [0];
+                CubeViz_Links_Module["selectedDS"] = entries [0];
                 
                 // reset selectedComponents
                 resetSelectedComponents = true;
@@ -404,12 +408,12 @@ class Module_Event {
             /**
              * Build select box
              */
-            Module_Main.buildDataSetBox (entries, CubeViz_Links_Module.selectedDS.url);
+            Module_Main.buildDataSetBox (entries, CubeViz_Links_Module ["selectedDS"]["url"]);
                         
             // will load all component dimensions for certain data structure definition and data set
             Component.loadAllDimensions ( 
-                CubeViz_Links_Module.selectedDSD.url, 
-                CubeViz_Links_Module.selectedDS.url, 
+                CubeViz_Links_Module["selectedDSD"]["url"], 
+                CubeViz_Links_Module["selectedDS"]["url"], 
                 Module_Event.onComplete_LoadAllComponentDimensions,
                 resetSelectedComponents
             );
