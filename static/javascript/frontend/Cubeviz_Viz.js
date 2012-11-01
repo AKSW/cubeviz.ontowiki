@@ -375,7 +375,7 @@ var HighCharts_Chart = (function () {
         for(var value in seriesElements) {
             obj = {
             };
-            obj["name"] = value;
+            obj["name"] = this.getLabelForPropertyUri(value, forSeries, selectedComponentDimensions);
             obj["data"] = [];
             for(var i in xAxisElements) {
                 for(var j in xAxisElements[i]) {
@@ -385,9 +385,7 @@ var HighCharts_Chart = (function () {
                         if("undefined" != System.toType(xAxisElements[i][j][measureUri]["ref"]) && value == xAxisElements[i][j][measureUri]["ref"][0][forSeries]["value"]) {
                             obj["data"].push(xAxisElements[i][j][measureUri]["value"]);
                         } else {
-                            if("undefined" == System.toType(xAxisElements[i][j][measureUri]["ref"])) {
-                                obj["data"].push(null);
-                            }
+                            obj["data"].push(null);
                         }
                     }
                 }
@@ -422,22 +420,6 @@ var HighCharts_Chart = (function () {
         var dims = HighCharts_Chart.getMultipleDimensions(retrievedData, selectedDimensions, measures);
         return dims["length"];
     }
-    HighCharts_Chart.groupElementsByPropertiesUri = function groupElementsByPropertiesUri(dimensionTypeUri, propertiesValueUri, entries) {
-        var seriesData = [];
-        for(var mainIndex in entries) {
-            for(var propertyUri in entries[mainIndex]) {
-                if(propertyUri == dimensionTypeUri) {
-                    if(undefined === seriesData[entries[mainIndex][propertyUri][0]["value"]]) {
-                        seriesData[entries[mainIndex][propertyUri][0]["value"]] = [];
-                    }
-                    seriesData[entries[mainIndex][propertyUri][0]["value"]].push(entries[mainIndex][propertiesValueUri][0]["value"]);
-                }
-            }
-        }
-        console.log("seriesData");
-        console.log(seriesData);
-        return seriesData;
-    }
     HighCharts_Chart.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
         for(var i in charts) {
             if(className == charts[i]["class"]) {
@@ -445,24 +427,29 @@ var HighCharts_Chart = (function () {
             }
         }
     }
-    HighCharts_Chart.getValueByDimensionProperties = function getValueByDimensionProperties(retrievedData, dimensionProperties, propertiesValueUri) {
-        var currentRetrDataValue = null;
-        var dimProperty = null;
-
-        for(var i in retrievedData) {
-            for(var dimensionType in retrievedData[i]) {
-                for(var iDP in dimensionProperties) {
-                    if(dimensionProperties[iDP]["dimension_type"] == dimensionType) {
-                        dimProperty = dimensionProperties[iDP]["property"];
-                        currentRetrDataValue = retrievedData[i];
-                        if(dimProperty == currentRetrDataValue[dimensionType][0]["value"]) {
-                            return currentRetrDataValue[propertiesValueUri][0]["value"];
-                        }
+    HighCharts_Chart.prototype.getLabelForPropertyUri = function (propertyUri, dimensionType, selectedDimensions) {
+        var dim = {
+        };
+        console.log("");
+        console.log("getLabelForPropertyUri");
+        console.log("propertyUri");
+        console.log(propertyUri);
+        console.log("dimensionType");
+        console.log(dimensionType);
+        for(var dimensionLabel in selectedDimensions) {
+            dim = selectedDimensions[dimensionLabel];
+            console.log(dim);
+            if(dim["type"] == dimensionType) {
+                console.log(dim["type"] + " == " + dimensionType);
+                for(var i in dim["elements"]) {
+                    if(dim["elements"][i]["property"] == propertyUri) {
+                        return dim["elements"][i]["property_label"];
                     }
                 }
             }
         }
-    }
+        return propertyUri;
+    };
     HighCharts_Chart.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
             if(className == charts[i]["class"]) {

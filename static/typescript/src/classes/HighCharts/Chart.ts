@@ -46,7 +46,7 @@ class HighCharts_Chart {
             
         for ( var value in seriesElements ) {
             obj = {};
-            obj ["name"] = value;
+            obj ["name"] = this.getLabelForPropertyUri ( value, forSeries, selectedComponentDimensions );
             obj ["data"] = [];
             
             for ( var i in xAxisElements ) {
@@ -60,7 +60,10 @@ class HighCharts_Chart {
                     else if ( "undefined" != System.toType ( xAxisElements[i][j][measureUri]["ref"] ) 
                                && value == xAxisElements[i][j][measureUri]["ref"][0][forSeries]["value"] ) {
                         obj ["data"].push ( xAxisElements[i][j][measureUri]["value"] );
-                    } else if ( "undefined" == System.toType ( xAxisElements[i][j][measureUri]["ref"] ) ) {
+                    } 
+                    
+                    // in this case CubeViz does not know how to handle this
+                    else { //if ( "undefined" == System.toType ( xAxisElements[i][j][measureUri]["ref"] ) ) {
                         obj ["data"].push ( null );
                     }
                 }
@@ -125,48 +128,7 @@ class HighCharts_Chart {
         
         return dims ["length"];
     }
-    
-    /**
-     * Go through retrieved data and build a certain component dimension element (e.g. Year > 2003)
-     * a list of its values.
-     */
-    static groupElementsByPropertiesUri ( dimensionTypeUri:string, propertiesValueUri:string, 
-                                           entries:any ) : Object [] {
-
-        var seriesData = []; // e.g. for http://data.lod2.eu/scoreboard/properties/year
-                
-        /**
-         * Dont forget, you are doing this only for a certain dimension (set by uri)
-         */
-        for ( var mainIndex in entries ) {
-            
-            for ( var propertyUri in entries [mainIndex] ) {
-                
-                // If you are in the dimension for the series, go further ...
-                if ( propertyUri == dimensionTypeUri ) {
-                    
-                    // if seriesData [ certain dimension element uri ] is not set
-                    // examples for    certain dimension element uri:
-                    // - 2010
-                    // - http://data.lod2.eu/scoreboard/indicators/FOA_cit_Country_ofpubs
-                    if ( undefined === seriesData [entries [mainIndex][propertyUri][0]["value"]] ) {
-                        seriesData [entries [mainIndex][propertyUri][0]["value"]] = [];
-                    }
-                    
-                    // push new value
-                    seriesData [entries [mainIndex][propertyUri][0]["value"]].push (
-                        entries [mainIndex][propertiesValueUri][0]["value"]
-                    );
-                }
-            }
-        }
         
-        console.log ( "seriesData" );
-        console.log ( seriesData );
-        
-        return seriesData;
-    }
-    
     /**
      * 
      */
@@ -179,44 +141,29 @@ class HighCharts_Chart {
     }
     
     /**
-     * 
+     * Returns the label of the given property uri.
      */
-    static getValueByDimensionProperties ( retrievedData:Object[], 
-                                            dimensionProperties:Object[],
-                                            propertiesValueUri:string ) : number {
-        
-        /**
-         * retrievedData [i] could looks like:
-         
-                http://data.lod2.eu/scoreboard/properties/indicator: Array[1]
-                http://data.lod2.eu/scoreboard/properties/unit: Array[1]
-                http://data.lod2.eu/scoreboard/properties/value: Array[1]
-                http://data.lod2.eu/scoreboard/properties/year: Array[1]
-                http://purl.org/linked-data/cube#dataSet: Array[1]
-                http://www.w3.org/1999/02/22-rdf-syntax-ns#type: Array[1]
-                http://www.w3.org/2000/01/rdf-schema#label: Array[1] 
-            ...
-         */
-         
-        var currentRetrDataValue = null,
-            dimProperty = null;            
-        
-        for ( var i in retrievedData ) {
-            for ( var dimensionType in retrievedData [i] ) {
-                for ( var iDP in dimensionProperties ) {
-                    if ( dimensionProperties [iDP]["dimension_type"] == dimensionType ) {
-                        
-                        dimProperty = dimensionProperties [iDP]["property"];
-                        currentRetrDataValue = retrievedData [i];
-                        
-                        if ( dimProperty == currentRetrDataValue[ dimensionType ][0]["value"] ) {
-                            return currentRetrDataValue[ propertiesValueUri ][0]["value"];
-                        }
+    public getLabelForPropertyUri ( propertyUri:string, dimensionType:string, selectedDimensions:Object[] ) : string {
+        var dim:Object = {};
+                
+        for ( var dimensionLabel in selectedDimensions ) {
+            
+            dim = selectedDimensions[dimensionLabel];
+            
+            // Stop if the given dimension was found (by type)
+            if ( dim["type"] == dimensionType ) {
+                
+                for ( var i in dim["elements"] ) {
+                    if ( dim["elements"][i]["property"] == propertyUri ) {
+                        return dim["elements"][i]["property_label"];
                     }
                 }
             }
         }
-    }    
+        
+        // if nothing was found, simply return the given propertyUri
+        return propertyUri;
+    }
     
     /**
      * Update ChartConfig entry with new value. Required e.g. for chart selection menu.
