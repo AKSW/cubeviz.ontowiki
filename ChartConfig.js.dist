@@ -25,6 +25,10 @@ var CubeViz_ChartConfig = {
                     "chart": { 
                         "renderTo": "container",
                         "type": "column"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
                     }
                 },
                 
@@ -70,6 +74,10 @@ var CubeViz_ChartConfig = {
                     "chart": { 
                         "renderTo": "container",
                         "type": "bar"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
                     }
                 },
                 
@@ -127,6 +135,10 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
                     }
                 },
                 
@@ -199,6 +211,10 @@ var CubeViz_ChartConfig = {
                         "type": "pie",
                         "plotShadow": "true"
                     },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    },
                     "tooltip": {
                     	"percentageDecimals": "1"
                     },
@@ -239,9 +255,13 @@ var CubeViz_ChartConfig = {
                         "renderTo": "container",
                         "type": "bar"
                     },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    },
                     "plotOptions": {
                         "series": {
-                            "stacking": "normal"
+                            "stacking": null
                         }
                     }
                 },
@@ -311,6 +331,10 @@ var CubeViz_ChartConfig = {
                     "chart": { 
                         "renderTo": "container",
                         "polar": "true"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
                     }
                 },
                 "options": [
@@ -360,6 +384,10 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
                     }
                 },
                 
