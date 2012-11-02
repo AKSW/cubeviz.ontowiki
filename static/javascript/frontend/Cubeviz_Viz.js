@@ -41,16 +41,8 @@ var ChartSelector = (function () {
         var nr = 0;
 
         $.each(suiteableCharts, function (index, element) {
-            console.log("index:");
-            console.log(index);
-            console.log("element:");
-            console.log(element);
             if(undefined == element) {
-                console.log("continue");
             } else {
-                console.log("element:");
-                console.log(element);
-                console.log("");
                 iconPath = CubeViz_Config["imagesPath"] + element["icon"];
                 name = element["class"];
                 item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
