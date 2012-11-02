@@ -546,12 +546,12 @@ var HighCharts_Pie = (function (_super) {
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         data.push({
             "type": "pie",
-            name: "TODO",
+            name: this["chartConfig"]["title"]["text"],
             "data": []
         });
         for(var value in xAxisElements) {
             data[0]["data"].push([
-                value, 
+                this.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions), 
                 xAxisElements[value][0][measureUri]["value"]
             ]);
         }

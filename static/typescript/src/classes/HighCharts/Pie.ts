@@ -52,11 +52,12 @@ class HighCharts_Pie extends HighCharts_Chart {
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
         
-        data.push ({ "type": "pie", name: "TODO", "data": [] });
+        data.push ({ "type": "pie", name: this ["chartConfig"]["title"]["text"], "data": [] });
                     
         for ( var value in xAxisElements ) {
             data[0]["data"].push ([
-                value, xAxisElements[value][0][measureUri]["value"]
+                this.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
+                xAxisElements[value][0][measureUri]["value"]
             ]);
         }
         

@@ -102,7 +102,7 @@ class HighCharts_Chart {
                             obj ["data"].push ( xAxisElements[xAxisEntry][i][measureUri]["value"] );
                             found = true;
                             
-                            // .. break this ...
+                            // .. break this loop ...
                             break;
                         }
                     }
