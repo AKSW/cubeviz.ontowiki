@@ -121,15 +121,13 @@ var Observation = (function () {
         this._selectedDimensionUris = [];
     }
     Observation.prototype.addAxisEntryPointsTo = function (uri, value, dimensionValues) {
-        if(false == this.existsPointsToEntry(uri, value, dimensionValues)) {
-            for(var dimensionUri in dimensionValues) {
-                dimensionValues[dimensionUri] = {
-                    "value": dimensionValues[dimensionUri],
-                    "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
-                };
-            }
-            this["_axes"][uri][value].push(dimensionValues);
+        for(var dimensionUri in dimensionValues) {
+            dimensionValues[dimensionUri] = {
+                "value": dimensionValues[dimensionUri],
+                "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
+            };
         }
+        this["_axes"][uri][value].push(dimensionValues);
     };
     Observation.prototype.extractSelectedDimensionUris = function (elements) {
         var resultList = [];
@@ -138,38 +136,13 @@ var Observation = (function () {
         }
         return resultList;
     };
-    Observation.prototype.existsPointsToEntry = function (uri, value, dimensionValues) {
-        var pointsTo = null;
-        var allTheSame = false;
-
-        if(1 > this["_axes"][uri][value]["length"]) {
-            return false;
-        }
-        for(var pointsToIndex in this["_axes"][uri][value]) {
-            pointsTo = this["_axes"][uri][value][pointsToIndex];
-            for(var i in pointsTo) {
-                allTheSame = false;
-                for(var dimensionUri in dimensionValues) {
-                    if(pointsTo[i]["value"] == dimensionValues[dimensionUri]) {
-                        allTheSame = true;
-                    } else {
-                        allTheSame = false;
-                        break;
-                    }
-                }
-                if(true == allTheSame) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
     Observation.prototype.getAxisElements = function (axisUri) {
         if("undefined" != System.toType(this["_axes"][axisUri])) {
             return this["_axes"][axisUri];
         } else {
             System.out("\nNo elements found given axisUri: " + axisUri);
-            return [];
+            return {
+            };
         }
     };
     Observation.prototype.initialize = function (entries, selectedComponentDimensions, measureUri) {
@@ -177,8 +150,6 @@ var Observation = (function () {
             System.out("\nEntries is empty or not an array!");
             return;
         }
-        console.log("Observation -> initialize > entries");
-        console.log(entries);
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
         var dimensionValues = {
         };
@@ -193,12 +164,10 @@ var Observation = (function () {
             measureObj = {
             };
             if("undefined" == System.toType(this["_axes"][measureUri])) {
-                this["_axes"][measureUri] = {
-                };
             }
-            this["_axes"][measureUri] = {
+            this["_axes"][measureUri] = this["_axes"][measureUri] || {
             };
-            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
+            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
@@ -207,7 +176,7 @@ var Observation = (function () {
                     this["_axes"][selecDimUri] = {
                     };
                 }
-                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
+                if(undefined == this["_axes"][selecDimUri][selecDimVal]) {
                     this["_axes"][selecDimUri][selecDimVal] = [];
                 }
                 measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];

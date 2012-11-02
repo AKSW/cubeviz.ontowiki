@@ -58,10 +58,10 @@ class HighCharts_Chart {
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( entries, selectedComponentDimensions, measureUri );
-        var xAxisElements = observation
+        var xAxisElements:Object = observation
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
-        
+            
         for ( var value in xAxisElements ) {
             this ["xAxis"]["categories"].push (
                 this.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
@@ -69,39 +69,42 @@ class HighCharts_Chart {
         }
         
         // now we will care about the series
-        var seriesElements = observation.getAxisElements ( forSeries ),
-            obj = {};
+        var found:bool = false,
+            i:number = 0,
+            length:number = System.countProperties (xAxisElements),
+            obj:Object = {},
+            seriesElements:Object = observation.getAxisElements ( forSeries );
             
         this["series"] = [];
+
+        for ( var seriesEntry in seriesElements ) {
             
-        for ( var value in seriesElements ) {
-            obj = {};
-            obj ["name"] = this.getLabelForPropertyUri ( value, forSeries, selectedComponentDimensions );
-            obj ["data"] = [];
+            obj = { 
+                "name": this.getLabelForPropertyUri ( seriesEntry, forSeries, selectedComponentDimensions ),
+                "data": []
+            };
             
-            for ( var i in xAxisElements ) {
-                for ( var j in xAxisElements [i] ) { 
-                                              
-                    // for 1 dimension
-                    if ( 0 == multipleDimensions ["length"] || 1 == multipleDimensions ["length"] ) {
-                        obj ["data"].push ( xAxisElements[i][j][measureUri]["value"] );
+            for ( var xAxisEntry in xAxisElements ) {
+                
+                console.log ( xAxisEntry );
+                found = false;
+                
+                for ( var i in xAxisElements[xAxisEntry] ) {
+                    for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {
+                        if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
+                            obj ["data"].push ( xAxisElements[xAxisEntry][i][measureUri]["value"] );
+                            found = true;
+                            break;
+                        }
                     }
-                    // for 2 dimensions
-                    else if ( "undefined" != System.toType ( xAxisElements[i][j][measureUri]["ref"] ) 
-                               && value == xAxisElements[i][j][measureUri]["ref"][0][forSeries]["value"] ) {
-                        obj ["data"].push ( xAxisElements[i][j][measureUri]["value"] );
-                    } 
-                    
-                    // in this case CubeViz does not know how to handle this
-                    else { //if ( "undefined" == System.toType ( xAxisElements[i][j][measureUri]["ref"] ) ) {
-                        obj ["data"].push ( null );
-                    }
+                    if ( true == found ) break;
                 }
             }
             
             this["series"].push (obj);
         }
         
+        System.out ( "" );
         System.out ( "generated series:" );
         System.out ( this["series"] );
     }

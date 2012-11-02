@@ -16,23 +16,20 @@ class Observation {
      * 
      */
     private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void {
-        
-        if ( false == this.existsPointsToEntry ( uri, value, dimensionValues ) ) {
-                        
-            for ( var dimensionUri in dimensionValues ) {
-                
-                // Set current value and reference to axes dimension element
-                dimensionValues [dimensionUri] = { 
-                    // e.g. value: "Germany"
-                    "value" : dimensionValues [dimensionUri],
-                    
-                    // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
-                    "ref" : this ["_axes"][dimensionUri][dimensionValues [dimensionUri]]
-                };
-            }
+                                                
+        for ( var dimensionUri in dimensionValues ) {
             
-            this ["_axes"][uri][value].push ( dimensionValues );
+            // Set current value and reference to axes dimension element
+            dimensionValues [dimensionUri] = { 
+                // e.g. value: "Germany"
+                "value" : dimensionValues [dimensionUri],
+                
+                // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
+                "ref" : this ["_axes"][dimensionUri][dimensionValues [dimensionUri]]
+            };
         }
+        
+        this ["_axes"][uri][value].push ( dimensionValues );
     }    
         
     /**
@@ -45,53 +42,16 @@ class Observation {
         }
         return resultList;
     }
-    
-    /**
-     * 
-     */
-    private existsPointsToEntry ( uri:string, value:any, dimensionValues:Object ) : bool {
-        
-        var pointsTo = null, allTheSame = false;
-        
-        if ( 1 > this ["_axes"][uri][value]["length"] ) {
-            return false;
-        }
-        
-        for ( var pointsToIndex in this["_axes"][uri][value] ) {
-            
-            pointsTo = this ["_axes"][uri][value][pointsToIndex];
-            
-            // go through all pointsTo entries and check if given constalation exists
-            for ( var i in pointsTo ) {
-                
-                allTheSame = false;
-                
-                for ( var dimensionUri in dimensionValues ) {
-                    if ( pointsTo[i]["value"] == dimensionValues [dimensionUri] ) {
-                        allTheSame = true;
-                    } else {
-                        allTheSame = false;
-                        break;
-                    }
-                }
-                
-                if ( true == allTheSame ) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * 
      */
-    public getAxisElements ( axisUri:string ) : Object[] {
+    public getAxisElements ( axisUri:string ) : Object {
         if ( "undefined" != System.toType ( this ["_axes"][axisUri] ) ) {
             return this ["_axes"][axisUri];
         } else {
             System.out ("\nNo elements found given axisUri: " + axisUri);
-            return [];
+            return {};
         }
     }
 
@@ -106,9 +66,6 @@ class Observation {
             System.out ("\nEntries is empty or not an array!");
             return;
         }
-        
-        console.log ( "Observation -> initialize > entries" );
-        console.log ( entries );
         
         // save uri's of selected component dimensions
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
@@ -129,39 +86,36 @@ class Observation {
             // e.g. ["http:// ... /value"] = "0.9";
             measureObj = {};  
             
-            // save measure value (by measureUri)
-            if ( "undefined" == System.toType ( this ["_axes"] [measureUri] ) ) {
-                this ["_axes"] [measureUri] = {};
-            }
+            // if the measureUri element or sub one is not set, set default values
+            this["_axes"][measureUri] = this["_axes"][measureUri] || {};
             
-            this ["_axes"] [measureUri] = {};
-            this ["_axes"] [measureUri] [entries[mainIndex][measureUri][0]["value"]] = [];
-            
+            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = 
+                this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
               
             // generate temporary list of selected dimension values in the current entry
             for ( var i in this["_selectedDimensionUris"] ) {
-                
+                                
                 // save current selected dimension, to save space
                 selecDimUri = this["_selectedDimensionUris"][i];
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
+                // e.g. ["_axes"]["http:// ... /country"] = {};
                 if ( undefined == this ["_axes"] [selecDimUri] ) {
                     this ["_axes"] [selecDimUri] = {};
                 }
                     
-                //                uri                     value
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
-                if ( "undefined" == System.toType ( this ["_axes"][selecDimUri][selecDimVal]) ) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
+                if ( undefined == this ["_axes"] [selecDimUri][selecDimVal] ) {
+                    this ["_axes"] [selecDimUri][selecDimVal] = [];
                 }
                 
                 measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
-                
+                                
                 // set references for current dimension                
                 this.addAxisEntryPointsTo (
-                    this["_selectedDimensionUris"] [i], selecDimVal, measureObj
+                    this["_selectedDimensionUris"][i], selecDimVal, measureObj
                 );
             }
             
