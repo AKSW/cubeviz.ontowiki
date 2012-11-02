@@ -61,32 +61,39 @@ class ChartSelector {
             item = null, 
             icon = null, 
             nr = 0;
-        
+                    
         // go through all suitableCharts
-        $.each(suiteableCharts, function (index, element) {            
-            // set values
-            iconPath = CubeViz_Config ["imagesPath"] + element ["icon"];
-            name = element ["class"];
-			
-            // create div for chart image
-            item = $("<div></div>")
-                .addClass("chartSelector-item")
-                .attr ( "className", name );
-			
-            // create image and set its values, after that, append it to its own div
-            icon = $("<img/>")
-                .attr({
-                    "src": iconPath,
-                    "name": name,
-                    "class": "chartSelectionItem"
-                })
+        $.each(suiteableCharts, function (index, element) {   
+            
+            if ( undefined == element ) {
                 
-                .data ("nr", nr++)
-            
-                .appendTo(item);
-            
-            // in the end, append div to #chartSelection div
-			item.appendTo ( $("#chartSelection") );
+                // element not defined, so do nothing.
+                
+            } else {                     
+                // set values
+                iconPath = CubeViz_Config ["imagesPath"] + element ["icon"];
+                name = element ["class"];
+                
+                // create div for chart image
+                item = $("<div></div>")
+                    .addClass("chartSelector-item")
+                    .attr ( "className", name );
+                
+                // create image and set its values, after that, append it to its own div
+                icon = $("<img/>")
+                    .attr({
+                        "src": iconPath,
+                        "name": name,
+                        "class": "chartSelectionItem"
+                    })
+                    
+                    .data ("nr", nr++)
+                
+                    .appendTo(item);
+                
+                // in the end, append div to #chartSelection div
+                item.appendTo ( $("#chartSelection") );
+            }
         });
         
 		$("#chartSelection").addClass("chartSelector");

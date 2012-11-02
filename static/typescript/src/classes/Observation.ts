@@ -107,7 +107,7 @@ class Observation {
             return;
         }
         
-        console.log ( "entries" );
+        console.log ( "Observation -> initialize > entries" );
         console.log ( entries );
         
         // save uri's of selected component dimensions
@@ -134,6 +134,7 @@ class Observation {
                 this ["_axes"] [measureUri] = {};
             }
             
+            this ["_axes"] [measureUri] = {};
             this ["_axes"] [measureUri] [entries[mainIndex][measureUri][0]["value"]] = [];
             
               
@@ -146,15 +147,11 @@ class Observation {
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
-                if ( "undefined" == System.toType ( this ["_axes"] [selecDimUri] ) ) {
-                    this ["_axes"] [selecDimUri] = {};
-                }
+                this ["_axes"] [selecDimUri] = {} || this ["_axes"] [selecDimUri];
                     
-                // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
                 //                uri                     value
-                if ( "undefined" == System.toType ( this ["_axes"][selecDimUri][selecDimVal]) ) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
-                }
+                // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
+                this["_axes"][selecDimUri][selecDimVal] = [] || this ["_axes"][selecDimUri][selecDimVal]
                 
                 measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
                 
