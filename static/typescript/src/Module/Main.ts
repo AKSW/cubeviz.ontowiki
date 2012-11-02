@@ -92,6 +92,19 @@ class Module_Main {
                         
             // Prepare jsontemplate
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
+
+            // Sorting the list of to be shown elements alphabetically
+            componentDimensionElements.sort(function (a, b){
+                var x = a.property_label.toUpperCase();         
+                var y = b.property_label.toUpperCase();         
+                if(x < y) {
+                    return -1;
+                } else if (x > y) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
             
             // fill template placeholders with data
             $("#dimensionDialogContainer").html ( tpl.expand({ 
