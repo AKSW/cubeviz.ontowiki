@@ -34,13 +34,15 @@ var ChartSelector = (function () {
     }
     ChartSelector.init = function init(suiteableCharts, onClick_Function) {
         $("#chartSelection").html("");
-        var iconPath = "";
-        var name = "";
-        var item = null;
+        var element = null;
         var icon = null;
+        var iconPath = "";
+        var item = null;
+        var name = "";
         var nr = 0;
 
-        $.each(suiteableCharts, function (index, element) {
+        for(var index in suiteableCharts) {
+            element = suiteableCharts[index];
             if(undefined == element) {
             } else {
                 iconPath = CubeViz_Config["imagesPath"] + element["icon"];
@@ -53,7 +55,8 @@ var ChartSelector = (function () {
                 }).data("nr", nr++).appendTo(item);
                 item.appendTo($("#chartSelection"));
             }
-        });
+        }
+        ; ;
         $("#chartSelection").addClass("chartSelector");
         $(".chartSelector-options-toggle").click(function () {
             $(".chartSelector-item-options").eq(this.itemFocused).toggle();
@@ -243,7 +246,9 @@ var System = (function () {
                     console.log(output);
                 } else {
                     console.log(" ");
-                    $.each(output, function (i, val) {
+                    var val = null;
+                    for(var i in output) {
+                        val = output[i];
                         if("object" == typeof val) {
                             console.log(" ");
                             console.log("subobject");
@@ -251,7 +256,8 @@ var System = (function () {
                         } else {
                             console.log(i + ": " + val);
                         }
-                    });
+                    }
+                    ; ;
                 }
             } else {
                 console.log(output);

@@ -56,14 +56,16 @@ class ChartSelector {
         $("#chartSelection").html ( "" );
             
         // 
-        var iconPath = "", 
-            name = "", 
-            item = null, 
+        var element = null,
             icon = null, 
+            iconPath = "", 
+            item = null, 
+            name = "", 
             nr = 0;
                     
         // go through all suitableCharts
-        $.each(suiteableCharts, function (index, element) {   
+        for ( var index in suiteableCharts ) {
+            element = suiteableCharts[index];
             
             if ( undefined == element ) {
                 
@@ -94,7 +96,7 @@ class ChartSelector {
                 // in the end, append div to #chartSelection div
                 item.appendTo ( $("#chartSelection") );
             }
-        });
+        };
         
 		$("#chartSelection").addClass("chartSelector");
                 

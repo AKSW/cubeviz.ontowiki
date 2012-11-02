@@ -48,8 +48,9 @@ class System {
                 // output objects property by property
                 } else {
                     console.log ( " " );
-                    
-                    $.each ( output, function ( i, val ) {
+                    var val = null;                    
+                    for ( var i in output ) {
+                        val = output[i];
                         if ( "object" == typeof val ) {
                             console.log ( " " );
                             console.log ( "subobject" );
@@ -57,7 +58,7 @@ class System {
                         } else {
                             console.log ( i + ": " + val );
                         }
-                    } );
+                    };
                 }
             
             // If your browser a modern one simply output

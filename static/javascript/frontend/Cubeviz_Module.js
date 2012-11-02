@@ -270,7 +270,9 @@ var System = (function () {
                     console.log(output);
                 } else {
                     console.log(" ");
-                    $.each(output, function (i, val) {
+                    var val = null;
+                    for(var i in output) {
+                        val = output[i];
                         if("object" == typeof val) {
                             console.log(" ");
                             console.log("subobject");
@@ -278,7 +280,8 @@ var System = (function () {
                         } else {
                             console.log(i + ": " + val);
                         }
-                    });
+                    }
+                    ; ;
                 }
             } else {
                 console.log(output);
