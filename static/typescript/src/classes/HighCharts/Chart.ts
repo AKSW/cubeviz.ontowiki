@@ -80,28 +80,39 @@ class HighCharts_Chart {
 
         for ( var seriesEntry in seriesElements ) {
             
+            // this represents one item of the series array (of highcharts)
             obj = { 
                 "name": this.getLabelForPropertyUri ( seriesEntry, forSeries, selectedComponentDimensions ),
                 "data": []
             };
             
+            // iterate over all x axis elements
             for ( var xAxisEntry in xAxisElements ) {
                 
                 found = false, alreadyNullAdded = false;
                 
+                // check for each entry of the x axis, if one of its entries contains a ref 
+                // to the the given seriesEntry
                 for ( var i in xAxisElements[xAxisEntry] ) {
                     
+                    // if one of the xAxis entries fits with given seriesEntry, so push the related value 
+                    // into the obj [data] array
                     for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
                         if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
                             obj ["data"].push ( xAxisElements[xAxisEntry][i][measureUri]["value"] );
                             found = true;
+                            
+                            // .. break this ...
                             break;
                         }
                     }
+                    // ... and this loop, because we found our related value
                     if ( true == found ) {
                         break;
                     }                     
                 }                
+                // Push null, if it was not possible to found the related value, to prevent highcharts sort 
+                // valid values at the beginning because it violates the order of entries
                 if ( false == found ) {
                     obj ["data"].push ( null );
                 }
