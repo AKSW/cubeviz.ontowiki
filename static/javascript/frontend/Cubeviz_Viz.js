@@ -382,7 +382,7 @@ var HighCharts_Chart = (function () {
                     }
                 }
                 if(false == found) {
-                    obj["data"].push("");
+                    obj["data"].push(null);
                 }
             }
             this["series"].push(obj);

@@ -569,6 +569,11 @@ var Module_Main = (function () {
     Module_Main.buildDimensionDialog = function buildDimensionDialog(dimensionLabel, dimensionType, dimensionUrl, componentDimensionElements) {
         try  {
             var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
+            componentDimensionElements.sort(function (a, b) {
+                a = a["property_label"].toUpperCase();
+                b = b["property_label"].toUpperCase();
+                return a < b ? -1 : (a > b ? 1 : 0);
+            });
             $("#dimensionDialogContainer").html(tpl.expand({
                 "dimensionLabel": dimensionLabel,
                 "dimensionType": dimensionType,

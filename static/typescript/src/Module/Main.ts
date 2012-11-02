@@ -95,15 +95,9 @@ class Module_Main {
 
             // Sorting the list of to be shown elements alphabetically
             componentDimensionElements.sort(function (a, b){
-                var x = a.property_label.toUpperCase();         
-                var y = b.property_label.toUpperCase();         
-                if(x < y) {
-                    return -1;
-                } else if (x > y) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                a = a["property_label"].toUpperCase();         
+                b = b["property_label"].toUpperCase();         
+                return a < b ? -1 : (a > b ? 1 : 0 );
             });
             
             // fill template placeholders with data
