@@ -177,7 +177,7 @@ var Observation = (function () {
             System.out("\nEntries is empty or not an array!");
             return;
         }
-        console.log("entries");
+        console.log("Observation -> initialize > entries");
         console.log(entries);
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
         var dimensionValues = {
@@ -196,18 +196,16 @@ var Observation = (function () {
                 this["_axes"][measureUri] = {
                 };
             }
+            this["_axes"][measureUri] = {
+            };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
-                if("undefined" == System.toType(this["_axes"][selecDimUri])) {
-                    this["_axes"][selecDimUri] = {
-                    };
-                }
-                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
-                }
+                this["_axes"][selecDimUri] = {
+                } || this["_axes"][selecDimUri];
+                this["_axes"][selecDimUri][selecDimVal] = [] || this["_axes"][selecDimUri][selecDimVal];
                 measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
                 this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
             }

@@ -41,15 +41,26 @@ var ChartSelector = (function () {
         var nr = 0;
 
         $.each(suiteableCharts, function (index, element) {
-            iconPath = CubeViz_Config["imagesPath"] + element["icon"];
-            name = element["class"];
-            item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
-            icon = $("<img/>").attr({
-                "src": iconPath,
-                "name": name,
-                "class": "chartSelectionItem"
-            }).data("nr", nr++).appendTo(item);
-            item.appendTo($("#chartSelection"));
+            console.log("index:");
+            console.log(index);
+            console.log("element:");
+            console.log(element);
+            if(undefined == element) {
+                console.log("continue");
+            } else {
+                console.log("element:");
+                console.log(element);
+                console.log("");
+                iconPath = CubeViz_Config["imagesPath"] + element["icon"];
+                name = element["class"];
+                item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
+                icon = $("<img/>").attr({
+                    "src": iconPath,
+                    "name": name,
+                    "class": "chartSelectionItem"
+                }).data("nr", nr++).appendTo(item);
+                item.appendTo($("#chartSelection"));
+            }
         });
         $("#chartSelection").addClass("chartSelector");
         $(".chartSelector-options-toggle").click(function () {
@@ -147,7 +158,7 @@ var Observation = (function () {
             System.out("\nEntries is empty or not an array!");
             return;
         }
-        console.log("entries");
+        console.log("Observation -> initialize > entries");
         console.log(entries);
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
         var dimensionValues = {
@@ -166,18 +177,16 @@ var Observation = (function () {
                 this["_axes"][measureUri] = {
                 };
             }
+            this["_axes"][measureUri] = {
+            };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
-                if("undefined" == System.toType(this["_axes"][selecDimUri])) {
-                    this["_axes"][selecDimUri] = {
-                    };
-                }
-                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
-                }
+                this["_axes"][selecDimUri] = {
+                } || this["_axes"][selecDimUri];
+                this["_axes"][selecDimUri][selecDimVal] = [] || this["_axes"][selecDimUri][selecDimVal];
                 measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
                 this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
             }
