@@ -103,7 +103,7 @@ class HighCharts_Chart {
                     }                     
                 }                
                 if ( false == found ) {
-                    obj ["data"].push ( "" );
+                    obj ["data"].push ( null );
                 }
             }
             
