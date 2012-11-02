@@ -147,11 +147,15 @@ class Observation {
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
-                this ["_axes"] [selecDimUri] = {} || this ["_axes"] [selecDimUri];
+                if ( undefined == this ["_axes"] [selecDimUri] ) {
+                    this ["_axes"] [selecDimUri] = {};
+                }
                     
                 //                uri                     value
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
-                this["_axes"][selecDimUri][selecDimVal] = [] || this ["_axes"][selecDimUri][selecDimVal]
+                if ( "undefined" == System.toType ( this ["_axes"][selecDimUri][selecDimVal]) ) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
+                }
                 
                 measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
                 

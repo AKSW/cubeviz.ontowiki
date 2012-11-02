@@ -203,9 +203,13 @@ var Observation = (function () {
                 selecDimUri = this["_selectedDimensionUris"][i];
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
-                this["_axes"][selecDimUri] = {
-                } || this["_axes"][selecDimUri];
-                this["_axes"][selecDimUri][selecDimVal] = [] || this["_axes"][selecDimUri][selecDimVal];
+                if(undefined == this["_axes"][selecDimUri]) {
+                    this["_axes"][selecDimUri] = {
+                    };
+                }
+                if("undefined" == System.toType(this["_axes"][selecDimUri][selecDimVal])) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
+                }
                 measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
                 this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
             }
