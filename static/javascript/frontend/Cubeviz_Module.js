@@ -163,8 +163,6 @@ var Observation = (function () {
             };
             measureObj = {
             };
-            if("undefined" == System.toType(this["_axes"][measureUri])) {
-            }
             this["_axes"][measureUri] = this["_axes"][measureUri] || {
             };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];

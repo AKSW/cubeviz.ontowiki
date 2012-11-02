@@ -136,8 +136,6 @@ var Observation = (function () {
             };
             measureObj = {
             };
-            if("undefined" == System.toType(this["_axes"][measureUri])) {
-            }
             this["_axes"][measureUri] = this["_axes"][measureUri] || {
             };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
@@ -352,11 +350,10 @@ var HighCharts_Chart = (function () {
         }
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
-        console.log("xAxisElements (" + System.toType(xAxisElements) + ")");
-        console.log(xAxisElements);
         for(var value in xAxisElements) {
             this["xAxis"]["categories"].push(this.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions));
         }
+        var alreadyNullAdded = false;
         var found = false;
         var i = 0;
         var length = System.countProperties(xAxisElements);
@@ -364,23 +361,17 @@ var HighCharts_Chart = (function () {
         };
         var seriesElements = observation.getAxisElements(forSeries);
 
-        console.log("seriesElements");
-        console.log(seriesElements);
         this["series"] = [];
         for(var seriesEntry in seriesElements) {
             obj = {
                 "name": this.getLabelForPropertyUri(seriesEntry, forSeries, selectedComponentDimensions),
                 "data": []
             };
-            console.log("\nSeries element: " + seriesEntry);
             for(var xAxisEntry in xAxisElements) {
-                console.log(xAxisEntry);
-                found = false;
+                found = false , alreadyNullAdded = false;
                 for(var i in xAxisElements[xAxisEntry]) {
                     for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
-                        console.log("[" + i + "][" + j + "]");
                         if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
-                            console.log("for " + seriesEntry + ": " + xAxisElements[xAxisEntry][i][measureUri]["value"]);
                             obj["data"].push(xAxisElements[xAxisEntry][i][measureUri]["value"]);
                             found = true;
                             break;
@@ -389,6 +380,9 @@ var HighCharts_Chart = (function () {
                     if(true == found) {
                         break;
                     }
+                }
+                if(false == found) {
+                    obj["data"].push("");
                 }
             }
             this["series"].push(obj);

@@ -69,7 +69,8 @@ class HighCharts_Chart {
         }
         
         // now we will care about the series
-        var found:bool = false,
+        var alreadyNullAdded:bool = false,
+            found:bool = false,
             i:number = 0,
             length:number = System.countProperties (xAxisElements),
             obj:Object = {},
@@ -86,18 +87,23 @@ class HighCharts_Chart {
             
             for ( var xAxisEntry in xAxisElements ) {
                 
-                console.log ( xAxisEntry );
-                found = false;
+                found = false, alreadyNullAdded = false;
                 
                 for ( var i in xAxisElements[xAxisEntry] ) {
-                    for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {
+                    
+                    for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
                         if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
                             obj ["data"].push ( xAxisElements[xAxisEntry][i][measureUri]["value"] );
                             found = true;
                             break;
                         }
                     }
-                    if ( true == found ) break;
+                    if ( true == found ) {
+                        break;
+                    }                     
+                }                
+                if ( false == found ) {
+                    obj ["data"].push ( "" );
                 }
             }
             
