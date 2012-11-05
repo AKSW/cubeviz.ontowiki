@@ -69,7 +69,7 @@ class Observation {
         
         // save uri's of selected component dimensions
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
-                
+        
         var dimensionValues = {}, measureObj = {}, selecDimUri = "", selecDimVal = "";
         
         // create an array for each selected dimension uri and save given values
@@ -97,6 +97,7 @@ class Observation {
                                 
                 // save current selected dimension, to save space
                 selecDimUri = this["_selectedDimensionUris"][i];
+                
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
@@ -133,7 +134,7 @@ class Observation {
      */
     static loadAll (linkCode:string, callback) {
         $.ajax({
-            url: CubeViz_Links_Module ["cubevizPath"] + "getresultobservations/",
+            url: CubeViz_Links_Module ["cubevizPath"] + "getobservations/",
             data: {
                 lC: linkCode
             }

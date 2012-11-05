@@ -20,7 +20,11 @@ class Module_Main {
             
         for ( var com in components ["dimensions"] ) {
             
-            selectedComLength = selectedComponents ["dimensions"][com]["elements"]["length"] || 1;
+            if ( undefined != selectedComponents ["dimensions"][com] ) {
+                selectedComLength = selectedComponents ["dimensions"][com]["elements"]["length"] || 1;
+            } else {
+                selectedComLength = 1;
+            }
             
             com = components ["dimensions"][com];
 
@@ -87,48 +91,43 @@ class Module_Main {
      */
     static buildDimensionDialog ( dimensionLabel:string, dimensionType:string, dimensionUrl:string, 
                                    componentDimensionElements:any ) {
-        
-        try {
-                        
-            // Prepare jsontemplate
-            var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
+                 
+        // Prepare jsontemplate
+        var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
 
-            // Sorting the list of to be shown elements alphabetically
-            componentDimensionElements.sort(function (a, b){
-                a = a["property_label"].toUpperCase();         
-                b = b["property_label"].toUpperCase();         
-                return a < b ? -1 : (a > b ? 1 : 0 );
-            });
-            
-            // fill template placeholders with data
-            $("#dimensionDialogContainer").html ( tpl.expand({ 
-                "dimensionLabel": dimensionLabel,
-                "dimensionType": dimensionType,
-                "dimensionUrl": dimensionUrl,
-                "list": componentDimensionElements
-            }));
-            
-            // collect urls of all selected component dimensions
-            var elements = CubeViz_Links_Module ["selectedComponents"]["dimensions"] [dimensionLabel]["elements"],
-                selectedDimensionUrls:string[] = []; 
-            for ( var index in elements ) {
-                selectedDimensionUrls.push ( elements [index].property );
-            }
-            
-            // go through the list of checkboxes and select one if its a the previously 
-            // selected component dimension
-            $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
-                if ( 0 <= $.inArray ( $(ele).attr ("value").toString (), selectedDimensionUrls ) ) {
-                    $(ele).attr ("checked", "checked" );
-                }
-            });
-            
-            // if rendering is complete, fade in the dialog
-            $("#dimensionDialogContainer").fadeIn (1000);
-        } catch ( e ) {
-            System.out ( "buildDimensionDialog error" );
-            System.out ( e );
+        // Sorting the list of to be shown elements alphabetically
+        componentDimensionElements.sort(function (a, b){
+            a = a["property_label"].toUpperCase();         
+            b = b["property_label"].toUpperCase();         
+            return a < b ? -1 : (a > b ? 1 : 0 );
+        });
+        
+        // fill template placeholders with data
+        $("#dimensionDialogContainer").html ( tpl.expand({ 
+            "dimensionLabel": dimensionLabel,
+            "dimensionType": dimensionType,
+            "dimensionUrl": dimensionUrl,
+            "list": componentDimensionElements
+        }));
+        
+        // collect urls of all selected component dimensions
+        var elements = CubeViz_Links_Module ["selectedComponents"]["dimensions"] [dimensionLabel]["elements"],
+            selectedDimensionUrls:string[] = []; 
+        for ( var index in elements ) {
+            selectedDimensionUrls.push ( elements [index].property );
         }
+        
+        // go through the list of checkboxes and select one if its a the previously 
+        // selected component dimension
+        $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
+            if ( 0 <= $.inArray ( $(ele).attr ("value").toString (), selectedDimensionUrls ) ) {
+                $(ele).attr ("checked", "checked" );
+            }
+        });
+        
+        // if rendering is complete, fade in the dialog
+        $("#dimensionDialogContainer").fadeIn (1000);
+        
     }
     
     /**
@@ -162,19 +161,19 @@ class Module_Main {
     static resetModuleParts ( exceptOf:string[] = [] ) : void {
     
         if ( -1 == $.inArray ("selectedDSD", exceptOf) ) {
-            CubeViz_Links_Module ["selectedDSD"] = null;
+            CubeViz_Links_Module ["selectedDSD"] = undefined;
         }
     
         if ( -1 == $.inArray ("selectedDS", exceptOf) ) {
-            CubeViz_Links_Module ["selectedDS"] = null;
+            CubeViz_Links_Module ["selectedDS"] = undefined;
         }
         
         if ( -1 == $.inArray ("linkCode", exceptOf) ) {
-            CubeViz_Links_Module ["linkCode"] = null;
+            CubeViz_Links_Module ["linkCode"] = undefined;
         }
         
         if ( -1 == $.inArray ("selectedComponents.dimensions", exceptOf) ) {
-            CubeViz_Links_Module ["selectedComponents"]["dimensions"] = null;
+            CubeViz_Links_Module ["selectedComponents"]["dimensions"] = undefined;
         }
         
         /*
@@ -185,7 +184,7 @@ class Module_Main {
         */
         
         if ( -1 == $.inArray ("components.dimensions", exceptOf) ) {
-            CubeViz_Links_Module ["components"]["dimensions"] = null;
+            CubeViz_Links_Module ["components"]["dimensions"] = undefined;
         }
         
         /*

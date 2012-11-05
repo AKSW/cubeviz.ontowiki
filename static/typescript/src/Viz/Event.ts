@@ -20,13 +20,6 @@ var CubeViz_Data = CubeViz_Data || {
 // Templates
 var ChartSelector_Array = ChartSelector_Array || {};
 
-/**
- * Event section
- */
-$(document).ready(function(){
-    Viz_Event.ready ();
-});
-
 class Viz_Event {
     /**
      * After document is ready
@@ -40,7 +33,6 @@ class Viz_Event {
         $("#showUpdateVisualizationButton").attr ( 
             "value", "Update visualization"
         );
-        
         
         // Dynamiclly set container height (highcharts)
         var container = $("#container").offset();

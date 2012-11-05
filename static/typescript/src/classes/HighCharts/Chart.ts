@@ -139,7 +139,8 @@ class HighCharts_Chart {
     /**
      * Extract the uri of the measure value
      */
-    static extractMeasureValue ( measures:Object[] ) : string {
+    static extractMeasureValue ( measures:Object ) : string {
+        // return the first value
         for ( var label in measures ) { return measures[label]["type"]; }
     }
         

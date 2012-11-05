@@ -26,11 +26,12 @@ class DataCube_Query {
 	 * Returns array of Data Structure Definitions 
      * @return array
 	 */ 
-	public function getDataStructureDefinition() {   
+	public function getDataStructureDefinitions () {   
 		
 		$result = array();
+        
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-
+        
 		//get all indicators in the cube by the DataStructureDefinitions
 		$sparql = 'SELECT ?dsd WHERE {
             ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
@@ -48,10 +49,15 @@ class DataCube_Query {
 			if( false == empty ($dsd['dsd']) ) {
                 $result [] = array ( 
                     'url'   => $dsd['dsd'],
-                    'label' => $titleHelper->getTitle($dsd['dsd'])
+                    'label' => str_replace ( ' ', '_', $titleHelper->getTitle($dsd['dsd']) )
                 );
 			}
 		}
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
 		return $result;
 	}  
@@ -85,10 +91,15 @@ class DataCube_Query {
             if(false == empty($ds['ds'])) {
                 $result[] = array (
                     'url'   => $ds ['ds'],
-                    'label' => $titleHelper->getTitle($ds['ds'])
+                    'label' => str_replace ( ' ', '_', $titleHelper->getTitle($ds['ds']) )
                 );
             }
         }
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
         return $result;
     }
@@ -101,7 +112,6 @@ class DataCube_Query {
      * @return array
      */
 	public function getComponents($dsdUri, $dsUri, $componentType) {
-                
               
         if ( $componentType != DataCube_UriOf::Dimension && 
              $componentType != DataCube_UriOf::Measure ) {
@@ -138,15 +148,25 @@ class DataCube_Query {
         foreach($queryresultComp as $comp) {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
-                $result [] = array ( 
-                    'label' => $titleHelper->getTitle($comp['comp']),
+                $element = array ( 
+                    'label' => str_replace ( ' ', '_', $titleHelper->getTitle($comp['comp']) ),
                     'order' => isset($comp['order']) ? $comp['order'] : -1,
                     'url'   => $comp['comp'],
-                    'type'  => $comp['comptype'],
-                    'elements' => $this->getComponentElements($dsUri, $comp['comptype'])
+                    'type'  => $comp['comptype']
                 );
+                
+                if ( DataCube_UriOf::Dimension == $componentType ) {
+                    $element ['elements'] = $this->getComponentElements($dsUri, $comp['comptype']);
+                }
+                
+                $result [] = $element;
             }
         }
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
         return $result;
     }
@@ -195,7 +215,7 @@ class DataCube_Query {
 		$result_with_labels = array();
 		foreach($result as $key => $element) {
 			if($this->isUrl($element)) {
-				$result_with_labels[$key]["property_label"] = $titleHelper->getTitle ( $element );
+				$result_with_labels[$key]["property_label"] = str_replace ( ' ', '_', $titleHelper->getTitle ( $element ) );
 			} else {
 				$result_with_labels[$key]["property_label"] = $element;
 			}			
@@ -225,12 +245,37 @@ class DataCube_Query {
      * 
      */
     public function getObservations ($linkConfiguration) {
-		
-        // Extract and save neccessary parameters from link configuration
-        $selectedComponents = $linkConfiguration ['selectedComponents'];
-		$graphUrl = $linkConfiguration ['selectedGraph'];
-		$dataSetUrl = $linkConfiguration ['selectedDS']['url'];		
-        $selCompDims = $linkConfiguration ['selectedComponents']['dimensions'];
+        
+        // Case: link configuration was found and loaded
+        if ( 0 < count ( $linkConfiguration ) ) {
+            // Extract and save neccessary parameters from link configuration
+            $selectedComponents = $linkConfiguration ['selectedComponents'];
+            $dataSetUrl = $linkConfiguration ['selectedDS']['url'];		
+            $selCompDims = $linkConfiguration ['selectedComponents']['dimensions'];
+        } 
+        
+        // Case: no link configuration was given
+        else {
+            
+            // set default values for DSD
+            $dataStructureDefinitionUrl = $this->getDataStructureDefinitions();
+            $dataStructureDefinitionUrl = $dataStructureDefinitionUrl [0]['url'];
+            
+            // ... and DS
+            $dataSetUrl = $this->getDataSets($dataStructureDefinitionUrl);
+            $dataSetUrl = $dataSetUrl [0]['url'];
+            
+            $tmp = $this->getComponents (
+                $dataStructureDefinitionUrl, $dataSetUrl, DataCube_UriOf::Dimension
+            );
+            
+            $selCompDims = array ();
+            
+            foreach ( $tmp as $dimension ) {
+                $dimension ['elements'] = array($dimension ['elements'][0]);
+                $selCompDims [] = $dimension;
+            }
+        }
         		 
         /**
          * Fill SimpleQuery object with live!
@@ -241,8 +286,8 @@ class DataCube_Query {
 		$queryObject->setProloguePart('CONSTRUCT {?s ?p ?o}');
 	
         // FROM
-		$queryObject->setFrom(array ($graphUrl));
-		
+		$queryObject->setFrom(array ($this->_model->getModelIri()));
+        
         // WHERE
 		$where = 'WHERE { ' ."\n" .'
 			?s ?p ?o .' ."\n" .'
@@ -342,7 +387,6 @@ class DataCube_Query {
 			$dimensionTypes[$url] = array();
 			$dimensionTypes[$url]['url'] = $url;
 			$dimensionTypes[$url]['type'] = $link['selectedDimensions']['dimensions'][$i]["type"];
-			$dimensionTypes[$url]['elemCount'] = $link['selectedDimensions']['dimensions'][$i]["elementCount"];
 			$dimensionTypes[$url]['order'] = '-1';
 			
 			$dimensionOptions[$url] = array();
@@ -372,7 +416,7 @@ class DataCube_Query {
 			$measureOptions[$url]['order'] = 'NONE';
 		}
 
-		return $this->getResultObservations($dsUri, 
+		return $this->getObservations($dsUri, 
             $dimensions, $dimensionElements, $dimensionTypes, $dimensionOptions, 
             $measures, $measureTypes, $measureAggregationMethods, $measureOptions);
 	}

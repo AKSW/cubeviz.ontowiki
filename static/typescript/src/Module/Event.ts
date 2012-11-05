@@ -261,24 +261,32 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadAllComponentDimensions (compDimensions) {
+    static onComplete_LoadAllComponentDimensions (dimensions) {
         
         var regenerateLinkCode:bool = false;
         
         // save pulled component dimensions
-        CubeViz_Links_Module ["components"] = compDimensions;
+        CubeViz_Links_Module ["components"]["dimensions"] = dimensions;
         
         // reset the existing component configuration
-        if ( null == CubeViz_Links_Module["selectedComponents"]["dimensions"] ) {
+        if ( undefined == CubeViz_Links_Module["selectedComponents"]["dimensions"] || 
+             0 == System.countProperties (CubeViz_Links_Module["selectedComponents"]["dimensions"]) ) {
             
             // set default values for selected component dimensions list
             // for each componentDimension first entry will be selected
             // e.g. Year (2003), Country (Germany)
             CubeViz_Links_Module["selectedComponents"]["dimensions"] =
-                Component.getDefaultSelectedDimensions ( compDimensions ["dimensions"] );
+                Component.getDefaultSelectedDimensions ( dimensions );
                 
             regenerateLinkCode = true;
         }
+        
+        // Loading all component measures
+        Component.loadAllMeasures (
+            CubeViz_Links_Module["selectedDSD"]["url"], 
+            CubeViz_Links_Module["selectedDS"]["url"], 
+            Module_Event.onComplete_LoadAllComponentMeasures
+        );
             
         /**
          * Update component selection
@@ -292,9 +300,6 @@ class Module_Event {
         if ( true == regenerateLinkCode ) {
             
             CubeViz_Links_Module ["linkCode"] = null;
-            
-            console.log ( "lets generate a new link code for: " );
-            console.log ( CubeViz_Links_Module );
             
             ConfigurationLink.saveToServerFile ( 
                 CubeViz_Links_Module,
@@ -320,6 +325,18 @@ class Module_Event {
          * 
          */
         Module_Main.hideSidebarLoader ();
+    }
+    
+    /**
+     * 
+     */
+    static onComplete_LoadAllComponentMeasures (compMeasures) {
+        CubeViz_Links_Module ["components"]["measures"] = compMeasures;
+        CubeViz_Links_Module ["selectedComponents"]["measures"] = compMeasures;
+        
+        if ( undefined != Viz_Event ) {
+            Viz_Event.ready ();
+        }
     }
     
     /**
@@ -381,38 +398,34 @@ class Module_Event {
     /**
      * 
      */
-    static onComplete_LoadDataSets (entries) {
+    static onComplete_LoadDataSets (dataSets) {
         
         // if at least one data structure definition, than load data sets for first one
-        if ( 0 == entries["length"] ) {
+        if ( 0 == dataSets["length"] ) {
             // todo: handle case that no data sets were loaded
             // CubeViz_Parameters_Module.selectedDS = {};
             System.out ( "onComplete_LoadDataSets" );
             System.out ( "no data sets were loaded" );
             
-        } else if ( 1 <= entries["length"] ) {
+        } else if ( 1 <= dataSets["length"] ) {
             
-            var resetSelectedComponents = false;
-            
-            if ( null == CubeViz_Links_Module ["selectedDS"] ) {
-                CubeViz_Links_Module["selectedDS"] = entries [0];
-                
-            } else {
-                // Data set is already set, so use it
+            // if selected data set url is not set, than use the first element of the previously loaded 
+            // entries instead
+            if ( undefined == CubeViz_Links_Module ["selectedDS"]["url"] ) {
+                CubeViz_Links_Module["selectedDS"] = dataSets [0];
             }
             
             /**
              * Build select box
              */
-            Module_Main.buildDataSetBox (entries, CubeViz_Links_Module ["selectedDS"]["url"]);
-                        
-            // will load all component dimensions for certain data structure definition and data set
+            Module_Main.buildDataSetBox (dataSets, CubeViz_Links_Module ["selectedDS"]["url"]);
+                       
+            // load all component dimensions
             Component.loadAllDimensions ( 
                 CubeViz_Links_Module["selectedDSD"]["url"], 
                 CubeViz_Links_Module["selectedDS"]["url"], 
-                Module_Event.onComplete_LoadAllComponentDimensions,
-                resetSelectedComponents
-            );
+                Module_Event.onComplete_LoadAllComponentDimensions
+            );   
             
             /**
              * Remove this event entry from sidebar left queue
@@ -442,6 +455,12 @@ class Module_Event {
             System.out ( "no data structure definitions were loaded" );
             
         } else if ( 1 <= dataStructureDefinitions["length"] ) {
+            
+            // if selected data structure defintion url is not set, than use the first element of the 
+            // previously loaded entries instead
+            if ( undefined == CubeViz_Links_Module ["selectedDSD"]["url"] ) {
+                CubeViz_Links_Module ["selectedDSD"] = dataStructureDefinitions [0];
+            }
             
             /**
              * Remove this event entry from sidebar left queue

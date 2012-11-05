@@ -162,7 +162,7 @@ var Observation = (function () {
     };
     Observation.loadAll = function loadAll(linkCode, callback) {
         $.ajax({
-            url: CubeViz_Links_Module["cubevizPath"] + "getresultobservations/",
+            url: CubeViz_Links_Module["cubevizPath"] + "getobservations/",
             data: {
                 lC: linkCode
             }
@@ -598,9 +598,6 @@ var CubeViz_Data = CubeViz_Data || {
 };
 var ChartSelector_Array = ChartSelector_Array || {
 };
-$(document).ready(function () {
-    Viz_Event.ready();
-});
 var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {

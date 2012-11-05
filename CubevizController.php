@@ -36,7 +36,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
         		
         // set base url paths to extension root and images folder
-		$this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
+		$this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
 		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
 		
 		// send backend information to the view
@@ -46,9 +46,8 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
-		// linkCode (default value: "default" )
-		$this->view->linkCode = $this->_request->getParam ("lC");
-		if(NULL == $this->view->linkCode) { $this->view->linkCode = "default"; }
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
         
 		// load configuration which is associated with given linkCode
 		$configuration = new CubeViz_ConfigurationLink(__DIR__);
@@ -58,8 +57,19 @@ class CubevizController extends OntoWiki_Controller_Component {
         $configuration->checkFolderPermissions ();
         
         $configuration = $configuration->read ($this->view->linkCode);
-		$this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
-		$this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
+        if (true == isset ($configuration [0])) {
+            $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
+            $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
+        } else {
+            $this->view->linkConfiguration = '{
+                "backend": "'. $this->view->backend .'",
+                "components": {},
+                "selectedDSD": {},
+                "selectedDS": {},
+                "selectedComponents": {"dimensions": {}, "measures": {}}
+            }';
+            $this->view->cubeVizUIChartConfig = 'null';
+        }
 	}
 	
 	public function getdatafromlinkcodeAction() {
@@ -76,26 +86,27 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->_response->setBody(json_encode($configuration));	
 	}
 	
-	public function getresultobservationsAction() {
+	public function getobservationsAction() {
 		
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();   
              
-		// linkCode (default value: "default" )
-		$linkCode = $this->_request->getParam ('lC');
-		if(NULL == $linkCode) { $linkCode = 'default'; }
-        
         // load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);
-        		
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);        	
+        
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        $linkConfiguration = array ();
+        
 		$configuration = $configuration->read ($linkCode);
-        $linkConfiguration = json_decode ($configuration [0], true) ; // contains stuff e.g. selectedDSD, ...
-		// var_dump ( $linkConfiguration );
+        if (true == isset ($configuration [0])) {
+            $linkConfiguration = json_decode ( $configuration [0], true ); // contains stuff e.g. selectedDSD, ...
+        }
         				
         // init Query and model
-        $model = new Erfurt_Rdf_Model ( $linkConfiguration ['selectedGraph'] );
-		$query = new DataCube_Query ($model);
+		$query = new DataCube_Query ( $this->_owApp->selectedModel );
                 
+        
         // ... get and return observations
 		$this->_response->setBody($query->getObservations($linkConfiguration));
 	}
@@ -111,7 +122,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		$query = new DataCube_Query($model);
 				
-        $this->_response->setBody(json_encode($query->getDataStructureDefinition()));
+        $this->_response->setBody(json_encode($query->getDataStructureDefinitions()));
 	}
 	
 	/**
@@ -164,29 +175,6 @@ class CubevizController extends OntoWiki_Controller_Component {
 			//error message
 		}        
 	}
-	
-	/**
-	 * 
-	 *
-	public function getalldimensionselementsAction() {
-		$this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
-        
-		$dimensions = $this->_request->getParam('dimensions'); // Data Structure Definition
-		
-		$query = new DataCube_Query($model);
-		$result = array();
-		
-		$dimensions_length = sizeof($dimensions);
-		for($i = 0; $i < $dimensions_length; ++$i) {
-			$result[$dimensions[$i]["label"]] = $query->getComponentElements($dsUrl, $dimensions[$i]["type"]);
-		}		
-		       
-        $this->_response->setBody(json_encode($result));
-	}*/
 	
 	/**
 	 * 
