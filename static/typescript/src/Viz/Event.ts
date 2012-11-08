@@ -13,8 +13,8 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
 var CubeViz_Data = CubeViz_Data || {
-    "retrievedObservations" : [],
-    "numberOfMultipleDimensions" : 0
+    "numberOfMultipleDimensions" : 0,
+    "retrievedObservations" : []
 };
 
 // Templates
@@ -70,7 +70,7 @@ class Viz_Event {
             );
         }
         
-        cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
+        // cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
         
         HighCharts_Chart.setChartConfigClassEntry (
             cubeVizUIChartConfig ["selectedChartConfig"]["class"],
@@ -86,8 +86,11 @@ class Viz_Event {
      */
     static onClick_ChartSelectionItem (event:any) {
                 
-        var currentNr:number = parseInt ( $(event["target"]).parent ().attr ( "nr" ) );
-        var lastUsedNr:number = parseInt ( $("#chartSelection").attr ( "lastSelection" ) );
+        var currentNr:number = parseInt ( $(event["target"]).parent ().attr ( "nr" ) ),
+            lastUsedNr:number = parseInt ( $("#chartSelection").attr ( "lastSelection" ) ),
+            lastSelectionAndClicked:number = parseInt ( 
+                $("#chartSelection").attr("lastSelectionAndClicked") 
+            );
         
         // If nothing was set or you clicked on another item as before
         if ( null == lastUsedNr || currentNr != lastUsedNr ) {
@@ -119,27 +122,36 @@ class Viz_Event {
             
             Viz_Main.closeChartSelectionMenu ();
             
-        // If you clicked the same item AGAIN > show the menu
+        // If you clicked the same item AGAIN > show the menu (but only once)
         } else {
             
-            // TODO avoid reexecute this stuff again and again
+            // check if clicked item was clicked before
+            if (lastUsedNr == lastSelectionAndClicked) {
+                // clicked item was clicked before AND menu was already shown
+            } 
             
-            var className = $(event["target"]).parent ().attr ( "className" );
+            // if not, show menu
+            else {
+                
+                $("#chartSelection").attr ( "lastSelectionAndClicked", currentNr );
+            
+                var className = $(event["target"]).parent ().attr ( "className" );
 
-            // get class
-            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
-                className,
-                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
-            );    
-            
-            cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
-            cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
-            
-            
-            Viz_Main.openChartSelectionMenu ( 
-                fromChartConfig ["options"], 
-                $(this).offset() 
-            );
+                // get class
+                var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+                    className,
+                    CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
+                );    
+                
+                cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
+                cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
+                
+                
+                Viz_Main.openChartSelectionMenu ( 
+                    fromChartConfig ["options"], 
+                    $(this).offset() 
+                );
+            }
         }
     }
     

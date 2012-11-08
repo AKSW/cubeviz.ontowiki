@@ -593,8 +593,8 @@ var cubeVizUIChartConfig = cubeVizUIChartConfig || {
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {
 };
 var CubeViz_Data = CubeViz_Data || {
-    "retrievedObservations": [],
-    "numberOfMultipleDimensions": 0
+    "numberOfMultipleDimensions": 0,
+    "retrievedObservations": []
 };
 var ChartSelector_Array = ChartSelector_Array || {
 };
@@ -622,13 +622,14 @@ var Viz_Event = (function () {
             value = $(menuItems[i]).attr("value");
             System.setObjectProperty(newDefaultConfig, key, ".", value);
         }
-        cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
         HighCharts_Chart.setChartConfigClassEntry(cubeVizUIChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], cubeVizUIChartConfig["selectedChartConfig"]);
         Viz_Main.renderChart(cubeVizUIChartConfig["selectedChartConfig"]["class"]);
     }
     Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
         var currentNr = parseInt($(event["target"]).parent().attr("nr"));
         var lastUsedNr = parseInt($("#chartSelection").attr("lastSelection"));
+        var lastSelectionAndClicked = parseInt($("#chartSelection").attr("lastSelectionAndClicked"));
+
         if(null == lastUsedNr || currentNr != lastUsedNr) {
             ChartSelector.itemClicked = currentNr;
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
@@ -640,11 +641,16 @@ var Viz_Event = (function () {
             $(event["target"]).parent().addClass("current");
             Viz_Main.closeChartSelectionMenu();
         } else {
-            var className = $(event["target"]).parent().attr("className");
-            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
-            cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
-            cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
-            Viz_Main.openChartSelectionMenu(fromChartConfig["options"], $(this).offset());
+            if(lastUsedNr == lastSelectionAndClicked) {
+                console.log("menu still open");
+            } else {
+                $("#chartSelection").attr("lastSelectionAndClicked", currentNr);
+                var className = $(event["target"]).parent().attr("className");
+                var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
+                cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
+                cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
+                Viz_Main.openChartSelectionMenu(fromChartConfig["options"], $(this).offset());
+            }
         }
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
