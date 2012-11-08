@@ -205,8 +205,13 @@ class Module_Event {
                             .css ( "top", position.top + 2 )
                             .css ( "left", position.left + 32 );
                             
+                        // build link to show later on
+                        var link = CubeViz_Links_Module ["cubevizPath"] 
+                                   + "?m=" + CubeViz_Links_Module ["modelUrl"]
+                                   + "&lC=" + CubeViz_Links_Module ["linkCode"];
+                            
                         var url = $("<a></a>")
-                            .attr ( "href", CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"] )
+                            .attr ( "href", link )
                             .attr ( "target", "_self" )
                             .html ( $("#permaLink").html () );
                             
