@@ -633,16 +633,17 @@ var Viz_Event = (function () {
         if(null == lastUsedNr || currentNr != lastUsedNr) {
             ChartSelector.itemClicked = currentNr;
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
-            Viz_Main.renderChart($(this).attr("className"));
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
             ; ;
             $("#chartSelection").attr("lastSelection", currentNr);
             $(".chartSelector-item").removeClass("current");
             $(event["target"]).parent().addClass("current");
+            Viz_Main.renderChart($(this).attr("className"));
             Viz_Main.closeChartSelectionMenu();
         } else {
             if(lastUsedNr == lastSelectionAndClicked) {
-                console.log("menu still open");
+                Viz_Main.closeChartSelectionMenu();
+                $("#chartSelection").attr("lastSelectionAndClicked", -1);
             } else {
                 $("#chartSelection").attr("lastSelectionAndClicked", currentNr);
                 var className = $(event["target"]).parent().attr("className");

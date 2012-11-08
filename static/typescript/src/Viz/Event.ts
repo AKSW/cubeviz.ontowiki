@@ -102,14 +102,6 @@ class Viz_Event {
                 .eq(currentNr)
                 .addClass("current");
             
-            /**
-             * Render chart for given class name
-             */
-            Viz_Main.renderChart ( 
-                $(this).attr ( "className" )
-            );
-            
-            // cubeVizUIChartConfig ["selectedChartClass"] = $(this).attr ( "className" );
             cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];;
         
             $("#chartSelection").attr ( "lastSelection", currentNr );
@@ -119,6 +111,12 @@ class Viz_Event {
             // add class current to div container which surrounds clicked item
             $(event["target"]).parent().addClass("current");
             
+            /**
+             * Render chart for given class name
+             */
+            Viz_Main.renderChart ( 
+                $(this).attr ( "className" )
+            );
             
             Viz_Main.closeChartSelectionMenu ();
             
@@ -127,7 +125,12 @@ class Viz_Event {
             
             // check if clicked item was clicked before
             if (lastUsedNr == lastSelectionAndClicked) {
-                // clicked item was clicked before AND menu was already shown
+                // close the opened menu from before
+                Viz_Main.closeChartSelectionMenu ();
+                
+                // reset control variables
+                $("#chartSelection")
+                    .attr("lastSelectionAndClicked", -1)
             } 
             
             // if not, show menu
