@@ -108,7 +108,7 @@ var Observation = (function () {
     Observation.prototype.extractSelectedDimensionUris = function (elements) {
         var resultList = [];
         for(var i in elements) {
-            resultList.push(elements[i]["type"]);
+            resultList.push(elements[i]["typeUrl"]);
         }
         return resultList;
     };
@@ -134,16 +134,20 @@ var Observation = (function () {
         var selecDimUri = "";
         var selecDimVal = "";
 
+        this["_axes"][measureUri] = this["_axes"][measureUri] || {
+        };
         for(var mainIndex in entries) {
             dimensionValues = {
             };
             measureObj = {
             };
-            this["_axes"][measureUri] = this["_axes"][measureUri] || {
-            };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
+                if(undefined == entries[mainIndex][selecDimUri]) {
+                    console.log("Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri);
+                    continue;
+                }
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
                 if(undefined == this["_axes"][selecDimUri]) {
@@ -183,7 +187,7 @@ var Observation = (function () {
         }
     }
     Observation.prototype.sortAxis = function (axisUri, mode) {
-        var mode = "undefined" == System.toType(mode) ? "ascending" : mode;
+        var mode = undefined == mode ? "ascending" : mode;
         var sortedKeys = [];
         var sortedObj = {
         };
@@ -332,7 +336,7 @@ var HighCharts_Chart = (function () {
         var builtTitle = dsdLabel + " - " + dsLabel;
 
         for(var i in oneElementDimensions) {
-            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["property_label"];
+            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
         }
         return builtTitle;
     };
@@ -347,11 +351,11 @@ var HighCharts_Chart = (function () {
 
         this["chartConfig"] = chartConfig;
         this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
-        for(var dimensionLabel in selectedComponentDimensions) {
+        for(var hashedUrl in selectedComponentDimensions) {
             if(null == forXAxis) {
-                forXAxis = selectedComponentDimensions[dimensionLabel]["type"];
+                forXAxis = selectedComponentDimensions[hashedUrl]["typeUrl"];
             } else {
-                forSeries = selectedComponentDimensions[dimensionLabel]["type"];
+                forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
         }
         observation.initialize(entries, selectedComponentDimensions, measureUri);
@@ -359,7 +363,6 @@ var HighCharts_Chart = (function () {
         for(var value in xAxisElements) {
             this["xAxis"]["categories"].push(this.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions));
         }
-        var alreadyNullAdded = false;
         var found = false;
         var i = 0;
         var length = System.countProperties(xAxisElements);
@@ -374,7 +377,7 @@ var HighCharts_Chart = (function () {
                 "data": []
             };
             for(var xAxisEntry in xAxisElements) {
-                found = false , alreadyNullAdded = false;
+                found = false;
                 for(var i in xAxisElements[xAxisEntry]) {
                     for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
                         if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
@@ -403,18 +406,18 @@ var HighCharts_Chart = (function () {
     };
     HighCharts_Chart.extractMeasureValue = function extractMeasureValue(measures) {
         for(var label in measures) {
-            return measures[label]["type"];
+            return measures[label]["typeUrl"];
         }
     }
     HighCharts_Chart.getOneElementDimensions = function getOneElementDimensions(retrievedData, selectedDimensions, measures) {
         var oneElementDimensions = [];
         var tmp = [];
 
-        for(var dimensionLabel in selectedDimensions) {
-            if(1 == selectedDimensions[dimensionLabel]["elements"]["length"]) {
+        for(var hashedUrl in selectedDimensions) {
+            if(1 == selectedDimensions[hashedUrl]["elements"]["length"]) {
                 oneElementDimensions.push({
-                    "dimensionLabel": dimensionLabel,
-                    "elements": selectedDimensions[dimensionLabel]["elements"]
+                    "label": selectedDimensions[hashedUrl]["label"],
+                    "elements": selectedDimensions[hashedUrl]["elements"]
                 });
             }
         }
@@ -424,11 +427,11 @@ var HighCharts_Chart = (function () {
         var multipleDimensions = [];
         var tmp = [];
 
-        for(var dimensionLabel in selectedDimensions) {
-            if(1 < selectedDimensions[dimensionLabel]["elements"]["length"]) {
+        for(var hashedUrl in selectedDimensions) {
+            if(1 < selectedDimensions[hashedUrl]["elements"]["length"]) {
                 multipleDimensions.push({
-                    "dimensionLabel": dimensionLabel,
-                    "elements": selectedDimensions[dimensionLabel]["elements"]
+                    "label": selectedDimensions[hashedUrl]["label"],
+                    "elements": selectedDimensions[hashedUrl]["elements"]
                 });
             }
         }
@@ -448,12 +451,12 @@ var HighCharts_Chart = (function () {
     HighCharts_Chart.prototype.getLabelForPropertyUri = function (propertyUri, dimensionType, selectedDimensions) {
         var dim = {
         };
-        for(var dimensionLabel in selectedDimensions) {
-            dim = selectedDimensions[dimensionLabel];
-            if(dim["type"] == dimensionType) {
+        for(var hashedUrl in selectedDimensions) {
+            dim = selectedDimensions[hashedUrl];
+            if(dim["typeUrl"] == dimensionType) {
                 for(var i in dim["elements"]) {
                     if(dim["elements"][i]["property"] == propertyUri) {
-                        return dim["elements"][i]["property_label"];
+                        return dim["elements"][i]["propertyLabel"];
                     }
                 }
             }
@@ -526,24 +529,31 @@ var HighCharts_Pie = (function (_super) {
         };
     }
     HighCharts_Pie.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {
+        console.log("PIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIE INIT");
         var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
         var measures = cubeVizLinksModule["selectedComponents"]["measures"];
         var multipleDimensions = HighCharts_Chart.getMultipleDimensions(entries, selectedComponentDimensions, measures);
 
+        console.log("multipleDimensions");
+        console.log(multipleDimensions);
         if(1 < multipleDimensions["length"]) {
             System.out("Pie chart is only suitable for one dimension!");
             System.out(multipleDimensions);
             return;
         }
         var data = [];
-        var forXAxis = multipleDimensions[0]["elements"][0]["dimension_type"];
+        var forXAxis = multipleDimensions[0]["elements"][0]["typeUrl"];
         var measureUri = HighCharts_Chart.extractMeasureValue(measures);
         var observation = new Observation();
 
+        console.log("forXAxis");
+        console.log(forXAxis);
         this["chartConfig"] = chartConfig;
         this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
+        console.log("xAxisElements");
+        console.log(xAxisElements);
         data.push({
             "type": "pie",
             name: this["chartConfig"]["title"]["text"],

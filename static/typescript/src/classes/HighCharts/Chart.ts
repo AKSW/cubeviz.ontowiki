@@ -17,7 +17,7 @@ class HighCharts_Chart {
             builtTitle = dsdLabel + " - " + dsLabel;
         
         for ( var i in oneElementDimensions ) {
-            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["property_label"];
+            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
         }
         
         return builtTitle;
@@ -47,11 +47,11 @@ class HighCharts_Chart {
         this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries);        
 
         // assign selected dimensions to xAxis and series (yAxis)
-        for ( var dimensionLabel in selectedComponentDimensions ) {
+        for ( var hashedUrl in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
-                forXAxis = selectedComponentDimensions[dimensionLabel]["type"];
+                forXAxis = selectedComponentDimensions[hashedUrl]["typeUrl"];
             } else {
-                forSeries = selectedComponentDimensions[dimensionLabel]["type"];
+                forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
         }
         
@@ -69,8 +69,7 @@ class HighCharts_Chart {
         }
         
         // now we will care about the series
-        var alreadyNullAdded:bool = false,
-            found:bool = false,
+        var found:bool = false,
             i:number = 0,
             length:number = System.countProperties (xAxisElements),
             obj:Object = {},
@@ -89,7 +88,7 @@ class HighCharts_Chart {
             // iterate over all x axis elements
             for ( var xAxisEntry in xAxisElements ) {
                 
-                found = false, alreadyNullAdded = false;
+                found = false;
                 
                 // check for each entry of the x axis, if one of its entries contains a ref 
                 // to the the given seriesEntry
@@ -141,7 +140,7 @@ class HighCharts_Chart {
      */
     static extractMeasureValue ( measures:Object ) : string {
         // return the first value
-        for ( var label in measures ) { return measures[label]["type"]; }
+        for ( var label in measures ) { return measures[label]["typeUrl"]; }
     }
         
     /**
@@ -154,13 +153,13 @@ class HighCharts_Chart {
         var oneElementDimensions:Object[] = [],
             tmp:Object[] = [];
             
-        for ( var dimensionLabel in selectedDimensions ) {
+        for ( var hashedUrl in selectedDimensions ) {
                         
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 == selectedDimensions [dimensionLabel] ["elements"]["length"] ) {
+            if ( 1 == selectedDimensions [hashedUrl] ["elements"]["length"] ) {
                 oneElementDimensions.push ( {
-                    "dimensionLabel" : dimensionLabel,
-                    "elements" : selectedDimensions [dimensionLabel] ["elements"] 
+                    "label" : selectedDimensions [hashedUrl]["label"],
+                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
                 } ); 
             }
         }
@@ -177,14 +176,15 @@ class HighCharts_Chart {
         // assign selected dimensions to xAxis and series (yAxis)
         var multipleDimensions:Object[] = [],
             tmp:Object[] = [];
-            
-        for ( var dimensionLabel in selectedDimensions ) {
+        
+        for ( var hashedUrl in selectedDimensions ) {
                         
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 < selectedDimensions [dimensionLabel] ["elements"]["length"] ) {
+            if ( 1 < selectedDimensions [hashedUrl] ["elements"]["length"] ) {
+                
                 multipleDimensions.push ( {
-                    "dimensionLabel" : dimensionLabel,
-                    "elements" : selectedDimensions [dimensionLabel] ["elements"] 
+                    "label" : selectedDimensions [hashedUrl]["label"],
+                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
                 } ); 
             }
         }
@@ -223,16 +223,16 @@ class HighCharts_Chart {
     public getLabelForPropertyUri ( propertyUri:string, dimensionType:string, selectedDimensions:Object[] ) : string {
         var dim:Object = {};
                 
-        for ( var dimensionLabel in selectedDimensions ) {
+        for ( var hashedUrl in selectedDimensions ) {
             
-            dim = selectedDimensions[dimensionLabel];
+            dim = selectedDimensions[hashedUrl];
             
             // Stop if the given dimension was found (by type)
-            if ( dim["type"] == dimensionType ) {
+            if ( dim["typeUrl"] == dimensionType ) {
                 
                 for ( var i in dim["elements"] ) {
                     if ( dim["elements"][i]["property"] == propertyUri ) {
-                        return dim["elements"][i]["property_label"];
+                        return dim["elements"][i]["propertyLabel"];
                     }
                 }
             }

@@ -89,45 +89,44 @@ class Module_Main {
     /**
      * Build dialog to select / unselect certain elements
      */
-    static buildDimensionDialog ( dimensionLabel:string, dimensionType:string, dimensionUrl:string, 
+    static buildDimensionDialog ( hashedUrl:string, label:string, typeUrl:string, url:string, 
                                    componentDimensionElements:any ) {
-                 
+                                  
         // Prepare jsontemplate
         var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
 
         // Sorting the list of to be shown elements alphabetically
         componentDimensionElements.sort(function (a, b){
-            a = a["property_label"].toUpperCase();         
-            b = b["property_label"].toUpperCase();         
+            a = a["propertyLabel"].toUpperCase();         
+            b = b["propertyLabel"].toUpperCase();         
             return a < b ? -1 : (a > b ? 1 : 0 );
         });
         
         // fill template placeholders with data
         $("#dimensionDialogContainer").html ( tpl.expand({ 
-            "dimensionLabel": dimensionLabel,
-            "dimensionType": dimensionType,
-            "dimensionUrl": dimensionUrl,
+            "hashedUrl": hashedUrl, "label": label, "typeUrl": typeUrl, "url": url,
             "list": componentDimensionElements
         }));
         
         // collect urls of all selected component dimensions
-        var elements = CubeViz_Links_Module ["selectedComponents"]["dimensions"] [dimensionLabel]["elements"],
+        var elements = CubeViz_Links_Module ["selectedComponents"]["dimensions"][hashedUrl]["elements"],
             selectedDimensionUrls:string[] = []; 
+            
         for ( var index in elements ) {
-            selectedDimensionUrls.push ( elements [index].property );
+            selectedDimensionUrls.push ( elements [index]["property"] );
         }
         
         // go through the list of checkboxes and select one if its a the previously 
         // selected component dimension
-        $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
-            if ( 0 <= $.inArray ( $(ele).attr ("value").toString (), selectedDimensionUrls ) ) {
-                $(ele).attr ("checked", "checked" );
+        elements = $(".dialog-checkbox-" + hashedUrl);
+        var length = elements ["length"];
+        
+        for ( var i = 0; i < length; ++i) {
+            
+            if ( 0 <= $.inArray ( $(elements[i]).attr("value").toString (), selectedDimensionUrls ) ) {
+                $(elements[i]).attr ("checked", "checked" );
             }
-        });
-        
-        // if rendering is complete, fade in the dialog
-        $("#dimensionDialogContainer").fadeIn (1000);
-        
+        }
     }
     
     /**

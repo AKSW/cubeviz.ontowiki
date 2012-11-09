@@ -24,7 +24,7 @@ var Component = (function () {
         var tmpEntries = {
         };
         for(var i in entries) {
-            tmpEntries[entries[i]["label"]] = entries[i];
+            tmpEntries[entries[i]["hashedUrl"]] = entries[i];
         }
         callback(tmpEntries);
     }
@@ -52,7 +52,7 @@ var Component = (function () {
         var tmpEntries = {
         };
         for(var i in entries) {
-            tmpEntries[entries[i]["label"]] = entries[i];
+            tmpEntries[entries[i]["hashedUrl"]] = entries[i];
         }
         callback(tmpEntries);
     }
@@ -60,10 +60,10 @@ var Component = (function () {
         componentDimensions = System.deepCopy(componentDimensions);
         var result = {
         };
-        for(var dimensionLabel in componentDimensions) {
-            result[dimensionLabel] = componentDimensions[dimensionLabel];
-            result[dimensionLabel]["elements"] = [
-                result[dimensionLabel].elements[0]
+        for(var dimensionHashedUrl in componentDimensions) {
+            result[dimensionHashedUrl] = componentDimensions[dimensionHashedUrl];
+            result[dimensionHashedUrl]["elements"] = [
+                result[dimensionHashedUrl].elements[0]
             ];
         }
         return result;
@@ -156,7 +156,7 @@ var Observation = (function () {
     Observation.prototype.extractSelectedDimensionUris = function (elements) {
         var resultList = [];
         for(var i in elements) {
-            resultList.push(elements[i]["type"]);
+            resultList.push(elements[i]["typeUrl"]);
         }
         return resultList;
     };
@@ -182,16 +182,20 @@ var Observation = (function () {
         var selecDimUri = "";
         var selecDimVal = "";
 
+        this["_axes"][measureUri] = this["_axes"][measureUri] || {
+        };
         for(var mainIndex in entries) {
             dimensionValues = {
             };
             measureObj = {
             };
-            this["_axes"][measureUri] = this["_axes"][measureUri] || {
-            };
             this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
+                if(undefined == entries[mainIndex][selecDimUri]) {
+                    console.log("Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri);
+                    continue;
+                }
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
                 if(undefined == this["_axes"][selecDimUri]) {
@@ -231,7 +235,7 @@ var Observation = (function () {
         }
     }
     Observation.prototype.sortAxis = function (axisUri, mode) {
-        var mode = "undefined" == System.toType(mode) ? "ascending" : mode;
+        var mode = undefined == mode ? "ascending" : mode;
         var sortedKeys = [];
         var sortedObj = {
         };
@@ -382,37 +386,42 @@ var Module_Event = (function () {
         if("undefined" != System.toType(Viz_Main)) {
             Viz_Main.closeChartSelectionMenu();
         }
-        var dimensionLabel = $(this).attr("dimensionLabel").toString();
-        var dimensionType = $(this).attr("dimensionType").toString();
-        var dimensionUrl = $(this).attr("dimensionUrl").toString();
-        Module_Main.buildDimensionDialog(dimensionLabel, dimensionType, dimensionUrl, CubeViz_Links_Module.components["dimensions"][dimensionLabel]["elements"]);
-        Module_Event.setupDialogSelectorCloseButton(dimensionLabel);
+        var label = $(this).attr("label").toString();
+        var hashedUrl = $(this).attr("hashedUrl").toString();
+        var typeUrl = $(this).attr("typeUrl").toString();
+        var url = $(this).attr("url").toString();
+
+        Module_Main.buildDimensionDialog(hashedUrl, label, typeUrl, url, CubeViz_Links_Module["components"]["dimensions"][hashedUrl]["elements"]);
+        $("#dimensionDialogContainer").fadeIn(1000);
+        $("#dialog-btn-close-" + hashedUrl).click(Module_Event.onClick_DialogSelectorCloseButton);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
         Module_Main.showSidebarLoader();
         Module_Main.addEntryFromSidebarLeftQueue("onClick_DialogSelectorCloseButton");
         var elements = [];
-        var dimensionLabel = $(this).attr("dimensionLabel").toString();
-        var dimensionType = $(this).attr("dimensionType").toString();
-        var dimensionUrl = $(this).attr("dimensionUrl").toString();
+        var hashedUrl = $(this).attr("hashedUrl").toString();
+        var label = $(this).attr("label").toString();
+        var typeUrl = $(this).attr("typeUrl").toString();
+        var url = $(this).attr("url").toString();
         var property = "";
         var propertyLabel = "";
 
-        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = [];
-        $(".dialog-checkbox-" + dimensionLabel).each(function (i, ele) {
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"] = [];
+        $(".dialog-checkbox-" + hashedUrl).each(function (i, ele) {
             if("checked" == $(ele).attr("checked")) {
                 property = $(ele).attr("property");
                 propertyLabel = $(ele).attr("propertyLabel");
                 elements.push({
                     "property": property,
-                    "property_label": propertyLabel,
-                    "dimension_label": dimensionLabel,
-                    "dimension_type": dimensionType,
-                    "dimension_url": dimensionUrl
+                    "propertyLabel": propertyLabel,
+                    "hashedUrl": hashedUrl,
+                    "label": label,
+                    "typeUrl": typeUrl,
+                    "url": url
                 });
             }
         });
-        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"] = elements;
         ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
         $("#dimensionDialogContainer").fadeOut(500).html("");
         Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
@@ -514,7 +523,7 @@ var Module_Event = (function () {
             System.out("no data sets were loaded");
         } else {
             if(1 <= dataSets["length"]) {
-                if(undefined == CubeViz_Links_Module["selectedDS"]["url"]) {
+                if(undefined == CubeViz_Links_Module["selectedDS"] || undefined == CubeViz_Links_Module["selectedDS"]["url"]) {
                     CubeViz_Links_Module["selectedDS"] = dataSets[0];
                 }
                 Module_Main.buildDataSetBox(dataSets, CubeViz_Links_Module["selectedDS"]["url"]);
@@ -547,9 +556,6 @@ var Module_Event = (function () {
     }
     Module_Event.setupDialogSelector = function setupDialogSelector() {
         $(".open-dialog-selector").click(Module_Event.onClick_DialogSelector);
-    }
-    Module_Event.setupDialogSelectorCloseButton = function setupDialogSelectorCloseButton(dimensionLabel) {
-        $("#dialog-btn-close-" + dimensionLabel).click(Module_Event.onClick_DialogSelectorCloseButton);
     }
     return Module_Event;
 })();
@@ -605,31 +611,33 @@ var Module_Main = (function () {
             $("#sidebar-left-data-selection-strc").append(entry);
         }
     }
-    Module_Main.buildDimensionDialog = function buildDimensionDialog(dimensionLabel, dimensionType, dimensionUrl, componentDimensionElements) {
+    Module_Main.buildDimensionDialog = function buildDimensionDialog(hashedUrl, label, typeUrl, url, componentDimensionElements) {
         var tpl = jsontemplate.Template(CubeViz_Dialog_Template);
         componentDimensionElements.sort(function (a, b) {
-            a = a["property_label"].toUpperCase();
-            b = b["property_label"].toUpperCase();
+            a = a["propertyLabel"].toUpperCase();
+            b = b["propertyLabel"].toUpperCase();
             return a < b ? -1 : (a > b ? 1 : 0);
         });
         $("#dimensionDialogContainer").html(tpl.expand({
-            "dimensionLabel": dimensionLabel,
-            "dimensionType": dimensionType,
-            "dimensionUrl": dimensionUrl,
+            "hashedUrl": hashedUrl,
+            "label": label,
+            "typeUrl": typeUrl,
+            "url": url,
             "list": componentDimensionElements
         }));
-        var elements = CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"];
+        var elements = CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"];
         var selectedDimensionUrls = [];
 
         for(var index in elements) {
-            selectedDimensionUrls.push(elements[index].property);
+            selectedDimensionUrls.push(elements[index]["property"]);
         }
-        $(".dialog-checkbox-" + dimensionLabel).each(function (i, ele) {
-            if(0 <= $.inArray($(ele).attr("value").toString(), selectedDimensionUrls)) {
-                $(ele).attr("checked", "checked");
+        elements = $(".dialog-checkbox-" + hashedUrl);
+        var length = elements["length"];
+        for(var i = 0; i < length; ++i) {
+            if(0 <= $.inArray($(elements[i]).attr("value").toString(), selectedDimensionUrls)) {
+                $(elements[i]).attr("checked", "checked");
             }
-        });
-        $("#dimensionDialogContainer").fadeIn(1000);
+        }
     }
     Module_Main.hideSidebarLoader = function hideSidebarLoader() {
         if(0 == tmpCubeVizLeftSidebarLeftQueue["length"]) {

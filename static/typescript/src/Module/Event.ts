@@ -96,24 +96,29 @@ class Module_Event {
         }
                 
         // get dimension from clicked dialog selector
-        var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString ();
-        var dimensionType:string = $(this).attr ( "dimensionType" ).toString ();
-        var dimensionUrl:string = $(this).attr ( "dimensionUrl" ).toString ();
+        var label:string       = $(this).attr("label").toString (),
+            hashedUrl:string   = $(this).attr("hashedUrl").toString (),
+            typeUrl:string     = $(this).attr("typeUrl").toString (),
+            url:string         = $(this).attr("url").toString ();
         
         // 
-        Module_Main.buildDimensionDialog (
-            dimensionLabel, // label of current dimension            
-            dimensionType, // type of current dimension            
-            dimensionUrl, // url of current dimension
+        Module_Main.buildDimensionDialog (        
+            hashedUrl, // label of current dimension
+            label, // hashed url of current dimension
+            typeUrl, // type url of current dimension            
+            url, // url of current dimension
             
             // component->dimension->elements to build a list with checkboxes to select / unselect
-            CubeViz_Links_Module.components ["dimensions"][dimensionLabel]["elements"] 
+            CubeViz_Links_Module ["components"]["dimensions"][hashedUrl]["elements"] 
         );
         
+        // if rendering is complete, fade in the dialog
+        $("#dimensionDialogContainer").fadeIn (1000);
+        
         /**
-         * Setup dialog selector close button ( id="dialog-btn-close-{dimension}" )
+         * Setup dialog selector close button
          */
-        Module_Event.setupDialogSelectorCloseButton (dimensionLabel);
+        $("#dialog-btn-close-" + hashedUrl).click (Module_Event.onClick_DialogSelectorCloseButton);
     }
      
     /**
@@ -129,9 +134,10 @@ class Module_Event {
         
         // get dimension information from clicked close button
         // fixed
-        var dimensionLabel:string = $(this).attr ( "dimensionLabel" ).toString (), 
-            dimensionType:string = $(this).attr ( "dimensionType" ).toString (),
-            dimensionUrl:string = $(this).attr ( "dimensionUrl" ).toString (),
+        var hashedUrl:string   = $(this).attr("hashedUrl").toString (),
+            label:string       = $(this).attr("label").toString (), 
+            typeUrl:string        = $(this).attr("typeUrl").toString (),
+            url:string         = $(this).attr("url").toString (),
             
         // dynamic
             property:string = "",
@@ -142,27 +148,24 @@ class Module_Event {
          */
         
         // empty elements list of current dimension
-        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = [];
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"] = [];
         
         // get dimensionUrl's over checked checkboxes
-        $(".dialog-checkbox-" + dimensionLabel).each (function(i, ele) {
+        $(".dialog-checkbox-" + hashedUrl).each (function(i, ele) {
             if ( "checked" == $(ele).attr ("checked") ) {
                 
                 property = $(ele).attr ("property");
                 propertyLabel = $(ele).attr ("propertyLabel");
                 
                 elements.push ({ 
-                    "property": property,
-                    "property_label": propertyLabel,
-                    "dimension_label": dimensionLabel,
-                    "dimension_type": dimensionType,
-                    "dimension_url": dimensionUrl
+                    "property": property, "propertyLabel": propertyLabel,
+                    "hashedUrl": hashedUrl, "label": label, "typeUrl": typeUrl, "url": url
                 });
             }
         });
         
         // save new dimensional elements list
-        CubeViz_Links_Module["selectedComponents"]["dimensions"][dimensionLabel]["elements"] = elements;
+        CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"] = elements;
         
         // take neccessary javascript objects and put them into configuration file on the server
         ConfigurationLink.saveToServerFile ( 
@@ -361,7 +364,7 @@ class Module_Event {
         Module_Main.resetModuleParts ();
         
         // set new selected data structure definition
-        CubeViz_Links_Module ["selectedDSD"] = { "label": dsdLabel, "url": dsdUrl};
+        CubeViz_Links_Module ["selectedDSD"] = {"label": dsdLabel, "url": dsdUrl};
         
         // re-load data set box
         DataSet.loadAll ( dsdUrl, Module_Event.onComplete_LoadDataSets );
@@ -416,7 +419,8 @@ class Module_Event {
             
             // if selected data set url is not set, than use the first element of the previously loaded 
             // entries instead
-            if ( undefined == CubeViz_Links_Module ["selectedDS"]["url"] ) {
+            if ( undefined == CubeViz_Links_Module ["selectedDS"] || 
+                 undefined == CubeViz_Links_Module ["selectedDS"]["url"] ) {
                 CubeViz_Links_Module["selectedDS"] = dataSets [0];
             }
             
@@ -499,14 +503,5 @@ class Module_Event {
         
         // set event for onChange
         $(".open-dialog-selector").click (Module_Event.onClick_DialogSelector);
-    }
-    
-    /**
-     * 
-     */
-    static setupDialogSelectorCloseButton (dimensionLabel:string) {
-        
-        // set event for onChange
-        $("#dialog-btn-close-" + dimensionLabel ).click (Module_Event.onClick_DialogSelectorCloseButton);
     }
 }

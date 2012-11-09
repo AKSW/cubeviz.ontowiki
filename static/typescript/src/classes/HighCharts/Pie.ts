@@ -24,7 +24,7 @@ class HighCharts_Pie extends HighCharts_Chart {
             measures = cubeVizLinksModule ["selectedComponents"]["measures"],
             multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
                 entries, selectedComponentDimensions, measures
-            );            
+            );
             
         // stop execution, if it contains more than one entry
         if ( 1 < multipleDimensions ["length"] ) {
@@ -34,7 +34,7 @@ class HighCharts_Pie extends HighCharts_Chart {
         }
         
         var data = [],
-            forXAxis = multipleDimensions [0]["elements"][0]["dimension_type"],
+            forXAxis = multipleDimensions [0]["elements"][0]["typeUrl"],
             measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
             observation = new Observation (); 
         
@@ -51,7 +51,7 @@ class HighCharts_Pie extends HighCharts_Chart {
         var xAxisElements = observation
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
-        
+            
         data.push ({ "type": "pie", name: this ["chartConfig"]["title"]["text"], "data": [] });
                     
         for ( var value in xAxisElements ) {

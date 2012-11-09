@@ -38,7 +38,7 @@ class Observation {
     private extractSelectedDimensionUris ( elements:Object[] ) : string[] {
         var resultList:string[] = [];        
         for ( var i in elements ) {
-            resultList.push ( elements [i]["type"] );
+            resultList.push ( elements [i]["typeUrl"] );
         }
         return resultList;
     }
@@ -72,25 +72,27 @@ class Observation {
         
         var dimensionValues = {}, measureObj = {}, selecDimUri = "", selecDimVal = "";
         
+        // if the measureUri element or sub one is not set, set default values
+        this["_axes"][measureUri] = this["_axes"][measureUri] || {};
+        
         // create an array for each selected dimension uri and save given values
         for ( var mainIndex in entries ) {        
             
             /**
              * e.g. 
-             *  [ "http:// ... /country" ] = "Germany"
-             *  [ "http:// ... /country" ] = "England"
-             *  ...
+             *  {
+             *      "http:// ... /country": "Germany",
+             *      "http:// ... /country": "England",
+             *      ...
+             *  }
              */
             dimensionValues = {};
             
             // e.g. ["http:// ... /value"] = "0.9";
             measureObj = {};  
             
-            // if the measureUri element or sub one is not set, set default values
-            this["_axes"][measureUri] = this["_axes"][measureUri] || {};
-            
-            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = 
-                this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
+            this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] = 
+                this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] || [];
               
             // generate temporary list of selected dimension values in the current entry
             for ( var i in this["_selectedDimensionUris"] ) {
@@ -98,18 +100,23 @@ class Observation {
                 // save current selected dimension, to save space
                 selecDimUri = this["_selectedDimensionUris"][i];
                 
+                if (undefined == entries[mainIndex][selecDimUri]) {
+                    console.log ( "Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri );
+                    continue;
+                }
+                
                 selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
                 // e.g. ["_axes"]["http:// ... /country"] = {};
                 if ( undefined == this ["_axes"] [selecDimUri] ) {
-                    this ["_axes"] [selecDimUri] = {};
+                    this ["_axes"][selecDimUri] = {};
                 }
                     
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
                 if ( undefined == this ["_axes"] [selecDimUri][selecDimVal] ) {
-                    this ["_axes"] [selecDimUri][selecDimVal] = [];
+                    this ["_axes"][selecDimUri][selecDimVal] = [];
                 }
                 
                 measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
@@ -164,10 +171,10 @@ class Observation {
     }
 
     /**
-     * @param mode Possible values: ascending, descending
+     * @param mode Possible values: ascending (default), descending
      */
     public sortAxis ( axisUri:string, mode?:string ) : Observation {
-        var mode = "undefined" == System.toType ( mode ) ? "ascending" : mode,
+        var mode = undefined == mode ? "ascending" : mode,
             sortedKeys = [], sortedObj = {};
 
         // Separate keys and sort them

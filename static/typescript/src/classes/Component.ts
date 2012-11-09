@@ -45,7 +45,7 @@ class Component {
         // 
         for ( var i in entries ) {            
             // establish a new structure where the key is the label of the dimension
-            tmpEntries [ entries [i] ["label"] ] = entries [i];
+            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
         }
         
         // call callback function with prepared entries
@@ -92,7 +92,7 @@ class Component {
         // 
         for ( var i in entries ) {            
             // establish a new structure where the key is the label of the dimension
-            tmpEntries [ entries [i] ["label"] ] = entries [i];
+            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
         }
         
         // call callback function with prepared entries
@@ -108,11 +108,11 @@ class Component {
         
         var result:Object = {};
     
-        for ( var dimensionLabel in componentDimensions ) {
+        for ( var dimensionHashedUrl in componentDimensions ) {
             
-            result [dimensionLabel] = componentDimensions [dimensionLabel];
+            result [dimensionHashedUrl] = componentDimensions [dimensionHashedUrl];
             
-            result [dimensionLabel]["elements"] = [ result [dimensionLabel].elements [0] ];
+            result [dimensionHashedUrl]["elements"] = [ result [dimensionHashedUrl].elements [0] ];
         }
         
         return result;
