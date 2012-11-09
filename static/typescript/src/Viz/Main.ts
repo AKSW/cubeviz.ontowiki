@@ -65,4 +65,21 @@ class Viz_Main {
         // show chart
         new Highcharts.Chart(chart.getRenderResult());
     }
+    
+    /**
+     * 
+     */
+    static showLoadingNotification () : void {
+        
+        var img = $("<img/>");
+            img.attr ( "src", CubeViz_Config ["imagesPath"] + "loader.gif" );
+            
+        img = $("<div id=\"loadingNotification\"></div>")
+                .append ( img )
+                .append ( "&nbsp; Loading ..." );
+        
+        $("#container")
+            .html ("")
+            .append (img);        
+    }
 }

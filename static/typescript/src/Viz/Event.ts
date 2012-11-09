@@ -20,6 +20,13 @@ var CubeViz_Data = CubeViz_Data || {
 // Templates
 var ChartSelector_Array = ChartSelector_Array || {};
 
+/**
+ * Event section
+ */
+$(document).ready(function(){
+    Viz_Main.showLoadingNotification ();
+});
+
 class Viz_Event {
     /**
      * After document is ready

@@ -529,13 +529,10 @@ var HighCharts_Pie = (function (_super) {
         };
     }
     HighCharts_Pie.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {
-        console.log("PIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIE INIT");
         var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
         var measures = cubeVizLinksModule["selectedComponents"]["measures"];
         var multipleDimensions = HighCharts_Chart.getMultipleDimensions(entries, selectedComponentDimensions, measures);
 
-        console.log("multipleDimensions");
-        console.log(multipleDimensions);
         if(1 < multipleDimensions["length"]) {
             System.out("Pie chart is only suitable for one dimension!");
             System.out(multipleDimensions);
@@ -546,14 +543,10 @@ var HighCharts_Pie = (function (_super) {
         var measureUri = HighCharts_Chart.extractMeasureValue(measures);
         var observation = new Observation();
 
-        console.log("forXAxis");
-        console.log(forXAxis);
         this["chartConfig"] = chartConfig;
         this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
-        console.log("xAxisElements");
-        console.log(xAxisElements);
         data.push({
             "type": "pie",
             name: this["chartConfig"]["title"]["text"],
@@ -608,6 +601,9 @@ var CubeViz_Data = CubeViz_Data || {
 };
 var ChartSelector_Array = ChartSelector_Array || {
 };
+$(document).ready(function () {
+    Viz_Main.showLoadingNotification();
+});
 var Viz_Event = (function () {
     function Viz_Event() { }
     Viz_Event.ready = function ready() {
@@ -696,6 +692,12 @@ var Viz_Main = (function () {
         var chart = HighCharts.loadChart(className);
         chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module, fromChartConfig["defaultConfig"]);
         new Highcharts.Chart(chart.getRenderResult());
+    }
+    Viz_Main.showLoadingNotification = function showLoadingNotification() {
+        var img = $("<img/>");
+        img.attr("src", CubeViz_Config["imagesPath"] + "loader.gif");
+        img = $("<div id=\"loadingNotification\"></div>").append(img).append("&nbsp; Loading ...");
+        $("#container").html("").append(img);
     }
     return Viz_Main;
 })();

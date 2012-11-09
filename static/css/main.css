@@ -558,3 +558,10 @@
 	border-radius: 0px 0px 5px 5px;
 	-moz-border-radius: 0px 0px 5px 5px;
 }
+
+#loadingNotification {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    margin-top: 20%;
+}
