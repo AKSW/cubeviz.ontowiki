@@ -434,7 +434,7 @@ var Module_Event = (function () {
             }, 400, "linear", function () {
                 var position = $("#permaLinkButton").position();
                 $("#permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
-                var link = CubeViz_Links_Module["cubevizPath"] + "?m=" + CubeViz_Links_Module["modelUrl"] + "&lC=" + CubeViz_Links_Module["linkCode"];
+                var link = CubeViz_Links_Module["cubevizPath"] + "?m=" + encodeURIComponent(CubeViz_Links_Module["modelUrl"]) + "&lC=" + CubeViz_Links_Module["linkCode"];
                 var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#permaLink").html());
                 $("#permaLinkMenu").animate({
                     width: 'toggle'

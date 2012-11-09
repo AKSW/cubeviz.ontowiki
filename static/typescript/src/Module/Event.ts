@@ -210,7 +210,7 @@ class Module_Event {
                             
                         // build link to show later on
                         var link = CubeViz_Links_Module ["cubevizPath"] 
-                                   + "?m=" + CubeViz_Links_Module ["modelUrl"]
+                                   + "?m=" + encodeURIComponent (CubeViz_Links_Module ["modelUrl"])
                                    + "&lC=" + CubeViz_Links_Module ["linkCode"];
                             
                         var url = $("<a></a>")
