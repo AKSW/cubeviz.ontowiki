@@ -20,83 +20,95 @@ class CubevizController extends OntoWiki_Controller_Component {
      */
     public function indexAction () {
         
+        // In case no model was selected, it redirect to the root url of OntoWiki
+        if ( null == $this->_owApp->selectedModel ) {
+            $this->_helper->redirector->gotoUrl('');
+        }
+        
         // fill title-field
         $this->view->placeholder('main.window.title')->set('Visualization for '. $this->_owApp->selectedModel );
         
+        // disable OntoWiki's Navigation
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation ();
         
 		// set URL for cubeviz extension folder
-		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
-        $this->view->cubevizPath = $cubeVizExtensionURL_controller;
-        // send backend information to the view
-        $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
-        $this->view->backend = $ontowikiBackend;
+        $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
+        		
+        // set base url paths to extension root and images folder
+		$this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
 		
-		$this->view->basePath = $this->_config->staticUrlBase . "extensions/cubeviz/";
-		$this->view->basePath_images = $this->_config->staticUrlBase . "extensions/cubeviz/static/images/";
-		
-		//endpoint is local now!
-		$sparqlEndpoint = "local";
-		$this->view->sparqlEndpoint = json_encode($sparqlEndpoint);
-		
-		//model
+		// send backend information to the view
+        $this->view->backend = $this->_owApp->getConfig()->store->backend;
+				
+		// model
 		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
-		//linkCode
-		$linkCode = $this->_request->getParam ("lC");
-		if(NULL == $linkCode) {
-			$linkCode = "default";
-		}
-		$this->view->linkCode = $linkCode;
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
-		$configuration->initFromLink($linkCode);		
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        
+		// load configuration which is associated with given linkCode
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);
 		
-		$this->view->links = json_encode($configuration->getLinks());
-											
-		// TODO: get backend from OntoWiki config
-		$this->view->backend = "virtuoso";
+        // check folder permissions
+        // throws an exception if not enough folder permissions
+        $configuration->checkFolderPermissions ();
+        
+        $configuration = $configuration->read ($this->view->linkCode);
+        if (true == isset ($configuration [0])) {
+            $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
+            $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
+        } else {
+            $this->view->linkConfiguration = '{
+                "backend": "'. $this->view->backend .'",
+                "components": {},
+                "selectedDSD": {},
+                "selectedDS": {},
+                "selectedComponents": {"dimensions": {}, "measures": {}}
+            }';
+            $this->view->cubeVizUIChartConfig = 'null';
+        }
 	}
 	
-	public function getparametersfromlinkAction() {
+	public function getdatafromlinkcodeAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();     
 		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$graphUrl = $this->_request->getParam ('m');
-		$linkCode = $this->_request->getParam('lC');
-		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
+        // load configuration which is associated with given linkCode
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+        $configuration = $configuration->read ($this->_request->getParam('lC'));
 				
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
-		$configuration->initFromLink($linkCode);
-		$links = $configuration->getLinks();
-				
-		$this->_response->setBody(json_encode($links[$linkCode]));	
+        // send back readed configuration
+        // $configuration [0] contains stuff e.g. selectedDSD, ...
+        //                [1] contains UI chart config information
+		$this->_response->setBody(json_encode($configuration));	
 	}
 	
-	public function getresultobservationsAction() {
-		$this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();        
+	public function getobservationsAction() {
 		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$graphUrl = $this->_request->getParam ('m');
-		$linkCode = $this->_request->getParam('lC');
-		$sparqlEndpoint = $this->_request->getParam('sparqlEndpoint');
-				
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
-		$configuration->initFromLink($linkCode);
-		$links = $configuration->getLinks();
-						
-		$query = new DataCube_Query($model);
-		
-		$dimensions = $links[$linkCode]['selectedDimensions'];
-		$dimensionComponents = $links[$linkCode]['selectedDimensionComponents'];
-		$graphUrl = $links[$linkCode]['selectedGraph'];
-		$dataSetUrl = $links[$linkCode]['selectedDS']['url'];		
-			
-		$resultObservations = $query->getObservations($graphUrl, $dimensionComponents, $dataSetUrl);	
-		$this->_response->setBody($resultObservations);
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
+        // load configuration which is associated with given linkCode
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);        	
+        
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        $linkConfiguration = array ();
+        
+		$configuration = $configuration->read ($linkCode);
+        if (true == isset ($configuration [0])) {
+            $linkConfiguration = json_decode ( $configuration [0], true ); // contains stuff e.g. selectedDSD, ...
+        }
+        				
+        // init Query and model
+		$query = new DataCube_Query ( $this->_owApp->selectedModel );
+                
+        
+        // ... get and return observations
+		$this->_response->setBody($query->getObservations($linkConfiguration));
 	}
     
     /**
@@ -110,7 +122,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		$query = new DataCube_Query($model);
 				
-        $this->_response->setBody(json_encode($query->getDataStructureDefinition()));
+        $this->_response->setBody(json_encode($query->getDataStructureDefinitions()));
 	}
 	
 	/**
@@ -124,8 +136,12 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 						
 		$query = new DataCube_Query($model);
-						
-        $this->_response->setBody(json_encode($query->getDataSets($dsdUrl)));
+
+        $this->_response
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
+            ->setBody(json_encode($query->getDataSets($dsdUrl)));
 	}
 	
 	/**
@@ -138,13 +154,17 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
 		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
 		$dsUrl = $this->_request->getParam('dsUrl'); // Data Set
-		$componentType = $this->_request->getParam('cT'); // can be  DataCube_UriOf::Dimension or DataCube_UriOf::Measure
+		$componentType = $this->_request->getParam('cT'); // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
 				
 		if($componentType == "measure") {
 			$componentType = DataCube_UriOf::Measure;
 		} else if($componentType == "dimension") {
 			$componentType = DataCube_UriOf::Dimension;
-		}
+		} else {
+            // stop execution, because it is not a $componentType that i understand
+            $this->_response->setBody("Unknown cT parameter! Given was: " . $componentType);
+            return;
+        }
 		
 		$query = new DataCube_Query($model);
 				
@@ -159,64 +179,17 @@ class CubevizController extends OntoWiki_Controller_Component {
 	/**
 	 * 
 	 */
-	public function getalldimensionselementsAction() {
-		$this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
-		$dimensions = json_decode($this->_request->getParam('dimensions'), true); // Data Structure Definition
-		
-		$query = new DataCube_Query($model);
-		$result = array();
-		
-		$dimensions_length = sizeof($dimensions["dimensions"]);
-		for($i = 0; $i < $dimensions_length; $i++) {
-			$dim_cur = $dimensions["dimensions"][$i];
-			$result[$dim_cur["label"]] = $query->getComponentElements($dsUrl, $dim_cur["type"]);
-		}		
-		       
-        $this->_response->setBody(json_encode($result));
-	}
-	
-	/**
-	 * 
-	 */
 	public function savelinktofileAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 		
-		//$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		//$dsUrl = $this->_request->getParam('dsUrl'); // Data Structure Definition
-		//$dimensions = json_decode($this->_request->getParam('dimensions'), true); // Data Structure Definition
-		$config['sparqlEndpoint'] = $this->_request->getParam('sparqlEndpoint');
-		$config['selectedGraph'] = $this->_request->getParam('modelUrl');
-		$config['selectedDSD'] = $this->_request->getParam('selectedDSD');
-		$config['selectedDS'] = $this->_request->getParam('selectedDS');
-		$config['selectedMeasures'] = $this->_request->getParam('selectedMeasures');
-		$config['selectedDimensions'] = $this->_request->getParam('selectedDimensions');
-		$config['selectedDimensionComponents'] = $this->_request->getParam('selectedDimensionComponents');
-		$config['selectedChartType'] = $this->_request->getParam('selectedChartType');
+        // Save parameter
+		$config['cubeVizLinksModule'] = $this->_request->getParam('cubeVizLinksModule');
+		$config['uiChartConfig'] = $this->_request->getParam('uiChartConfig');
 		
-		$sparqlEndpoint = json_decode($config['sparqlEndpoint']);
-		if(NULL === $sparqlEndpoint) {
-			$sparqlEndpoint = "local";
-		}
-		
-		$model = json_decode($config['selectedGraph']);
-		
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $model);
-		$result = $configuration->writeToFile($config);
-		
-		/*
-		$query = new DataCube_Query($model);
-		$result = array();
-		
-		$dimensions_length = sizeof($dimensions["dimensions"]);
-		for($i = 0; $i < $dimensions_length; $i++) {
-			$dim_cur = $dimensions["dimensions"][$i];
-			$result[$dim_cur["label"]] = $query->getComponentElements($dsUrl, $dim_cur["type"]);
-		}		*/      
-        $this->_response->setBody(json_encode($result));
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+        
+        // write given parameter to file and send back result
+		$this->_response->setBody(json_encode($configuration->write($config)));
 	}
 }

@@ -26,17 +26,20 @@ class CubevizModule extends OntoWiki_Module
 	}
 
     public function getTitle() {
-        return "Data Selection";
+        return 'Data Selection';
     }
     
     public function shouldShow(){
-		//show only for http://data.lod2.eu/scoreboard/
-		$scoreboard = "http://data.lod2.eu/scoreboard/";
-		if (isset($this->_owApp->selectedModel)) {
-            return true;
-        } else {
-            return false;
-        }
+        
+        /**
+         * Check if the current selected knowledgebase contains datacube information
+         */
+		if (true == isset($this->_owApp->selectedModel)) {
+            $q = new DataCube_Query ( $this->_owApp->selectedModel );
+            return $q->containsDataCubeInformation();
+        } 
+        
+        return false;
     }
 
     /**
@@ -45,39 +48,47 @@ class CubevizModule extends OntoWiki_Module
     public function getContents() {
 
 		// set URL for cubeviz extension folder
-		$cubeVizExtensionURL_controller = $this->_config->staticUrlBase . "cubeviz/";
-        $this->view->cubevizPath = $cubeVizExtensionURL_controller;
+        $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
+        $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
+        
         // send backend information to the view
-        $ontowikiBackend = $this->_owApp->getConfig()->store->backend;
-        $this->view->backend = $ontowikiBackend;
-		
-		//endpoint is local now!
-		$sparqlEndpoint = "local";
-		
-		//model
-		$this->view->modelUrl =  $this->_owApp->selectedModel;
+        $this->view->backend = $this->_owApp->getConfig()->store->backend;
+				
+		// model
+		$this->view->modelUrl = $this->_owApp->selectedModel;
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
-		//linkCode
-		$linkCode = $this->_request->getParam ("lC");
-		if(NULL == $linkCode) {
-			$linkCode = "default";
-		}
-		$this->view->linkCode = $linkCode;
-		$configuration = new CubeViz_ConfigurationLink($sparqlEndpoint, $graphUrl);
-		$configuration->initFromLink($linkCode);		
-		$this->view->links = json_encode($configuration->getLinks());
-													
-		 // $_REQUEST['m'];
-		// TODO: get backend from OntoWiki config
-		$this->view->backend = "virtuoso";
-				
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        
+        // load configuration which is associated with given linkCode
+		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+        
+        // check folder permissions
+        // throws an exception if not enough folder permissions
+        $configuration->checkFolderPermissions ();
+        
+        $configuration = $configuration->read ($this->view->linkCode);
+        if (true == isset ($configuration [0])) {
+            $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
+            $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
+        } else {
+            $this->view->linkConfiguration = '{
+                "backend": "'. $this->view->backend .'",
+                "components": {},
+                "selectedDSD": {},
+                "selectedDS": {},
+                "selectedComponents": {"dimensions": {}, "measures": {}}
+            }';
+            $this->view->cubeVizUIChartConfig = 'null';
+        }
+    
         $content = $this->render('static/pages/CubeVizModule');
         return $content;
     }
 
     public function layoutType(){
-        return "inline";
+        return 'inline';
     }
     
 }

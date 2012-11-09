@@ -26,11 +26,12 @@ class DataCube_Query {
 	 * Returns array of Data Structure Definitions 
      * @return array
 	 */ 
-	public function getDataStructureDefinition() {   
+	public function getDataStructureDefinitions () {   
 		
 		$result = array();
+        
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-
+        
 		//get all indicators in the cube by the DataStructureDefinitions
 		$sparql = 'SELECT ?dsd WHERE {
             ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
@@ -47,11 +48,17 @@ class DataCube_Query {
 		foreach($queryResultDSD as $dsd) {
 			if( false == empty ($dsd['dsd']) ) {
                 $result [] = array ( 
-                    'url'   => $dsd['dsd'],
-                    'label' => $titleHelper->getTitle($dsd['dsd'])
+                    'url'       => $dsd['dsd'],
+                    'hashedUrl' => md5($dsd['dsd']),
+                    'label'     => str_replace('"', "'", $titleHelper->getTitle($dsd['dsd']))
                 );
 			}
 		}
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
 		return $result;
 	}  
@@ -84,11 +91,17 @@ class DataCube_Query {
         foreach($queryResultDS as $ds) {
             if(false == empty($ds['ds'])) {
                 $result[] = array (
-                    'url'   => $ds ['ds'],
-                    'label' => $titleHelper->getTitle($ds['ds'])
+                    'url'       => $ds['ds'],
+                    'hashedUrl' => md5($ds['ds']),
+                    'label'     => str_replace('"', "'", $titleHelper->getTitle($ds['ds']))
                 );
             }
         }
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
         return $result;
     }
@@ -101,7 +114,6 @@ class DataCube_Query {
      * @return array
      */
 	public function getComponents($dsdUri, $dsUri, $componentType) {
-                
               
         if ( $componentType != DataCube_UriOf::Dimension && 
              $componentType != DataCube_UriOf::Measure ) {
@@ -138,23 +150,26 @@ class DataCube_Query {
         foreach($queryresultComp as $comp) {
             if(false == empty($comp['comp'])) {
 				//add the component properties to the result set
-                $entry = array ( 
-                    'url'   => $comp['comp'],
-                    'url_md5'   => md5($comp['comp']),
-                    'type'  => $comp['comptype'],
-                    'order' => isset($comp['order']) ? $comp['order'] : -1,
-                    'label' => $titleHelper->getTitle($comp['comp'])
+                $element = array ( 
+                    'label'     => str_replace('"', "'", $titleHelper->getTitle($comp['comp'])),
+                    'order'     => isset($comp['order']) ? $comp['order'] : -1,
+                    'url'       => $comp['comp'],
+                    'hashedUrl' => md5($comp['comp']),
+                    'typeUrl'   => $comp['comptype']
                 );
-
-                if($componentType == 'dimension'){
-                    $entry ['elementCount'] = $this->getComponentElementCount(
-                        $dsUri, $entry['type']
-                    );
+                
+                if ( DataCube_UriOf::Dimension == $componentType ) {
+                    $element ['elements'] = $this->getComponentElements($dsUri, $comp['comptype']);
                 }
-                    
-                array_push($result, $entry);
+                
+                $result [] = $element;
             }
         }
+        
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
+        ); 
         
         return $result;
     }
@@ -198,16 +213,14 @@ class DataCube_Query {
 			}
 		}
 		
-		
-		//var_dump($result); die;
 		$result_with_labels = array();
 		foreach($result as $key => $element) {
-			if($this->isUrl($element)) {
-				$result_with_labels[$key]["property_label"] = $titleHelper->getTitle ( $element );
-			} else {
-				$result_with_labels[$key]["property_label"] = $element;
-			}			
-			$result_with_labels[$key]["property"] = $element;
+            $result_with_labels[$key]['propertyLabel'] = true == $this->isUrl($element) 
+                ? str_replace('"', "'", $titleHelper->getTitle ( $element ))
+                : str_replace('"', "'", $element);
+        
+            $result_with_labels[$key]['hashedProperty'] = md5 ($element);
+			$result_with_labels[$key]['property'] = $element;
 		}
 		                                
         return $result_with_labels;
@@ -222,74 +235,128 @@ class DataCube_Query {
         return count ( $this->getComponentElements ( $dsUri, $componentProperty ) );
     } 
        
-    public function getObservations($graphUri, $dimensionComponents, $dataSetUri) {
-		
-		$dimComps = $dimensionComponents['selectedDimensionComponents'];
-				 
+    /**
+     * 
+     */
+    public function getObservations ($linkConfiguration) {
+        
+        // Case: link configuration was found and loaded
+        if ( 0 < count ( $linkConfiguration ) ) {
+            // Extract and save neccessary parameters from link configuration
+            $selectedComponents = $linkConfiguration ['selectedComponents'];
+            $dataSetUrl = $linkConfiguration ['selectedDS']['url'];		
+            $selCompDims = $linkConfiguration ['selectedComponents']['dimensions'];
+        } 
+        
+        // Case: no link configuration was given
+        else {
+            
+            // set default values for DSD
+            $dataStructureDefinitionUrl = $this->getDataStructureDefinitions();
+            $dataStructureDefinitionUrl = $dataStructureDefinitionUrl [0]['url'];
+            
+            // ... and DS
+            $dataSetUrl = $this->getDataSets($dataStructureDefinitionUrl);
+            $dataSetUrl = $dataSetUrl [0]['url'];
+            
+            $tmp = $this->getComponents (
+                $dataStructureDefinitionUrl, $dataSetUrl, DataCube_UriOf::Dimension
+            );
+            
+            $selCompDims = array ();
+            
+            foreach ( $tmp as $dimension ) {
+                $dimension ['elements'] = array($dimension ['elements'][0]);
+                $selCompDims [] = $dimension;
+            }
+        }
+        		 
+        /**
+         * Fill SimpleQuery object with live!
+         */
 		$queryObject = new Erfurt_Sparql_SimpleQuery();
 		
-		$prologuePart = //'define output:format "JSON"
-						 'CONSTRUCT {?s ?p ?o}';
-		$queryObject->setProloguePart($prologuePart);
+        // CONSTRUCT
+		$queryObject->setProloguePart('CONSTRUCT {?s ?p ?o}');
 	
-		$fromPart[] = $graphUri;
-		$queryObject->setFrom($fromPart);
-		
-		$where = 'WHERE {
-			?s ?p ?o .
-            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .'."\n" .
-            //TODO: Tell Micha to correct "dataset" to "DataSet"!
-            '?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'> .'."\n";
+        // FROM
+		$queryObject->setFrom(array ($this->_model->getModelIri()));
         
-		//unite all the triple patterns of the same dimension_type
-        usort($dimComps, array('DataCube_Query','compareDimensionLabels'));	
-        $dimComps_length = sizeof($dimComps);
-        $borderKeys = $this->getBorderKeys($dimComps, $dimComps_length);
-        $borderKeys_length = sizeof($borderKeys);
-        $filters = array();
-        $triplePatterns = array();
-        for($i = 0; $i < $borderKeys_length; $i++) {
-			$filters[$i] = array();
-			array_push($triplePatterns, '?s ' . '<' . $dimComps[$borderKeys[$i]]['dimension_type'] . '>' . ' ?d' . $i . ' .');		
-			if(isset($borderKeys[$i+1])) {
-				$sectionEnd = $borderKeys[$i] + $borderKeys[$i+1];
-				for($j = $borderKeys[$i]; $j < $sectionEnd; $j++) {
-					if(isset($dimComps[$j]) && $this->isUrl($dimComps[$j]['property'])) {
-						array_push($filters[$i], '?d'. $i .' = <' . $dimComps[$j]['property'] . '>');
-					} else {
-						if(isset($dimComps[$j])) {
-							array_push($filters[$i], '?d'. $i .' = ' .'"'. $dimComps[$j]['property'].'"');
-						}
-					}
-				}
-			} else {
-				for($j = $borderKeys[$i]; $j < $dimComps_length; $j++) {
-					if($this->isUrl($dimComps[$j]['property'])) {
-						array_push($filters[$i], '?d'. $i .' = '.'<' . $dimComps[$j]['property'] . '>');
-					} else {
-						array_push($filters[$i], '?d'. $i .' = '.'"'.$dimComps[$j]['property'].'"');
-					}
-				}
-			}
-		}
-		        
-        $triplePatterns = implode("\n", $triplePatterns);
-		$where .= $triplePatterns;
-		$where .= "\n";
-		
-		for($i = 0; $i < $borderKeys_length; $i++) {
-			$where .= 'FILTER (' . implode(" OR ",$filters[$i]) .')' . "\n";
-		}
-		$where .= "\n";
-			
+        // WHERE
+		$where = 'WHERE { ' ."\n" .'
+			?s ?p ?o .' ."\n" .'
+            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
+            ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
+        
+        $i = 0;
+        // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
+        foreach ( $selCompDims as $ele ) {
+            $where .= ' ?s <'. $ele ['typeUrl'] .'> ?d'. $i++ .' .'. "\n";
+        }
+        
+        // Set FILTER (e.g. FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002") )
+        $i = 0;
+        foreach ( $selCompDims as $dim ) {
+            
+            $dimElements = $dim ['elements'];
+            
+            if ( 0 < count ( $dimElements ) ) {
+            
+                $filter = array ();
+            
+                foreach ( $dimElements as $element ) {
+                    
+                    // If property is an URL
+                    if ( true == $this->isUrl ( $element ['property'] ) ) {
+                        $filter [] = ' ?d'. $i .' = <'. $element ['property'] .'> ';
+                        
+                    // If property is NOT an URL
+                    } else {
+                        $filter [] = ' ?d'. $i .' = "'. $element ['property'] .'" ';
+                    }
+                }
+                
+                $i++;
+                $where .= ' FILTER (' . implode ( 'OR', $filter ) .') ' . "\n";
+            }
+        }
         
         $where .= '}';    
-		$queryObject->setWherePart($where);
-				
-		$options = array('result_format' => 'json');
-        $queryResult = $this->_store->sparqlQuery($queryObject, $options);
-                    
-        return $queryResult;
+		
+        $queryObject->setWherePart($where);
+        
+        // send query, return result as JSON
+        $result = json_decode ( $this->_store->sparqlQuery (
+            $queryObject, 
+            array('result_format' => 'json')
+        ), true );
+        
+        $tmp = array ();
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
+        
+        foreach ( $result as $entry ) {
+            $count = count ( $entry );
+            foreach ( $entry as $key => $ele ) { 
+                if ( 'uri' == $entry [$key] [0]['type'] ) {
+                    $titleHelper->addResource ( $ele [0]['value'] );
+                }
+            }
+        }
+        
+        foreach ( $result as $entry ) {
+            $count = count ( $entry );
+            $tmpEntry = $entry;
+            foreach ( $entry as $key => $ele ) {
+                if ( 'uri' == $entry [$key] [0]['type'] ) {
+                    $tmpEntry [$key][0]['label'] = str_replace('"', "'", $titleHelper->getTitle($ele [0]['value']));
+                }
+                $entry [$key] [0]['typeUrl'] = $entry [$key] [0]['type'];
+                unset($entry [$key] [0]['type']);
+            }
+            $tmp [] = $tmpEntry;
+        }
+        
+        return json_encode ( $tmp );
 	}
     
     private function isUrl($url) {
@@ -297,22 +364,7 @@ class DataCube_Query {
 		return preg_match($url_pattern, $url);
 	}
 	
-	private static function compareDimensionLabels($a, $b) {
-		return strnatcmp($a['dimension_type'], $b['dimension_type']);
-	}
-	
-	private function getBorderKeys($dimComps, $dimComps_length) {
-		$borderKeys = array(0);
-		for($i = 0; $i < $dimComps_length; $i++) {
-			if(isset($dimComps[$i+1]) &&
-			   $dimComps[$i]["dimension_label"] != $dimComps[$i+1]["dimension_label"]) {
-				   array_push($borderKeys, $i+1);
-			   }
-		}
-		return $borderKeys;
-	}
-    
-    /**
+	/**
      * 
      */
     public function getResultObservationsFromLink($link) {
@@ -330,17 +382,16 @@ class DataCube_Query {
 			
 			$dimensionTypes[$url] = array();
 			$dimensionTypes[$url]['url'] = $url;
-			$dimensionTypes[$url]['type'] = $link['selectedDimensions']['dimensions'][$i]["type"];
-			$dimensionTypes[$url]['elemCount'] = $link['selectedDimensions']['dimensions'][$i]["elementCount"];
+			$dimensionTypes[$url]['typeUrl'] = $link['selectedDimensions']['dimensions'][$i]['typeUrl'];
 			$dimensionTypes[$url]['order'] = '-1';
 			
 			$dimensionOptions[$url] = array();
-			$dimensionOptions[$url]['order'] = "NONE";
+			$dimensionOptions[$url]['order'] = 'NONE';
 			
 			$dimensionElements[$url] = array();
 		}
 		
-		for($i = 0, $dimComp_length = sizeof($link['selectedDimensionComponents']['selectedDimensionComponents']); $i < $dimComp_length; $i++) {
+		for($i = 0, $dimComp_length = sizeof($link['selectedDimensionComponents']['selectedDimensionComponents']); $i < $dimComp_length; ++$i) {
 			$url = $link['selectedDimensionComponents']['selectedDimensionComponents'][$i]['dimension_url'];
 			array_push($dimensionElements[$url], $link['selectedDimensionComponents']['selectedDimensionComponents'][$i]['property']);
 		}
@@ -350,18 +401,18 @@ class DataCube_Query {
 		$measureAggregationMethods = null;
 		$measureOptions = null;
 		
-		for($i = 0, $meas_length = sizeof($link['selectedMeasures']['measures']); $i < $meas_length; $i++) {
+		for($i = 0, $meas_length = sizeof($link['selectedMeasures']['measures']); $i < $meas_length; ++$i) {
 			$url = $link['selectedMeasures']['measures'][$i]['url'];
 			array_push($measures, $url);
 			$measureTypes[$url] = array();
 			$measureTypes[$url]['url'] = $url;
-			$measureTypes[$url]['type'] = $link['selectedMeasures']['measures'][$i]['type'];
+			$measureTypes[$url]['typeUrl'] = $link['selectedMeasures']['measures'][$i]['typeUrl'];
 			$measureTypes[$url]['order'] = '-1';
 			$measureAggregationMethods[$url] = 'sum';
 			$measureOptions[$url]['order'] = 'NONE';
 		}
 
-		return $this->getResultObservations($dsUri, 
+		return $this->getObservations($dsUri, 
             $dimensions, $dimensionElements, $dimensionTypes, $dimensionOptions, 
             $measures, $measureTypes, $measureAggregationMethods, $measureOptions);
 	}
@@ -424,11 +475,11 @@ class DataCube_Query {
             
             // 
             $internalNameTable['d'][$dimension] = array ( 
-                'index' => $index, 
-                'qname' => $dimQName,
-                'url' => $dimension,
-                'label' => $titleHelper->getTitle ( $dimension ),
-                'type' => $dimensionTypes [$dimension]['type']
+                'index'     => $index, 
+                'qname'     => $dimQName,
+                'url'       => $dimension,
+                'label'     => str_replace('"', "'", $titleHelper->getTitle($dimension)),
+                'type'      => $dimensionTypes [$dimension]['type']
             );
             
             // add constraints for the dimension element selection in the observations
@@ -436,10 +487,11 @@ class DataCube_Query {
                 
                 //$dimElemList = DataCube_Query::getComponentElements ($dsUri, $dimPropertyUri);
                 $falseList = array_diff($dimElemList, $dimensionElements [$dimension]);
+                $count = count($falseList);
                 
-                if(count($falseList)>0) {
+                if(0 < $countFalseList) {
                     
-                    $sparqlWhere .= count($falseList) < 80 ? 
+                    $sparqlWhere .= $countFalseList < 80 ? 
                         // if the falselist contains less than 80 elements, dont use filter statement
                         ' FILTER ( NOT(' : 
                         // else use the regular filter statement
@@ -570,5 +622,34 @@ class DataCube_Query {
         };';
         
         return $this->_model->sparqlQuery($sparql);
+    }
+    
+    /**
+     * Check if there is at least one observation in the knowledgebase
+     */
+    public function containsDataCubeInformation () {
+        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
+                    ASK FROM http://data.lod2.eu/scoreboard/ 
+                    {
+                        ?observation a qb:Observation .
+                        ?observation qb:dataSet ?dataset .
+                        ?observation ?dimension ?dimelement .
+                        ?observation ?measure ?value .
+
+                        ?dataset a qb:DataSet .
+                        ?dataset qb:structure ?datastructuredefintion .
+
+                        ?datastructuredefintion a qb:DataStructureDefinition .
+                        ?datastructuredefintion qb:component ?dimensionspecification .
+                        ?datastructuredefintion qb:component ?measurespecification .
+
+                        ?dimensionspecification a qb:ComponentSpecification .
+                        ?dimensionpecification qb:dimension ?dimension .
+
+                        ?measurespecification a qb:ComponentSpecification .
+                        ?measurespecification qb:measure ?measure .
+                    }';
+            
+        return 1 == count ( $this->_model->sparqlQuery($sparql) ) ? true : false;
     }
 }

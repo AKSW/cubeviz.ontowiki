@@ -21,14 +21,10 @@ class DataCube_VocabularyTerms_Dimension extends ArrayObject
 	 * @param $order
 	 * @param $chartAxis
 	 * @param $orderDirection
-	 * @param $elementCount
-	 * @param $selectedElementCount
      */
-    public function __construct($url, $label, $type, $elementCount, $selectedElementCount) {
+    public function __construct($url, $label, $type) {
 		$this ['url'] = $url;
 		$this ['label'] = $label;
 		$this ['type'] = $type;
-		$this ['elementCount'] = $elementCount;
-		$this ['selectedElementCount'] = $selectedElementCount;
 	}
 }

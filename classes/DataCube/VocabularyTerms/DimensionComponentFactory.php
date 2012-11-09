@@ -10,21 +10,22 @@
  * @author Ivan Ermilov
  * @author Konrad Abicht
  */
-class DataCube_VocabularyTerms_DimensionComponentFactory extends ArrayObject
+class DataCube_VocabularyTerms_DimensionComponentFactory
 {    
-	public function __construct() {
-		$this ['selectedDimensionComponents'] = array();
-	}
-	
 	/**
 	 * @param $dimensionComponents 
 	 */	
-	public function initFromArray($selectedDimensionComponents) {
-		$selectedDimensionComponents_length = sizeof($selectedDimensionComponents);
-		while($selectedDimensionComponents_length--) {
-			$current_dimensionComponent = $selectedDimensionComponents[$selectedDimensionComponents_length];
-			$dimensionComponent = new DataCube_VocabularyTerms_DimensionComponent($current_dimensionComponent['property'], $current_dimensionComponent['property_label'],$current_dimensionComponent['dimension_type'],$current_dimensionComponent['dimension_url'],$current_dimensionComponent['dimension_label']);
-			array_push($this ['selectedDimensionComponents'], $dimensionComponent);
-		}
+	public static function extract ($selectedDimensions, $selectedDimensionComponents) {
+		$return = array ();
+        
+        $selectedDimensions = DataCube_VocabularyTerms_DimensionFactory::extract ( $selectedDimensions );
+        
+        foreach ( $selectedDimensionComponents as $dimension => $entries ) {
+            foreach ( $entries as $entry ) {
+                $return [$dimension] = $selectedDimensions [$dimension];
+                $return [$dimension] ['elements'][] = $entry;
+            }
+        }
+        return $return;
 	}
 }
