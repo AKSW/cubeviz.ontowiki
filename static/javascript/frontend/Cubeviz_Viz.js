@@ -690,7 +690,7 @@ var Viz_Main = (function () {
             var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
             var topPosition = offset["top"] - 40;
             var generatedHtml = ChartSelector.buildMenu(options);
-            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").css("margin-top", "15px").attr("value", "Update chart");
+            var menuButton = $("<input type=\"button\"/>").attr("id", "chartSelectionMenuButton").attr("class", "minibutton submit").css("margin-top", "15px").attr("value", "Update chart");
 
             $("#chartSelectionMenuContent").html(generatedHtml).append(menuButton);
             $("#chartSelectionMenu").css("left", leftPosition).css("top", topPosition).slideDown(800);

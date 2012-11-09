@@ -29,11 +29,9 @@ class Viz_Main {
                 
                 generatedHtml = ChartSelector.buildMenu ( options ),
             
-                menuButton = $("<input/>")
+                menuButton = $("<input type=\"button\"/>")
                     .attr ( "id", "chartSelectionMenuButton" )
-                    .attr ( "type", "button" )
                     .attr ( "class", "minibutton submit" )
-                    .attr ( "type", "button" )
                     .css ( "margin-top", "15px" )
                     .attr ( "value", "Update chart" );
                     
