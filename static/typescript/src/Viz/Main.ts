@@ -6,7 +6,14 @@ class Viz_Main {
      * 
      */
     static closeChartSelectionMenu () : void {
-        $("#chartSelectionMenu").fadeOut ( 500 );
+        $("#chartSelectionMenu").slideUp ( 500 );
+    }
+    
+    /**
+     * 
+     */
+    static hideMenuDongle () : void {
+        $("#chartSelectionMenuDongle").hide();
     }
     
     /**
@@ -27,16 +34,22 @@ class Viz_Main {
                     .attr ( "type", "button" )
                     .attr ( "class", "minibutton submit" )
                     .attr ( "type", "button" )
-                    .attr ( "value", "update chart" );
+                    .css ( "margin-top", "15px" )
+                    .attr ( "value", "Update chart" );
                     
             // fill #chartSelectionMenu; when its done, fade it in!
-            $("#chartSelectionMenu")
+            $("#chartSelectionMenuContent")
                 .html ( generatedHtml )
-                .append ( menuButton )
-                .css ( "left", leftPosition ).css ( "top", topPosition )
-                .fadeIn ( 500 );
+                .append ( menuButton );
+                
+            $("#chartSelectionMenu")
+                .css ( "left", leftPosition )
+                .css ( "top", topPosition )
+                .slideDown ( 800 );
                 
             $("#chartSelectionMenuButton").click (Viz_Event.onClick_chartSelectionMenuButton);
+            
+            $("#chartSelectionMenuCloseCross").click (Viz_Main.closeChartSelectionMenu);
         }
     }
     
@@ -81,5 +94,24 @@ class Viz_Main {
         $("#container")
             .html ("")
             .append (img);        
+    }
+    
+    /**
+     * 
+     */
+    static showMenuDongle (offset:Object) : void {
+        
+        // extract positions out of offset
+        var containerOffset = $("#container").offset (),
+            menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
+            leftPosition = offset["left"] - containerOffset ["left"] + 4,
+            topPosition = offset["top"] - 43;
+                
+            // build the dongle
+        $("#chartSelectionMenuDongle")
+            .attr ("src", CubeViz_Config ["imagesPath"] + "menuDongle.png")
+            .css  ("left", leftPosition)
+            .css  ("top", topPosition)
+            .fadeIn (800);
     }
 }

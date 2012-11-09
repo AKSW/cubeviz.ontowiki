@@ -1,6 +1,5 @@
 var ChartSelector = (function () {
     function ChartSelector() { }
-    ChartSelector.itemClicked = -1;
     ChartSelector.buildMenu = function buildMenu(options) {
         try  {
             var finalHtml = "";
@@ -640,7 +639,6 @@ var Viz_Event = (function () {
         var lastSelectionAndClicked = parseInt($("#chartSelection").attr("lastSelectionAndClicked"));
 
         if(null == lastUsedNr || currentNr != lastUsedNr) {
-            ChartSelector.itemClicked = currentNr;
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
             ; ;
@@ -649,11 +647,17 @@ var Viz_Event = (function () {
             $(event["target"]).parent().addClass("chartSelector-item-current");
             Viz_Main.renderChart($(this).attr("className"));
             Viz_Main.closeChartSelectionMenu();
+            Viz_Main.hideMenuDongle();
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass($(event["target"]).parent().attr("className"), CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
+            if(undefined != fromChartConfig["options"] && 0 < fromChartConfig["options"]["length"]) {
+                Viz_Main.showMenuDongle($(this).offset());
+            }
         } else {
             if(lastUsedNr == lastSelectionAndClicked) {
                 Viz_Main.closeChartSelectionMenu();
                 $("#chartSelection").attr("lastSelectionAndClicked", -1);
             } else {
+                Viz_Main.hideMenuDongle();
                 $("#chartSelection").attr("lastSelectionAndClicked", currentNr);
                 var className = $(event["target"]).parent().attr("className");
                 var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
@@ -674,7 +678,10 @@ var Viz_Event = (function () {
 var Viz_Main = (function () {
     function Viz_Main() { }
     Viz_Main.closeChartSelectionMenu = function closeChartSelectionMenu() {
-        $("#chartSelectionMenu").fadeOut(500);
+        $("#chartSelectionMenu").slideUp(500);
+    }
+    Viz_Main.hideMenuDongle = function hideMenuDongle() {
+        $("#chartSelectionMenuDongle").hide();
     }
     Viz_Main.openChartSelectionMenu = function openChartSelectionMenu(options, offset) {
         if(0 < options["length"]) {
@@ -683,10 +690,12 @@ var Viz_Main = (function () {
             var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
             var topPosition = offset["top"] - 40;
             var generatedHtml = ChartSelector.buildMenu(options);
-            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").attr("value", "update chart");
+            var menuButton = $("<input/>").attr("id", "chartSelectionMenuButton").attr("type", "button").attr("class", "minibutton submit").attr("type", "button").css("margin-top", "15px").attr("value", "Update chart");
 
-            $("#chartSelectionMenu").html(generatedHtml).append(menuButton).css("left", leftPosition).css("top", topPosition).fadeIn(500);
+            $("#chartSelectionMenuContent").html(generatedHtml).append(menuButton);
+            $("#chartSelectionMenu").css("left", leftPosition).css("top", topPosition).slideDown(800);
             $("#chartSelectionMenuButton").click(Viz_Event.onClick_chartSelectionMenuButton);
+            $("#chartSelectionMenuCloseCross").click(Viz_Main.closeChartSelectionMenu);
         }
     }
     Viz_Main.renderChart = function renderChart(className) {
@@ -701,6 +710,14 @@ var Viz_Main = (function () {
         img.attr("src", CubeViz_Config["imagesPath"] + "loader.gif");
         img = $("<div id=\"loadingNotification\"></div>").append(img).append("&nbsp; Loading ...");
         $("#container").html("").append(img);
+    }
+    Viz_Main.showMenuDongle = function showMenuDongle(offset) {
+        var containerOffset = $("#container").offset();
+        var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
+        var leftPosition = offset["left"] - containerOffset["left"] + 4;
+        var topPosition = offset["top"] - 43;
+
+        $("#chartSelectionMenuDongle").attr("src", CubeViz_Config["imagesPath"] + "menuDongle.png").css("left", leftPosition).css("top", topPosition).fadeIn(800);
     }
     return Viz_Main;
 })();

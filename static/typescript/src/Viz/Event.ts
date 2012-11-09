@@ -101,8 +101,6 @@ class Viz_Event {
         
         // If nothing was set or you clicked on another item as before
         if ( null == lastUsedNr || currentNr != lastUsedNr ) {
-            
-            ChartSelector.itemClicked = currentNr;		
                         
             $(".chartSelector-item")
                 .removeClass("current")
@@ -125,7 +123,27 @@ class Viz_Event {
                 $(this).attr ( "className" )
             );
             
+            /**
+             * Close chart selection menu, if it is still open
+             */
             Viz_Main.closeChartSelectionMenu ();
+            
+            Viz_Main.hideMenuDongle ();
+            
+            /**
+             * If there menu entries available, show a dongle under the current selected item!
+             */
+            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+                $(event["target"]).parent ().attr("className"),
+                CubeViz_ChartConfig [CubeViz_Data["numberOfMultipleDimensions"]]["charts"]
+            );             
+            
+            if ( undefined != fromChartConfig["options"] && 
+                 0 < fromChartConfig["options"]["length"] ) {
+                Viz_Main.showMenuDongle (
+                    $(this).offset() 
+                );
+            }
             
         // If you clicked the same item AGAIN > show the menu (but only once)
         } else {
@@ -143,6 +161,8 @@ class Viz_Event {
             // if not, show menu
             else {
                 
+                Viz_Main.hideMenuDongle ();
+                
                 $("#chartSelection").attr ( "lastSelectionAndClicked", currentNr );
             
                 var className = $(event["target"]).parent ().attr ( "className" );
@@ -151,11 +171,10 @@ class Viz_Event {
                 var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
                     className,
                     CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
-                );    
+                );
                 
                 cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
                 cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
-                
                 
                 Viz_Main.openChartSelectionMenu ( 
                     fromChartConfig ["options"], 

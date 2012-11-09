@@ -4,10 +4,10 @@
         {.repeated section @}
         
             <div class="chartMenuItem" style="clear:both;">
-                <div style="float:left; font-size:13px; font-weight:bold;">{label}</div>
+                <div style="float:left; margin-left:3px; font-size:12px;">{label}</div>
             
                 <div style="float:right">
-                    <select name="chartMenuItem_{key}" key="{key}" style="width: 100px; min-width: 100px; max-width: 100px; ">
+                    <select name="chartMenuItem_{key}" key="{key}" class="chartMenuItem_SelectBox">
                     {.repeated section defaultValue}
                     <option value="{value}" selected="selected">{label}</option>        
                     {.end}

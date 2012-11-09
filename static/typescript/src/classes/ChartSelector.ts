@@ -2,12 +2,7 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
 class ChartSelector {
-		    
-    /**
-     * 
-     */
-	static itemClicked:number = -1;
-    	
+		        	
     /**
      * Build menu based on jsontemplate and returns HTML
      */
