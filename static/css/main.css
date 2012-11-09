@@ -482,6 +482,11 @@
     cursor: pointer;
 }
 
+#chartSelectionMenuContent {
+    margin-top: 9px;
+    clear: both;
+}
+
 #chartSelectionMenuDongle {
     display: none;
     position: absolute;
