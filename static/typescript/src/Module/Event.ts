@@ -91,7 +91,7 @@ class Module_Event {
      */
     static onClick_DialogSelector () {
         
-        if ( "undefined" != System.toType ( Viz_Main ) ) {
+        if ( undefined != Viz_Main ) {
             Viz_Main.closeChartSelectionMenu ();
         }
                 
@@ -113,7 +113,7 @@ class Module_Event {
         );
         
         // if rendering is complete, fade in the dialog
-        $("#dimensionDialogContainer").fadeIn (1000);
+        $("#dimensionDialogContainer").fadeIn (500);
         
         /**
          * Setup dialog selector close button

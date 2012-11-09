@@ -383,7 +383,7 @@ var Module_Event = (function () {
         $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
-        if("undefined" != System.toType(Viz_Main)) {
+        if(undefined != Viz_Main) {
             Viz_Main.closeChartSelectionMenu();
         }
         var label = $(this).attr("label").toString();
@@ -392,7 +392,7 @@ var Module_Event = (function () {
         var url = $(this).attr("url").toString();
 
         Module_Main.buildDimensionDialog(hashedUrl, label, typeUrl, url, CubeViz_Links_Module["components"]["dimensions"][hashedUrl]["elements"]);
-        $("#dimensionDialogContainer").fadeIn(1000);
+        $("#dimensionDialogContainer").fadeIn(500);
         $("#dialog-btn-close-" + hashedUrl).click(Module_Event.onClick_DialogSelectorCloseButton);
     }
     Module_Event.onClick_DialogSelectorCloseButton = function onClick_DialogSelectorCloseButton() {
