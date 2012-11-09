@@ -113,10 +113,10 @@ class Viz_Event {
         
             $("#chartSelection").attr ( "lastSelection", currentNr );
         
-            $(".chartSelector-item").removeClass("current");
+            $(".chartSelector-item").removeClass("chartSelector-item-current");
             
             // add class current to div container which surrounds clicked item
-            $(event["target"]).parent().addClass("current");
+            $(event["target"]).parent().addClass("chartSelector-item-current");
             
             /**
              * Render chart for given class name

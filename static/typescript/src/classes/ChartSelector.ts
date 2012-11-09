@@ -81,6 +81,10 @@ class ChartSelector {
                     .addClass("chartSelector-item")
                     .attr ( "className", name );
                 
+                if ( 0 == nr ) {
+                    item.addClass("chartSelector-item-current");
+                }
+                
                 // create image and set its values, after that, append it to its own div
                 icon = $("<img/>")
                     .attr({
@@ -92,7 +96,7 @@ class ChartSelector {
                     .data ("nr", nr++)
                 
                     .appendTo(item);
-                
+                   
                 // in the end, append div to #chartSelection div
                 item.appendTo ( $("#chartSelection") );
             }

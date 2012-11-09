@@ -48,6 +48,9 @@ var ChartSelector = (function () {
                 iconPath = CubeViz_Config["imagesPath"] + element["icon"];
                 name = element["class"];
                 item = $("<div></div>").addClass("chartSelector-item").attr("className", name);
+                if(0 == nr) {
+                    item.addClass("chartSelector-item-current");
+                }
                 icon = $("<img/>").attr({
                     "src": iconPath,
                     "name": name,
@@ -642,8 +645,8 @@ var Viz_Event = (function () {
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
             ; ;
             $("#chartSelection").attr("lastSelection", currentNr);
-            $(".chartSelector-item").removeClass("current");
-            $(event["target"]).parent().addClass("current");
+            $(".chartSelector-item").removeClass("chartSelector-item-current");
+            $(event["target"]).parent().addClass("chartSelector-item-current");
             Viz_Main.renderChart($(this).attr("className"));
             Viz_Main.closeChartSelectionMenu();
         } else {

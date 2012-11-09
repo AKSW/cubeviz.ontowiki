@@ -505,7 +505,7 @@
     filter:alpha(opacity=75);
 }
 
-.chartSelector-item.current {
+.chartSelector-item-current {
 	background-color: #FFF;
 	border-bottom: 1px solid white;
 	border: 1px solid #777;
