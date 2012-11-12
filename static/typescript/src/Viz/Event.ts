@@ -1,3 +1,4 @@
+/// <reference path="..\DeclarationSourceFiles\CryptoJs.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\JSON.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 /// <reference path="..\DeclarationSourceFiles\Highcharts.d.ts" />

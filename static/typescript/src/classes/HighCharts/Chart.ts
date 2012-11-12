@@ -24,6 +24,16 @@ class HighCharts_Chart {
     }
     
     /**
+     * Extract a hex color code for a given URI (using hash algorithm).
+     * @param uri string
+     * @return string Generated hex color code
+     */
+    public getColor ( uri:string ) : string {
+        uri = "" + CryptoJS.SHA512 (uri);
+        return "#" + uri.substr((uri["length"]-6), 6);
+    }
+    
+    /**
      * 
      */
     public init ( entries:any, cubeVizLinksModule:Object, chartConfig:any ) : void { 
@@ -82,7 +92,8 @@ class HighCharts_Chart {
             // this represents one item of the series array (of highcharts)
             obj = { 
                 "name": this.getLabelForPropertyUri ( seriesEntry, forSeries, selectedComponentDimensions ),
-                "data": []
+                "data": [],
+                "color": this.getColor ( seriesEntry )
             };
             
             // iterate over all x axis elements

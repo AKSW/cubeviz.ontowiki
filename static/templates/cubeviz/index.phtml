@@ -1,4 +1,5 @@
 <!-- Libraries -->
+<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/CryptoJs/sha512-min.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.js"></script>
 <!--<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.src.js"></script>-->
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts-more.js"></script>
@@ -21,7 +22,6 @@
      */
     var CubeViz_Links_Module = CubeViz_Links_Module || <?php echo $this->linkConfiguration; ?>;
 	
-    // Name of choosen config; default is "default"
     CubeViz_Links_Module ["linkCode"] = CubeViz_Links_Module ["linkCode"] || <?php echo json_encode($this->linkCode); ?>; 
     CubeViz_Links_Module ["backend"] = CubeViz_Links_Module ["backend"] || <?php echo json_encode($this->backend); ?>;
     CubeViz_Links_Module ["cubevizPath"] = CubeViz_Links_Module ["cubevizPath"] || <?php echo json_encode($this->cubevizPath); ?>;		

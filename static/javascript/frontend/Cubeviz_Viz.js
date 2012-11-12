@@ -342,6 +342,10 @@ var HighCharts_Chart = (function () {
         }
         return builtTitle;
     };
+    HighCharts_Chart.prototype.getColor = function (uri) {
+        uri = "" + CryptoJS.SHA512(uri);
+        return "#" + uri.substr((uri["length"] - 6), 6);
+    };
     HighCharts_Chart.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {
         var forXAxis = null;
         var forSeries = null;
@@ -376,7 +380,8 @@ var HighCharts_Chart = (function () {
         for(var seriesEntry in seriesElements) {
             obj = {
                 "name": this.getLabelForPropertyUri(seriesEntry, forSeries, selectedComponentDimensions),
-                "data": []
+                "data": [],
+                "color": this.getColor(seriesEntry)
             };
             for(var xAxisEntry in xAxisElements) {
                 found = false;
