@@ -60,21 +60,32 @@ class Viz_Main {
         var charts = CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"];
         
         // get class
-        var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+        var fromChartConfig = Visualization_Controller.getFromChartConfigByClass (
             className, charts
         );
         
-        var chart = HighCharts.loadChart ( className );
-                    
-        // init chart instance
-        chart.init ( 
-            CubeViz_Data ["retrievedObservations"], 
-            CubeViz_Links_Module,
-            fromChartConfig ["defaultConfig"]
-        );
+        switch ( Visualization_Controller.getVisualizationType ( className ) ) {
+            case "CubeViz":
+            
+            
+                break;
                 
-        // show chart
-        new Highcharts.Chart(chart.getRenderResult());
+            default: // HighCharts
+                
+                var chart = Visualization_HighCharts.loadChart ( className );
+                    
+                // init chart instance
+                chart.init ( 
+                    CubeViz_Data ["retrievedObservations"], 
+                    CubeViz_Links_Module,
+                    fromChartConfig ["defaultConfig"]
+                );
+                        
+                // show chart
+                new Highcharts.Chart(chart.getRenderResult());
+            
+                break;
+        }
     }
     
     /**

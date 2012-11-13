@@ -1,7 +1,7 @@
 /**
  * Fits if you have exactly 1 multiple dimensions.
  */
-class HighCharts_Pie extends HighCharts_Chart {
+class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
         
     /**
      * formally yAxis
@@ -22,7 +22,7 @@ class HighCharts_Pie extends HighCharts_Chart {
         // this array MUST contains only ONE entry!
         var selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
             measures = cubeVizLinksModule ["selectedComponents"]["measures"],
-            multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
+            multipleDimensions = Visualization_Controller.getMultipleDimensions ( 
                 entries, selectedComponentDimensions, measures
             );
             
@@ -35,7 +35,7 @@ class HighCharts_Pie extends HighCharts_Chart {
         
         var data = [],
             forXAxis = multipleDimensions [0]["elements"][0]["typeUrl"],
-            measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
+            measureUri = Visualization_HighCharts_Chart.extractMeasureValue ( measures ),
             observation = new Observation (); 
         
         // save given chart config

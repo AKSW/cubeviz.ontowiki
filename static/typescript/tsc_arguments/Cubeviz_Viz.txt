@@ -3,12 +3,17 @@ static/typescript/src/classes/ConfigurationLink.ts
 static/typescript/src/classes/Observation.ts
 static/typescript/src/classes/System.ts
 
-static/typescript/src/classes/HighCharts.ts
-static/typescript/src/classes/HighCharts/Chart.ts
-static/typescript/src/classes/HighCharts/Bar.ts
-static/typescript/src/classes/HighCharts/Line.ts
-static/typescript/src/classes/HighCharts/Pie.ts
-static/typescript/src/classes/HighCharts/Polar.ts
+static/typescript/src/classes/Visualization/HighCharts.ts
+static/typescript/src/classes/Visualization/HighCharts/Chart.ts
+static/typescript/src/classes/Visualization/HighCharts/Bar.ts
+static/typescript/src/classes/Visualization/HighCharts/Line.ts
+static/typescript/src/classes/Visualization/HighCharts/Pie.ts
+static/typescript/src/classes/Visualization/HighCharts/Polar.ts
+
+static/typescript/src/classes/Visualization/CubeViz.ts
+static/typescript/src/classes/Visualization/CubeViz/Table.ts
+
+static/typescript/src/classes/Visualization/Controller.ts
 
 static/typescript/src/Viz/Event.ts
 static/typescript/src/Viz/Main.ts

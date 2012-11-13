@@ -1,7 +1,7 @@
 /**
  * Fits if you have 1 or 2 multiple dimensions.
  */
-class HighCharts_Polar extends HighCharts_Chart {
+class Visualization_HighCharts_Line extends Visualization_HighCharts_Chart {
     
     /**
      * 

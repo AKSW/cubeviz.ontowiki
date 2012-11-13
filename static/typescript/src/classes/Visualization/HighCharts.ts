@@ -1,22 +1,22 @@
-class HighCharts {
+class Visualization_HighCharts {
     
     /**
      * 
      */
-    static loadChart (chartName:string) : HighCharts_Chart {
+    static loadChart (chartName:string) : Visualization_HighCharts_Chart {
         switch ( chartName ) {
             
             case 'Bar':
-                return new HighCharts_Bar ();
+                return new Visualization_HighCharts_Bar ();
             
             case 'Line':
-                return new HighCharts_Line ();
+                return new Visualization_HighCharts_Line ();
             
             case 'Pie':
-                return new HighCharts_Pie ();
+                return new Visualization_HighCharts_Pie ();
             
             case 'Polar':
-                return new HighCharts_Polar ();
+                return new Visualization_HighCharts_Polar ();
             
             default: 
                 System.out ( "HighCharts - loadChart" );

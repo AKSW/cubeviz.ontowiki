@@ -75,7 +75,7 @@ class Viz_Event {
         // Go through the given menu items and set the values by given key (specific or intern)
         Viz_Main.setMenuOptions (menuItems, newDefaultConfig);
     
-        HighCharts_Chart.setChartConfigClassEntry (
+        Visualization_HighCharts_Chart.setChartConfigClassEntry (
             cubeVizUIChartConfig ["selectedChartConfig"]["class"],
             CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
             cubeVizUIChartConfig ["selectedChartConfig"]
@@ -130,7 +130,7 @@ class Viz_Event {
             /**
              * If there menu entries available, show a dongle under the current selected item!
              */
-            var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+            var fromChartConfig = Visualization_Controller.getFromChartConfigByClass (
                 $(event["target"]).parent ().attr("className"),
                 CubeViz_ChartConfig [CubeViz_Data["numberOfMultipleDimensions"]]["charts"]
             );             
@@ -165,7 +165,7 @@ class Viz_Event {
                 var className = $(event["target"]).parent ().attr ( "className" );
 
                 // get class
-                var fromChartConfig = HighCharts_Chart.getFromChartConfigByClass (
+                var fromChartConfig = Visualization_Controller.getFromChartConfigByClass (
                     className,
                     CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
                 );
@@ -189,7 +189,7 @@ class Viz_Event {
         CubeViz_Data ["retrievedObservations"] = entries;
         
         // get number of multiple dimensions
-        CubeViz_Data ["numberOfMultipleDimensions"] = HighCharts_Chart.getNumberOfMultipleDimensions (
+        CubeViz_Data ["numberOfMultipleDimensions"] = Visualization_Controller.getNumberOfMultipleDimensions (
             entries, 
             CubeViz_Links_Module ["selectedComponents"]["dimensions"],
             CubeViz_Links_Module ["selectedComponents"]["measures"]

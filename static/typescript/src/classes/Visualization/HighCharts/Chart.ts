@@ -1,4 +1,4 @@
-class HighCharts_Chart {
+class Visualization_HighCharts_Chart {
     
     /**
      * Returns the chart title for the given data.
@@ -8,7 +8,7 @@ class HighCharts_Chart {
         var dsdLabel = cubeVizLinksModule ["selectedDSD"]["label"],
             dsLabel = cubeVizLinksModule ["selectedDS"]["label"],
             
-            oneElementDimensions = HighCharts_Chart.getOneElementDimensions (
+            oneElementDimensions = Visualization_HighCharts_Chart.getOneElementDimensions (
                 retrievedObservations, 
                 cubeVizLinksModule ["selectedComponents"]["dimensions"],
                 cubeVizLinksModule ["selectedComponents"]["measures"]
@@ -42,8 +42,8 @@ class HighCharts_Chart {
             forSeries = null,
             selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
             measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
-            measureUri = HighCharts_Chart.extractMeasureValue ( measures ),
-            multipleDimensions = HighCharts_Chart.getMultipleDimensions ( 
+            measureUri = Visualization_HighCharts_Chart.extractMeasureValue ( measures ),
+            multipleDimensions = Visualization_Controller.getMultipleDimensions ( 
                 entries, selectedComponentDimensions, measures
             ),
             observation = new Observation (); 
@@ -183,56 +183,6 @@ class HighCharts_Chart {
         }
         
         return oneElementDimensions;
-    }
-    
-    /**
-     * @return Object[]
-     */
-    static getMultipleDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                    measures:Object[] ) : Object [] {
-                                                
-        // assign selected dimensions to xAxis and series (yAxis)
-        var multipleDimensions:Object[] = [],
-            tmp:Object[] = [];
-        
-        for ( var hashedUrl in selectedDimensions ) {
-                        
-            // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 < selectedDimensions [hashedUrl] ["elements"]["length"] ) {
-                
-                multipleDimensions.push ( {
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
-                } ); 
-            }
-        }
-        
-        return multipleDimensions;
-    }
-    
-    /**
-     * @return integer at least 0
-     */
-    static getNumberOfMultipleDimensions ( retrievedData:Object[], 
-                                            selectedDimensions:Object[],
-                                            measures:Object[] ) : number {
-                                                
-        var dims = HighCharts_Chart.getMultipleDimensions (
-            retrievedData, selectedDimensions, measures
-        );
-        
-        return dims ["length"];
-    }
-        
-    /**
-     * 
-     */
-    static getFromChartConfigByClass ( className:string, charts:Object[] ) {
-        for ( var i in charts ) {
-            if ( className == charts [i]["class"] ) {
-                return charts [i];
-            }
-        }
     }
     
     /**

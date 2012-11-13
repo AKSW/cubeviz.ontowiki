@@ -1,7 +1,7 @@
 /**
  * Fits if you have 1 or 2 multiple dimensions.
  */
-class HighCharts_Bar extends HighCharts_Chart {
+class Visualization_HighCharts_Polar extends Visualization_HighCharts_Chart {
     
     /**
      * 
@@ -19,13 +19,13 @@ class HighCharts_Bar extends HighCharts_Chart {
      * Complete chart configuration for a certain chart
      */
     private chartConfig = {};
-    
+        
     /**
      * 
      */
     public getRenderResult () : Object {
-        this["chartConfig"]["xAxis"] = this ["xAxis"];
-        this["chartConfig"]["series"] = this ["series"];        
+        this.chartConfig ["xAxis"] = this ["xAxis"];
+        this.chartConfig ["series"] = this ["series"];
         return this.chartConfig;
     }
 }
