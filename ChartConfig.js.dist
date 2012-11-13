@@ -92,6 +92,16 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
@@ -153,6 +163,16 @@ var CubeViz_ChartConfig = {
                             { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
                         "type": "array"
                     },
                     {
@@ -277,6 +297,16 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
@@ -352,6 +382,16 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
                         "label": "Stacking",
                         "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
@@ -402,6 +442,16 @@ var CubeViz_ChartConfig = {
                             { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
                         "type": "array"
                     },
                     {
