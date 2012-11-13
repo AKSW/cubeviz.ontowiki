@@ -65,6 +65,13 @@ class HighCharts_Chart {
             }
         }
         
+        // If set, switch axes
+        if ( true == CubeViz_Data ["_highchart_switchAxes"] ) {
+            var tmp = forXAxis;
+            forXAxis = forSeries;
+            forSeries = tmp;
+        }
+        
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( entries, selectedComponentDimensions, measureUri );

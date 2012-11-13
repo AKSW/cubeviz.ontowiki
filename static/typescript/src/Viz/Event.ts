@@ -15,7 +15,9 @@ var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
 
 var CubeViz_Data = CubeViz_Data || {
     "numberOfMultipleDimensions" : 0,
-    "retrievedObservations" : []
+    "retrievedObservations" : [],
+    "_highchart_switchAxes": false // TODO create a simple solution for intern chart configuration 
+                                         // (use for instance cubeVizUIChartConfig )
 };
 
 // Templates
@@ -63,29 +65,23 @@ class Viz_Event {
      */
     static onClick_chartSelectionMenuButton (event:any) {
         
+        // collect and save necessary information
         var newDefaultConfig = cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"],
             key = "",
             menuItems:Object[] = $.makeArray ( $('*[name*="chartMenuItem"]') ),
             length:number = menuItems ["length"],
             value = "";
 
-        // start from the second item, because the first one is the template entry
-        for ( var i=1; i < length; ++i ) {
-            key = $(menuItems [i]).attr ( "key" );
-            value = $(menuItems [i]).attr ( "value" );
-            System.setObjectProperty ( 
-                newDefaultConfig, key, ".", value 
-            );
-        }
-        
-        // cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"] = newDefaultConfig;
-        
+        // Go through the given menu items and set the values by given key (specific or intern)
+        Viz_Main.setMenuOptions (menuItems, newDefaultConfig);
+    
         HighCharts_Chart.setChartConfigClassEntry (
             cubeVizUIChartConfig ["selectedChartConfig"]["class"],
             CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
             cubeVizUIChartConfig ["selectedChartConfig"]
         );
-        
+    
+        // Re-render the chart with new configuration
         Viz_Main.renderChart ( cubeVizUIChartConfig ["selectedChartConfig"]["class"] );
     }
     

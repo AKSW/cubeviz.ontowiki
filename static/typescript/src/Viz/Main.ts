@@ -78,6 +78,37 @@ class Viz_Main {
     }
     
     /**
+     * Go through the given menu items and set the values by given key (specific or intern)
+     */
+    static setMenuOptions (menuItems:Object[], newDefaultConfig:Object) : void {
+        
+        var key = null, 
+            length = menuItems["length"],
+            value = null;
+        
+        // start from the second item, because the first one is the template entry
+        for ( var i=1; i < length; ++i ) {
+            key = $(menuItems [i]).attr ( "key" );
+            value = $(menuItems [i]).attr ( "value" );
+            
+            // Check if the option is visualization specific or an intern (starts with _)
+            if ( "_" == key [0] ) {
+                switch ( key ) {
+                    case "_highchart_switchAxes": 
+                        CubeViz_Data ["_highchart_switchAxes"] = "true" == value ? true : false;
+                        break;
+                }
+            } 
+            
+            else {
+                System.setObjectProperty ( 
+                    newDefaultConfig, key, ".", value 
+                );
+            }
+        }
+    }
+    
+    /**
      * 
      */
     static showLoadingNotification () : void {

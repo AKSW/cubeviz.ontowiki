@@ -364,6 +364,11 @@ var HighCharts_Chart = (function () {
                 forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
         }
+        if(true == CubeViz_Data["_highchart_switchAxes"]) {
+            var tmp = forXAxis;
+            forXAxis = forSeries;
+            forSeries = tmp;
+        }
         observation.initialize(entries, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         for(var value in xAxisElements) {
@@ -604,7 +609,8 @@ var CubeViz_ChartConfig = CubeViz_ChartConfig || {
 };
 var CubeViz_Data = CubeViz_Data || {
     "numberOfMultipleDimensions": 0,
-    "retrievedObservations": []
+    "retrievedObservations": [],
+    "_highchart_switchAxes": false
 };
 var ChartSelector_Array = ChartSelector_Array || {
 };
@@ -630,11 +636,7 @@ var Viz_Event = (function () {
         var length = menuItems["length"];
         var value = "";
 
-        for(var i = 1; i < length; ++i) {
-            key = $(menuItems[i]).attr("key");
-            value = $(menuItems[i]).attr("value");
-            System.setObjectProperty(newDefaultConfig, key, ".", value);
-        }
+        Viz_Main.setMenuOptions(menuItems, newDefaultConfig);
         HighCharts_Chart.setChartConfigClassEntry(cubeVizUIChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], cubeVizUIChartConfig["selectedChartConfig"]);
         Viz_Main.renderChart(cubeVizUIChartConfig["selectedChartConfig"]["class"]);
     }
@@ -709,6 +711,27 @@ var Viz_Main = (function () {
         var chart = HighCharts.loadChart(className);
         chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module, fromChartConfig["defaultConfig"]);
         new Highcharts.Chart(chart.getRenderResult());
+    }
+    Viz_Main.setMenuOptions = function setMenuOptions(menuItems, newDefaultConfig) {
+        var key = null;
+        var length = menuItems["length"];
+        var value = null;
+
+        for(var i = 1; i < length; ++i) {
+            key = $(menuItems[i]).attr("key");
+            value = $(menuItems[i]).attr("value");
+            if("_" == key[0]) {
+                switch(key) {
+                    case "_highchart_switchAxes": {
+                        CubeViz_Data["_highchart_switchAxes"] = "true" == value ? true : false;
+                        break;
+
+                    }
+                }
+            } else {
+                System.setObjectProperty(newDefaultConfig, key, ".", value);
+            }
+        }
     }
     Viz_Main.showLoadingNotification = function showLoadingNotification() {
         var img = $("<img/>");
