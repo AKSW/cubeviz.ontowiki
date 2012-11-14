@@ -343,7 +343,7 @@ var HighCharts_Chart = (function () {
         return builtTitle;
     };
     HighCharts_Chart.prototype.getColor = function (uri) {
-        uri = "" + CryptoJS.SHA512(uri);
+        uri = "" + CryptoJS.MD5(uri);
         return "#" + uri.substr((uri["length"] - 6), 6);
     };
     HighCharts_Chart.prototype.init = function (entries, cubeVizLinksModule, chartConfig) {

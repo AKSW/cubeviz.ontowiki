@@ -29,7 +29,7 @@ class HighCharts_Chart {
      * @return string Generated hex color code
      */
     public getColor ( uri:string ) : string {
-        uri = "" + CryptoJS.SHA512 (uri);
+        uri = "" + CryptoJS.MD5 (uri);
         return "#" + uri.substr((uri["length"]-6), 6);
     }
     
