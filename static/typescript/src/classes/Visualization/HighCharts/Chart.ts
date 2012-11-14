@@ -21,7 +21,7 @@ class Visualization_HighCharts_Chart {
         }
         
         return builtTitle;
-    }
+    } 
     
     /**
      * 
