@@ -22,6 +22,7 @@ var CubeViz_Data = CubeViz_Data || {
 
 // Templates
 var ChartSelector_Array = ChartSelector_Array || {};
+var templateVisualization_CubeViz_Table = templateVisualization_CubeViz_Table || {};
 
 /**
  * Event section
@@ -75,7 +76,7 @@ class Viz_Event {
         // Go through the given menu items and set the values by given key (specific or intern)
         Viz_Main.setMenuOptions (menuItems, newDefaultConfig);
     
-        Visualization_HighCharts_Chart.setChartConfigClassEntry (
+        Visualization_Controller.setChartConfigClassEntry (
             cubeVizUIChartConfig ["selectedChartConfig"]["class"],
             CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
             cubeVizUIChartConfig ["selectedChartConfig"]

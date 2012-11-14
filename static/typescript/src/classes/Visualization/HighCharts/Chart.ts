@@ -8,7 +8,7 @@ class Visualization_HighCharts_Chart {
         var dsdLabel = cubeVizLinksModule ["selectedDSD"]["label"],
             dsLabel = cubeVizLinksModule ["selectedDS"]["label"],
             
-            oneElementDimensions = Visualization_HighCharts_Chart.getOneElementDimensions (
+            oneElementDimensions = Visualization_Controller.getOneElementDimensions (
                 retrievedObservations, 
                 cubeVizLinksModule ["selectedComponents"]["dimensions"],
                 cubeVizLinksModule ["selectedComponents"]["measures"]
@@ -24,16 +24,6 @@ class Visualization_HighCharts_Chart {
     }
     
     /**
-     * Extract a hex color code for a given URI (using hash algorithm).
-     * @param uri string
-     * @return string Generated hex color code
-     */
-    public getColor ( uri:string ) : string {
-        uri = "" + CryptoJS.SHA512 (uri);
-        return "#" + uri.substr((uri["length"]-6), 6);
-    }
-    
-    /**
      * 
      */
     public init ( entries:any, cubeVizLinksModule:Object, chartConfig:any ) : void { 
@@ -42,7 +32,7 @@ class Visualization_HighCharts_Chart {
             forSeries = null,
             selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
             measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
-            measureUri = Visualization_HighCharts_Chart.extractMeasureValue ( measures ),
+            measureUri = Visualization_Controller.getMeasureTypeUrl (),
             multipleDimensions = Visualization_Controller.getMultipleDimensions ( 
                 entries, selectedComponentDimensions, measures
             ),
@@ -81,7 +71,7 @@ class Visualization_HighCharts_Chart {
             
         for ( var value in xAxisElements ) {
             this ["xAxis"]["categories"].push (
-                this.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
+                Visualization_Controller.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
             );
         }
         
@@ -98,9 +88,9 @@ class Visualization_HighCharts_Chart {
             
             // this represents one item of the series array (of highcharts)
             obj = { 
-                "name": this.getLabelForPropertyUri ( seriesEntry, forSeries, selectedComponentDimensions ),
+                "name": Visualization_Controller.getLabelForPropertyUri ( seriesEntry, forSeries, selectedComponentDimensions ),
                 "data": [],
-                "color": this.getColor ( seriesEntry )
+                "color": Visualization_Controller.getColor ( seriesEntry )
             };
             
             // iterate over all x axis elements
@@ -147,77 +137,4 @@ class Visualization_HighCharts_Chart {
      * 
      */
     public getRenderResult () : Object { return {}; }
-        
-    
-    /**
-     * ---------------------------------------------------------------
-     */
-    
-    /**
-     * Extract the uri of the measure value
-     */
-    static extractMeasureValue ( measures:Object ) : string {
-        // return the first value
-        for ( var label in measures ) { return measures[label]["typeUrl"]; }
-    }
-        
-    /**
-     * @return Object[]
-     */
-    static getOneElementDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                      measures:Object[] ) : Object [] {
-                                                
-        // assign selected dimensions to xAxis and series (yAxis)
-        var oneElementDimensions:Object[] = [],
-            tmp:Object[] = [];
-            
-        for ( var hashedUrl in selectedDimensions ) {
-                        
-            // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 == selectedDimensions [hashedUrl] ["elements"]["length"] ) {
-                oneElementDimensions.push ( {
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
-                } ); 
-            }
-        }
-        
-        return oneElementDimensions;
-    }
-    
-    /**
-     * Returns the label of the given property uri.
-     */
-    public getLabelForPropertyUri ( propertyUri:string, dimensionType:string, selectedDimensions:Object[] ) : string {
-        var dim:Object = {};
-                
-        for ( var hashedUrl in selectedDimensions ) {
-            
-            dim = selectedDimensions[hashedUrl];
-            
-            // Stop if the given dimension was found (by type)
-            if ( dim["typeUrl"] == dimensionType ) {
-                
-                for ( var i in dim["elements"] ) {
-                    if ( dim["elements"][i]["property"] == propertyUri ) {
-                        return dim["elements"][i]["propertyLabel"];
-                    }
-                }
-            }
-        }
-        
-        // if nothing was found, simply return the given propertyUri
-        return propertyUri;
-    }
-    
-    /**
-     * Update ChartConfig entry with new value. Required e.g. for chart selection menu.
-     */
-    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) {
-        for ( var i in charts ) {
-            if ( className == charts [i]["class"] ) {
-                charts [i] = newValue;
-            }
-        }
-    }
 }

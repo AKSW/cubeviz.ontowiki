@@ -35,7 +35,7 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
         
         var data = [],
             forXAxis = multipleDimensions [0]["elements"][0]["typeUrl"],
-            measureUri = Visualization_HighCharts_Chart.extractMeasureValue ( measures ),
+            measureUri = Visualization_Controller.getMeasureTypeUrl (),
             observation = new Observation (); 
         
         // save given chart config
@@ -56,7 +56,7 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
                     
         for ( var value in xAxisElements ) {
             data[0]["data"].push ([
-                this.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
+                Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
                 xAxisElements[value][0][measureUri]["value"]
             ]);
         }

@@ -18,7 +18,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "bar",
-                "class": "Bar",
+                "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -67,7 +67,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "bar",
-                "class": "Bar",
+                "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -139,7 +139,7 @@ var CubeViz_ChartConfig = {
              */
            {
                 "label": "line",
-                "class": "Line",
+                "class": "Visualization_HighCharts_Line",
                 "icon": "line.png",
                 
                 "defaultConfig": {
@@ -222,7 +222,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "pie",
-                "class": "Pie",
+                "class": "Visualization_HighCharts_Pie",
                 "icon": "pie.png",
                 
                 "defaultConfig": {
@@ -266,8 +266,19 @@ var CubeViz_ChartConfig = {
              * -----------------------------------------------------------------
              */
             {
+                "label": "Table",
+                "class": "Visualization_CubeViz_Table",
+                "icon": "table.png",                               
+                "options": [
+                ]
+            },
+            
+            /**
+             * -----------------------------------------------------------------
+             */
+            {
                 "label": "bar",
-                "class": "Bar",
+                "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -354,7 +365,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "polar",
-                "class": "Polar",
+                "class": "Visualization_HighCharts_Polar",
                 "icon": "polar.png",
                 
                 "defaultConfig": {
@@ -418,7 +429,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "line",
-                "class": "Line",
+                "class": "Visualization_HighCharts_Line",
                 "icon": "line.png",
                 
                 "defaultConfig": {

@@ -11,6 +11,7 @@ static/typescript/src/classes/Visualization/HighCharts/Pie.ts
 static/typescript/src/classes/Visualization/HighCharts/Polar.ts
 
 static/typescript/src/classes/Visualization/CubeViz.ts
+static/typescript/src/classes/Visualization/CubeViz/Visualization.ts
 static/typescript/src/classes/Visualization/CubeViz/Table.ts
 
 static/typescript/src/classes/Visualization/Controller.ts

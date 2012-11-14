@@ -65,14 +65,24 @@ class Viz_Main {
         );
         
         switch ( Visualization_Controller.getVisualizationType ( className ) ) {
+            
             case "CubeViz":
             
+                var visz = Visualization_CubeViz.load ( className );
+                
+                visz.init (
+                    CubeViz_Data ["retrievedObservations"], 
+                    CubeViz_Links_Module,
+                    fromChartConfig ["defaultConfig"]
+                );
+                
+                visz.render ();
             
                 break;
                 
             default: // HighCharts
                 
-                var chart = Visualization_HighCharts.loadChart ( className );
+                var chart = Visualization_HighCharts.load ( className );
                     
                 // init chart instance
                 chart.init ( 

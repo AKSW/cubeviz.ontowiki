@@ -1,5 +1,5 @@
 <!-- Libraries -->
-<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/CryptoJs/sha512-min.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/CryptoJs/md5-min.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.js"></script>
 <!--<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.src.js"></script>-->
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts-more.js"></script>
@@ -13,7 +13,8 @@
     @import url("<?php echo $this->basePath; ?>static/css/main.css");
 </style>
 
-<?php require_once ('extensions/cubeviz/static/templates/ChartSelectorTemplate.phtml'); ?>
+<?php require_once ('extensions/cubeviz/static/templates/ChartSelectorTemplates.phtml'); ?>
+<?php require_once ('extensions/cubeviz/static/templates/Visualization_CubeViz_Templates.phtml'); ?>
 
 <script>
     /**

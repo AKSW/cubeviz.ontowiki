@@ -1,0 +1,73 @@
+<div id="stringContainerVisualization_CubeViz_Table" style="display:none;">
+
+    <br/>
+
+    <div style="margin: 15px;">
+        
+        <div id="Vis_CV_Table_Structure">
+            
+            <h2>Structure</h2>
+            
+            <div class="Vis_CV_Table_row">
+                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;margin-right:10px;">Data Structure Definition</div>
+                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;">Data Set</div>
+            </div>
+            
+            {.section generatedStructure}
+                <div class="Vis_CV_Table_row">
+                {.repeated section @}                                
+                    <div class="Vis_CV_Table_column">{@}</div>
+                {.end}                
+                </div>
+            {.end}
+            
+            <br/>
+            <br/>
+            
+            <div style="clear:both;">
+                <h3>Selected Dimensions</h3>
+                <br/>
+                {.section generatedStructure_Components}
+                    {.repeated section @}
+                    <div style="float:left; width:35%; min-width:30%; padding-right:10px;">
+                        <div style="font-size:13px;font-weight:bold;border-bottom:1px solid #000000;">
+                            <a href="{typeUrl}" target="_blank">{label}</a>
+                        </div>
+                        {.section entries}{.repeated section @}
+                            <div style="margin-top:3px;">{@}</div>              
+                        {.end}{.end}
+                    </div>
+                    {.end}
+                {.end}
+            </div>            
+            
+        </div>
+        
+        <div style="clear:both;"><br/></div>
+        
+        <div id="Vis_CV_Table_Observations">
+            
+            <h2>Observations</h2>
+            
+            {.section generatedObservations}
+                {.repeated section @}             
+                    <div style="clear:both;">
+                    {.section entries}{.repeated section @}
+                        <div class="Vis_CV_Table_Observation_Column">
+                            <div style="margin-top:3px;">{@}</div>
+                        </div>
+                    {.end}{.end}
+                    </div>
+                {.end}
+            {.end}
+            
+        </div>
+    </div>
+    
+</div>
+    
+<script type="text/javascript">
+
+    var templateVisualization_CubeViz_Table = $("#stringContainerVisualization_CubeViz_Table").html ();
+    
+</script>
