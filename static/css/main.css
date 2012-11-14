@@ -652,6 +652,15 @@
 #Vis_CV_Table_Observations {
 }
 
+.Vis_CV_Table_ObservationsHeaderLabel {
+    font-size: 12.5px;
+    font-weight: bold;
+}
+
+.Vis_CV_Table_ObservationsHeaderLabel a {
+    color: #000000;
+}
+
 .Vis_CV_Table_Observation_Column {
     float:left; 
     height: 40px; 

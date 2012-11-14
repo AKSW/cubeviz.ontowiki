@@ -42,10 +42,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
             observation = new Observation ();
         
         // initializing observation handling instance with given elements
-        // after init, sorting the x axis elements ascending
-        console.log ( "entries" );
-        console.log ( entries );
-        
+        // after init, sorting the x axis elements ascending        
         observation.initialize ( 
             entries, 
             cubeVizLinksModule["selectedComponents"]["dimensions"], 
@@ -56,7 +53,31 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
         necUris.push ( Visualization_Controller.getMeasureTypeUrl() );
         necUris.push ( "http://www.w3.org/2000/01/rdf-schema#label" );
         
+        /**
+         * Header
+         */
         for (var i in entries) {
+            
+            entry = {"entries": []};
+            
+            for ( var uri in entries[i] ) {                
+                if ( -1 != $.inArray ( uri, necUris ) ) {
+                    entry ["entries"].push (
+                        "<br/><div class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + 
+                            "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel (uri) + "</a>" +
+                        "</div>"
+                    );
+                }
+            }
+        
+            this["_generatedObservations"].push ( entry );
+            break;
+        }
+        
+        /**
+         * Data
+         */
+        for (i in entries) {
             
             entry = {"entries": []};
             
@@ -150,27 +171,6 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
             }
             
             this["_generatedStructure_Components"].push ( entry );
-        }
-        
-        // add selected Measures
-        for ( var dim in cubeVizLinksModule["selectedComponents"]["measures"] ) {
-            break;
-            dim = cubeVizLinksModule["selectedComponents"]["measures"][dim];
-            
-            data = "<div style=\"float:left;\">" +
-                        "<a href=\"" + dim["typeUrl"] + "\">" + dim["label"] + "</a>" +
-                   "</div>";
-            
-            backgroundColor = Visualization_Controller.getColor (dim["typeUrl"]);
-            data += "<div style=\"background-color:" + backgroundColor +";width:10px;height:10px;float:left;vertical-align:middle;\">&nbsp;</div>";
-            
-            entry = {
-                "label": dim ["label"],
-                "entries": [data]
-            };
-            
-            this["_generatedStructure_Components"].push ( entry );
-            break;
         }
     }
     

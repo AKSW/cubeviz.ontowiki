@@ -9,8 +9,8 @@
             <h2>Structure</h2>
             
             <div class="Vis_CV_Table_row">
-                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;margin-right:10px;">Data Structure Definition</div>
-                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;">Data Set</div>
+                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;">Data Structure Definition</div>
+                <div class="Vis_CV_Table_column" style="border-bottom:1px solid #000000;padding-left:4px;">Data Set</div>
             </div>
             
             {.section generatedStructure}
@@ -31,7 +31,7 @@
                     {.repeated section @}
                     <div style="float:left; width:35%; min-width:30%; padding-right:10px;">
                         <div style="font-size:13px;font-weight:bold;border-bottom:1px solid #000000;">
-                            <a href="{typeUrl}" target="_blank">{label}</a>
+                            <a href="{typeUrl}" target="_blank" style="color:#000000;">{label}</a>
                         </div>
                         {.section entries}{.repeated section @}
                             <div style="margin-top:3px;">{@}</div>              
@@ -54,7 +54,7 @@
                     <div style="clear:both;">
                     {.section entries}{.repeated section @}
                         <div class="Vis_CV_Table_Observation_Column">
-                            <div style="margin-top:3px;">{@}</div>
+                            <div>{@}</div>
                         </div>
                     {.end}{.end}
                     </div>

@@ -16,6 +16,38 @@ class Visualization_Controller {
     /**
      * 
      */
+    static getDimensionOrMeasureLabel (uri:string) : string {
+        
+        if ( "http://www.w3.org/2000/01/rdf-schema#label" == uri ) {
+            return "Label";
+        }
+        
+        // return the first value
+        for ( var dim in CubeViz_Links_Module["selectedComponents"]["dimensions"] ) { 
+            
+            dim = CubeViz_Links_Module["selectedComponents"]["dimensions"][dim];
+            
+            if ( uri == dim ["typeUrl"] ) {
+                return dim ["label"]; 
+            }
+        }
+        
+        // return the first value
+        for ( var mea in CubeViz_Links_Module["selectedComponents"]["measures"] ) { 
+            
+            mea = CubeViz_Links_Module["selectedComponents"]["measures"][mea];
+            
+            if ( uri == mea ["typeUrl"] ) {
+                return mea ["label"]; 
+            }
+        }
+        
+        return uri;
+    }
+    
+    /**
+     * 
+     */
     static getFromChartConfigByClass ( className:string, charts:Object[] ) : string {
         for ( var i in charts ) {
             if ( className == charts [i]["class"] ) {
