@@ -12,7 +12,6 @@ var CubeViz_ChartConfig = {
      */
     "0": {
         "charts": [
-        
             /**
              * -----------------------------------------------------------------
              */
@@ -53,6 +52,13 @@ var CubeViz_ChartConfig = {
                     }  
                 ]
             },
+            {
+                "label": "Table",
+                "class": "Visualization_CubeViz_Table",
+                "icon": "table.png",                               
+                "options": [
+                ]
+            }
         ]
     },
     
@@ -61,7 +67,6 @@ var CubeViz_ChartConfig = {
      */
     "1": {
         "charts": [
-        
             /**
              * -----------------------------------------------------------------
              */
@@ -118,19 +123,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "yAxis.type",
                         "type": "array"
-                    },
-                    {
-                        "label": "Rotate Labels",
-                        "defaultValue" : [ { "label": "Default", "value": "" } ],
-                        "values": [
-                            { "label": "30°", "value": "-30" },
-                            { "label": "45°", "value": "-45" },
-                            { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" }
-                        ],
-                        "key": "xAxis.labels.rotation",
-                        "type": "array"
-                    }              
+                    }
                 ]
             },
             
@@ -201,19 +194,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "yAxis.type",
                         "type": "array"
-                    },
-                    {
-                        "label": "Rotate Labels",
-                        "defaultValue" : [ { "label": "Default", "value": "" } ],
-                        "values": [
-                            { "label": "30°", "value": "-30" },
-                            { "label": "45°", "value": "-45" },
-                            { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" }
-                        ],
-                        "key": "xAxis.labels.rotation",
-                        "type": "array"
-                    }      
+                    }
                 ]
             },
             
@@ -252,16 +233,7 @@ var CubeViz_ChartConfig = {
                                 
                 "options": [                   
                 ]
-            }
-        ]
-    },
-    
-    /**
-     * Two multiple dimensions
-     */
-    "2": {
-        "charts": [
-            
+            },
             /**
              * -----------------------------------------------------------------
              */
@@ -271,8 +243,18 @@ var CubeViz_ChartConfig = {
                 "icon": "table.png",                               
                 "options": [
                 ]
-            },
-            
+            }
+            /**
+             * -----------------------------------------------------------------
+             */
+        ]
+    },
+    
+    /**
+     * Two multiple dimensions
+     */
+    "2": {
+        "charts": [
             /**
              * -----------------------------------------------------------------
              */
@@ -344,19 +326,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "yAxis.type",
                         "type": "array"
-                    },
-                    {
-                        "label": "Rotate Labels",
-                        "defaultValue" : [ { "label": "Default", "value": "" } ],
-                        "values": [
-                            { "label": "30", "value": "-30" },
-                            { "label": "45", "value": "-45" },
-                            { "label": "60", "value": "-60" },
-                            { "label": "90", "value": "-90" }
-                        ],
-                        "key": "xAxis.labels.rotation",
-                        "type": "array"
-                    }          
+                    }
                 ]
             },
             
@@ -501,19 +471,17 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "yAxis.type",
                         "type": "array"
-                    },
-                    {
-                        "label": "Rotate Labels",
-                        "defaultValue" : [ { "label": "Default", "value": "" } ],
-                        "values": [
-                            { "label": "30°", "value": "-30" },
-                            { "label": "45°", "value": "-45" },
-                            { "label": "60°", "value": "-60" },
-                            { "label": "90°", "value": "-90" }
-                        ],
-                        "key": "xAxis.labels.rotation",
-                        "type": "array"
-                    }      
+                    }
+                ]
+            },
+            /**
+             * -----------------------------------------------------------------
+             */
+            {
+                "label": "Table",
+                "class": "Visualization_CubeViz_Table",
+                "icon": "table.png",                               
+                "options": [
                 ]
             }
         ]
