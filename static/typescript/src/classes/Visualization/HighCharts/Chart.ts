@@ -106,7 +106,8 @@ class Visualization_HighCharts_Chart {
                     // into the obj [data] array
                     for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
                         if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
-                            obj ["data"].push ( xAxisElements[xAxisEntry][i][measureUri]["value"] );
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            obj ["data"].push ( floatValue );
                             found = true;
                             
                             // .. break this loop ...
