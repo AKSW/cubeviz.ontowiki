@@ -389,7 +389,8 @@ var Visualization_HighCharts_Chart = (function () {
                 for(var i in xAxisElements[xAxisEntry]) {
                     for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
                         if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
-                            obj["data"].push(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            obj["data"].push(floatValue);
                             found = true;
                             break;
                         }

@@ -380,6 +380,7 @@ var Module_Event = (function () {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
         $("#sidebar-left-data-selection-strc").change(Module_Event.onChange_DataStructureDefinitionBox);
         $("#showUpdateVisualizationButton").click(Module_Event.onClick_ShowVisualizationButton);
+        console.log("add event for showUpdateVisualizationButton");
         $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
@@ -451,7 +452,7 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
         if("undefined" == typeof Viz_Event) {
-            window.location.href = CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"];
+            window.location.href = CubeViz_Links_Module["cubevizPath"] + "?m=" + encodeURIComponent(CubeViz_Links_Module["modelUrl"]) + "&lC=" + CubeViz_Links_Module["linkCode"];
         } else {
             if("undefined" != System.toType(Viz_Main)) {
                 Viz_Main.closeChartSelectionMenu();
