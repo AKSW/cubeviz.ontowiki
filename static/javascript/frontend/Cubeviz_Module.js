@@ -380,7 +380,6 @@ var Module_Event = (function () {
         DataStructureDefinition.loadAll(Module_Event.onComplete_LoadDataStructureDefinitions);
         $("#sidebar-left-data-selection-strc").change(Module_Event.onChange_DataStructureDefinitionBox);
         $("#showUpdateVisualizationButton").click(Module_Event.onClick_ShowVisualizationButton);
-        console.log("add event for showUpdateVisualizationButton");
         $("#permaLinkButton").click(Module_Event.onClick_PermaLinkButton);
     }
     Module_Event.onClick_DialogSelector = function onClick_DialogSelector() {
