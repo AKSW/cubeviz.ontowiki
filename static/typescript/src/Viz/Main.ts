@@ -154,10 +154,10 @@ class Viz_Main {
         // extract positions out of offset
         var containerOffset = $("#container").offset (),
             menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
-            leftPosition = offset["left"] - containerOffset ["left"] + 4,
-            topPosition = offset["top"] - 43;
-                
-            // build the dongle
+            leftPosition = offset["left"] + 4,
+            topPosition = offset["top"] + 35;
+            
+        // build the dongle
         $("#chartSelectionMenuDongle")
             .attr ("src", CubeViz_Config ["imagesPath"] + "menuDongle.png")
             .css  ("left", leftPosition)

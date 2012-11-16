@@ -781,10 +781,6 @@ var Visualization_Controller = (function () {
         return uri;
     }
     Visualization_Controller.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
-        console.log("charts:");
-        console.log(charts);
-        console.log("className:");
-        console.log(className);
         for(var i in charts) {
             if(className == charts[i]["class"]) {
                 return charts[i];
@@ -922,6 +918,7 @@ var Viz_Event = (function () {
             Viz_Main.hideMenuDongle();
             var fromChartConfig = Visualization_Controller.getFromChartConfigByClass($(event["target"]).parent().attr("className"), CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
             if(undefined != fromChartConfig["options"] && 0 < fromChartConfig["options"]["length"]) {
+                console.log($(this).offset());
                 Viz_Main.showMenuDongle($(this).offset());
             }
         } else {
@@ -982,8 +979,6 @@ var Viz_Main = (function () {
 
             }
             default: {
-                console.log("Highcharts > defaultConfig");
-                console.log(fromChartConfig["defaultConfig"]);
                 var chart = Visualization_HighCharts.load(className);
                 chart.init(CubeViz_Data["retrievedObservations"], CubeViz_Links_Module, fromChartConfig["defaultConfig"]);
                 new Highcharts.Chart(chart.getRenderResult());
@@ -1022,9 +1017,14 @@ var Viz_Main = (function () {
     Viz_Main.showMenuDongle = function showMenuDongle(offset) {
         var containerOffset = $("#container").offset();
         var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
-        var leftPosition = offset["left"] - containerOffset["left"] + 4;
-        var topPosition = offset["top"] - 43;
+        var leftPosition = offset["left"] + 4;
+        var topPosition = offset["top"] + 35;
 
+        console.log(">>>>>>>>>>>>>>>>");
+        console.log(">>>>>>>>>>>>>>>>");
+        console.log(">>>>>>>>>>>>>>>>");
+        console.log(">>>>>>>>>>>>>>>>");
+        console.log(">>>>>>>>>>>>>>>>");
         $("#chartSelectionMenuDongle").attr("src", CubeViz_Config["imagesPath"] + "menuDongle.png").css("left", leftPosition).css("top", topPosition).fadeIn(800);
     }
     return Viz_Main;

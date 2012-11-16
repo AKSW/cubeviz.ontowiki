@@ -509,9 +509,10 @@
 
 #chartSelectionMenuDongle {
     display: none;
-    position: absolute;
+    position: fixed;
     width: 25px;
     height: 6px;
+    z-index: 100;
 }
 
 #chartSelectionMenuButton {
