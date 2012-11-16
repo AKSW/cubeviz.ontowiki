@@ -475,7 +475,7 @@
 
 #chartSelectionMenu {
     display: none;
-    position: fixed;
+    position: absolute;
     padding: 6px;
     width: 220px;
     height: auto;
@@ -509,7 +509,7 @@
 
 #chartSelectionMenuDongle {
     display: none;
-    position: fixed;
+    position: absolute;
     width: 25px;
     height: 6px;
     z-index: 100;
