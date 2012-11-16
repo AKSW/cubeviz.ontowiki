@@ -37,7 +37,6 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
          * ... and now the observations
          */
         var elements:Object = {},
-            entry:Object = {},
             link = "",
             observation = new Observation ();
         
@@ -58,7 +57,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
          */
         for (var i in entries) {
             
-            entry = {"entries": []};
+            var entry = {"entries": []};
             
             for ( var uri in entries[i] ) {                
                 if ( -1 != $.inArray ( uri, necUris ) ) {
@@ -79,7 +78,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
          */
         for (i in entries) {
             
-            entry = {"entries": []};
+            var entry = {"entries": []};
             
             for ( var uri in entries[i] ) {                
                 if ( -1 != $.inArray ( uri, necUris ) ) {

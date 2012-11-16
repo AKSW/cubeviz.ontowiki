@@ -670,8 +670,6 @@ var Visualization_CubeViz_Table = (function (_super) {
         this["_generatedObservations"] = [];
         var elements = {
         };
-        var entry = {
-        };
         var link = "";
         var observation = new Observation();
 
@@ -680,7 +678,7 @@ var Visualization_CubeViz_Table = (function (_super) {
         necUris.push(Visualization_Controller.getMeasureTypeUrl());
         necUris.push("http://www.w3.org/2000/01/rdf-schema#label");
         for(var i in entries) {
-            entry = {
+            var entry = {
                 "entries": []
             };
             for(var uri in entries[i]) {
@@ -692,7 +690,7 @@ var Visualization_CubeViz_Table = (function (_super) {
             break;
         }
         for(i in entries) {
-            entry = {
+            var entry = {
                 "entries": []
             };
             for(var uri in entries[i]) {
@@ -908,6 +906,9 @@ var Viz_Event = (function () {
         var lastUsedNr = parseInt($("#chartSelection").attr("lastSelection"));
         var lastSelectionAndClicked = parseInt($("#chartSelection").attr("lastSelectionAndClicked"));
 
+        if(undefined == $(event["target"]).parent().attr("className")) {
+            return;
+        }
         if(null == lastUsedNr || currentNr != lastUsedNr) {
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
