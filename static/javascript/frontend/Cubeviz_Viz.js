@@ -568,11 +568,13 @@ var Visualization_HighCharts_Pie = (function (_super) {
             name: this["chartConfig"]["title"]["text"],
             "data": []
         });
+        this["chartConfig"]["colors"] = [];
         for(var value in xAxisElements) {
             data[0]["data"].push([
                 Visualization_Controller.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions), 
                 xAxisElements[value][0][measureUri]["value"]
             ]);
+            this["chartConfig"]["colors"].push(Visualization_Controller.getColor(value));
         }
         this["series"] = data;
         System.out("generated series:");
@@ -918,7 +920,6 @@ var Viz_Event = (function () {
             Viz_Main.hideMenuDongle();
             var fromChartConfig = Visualization_Controller.getFromChartConfigByClass($(event["target"]).parent().attr("className"), CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
             if(undefined != fromChartConfig["options"] && 0 < fromChartConfig["options"]["length"]) {
-                console.log($(this).offset());
                 Viz_Main.showMenuDongle($(this).offset());
             }
         } else {
@@ -1020,11 +1021,6 @@ var Viz_Main = (function () {
         var leftPosition = offset["left"] + 4;
         var topPosition = offset["top"] + 35;
 
-        console.log(">>>>>>>>>>>>>>>>");
-        console.log(">>>>>>>>>>>>>>>>");
-        console.log(">>>>>>>>>>>>>>>>");
-        console.log(">>>>>>>>>>>>>>>>");
-        console.log(">>>>>>>>>>>>>>>>");
         $("#chartSelectionMenuDongle").attr("src", CubeViz_Config["imagesPath"] + "menuDongle.png").css("left", leftPosition).css("top", topPosition).fadeIn(800);
     }
     return Viz_Main;
