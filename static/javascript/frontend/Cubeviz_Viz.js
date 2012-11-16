@@ -691,6 +691,7 @@ var Visualization_CubeViz_Table = (function (_super) {
             this["_generatedObservations"].push(entry);
             break;
         }
+        console.log(entries);
         for(i in entries) {
             entry = {
                 "entries": []
@@ -955,10 +956,9 @@ var Viz_Main = (function () {
     }
     Viz_Main.openChartSelectionMenu = function openChartSelectionMenu(options, offset) {
         if(0 < options["length"]) {
-            var containerOffset = $("#container").offset();
             var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
-            var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
-            var topPosition = offset["top"] - 40;
+            var leftPosition = offset["left"] - menuWidth + 17;
+            var topPosition = offset["top"] + 37;
             var generatedHtml = ChartSelector.buildMenu(options);
             var menuButton = $("<input type=\"button\"/>").attr("id", "chartSelectionMenuButton").attr("class", "minibutton submit").css("margin-top", "15px").attr("value", "Update chart");
 
@@ -1016,7 +1016,6 @@ var Viz_Main = (function () {
         $("#container").html("").append(img);
     }
     Viz_Main.showMenuDongle = function showMenuDongle(offset) {
-        var containerOffset = $("#container").offset();
         var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
         var leftPosition = offset["left"] + 4;
         var topPosition = offset["top"] + 35;

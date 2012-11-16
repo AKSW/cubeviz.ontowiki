@@ -22,10 +22,9 @@ class Viz_Main {
     static openChartSelectionMenu (options:Object[], offset:Object) : void {
         if ( 0 < options["length"] ) {
                    
-            var containerOffset = $("#container").offset (),
-                menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
-                leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 18,
-                topPosition = offset["top"] - 40,
+            var menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
+                leftPosition = offset["left"] - menuWidth + 17,
+                topPosition = offset["top"] + 37,
                 
                 generatedHtml = ChartSelector.buildMenu ( options ),
             
@@ -152,8 +151,7 @@ class Viz_Main {
     static showMenuDongle (offset:Object) : void {
         
         // extract positions out of offset
-        var containerOffset = $("#container").offset (),
-            menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
+        var menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
             leftPosition = offset["left"] + 4,
             topPosition = offset["top"] + 35;
             

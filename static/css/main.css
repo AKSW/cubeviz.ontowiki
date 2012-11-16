@@ -475,7 +475,7 @@
 
 #chartSelectionMenu {
     display: none;
-    position: absolute;
+    position: fixed;
     padding: 6px;
     width: 220px;
     height: auto;
