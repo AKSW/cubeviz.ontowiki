@@ -23,7 +23,7 @@ var CubeViz_ChartConfig = {
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "container",
-                        "type": "column"
+                        "type": "bar"
                     },
                     "title": {
                         "align": "left",
