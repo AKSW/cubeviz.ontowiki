@@ -908,6 +908,9 @@ var Viz_Event = (function () {
         var lastUsedNr = parseInt($("#chartSelection").attr("lastSelection"));
         var lastSelectionAndClicked = parseInt($("#chartSelection").attr("lastSelectionAndClicked"));
 
+        if(undefined == $(event["target"]).parent().attr("className")) {
+            return;
+        }
         if(null == lastUsedNr || currentNr != lastUsedNr) {
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
             cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];

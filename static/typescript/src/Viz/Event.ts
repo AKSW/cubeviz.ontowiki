@@ -96,6 +96,10 @@ class Viz_Event {
             lastSelectionAndClicked:number = parseInt ( 
                 $("#chartSelection").attr("lastSelectionAndClicked") 
             );
+            
+        if ( undefined == $(event["target"]).parent ().attr("className") ) {
+            return;
+        }
         
         // If nothing was set or you clicked on another item as before
         if ( null == lastUsedNr || currentNr != lastUsedNr ) {
