@@ -5,10 +5,14 @@ static/typescript/src/classes/System.ts
 
 static/typescript/src/classes/Visualization/HighCharts.ts
 static/typescript/src/classes/Visualization/HighCharts/Chart.ts
+static/typescript/src/classes/Visualization/HighCharts/Area.ts
+static/typescript/src/classes/Visualization/HighCharts/AreaSpline.ts
 static/typescript/src/classes/Visualization/HighCharts/Bar.ts
+static/typescript/src/classes/Visualization/HighCharts/Column.ts
 static/typescript/src/classes/Visualization/HighCharts/Line.ts
 static/typescript/src/classes/Visualization/HighCharts/Pie.ts
 static/typescript/src/classes/Visualization/HighCharts/Polar.ts
+static/typescript/src/classes/Visualization/HighCharts/Spline.ts
 
 static/typescript/src/classes/Visualization/CubeViz.ts
 static/typescript/src/classes/Visualization/CubeViz/Visualization.ts

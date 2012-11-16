@@ -138,6 +138,7 @@ class Viz_Event {
             
             if ( undefined != fromChartConfig["options"] && 
                  0 < fromChartConfig["options"]["length"] ) {
+                                
                 Viz_Main.showMenuDongle (
                     $(this).offset() 
                 );
@@ -152,8 +153,7 @@ class Viz_Event {
                 Viz_Main.closeChartSelectionMenu ();
                 
                 // reset control variables
-                $("#chartSelection")
-                    .attr("lastSelectionAndClicked", -1)
+                $("#chartSelection").attr("lastSelectionAndClicked", -1);
             } 
             
             // if not, show menu

@@ -303,8 +303,20 @@ var Visualization_HighCharts = (function () {
     function Visualization_HighCharts() { }
     Visualization_HighCharts.load = function load(chartName) {
         switch(chartName) {
+            case 'Visualization_HighCharts_Area': {
+                return new Visualization_HighCharts_Area();
+
+            }
+            case 'Visualization_HighCharts_AreaSpline': {
+                return new Visualization_HighCharts_AreaSpline();
+
+            }
             case 'Visualization_HighCharts_Bar': {
                 return new Visualization_HighCharts_Bar();
+
+            }
+            case 'Visualization_HighCharts_Column': {
+                return new Visualization_HighCharts_Column();
 
             }
             case 'Visualization_HighCharts_Line': {
@@ -317,6 +329,10 @@ var Visualization_HighCharts = (function () {
             }
             case 'Visualization_HighCharts_Polar': {
                 return new Visualization_HighCharts_Polar();
+
+            }
+            case 'Visualization_HighCharts_Spline': {
+                return new Visualization_HighCharts_Spline();
 
             }
             default: {
@@ -389,7 +405,8 @@ var Visualization_HighCharts_Chart = (function () {
                 for(var i in xAxisElements[xAxisEntry]) {
                     for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
                         if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
-                            obj["data"].push(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            obj["data"].push(floatValue);
                             found = true;
                             break;
                         }
@@ -419,6 +436,44 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
+var Visualization_HighCharts_Area = (function (_super) {
+    __extends(Visualization_HighCharts_Area, _super);
+    function Visualization_HighCharts_Area() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    Visualization_HighCharts_Area.prototype.getRenderResult = function () {
+        this.chartConfig["xAxis"] = this["xAxis"];
+        this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return Visualization_HighCharts_Area;
+})(Visualization_HighCharts_Chart);
+var Visualization_HighCharts_AreaSpline = (function (_super) {
+    __extends(Visualization_HighCharts_AreaSpline, _super);
+    function Visualization_HighCharts_AreaSpline() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    Visualization_HighCharts_AreaSpline.prototype.getRenderResult = function () {
+        this.chartConfig["xAxis"] = this["xAxis"];
+        this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return Visualization_HighCharts_AreaSpline;
+})(Visualization_HighCharts_Chart);
 var Visualization_HighCharts_Bar = (function (_super) {
     __extends(Visualization_HighCharts_Bar, _super);
     function Visualization_HighCharts_Bar() {
@@ -437,6 +492,25 @@ var Visualization_HighCharts_Bar = (function (_super) {
         return this.chartConfig;
     };
     return Visualization_HighCharts_Bar;
+})(Visualization_HighCharts_Chart);
+var Visualization_HighCharts_Column = (function (_super) {
+    __extends(Visualization_HighCharts_Column, _super);
+    function Visualization_HighCharts_Column() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    Visualization_HighCharts_Column.prototype.getRenderResult = function () {
+        this["chartConfig"]["xAxis"] = this["xAxis"];
+        this["chartConfig"]["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return Visualization_HighCharts_Column;
 })(Visualization_HighCharts_Chart);
 var Visualization_HighCharts_Line = (function (_super) {
     __extends(Visualization_HighCharts_Line, _super);
@@ -494,11 +568,13 @@ var Visualization_HighCharts_Pie = (function (_super) {
             name: this["chartConfig"]["title"]["text"],
             "data": []
         });
+        this["chartConfig"]["colors"] = [];
         for(var value in xAxisElements) {
             data[0]["data"].push([
                 Visualization_Controller.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions), 
                 xAxisElements[value][0][measureUri]["value"]
             ]);
+            this["chartConfig"]["colors"].push(Visualization_Controller.getColor(value));
         }
         this["series"] = data;
         System.out("generated series:");
@@ -528,6 +604,25 @@ var Visualization_HighCharts_Polar = (function (_super) {
         return this.chartConfig;
     };
     return Visualization_HighCharts_Polar;
+})(Visualization_HighCharts_Chart);
+var Visualization_HighCharts_Spline = (function (_super) {
+    __extends(Visualization_HighCharts_Spline, _super);
+    function Visualization_HighCharts_Spline() {
+        _super.apply(this, arguments);
+
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    Visualization_HighCharts_Spline.prototype.getRenderResult = function () {
+        this.chartConfig["xAxis"] = this["xAxis"];
+        this.chartConfig["series"] = this["series"];
+        return this.chartConfig;
+    };
+    return Visualization_HighCharts_Spline;
 })(Visualization_HighCharts_Chart);
 var Visualization_CubeViz = (function () {
     function Visualization_CubeViz() { }
@@ -863,7 +958,7 @@ var Viz_Main = (function () {
             var containerOffset = $("#container").offset();
             var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
             var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
-            var topPosition = offset["top"] - 40;
+            var topPosition = offset["top"] - containerOffset["top"] + 67;
             var generatedHtml = ChartSelector.buildMenu(options);
             var menuButton = $("<input type=\"button\"/>").attr("id", "chartSelectionMenuButton").attr("class", "minibutton submit").css("margin-top", "15px").attr("value", "Update chart");
 
@@ -924,7 +1019,7 @@ var Viz_Main = (function () {
         var containerOffset = $("#container").offset();
         var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
         var leftPosition = offset["left"] - containerOffset["left"] + 4;
-        var topPosition = offset["top"] - 43;
+        var topPosition = offset["top"] - containerOffset["top"] + 65;
 
         $("#chartSelectionMenuDongle").attr("src", CubeViz_Config["imagesPath"] + "menuDongle.png").css("left", leftPosition).css("top", topPosition).fadeIn(800);
     }

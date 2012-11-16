@@ -75,7 +75,7 @@ class Module_Event {
          * Button to show visualization
          */
         $("#showUpdateVisualizationButton").click (Module_Event.onClick_ShowVisualizationButton);
-         
+        
         /**
          * Button to show perma link menu
          */
@@ -247,7 +247,9 @@ class Module_Event {
         // Case 1: Only CubeViz module was loaded
         if ( "undefined" == typeof Viz_Event ) {
            // refresh page and show visualization for the latest linkCode
-            window.location.href = CubeViz_Links_Module ["cubevizPath"] + "?lC=" + CubeViz_Links_Module ["linkCode"];
+            window.location.href = CubeViz_Links_Module ["cubevizPath"] 
+                + "?m=" + encodeURIComponent (CubeViz_Links_Module ["modelUrl"])
+                + "&lC=" + CubeViz_Links_Module ["linkCode"];
         
         // Case 2: CubeViz module and visualization part was loaded
         // Load observations based on pre-configured data structure definition and data set.

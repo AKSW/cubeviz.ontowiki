@@ -512,6 +512,7 @@
     position: absolute;
     width: 25px;
     height: 6px;
+    z-index: 100;
 }
 
 #chartSelectionMenuButton {

@@ -53,12 +53,20 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
             .getAxisElements ( forXAxis );
             
         data.push ({ "type": "pie", name: this ["chartConfig"]["title"]["text"], "data": [] });
-                    
+        
+        this ["chartConfig"]["colors"] = [];
+              
+        /**
+         * Fill data series
+         */
         for ( var value in xAxisElements ) {
             data[0]["data"].push ([
                 Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
                 xAxisElements[value][0][measureUri]["value"]
             ]);
+            
+            // set color based on the URI
+            this ["chartConfig"]["colors"].push (Visualization_Controller.getColor(value));
         }
         
         this["series"] = data;

@@ -451,7 +451,7 @@ var Module_Event = (function () {
     }
     Module_Event.onClick_ShowVisualizationButton = function onClick_ShowVisualizationButton() {
         if("undefined" == typeof Viz_Event) {
-            window.location.href = CubeViz_Links_Module["cubevizPath"] + "?lC=" + CubeViz_Links_Module["linkCode"];
+            window.location.href = CubeViz_Links_Module["cubevizPath"] + "?m=" + encodeURIComponent(CubeViz_Links_Module["modelUrl"]) + "&lC=" + CubeViz_Links_Module["linkCode"];
         } else {
             if("undefined" != System.toType(Viz_Main)) {
                 Viz_Main.closeChartSelectionMenu();
