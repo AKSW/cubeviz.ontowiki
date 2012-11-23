@@ -61,10 +61,11 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
          */
         for ( var value in xAxisElements ) {
             var floatValue = parseFloat(xAxisElements[value][0][measureUri]["value"]);
-            data[0]["data"].push ([
-                Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
-                floatValue
-            ]);
+            if (isNaN(floatValue)) {
+                floatValue = null;
+            } 
+            var label = Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions );
+            data[0]["data"].push([label, floatValue]) ;
             
             // set color based on the URI
             this ["chartConfig"]["colors"].push (Visualization_Controller.getColor(value));

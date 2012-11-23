@@ -107,6 +107,10 @@ class Visualization_HighCharts_Chart {
                     for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
                         if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
                             var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            if (isNaN(floatValue)) {
+                                floatValue = null;
+                            } 
+                               
                             obj ["data"].push ( floatValue );
                             found = true;
                             

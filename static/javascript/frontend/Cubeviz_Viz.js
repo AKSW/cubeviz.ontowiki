@@ -406,6 +406,9 @@ var Visualization_HighCharts_Chart = (function () {
                     for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
                         if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
                             var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            if(isNaN(floatValue)) {
+                                floatValue = null;
+                            }
                             obj["data"].push(floatValue);
                             found = true;
                             break;
@@ -570,14 +573,19 @@ var Visualization_HighCharts_Pie = (function (_super) {
         });
         this["chartConfig"]["colors"] = [];
         for(var value in xAxisElements) {
+            var floatValue = parseFloat(xAxisElements[value][0][measureUri]["value"]);
+            if(isNaN(floatValue)) {
+                floatValue = null;
+            }
+            var label = Visualization_Controller.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions);
             data[0]["data"].push([
-                Visualization_Controller.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions), 
-                xAxisElements[value][0][measureUri]["value"]
+                label, 
+                floatValue
             ]);
             this["chartConfig"]["colors"].push(Visualization_Controller.getColor(value));
         }
         this["series"] = data;
-        System.out("generated series:");
+        System.out("generated piechart-series:");
         System.out(this["series"]);
     };
     Visualization_HighCharts_Pie.prototype.getRenderResult = function () {
@@ -683,7 +691,7 @@ var Visualization_CubeViz_Table = (function (_super) {
             };
             for(var uri in entries[i]) {
                 if(-1 != $.inArray(uri, necUris)) {
-                    entry["entries"].push("<br/><div class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel(uri) + "</a>" + "</div>");
+                    entry["entries"].push("<br/><b class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel(uri) + "</a>" + "</b>");
                 }
             }
             this["_generatedObservations"].push(entry);
