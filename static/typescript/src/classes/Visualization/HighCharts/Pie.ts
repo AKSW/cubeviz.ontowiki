@@ -60,10 +60,12 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
          * Fill data series
          */
         for ( var value in xAxisElements ) {
-            data[0]["data"].push ([
-                Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions ),
-                xAxisElements[value][0][measureUri]["value"]
-            ]);
+            var floatValue:any = parseFloat(xAxisElements[value][0][measureUri]["value"]);
+            if (isNaN(floatValue)) {
+                floatValue = null;
+            } 
+            var label:any = Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions );
+            data[0]["data"].push([label, floatValue]) ;
             
             // set color based on the URI
             this ["chartConfig"]["colors"].push (Visualization_Controller.getColor(value));
@@ -71,7 +73,7 @@ class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
         
         this["series"] = data;
         
-        System.out ( "generated series:" );
+        System.out ( "generated piechart-series:" );
         System.out ( this["series"] );
     }
     

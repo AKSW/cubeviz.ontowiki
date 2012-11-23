@@ -1,12 +1,12 @@
 /**
  * Chart configuration
- * 
+ *
  * Each key represents the "maximum" number of multiple dimensions which can
  * be represents by one of the items in charts-array. That means, a bar chart
  * which has maximum number of two is also able to display only one dimension.
  */
 var CubeViz_ChartConfig = {
-    
+
     /**
      * No multiple dimensions
      */
@@ -19,28 +19,18 @@ var CubeViz_ChartConfig = {
                 "label": "bar",
                 "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container",
-                        "type": "column"
+                        "type": "bar"
                     },
                     "title": {
                         "align": "left",
                         "color": "#000000"
                     }
                 },
-                
                 "options": [
-                    {
-                        "label": "Type",
-                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
-                        "values": [
-                            { "label": "Column", "value": "column" }
-                        ],
-                        "key": "chart.type",
-                        "type": "array"
-                    },
                     {
                         "label": "DataLabels",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
@@ -49,19 +39,45 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
-                    }  
+                    }
+                ]
+            },
+            {
+                "label": "column",
+                "class": "Visualization_HighCharts_Column",
+                "icon": "column.png",
+                "defaultConfig": {
+                    "chart": {
+                        "renderTo": "container",
+                        "type": "column"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    }
+                },
+                "options": [
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    }
                 ]
             },
             {
                 "label": "Table",
                 "class": "Visualization_CubeViz_Table",
-                "icon": "table.png",                               
+                "icon": "table.png",
                 "options": [
                 ]
             }
         ]
     },
-    
+
     /**
      * One multiple dimensions
      */
@@ -74,9 +90,9 @@ var CubeViz_ChartConfig = {
                 "label": "bar",
                 "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container",
                         "type": "bar"
                     },
@@ -85,17 +101,53 @@ var CubeViz_ChartConfig = {
                         "color": "#000000"
                     }
                 },
-                
+
                 "options": [
                     {
-                        "label": "Type",
-                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
-                            { "label": "Column", "value": "column" }
+                            { "label": "Yes", "value": true }
                         ],
-                        "key": "chart.type",
+                        "key": "_highchart_switchAxes",
                         "type": "array"
                     },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" }
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }
+                ]
+            },
+            {
+                "label": "column",
+                "class": "Visualization_HighCharts_Column",
+                "icon": "column.png",
+                "defaultConfig": {
+                    "chart": {
+                        "renderTo": "container",
+                        "type": "column"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    }
+                },
+
+                "options": [
                     {
                         /* System default fpr _highchart_switchAxes is false! */
                         "label": "Switching axes",
@@ -126,7 +178,7 @@ var CubeViz_ChartConfig = {
                     }
                 ]
             },
-            
+
             /**
              * -----------------------------------------------------------------
              */
@@ -134,25 +186,23 @@ var CubeViz_ChartConfig = {
                 "label": "line",
                 "class": "Visualization_HighCharts_Line",
                 "icon": "line.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
-                        "renderTo": "container"
+                    "chart": {
+                        "renderTo": "container",
+                        "type" : "line"
                     },
                     "title": {
                         "align": "left",
                         "color": "#000000"
                     }
                 },
-                
-                "options": [   
+                "options": [
                     {
                         "label": "Type",
                         "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
                             { "label": "Spline", "value": "spline" },
-                            { "label": "Area", "value": "area" },
-                            { "label": "AreaSpline", "value": "areaspline" },
                             { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
@@ -176,7 +226,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
-                    },   
+                    },
                     {
                         "label": "Inverted",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
@@ -197,7 +247,70 @@ var CubeViz_ChartConfig = {
                     }
                 ]
             },
-            
+           {
+                "label": "area",
+                "class": "Visualization_HighCharts_Area",
+                "icon": "area.png",
+                "defaultConfig": {
+                    "chart": {
+                        "renderTo": "container",
+                        "type" : "area"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    }
+                },
+                "options": [
+                    {
+                        "label": "Type",
+                        "defaultValue": [ { "label": "Area", "value": "area" } ],
+                        "values": [
+                            { "label": "AreaSpline", "value": "areaspline" },
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Inverted",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "chart.inverted",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" }
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }
+                ]
+            },
+
             /**
              * -----------------------------------------------------------------
              */
@@ -205,9 +318,9 @@ var CubeViz_ChartConfig = {
                 "label": "pie",
                 "class": "Visualization_HighCharts_Pie",
                 "icon": "pie.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container",
                         "type": "pie",
                         "plotShadow": "true"
@@ -217,7 +330,7 @@ var CubeViz_ChartConfig = {
                         "color": "#000000"
                     },
                     "tooltip": {
-                    	"percentageDecimals": "1"
+                        "percentageDecimals": "1"
                     },
                     "plotOptions": {
                         "pie": {
@@ -230,8 +343,8 @@ var CubeViz_ChartConfig = {
                         }
                     }
                 },
-                                
-                "options": [                   
+
+                "options": [
                 ]
             },
             /**
@@ -240,7 +353,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "Table",
                 "class": "Visualization_CubeViz_Table",
-                "icon": "table.png",                               
+                "icon": "table.png",
                 "options": [
                 ]
             }
@@ -249,7 +362,7 @@ var CubeViz_ChartConfig = {
              */
         ]
     },
-    
+
     /**
      * Two multiple dimensions
      */
@@ -262,9 +375,9 @@ var CubeViz_ChartConfig = {
                 "label": "bar",
                 "class": "Visualization_HighCharts_Bar",
                 "icon": "bar.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container",
                         "type": "bar"
                     },
@@ -278,17 +391,7 @@ var CubeViz_ChartConfig = {
                         }
                     }
                 },
-                
                 "options": [
-                    {
-                        "label": "Type",
-                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
-                        "values": [
-                            { "label": "Column", "value": "column" }
-                        ],
-                        "key": "chart.type",
-                        "type": "array"
-                    },
                     {
                         /* System default fpr _highchart_switchAxes is false! */
                         "label": "Switching axes",
@@ -316,7 +419,7 @@ var CubeViz_ChartConfig = {
                             { "label": "Percentage", "value": "percent" }
                         ],
                         "key": "plotOptions.series.stacking",
-                        "type": "array"                        
+                        "type": "array"
                     },
                     {
                         "label": "Scale",
@@ -329,7 +432,69 @@ var CubeViz_ChartConfig = {
                     }
                 ]
             },
-            
+            {
+                "label": "column",
+                "class": "Visualization_HighCharts_Column",
+                "icon": "column.png",
+
+                "defaultConfig": {
+                    "chart": {
+                        "renderTo": "container",
+                        "type": "column"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    },
+                    "plotOptions": {
+                        "series": {
+                            "stacking": null
+                        }
+                    }
+                },
+
+                "options": [
+                    {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Stacking",
+                        "defaultValue": [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "Percentage", "value": "percent" }
+                        ],
+                        "key": "plotOptions.series.stacking",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" }
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }
+                ]
+            },
+
             /**
              * -----------------------------------------------------------------
              */
@@ -337,11 +502,12 @@ var CubeViz_ChartConfig = {
                 "label": "polar",
                 "class": "Visualization_HighCharts_Polar",
                 "icon": "polar.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container",
-                        "polar": "true"
+                        "polar": "true",
+                        "type" : "column"
                     },
                     "title": {
                         "align": "left",
@@ -351,12 +517,12 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Line", "value": "line" } ],
+                        "defaultValue": [ { "label": "Column", "value": "column" } ],
                         "values": [
+                            { "label": "Line", "value": "line" },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" },
-                            { "label": "Column", "value": "column" },
                             { "label": "Scatter", "value": "scatter" }
                         ],
                         "key": "chart.type",
@@ -390,10 +556,10 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "yAxis.type",
                         "type": "array"
-                    }        
+                    }
                 ]
             },
-            
+
             /**
              * -----------------------------------------------------------------
              */
@@ -401,9 +567,9 @@ var CubeViz_ChartConfig = {
                 "label": "line",
                 "class": "Visualization_HighCharts_Line",
                 "icon": "line.png",
-                
+
                 "defaultConfig": {
-                    "chart": { 
+                    "chart": {
                         "renderTo": "container"
                     },
                     "title": {
@@ -411,15 +577,13 @@ var CubeViz_ChartConfig = {
                         "color": "#000000"
                     }
                 },
-                
-                "options": [   
+
+                "options": [
                     {
                         "label": "Type",
                         "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
                             { "label": "Spline", "value": "spline" },
-                            { "label": "Area", "value": "area" },
-                            { "label": "AreaSpline", "value": "areaspline" },
                             { "label": "Scatterplot", "value": "scatter" }
                         ],
                         "key": "chart.type",
@@ -453,7 +617,7 @@ var CubeViz_ChartConfig = {
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
                         "type": "array"
-                    },   
+                    },
                     {
                         "label": "Inverted",
                         "defaultValue" : [ { "label": "None", "value": "" } ],
@@ -474,16 +638,92 @@ var CubeViz_ChartConfig = {
                     }
                 ]
             },
+            {
+                "label": "area",
+                "class": "Visualization_HighCharts_Area",
+                "icon": "area.png",
+
+                "defaultConfig": {
+                    "chart": {
+                        "renderTo": "container",
+                        "type" : "area"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    }
+                },
+
+                "options": [
+                    {
+                        "label": "Type",
+                        "defaultValue": [ { "label": "Area", "value": "area" } ],
+                        "values": [
+                            { "label": "AreaSpline", "value": "areaspline" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        /* System default fpr _highchart_switchAxes is false! */
+                        "label": "Switching axes",
+                        "defaultValue" : [ { "label": "No", "value": false } ],
+                        "values": [
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_highchart_switchAxes",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Stacking",
+                        "defaultValue": [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Normal", "value": "normal" },
+                            { "label": "Percentage", "value": "percent" }
+                        ],
+                        "key": "plotOptions.series.stacking",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Inverted",
+                        "defaultValue" : [ { "label": "None", "value": "" } ],
+                        "values": [
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "chart.inverted",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
+                        "values": [
+                            { "label": "Logarithmic", "value": "logarithmic" }
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }
+                ]
+            },
+
             /**
              * -----------------------------------------------------------------
              */
             {
                 "label": "Table",
                 "class": "Visualization_CubeViz_Table",
-                "icon": "table.png",                               
+                "icon": "table.png",
                 "options": [
                 ]
             }
         ]
     }
-};
+}; 
