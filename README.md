@@ -1,6 +1,6 @@
 # CubeViz - THE RDF DATACUBE BROWSER 
 
-CubeViz is the facetted browser for statistical data in the Linked Data Web. It was set up and 
+CubeViz is the faceted browser for statistical data in the Linked Data Web. It was set up and 
 adopted to be part of the Data Portal of the European Union. 
 
 ![Line of different charts](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/differentCharts.png)
