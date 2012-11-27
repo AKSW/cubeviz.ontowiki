@@ -1,22 +1,23 @@
-# Visualization of statistics in the Linked Data Web with CubeViz
+# CubeViz - THE RDF DATACUBE BROWSER 
 
-CubeViz is based on the award winning Semantic Wiki technology [OntoWiki](http://ontowiki.net/Projects/OntoWiki) 
-which offers possibilities to visualize statistical data in a generic way. The statistical data itself has to be 
-in [RDF data format](http://localhost/ow_cubeviz_odp/www.w3.org/RDF/) designed by using the 
-[RDF DataCube vocabulary](http://www.w3.org/TR/vocab-data-cube/). The Visualization of and the access to statistical 
-data becomes more and more important since the amount of available data in the web is increasing. CubeViz addresses 
-this issue and offers user-friendly exploration possibilities. At the moment CubeViz offers basic chart types to explore
-up to two dimensions in a data structure. Due to the fact that statistics can be much more complex, we will offer more 
-chart types and additional facetted browsing possibilities as part of CubeViz in the near future.
+## About the project
 
+CubeViz is the facetted browser for statistical data in the Linked Data Web. It was set up and 
+adopted to be part of the Data Portal of the European Union. 
 
-## Get started
+![Line of different charts](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/differentCharts.png)
 
-Want to play with CubeViz? Just follow the Wiki [pages](https://github.com/AKSW/cubeviz.ontowiki/wiki) which describes 
-how to install and setup CubeViz.
+Do you want to read further information about the project and its background, please have a look into 
+[about](https://github.com/AKSW/cubeviz.ontowiki/wiki/About-the-project) page.
 
+## Getting started
+
+You will find various information in our [Wiki](https://github.com/AKSW/cubeviz.ontowiki/wiki/Home).
+For new users, please visit the [installation](https://github.com/AKSW/cubeviz.ontowiki/wiki/Installation-and-setup-main) 
+- or [introduction](https://github.com/AKSW/cubeviz.ontowiki/wiki/Introductions-for-first-steps) page. 
+Further information about the repository structure or other internals can be also found in the Wiki.
 
 ## License
 
-CubeViz is licensed under the terms of GNU General Public License 2. For further details look 
-[here](https://raw.github.com/AKSW/cubeviz.ontowiki/master/LICENSE.md).
+CubeViz is licensed under the terms of GNU General Public License 2 and it uses foreign libraries. 
+For further details look [here](https://raw.github.com/AKSW/cubeviz.ontowiki/master/LICENSE.md).
