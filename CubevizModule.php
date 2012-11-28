@@ -62,12 +62,7 @@ class CubevizModule extends OntoWiki_Module
 		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
         
         // load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);
-        
-        // check folder permissions
-        // throws an exception if not enough folder permissions
-        $configuration->checkFolderPermissions ();
-        
+		$configuration = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
         $configuration = $configuration->read ($this->view->linkCode);
         if (true == isset ($configuration [0])) {
             $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...

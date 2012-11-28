@@ -4,6 +4,8 @@
  * 
  */
 class CubevizController extends OntoWiki_Controller_Component {
+
+    protected $_configuration = null;
     
     public function init () {
         parent::init();
@@ -50,12 +52,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
         
 		// load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);
-		
-        // check folder permissions
-        // throws an exception if not enough folder permissions
-        $configuration->checkFolderPermissions ();
-        
+		$configuration = $this->_getConfiguration ();
         $configuration = $configuration->read ($this->view->linkCode);
         if (true == isset ($configuration [0])) {
             $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
@@ -77,7 +74,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();     
 		
         // load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+		$configuration = $this->_getConfiguration ();
         $configuration = $configuration->read ($this->_request->getParam('lC'));
 				
         // send back readed configuration
@@ -92,7 +89,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();   
              
         // load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);        	
+		$configuration = $this->_getConfiguration (); 	
         
 		// linkCode (each linkcode represents a particular configuration of CubeViz)
 		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
@@ -187,9 +184,18 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$config['cubeVizLinksModule'] = $this->_request->getParam('cubeVizLinksModule');
 		$config['uiChartConfig'] = $this->_request->getParam('uiChartConfig');
 		
-		$configuration = new CubeViz_ConfigurationLink(__DIR__);
+		$configuration = $this->_getConfiguration ();
         
         // write given parameter to file and send back result
 		$this->_response->setBody(json_encode($configuration->write($config)));
 	}
+
+    protected function _getConfiguration () {
+        $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        if (null === $this->_configuration) {
+    		$this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
+        } 
+        return $this->_configuration;
+    }
+
 }

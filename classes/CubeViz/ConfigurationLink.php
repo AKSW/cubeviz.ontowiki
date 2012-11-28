@@ -16,7 +16,12 @@ class CubeViz_ConfigurationLink
 	/**
      * Path to the links folder
      */
-    protected $_linksFolder = '';    
+    protected $_hashDirectory = '';    
+
+	/**
+     * filePrefix for hashes
+     */
+    protected $_filePrefix = 'cubeviz-hash-';
     
     /**
      * Needs to be public to be accessible through json_encode interface
@@ -26,9 +31,8 @@ class CubeViz_ConfigurationLink
     /**
      * Constructor
      */
-    public function __construct($cubeVizDir) {
-        $ds = DIRECTORY_SEPARATOR;        
-        $this->_linksFolder = $cubeVizDir . $ds . 'data' . $ds . 'links' . $ds;
+    public function __construct($path) {
+        $this->_hashDirectory = $path;
         $this->_links = array ();
 	}
     
@@ -39,8 +43,8 @@ class CubeViz_ConfigurationLink
 	 */
 	public function read($linkCode) {
         
-		if (true === file_exists($this->_linksFolder . $linkCode) ) {
-            return file($this->_linksFolder . $linkCode);
+		if (true === file_exists($this->_hashDirectory . $linkCode) ) {
+            return file($this->_hashDirectory . $linkCode);
 		}
 		return false;
 	}
@@ -49,12 +53,9 @@ class CubeViz_ConfigurationLink
      * Writes a given configuration to a file
      */
 	public function write($config) {
-        		
-        $this->checkFolderPermissions ();
-        		
         // compute hashcode for the given configuration
-        $fileName = $this->generateHash ($config);
-		$filePath = $this->_linksFolder . $fileName;
+        $fileName = $this->_filePrefix . $this->generateHash ($config);
+		$filePath = $this->_hashDirectory . $fileName;
         				
 		if( false == file_exists($filePath) ) {
             
@@ -79,13 +80,6 @@ class CubeViz_ConfigurationLink
     /**
      * 
      */
-    public function checkFolderPermissions () {
-        $perms = substr(decoct( fileperms($this->_linksFolder) ), 2);
-        if ( 777 != $perms ) {
-            throw new CubeViz_Exception ( $this->_linksFolder . ' has 0'. $perms .', but needs 0777 (file permissions)!' );
-            return;
-        }
-    }
 	
 	private function generateHash ($config) {		
 		return hash ( 'sha256', json_encode ( $config ) );
