@@ -15,7 +15,6 @@ build-javascript:
 	@echo " "
 	
 install:
-	chmod 0777 data/links
 	cp ChartConfig.js.dist ChartConfig.js
 	
 install-typescript:
