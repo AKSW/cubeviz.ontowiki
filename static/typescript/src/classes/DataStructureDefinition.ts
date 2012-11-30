@@ -26,6 +26,8 @@ class DataStructureDefinition {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedDataStructureDefinitions ( entries, callback ) {
+        
+        entries = JSON.parse (entries);
                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {

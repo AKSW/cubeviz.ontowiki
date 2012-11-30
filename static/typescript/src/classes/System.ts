@@ -90,7 +90,6 @@ class System {
             "async": true,
             "cache": false,
             "crossDomain": true,
-            "dataType": "json",
             "type": "POST"
         });
         

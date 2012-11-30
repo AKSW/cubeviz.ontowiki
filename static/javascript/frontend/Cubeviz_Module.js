@@ -18,6 +18,7 @@ var Component = (function () {
         });
     }
     Component.prepareLoadedAllDimensions = function prepareLoadedAllDimensions(entries, callback) {
+        entries = JSON.parse(entries);
         entries.sort(function (a, b) {
             return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
@@ -46,6 +47,7 @@ var Component = (function () {
         });
     }
     Component.prepareLoadedAllMeasures = function prepareLoadedAllMeasures(entries, callback) {
+        entries = JSON.parse(entries);
         entries.sort(function (a, b) {
             return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
@@ -84,7 +86,7 @@ var ConfigurationLink = (function () {
             System.out("response text: " + xhr.responseText);
             System.out("error: " + thrownError);
         }).done(function (result) {
-            callback(result);
+            callback(JSON.parse(result));
         });
     }
     return ConfigurationLink;
@@ -106,6 +108,7 @@ var DataStructureDefinition = (function () {
         });
     }
     DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
+        entries = JSON.parse(entries);
         entries.sort(function (a, b) {
             return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
         });
@@ -331,7 +334,6 @@ var System = (function () {
             "async": true,
             "cache": false,
             "crossDomain": true,
-            "dataType": "json",
             "type": "POST"
         });
         $.support.cors = true;

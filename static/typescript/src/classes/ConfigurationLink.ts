@@ -19,7 +19,7 @@ class ConfigurationLink {
             System.out ( "error: " + thrownError );
         })
         .done( function (result) { 
-            callback ( result );
+            callback ( JSON.parse(result) );
         });
     }
 }

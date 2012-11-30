@@ -34,6 +34,8 @@ class Component {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedAllDimensions (entries:any, callback) {
+        
+        entries = JSON.parse (entries);
                                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {
@@ -81,6 +83,8 @@ class Component {
      * Set default values, sort objects by label etc.
      */
     static prepareLoadedAllMeasures (entries:any, callback) {
+        
+        entries = JSON.parse (entries);        
                                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {

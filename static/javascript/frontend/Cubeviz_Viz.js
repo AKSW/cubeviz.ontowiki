@@ -87,7 +87,7 @@ var ConfigurationLink = (function () {
             System.out("response text: " + xhr.responseText);
             System.out("error: " + thrownError);
         }).done(function (result) {
-            callback(result);
+            callback(JSON.parse(result));
         });
     }
     return ConfigurationLink;
@@ -285,7 +285,6 @@ var System = (function () {
             "async": true,
             "cache": false,
             "crossDomain": true,
-            "dataType": "json",
             "type": "POST"
         });
         $.support.cors = true;
@@ -691,7 +690,7 @@ var Visualization_CubeViz_Table = (function (_super) {
             };
             for(var uri in entries[i]) {
                 if(-1 != $.inArray(uri, necUris)) {
-                    entry["entries"].push("<br/><b class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel(uri) + "</a>" + "</b>");
+                    entry["entries"].push("<br/><div class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel(uri) + "</a>" + "</div>");
                 }
             }
             this["_generatedObservations"].push(entry);
