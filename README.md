@@ -11,10 +11,10 @@ Based on the vocabulary and the encoded Data Cube, CubeViz is generating a facet
 can be used to filter interactively observations to be visualized in charts. 
 Based on the selected structure, CubeViz offer beneficiary chart types and options which can be selected by users.
 
-![Line of different charts](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/differentCharts.png)
-
 Do you want to read further information about the project and its background, please have a look into 
 [about](https://github.com/AKSW/cubeviz.ontowiki/wiki/About-the-project) page.
+
+![Line of different charts](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/differentCharts.png)
 
 ## Getting started
 
