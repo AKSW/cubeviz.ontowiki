@@ -86,7 +86,7 @@
 
 #container {
     position: absolute;
-    top: 30px;
+    top: 70px;
     left: 0px;
     height: 98%;
     width: 100%;
@@ -98,9 +98,6 @@
     top: 21px;
     width: auto;
     height: 25px;
-    /* border: 1px solid #000000; */
-    /* background-color: #FFFFFF; */
-    /* padding-top: 5px; */
     padding-right: 5px;
     padding-bottom: 5px;
 }
@@ -673,4 +670,31 @@
     padding-bottom:3px;
     text-align:left;
     vertical-align:middle;
+}
+
+
+/**
+ * ICONS
+ */
+.cubeviz-icon-minimal {
+    width: 15px;
+    border: 0px;
+    vertical-align: middle;
+}
+
+.cubeviz-icon-small {
+    width: 20px;
+    border: 0px;
+    vertical-align: middle;
+}
+
+/**
+ * UNORDERED LISTS
+ */
+.cubeviz-ul-basic {
+    margin-left: 2px; list-style-type: none;
+}
+
+.cubeviz-ul-basic li {
+    margin-top: 5px;
 }

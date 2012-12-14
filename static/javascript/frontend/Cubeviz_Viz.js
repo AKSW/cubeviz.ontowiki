@@ -896,6 +896,13 @@ var Viz_Event = (function () {
         var containerHeight = 0;
         $("#container").css("height", $(window).height() - container["top"] - 5);
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
+        $("#cubeviz-Index-DialogboxHeadline").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
+        $("#cubeviz-Index-questionMarkHeadline").click(Viz_Event.onClick_QuestionMarkDialogboxHeadline);
     }
     Viz_Event.onClick_chartSelectionMenuButton = function onClick_chartSelectionMenuButton(event) {
         var newDefaultConfig = cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"];
@@ -944,6 +951,10 @@ var Viz_Event = (function () {
                 Viz_Main.openChartSelectionMenu(fromChartConfig["options"], $(this).offset());
             }
         }
+    }
+    Viz_Event.onClick_QuestionMarkDialogboxHeadline = function onClick_QuestionMarkDialogboxHeadline() {
+        console.log("click");
+        $("#cubeviz-Index-DialogboxHeadline").dialog("open");
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         CubeViz_Data["retrievedObservations"] = entries;

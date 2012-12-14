@@ -1,7 +1,6 @@
 <!-- Libraries -->
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/CryptoJs/md5-min.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.js"></script>
-<!--<script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts.src.js"></script>-->
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/highcharts-more.js"></script>
 <script type="text/javascript" src="<?php echo $this->basePath; ?>static/javascript/libraries/json2.js"></script>
 
@@ -11,6 +10,7 @@
 
 <style type="text/css">
     @import url("<?php echo $this->basePath; ?>static/css/main.css");
+    @import url("<?php echo $this->basePath; ?>static/css/IndexAction.css");
 </style>
 
 <?php require_once ('extensions/cubeviz/static/templates/ChartSelectorTemplates.phtml'); ?>
@@ -40,11 +40,24 @@
     var cubeVizUIChartConfig = <?php echo $this->cubeVizUIChartConfig; ?>; 
 </script>
 
+
+<!-- 
+    Chart rendering area 
+-->
 <div id="wrapper-index" scrolling="no">
+    <h2>
+        CubeViz - Visualization of the <?php echo $this->modelTitle; ?>
+        &nbsp;
+        <img id="cubeviz-Index-questionMarkHeadline" class="cubeviz-icon-small" src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" title="Click for more information"/>
+    </h2>
     <div id="container"></div>
     <div id="chartSelection" scrolling="no"></div>
 </div>
 
+
+<!-- 
+    Chart Selection menu 
+-->
 <div id="chartSelectionMenu" lastSelection="0">
     <div id="chartSelectionMenuHeader">
         Configure the visualization
@@ -53,3 +66,43 @@
     <div id="chartSelectionMenuContent"></div>
 </div>
 <img id="chartSelectionMenuDongle" title="Click to open the menu"/>
+
+
+<!-- 
+    Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
+-->
+<div id="cubeviz-Index-DialogboxHeadline">
+    
+    <!-- Label -->
+    <h2><?php echo $this->modelInformation ['label']; ?></h2>
+    
+    <!-- Short description -->
+    <div style="font-size: 14px;"><?php echo $this->modelInformation ['shortdesc']; ?></div>
+        
+    <!-- Description -->
+    <small><?php echo $this->modelInformation ['description']; ?></small>
+    
+    <br/>
+    <br/>
+    <div style="font-size: 14px;">Information:</div>
+    
+    <ul class="cubeviz-ul-basic">
+        <!-- Pencil -->
+        <li>
+            <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal"/>
+            <?php echo $this->modelInformation ['creator']; ?>
+        </li>
+    
+        <!-- Revision -->
+        <li>
+            <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal"/>
+            Revision: <?php echo $this->modelInformation ['revision']; ?>
+        </li>
+    
+        <!-- Document -->
+        <li>
+            <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal"/>
+            <?php echo $this->modelInformation ['license']; ?>
+        </li>
+    </ul>
+</div>

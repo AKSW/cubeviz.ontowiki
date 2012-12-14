@@ -703,6 +703,7 @@ interface JQuery {
     /**********
      EXTENSIONS
      **********/
+    dialog (options?: any): void;
     tagsInput ( options:any ): void;
     
     

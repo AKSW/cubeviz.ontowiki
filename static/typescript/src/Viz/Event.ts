@@ -59,6 +59,15 @@ class Viz_Event {
             CubeViz_Links_Module ["linkCode"],
             Viz_Event.onComplete_LoadResultObservations
         );
+        
+        // set div as dialog (jqueryui) and click event
+        $("#cubeviz-Index-DialogboxHeadline").dialog({ 
+            "autoOpen": false,
+            "draggable": false, 
+            "hide": "slow",
+            "show": "slow"
+        });
+        $("#cubeviz-Index-questionMarkHeadline").click (Viz_Event.onClick_QuestionMarkDialogboxHeadline);
     }
     
     /**
@@ -184,6 +193,14 @@ class Viz_Event {
                 );
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    static onClick_QuestionMarkDialogboxHeadline () : void {
+        console.log ( "click" );
+        $("#cubeviz-Index-DialogboxHeadline").dialog( "open" );
     }
     
     /**

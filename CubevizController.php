@@ -46,6 +46,11 @@ class CubevizController extends OntoWiki_Controller_Component {
 				
 		// model
 		$this->view->modelUrl = $this->_owApp->selectedModel;
+        $this->view->modelInformation = $this->_owApp->selectedModel->getMetaInformation ();
+        
+        $th = new OntoWiki_Model_TitleHelper ($this->_owApp->selectedModel);
+        $th->addResource($this->_owApp->selectedModel->getModelIri());
+		$this->view->modelTitle = $th->getTitle($this->_owApp->selectedModel->getModelIri());
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
 		// linkCode (each linkcode represents a particular configuration of CubeViz)
