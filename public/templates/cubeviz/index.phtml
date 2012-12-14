@@ -1,5 +1,7 @@
-<?php require_once ('extensions/cubeviz/public/jsontemplates/ChartSelectorTemplates.phtml'); ?>
-<?php require_once ('extensions/cubeviz/public/jsontemplates/Visualization_CubeViz_Templates.phtml'); ?>
+<?php 
+    require_once ('extensions/cubeviz/public/jsontemplates/ChartSelectorTemplates.phtml'); 
+    require_once ('extensions/cubeviz/public/jsontemplates/Visualization_CubeViz_Templates.phtml'); 
+?>
 
 <script>
     /**
@@ -33,7 +35,7 @@
     <h2>
         CubeViz - Visualization of the <?php echo $this->modelTitle; ?>
         &nbsp;
-        <img id="cubeviz-Index-questionMarkHeadline" class="cubeviz-icon-small" src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" title="Click for more information"/>
+        <img id="cubeviz-Index-questionMarkHeadline" class="cubeviz-icon-small" src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
     </h2>
     <div id="container"></div>
     <div id="chartSelection" scrolling="no"></div>
@@ -52,42 +54,5 @@
 </div>
 <img id="chartSelectionMenuDongle" title="Click to open the menu"/>
 
-
-<!-- 
-    Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
--->
-<div id="cubeviz-Index-DialogboxHeadline">
-    
-    <!-- Label -->
-    <h2><?php echo $this->modelInformation ['rdfs:label']; ?></h2>
-    
-    <!-- Short description -->
-    <div style="font-size: 14px;"><?php echo $this->modelInformation ['doap:shortdesc']; ?></div>
-        
-    <!-- Description -->
-    <small><?php echo $this->modelInformation ['dc:description']; ?></small>
-    
-    <br/>
-    <br/>
-    <div style="font-size: 14px;">Information:</div>
-    
-    <ul class="cubeviz-ul-basic">
-        <!-- Creator -->
-        <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal" title="Creator"/>
-            <?php echo $this->modelInformation ['dc:creator']; ?>
-        </li>
-    
-        <!-- Revision -->
-        <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal" title="Revision"/>
-            Revision: <?php echo $this->modelInformation ['doap:revision']; ?>
-        </li>
-    
-        <!-- Document -->
-        <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal" title="License"/>
-            <?php echo $this->modelInformation ['doap:license']; ?>
-        </li>
-    </ul>
-</div>
+<!-- File with dialogs -->
+<?php require_once ('extensions/cubeviz/public/templates/cubeviz/indexDialogs.phtml'); ?>

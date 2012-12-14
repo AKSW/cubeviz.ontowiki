@@ -15,7 +15,8 @@ class CubevizModule extends OntoWiki_Module
 {
     protected $session = null;
 
-    public function init() {
+    public function init() 
+    {
         $this->session = $this->_owApp->session;
         
 		$loader = Zend_Loader_Autoloader::getInstance();
@@ -25,28 +26,50 @@ class CubevizModule extends OntoWiki_Module
 		set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
 	}
 
-    public function getTitle() {
+    public function getTitle() 
+    {
         return 'Data Selection';
     }
     
-    public function shouldShow(){
-        
-        /**
-         * Check if the current selected knowledgebase contains datacube information
-         */
+    /**
+     * Check if the current selected knowledgebase contains datacube information
+     * @return bool True if selected model contains Data Cube information, false otherwise.
+     */
+    public function shouldShow()
+    {
 		if (true == isset($this->_owApp->selectedModel)) {
             $q = new DataCube_Query ( $this->_owApp->selectedModel );
             return $q->containsDataCubeInformation();
         } 
-        
         return false;
     }
 
     /**
      * Returns the content
      */
-    public function getContents() {
-
+    public function getContents() 
+    {
+        /**
+         * Model information
+         */
+        $model = $this->_owApp->selectedModel;
+        $modelIri = $model->getModelIri();
+        $modelStore = $model->getStore();
+        
+		// linkCode (each linkcode represents a particular configuration of CubeViz)
+		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        
+        
+        /**
+         * Load configuration which is associated with given linkCode
+         */
+		$configuration = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $configuration = $configuration->read ($linkCode);
+        
+        
+        /**
+         * Set view and some of its properties.
+         */
 		// set URL for cubeviz extension folder
         $this->view->cubevizUrl = $this->_config->staticUrlBase . 'cubeviz/';
         $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
@@ -55,15 +78,11 @@ class CubevizModule extends OntoWiki_Module
         $this->view->backendName = $this->_owApp->getConfig()->store->backend;
 				
 		// model
-		$this->view->modelUrl = $this->_owApp->selectedModel;
-		$graphUrl = $this->_owApp->selectedModel->getModelIri();
-		
-		// linkCode (each linkcode represents a particular configuration of CubeViz)
-		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+		$this->view->modelUrl = $model;
+		$graphUrl = $modelIri;
+		        
+        $this->view->linkCode = $linkCode;
         
-        // load configuration which is associated with given linkCode
-		$configuration = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $configuration = $configuration->read ($this->view->linkCode);
         if (true == isset ($configuration [0])) {
             $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
             $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
@@ -78,14 +97,10 @@ class CubevizModule extends OntoWiki_Module
             $this->view->cubeVizUIChartConfig = 'null';
         }
     
-        $content = $this->render('public/templates/cubeviz/CubeVizModule');
-        return $content;
+        return $this->render('public/templates/cubeviz/Module/index');
     }
 
-    public function layoutType(){
-        return 'inline';
-    }
-    
+    public function layoutType() { return 'inline'; }
 }
 
 

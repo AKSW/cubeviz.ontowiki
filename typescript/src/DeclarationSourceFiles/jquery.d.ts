@@ -700,11 +700,12 @@ interface JQuery {
     queue(queueName: string, newQueueOrCallback: any): JQuery;
     queue(newQueueOrCallback: any): JQuery;
     
+    
     /**********
      EXTENSIONS
      **********/
     dialog (options?: any): void;
-    tagsInput ( options:any ): void;
+    tagsInput (options:any): void;
     
     
     size (): number;
