@@ -43,20 +43,43 @@ class CubevizController extends OntoWiki_Controller_Component {
 		
 		// send backend information to the view
         $this->view->backend = $this->_owApp->getConfig()->store->backend;
-				
-		// model
-		$this->view->modelUrl = $this->_owApp->selectedModel;
-        $this->view->modelInformation = $this->_owApp->selectedModel->getMetaInformation ();
+
+
+		/**
+         * Load model information
+         */
+		$this->view->modelUrl = $this->_owApp->selectedModel->getModelIri();
+        $m = $this->view->modelUrl;
+        $modelResource = new OntoWiki_Model_Resource (
+           $this->_owApp->selectedModel->getStore(),
+           $this->_owApp->selectedModel,
+           $this->_owApp->selectedModel->getModelIri()
+        );
+        $modelResource = $modelResource->getValues(true);
+        $this->view->modelInformation = array(
+            'creator'       => $modelResource [$m]['dc:creator'][0]['content'],
+            'description'   => $modelResource [$m]['dc:description'][0]['content'],
+            'label'         => $modelResource [$m]['rdfs:label'][0]['content'],
+            'license'       => $modelResource [$m]['doap:license'][0]['content'],
+            'revision'      => $modelResource [$m]['doap:revision'][0]['content'],
+            'shortdesc'     => $modelResource [$m]['doap:shortdesc'][0]['content']
+        );
         
         $th = new OntoWiki_Model_TitleHelper ($this->_owApp->selectedModel);
         $th->addResource($this->_owApp->selectedModel->getModelIri());
 		$this->view->modelTitle = $th->getTitle($this->_owApp->selectedModel->getModelIri());
 		$graphUrl = $this->_owApp->selectedModel->getModelIri();
 		
-		// linkCode (each linkcode represents a particular configuration of CubeViz)
+        
+		/**
+         * Set LinkCode (each linkcode represents a particular configuration of CubeViz)
+         */
 		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
         
-		// load configuration which is associated with given linkCode
+        
+		/**
+         * Load configuration which is associated with given linkCode
+         */
 		$configuration = $this->_getConfiguration ();
         $configuration = $configuration->read ($this->view->linkCode);
         if (true == isset ($configuration [0])) {
