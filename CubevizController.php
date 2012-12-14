@@ -21,40 +21,50 @@ class CubevizController extends OntoWiki_Controller_Component {
      * 
      */
     public function indexAction () {
-        
+    
         // In case no model was selected, it redirect to the root url of OntoWiki
         if ( null == $this->_owApp->selectedModel ) {
             $this->_helper->redirector->gotoUrl('');
         }
         
-        // fill title-field
-        $this->view->placeholder('main.window.title')->set('Visualization for '. $this->_owApp->selectedModel );
+    
+        /**
+         * Set paths
+         */
+        $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+        $baseJavascriptPath = $basePath .'public/javascript/';
+        $baseCssPath = $basePath .'public/css/';
+		$this->view->cubevizImagesPath = $baseImagesPath = $basePath .'public/images/';
+    
+    
+        /**
+         * Including javascript files for this action
+         */
+        // Libraries
+        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/CryptoJs/md5-min.js', 'text/javascript');
+        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript');
+        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');
+        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/json2.js', 'text/javascript');
         
-        // disable OntoWiki's Navigation
-        $on = $this->_owApp->getNavigation();
-        $on->disableNavigation ();
+        // Generated Javascript
+        $this->view->headScript()->appendFile($baseJavascriptPath.'frontend/Cubeviz_Viz.js', 'text/javascript');
+        $this->view->headScript()->appendFile($basePath.'ChartConfig.js', 'text/javascript');
+    
+    
+        /**
+         * Including css files for this action
+         */
+        $this->view->headLink()->prependStylesheet($baseCssPath.'/main.css');
+        $this->view->headLink()->prependStylesheet($baseCssPath.'/IndexAction.css');
         
-		// set URL for cubeviz extension folder
-        $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
-        		
-        // set base url paths to extension root and images folder
-		$this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
-		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
-		
-		// send backend information to the view
-        $this->view->backend = $this->_owApp->getConfig()->store->backend;
-
-
+    
 		/**
          * Load model information
          */
-		$this->view->modelUrl = $this->_owApp->selectedModel->getModelIri();
-        $m = $this->view->modelUrl;
-        $modelResource = new OntoWiki_Model_Resource (
-           $this->_owApp->selectedModel->getStore(),
-           $this->_owApp->selectedModel,
-           $this->_owApp->selectedModel->getModelIri()
-        );
+		$model = $this->_owApp->selectedModel;
+        $modelIri = $model->getModelIri();
+        $modelStore = $model->getStore();
+        $modelResource = new OntoWiki_Model_Resource($modelStore, $model, $modelIri);
         $modelResource = $modelResource->getValues();
         
         $usedPredicates = array(
@@ -62,22 +72,21 @@ class CubevizController extends OntoWiki_Controller_Component {
             'doap:revision', 'doap:shortdesc'
         );
         
-        $this->view->modelInformation = array();
+        $modelInformation = array();
         
         // Build array modelInformation which contains exactly the predicates from
         // $usedPredicates as keys and the content as value.
-        foreach ($modelResource [$m] as $predicateUri => $ele) {
+        foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
             $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
             if(true == in_array($compactPredicateUri, $usedPredicates)) {
-                $this->view->modelInformation [$compactPredicateUri] = 
-                    $modelResource [$m][$predicateUri][0]['content'];
+                $modelInformation [$compactPredicateUri] = 
+                    $modelResource [$modelIri][$predicateUri][0]['content'];
             }
         }
         
-        $th = new OntoWiki_Model_TitleHelper ($this->_owApp->selectedModel);
-        $th->addResource($this->_owApp->selectedModel->getModelIri());
-		$this->view->modelTitle = $th->getTitle($this->_owApp->selectedModel->getModelIri());
-		$graphUrl = $this->_owApp->selectedModel->getModelIri();
+        $th = new OntoWiki_Model_TitleHelper ($model);
+        $th->addResource($modelIri);
+		$graphUrl = $modelIri;
 		
         
 		/**
@@ -91,12 +100,35 @@ class CubevizController extends OntoWiki_Controller_Component {
          */
 		$configuration = $this->_getConfiguration ();
         $configuration = $configuration->read ($this->view->linkCode);
+        
+        
+        /**
+         * Set view and some of its properties.
+         */        
+        // fill title-field
+        $this->view->placeholder('main.window.title')
+                   ->set('Visualization for '. $th->getTitle($modelIri));
+        
+        $on = $this->_owApp->getNavigation();
+        $on->disableNavigation (); // disable OntoWiki's Navigation
+        
+        $this->view->cubevizUrl = $this->_config->staticUrlBase . 'cubeviz/';
+        
+		// backend information
+        $this->view->backendName = $this->_owApp->getConfig()->store->backend;
+        
+        // model information
+        $this->view->modelInformation = $modelInformation;
+        $this->view->modelTitle = $th->getTitle($modelIri);
+        $this->view->modelUrl = $modelIri;
+        
+        // set configuration information
         if (true == isset ($configuration [0])) {
             $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
             $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
         } else {
             $this->view->linkConfiguration = '{
-                "backend": "'. $this->view->backend .'",
+                "backend": "'. $this->view->backendName .'",
                 "components": {},
                 "selectedDSD": {},
                 "selectedDS": {},

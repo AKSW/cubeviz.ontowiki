@@ -48,11 +48,11 @@ class CubevizModule extends OntoWiki_Module
     public function getContents() {
 
 		// set URL for cubeviz extension folder
-        $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
+        $this->view->cubevizUrl = $this->_config->staticUrlBase . 'cubeviz/';
         $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
         
         // send backend information to the view
-        $this->view->backend = $this->_owApp->getConfig()->store->backend;
+        $this->view->backendName = $this->_owApp->getConfig()->store->backend;
 				
 		// model
 		$this->view->modelUrl = $this->_owApp->selectedModel;
@@ -69,7 +69,7 @@ class CubevizModule extends OntoWiki_Module
             $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
         } else {
             $this->view->linkConfiguration = '{
-                "backend": "'. $this->view->backend .'",
+                "backend": "'. $this->view->backendName .'",
                 "components": {},
                 "selectedDSD": {},
                 "selectedDS": {},
