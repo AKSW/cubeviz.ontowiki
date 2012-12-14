@@ -49,7 +49,7 @@ class CubevizModule extends OntoWiki_Module
 
 		// set URL for cubeviz extension folder
         $this->view->cubevizPath = $this->_config->staticUrlBase . 'cubeviz/';
-        $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
+        $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
         
         // send backend information to the view
         $this->view->backend = $this->_owApp->getConfig()->store->backend;
@@ -78,7 +78,7 @@ class CubevizModule extends OntoWiki_Module
             $this->view->cubeVizUIChartConfig = 'null';
         }
     
-        $content = $this->render('static/pages/CubeVizModule');
+        $content = $this->render('public/templates/cubeviz/CubeVizModule');
         return $content;
     }
 

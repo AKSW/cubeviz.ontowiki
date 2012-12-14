@@ -1,0 +1,17 @@
+default:
+	@echo "CubeViz - cli"
+	@echo " make install-typescript > install npm and typescript over npm"
+	@echo " make build-javascript > build javascript files"
+	
+build-javascript:	
+	@echo "Build Javascript files, out of TypeScript files ..."
+	@echo " "
+	@echo "Build cubeviz/public/javascript/Cubeviz_Module.js ... "
+	tsc --out ../public/javascript/frontend/Cubeviz_Module.js @tsc_arguments/Cubeviz_Module.txt
+	@echo " "
+	@echo "Build cubeviz/public/javascript/Cubeviz_Viz.js ... "
+	tsc --out ../public/javascript/frontend/Cubeviz_Viz.js @tsc_arguments/Cubeviz_Viz.txt
+	@echo " "
+	
+install-typescript:
+	sudo apt-get install npm && sudo npm install -g typescript

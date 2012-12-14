@@ -39,7 +39,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         		
         // set base url paths to extension root and images folder
 		$this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
-		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/static/images/';
+		$this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
 		
 		// send backend information to the view
         $this->view->backend = $this->_owApp->getConfig()->store->backend;
@@ -55,15 +55,24 @@ class CubevizController extends OntoWiki_Controller_Component {
            $this->_owApp->selectedModel,
            $this->_owApp->selectedModel->getModelIri()
         );
-        $modelResource = $modelResource->getValues(true);
-        $this->view->modelInformation = array(
-            'creator'       => $modelResource [$m]['dc:creator'][0]['content'],
-            'description'   => $modelResource [$m]['dc:description'][0]['content'],
-            'label'         => $modelResource [$m]['rdfs:label'][0]['content'],
-            'license'       => $modelResource [$m]['doap:license'][0]['content'],
-            'revision'      => $modelResource [$m]['doap:revision'][0]['content'],
-            'shortdesc'     => $modelResource [$m]['doap:shortdesc'][0]['content']
+        $modelResource = $modelResource->getValues();
+        
+        $usedPredicates = array(
+            'dc:creator', 'dc:description', 'rdfs:label', 'doap:license',
+            'doap:revision', 'doap:shortdesc'
         );
+        
+        $this->view->modelInformation = array();
+        
+        // Build array modelInformation which contains exactly the predicates from
+        // $usedPredicates as keys and the content as value.
+        foreach ($modelResource [$m] as $predicateUri => $ele) {
+            $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
+            if(true == in_array($compactPredicateUri, $usedPredicates)) {
+                $this->view->modelInformation [$compactPredicateUri] = 
+                    $modelResource [$m][$predicateUri][0]['content'];
+            }
+        }
         
         $th = new OntoWiki_Model_TitleHelper ($this->_owApp->selectedModel);
         $th->addResource($this->_owApp->selectedModel->getModelIri());

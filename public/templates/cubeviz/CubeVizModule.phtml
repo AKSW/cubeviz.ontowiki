@@ -32,15 +32,15 @@
 			
 </script>
 
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json2.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/libraries/json-template.min.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>static/javascript/frontend/Cubeviz_Module.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/libraries/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/libraries/json-template.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/frontend/Cubeviz_Module.js"></script>
 
 <!-- Include index json-templates for instance the dialogs. -->
-<?php include ("extensions/cubeviz/static/templates/CubeVizModuleTemplates.phtml"); ?>
+<?php include ('extensions/cubeviz/public/jsontemplates/CubeVizModuleTemplates.phtml'); ?>
 
 <style type="text/css">
-	@import url("<?php echo $this->moduleUrl; ?>static/css/main.css");
+	@import url("<?php echo $this->moduleUrl; ?>public/css/main.css");
 </style>
 
 <!-- Selection data routine -->
@@ -53,7 +53,7 @@
         <!-- -->
         <div id="sidebar-left-loader">
             <div style="margin-top: 90px; height: 220px;">
-                <img src="<?php echo $this->moduleUrl; ?>static/images/loader.gif"/>
+                <img src="<?php echo $this->moduleUrl; ?>public/images/loader.gif"/>
                 Loading ...
             </div>
         </div>

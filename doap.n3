@@ -18,7 +18,7 @@
   owconfig:enabled "true"^^xsd:boolean ;
   owconfig:hasModule :Default ;
   owconfig:privateNamespace <https://github.com/AKSW/cubeviz/raw/master/doap.n3#> ;
-  owconfig:templates "static/templates" ;
+  owconfig:templates "public/templates" ;
 
   rdfs:label "CubeViz" .
 
