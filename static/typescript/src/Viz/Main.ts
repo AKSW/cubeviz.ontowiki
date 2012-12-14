@@ -25,7 +25,7 @@ class Viz_Main {
             var containerOffset = $("#container").offset(),
                 menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
                 leftPosition = offset["left"] - containerOffset ["left"] - menuWidth + 18,
-                topPosition = offset["top"] - containerOffset ["top"] + 67,
+                topPosition = offset["top"] - containerOffset ["top"] + 106,
                 
                 generatedHtml = ChartSelector.buildMenu ( options ),
             
@@ -155,7 +155,7 @@ class Viz_Main {
         var containerOffset = $("#container").offset(),
             menuWidth = parseInt ( $("#chartSelectionMenu").css ("width") ),
             leftPosition = offset["left"] - containerOffset ["left"] + 4,
-            topPosition = offset["top"] - containerOffset ["top"] + 65;
+            topPosition = offset["top"] - containerOffset ["top"] + 106;
             
         // build the dongle
         $("#chartSelectionMenuDongle")

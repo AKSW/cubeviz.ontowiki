@@ -977,7 +977,7 @@ var Viz_Main = (function () {
             var containerOffset = $("#container").offset();
             var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
             var leftPosition = offset["left"] - containerOffset["left"] - menuWidth + 18;
-            var topPosition = offset["top"] - containerOffset["top"] + 67;
+            var topPosition = offset["top"] - containerOffset["top"] + 106;
             var generatedHtml = ChartSelector.buildMenu(options);
             var menuButton = $("<input type=\"button\"/>").attr("id", "chartSelectionMenuButton").attr("class", "minibutton submit").css("margin-top", "15px").attr("value", "Update chart");
 
@@ -1038,7 +1038,7 @@ var Viz_Main = (function () {
         var containerOffset = $("#container").offset();
         var menuWidth = parseInt($("#chartSelectionMenu").css("width"));
         var leftPosition = offset["left"] - containerOffset["left"] + 4;
-        var topPosition = offset["top"] - containerOffset["top"] + 65;
+        var topPosition = offset["top"] - containerOffset["top"] + 106;
 
         $("#chartSelectionMenuDongle").attr("src", CubeViz_Config["imagesPath"] + "menuDongle.png").css("left", leftPosition).css("top", topPosition).fadeIn(800);
     }
