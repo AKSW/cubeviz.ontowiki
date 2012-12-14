@@ -87,21 +87,21 @@
     <div style="font-size: 14px;">Information:</div>
     
     <ul class="cubeviz-ul-basic">
-        <!-- Pencil -->
+        <!-- Creator -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal"/>
+            <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal" title="Creator"/>
             <?php echo $this->modelInformation ['creator']; ?>
         </li>
     
         <!-- Revision -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal"/>
+            <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal" title="Revision"/>
             Revision: <?php echo $this->modelInformation ['revision']; ?>
         </li>
     
         <!-- Document -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal"/>
+            <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal" title="License"/>
             <?php echo $this->modelInformation ['license']; ?>
         </li>
     </ul>
