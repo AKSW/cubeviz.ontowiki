@@ -122,7 +122,7 @@ class CubevizModule extends OntoWiki_Module
         /**
          * fill template with content and give generated HTML back
          */
-        return $this->render('public/templates/cubeviz/Module/index');
+        return $this->render('public/templates/cubeviz/CubeVizModule');
     }
 
     public function layoutType() { return 'inline'; }
