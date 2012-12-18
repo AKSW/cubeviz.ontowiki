@@ -20,7 +20,6 @@ echo ""
 rsync -av --exclude='.git' \
 		  --exclude='assets' \
 		  --exclude='data' \
-		  --exclude='debian' \
 		  --exclude='deployment' \
 		  --exclude='additional-files' \
 		  --exclude='ChartConfig.js' \
@@ -28,7 +27,7 @@ rsync -av --exclude='.git' \
 		  --exclude='generated-packages' \
 		  --exclude='Makefile' \
 		  --exclude='scripts' \
-		  --exclude='static/typescript' \
+		  --exclude='typescript' \
 		  --exclude='README.md' \
           $cubevizRoot/* $cubevizRoot/deployment/generated-packages/$packageName
 

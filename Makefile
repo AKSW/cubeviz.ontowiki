@@ -3,7 +3,7 @@ default:
 	@echo " make install > setup cubeviz"
 	@echo ""
 	@echo "Package generation"
-	@echo " make tar > Generate tar.gz archive in generated-packages folder"
+	@echo " make cubeviz > Generate tar.gz archive in generated-packages folder"
 	@echo " make ontowiki > Generate an stand-alone ready-to-use OntoWiki archive"
 	@echo ""
 	
@@ -13,5 +13,5 @@ install:
 ontowiki:
 	sh deployment/scripts/createOntoWiki.sh
 	
-tar:
-	sh deployment/scripts/createTar.sh
+cubeviz:
+	sh deployment/scripts/createCubeViz.sh
