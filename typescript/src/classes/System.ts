@@ -89,7 +89,7 @@ class System {
         $.ajaxSetup({
             "async": true,
             "cache": false,
-            "crossDomain": true,
+            // "crossDomain": true > make the OW user interface usable
             "type": "POST"
         });
         
