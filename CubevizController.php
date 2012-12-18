@@ -44,7 +44,6 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/CryptoJs/md5-min.js', 'text/javascript');
         $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript');
         $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');
-        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/json2.js', 'text/javascript');
         
         // Generated Javascript
         $this->view->headScript()->appendFile($baseJavascriptPath.'frontend/Cubeviz_Viz.js', 'text/javascript');
@@ -64,78 +63,65 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$model = $this->_owApp->selectedModel;
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
-        $modelResource = new OntoWiki_Model_Resource($modelStore, $model, $modelIri);
-        $modelResource = $modelResource->getValues();
-        
-        $usedPredicates = array(
-            'dc:creator', 'dc:description', 'rdfs:label', 'doap:license',
-            'doap:revision', 'doap:shortdesc'
-        );
-        
-        $modelInformation = array();
-        
-        // Build array modelInformation which contains exactly the predicates from
-        // $usedPredicates as keys and the content as value.
-        foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
-            $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
-            if(true == in_array($compactPredicateUri, $usedPredicates)) {
-                $modelInformation [$compactPredicateUri] = 
-                    $modelResource [$modelIri][$predicateUri][0]['content'];
-            }
-        }
-        
-        $th = new OntoWiki_Model_TitleHelper ($model);
-        $th->addResource($modelIri);
-		$graphUrl = $modelIri;
-		
-        
-		/**
-         * Set LinkCode (each linkcode represents a particular configuration of CubeViz)
-         */
-		$this->view->linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
-        
-        
-		/**
-         * Load configuration which is associated with given linkCode
-         */
-		$configuration = $this->_getConfiguration ();
-        $configuration = $configuration->read ($this->view->linkCode);
-        
-        
+        $modelInformation = $this->_getModelInformation($modelStore, $model, $modelIri);
+                
         /**
          * Set view and some of its properties.
          */        
         // fill title-field
         $this->view->placeholder('main.window.title')
-                   ->set('Visualization for '. $th->getTitle($modelIri));
+                   ->set('Visualization for '. $modelInformation ['rdfs:label']);
         
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation
+    
+		/**
+         * Set LinkCode (each linkcode represents a particular configuration of CubeViz)
+         */
+		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+                
+        /**
+         * Save model information
+         */
+        $this->view->CubeViz_ModelInformation = $modelInformation;
         
-        $this->view->cubevizUrl = $this->_config->staticUrlBase . 'cubeviz/';
-        
-		// backend information
-        $this->view->backendName = $this->_owApp->getConfig()->store->backend;
-        
-        // model information
-        $this->view->modelInformation = $modelInformation;
-        $this->view->modelTitle = $th->getTitle($modelIri);
-        $this->view->modelUrl = $modelIri;
-        
-        // set configuration information
-        if (true == isset ($configuration [0])) {
-            $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
-            $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
-        } else {
-            $this->view->linkConfiguration = '{
-                "backend": "'. $this->view->backendName .'",
-                "components": {},
-                "selectedDSD": {},
-                "selectedDS": {},
-                "selectedComponents": {"dimensions": {}, "measures": {}}
-            }';
-            $this->view->cubeVizUIChartConfig = 'null';
-        }
+		/**
+         * Set view and some of its properties.
+         */
+        $this->view->cubevizImagesPath = $baseImagesPath;
+                				
+        /**
+         * Set CubeViz_Links_Module
+         * Contains loaded configuration for given hashcode or default values.
+         */
+        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $c = $c->read ($linkCode);
+
+        $c['CubeViz_Links_Module'] ['backend']           = $this->_owApp->getConfig()->store->backend;
+        $c['CubeViz_Links_Module'] ['linkCode']          = $linkCode;
+        $c['CubeViz_Links_Module'] ['cubevizPath']       = $this->_config->staticUrlBase . 'cubeviz/';
+        $c['CubeViz_Links_Module'] ['modelUrl']          = $modelIri;
+        $c['CubeViz_Links_Module'] ['sparqlEndpoint']    = 'local'; 
+        $this->view->CubeViz_Links_Module = json_encode($c['CubeViz_Links_Module'], JSON_FORCE_OBJECT);
+    
+        /**
+         * Contains UI chart config information
+         */
+        $this->view->CubeViz_UI_ChartConfig = json_encode(
+            $c['CubeViz_UI_ChartConfig'],
+            JSON_FORCE_OBJECT
+        );
+    
+        /**
+         * 
+         */
+        $this->view->CubeViz_Config = json_encode(
+            array(
+                'context'       => 'development', // TODO get it from doap.n3
+                'imagesPath'    => $baseImagesPath
+            ), 
+            JSON_FORCE_OBJECT
+        );    
 	}
 	
 	public function getdatafromlinkcodeAction() {
@@ -157,24 +143,19 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();   
              
-        // load configuration which is associated with given linkCode
-		$configuration = $this->_getConfiguration (); 	
-        
-		// linkCode (each linkcode represents a particular configuration of CubeViz)
+        // linkCode (each linkcode represents a particular configuration of CubeViz)
 		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
         $linkConfiguration = array ();
         
-		$configuration = $configuration->read ($linkCode);
-        if (true == isset ($configuration [0])) {
-            $linkConfiguration = json_decode ( $configuration [0], true ); // contains stuff e.g. selectedDSD, ...
-        }
-        				
         // init Query and model
 		$query = new DataCube_Query ( $this->_owApp->selectedModel );
-                
+        
+        // load configuration which is associated with given linkCode
+		$c = $this->_getConfiguration (); 	
+		$c = $c->read ($linkCode);
         
         // ... get and return observations
-		$this->_response->setBody($query->getObservations($linkConfiguration));
+		$this->_response->setBody($query->getObservations($c ['CubeViz_Links_Module']));
 	}
     
     /**
@@ -259,6 +240,9 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->_response->setBody(json_encode($configuration->write($config)));
 	}
 
+    /**
+     *
+     */
     protected function _getConfiguration () {
         $cacheDir = $this->_owApp->erfurt->getCacheDir();
         if (null === $this->_configuration) {
@@ -267,4 +251,36 @@ class CubevizController extends OntoWiki_Controller_Component {
         return $this->_configuration;
     }
 
+    /**
+     * Get information about the selected model
+     * @param $modelStore Store of selected model
+     * @param $model Model itself
+     * @param $modelIri Iri of the selected model
+     * @return Array Array with fields about dc:creator, dc:description, 
+     *               rdfs:label, doap:license, doap:revision, doap:shortdesc
+     */
+    protected function _getModelInformation ($modelStore, $model, $modelIri) {
+        $modelResource = new OntoWiki_Model_Resource($modelStore, $model, $modelIri);
+        $modelResource = $modelResource->getValues();
+        
+        $usedPredicates = array(
+            'dc:creator', 'dc:description', 'rdfs:label', 'doap:license',
+            'doap:revision', 'doap:shortdesc'
+        );
+        
+        $modelInformation = array(
+            'uri' => $modelIri
+        );
+        
+        // Build array modelInformation which contains exactly the predicates from
+        // $usedPredicates as keys and the content as value.
+        foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
+            $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
+            if(true == in_array($compactPredicateUri, $usedPredicates)) {
+                $modelInformation [$compactPredicateUri] = 
+                    $modelResource [$modelIri][$predicateUri][0]['content'];
+            }
+        }
+        return $modelInformation;
+    }
 }

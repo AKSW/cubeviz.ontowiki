@@ -11,7 +11,7 @@
  */
 var CubeViz_Config = CubeViz_Config || {};
 var CubeViz_Links_Module = CubeViz_Links_Module || {};
-var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
+var CubeViz_UI_ChartConfig = CubeViz_UI_ChartConfig || {};
 
 // templates
 var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {};
@@ -170,7 +170,7 @@ class Module_Event {
         // take neccessary javascript objects and put them into configuration file on the server
         ConfigurationLink.saveToServerFile ( 
             CubeViz_Links_Module,
-            cubeVizUIChartConfig,
+            CubeViz_UI_ChartConfig,
             Module_Event.onComplete_SaveConfigurationAfterChangeElements
         );
         
@@ -313,7 +313,7 @@ class Module_Event {
             
             ConfigurationLink.saveToServerFile ( 
                 CubeViz_Links_Module,
-                cubeVizUIChartConfig,
+                CubeViz_UI_ChartConfig,
                 function ( newLinkCode ) {
                     // Save new generated linkCode
                     CubeViz_Links_Module ["linkCode"] = newLinkCode;

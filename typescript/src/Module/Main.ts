@@ -11,17 +11,19 @@ class Module_Main {
     }
     
     /**
-     * Build component selection, with jsontemplate
+     * Build component selection in the left sidebar (to select component elements), 
+     * (using jsontemplate)
      */
-    static buildComponentSelection ( components, selectedComponents ) {
+    static buildComponentSelection ( components, selectedComponents ) : void {
     
         var selectedComLength:number = 1,
             tplEntries = {"dimensions":[]};
-            
+                        
         for ( var com in components ["dimensions"] ) {
             
             if ( undefined != selectedComponents ["dimensions"][com] ) {
-                selectedComLength = selectedComponents ["dimensions"][com]["elements"]["length"] || 1;
+                selectedComLength = System.countProperties (selectedComponents ["dimensions"][com]["elements"]);
+                selectedComLength = 0 < selectedComLength ? selectedComLength : 1;
             } else {
                 selectedComLength = 1;
             }

@@ -333,7 +333,6 @@ var System = (function () {
         $.ajaxSetup({
             "async": true,
             "cache": false,
-            "crossDomain": true,
             "type": "POST"
         });
         $.support.cors = true;
@@ -351,7 +350,7 @@ var CubeViz_Config = CubeViz_Config || {
 };
 var CubeViz_Links_Module = CubeViz_Links_Module || {
 };
-var cubeVizUIChartConfig = cubeVizUIChartConfig || {
+var CubeViz_UI_ChartConfig = CubeViz_UI_ChartConfig || {
 };
 var CubeViz_Dialog_Template = CubeViz_Dialog_Template || {
 };
@@ -424,7 +423,7 @@ var Module_Event = (function () {
             }
         });
         CubeViz_Links_Module["selectedComponents"]["dimensions"][hashedUrl]["elements"] = elements;
-        ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
+        ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, Module_Event.onComplete_SaveConfigurationAfterChangeElements);
         $("#dimensionDialogContainer").fadeOut(500).html("");
         Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
         Module_Event.setupDialogSelector();
@@ -472,7 +471,7 @@ var Module_Event = (function () {
         Module_Main.buildComponentSelection(CubeViz_Links_Module["components"], CubeViz_Links_Module["selectedComponents"]);
         if(true == regenerateLinkCode) {
             CubeViz_Links_Module["linkCode"] = null;
-            ConfigurationLink.saveToServerFile(CubeViz_Links_Module, cubeVizUIChartConfig, function (newLinkCode) {
+            ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
                 CubeViz_Links_Module["linkCode"] = newLinkCode;
             });
         }
@@ -574,7 +573,8 @@ var Module_Main = (function () {
 
         for(var com in components["dimensions"]) {
             if(undefined != selectedComponents["dimensions"][com]) {
-                selectedComLength = selectedComponents["dimensions"][com]["elements"]["length"] || 1;
+                selectedComLength = System.countProperties(selectedComponents["dimensions"][com]["elements"]);
+                selectedComLength = 0 < selectedComLength ? selectedComLength : 1;
             } else {
                 selectedComLength = 1;
             }

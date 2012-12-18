@@ -1,47 +1,21 @@
 <script type="text/javascript">
-    /**
-     * CUBEVIZ MODULE
-     */
-    
-	/*************************************
-	 * Importing Server-Side System Info *
-	 *************************************/
     
     /**
      * Contains loaded configuration for given hashcode
-     * default is "default" configuration
      */
-    var CubeViz_Links_Module = <?php echo $this->linkConfiguration; ?>;
-	
-    // Name of choosen config; default is "default"
-    CubeViz_Links_Module ["linkCode"] = <?php echo json_encode($this->linkCode); ?>; 
-    CubeViz_Links_Module ["backend"] = <?php echo json_encode($this->backendName); ?>;
-    CubeViz_Links_Module ["cubevizPath"] = <?php echo json_encode($this->cubevizUrl); ?>;		
-    CubeViz_Links_Module ["modelUrl"] = "<?php echo $this->modelUrl; ?>";		
-	CubeViz_Links_Module ["sparqlEndpoint"] = "local"; 
-	
+    var CubeViz_Links_Module = <?php echo $this->CubeViz_Links_Module; ?>;
+    
     /**
      * Contains system information related only to CubeViz
      */
-    var CubeViz_Config = {
-        "context": "development",   // possible: development, production
-        "imagesPath": <?php echo json_encode($this->cubevizImagesPath); ?>
-    };
+    var CubeViz_Config = <?php echo $this->CubeViz_Config; ?>;
     
-    var cubeVizUIChartConfig = <?php echo $this->cubeVizUIChartConfig; ?>;
-			
+    /**
+     * For the future
+     * Will be contains all relevant information about the UI
+     */
+    var CubeViz_UI_ChartConfig = <?php echo $this->CubeViz_UI_ChartConfig; ?>;			
 </script>
-
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/libraries/json2.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/libraries/json-template.min.js"></script>
-<script type="text/javascript" src="<?php echo $this->moduleUrl; ?>public/javascript/frontend/Cubeviz_Module.js"></script>
-
-<!-- Include index json-templates for instance the dialogs. -->
-<?php include ('extensions/cubeviz/public/jsontemplates/CubeVizModuleTemplates.phtml'); ?>
-
-<style type="text/css">
-	@import url("<?php echo $this->moduleUrl; ?>public/css/main.css");
-</style>
 
 <!-- Selection data routine -->
 
@@ -117,3 +91,6 @@
 
 <!-- Later on, after all loading is complete, it will contain a dialog instance -->
 <div id="dimensionDialogContainer"></div>
+
+<!-- Include index json-templates for instance the dialogs. -->
+<?php include ('extensions/cubeviz/public/jsontemplates/CubeVizModuleTemplates.phtml'); ?>

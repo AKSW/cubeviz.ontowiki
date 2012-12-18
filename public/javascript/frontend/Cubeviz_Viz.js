@@ -284,7 +284,6 @@ var System = (function () {
         $.ajaxSetup({
             "async": true,
             "cache": false,
-            "crossDomain": true,
             "type": "POST"
         });
         $.support.cors = true;
@@ -869,7 +868,7 @@ var CubeViz_Config = CubeViz_Config || {
 };
 var CubeViz_Links_Module = CubeViz_Links_Module || {
 };
-var cubeVizUIChartConfig = cubeVizUIChartConfig || {
+var CubeViz_UI_ChartConfig = CubeViz_UI_ChartConfig || {
 };
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {
 };
@@ -905,15 +904,15 @@ var Viz_Event = (function () {
         $("#cubeviz-Index-questionMarkHeadline").click(Viz_Event.onClick_QuestionMarkDialogboxHeadline);
     }
     Viz_Event.onClick_chartSelectionMenuButton = function onClick_chartSelectionMenuButton(event) {
-        var newDefaultConfig = cubeVizUIChartConfig["selectedChartConfig"]["defaultConfig"];
+        var newDefaultConfig = CubeViz_UI_ChartConfig["selectedChartConfig"]["defaultConfig"];
         var key = "";
         var menuItems = $.makeArray($('*[name*="chartMenuItem"]'));
         var length = menuItems["length"];
         var value = "";
 
         Viz_Main.setMenuOptions(menuItems, newDefaultConfig);
-        Visualization_Controller.setChartConfigClassEntry(cubeVizUIChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], cubeVizUIChartConfig["selectedChartConfig"]);
-        Viz_Main.renderChart(cubeVizUIChartConfig["selectedChartConfig"]["class"]);
+        Visualization_Controller.setChartConfigClassEntry(CubeViz_UI_ChartConfig["selectedChartConfig"]["class"], CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], CubeViz_UI_ChartConfig["selectedChartConfig"]);
+        Viz_Main.renderChart(CubeViz_UI_ChartConfig["selectedChartConfig"]["class"]);
     }
     Viz_Event.onClick_ChartSelectionItem = function onClick_ChartSelectionItem(event) {
         var currentNr = parseInt($(event["target"]).parent().attr("nr"));
@@ -925,7 +924,7 @@ var Viz_Event = (function () {
         }
         if(null == lastUsedNr || currentNr != lastUsedNr) {
             $(".chartSelector-item").removeClass("current").eq(currentNr).addClass("current");
-            cubeVizUIChartConfig["selectedChartClass"] = event["target"]["name"];
+            CubeViz_UI_ChartConfig["selectedChartClass"] = event["target"]["name"];
             ; ;
             $("#chartSelection").attr("lastSelection", currentNr);
             $(".chartSelector-item").removeClass("chartSelector-item-current");
@@ -946,14 +945,13 @@ var Viz_Event = (function () {
                 $("#chartSelection").attr("lastSelectionAndClicked", currentNr);
                 var className = $(event["target"]).parent().attr("className");
                 var fromChartConfig = Visualization_Controller.getFromChartConfigByClass(className, CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"]);
-                cubeVizUIChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
-                cubeVizUIChartConfig["selectedChartConfig"] = fromChartConfig;
+                CubeViz_UI_ChartConfig["oldSelectedChartConfig"] = System.deepCopy(fromChartConfig);
+                CubeViz_UI_ChartConfig["selectedChartConfig"] = fromChartConfig;
                 Viz_Main.openChartSelectionMenu(fromChartConfig["options"], $(this).offset());
             }
         }
     }
     Viz_Event.onClick_QuestionMarkDialogboxHeadline = function onClick_QuestionMarkDialogboxHeadline() {
-        console.log("click");
         $("#cubeviz-Index-DialogboxHeadline").dialog("open");
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {

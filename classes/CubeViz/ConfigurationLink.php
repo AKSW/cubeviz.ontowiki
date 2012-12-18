@@ -39,12 +39,44 @@ class CubeViz_ConfigurationLink
 	/**
 	 * Read configuration from a json file in links folder
      * @param $linkCode Name of the file (name = hash code)
-     * @return boolean
+     * @return array Array with different kinds of information
 	 */
 	public function read($linkCode) {
         
 		if (true === file_exists($this->_hashDirectory . $linkCode) ) {
-            return file($this->_hashDirectory . $linkCode);
+            
+            $readedConfig = array ();
+            
+            $c = file($this->_hashDirectory . $linkCode);
+            
+            // if configuration file contains information
+            if (true == isset ($c [0])) {
+                
+                // contains stuff e.g. selectedDSD, ...
+                $readedConfig ['CubeViz_Links_Module'] = json_decode($c [0], true);
+                
+                // contains UI chart config information
+                $readedConfig ['CubeViz_UI_ChartConfig'] = json_decode($c [1], true);
+                if(null == $readedConfig ['CubeViz_UI_ChartConfig']) 
+                    $readedConfig ['CubeViz_UI_ChartConfig'] = array();
+            
+            // no content in file, set default values
+            } else {
+                
+                $readedConfig ['CubeViz_Links_Module'] = array (
+                    'backend'               => '',
+                    'components'            => array(),
+                    'selectedDSD'           => array(),
+                    'selectedDS'            => array(),
+                    'selectedComponents'    => array (
+                        'dimensions'    => array(),
+                        'measures'      => array()
+                    )
+                );
+                $readedConfig ['CubeViz_UI_ChartConfig'] = array();
+            }
+            
+            return $readedConfig;
 		}
 		return false;
 	}
@@ -59,9 +91,9 @@ class CubeViz_ConfigurationLink
         				
 		if( false == file_exists($filePath) ) {
             
+            // can't open the file: throw exception
             if ( false === ( $fh = fopen($filePath, 'w') ) ) {
-                // can't open the file
-                $m = "No write permissions for ". $filePath;
+                $m = 'No write permissions for '. $filePath;
                 throw new CubeViz_Exception ( $m );
                 return $m;
             }

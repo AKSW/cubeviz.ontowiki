@@ -48,7 +48,29 @@ class CubevizModule extends OntoWiki_Module
      * Returns the content
      */
     public function getContents() 
-    {
+    {        
+        /**
+         * Set paths
+         */
+        $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+        $baseCssPath = $basePath .'public/css/';
+        $baseImagesPath = $basePath .'public/images/';
+        $baseJavascriptPath = $basePath .'public/javascript/';
+        
+        
+        /**
+         * Including javascript files for this action
+         */
+        $this->view->headScript()->prependFile($baseJavascriptPath.'libraries/json2.js', 'text/javascript');
+        $this->view->headScript()->prependFile($baseJavascriptPath.'libraries/json-template.min.js', 'text/javascript');
+        $this->view->headScript()->prependFile($baseJavascriptPath.'frontend/Cubeviz_Module.js', 'text/javascript');
+        
+        
+        /**
+         * Including css files for this action
+         */
+        $this->view->headLink()->prependStylesheet($baseCssPath.'/main.css');
+        
         /**
          * Model information
          */
@@ -58,45 +80,48 @@ class CubevizModule extends OntoWiki_Module
         
 		// linkCode (each linkcode represents a particular configuration of CubeViz)
 		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
-        
-        
-        /**
-         * Load configuration which is associated with given linkCode
-         */
-		$configuration = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $configuration = $configuration->read ($linkCode);
-        
-        
+                
         /**
          * Set view and some of its properties.
          */
-		// set URL for cubeviz extension folder
-        $this->view->cubevizUrl = $this->_config->staticUrlBase . 'cubeviz/';
-        $this->view->cubevizImagesPath = $this->_config->staticUrlBase . 'extensions/cubeviz/public/images/';
-        
-        // send backend information to the view
-        $this->view->backendName = $this->_owApp->getConfig()->store->backend;
-				
-		// model
-		$this->view->modelUrl = $model;
-		$graphUrl = $modelIri;
-		        
-        $this->view->linkCode = $linkCode;
-        
-        if (true == isset ($configuration [0])) {
-            $this->view->linkConfiguration = $configuration [0]; // contains stuff e.g. selectedDSD, ...
-            $this->view->cubeVizUIChartConfig = $configuration [1]; // contains UI chart config information
-        } else {
-            $this->view->linkConfiguration = '{
-                "backend": "'. $this->view->backendName .'",
-                "components": {},
-                "selectedDSD": {},
-                "selectedDS": {},
-                "selectedComponents": {"dimensions": {}, "measures": {}}
-            }';
-            $this->view->cubeVizUIChartConfig = 'null';
-        }
+        $this->view->cubevizImagesPath = $baseImagesPath;
+                				
+        /**
+         * Set CubeViz_Links_Module
+         * Contains loaded configuration for given hashcode or default values.
+         */
+        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $c = $c->read ($linkCode);
+
+        $c['CubeViz_Links_Module'] ['backend']           = $this->_owApp->getConfig()->store->backend;
+        $c['CubeViz_Links_Module'] ['linkCode']          = $linkCode;
+        $c['CubeViz_Links_Module'] ['cubevizPath']       = $this->_config->staticUrlBase . 'cubeviz/';
+        $c['CubeViz_Links_Module'] ['modelUrl']          = $modelIri;
+        $c['CubeViz_Links_Module'] ['sparqlEndpoint']    = 'local'; 
+        $this->view->CubeViz_Links_Module = json_encode($c['CubeViz_Links_Module'], JSON_FORCE_OBJECT);
     
+        /**
+         * Contains UI chart config information
+         */
+        $this->view->CubeViz_UI_ChartConfig = json_encode(
+            $c['CubeViz_UI_ChartConfig'],
+            JSON_FORCE_OBJECT
+        );
+    
+        /**
+         * 
+         */
+        $this->view->CubeViz_Config = json_encode(
+            array(
+                'context'       => 'development', // TODO get it from doap.n3
+                'imagesPath'    => $baseImagesPath
+            ), 
+            JSON_FORCE_OBJECT
+        );
+    
+        /**
+         * fill template with content and give generated HTML back
+         */
         return $this->render('public/templates/cubeviz/Module/index');
     }
 

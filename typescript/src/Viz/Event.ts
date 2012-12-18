@@ -8,7 +8,7 @@
  */
 var CubeViz_Config = CubeViz_Config || {};
 var CubeViz_Links_Module = CubeViz_Links_Module || {};
-var cubeVizUIChartConfig = cubeVizUIChartConfig || {};
+var CubeViz_UI_ChartConfig = CubeViz_UI_ChartConfig || {};
 
 // ChartConfig.js > Array which contains chart configurations for each dimensional-case
 var CubeViz_ChartConfig = CubeViz_ChartConfig || {};
@@ -76,7 +76,7 @@ class Viz_Event {
     static onClick_chartSelectionMenuButton (event:any) {
         
         // collect and save necessary information
-        var newDefaultConfig = cubeVizUIChartConfig ["selectedChartConfig"]["defaultConfig"],
+        var newDefaultConfig = CubeViz_UI_ChartConfig ["selectedChartConfig"]["defaultConfig"],
             key = "",
             menuItems:Object[] = $.makeArray ( $('*[name*="chartMenuItem"]') ),
             length:number = menuItems ["length"],
@@ -86,13 +86,13 @@ class Viz_Event {
         Viz_Main.setMenuOptions (menuItems, newDefaultConfig);
     
         Visualization_Controller.setChartConfigClassEntry (
-            cubeVizUIChartConfig ["selectedChartConfig"]["class"],
+            CubeViz_UI_ChartConfig ["selectedChartConfig"]["class"],
             CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
-            cubeVizUIChartConfig ["selectedChartConfig"]
+            CubeViz_UI_ChartConfig ["selectedChartConfig"]
         );
     
         // Re-render the chart with new configuration
-        Viz_Main.renderChart ( cubeVizUIChartConfig ["selectedChartConfig"]["class"] );
+        Viz_Main.renderChart ( CubeViz_UI_ChartConfig ["selectedChartConfig"]["class"] );
     }
     
     /**
@@ -118,7 +118,7 @@ class Viz_Event {
                 .eq(currentNr)
                 .addClass("current");
             
-            cubeVizUIChartConfig ["selectedChartClass"] = event ["target"]["name"];;
+            CubeViz_UI_ChartConfig ["selectedChartClass"] = event ["target"]["name"];;
         
             $("#chartSelection").attr ( "lastSelection", currentNr );
         
@@ -184,8 +184,8 @@ class Viz_Event {
                     CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"]
                 );
                 
-                cubeVizUIChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
-                cubeVizUIChartConfig ["selectedChartConfig"] = fromChartConfig;
+                CubeViz_UI_ChartConfig ["oldSelectedChartConfig"] = System.deepCopy (fromChartConfig);
+                CubeViz_UI_ChartConfig ["selectedChartConfig"] = fromChartConfig;
                 
                 Viz_Main.openChartSelectionMenu ( 
                     fromChartConfig ["options"], 
@@ -199,7 +199,6 @@ class Viz_Event {
      * 
      */
     static onClick_QuestionMarkDialogboxHeadline () : void {
-        console.log ( "click" );
         $("#cubeviz-Index-DialogboxHeadline").dialog( "open" );
     }
     
