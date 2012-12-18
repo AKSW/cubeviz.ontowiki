@@ -1,0 +1,73 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/colorbox.css"/>
+<script type="text/javascript" src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("a.gallery").colorbox({transition:"none", width:"75%", height:"75%"});
+});
+</script>
+
+<div style=" margin-top: 0px; margin-left: 0px; border-left: 10px solid D8D8D8; min-height: 100%; height:auto !important; height:100%;">
+    <div style="float:right; margin:1em; text-align:center; height:320px">
+        <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-home-polar.png" class="gallery" rel="gallery-0" title="CubeViz Output of the Digital Agenda Scoreboard DataCube">
+           <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-home-polar.png" style="height:300px">
+            <br> CubeViz Polar Chart
+        </a>            
+    </div>
+
+    <h1 style="font-size: 24px;">CubeViz - The RDF DataCube Browser</h1>
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">
+        Welcome to CubeViz - the facetted browser for statistical data in the Linked Data Web.
+        It was set up and adopted to be part of the Data Portal of the European Union.
+    </p>
+    
+    <p style=" color: #4A4A4A; width: 96%;">
+        CubeViz represent the statistical dataset to be visualized as a facetted based browsing component.
+        This component enables the users to select interesting parts of the dataset. 
+        After selection the user can proceed while clicking on the button <em>Show/Update Chart</em>. 
+        One can instantly start using CubeViz while clicking on the button.
+        As a result CubeViz processes a chart according to user's selection.
+        The current version of CubeViz processes basic chart types - such as <em>line</em>, <em>bar</em> and <em>pie chart</em> facilitating the exploration up to two 
+        statistical dimensions in a data structure.
+    </p>
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">            
+        <span style="font-weight:bold">If you  dont know what do you now, click to</span> <a href="<?php echo $_REQUEST ['urlBase']; ?>page/gettingstarted">Getting started</a>. 
+        <br/>
+        <br/>
+        Otherwise if you need further information of how to use CubeViz have a look on our <a href="<?php echo $_REQUEST ['urlBase']; ?>page/howto">HowTo</a> 
+        or <a href="<?php echo $_REQUEST ['urlBase']; ?>page/faq">FAQ</a> page.
+        Some impressions of possible outputs are listed on our <a href="<?php echo $_REQUEST ['urlBase']; ?>page/examples">page of examples</a>, where you find explanations on some 
+		outputs of the statistical of the <a href="http://scoreboard.lod2.eu/">Digital Agenda Scoreboard of the European Commission</a>. 
+    </p>
+
+    <br/>
+    <h2 style="margin-top: 5px; margin-bottom: 10px; font-size: 14px; font-weight: bold; color: #35546E;">Screenshots</h2>    
+    <p style="color: #4A4A4A; width: 96%;">            
+        <div style="float:top;">
+            <div style="float:left; margin-left: 4px; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-pie.png" class="gallery" rel="gallery-1" title="CubeViz Pie Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-pie.png" style="height: 170px"><br>            
+                    CubeViz Pie Chart
+                </a>
+            </div>
+            <div style="float:left; margin-left: 20px; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-bar.png" class="gallery" rel="gallery-1" title="CubeViz Bar Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-bar.png" style="height: 170px"><br>            
+                    CubeViz Bar Chart
+                </a>
+            </div>
+           <div style="float:left; margin-left: 20px; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-axisSwitch.png" class="gallery" rel="gallery-1" title="CubeViz Polar Chart with columns and switched axes">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-axisSwitch.png" style="height: 170px"><br>            
+                    CubeViz Polar Chart
+                </a>
+            </div>
+        </div>
+        <br/>
+        <br/>
+    </p>
+</div>
+
+
+
+
+        

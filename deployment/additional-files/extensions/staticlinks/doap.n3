@@ -1,0 +1,101 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owconfig: <http://ns.ontowiki.net/SysOnt/ExtensionConfig/> .
+@prefix extension: <http://ns.ontowiki.net/Extensions/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix event: <http://ns.ontowiki.net/SysOnt/Events/> .
+@prefix : <https://github.com/AKSW/staticlinks.ontowiki/raw/master/doap.n3#> .
+
+<> foaf:primaryTopic :staticlinks .
+:staticlinks a doap:Project ;
+
+  doap:release :v1-0 ;
+  doap:description "" ;
+  doap:name "Static Links" ;
+
+  owconfig:authorLabel "" ;
+  owconfig:enabled "true"^^xsd:boolean ;
+  owconfig:hasModule :Default ;
+  owconfig:privateNamespace <https://github.com/AKSW/staticlinks.ontowiki/raw/master/doap.n3#> ;
+  owconfig:templates "static/templates" ;
+
+  rdfs:label "Static Links" .
+
+:Default a owconfig:Module ;
+
+  rdfs:label "Static Links" ;
+
+  owconfig:caching "false"^^xsd:boolean ;
+  owconfig:priority "1" ;
+  owconfig:context "main.sidewindows" .
+
+:staticlinks doap:release :v1-0 .
+
+:v1-0 a doap:Version ;
+  doap:revision "1.0" .
+
+
+
+
+:staticlinks 
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "LinkConfiguration";
+        :ul "with-images"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_GettingStarted";
+        :href "gettingstarted";
+        :label "Getting started";
+        :title "Getting started";
+        :target "_self";
+        :image "server_add.png"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_HowTo";
+        :href "howto";
+        :label "HowTo";
+        :title "How to use CubeViz";
+        :target "_self";
+        :image "information.png"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_Examples";
+        :href "examples";
+        :label "Examples";
+        :title "Examples";
+        :target "_self";
+        :image "chart_bar.png"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_Faq";
+        :href "faq";
+        :label "FAQ";
+        :title "Frequently Asked Questions";
+        :target "_self";
+        :image "text_padding_top.png"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_Index";
+        :href "index";
+        :label "CubeViz Home";
+        :title "CubeViz Home";
+        :target "_self";
+        :image "house.png"
+    ] ;
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "Link_AKSW";
+        :href "http://aksw.org/Projects/CubeViz.html";
+        :label "Project Homepage";
+        :title "CubeViz Project Homepage";
+        :target "_blank";
+        :image "anchor.png"
+    ]
+.

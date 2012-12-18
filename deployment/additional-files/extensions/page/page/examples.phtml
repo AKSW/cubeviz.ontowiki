@@ -1,0 +1,135 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/colorbox.css"/>
+<script type="text/javascript" src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("a.gallery").colorbox({transition:"none", width:"75%", height:"75%"});
+});
+</script>
+<div style="margin-top: -20px; margin-left: 0px; height: 90%;">
+    
+    <br/>
+    
+    <h1>Examples</h1>
+    
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">
+        On this page we will describe a set of examples that showcases the features of CubeViz. 
+        The Dataset we used is the <a href="http://data.lod2.eu/scoreboard/">RDF version of the Digital Agenda Scoreboard (DAS)</a>, that was published within an own Web Application. 
+        The DAS Web Application was created especially for presenting specific scenarios such as :
+        <ol style="margin-left:3em">
+            <li><a href="http://scoreboard.lod2.eu/index.php?scenario=1">Analysis of one indicator and compare countries</a></li>
+            <li><a href="http://scoreboard.lod2.eu/index.php?scenario=2">The evolution of an indicator</a></li>
+            <li><a href="http://scoreboard.lod2.eu/index.php?scenario=3">Comparison of two indicators</a></li>
+            <li><a href="http://scoreboard.lod2.eu/index.php?scenario=4">A Country profile</a></li>
+        </ol>
+        Note that CubeViz is a generic application for statistics from widespread domains and is not adopted for specific use cases. 
+        Because of that, users have more options to configure a desired chart output which is indeed in some cases not such comfortable as the DAS Web Application.
+    </p>
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">
+        Structure of this page:
+        <ul style="margin-top: 0.5em; margin-left: 3em; margin-bottom:1em; color: #4A4A4A; width: 96%;">
+            <li> <a href="#ex1">Example 1: Analyses of the Total Fixed Broadband Coverage for 2010</a></li>
+            <li> <a href="#ex2">Example 2: The Evolution of households with access to the Internet at home</a> </li>
+        </ul>
+
+    </p>
+   
+    <div style="margin: 1em; padding:0.5em 1em 1em 1em; border:1px dotted lightgrey; color: #4A4A4A; vertical-align:top">
+        <h2 id="ex1" style="font-size: 14px; color: #6386A4;">Example 1: Analysis of the Total Fixed Broadband Coverage for 2010</h2>
+        <div style="float:right; vertical-align:right">
+            <div style="margin:1em; text-align:center; border:1px dotted #6386A4">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example1-CubeViz.png" class="gallery" rel="gallery-0" title="Figure 1. Output of Example 1 with CubeViz">
+                   <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example1-CubeViz.png" style="height: 240px">
+                    <br> Figure 1. Output of Example 1 with CubeViz
+                </a>            
+            </div>
+            <div style="margin:1em; text-align:center; border:1px dotted #6386A4">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example1-DAS.png" class="gallery" rel="gallery-0" title="Figure 2. Output of Example 1 with DAS">
+                   <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example1-DAS.png" style="height: 240px">
+                    <br> Figure 2. Output of Example 1 with DAS
+                </a>            
+            </div>
+        </div>
+        <p>
+            The first example is about the analysis of a specific indicator of the DAS dataset. 
+            To get the result illustrated in the depictions Fig.1 and Fig.2 proceed with the following actions.
+        </p><p>                
+            Creation of the chart output with DAS:
+            <ol style="margin-left:3em">
+                <li>First start the DAS Web Application: <a href="http://scoreboard.lod2.eu/index.php?scenario=1">Open DAS - Scenario 1</a></li>
+                <li>Select the Indicator: <em>Total Fixed Broadband Coverage</em> of Indicatorgroup <em>Broadband</em> in the respective selection box.</li>
+                <li>Select the Year <em>2010</em> in the respective selection box.</li>
+                <li>Select all countries in the Country selector (per default all of them should still be selected)</li>
+            </ol>
+            The output should be somehow the same as depicted in Fig.2. If you do not want to follow these steps you can click 
+            <a href="http://scoreboard.lod2.eu/index.php?scenario=1&indicators%5B%5D=bb_fcov+TOTAL_POP+%25_pop&year=2010&countries%5B%5D=AT&countries%5B%5D=BE&countries%5B%5D=BG&countries%5B%5D=HR&countries%5B%5D=CY&countries%5B%5D=CZ&countries%5B%5D=DK&countries%5B%5D=EE&countries%5B%5D=EU27&countries%5B%5D=FI&countries%5B%5D=FR&countries%5B%5D=DE&countries%5B%5D=EL&countries%5B%5D=HU&countries%5B%5D=IS&countries%5B%5D=IE&countries%5B%5D=IT&countries%5B%5D=LV&countries%5B%5D=LT&countries%5B%5D=LU&countries%5B%5D=MT&countries%5B%5D=NL&countries%5B%5D=NO&countries%5B%5D=PL&countries%5B%5D=PT&countries%5B%5D=RO&countries%5B%5D=SK&countries%5B%5D=SI&countries%5B%5D=ES&countries%5B%5D=SE&countries%5B%5D=TR&countries%5B%5D=UK#chart">here</a> 
+            to jump directly to the output. 
+        </p><p>
+            In difference to the workflow in DAS you can produce a similar output with CubeViz as follows:
+            <ol style="margin-left:3em">
+                <li>Start CubeViz as part of the Data Portal for the European Commission with the DAS DataCube: <a href="<?php echo $_REQUEST ['urlBase']; ?>?m=http://data.lod2.eu/scoreboard/">Start CubeViz with DAS DataCube</a></li>                
+                <li>Select on the left side the Data Structure <em>per Indicator</em>.</li>
+                <li>Select the dataset <em>Total fixed broadband coverage (supply as a % of total population).</em></li>
+                <li>Select all elements of the dimension <em>Country</em> (click on the icon behind the dimension).</li>
+                <li>Select only the element <em>2010</em> of the dimension <em>Year</em> (click the Icon behind the Dimension).
+                <li>Click on Update Visualization</li>
+                <li>The first renderd Chart is a Bar chart. To get a similarly chart as in DAS click on the upper right corner on the icon for the Column chart.</li>
+            </ol>
+            As you can see both visualizations and the workflows to produce them are similar.
+        </p>
+        <div style="clear:both"></div>
+    </div>
+
+    <div style="margin: 1em; padding:0.5em 1em 1em 1em; border:1px dotted lightgrey; color: #4A4A4A; vertical-align:top">
+        <h2 id="ex2" style=" font-size: 14px; color: #6386A4;">Example 2: The Evolution of households with access to the Internet at home</h2>
+        <div style="float:right;">
+            <div style=" margin:1em; text-align:center; border:1px dotted #6386A4">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example2-CubeViz.png" class="gallery" rel="gallery-1" title="Figure 3. Output of Example 2 with CubeViz">
+                   <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example2-CubeViz.png" style="height: 240px">
+                    <br> Figure 3. Output of Example 2 with CubeViz
+                </a>            
+            </div>
+            <div style=" margin:1em; text-align:center; border:1px dotted #6386A4">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example2-DAS.png" class="gallery" rel="gallery-1" title="Figure 4. Output of Example 2 with DAS">
+                   <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/example2-DAS.png" style="height: 240px">
+                    <br> Figure 4. Output of Example 2 with DAS
+                </a>            
+            </div>
+        </div>
+        <p>
+            This example is about the evolution of a specific indicator over time. 
+            In order to keep it simple we will observe only 3 countries and compare them with the average over the European Union 27 countries.
+        </p><p>
+            Creation of the chart output with DAS:<br>
+            <ol style="margin-left:3em">
+                <li>First start the DAS Web Application: <a href="http://scoreboard.lod2.eu/index.php?scenario=2">Open DAS - Scenario 2</a></li>
+                <li>Select the indicator <em>Households with access to the Internet at home</em> of indicatorgroup <em>Internet usage</em> in the respective selection box.
+                <li>Select the countries <em>Belgium</em>, <em>European Union - 27 countries</em>, <em>France</em> and <em>Germany</em> in the country selector 
+                (by default the <em>European Union - 27 countries</em> should still be selected).
+            </ol>
+            If you do not want to follow these steps you can click 
+            <a href="http://scoreboard.lod2.eu/index.php?scenario=2&indicators%5B%5D=h_iacc+HH_TOTAL+%25_hh&countries%5B%5D=BE&countries%5B%5D=EU27&countries%5B%5D=FR&countries%5B%5D=DE#chart">here</a> 
+            to jump directly to the output. 
+            The result of this selection leads to a line-chart containing 4 lines representing the countries. 
+            The temporal dimension is represented on the X-Axis, and the percentage values are put on the Y-Axis (compare with Figure 4). 
+        </p><p>
+            A similar output can be created with CubeViz:
+            <ol style="margin-left:3em">
+                <li>Start CubeViz as part of the Data Portal for the European Commission with the DAS DataCube: <a href="<?php echo $_REQUEST ['urlBase']; ?>?m=http://data.lod2.eu/scoreboard/">Start CubeViz with DAS DataCube</a></li>                
+                <li>Select on the left side the Data Structure <em>per Indicator</em></li>
+                <li>Select the Dataset <em>% of Housholds with Access to the Internet at home</em></li>
+                <li>Select the elements <em>Belgium</em>, <em>European Union - 27 countries</em>, <em>France</em> and <em>Germany</em> of the dimension <em>Country</em> (click the Icon behind the dimension)</li>
+                <li>Select all elements of the dimension <em>Year</em>. (click on the icon behind the dimension)</li>
+                <li>Click on <em>Update Visualization</em></li>
+                <li>The first rendered Chart is a bar-chart. To get a similar chart click on the top-right corner on the icon for the line-chart.</li>
+                <li>Click again on the line-chart icon to open the <em>options dialogue</em> and configure there the type <em>spline</em> (and a <em>switch of the axes</em> if necessary)</li>
+            </ol>
+        </p><p>
+            The result with CubeViz is quite similar to the output of DAS (compare Figure 3 and 4).
+            In DAS the years are limited from 2004 until 2012, which can not be configured. 
+            For France, data is missing for the Year 2005, which can be seen in both tools, but with different visualized elements. 
+            Try out the Column and Polar charts with the same selection.
+        </p>
+        <div style="clear:both"></div>
+    </div>   
+</div>
+

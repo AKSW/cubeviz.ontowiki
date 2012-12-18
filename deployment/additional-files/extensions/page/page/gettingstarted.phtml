@@ -1,0 +1,66 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/colorbox.css"/>
+<script type="text/javascript" src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("a.gallery").colorbox({transition:"none", width:"75%", height:"75%"});
+});
+</script>
+
+<div style=" margin-top: 0px; margin-left: 10px; border-left: 10px solid D8D8D8; min-height: 100%; height:auto !important; height:100%;">
+
+    <h1 style="font-size: 1.5em;">
+        <img src="<?php echo $_REQUEST ['urlImages']; ?>server_add.png"/>
+        <span style="vertical-align:middle;">
+            <?php if ( false == $_REQUEST ['exampleCubeExists'] || false == $_REQUEST ['allow'] ) { ?>
+                Getting started
+            <?php } else { ?>
+                Getting started (example knowledebase ready to use!)
+            <?php } ?>
+        </span>
+    </h1>
+    <p style="margin-top: 1em; color: #4A4A4A; width: 80%;">
+        
+        <?php if ( false == $_REQUEST ['exampleCubeExists'] || false == $_REQUEST ['allow'] ) { ?>
+        
+            This page contains information about how getting started with this installation. 
+            You have to follow the introductions step by step: 
+        
+        <?php } else { ?>
+        
+            You are logged in and should see the entry <span style="font-weight:bold">Example DataCube Knowledge Base</span>
+            in left sidebar. After you clicked it, a new box in the sidebar will open and provides you the possibility
+            to make a selection. If you dont want to make a selection, simply click to 
+            <span style="font-weight:bold">Show Visualization</span>.
+        
+        <?php } ?>
+        
+        <?php if ( false == $_REQUEST ['exampleCubeExists'] || false == $_REQUEST ['allow'] ) { ?>
+            
+        <ol style="margin-left: 20px;">
+            <li>
+                <span style="font-weight:bold;">Log in</span> in the left sidebar as 
+                <span style="font-weight:bold;">Admin</span> with empty password or 
+                dba / dba (or whatever your access data to Virtuoso are).
+                <br/>
+                <br/>
+            </li>
+            <li>
+                <span style="font-weight:bold;">If you are logged in</span> you should see either the 
+                <span style="font-weight:bold;">Examples box</span> or the entry 
+                <span style="font-weight:bold">Example DataCube Knowledge Base</span> in the Knowledgebases box.
+                <br/>
+                If you see the Examples box, click to its link named 
+                <span style="font-weight:bold;">Create example knowledgebase</span>. 
+                <br/>
+                Otherwise to <span style="font-weight:bold">Example DataCube Knowledge Base</span> in the Knowledge Bases box.
+            </li>
+        </ol>
+            
+        <?php } ?>
+    </p>
+</div>
+
+
+
+
+        

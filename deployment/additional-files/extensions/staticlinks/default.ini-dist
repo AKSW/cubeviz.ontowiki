@@ -1,0 +1,23 @@
+enabled     = true
+templates   = "static/templates"
+languages   = "languages/"
+action      = index
+author      = "Michael Martin, Konrad Abicht"
+name        = "Static Links"
+position    = 20
+priority    = 30
+contexts[]  = "main.sidewindows"
+
+[private]
+
+module.title = "Links"
+
+links.aksw.label = "AKSW Homepage"
+links.aksw.title = "This is the AKSW homepage with information about project, staff etc."
+links.aksw.url = "http://www.aksw.org/"
+links.aksw.target = "_blank"
+
+links.github.label = "Static Links Project Page"
+links.github.title = "Github project page with source code and possibility to stay in touc "
+links.github.url = "http://www.github.com/AKSW/staticlinks.ontowiki/"
+links.github.target = "_blank"
