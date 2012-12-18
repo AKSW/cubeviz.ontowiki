@@ -29,6 +29,18 @@ var templateVisualization_CubeViz_Table = templateVisualization_CubeViz_Table ||
  */
 $(document).ready(function(){
     Viz_Main.showLoadingNotification ();
+    
+    /**
+     * Set div as dialog (jqueryui) and click event
+     */
+    $("#cubeviz-Index-DialogboxHeadline").dialog({ 
+        "autoOpen": false,
+        "draggable": false, 
+        "hide": "slow",
+        "show": "slow"
+    });
+    
+    $("#cubeviz-Index-questionMarkHeadline").click(Viz_Event.onClick_QuestionMarkDialogboxHeadline);    
 });
 
 class Viz_Event {
@@ -59,15 +71,6 @@ class Viz_Event {
             CubeViz_Links_Module ["linkCode"],
             Viz_Event.onComplete_LoadResultObservations
         );
-        
-        // set div as dialog (jqueryui) and click event
-        $("#cubeviz-Index-DialogboxHeadline").dialog({ 
-            "autoOpen": false,
-            "draggable": false, 
-            "hide": "slow",
-            "show": "slow"
-        });
-        $("#cubeviz-Index-questionMarkHeadline").click (Viz_Event.onClick_QuestionMarkDialogboxHeadline);
     }
     
     /**
@@ -198,6 +201,13 @@ class Viz_Event {
     /**
      * 
      */
+    static onClick_NothingFoundNotificationLink () : void {
+        $("#cubeviz-Index-NothingFoundFurtherExplanation").slideDown("slow");
+    }
+    
+    /**
+     * 
+     */
     static onClick_QuestionMarkDialogboxHeadline () : void {
         $("#cubeviz-Index-DialogboxHeadline").dialog( "open" );
     }
@@ -215,20 +225,42 @@ class Viz_Event {
             CubeViz_Links_Module ["selectedComponents"]["dimensions"],
             CubeViz_Links_Module ["selectedComponents"]["measures"]
         ); 
-              
-        /**
-         * Render chart with the given data
-         */
-        Viz_Main.renderChart ( 
-            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"][0]["class"] 
-        );
         
-        /**
-         * Setup click event for chartSelection item's
-         */
-        ChartSelector.init ( 
-            CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
-            Viz_Event.onClick_ChartSelectionItem
-        );
+        // If at least one observation was received
+        if ( 0 < entries["length"] ) {
+              
+            /**
+             * Render chart with the given data
+             */
+            Viz_Main.renderChart ( 
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"][0]["class"] 
+            );
+            
+            /**
+             * Setup click event for chartSelection item's
+             */
+            ChartSelector.init ( 
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
+                Viz_Event.onClick_ChartSelectionItem
+            );
+        } 
+        
+        // If nothing was received
+        else {
+                        
+            $("#container")
+                .html ("")
+                .append ($("#cubeviz-Index-NothingFoundNotificationContainer").html());
+                
+            
+            /**
+             * Notification: Empty data received
+             */
+            $("#cubeviz-Index-NothingFoundNotificationLink").click(Viz_Event.onClick_NothingFoundNotificationLink);
+                
+            Viz_Main.closeChartSelection();
+            Viz_Main.closeChartSelectionMenu();
+            Viz_Main.hideMenuDongle();
+        }
     }
 }

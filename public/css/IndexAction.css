@@ -1,5 +1,38 @@
 /**
- *
+ * IDs
+ */
+ 
+/**
+ * Notification about empty chart
+ */
+#cubeviz-Index-NothingFoundBox {
+    height: 100%;
+    width: 100%;
+    margin-top: 17%;
+}
+ 
+#cubeviz-Index-NothingFoundFurtherExplanation {
+    width: 50%;
+    text-align: left;
+    display: none;
+}
+
+#cubeviz-Index-NothingFoundNotification {
+    width: 50%;
+    text-align: left;
+    font-weight: bold;
+}
+
+#cubeviz-Index-NothingFoundNotificationLink {
+    text-align: left;
+    cursor: pointer;
+    font-style: italic;
+    font-weight: normal;
+}
+
+
+/**
+ * 
  */
 #cubeviz-Index-DialogboxHeadline {
     display: none;
@@ -20,3 +53,9 @@
     opacity:0.5;
     filter:alpha(opacity=50);
 }
+
+
+
+/**
+ * CLASSES
+ */

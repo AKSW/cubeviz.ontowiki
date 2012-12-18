@@ -3,6 +3,13 @@
 class Viz_Main {
     
     /**
+      * 
+      */
+    static closeChartSelection () : void {
+        $("#chartSelection").html ( "" );
+    }
+    
+    /**
      * 
      */
     static closeChartSelectionMenu () : void {

@@ -883,6 +883,13 @@ var templateVisualization_CubeViz_Table = templateVisualization_CubeViz_Table ||
 };
 $(document).ready(function () {
     Viz_Main.showLoadingNotification();
+    $("#cubeviz-Index-DialogboxHeadline").dialog({
+        "autoOpen": false,
+        "draggable": false,
+        "hide": "slow",
+        "show": "slow"
+    });
+    $("#cubeviz-Index-questionMarkHeadline").click(Viz_Event.onClick_QuestionMarkDialogboxHeadline);
 });
 var Viz_Event = (function () {
     function Viz_Event() { }
@@ -895,13 +902,6 @@ var Viz_Event = (function () {
         var containerHeight = 0;
         $("#container").css("height", $(window).height() - container["top"] - 5);
         Observation.loadAll(CubeViz_Links_Module["linkCode"], Viz_Event.onComplete_LoadResultObservations);
-        $("#cubeviz-Index-DialogboxHeadline").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
-        });
-        $("#cubeviz-Index-questionMarkHeadline").click(Viz_Event.onClick_QuestionMarkDialogboxHeadline);
     }
     Viz_Event.onClick_chartSelectionMenuButton = function onClick_chartSelectionMenuButton(event) {
         var newDefaultConfig = CubeViz_UI_ChartConfig["selectedChartConfig"]["defaultConfig"];
@@ -951,19 +951,33 @@ var Viz_Event = (function () {
             }
         }
     }
+    Viz_Event.onClick_NothingFoundNotificationLink = function onClick_NothingFoundNotificationLink() {
+        $("#cubeviz-Index-NothingFoundFurtherExplanation").slideDown("slow");
+    }
     Viz_Event.onClick_QuestionMarkDialogboxHeadline = function onClick_QuestionMarkDialogboxHeadline() {
         $("#cubeviz-Index-DialogboxHeadline").dialog("open");
     }
     Viz_Event.onComplete_LoadResultObservations = function onComplete_LoadResultObservations(entries) {
         CubeViz_Data["retrievedObservations"] = entries;
         CubeViz_Data["numberOfMultipleDimensions"] = Visualization_Controller.getNumberOfMultipleDimensions(entries, CubeViz_Links_Module["selectedComponents"]["dimensions"], CubeViz_Links_Module["selectedComponents"]["measures"]);
-        Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
-        ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
+        if(0 < entries["length"]) {
+            Viz_Main.renderChart(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"][0]["class"]);
+            ChartSelector.init(CubeViz_ChartConfig[CubeViz_Data["numberOfMultipleDimensions"]]["charts"], Viz_Event.onClick_ChartSelectionItem);
+        } else {
+            $("#container").html("").append($("#cubeviz-Index-NothingFoundNotificationContainer").html());
+            $("#cubeviz-Index-NothingFoundNotificationLink").click(Viz_Event.onClick_NothingFoundNotificationLink);
+            Viz_Main.closeChartSelection();
+            Viz_Main.closeChartSelectionMenu();
+            Viz_Main.hideMenuDongle();
+        }
     }
     return Viz_Event;
 })();
 var Viz_Main = (function () {
     function Viz_Main() { }
+    Viz_Main.closeChartSelection = function closeChartSelection() {
+        $("#chartSelection").html("");
+    }
     Viz_Main.closeChartSelectionMenu = function closeChartSelectionMenu() {
         $("#chartSelectionMenu").slideUp(500);
     }

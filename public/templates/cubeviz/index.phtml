@@ -48,5 +48,56 @@
 </div>
 <img id="chartSelectionMenuDongle" title="Click to open the menu"/>
 
+<!-- 
+    
+-->
+<div id="cubeviz-Index-NothingFoundNotificationContainer" style="display:none;">
+    
+    <div id="cubeviz-Index-NothingFoundBox">
+        
+        <div align="center">
+        
+            <div id="cubeviz-Index-NothingFoundNotification">
+                No data fits to your selection, please adapt your selection in the left sidebar manually.
+                <br/>
+                <br/>
+                
+                <div id="cubeviz-Index-NothingFoundNotificationLink">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>arrow-down.png" class="cubeviz-icon-micro" id="cubeviz-Index-NothingFoundNotificationLink">
+                    &nbsp;
+                    <a>Why do i sometimes receive an empty chart / no data?</a>
+                </div>
+            </div>
+            
+            <br/>
+            
+            <div id="cubeviz-Index-NothingFoundFurtherExplanation">
+                
+                <div style="float:left;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" class="cubeviz-icon-minimal" style="opacity:0.3;"/>
+                </div>
+                <div style="margin-left: 24px; margin-top:-3px;">
+                    <span style="font-size:16px; font-weight:bold;">
+                        Explanation
+                    </span>
+                    <p>
+                        This behavior can have various reasons. On the one hand it is possible that there is no data available 
+                        according to the selection. In order to reduce the load of the server we decided not to check the 
+                        availability of data for every selection. 
+                        <br/>
+                        <br/>
+                        On the other hand it is possible that a chart can not be 
+                        produced if the user selects inapplicable combinations of options such as a logarithm scale in combination 
+                        with percentage stacking. Trapping such cases is not yet fully implemented but will be done soon.
+                        <br/>
+                        <br/>
+                        To solve such problems we suggest to change the selection and/or the selected chart options.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- File with dialogs -->
 <?php require_once ('extensions/cubeviz/public/templates/cubeviz/indexDialogs.phtml'); ?>
