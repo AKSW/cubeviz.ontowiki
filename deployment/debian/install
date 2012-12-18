@@ -7,6 +7,5 @@ public                usr/share/ontowiki-cubeviz
 doap.n3               etc/ontowiki-cubeviz
 ChartConfig.js        etc/ontowiki-cubeviz
 
-README                usr/share/doc/ontowiki-cubeviz
 README.md             usr/share/doc/ontowiki-cubeviz
 
