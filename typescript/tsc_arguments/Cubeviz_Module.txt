@@ -1,7 +1,8 @@
-src/model/DataCube/DataStructureDefinition.ts
-src/model/DataCube/DataSet.ts
+src/Model/DataCube/DataStructureDefinition.ts
+src/Model/DataCube/DataSet.ts
 
-src/model/View/Abstract.ts
-src/model/View/Manager.ts
+src/Model/View/Abstract.ts
+src/Model/View/Manager.ts
 
-src/views/CubeVizModule/DataStructureDefinitionView.ts
+src/View/CubeVizModule/DataStructureDefinition.ts
+src/View/CubeVizModule/DataSet.ts

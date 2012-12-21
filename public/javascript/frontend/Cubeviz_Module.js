@@ -89,13 +89,17 @@ var View_Manager = (function () {
         }
         return false;
     };
+    View_Manager.prototype.callView = function (id) {
+        var view = this.get(id);
+        if(false != view) {
+            view.render();
+        }
+    };
     View_Manager.prototype.render = function () {
         var view = null;
-        console.log("Rendering autostart views... ");
         for(var i = 0; i < this._allViews.length; ++i) {
             view = this._allViews[i];
             if(true == view.autostart) {
-                console.log(view);
                 view.render();
             }
         }
@@ -107,21 +111,16 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
-var DataStructureDefintionView = (function (_super) {
-    __extends(DataStructureDefintionView, _super);
-    function DataStructureDefintionView() {
+var View_CubeVizModule_DataStructureDefintion = (function (_super) {
+    __extends(View_CubeVizModule_DataStructureDefintion, _super);
+    function View_CubeVizModule_DataStructureDefintion() {
         _super.call(this);
         this.id = "DataStructureDefintionView";
         this.attachedTo = "#cubviz-dataStructureDefinition-container";
     }
-    DataStructureDefintionView.prototype.onChange_list = function () {
+    View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function () {
     };
-    DataStructureDefintionView.prototype.loadDataSets = function () {
-        DataCube_DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, function (elements) {
-            console.log(elements);
-        });
-    };
-    DataStructureDefintionView.prototype.setSelectedDsd = function (entries) {
+    View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDsd = function (entries) {
         if(0 == entries.length) {
             CubeViz_Links_Module.selectedDSD = {
             };
@@ -135,10 +134,10 @@ var DataStructureDefintionView = (function (_super) {
             }
         }
     };
-    DataStructureDefintionView.prototype.render = function () {
+    View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var List = Backbone.Collection.extend({
         });
-        var view = this;
+        var thisView = this;
         this.viewInstance = {
             el: $(this.attachedTo),
             events: {
@@ -150,8 +149,8 @@ var DataStructureDefintionView = (function (_super) {
                 _.bindAll(this, "render", "onChange_list");
                 this.dataStructureDefinitions = new List();
                 DataCube_DataStructureDefinition.loadAll(function (entries) {
-                    view.setSelectedDsd(entries);
-                    view.loadDataSets();
+                    thisView.setSelectedDsd(entries);
+                    thisView.viewManager.callView("");
                     $(entries).each(function (i, element) {
                         element["id"] = element["hashedUrl"];
                         self.dataStructureDefinitions.add(element);
@@ -176,5 +175,14 @@ var DataStructureDefintionView = (function (_super) {
         this.backboneViewContainer = bv;
         this.backboneViewInstance = new bv();
     };
-    return DataStructureDefintionView;
+    return View_CubeVizModule_DataStructureDefintion;
+})(View_Abstract);
+var View_CubeVizModule_DataSet = (function (_super) {
+    __extends(View_CubeVizModule_DataSet, _super);
+    function View_CubeVizModule_DataSet() {
+        _super.call(this);
+        this.id = "DataStructureDefintionView";
+        this.attachedTo = "#cubviz-dataStructureDefinition-container";
+    }
+    return View_CubeVizModule_DataSet;
 })(View_Abstract);

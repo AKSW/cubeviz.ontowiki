@@ -48,14 +48,23 @@ class View_Manager {
     /**
      * 
      */
+    public callView(id:string) 
+    {
+        var view = this.get(id);
+        if(false != view) {
+            view.render();
+        }
+    }
+    
+    /**
+     * 
+     */
     public render() 
     {
         var view = null;
-        console.log("Rendering autostart views... ");
         for(var i=0;i<this._allViews.length;++i){
             view = this._allViews[i];
             if(true == view.autostart){
-                console.log (view);
                 view.render();
             }
         }

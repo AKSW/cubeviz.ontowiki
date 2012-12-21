@@ -6,7 +6,7 @@
 
 declare var CubeViz_Links_Module: any;
 
-class DataStructureDefintionView extends View_Abstract {
+class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
         
     constructor() 
     {
@@ -19,20 +19,6 @@ class DataStructureDefintionView extends View_Abstract {
     public onChange_list() : void 
     {
         
-    }
-    
-    /**
-     * 
-     */
-    public loadDataSets() : void 
-    {
-        // if more than one data structure definition, load for the first one its data sets
-        DataCube_DataSet.loadAll (
-            CubeViz_Links_Module.selectedDSD.url, 
-            function(elements) {
-                console.log(elements);
-            }
-        );
     }
     
     /**
@@ -70,7 +56,7 @@ class DataStructureDefintionView extends View_Abstract {
         // TODO refac
         var List = Backbone.Collection.extend({});
         
-        var view = this;
+        var thisView = this;
         
         /**
          * 
@@ -108,10 +94,10 @@ class DataStructureDefintionView extends View_Abstract {
                     function(entries) {
                         
                         // set selectedDsd
-                        view.setSelectedDsd(entries);
+                        thisView.setSelectedDsd(entries);
                         
                         // load data set
-                        view.loadDataSets();
+                        thisView.viewManager.callView("");
                         
                         // save given elements
                         $(entries).each(function(i, element){
