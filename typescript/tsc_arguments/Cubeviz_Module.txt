@@ -1,4 +1,5 @@
 src/model/DataCube/DataStructureDefinition.ts
+src/model/DataCube/DataSet.ts
 
 src/model/View/Abstract.ts
 src/model/View/Manager.ts
