@@ -67,7 +67,7 @@
             </div>
             
             <!-- Select data set -->
-            <div style="margin-top: 15px; margin-left: 2px; clear:both;">
+            <div id="cubviz-dataSet-container">
                 <div style="width: 100%; float:left; font-size: 12px; font-weight:bold; margin-bottom:2px;">
                     <?php echo $this->_translate->_('Select part of group'); ?>
                     &nbsp;
@@ -75,7 +75,6 @@
                          title="<?php echo $this->_translate->_('Click for more information'); ?>" 
                          class="cubeviz-icon-micro"/>
                 </div>
-                <select name="datasets" id="sidebar-left-data-selection-sets"></select>
             </div>
 			
             <!-- Visual seperator -->
@@ -115,17 +114,30 @@
     Templates
     #########
 -->
-<script type="text/template" id="cubeviz-dataStructureDefinition-listTpl">
-    <select name="datastructures" id="cubeviz-dataStructureDefinition-list">
+<!-- Data Structure Definition -->
+<script type="text/template" id="cubeviz-dataStructureDefinition-tpl-list">
+    <select name="cubeviz-dataStructureDefinition-list" id="cubeviz-dataStructureDefinition-list">
     </select>
 </script>
 
-<script type="text/template" id="cubeviz-dataStructureDefinition-listOptionTpl">
+<script type="text/template" id="cubeviz-dataStructureDefinition-tpl-listOption">
     <option value="<%= url %>"<%= selected %>>
         <%= label %>
     </option>    
 </script>
 
+<!-- Data Set -->
+<script type="text/template" id="cubeviz-dataSet-tpl-list">
+    <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
+</script>
+
+<script type="text/template" id="cubeviz-dataSet-tpl-listOption">
+    <option value="<%= url %>"<%= selected %>>
+        <%= label %>
+    </option>    
+</script>
+
+<!-- ... -->
 <script type="text/template" id="cubeviz-template-cubeVizModule-DimensionBox">
     <div class="sidebar-left-data-selection-dims-box-label-value">    
         <span style="float:left;"><%= label %></span> 

@@ -1,0 +1,11 @@
+#cubviz-dataSet-container {
+    margin-top: 15px; 
+    margin-left: 2px; 
+    clear:both;
+}
+
+#cubeviz-dataSet-list {
+    min-width: 242px;
+    max-width: 242px;
+    width: 242px;	
+}

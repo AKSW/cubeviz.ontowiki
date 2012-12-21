@@ -115,24 +115,10 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
     function View_CubeVizModule_DataStructureDefintion() {
         _super.call(this);
-        this.id = "DataStructureDefintionView";
+        this.id = "View_CubeVizModule_DataStructureDefintion";
         this.attachedTo = "#cubviz-dataStructureDefinition-container";
     }
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function () {
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDsd = function (entries) {
-        if(0 == entries.length) {
-            CubeViz_Links_Module.selectedDSD = {
-            };
-            console.log("onComplete_LoadDataStructureDefinitions");
-            console.log("no data structure definitions were loaded");
-        } else {
-            if(1 <= entries.length) {
-                if(undefined == CubeViz_Links_Module.selectedDSD.url) {
-                    CubeViz_Links_Module.selectedDSD = entries[0];
-                }
-            }
-        }
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var List = Backbone.Collection.extend({
@@ -147,24 +133,24 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             initialize: function () {
                 var self = this;
                 _.bindAll(this, "render", "onChange_list");
-                this.dataStructureDefinitions = new List();
+                this.collection = new List();
                 DataCube_DataStructureDefinition.loadAll(function (entries) {
-                    thisView.setSelectedDsd(entries);
-                    thisView.viewManager.callView("");
+                    thisView.setSelectedDSD(entries);
+                    thisView.viewManager.callView("View_CubeVizModule_DataSet");
                     $(entries).each(function (i, element) {
                         element["id"] = element["hashedUrl"];
-                        self.dataStructureDefinitions.add(element);
+                        self.collection.add(element);
                     });
                     self.render();
                 });
             },
             render: function () {
-                var listTpl = $("#cubeviz-dataStructureDefinition-listTpl").text();
+                var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
                 $(this.el).append(listTpl);
                 var list = $("#cubeviz-dataStructureDefinition-list");
-                var optionTpl = _.template($("#cubeviz-dataStructureDefinition-listOptionTpl").text());
+                var optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
 
-                $(this.dataStructureDefinitions.models).each(function (i, element) {
+                $(this.collection.models).each(function (i, element) {
                     element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
                     list.append(optionTpl(element.attributes));
                 });
@@ -175,14 +161,84 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.backboneViewContainer = bv;
         this.backboneViewInstance = new bv();
     };
+    View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDSD = function (entries) {
+        if(0 == entries.length) {
+            CubeViz_Links_Module.selectedDSD = {
+            };
+            console.log("onComplete_LoadDataStructureDefinitions");
+            console.log("no data structure definitions were loaded");
+        } else {
+            if(1 <= entries.length) {
+                if(undefined == CubeViz_Links_Module.selectedDSD.url) {
+                    CubeViz_Links_Module.selectedDSD = entries[0];
+                }
+            }
+        }
+    };
     return View_CubeVizModule_DataStructureDefintion;
 })(View_Abstract);
 var View_CubeVizModule_DataSet = (function (_super) {
     __extends(View_CubeVizModule_DataSet, _super);
     function View_CubeVizModule_DataSet() {
         _super.call(this);
-        this.id = "DataStructureDefintionView";
-        this.attachedTo = "#cubviz-dataStructureDefinition-container";
+        this.id = "View_CubeVizModule_DataSet";
+        this.attachedTo = "#cubviz-dataSet-container";
     }
+    View_CubeVizModule_DataSet.prototype.onChange_list = function () {
+    };
+    View_CubeVizModule_DataSet.prototype.render = function () {
+        var List = Backbone.Collection.extend({
+        });
+        var thisView = this;
+        this.viewInstance = {
+            el: $(this.attachedTo),
+            events: {
+                "change #cubeviz-dataSet-list": "onChange_list"
+            },
+            onChange_list: this.onChange_list,
+            initialize: function () {
+                var self = this;
+                _.bindAll(this, "render", "onChange_list");
+                this.collection = new List();
+                DataCube_DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, function (entries) {
+                    thisView.setSelectedDS(entries);
+                    $(entries).each(function (i, element) {
+                        element["id"] = element["hashedUrl"];
+                        self.collection.add(element);
+                    });
+                    self.render();
+                });
+            },
+            render: function () {
+                var listTpl = $("#cubeviz-dataSet-tpl-list").text();
+                $(this.el).append(listTpl);
+                var list = $("#cubeviz-dataSet-list");
+                var optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
+
+                $(this.collection.models).each(function (i, element) {
+                    element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
+                    list.append(optionTpl(element.attributes));
+                });
+                return this;
+            }
+        };
+        var bv = Backbone.View.extend(this.viewInstance);
+        this.backboneViewContainer = bv;
+        this.backboneViewInstance = new bv();
+    };
+    View_CubeVizModule_DataSet.prototype.setSelectedDS = function (entries) {
+        if(0 == entries.length) {
+            CubeViz_Links_Module.selectedDS = {
+            };
+            console.log("onComplete_LoadDataSets");
+            console.log("no data sets were loaded");
+        } else {
+            if(1 <= entries["length"]) {
+                if(undefined == CubeViz_Links_Module.selectedDS || undefined == CubeViz_Links_Module.selectedDS.url) {
+                    CubeViz_Links_Module.selectedDS = entries[0];
+                }
+            }
+        }
+    };
     return View_CubeVizModule_DataSet;
 })(View_Abstract);

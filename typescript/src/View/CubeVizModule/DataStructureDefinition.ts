@@ -12,40 +12,13 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
     {
         super();
         
-        this.id = "DataStructureDefintionView";
+        this.id = "View_CubeVizModule_DataStructureDefintion";
         this.attachedTo = "#cubviz-dataStructureDefinition-container";
     }
     
     public onChange_list() : void 
     {
         
-    }
-    
-    /**
-     * 
-     */
-    public setSelectedDsd(entries) : void 
-    {
-        // if at least one data structure definition, than load data sets for first one
-        if(0 == entries.length) {
-            // todo: handle case that no data structure definition were loaded!
-            CubeViz_Links_Module.selectedDSD = {};
-            console.log("onComplete_LoadDataStructureDefinitions");
-            console.log("no data structure definitions were loaded");
-            
-        } else if(1 <= entries.length) {
-            
-            // if selected data structure defintion url is not set, than use the first element of the 
-            // previously loaded entries instead
-            if(undefined == CubeViz_Links_Module.selectedDSD.url) {
-                CubeViz_Links_Module.selectedDSD = entries[0];
-            }
-            
-            /**
-             * Remove this event entry from sidebar left queue
-             */
-            // Module_Main.removeEntryFromSidebarLeftQueue ( "onComplete_LoadDataStructureDefinitions" );
-        }
     }
     
     /**
@@ -84,7 +57,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
                 /**
                  * Load all data structure definitions
                  */
-                this.dataStructureDefinitions = new List();
+                this.collection = new List();
                 
                 // load all data structure definitions from server
                 DataCube_DataStructureDefinition.loadAll(
@@ -94,15 +67,15 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
                     function(entries) {
                         
                         // set selectedDsd
-                        thisView.setSelectedDsd(entries);
+                        thisView.setSelectedDSD(entries);
                         
-                        // load data set
-                        thisView.viewManager.callView("");
+                        // load data set view
+                        thisView.viewManager.callView("View_CubeVizModule_DataSet");
                         
                         // save given elements
                         $(entries).each(function(i, element){
                             element["id"] = element["hashedUrl"];
-                            self.dataStructureDefinitions.add(element);
+                            self.collection.add(element);
                         });
                         
                         // render given elements
@@ -116,14 +89,14 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
              */
             render: function(){
                 
-                var listTpl = $("#cubeviz-dataStructureDefinition-listTpl").text();
+                var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
                 $(this.el).append(listTpl);
                 
                 var list = $("#cubeviz-dataStructureDefinition-list"),
-                    optionTpl = _.template($("#cubeviz-dataStructureDefinition-listOptionTpl").text());
+                    optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
                 
                 // output loaded data
-                $(this.dataStructureDefinitions.models).each(function(i, element){
+                $(this.collection.models).each(function(i, element){
                     
                     // set selected variable, if element url is equal to selected dsd
                     element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url
@@ -139,5 +112,27 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
         var bv = Backbone.View.extend(this.viewInstance);
         this.backboneViewContainer = bv;
         this.backboneViewInstance = new bv ();
+    }
+    
+    /**
+     * 
+     */
+    public setSelectedDSD(entries) : void 
+    {
+        // if at least one data structure definition, than load data sets for first one
+        if(0 == entries.length) {
+            // todo: handle case that no data structure definition were loaded!
+            CubeViz_Links_Module.selectedDSD = {};
+            console.log("onComplete_LoadDataStructureDefinitions");
+            console.log("no data structure definitions were loaded");
+            
+        } else if(1 <= entries.length) {
+            
+            // if selected data structure defintion url is not set, than use the first element of the 
+            // previously loaded entries instead
+            if(undefined == CubeViz_Links_Module.selectedDSD.url) {
+                CubeViz_Links_Module.selectedDSD = entries[0];
+            }
+        }
     }
 }
