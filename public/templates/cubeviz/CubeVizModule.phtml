@@ -1,5 +1,4 @@
 <script type="text/javascript">
-    
     /**
      * Contains loaded configuration for given hashcode
      */
@@ -14,7 +13,24 @@
      * For the future
      * Will be contains all relevant information about the UI
      */
-    var CubeViz_UI_ChartConfig = <?php echo $this->CubeViz_UI_ChartConfig; ?>;			
+    var CubeViz_UI_ChartConfig = <?php echo $this->CubeViz_UI_ChartConfig; ?>;		
+    
+    
+    /**
+     *
+     */
+    $(document).ready(function(){
+        
+        // initialize view manager to handle all the used views
+        var viewManager = new View_Manager();
+        
+        // add views to view
+        viewManager.add(new DataStructureDefintionView(), true);
+        
+        // run
+        viewManager.render();
+    });
+    
 </script>
 
 <!-- Selection data routine -->
@@ -24,28 +40,29 @@
 <div id="sidebar-left">
     <div id="sidebar-left-data-selection">
         
-        <!-- -->
+        <!-- 
         <div id="sidebar-left-loader">
             <div style="margin-top: 90px; height: 220px;">
                 <img src="<?php echo $this->moduleUrl; ?>public/images/loader.gif"/>
                 Loading ...
             </div>
         </div>
+        -->
         
 		<div id="sidebar-left-data-selection-wrapper">
             
             <br/>
             
             <!-- Select data structure-->
-            <div style="margin-top: -10px; margin-left: 2px; clear:both;">
+            <div id="cubviz-dataStructureDefinition-container">
                 <div style="width: 100%; font-size: 12px; font-weight:bold; margin-bottom:2px;">
                     <?php echo $this->_translate->_('Select group of interest'); ?>
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
-                         title="<?php echo $this->_translate->_('Click for more information'); ?>" 
-                         class="cubeviz-icon-micro"/>
-                </div> 
-                <select name="datastructures" id="sidebar-left-data-selection-strc"></select>
+                         class="cubeviz-icon-micro"
+                         id="cubeviz-dataStructureDefinition-questionMark"
+                         title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
+                </div>
             </div>
             
             <!-- Select data set -->
@@ -92,5 +109,58 @@
 <!-- Later on, after all loading is complete, it will contain a dialog instance -->
 <div id="dimensionDialogContainer"></div>
 
-<!-- Include index json-templates for instance the dialogs. -->
-<?php include ('extensions/cubeviz/public/jsontemplates/userinterface/CubeVizModule.phtml'); ?>
+<!-- 
+    #########
+    Templates
+    #########
+-->
+<script type="text/template" id="cubeviz-dataStructureDefinition-listTpl">
+    <select name="datastructures" id="cubeviz-dataStructureDefinition-list">
+    </select>
+</script>
+
+<script type="text/template" id="cubeviz-dataStructureDefinition-listOptionTpl">
+    <option value="<%= url %>"<%= selected %>>
+        <%= label %>
+    </option>    
+</script>
+
+<script type="text/template" id="cubeviz-template-cubeVizModule-DimensionBox">
+    <div class="sidebar-left-data-selection-dims-box-label-value">    
+        <span style="float:left;"><%= label %></span> 
+        <span style="float:left;" id="dialog-{label}-selected-items">
+            &nbsp;(<%= selectedElementCount %>} / <%= elementCount %>)
+        </span>        
+        <span style="float:right;" 
+               id="open-dialog-{hashedUrl}-selector" 
+               class="open-dialog-selector" 
+               label="{label}" 
+               hashedUrl="{hashedUrl}" 
+               typeUrl="{typeUrl}" url="{url}">
+            <img class="sidebar-left-data-selection-dims-box-abstract-img" 
+                 src="<?php echo $this->moduleUrl; ?>public/images/check_book.png" 
+                 title="<?php echo $this->_translate->_('Select some elements'); ?>">
+        </span>        
+    </div>    
+</script>
+
+<script type="text/template" id="cubeviz-template-cubeVizModule-DimensionBox">
+    <div class="dialog" id="dialog-{label}">
+        <div class="dialog-header">
+            <div class="dialog-header-label">{label}</div>
+            <div style="float:right;">
+                <input type="button" id="dialog-btn-close-{hashedUrl}" class="minibutton submit" hashedUrl="{hashedUrl}" label="{label}" typeUrl="{typeUrl}" url="{url}" value="<?php echo $this->_translate->_('Update and close'); ?>">
+            </div>
+        </div>
+        <div class="dialog-components">
+            <ul>
+                <% _.each(list, function(name) { %> 
+                    <li>
+                        <input type="checkbox" name="<%= url %>" class="dialog-checkbox-<%= hashedUrl %>" value="<%= property %>" propertyLabel="<%= propertyLabel %>" property="<%= property %>"/>
+                        <label class="dialog-listitem-value"><%= propertyLabel %></label>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>    
+</script>

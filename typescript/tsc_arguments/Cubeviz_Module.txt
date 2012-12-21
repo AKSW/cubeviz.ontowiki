@@ -1,9 +1,6 @@
-src/classes/Component.ts
-src/classes/ConfigurationLink.ts
-src/classes/DataStructureDefinition.ts
-src/classes/DataSet.ts
-src/classes/Observation.ts
-src/classes/System.ts
+src/model/DataCube/DataStructureDefinition.ts
 
-src/Module/Event.ts
-src/Module/Main.ts
+src/model/View/Abstract.ts
+src/model/View/Manager.ts
+
+src/views/CubeVizModule/DataStructureDefinitionView.ts

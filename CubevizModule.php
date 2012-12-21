@@ -61,15 +61,19 @@ class CubevizModule extends OntoWiki_Module
         /**
          * Including javascript files for this action
          */
-        $this->view->headScript()->prependFile($baseJavascriptPath.'libraries/json2.js', 'text/javascript');
-        $this->view->headScript()->prependFile($baseJavascriptPath.'libraries/json-template.min.js', 'text/javascript');
-        $this->view->headScript()->prependFile($baseJavascriptPath.'frontend/Cubeviz_Module.js', 'text/javascript');
-        
+        $this->view->headScript()
+            ->prependFile   ($baseJavascriptPath.'libraries/json2.js', 'text/javascript')
+            ->prependFile   ($baseJavascriptPath.'libraries/json-template.min.js', 'text/javascript')
+            ->prependFile   ($baseJavascriptPath.'frontend/Cubeviz_Module.js', 'text/javascript')
+            ->prependFile   ($baseJavascriptPath.'libraries/underscore.js', 'text/javascript')
+            ->offsetSetFile (100, $baseJavascriptPath.'libraries/backbone.js', 'text/javascript');
+            
         
         /**
          * Including css files for this action
          */
-        $this->view->headLink()->prependStylesheet($baseCssPath.'/main.css');
+        $this->view->headLink()->prependStylesheet($baseCssPath.'main.css');
+        $this->view->headLink()->prependStylesheet($baseCssPath.'dataStructureDefinition.css');
         
         /**
          * Model information

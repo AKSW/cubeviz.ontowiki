@@ -1,6 +1,8 @@
-/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
 
-class DataStructureDefinition {
+declare var CubeViz_Links_Module: any;
+
+class DataCube_DataStructureDefinition {
     
     /**
      * result: JSON
@@ -13,12 +15,12 @@ class DataStructureDefinition {
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            System.out ( "DataStructureDefinition > loadAll > error" );
-            System.out ( "response text: " + xhr ["responseText"] );
-            System.out ( "error: " + thrownError );
+            console.log ( "DataStructureDefinition > loadAll > error" );
+            console.log ( "response text: " + xhr ["responseText"] );
+            console.log ( "error: " + thrownError );
         })
         .done( function (entries) { 
-            DataStructureDefinition.prepareLoadedDataStructureDefinitions (entries, callback); 
+            DataCube_DataStructureDefinition.prepareLoadedDataStructureDefinitions (entries, callback); 
         });
     }
     
@@ -31,7 +33,7 @@ class DataStructureDefinition {
                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {
-           return a ["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
+           return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
         });
         
         // call callback function with prepared entries
