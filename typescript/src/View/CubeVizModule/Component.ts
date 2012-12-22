@@ -10,12 +10,11 @@ declare var CubeViz_UI_ChartConfig: any;
 
 class View_CubeVizModule_Component extends View_Abstract {
         
-    constructor() 
+    constructor(attachedTo:string) 
     {
-        super();
+        super(attachedTo);
         
         this.id = "View_CubeVizModule_Component";
-        this.attachedTo = "#cubviz-component-container";
     }
     
     /**

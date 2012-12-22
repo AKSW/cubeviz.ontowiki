@@ -34,10 +34,10 @@ class View_Abstract {
     /**
      * 
      */
-    constructor() 
+    constructor(attachedTo:string) 
     {
         this.autostart = false;
-        this.attachedTo = "";
+        this.attachedTo = attachedTo;
         this.id = "View_Abstract";
         this.viewManager = null;
         this.viewInstance = {};

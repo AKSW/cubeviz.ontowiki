@@ -28,11 +28,13 @@
          * Add views to view manager
          */
         // These views will added and executed on render() call. (parameter true cause that)
-        viewManager.add(new View_CubeVizModule_DataStructureDefintion(), true);
+        viewManager.add(new View_CubeVizModule_DataStructureDefintion(
+            "#cubviz-dataStructureDefinition-container"
+        ), true);
         
         // These views will only added but not executed on render() call.
-        viewManager.add(new View_CubeVizModule_DataSet());
-        viewManager.add(new View_CubeVizModule_Component());
+        viewManager.add(new View_CubeVizModule_DataSet("#cubviz-dataSet-container"));
+        viewManager.add(new View_CubeVizModule_Component("#cubviz-component-container"));
         
         // run
         viewManager.render();

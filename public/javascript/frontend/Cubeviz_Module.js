@@ -148,9 +148,9 @@ var CubeViz_ConfigurationLink = (function () {
     return CubeViz_ConfigurationLink;
 })();
 var View_Abstract = (function () {
-    function View_Abstract() {
+    function View_Abstract(attachedTo) {
         this.autostart = false;
-        this.attachedTo = "";
+        this.attachedTo = attachedTo;
         this.id = "View_Abstract";
         this.viewManager = null;
         this.viewInstance = {
@@ -212,10 +212,9 @@ var __extends = this.__extends || function (d, b) {
 }
 var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
-    function View_CubeVizModule_DataStructureDefintion() {
-        _super.call(this);
+    function View_CubeVizModule_DataStructureDefintion(attachedTo) {
+        _super.call(this, attachedTo);
         this.id = "View_CubeVizModule_DataStructureDefintion";
-        this.attachedTo = "#cubviz-dataStructureDefinition-container";
     }
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function () {
     };
@@ -278,10 +277,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
 })(View_Abstract);
 var View_CubeVizModule_DataSet = (function (_super) {
     __extends(View_CubeVizModule_DataSet, _super);
-    function View_CubeVizModule_DataSet() {
-        _super.call(this);
+    function View_CubeVizModule_DataSet(attachedTo) {
+        _super.call(this, attachedTo);
         this.id = "View_CubeVizModule_DataSet";
-        this.attachedTo = "#cubviz-dataSet-container";
     }
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
     };
@@ -344,10 +342,9 @@ var View_CubeVizModule_DataSet = (function (_super) {
 })(View_Abstract);
 var View_CubeVizModule_Component = (function (_super) {
     __extends(View_CubeVizModule_Component, _super);
-    function View_CubeVizModule_Component() {
-        _super.call(this);
+    function View_CubeVizModule_Component(attachedTo) {
+        _super.call(this, attachedTo);
         this.id = "View_CubeVizModule_Component";
-        this.attachedTo = "#cubviz-component-container";
     }
     View_CubeVizModule_Component.prototype.regenerateLinkCode = function () {
         CubeViz_Links_Module.linkCode = null;

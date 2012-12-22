@@ -6,12 +6,11 @@ declare var CubeViz_Links_Module: any;
 
 class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
         
-    constructor() 
+    constructor(attachedTo:string) 
     {
-        super();
+        super(attachedTo);
         
         this.id = "View_CubeVizModule_DataStructureDefintion";
-        this.attachedTo = "#cubviz-dataStructureDefinition-container";
     }
     
     public onChange_list() : void 
