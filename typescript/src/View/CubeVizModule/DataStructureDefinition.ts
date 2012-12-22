@@ -1,5 +1,3 @@
-/// <reference path="..\..\..\DeclarationSourceFiles\views\CubeVizModule.d.ts" />
-
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Backbone.d.ts" />

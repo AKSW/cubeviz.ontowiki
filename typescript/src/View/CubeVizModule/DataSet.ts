@@ -1,5 +1,3 @@
-/// <reference path="..\..\..\DeclarationSourceFiles\views\CubeVizModule.d.ts" />
-
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Backbone.d.ts" />
@@ -75,7 +73,7 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                         thisView.setSelectedDS(entries);
                         
                         // load components
-                        // thisView.viewManager.callView("View_CubeVizModule_Components");
+                        thisView.viewManager.callView("View_CubeVizModule_Component");
                         
                         // save given elements
                         $(entries).each(function(i, element){

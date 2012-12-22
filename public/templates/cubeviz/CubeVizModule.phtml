@@ -24,9 +24,15 @@
         // initialize view manager to handle all the used views
         var viewManager = new View_Manager();
         
-        // add views to view
+        /**
+         * Add views to view manager
+         */
+        // These views will added and executed on render() call. (parameter true cause that)
         viewManager.add(new View_CubeVizModule_DataStructureDefintion(), true);
+        
+        // These views will only added but not executed on render() call.
         viewManager.add(new View_CubeVizModule_DataSet());
+        viewManager.add(new View_CubeVizModule_Component());
         
         // run
         viewManager.render();
@@ -80,7 +86,7 @@
             <!-- Visual seperator -->
             <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
             
-            <div style="margin-left: 3px;">
+            <div id="cubviz-component-container">
 				<div style="width: 100%; font-size: 12px; font-weight: bold;">
                     <?php echo $this->_translate->_('Select axis elements'); ?>
                     &nbsp;
@@ -88,8 +94,11 @@
                          title="<?php echo $this->_translate->_('Click for more information'); ?>" 
                          class="cubeviz-icon-micro"/>
                 </div>
-				<div id="sidebar-left-data-selection-dims-boxes"></div>
+                <div id="cubviz-component-listBox">
+                </div>
 			</div>
+            
+            
             <div style="float:none; clear:both; margin-top: 25px; margin-left: 0px; margin-bottom: 5px; margin-right: 0px; padding:0px; width: 100%; min-width: 100%; max-width:100%;">				
                 <span style="float:left;">
                     <input type="button" id="permaLinkButton" value="Permalink" class="minibutton submit"/>
@@ -115,49 +124,49 @@
     #########
 -->
 <!-- Data Structure Definition -->
-<script type="text/template" id="cubeviz-dataStructureDefinition-tpl-list">
+<script id="cubeviz-dataStructureDefinition-tpl-list" type="text/template">
     <select name="cubeviz-dataStructureDefinition-list" id="cubeviz-dataStructureDefinition-list">
     </select>
 </script>
 
-<script type="text/template" id="cubeviz-dataStructureDefinition-tpl-listOption">
+<script id="cubeviz-dataStructureDefinition-tpl-listOption" type="text/template">
     <option value="<%= url %>"<%= selected %>>
         <%= label %>
     </option>    
 </script>
 
 <!-- Data Set -->
-<script type="text/template" id="cubeviz-dataSet-tpl-list">
+<script id="cubeviz-dataSet-tpl-list" type="text/template">
     <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
 </script>
 
-<script type="text/template" id="cubeviz-dataSet-tpl-listOption">
+<script id="cubeviz-dataSet-tpl-listOption" type="text/template">
     <option value="<%= url %>"<%= selected %>>
         <%= label %>
     </option>    
 </script>
 
-<!-- ... -->
-<script type="text/template" id="cubeviz-template-cubeVizModule-DimensionBox">
+<!-- Component-Dimension -->
+<script id="cubeviz-component-tpl-listBoxItem" type="text/template">
     <div class="sidebar-left-data-selection-dims-box-label-value">    
-        <span style="float:left;"><%= label %></span> 
-        <span style="float:left;" id="dialog-{label}-selected-items">
-            &nbsp;(<%= selectedElementCount %>} / <%= elementCount %>)
-        </span>        
-        <span style="float:right;" 
-               id="open-dialog-{hashedUrl}-selector" 
+        <div class="cubeviz-component-title" id="dialog-{label}-selected-items">
+            <%= label %>&nbsp;(<%= selectedElementCount %> / <%= elementCount %>)
+        </div>
+        <div>
+            Explanation text
+        </div>
+        <div id="open-dialog-{hashedUrl}-selector" 
                class="open-dialog-selector" 
                label="{label}" 
                hashedUrl="{hashedUrl}" 
                typeUrl="{typeUrl}" url="{url}">
-            <img class="sidebar-left-data-selection-dims-box-abstract-img" 
-                 src="<?php echo $this->moduleUrl; ?>public/images/check_book.png" 
-                 title="<?php echo $this->_translate->_('Select some elements'); ?>">
-        </span>        
+            <?php echo $this->_translate->_('Select elements of interest'); ?>
+        </div>        
     </div>    
 </script>
 
-<script type="text/template" id="cubeviz-template-cubeVizModule-DimensionBox">
+<!-- Dialog -->
+<script id="cubeviz-template-cubeVizModule-DimensionBox" type="text/template">
     <div class="dialog" id="dialog-{label}">
         <div class="dialog-header">
             <div class="dialog-header-label">{label}</div>

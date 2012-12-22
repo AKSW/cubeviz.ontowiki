@@ -75,6 +75,7 @@ class CubevizModule extends OntoWiki_Module
         $this->view->headLink()->prependStylesheet($baseCssPath.'main.css');
         $this->view->headLink()->prependStylesheet($baseCssPath.'dataStructureDefinition.css');
         $this->view->headLink()->prependStylesheet($baseCssPath.'dataSet.css');
+        $this->view->headLink()->prependStylesheet($baseCssPath.'component.css');
         
         /**
          * Model information
