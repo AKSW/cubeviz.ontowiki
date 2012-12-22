@@ -13,9 +13,23 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
         this.id = "View_CubeVizModule_DataStructureDefintion";
     }
     
-    public onChange_list() : void 
-    {
+    /**
+     * If new option was selected
+     */
+    public onChange_list(event) : void 
+    {        
+        var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
+            selectedElement = this["collection"].get(selectedElementId),
+            thisView = this["thisView"];
         
+        // TODO: remember previous selection
+        
+        // set new selected data structure definition
+        CubeViz_Links_Module.selectedDSD = {};
+        thisView.setSelectedDSD([selectedElement.attributes]);
+        
+        // load data set view
+        thisView.viewManager.callView("View_CubeVizModule_DataSet");
     }
     
     /**
@@ -47,6 +61,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
             initialize:function() {
             
                 var self = this;
+                self.thisView = thisView;
             
                 // every function that uses 'this' as the current object should be in here
                 _.bindAll(this, "render", "onChange_list"); 

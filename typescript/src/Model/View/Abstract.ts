@@ -19,7 +19,7 @@ class View_Abstract {
     /**
      * 
      */
-    public viewInstance:Object;
+    public viewInstance:any;
     
     /**
      * 

@@ -1,13 +1,12 @@
-/// <reference path="..\..\..\DeclarationSourceFiles\jquery.d.ts" />
-/// <reference path="..\..\..\DeclarationSourceFiles\Underscore.d.ts" />
-/// <reference path="..\..\..\DeclarationSourceFiles\Backbone.d.ts" />
-
+/**
+ * 
+ */
 class View_Manager {
     
     private _allViews = [];
     
     /**
-     * 
+     * Constructor
      */
     constructor() 
     {
@@ -15,7 +14,9 @@ class View_Manager {
     }
     
     /**
-     * 
+     * Add a new view and set it to autostart or not.
+     * @param view View instance to add.
+     * @param autostart True if view has to be rendered on render() call, false or nothing otherwise.
      */
     public add(view:View_Abstract, autostart?:bool) 
     {
@@ -30,7 +31,9 @@ class View_Manager {
     }
     
     /**
-     * 
+     * Get a particular view.
+     * @param id ID of the view.
+     * @return View_Abstract|bool View instance, if found, false otherwise.
      */
     public get(id:string) : any
     {
@@ -38,6 +41,8 @@ class View_Manager {
         
         for(var i=0;i<this._allViews.length;++i){
             view = this._allViews[i];
+            
+            // if view was found, return it
             if(id == view.id){
                 return view;
             }
@@ -46,24 +51,53 @@ class View_Manager {
     }
     
     /**
-     * 
+     * Re-initialize and render a particular view, if it exists.
+     * @param id ID of the view.
+     * @return void
      */
     public callView(id:string) 
     {
         var view = this.get(id);
         if(false != view) {
+            this.remove(id);
+            eval ("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
+            console.log("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
             view.render();
         }
     }
     
     /**
-     * 
+     * Removes an element.
+     * @param id ID of the view to remove.
+     * @return bool True if element with given id was found and removed, false otherwise.
      */
-    public render() 
+    public remove(id:string) : bool
     {
         var view = null;
         for(var i=0;i<this._allViews.length;++i){
             view = this._allViews[i];
+            
+            // if view was found, delete entry
+            if(id == view.id) {
+                delete this._allViews[i];
+                this._allViews.splice(i,1);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Renders all views, which have property autostart=true
+     * @return void
+     */
+    public render() : void
+    {
+        var view = null;
+        for(var i=0;i<this._allViews.length;++i){
+            view = this._allViews[i];
+            
+            // if view was found
             if(true == view.autostart){
                 view.render();
             }

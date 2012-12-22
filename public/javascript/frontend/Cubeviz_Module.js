@@ -191,8 +191,23 @@ var View_Manager = (function () {
     View_Manager.prototype.callView = function (id) {
         var view = this.get(id);
         if(false != view) {
+            this.remove(id);
+            eval("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
+            console.log("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
             view.render();
         }
+    };
+    View_Manager.prototype.remove = function (id) {
+        var view = null;
+        for(var i = 0; i < this._allViews.length; ++i) {
+            view = this._allViews[i];
+            if(id == view.id) {
+                delete this._allViews[i];
+                this._allViews.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
     };
     View_Manager.prototype.render = function () {
         var view = null;
@@ -216,7 +231,17 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         _super.call(this, attachedTo);
         this.id = "View_CubeVizModule_DataStructureDefintion";
     }
-    View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function () {
+    View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
+        var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
+        var selectedElement = this["collection"].get(selectedElementId);
+        var thisView = this["thisView"];
+
+        CubeViz_Links_Module.selectedDSD = {
+        };
+        thisView.setSelectedDSD([
+            selectedElement.attributes
+        ]);
+        thisView.viewManager.callView("View_CubeVizModule_DataSet");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var List = Backbone.Collection.extend({
@@ -230,6 +255,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             onChange_list: this.onChange_list,
             initialize: function () {
                 var self = this;
+                self.thisView = thisView;
                 _.bindAll(this, "render", "onChange_list");
                 this.collection = new List();
                 DataCube_DataStructureDefinition.loadAll(function (entries) {
@@ -295,6 +321,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
             onChange_list: this.onChange_list,
             initialize: function () {
                 var self = this;
+                self.thisView = thisView;
                 _.bindAll(this, "render", "onChange_list");
                 this.collection = new List();
                 DataCube_DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, function (entries) {
@@ -308,6 +335,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
                 });
             },
             render: function () {
+                $("#cubeviz-dataSet-list").remove();
                 var listTpl = $("#cubeviz-dataSet-tpl-list").text();
                 $(this.el).append(listTpl);
                 var list = $("#cubeviz-dataSet-list");
@@ -381,6 +409,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 var optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text());
                 var tmp = null;
 
+                list.empty();
                 $(this.collection.models).each(function (i, d) {
                     dimension = d.attributes;
                     if(undefined != CubeViz_Links_Module.selectedComponents.dimensions) {
@@ -401,10 +430,8 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.setComponentsStuff = function (entries) {
         CubeViz_Links_Module.components.dimensions = entries;
-        if(undefined == CubeViz_Links_Module.selectedComponents.dimensions || 0 == _.keys(CubeViz_Links_Module.selectedComponents.dimensions).length) {
-            CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
-            this.regenerateLinkCode();
-        }
+        CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
+        this.regenerateLinkCode();
     };
     return View_CubeVizModule_Component;
 })(View_Abstract);

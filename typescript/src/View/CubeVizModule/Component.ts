@@ -111,6 +111,9 @@ class View_CubeVizModule_Component extends View_Abstract {
                     list = $("#cubviz-component-listBox"),
                     optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
                     tmp = null;
+                    
+                // empty list to avoid listing outdated items
+                list.empty();
                 
                 // output loaded data
                 $(this.collection.models).each(function(i, d){
@@ -150,17 +153,12 @@ class View_CubeVizModule_Component extends View_Abstract {
         // save pulled component dimensions
         CubeViz_Links_Module.components.dimensions = entries;
         
-        // reset the existing component configuration
-        if ( undefined == CubeViz_Links_Module.selectedComponents.dimensions || 
-             0 == _.keys(CubeViz_Links_Module.selectedComponents.dimensions).length ) {
+        // set default values for selected component dimensions list
+        // for each componentDimension first entry will be selected
+        // e.g. Year (2003), Country (Germany)
+        CubeViz_Links_Module.selectedComponents.dimensions =
+            DataCube_Component.getDefaultSelectedDimensions ( entries );
             
-            // set default values for selected component dimensions list
-            // for each componentDimension first entry will be selected
-            // e.g. Year (2003), Country (Germany)
-            CubeViz_Links_Module.selectedComponents.dimensions =
-                DataCube_Component.getDefaultSelectedDimensions ( entries );
-                
-            this.regenerateLinkCode();
-        }
+        this.regenerateLinkCode();
     }
 }

@@ -49,7 +49,8 @@ class View_CubeVizModule_DataSet extends View_Abstract {
             // init
             initialize:function() {
             
-                var self = this;
+                var self = this;                
+                self.thisView = thisView;
             
                 // every function that uses 'this' as the current object should be in here
                 _.bindAll(this, "render", "onChange_list"); 
@@ -90,6 +91,8 @@ class View_CubeVizModule_DataSet extends View_Abstract {
              * render view
              */
             render: function(){
+                
+                $("#cubeviz-dataSet-list").remove();
                 
                 var listTpl = $("#cubeviz-dataSet-tpl-list").text();
                 $(this.el).append(listTpl);

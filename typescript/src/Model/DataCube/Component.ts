@@ -1,5 +1,7 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
+declare var CubeViz_Links_Module: any;
+
 /**
  * Represents a component which can be a dimension or a measure.
  */

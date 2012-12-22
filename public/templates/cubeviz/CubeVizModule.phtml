@@ -27,7 +27,7 @@
         /**
          * Add views to view manager
          */
-        // These views will added and executed on render() call. (parameter true cause that)
+        // These views will added and executed on render() call. (second parameter causes that)
         viewManager.add(new View_CubeVizModule_DataStructureDefintion(
             "#cubviz-dataStructureDefinition-container"
         ), true);
@@ -132,7 +132,7 @@
 </script>
 
 <script id="cubeviz-dataStructureDefinition-tpl-listOption" type="text/template">
-    <option value="<%= url %>"<%= selected %>>
+    <option value="<%= hashedUrl %>"<%= selected %>>
         <%= label %>
     </option>    
 </script>
