@@ -55,14 +55,18 @@ class View_Manager {
      * @param id ID of the view.
      * @return void
      */
-    public callView(id:string) 
+    public callView(id:string) : void
     {
-        var view = this.get(id);
-        if(false != view) {
+        if(false != this.get(id)) {
+            
+            // first remove view instance
             this.remove(id);
+            
+            // add new instance of the view
             eval ("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
-            console.log("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
-            view.render();
+            
+            // render this new view
+            this.get(id).render();
         }
     }
     

@@ -25,10 +25,9 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
         // TODO: remember previous selection
         
         // set new selected data structure definition
-        CubeViz_Links_Module.selectedDSD = {};
         thisView.setSelectedDSD([selectedElement.attributes]);
         
-        // load data set view
+        // reset data set view
         thisView.viewManager.callView("View_CubeVizModule_DataSet");
     }
     
@@ -129,7 +128,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
     /**
      * 
      */
-    public setSelectedDSD(entries) : void 
+    public setSelectedDSD(entries:any[]) : void 
     {
         // if at least one data structure definition, than load data sets for first one
         if(0 == entries.length) {
@@ -137,14 +136,9 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
             CubeViz_Links_Module.selectedDSD = {};
             console.log("onComplete_LoadDataStructureDefinitions");
             console.log("no data structure definitions were loaded");
-            
-        } else if(1 <= entries.length) {
-            
-            // if selected data structure defintion url is not set, than use the first element of the 
-            // previously loaded entries instead
-            if(undefined == CubeViz_Links_Module.selectedDSD.url) {
-                CubeViz_Links_Module.selectedDSD = entries[0];
-            }
+             
+        } else {
+            CubeViz_Links_Module.selectedDSD = entries[0];
         }
     }
 }

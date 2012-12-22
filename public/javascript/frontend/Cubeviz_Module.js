@@ -193,8 +193,7 @@ var View_Manager = (function () {
         if(false != view) {
             this.remove(id);
             eval("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
-            console.log("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
-            view.render();
+            this.get(id).render();
         }
     };
     View_Manager.prototype.remove = function (id) {
@@ -236,8 +235,6 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var selectedElement = this["collection"].get(selectedElementId);
         var thisView = this["thisView"];
 
-        CubeViz_Links_Module.selectedDSD = {
-        };
         thisView.setSelectedDSD([
             selectedElement.attributes
         ]);
@@ -292,11 +289,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             console.log("onComplete_LoadDataStructureDefinitions");
             console.log("no data structure definitions were loaded");
         } else {
-            if(1 <= entries.length) {
-                if(undefined == CubeViz_Links_Module.selectedDSD.url) {
-                    CubeViz_Links_Module.selectedDSD = entries[0];
-                }
-            }
+            CubeViz_Links_Module.selectedDSD = entries[0];
         }
     };
     return View_CubeVizModule_DataStructureDefintion;
@@ -308,6 +301,14 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.id = "View_CubeVizModule_DataSet";
     }
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
+        var selectedElementId = $("#cubeviz-dataset-list").val();
+        var selectedElement = this["collection"].get(selectedElementId);
+        var thisView = this["thisView"];
+
+        thisView.setSelectedDSD([
+            selectedElement.attributes
+        ]);
+        thisView.viewManager.callView("View_CubeVizModule_Component");
     };
     View_CubeVizModule_DataSet.prototype.render = function () {
         var List = Backbone.Collection.extend({
@@ -359,11 +360,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
             console.log("onComplete_LoadDataSets");
             console.log("no data sets were loaded");
         } else {
-            if(1 <= entries["length"]) {
-                if(undefined == CubeViz_Links_Module.selectedDS || undefined == CubeViz_Links_Module.selectedDS.url) {
-                    CubeViz_Links_Module.selectedDS = entries[0];
-                }
-            }
+            CubeViz_Links_Module.selectedDS = entries[0];
         }
     };
     return View_CubeVizModule_DataSet;
