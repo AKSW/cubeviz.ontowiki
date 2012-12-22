@@ -26,8 +26,16 @@ class View_Manager {
         // save reference of this view manager instance into view
         view.setViewManager(this);
         
-        // save view
-        this._allViews.push (view);
+        // add view if it does not exists
+        if(false == this.get(view.id)) {
+            this._allViews.push (view);
+        
+        // otherwise replace view
+        } else {
+            // first remove view instance
+            this.remove(view.id);
+            this._allViews.push (view);
+        }
     }
     
     /**
@@ -59,11 +67,8 @@ class View_Manager {
     {
         if(false != this.get(id)) {
             
-            // first remove view instance
-            this.remove(id);
-            
-            // add new instance of the view
-            eval ("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
+            // replace existing instance with new instance of the view
+            eval ("this.add(new " + id + "(\"" + this.get(id).attachedTo + "\"));");
             
             // render this new view
             this.get(id).render();

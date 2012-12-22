@@ -176,7 +176,12 @@ var View_Manager = (function () {
     View_Manager.prototype.add = function (view, autostart) {
         view.autostart = true == autostart ? true : false;
         view.setViewManager(this);
-        this._allViews.push(view);
+        if(false == this.get(view.id)) {
+            this._allViews.push(view);
+        } else {
+            this.remove(view.id);
+            this._allViews.push(view);
+        }
     };
     View_Manager.prototype.get = function (id) {
         var view = null;
@@ -189,10 +194,8 @@ var View_Manager = (function () {
         return false;
     };
     View_Manager.prototype.callView = function (id) {
-        var view = this.get(id);
-        if(false != view) {
-            this.remove(id);
-            eval("this.add(new " + id + "(\"" + view.attachedTo + "\"));");
+        if(false != this.get(id)) {
+            eval("this.add(new " + id + "(\"" + this.get(id).attachedTo + "\"));");
             this.get(id).render();
         }
     };
@@ -301,11 +304,11 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.id = "View_CubeVizModule_DataSet";
     }
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
-        var selectedElementId = $("#cubeviz-dataset-list").val();
+        var selectedElementId = $("#cubeviz-dataSet-list").val();
         var selectedElement = this["collection"].get(selectedElementId);
         var thisView = this["thisView"];
 
-        thisView.setSelectedDSD([
+        thisView.setSelectedDS([
             selectedElement.attributes
         ]);
         thisView.viewManager.callView("View_CubeVizModule_Component");

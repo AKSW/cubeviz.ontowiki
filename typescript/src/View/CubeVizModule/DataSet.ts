@@ -18,15 +18,15 @@ class View_CubeVizModule_DataSet extends View_Abstract {
      */
     public onChange_list() : void 
     {
-        var selectedElementId:string = $("#cubeviz-dataset-list").val(),
+        var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
             selectedElement = this["collection"].get(selectedElementId),
             thisView = this["thisView"];
-        
+
         // TODO: remember previous selection
-        
+
         // set new selected data set
-        thisView.setSelectedDSD([selectedElement.attributes]);
-                
+        thisView.setSelectedDS([selectedElement.attributes]);
+
         // reset component view
         thisView.viewManager.callView("View_CubeVizModule_Component");
     }
