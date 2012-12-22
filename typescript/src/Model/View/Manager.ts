@@ -18,7 +18,7 @@ class View_Manager {
      * @param view View instance to add.
      * @param autostart True if view has to be rendered on render() call, false or nothing otherwise.
      */
-    public add(id:string, attachedTo:string, autostart?:bool) 
+    public add(id:string, attachedTo:string, autostart?:bool) : View_Manager
     {
         // set autostart property
         autostart = true == autostart ? true : false;
@@ -30,6 +30,8 @@ class View_Manager {
         
         // add view
         this._allViews.push({id:id, attachedTo:attachedTo, autostart:autostart});
+        
+        return this;
     }
     
     /**

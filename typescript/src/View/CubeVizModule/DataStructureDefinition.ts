@@ -12,7 +12,6 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
         super(attachedTo, viewManager);
-        this["el"] = $(attachedTo);
         this.id = "View_CubeVizModule_DataStructureDefintion";
     }
     
@@ -54,9 +53,6 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 // set selectedDsd
                 self.setSelectedDSD(entries);
                 
-                // load data set view
-                // self.viewManager.callView("View_CubeVizModule_DataSet");
-                
                 // save given elements
                 $(entries).each(function(i, element){
                     element["id"] = element["hashedUrl"];
@@ -65,6 +61,9 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 
                 // render given elements
                 self.render();
+                
+                // load data set view
+                self.viewManager.renderView("View_CubeVizModule_DataSet");
             }
         );
     }
@@ -73,8 +72,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
      * 
      */
     public render() : View_Abstract
-    {        
-        console.log("render");
+    {
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
         this["el"].append(listTpl);
         

@@ -38,6 +38,7 @@ class View_Abstract extends Backbone.View {
         // set properties
         this.attachedTo = attachedTo;
         this.autostart = false;
+        this["el"] = $(attachedTo);
         this.id = "View_Abstract";
         this.collection = new Backbone.Collection;
         this.viewManager = viewManager;

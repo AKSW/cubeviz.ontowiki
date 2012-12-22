@@ -35,8 +35,9 @@
         );
         
         // These views will only added but not executed on render() call.
-        //viewManager.add(new View_CubeVizModule_DataSet("#cubviz-dataSet-container"));
-        //viewManager.add(new View_CubeVizModule_Component("#cubviz-component-container"));
+        viewManager
+            .add("View_CubeVizModule_DataSet", "#cubviz-dataSet-container");
+            //.add("View_CubeVizModule_Component", "#cubviz-component-container");
         
         // run
         viewManager.render();
