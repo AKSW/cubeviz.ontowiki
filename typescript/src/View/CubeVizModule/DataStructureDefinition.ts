@@ -20,6 +20,8 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
      */
     public onChange_list(event) : void 
     {        
+        console.log ("change");
+        
         var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
             selectedElement = this["collection"].get(selectedElementId),
             thisView = this["thisView"];
@@ -39,6 +41,10 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     public initialize() : void
     {        
         var self = this;
+        
+        this.events = {
+            "change #cubeviz-dataStructureDefinition-list" : this.onChange_list
+        };
     
         // every function that uses 'this' as the current object should be in here
         _.bindAll(this, "render", "onChange_list"); 
@@ -63,7 +69,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 self.render();
                 
                 // load data set view
-                self.viewManager.renderView("View_CubeVizModule_DataSet");
+                // self.viewManager.renderView("View_CubeVizModule_DataSet");
             }
         );
     }
@@ -89,6 +95,8 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
             list.append(optionTpl(element.attributes));
         
         });
+    
+        this.delegateEvents(this.events);
         
         return this;
     }

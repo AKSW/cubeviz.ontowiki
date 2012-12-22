@@ -156,13 +156,32 @@ var View_Abstract = (function (_super) {
     __extends(View_Abstract, _super);
     function View_Abstract(attachedTo, viewManager) {
         _super.call(this);
+        this.delegateEventSplitter = /(.*)\s+(.*)/i;
         this.attachedTo = attachedTo;
         this.autostart = false;
+        this.cid = _.uniqueId('c');
         this["el"] = $(attachedTo);
         this.id = "View_Abstract";
         this.collection = new Backbone.Collection();
         this.viewManager = viewManager;
     }
+    View_Abstract.prototype.delegateEvents = function (events) {
+        if(undefined == events) {
+            return;
+        }
+        for(var key in events) {
+            var eventName = key.substr(0, key.indexOf(" "));
+            var selector = key.substr(key.indexOf(" ") + 1);
+            var method = events[key];
+            if(!_.isFunction(method)) {
+                method = this[events[key]];
+            }
+            if(!method) {
+                throw new Error('Method "' + events[key] + '" does not exist');
+            }
+            $(selector).on(eventName, method);
+        }
+    };
     return View_Abstract;
 })(Backbone.View);
 var View_Manager = (function () {
@@ -221,6 +240,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.id = "View_CubeVizModule_DataStructureDefintion";
     }
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
+        console.log("change");
         var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
         var selectedElement = this["collection"].get(selectedElementId);
         var thisView = this["thisView"];
@@ -232,6 +252,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     };
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
         var self = this;
+        this.events = {
+            "change #cubeviz-dataStructureDefinition-list": this.onChange_list
+        };
         _.bindAll(this, "render", "onChange_list");
         DataCube_DataStructureDefinition.loadAll(function (entries) {
             self.setSelectedDSD(entries);
@@ -240,11 +263,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
                 self.collection.add(element);
             });
             self.render();
-            self.viewManager.renderView("View_CubeVizModule_DataSet");
         });
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
-        console.log("render");
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
         this["el"].append(listTpl);
         var list = $("#cubeviz-dataStructureDefinition-list");
@@ -254,6 +275,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element.attributes));
         });
+        this.delegateEvents(this.events);
         return this;
     };
     View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDSD = function (entries) {
