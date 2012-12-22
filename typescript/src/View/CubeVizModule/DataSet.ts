@@ -23,6 +23,10 @@ class View_CubeVizModule_DataSet extends View_Abstract {
             thisView = this["thisView"];
 
         // TODO: remember previous selection
+        
+        console.log(this);
+        console.log(this["collection"]);
+        console.log(thisView);
 
         // set new selected data set
         thisView.setSelectedDS([selectedElement.attributes]);
@@ -58,6 +62,10 @@ class View_CubeVizModule_DataSet extends View_Abstract {
             
             // init
             initialize:function() {
+                
+                console.log("");
+                console.log("INIT DATA SET >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                console.log("");
             
                 var self = this;                
                 self.thisView = thisView;
@@ -66,11 +74,8 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                 _.bindAll(this, "render", "onChange_list"); 
                 
                 /**
-                 * Load all data structure definitions
+                 * Load all data sets
                  */
-                this.collection = new List();
-                
-                // load all data structure definitions from server
                 DataCube_DataSet.loadAll(
                 
                     CubeViz_Links_Module.selectedDSD.url,
@@ -79,11 +84,10 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                     // and render the view
                     function(entries) {
                         
+                        self.collection = new List();
+                        
                         // set selectedDsd
                         thisView.setSelectedDS(entries);
-                        
-                        // load components
-                        thisView.viewManager.callView("View_CubeVizModule_Component");
                         
                         // save given elements
                         $(entries).each(function(i, element){
@@ -93,6 +97,9 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                         
                         // render given elements
                         self.render();
+                        
+                        // load components
+                        thisView.viewManager.callView("View_CubeVizModule_Component");
                     }
                 );
             },

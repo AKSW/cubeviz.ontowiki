@@ -1,7 +1,9 @@
+/// <reference path="..\..\..\DeclarationSourceFiles\libraries\Backbone.d.ts" />
+
 /**
  * 
  */
-class View_Abstract {
+class View_Abstract extends Backbone.View {
     
     public autostart:bool;
     
@@ -14,52 +16,30 @@ class View_Abstract {
      * Unique identifier (e.g. used for backbone.collection)
      */
     public id:string;
+    
+    /**
+     * 
+     */
+    public collection:Backbone.Collection;
+    
+    /**
+     * Reference to view manager which called this instance
+     */
     public viewManager:View_Manager;    
-    
+        
     /**
      * 
      */
-    public viewInstance:any;
-    
-    /**
-     * 
-     */
-    public backboneViewContainer:Backbone.View;
-    
-    /**
-     *
-     */
-    public backboneViewInstance:Object;
-    
-    /**
-     * 
-     */
-    constructor(attachedTo:string) 
+    constructor(attachedTo:string, viewManager:View_Manager) 
     {
-        this.autostart = false;
+        // call constructor of Backbone.View
+        super();
+        
+        // set properties
         this.attachedTo = attachedTo;
+        this.autostart = false;
         this.id = "View_Abstract";
-        this.viewManager = null;
-        this.viewInstance = {};
-        this.backboneViewContainer = null;
-        this.backboneViewInstance = null;
-    }
-    
-    /**
-     * 
-     */
-    public getId (): string { return this.id; }
-    
-    /**
-     * 
-     */
-    public render(): void {}
-    
-    /**
-     * 
-     */
-    public setViewManager(viewManager:View_Manager): void 
-    {
+        this.collection = new Backbone.Collection;
         this.viewManager = viewManager;
     }
 }

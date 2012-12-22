@@ -18,24 +18,18 @@ class View_Manager {
      * @param view View instance to add.
      * @param autostart True if view has to be rendered on render() call, false or nothing otherwise.
      */
-    public add(view:View_Abstract, autostart?:bool) 
+    public add(id:string, attachedTo:string, autostart?:bool) 
     {
         // set autostart property
-        view.autostart = true == autostart ? true : false;
+        autostart = true == autostart ? true : false;
         
-        // save reference of this view manager instance into view
-        view.setViewManager(this);
+        // first remove view instance
+        if(false !== this.get(id)) {
+            this.remove(id);
+        } 
         
-        // add view if it does not exists
-        if(false == this.get(view.id)) {
-            this._allViews.push (view);
-        
-        // otherwise replace view
-        } else {
-            // first remove view instance
-            this.remove(view.id);
-            this._allViews.push (view);
-        }
+        // add view
+        this._allViews.push({id:id, attachedTo:attachedTo, autostart:autostart});
     }
     
     /**
@@ -45,14 +39,9 @@ class View_Manager {
      */
     public get(id:string) : any
     {
-        var view = null;
-        
         for(var i=0;i<this._allViews.length;++i){
-            view = this._allViews[i];
-            
-            // if view was found, return it
-            if(id == view.id){
-                return view;
+            if(id == this._allViews[i].id) {
+                return this._allViews[i];
             }
         }
         return false;
@@ -63,15 +52,11 @@ class View_Manager {
      * @param id ID of the view.
      * @return void
      */
-    public callView(id:string) : void
+    public renderView(id:string) : void
     {
         if(false != this.get(id)) {
-            
-            // replace existing instance with new instance of the view
-            eval ("this.add(new " + id + "(\"" + this.get(id).attachedTo + "\"));");
-            
-            // render this new view
-            this.get(id).render();
+            // render view
+            eval ("new " + id + "(\"" + this.get(id).attachedTo + "\", this);");
         }
     }
     
@@ -82,12 +67,9 @@ class View_Manager {
      */
     public remove(id:string) : bool
     {
-        var view = null;
-        for(var i=0;i<this._allViews.length;++i){
-            view = this._allViews[i];
-            
+        for(var i=0;i<this._allViews.length;++i){            
             // if view was found, delete entry
-            if(id == view.id) {
+            if(id == this._allViews[i].id) {
                 delete this._allViews[i];
                 this._allViews.splice(i,1);
                 return true;
@@ -102,13 +84,10 @@ class View_Manager {
      */
     public render() : void
     {
-        var view = null;
-        for(var i=0;i<this._allViews.length;++i){
-            view = this._allViews[i];
-            
+        for(var i=0;i<this._allViews.length;++i){            
             // if view was found
-            if(true == view.autostart){
-                view.render();
+            if(true == this._allViews[i].autostart){
+                this.renderView(this._allViews[i].id);
             }
         }
     }

@@ -102,6 +102,10 @@ declare module Backbone {
         comparator(compare: Model, to?: Model): number;
 
         add(model: Model, options?: AddOptions);
+        
+        // hack, to allow adding simple objects
+        add(model: any, options?: AddOptions);
+        
         add(models: Model[], options?: AddOptions);
         at(index: number): Model;
         get(id: any): Model;

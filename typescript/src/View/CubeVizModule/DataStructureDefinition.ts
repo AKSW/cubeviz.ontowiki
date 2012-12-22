@@ -4,12 +4,15 @@
 
 declare var CubeViz_Links_Module: any;
 
-class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
-        
-    constructor(attachedTo:string) 
+class View_CubeVizModule_DataStructureDefintion extends View_Abstract 
+{
+    /**
+     * 
+     */
+    constructor(attachedTo:string, viewManager:View_Manager) 
     {
-        super(attachedTo);
-        
+        super(attachedTo, viewManager);
+        this["el"] = $(attachedTo);
         this.id = "View_CubeVizModule_DataStructureDefintion";
     }
     
@@ -34,95 +37,62 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract {
     /**
      * 
      */
-    public render() : void
-    {
-        // TODO refac
-        var List = Backbone.Collection.extend({});
+    public initialize() : void
+    {        
+        var self = this;
+    
+        // every function that uses 'this' as the current object should be in here
+        _.bindAll(this, "render", "onChange_list"); 
         
-        var thisView = this;
-        
-        /**
-         * 
-         */
-        this.viewInstance = {
+        // load all data structure definitions from server
+        DataCube_DataStructureDefinition.loadAll(
             
-            // el attaches to existing element
-            el: $(this.attachedTo), 
-            
-            // 
-            events: {
-                "change #cubeviz-dataStructureDefinition-list": "onChange_list"
-            },
-            
-            onChange_list: this.onChange_list,
-            
-            // init
-            initialize:function() {
-            
-                var self = this;
-                self.thisView = thisView;
-            
-                // every function that uses 'this' as the current object should be in here
-                _.bindAll(this, "render", "onChange_list"); 
+            // after all elements were loaded, add them to collection
+            // and render the view
+            function(entries) {
+                                
+                // set selectedDsd
+                self.setSelectedDSD(entries);
                 
-                /**
-                 * Load all data structure definitions
-                 */
-                this.collection = new List();
+                // load data set view
+                // self.viewManager.callView("View_CubeVizModule_DataSet");
                 
-                // load all data structure definitions from server
-                DataCube_DataStructureDefinition.loadAll(
-                    
-                    // after all elements were loaded, add them to collection
-                    // and render the view
-                    function(entries) {
-                        
-                        // set selectedDsd
-                        thisView.setSelectedDSD(entries);
-                        
-                        // load data set view
-                        thisView.viewManager.callView("View_CubeVizModule_DataSet");
-                        
-                        // save given elements
-                        $(entries).each(function(i, element){
-                            element["id"] = element["hashedUrl"];
-                            self.collection.add(element);
-                        });
-                        
-                        // render given elements
-                        self.render();
-                    }
-                );
-            },
-            
-            /**
-             * render view
-             */
-            render: function(){
-                
-                var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
-                $(this.el).append(listTpl);
-                
-                var list = $("#cubeviz-dataStructureDefinition-list"),
-                    optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
-                
-                // output loaded data
-                $(this.collection.models).each(function(i, element){
-                    
-                    // set selected variable, if element url is equal to selected dsd
-                    element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url
-                        ? " selected" : "";
-                        
-                    list.append(optionTpl(element.attributes));
+                // save given elements
+                $(entries).each(function(i, element){
+                    element["id"] = element["hashedUrl"];
+                    self.collection.add(element);
                 });
                 
-                return this;
-            }            
-        };
+                // render given elements
+                self.render();
+            }
+        );
+    }
+    
+    /**
+     * 
+     */
+    public render() : View_Abstract
+    {        
+        console.log("render");
+        var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
+        this["el"].append(listTpl);
         
-        var bv = Backbone.View.extend(this.viewInstance);
-        this.backboneViewContainer = bv;
-        this.backboneViewInstance = new bv ();
+        var list = $("#cubeviz-dataStructureDefinition-list"),
+        optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
+        
+        // output loaded data
+        $(this.collection.models).each(function(i, element){
+            
+            // set selected variable, if element url is equal to selected dsd
+            element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url
+                ? " selected" : "";
+
+            list.append(optionTpl(element.attributes));
+        
+        });
+        
+        return this;
     }
     
     /**
