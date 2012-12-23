@@ -44,9 +44,18 @@ class CubeViz_Collection
     public addList(list) 
     {
         var self = this;
-        $(list).each(function(i, element){
-            self.add(element);
-        });
+        
+        // if list is an array
+        if(true == _.isArray(list)){
+            $(list).each(function(i, element){
+                self.add(element);
+            });
+            
+        // if list is an object, than this function recall itself with all the 
+        // values of the object 
+        } else if(true == _.isObject(list)){
+            this.addList(_.values(list));
+        }
     }
     
     /**
