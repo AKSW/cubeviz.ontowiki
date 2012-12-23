@@ -25,7 +25,7 @@ class View_CubeVizModule_DataSet extends View_Abstract {
             // after all elements were loaded, add them to collection
             // and render the view
             function(entries) {
-                                
+                
                 // set selectedDsd
                 self.setSelectedDS(entries);
                 
@@ -37,7 +37,7 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                 self.render();
                 
                 // load components
-                // thisView.viewManager.callView("View_CubeVizModule_Component");
+                self.viewManager.renderView("View_CubeVizModule_Component");
             }
         );
     }
@@ -47,18 +47,16 @@ class View_CubeVizModule_DataSet extends View_Abstract {
      */
     public onChange_list() : void 
     {
-        console.log("change DS");
-        
         var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
             selectedElement = this["collection"].get(selectedElementId);
 
         // TODO: remember previous selection
 
         // set new selected data set
-        this.setSelectedDS([selectedElement.attributes]);
+        this.setSelectedDS([selectedElement]);
 
         // reset component view
-        // this.viewManager.callView("View_CubeVizModule_Component");
+        this.viewManager.renderView("View_CubeVizModule_Component");
     }
     
     /**
@@ -92,15 +90,18 @@ class View_CubeVizModule_DataSet extends View_Abstract {
         return this;
     }
     
+    /**
+     * 
+     */
     public setSelectedDS(entries) : void 
     {
-        // if at least one data structure definition, than load data sets for first one
-        if(0 == entries.length) {
+        // 
+        if(0 === entries.length || undefined === entries) {
             // todo: handle case that no data sets were loaded
             CubeViz_Links_Module.selectedDS = {};
-            console.log ( "onComplete_LoadDataSets" );
-            console.log ( "no data sets were loaded" );
-            
+            throw new Error ("View_CubeVizModule_DataSet: No data sets were loaded!");
+        
+        // if at least one data structure definition, than load data sets for first one
         } else {
             CubeViz_Links_Module.selectedDS = entries[0];
         }

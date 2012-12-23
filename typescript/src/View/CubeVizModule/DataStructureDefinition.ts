@@ -49,7 +49,6 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
      */
     public onChange_list(event) : void 
     {
-        console.log("change");
         var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
             selectedElement = this.collection.get(selectedElementId);
         

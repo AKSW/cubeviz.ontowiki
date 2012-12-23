@@ -10,11 +10,9 @@ declare var CubeViz_UI_ChartConfig: any;
 
 class View_CubeVizModule_Component extends View_Abstract {
         
-    constructor(attachedTo:string) 
+    constructor(attachedTo:string, viewManager:View_Manager) 
     {
-        super(attachedTo);
-        
-        this.id = "View_CubeVizModule_Component";
+        super("View_CubeVizModule_Component", attachedTo, viewManager);
     }
     
     /**
@@ -39,110 +37,68 @@ class View_CubeVizModule_Component extends View_Abstract {
     }
     
     /**
-     * 
+     *
      */
-    public render() : void
-    {
-        // TODO refac
-        var List = Backbone.Collection.extend({});
+    public initialize() {
         
-        var thisView = this;
+        var self = this;
         
-        /**
-         * 
-         */
-        this.viewInstance = {
-            
-            // el attaches to existing element
-            el: $(this.attachedTo), 
-            
-            // 
-            events: {
-            },
-            
-            // init
-            initialize:function() {
-            
-                var self = this;
-            
-                // every function that uses 'this' as the current object should be in here
-                _.bindAll(this, "render"); 
-                
-                /**
-                 * Load all data structure definitions
-                 */
-                this.collection = new List();
-                
-                // load all data structure definitions from server
-                DataCube_Component.loadAllDimensions(
-                
-                    CubeViz_Links_Module.selectedDSD.url,                    
-                    CubeViz_Links_Module.selectedDS.url,
-                    
-                    // after all elements were loaded, add them to collection
-                    // and render the view
-                    function(entries) {
-                        
-                        // set selectedDsd
-                        thisView.setComponentsStuff(entries);
-                        
-                        // load components
-                        // thisView.viewManager.callView("View_CubeVizModule_Dialog");
-                        
-                        var keys = _.keys(entries);
-                        
-                        for(var i=0;i<keys.length;++i){
-                            entries[keys[i]]["id"] = entries[keys[i]]["hashedUrl"];
-                            self.collection.add(entries[keys[i]]);
-                        };
-                        
-                        // render given elements
-                        self.render();
-                    }
-                );
-            },
-            
-            /**
-             * render view
-             */
-            render: function(){
-                
-                var dimension = null,
-                    list = $("#cubviz-component-listBox"),
-                    optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
-                    tmp = null;
-                    
-                // empty list to avoid listing outdated items
-                list.empty();
-                
-                // output loaded data
-                $(this.collection.models).each(function(i, d){
-                    
-                    // set current dimension instance
-                    dimension = d.attributes;
-                    
-                    // set selected element count
-                    if ( undefined != CubeViz_Links_Module.selectedComponents.dimensions ) {
-                        tmp = CubeViz_Links_Module.selectedComponents.dimensions[dimension["hashedUrl"]];
-                        dimension["selectedElementCount"] = 0 < _.keys (tmp["elements"]).length
-                            ? _.keys (tmp["elements"]).length : 1;
-                    } else {
-                        dimension["selectedElementCount"] = 1;
-                    }
-                    
-                    // set general element count
-                    dimension["elementCount"] = dimension.elements.length;
-                    
-                    list.append(optionTpl(dimension));
-                });
-                
-                return this;
-            }            
-        };
+        // load all data structure definitions from server
+        DataCube_Component.loadAllDimensions(
         
-        var bv = Backbone.View.extend(this.viewInstance);
-        this.backboneViewContainer = bv;
-        this.backboneViewInstance = new bv ();
+            CubeViz_Links_Module.selectedDSD.url,                    
+            CubeViz_Links_Module.selectedDS.url,
+            
+            // after all elements were loaded, add them to collection
+            // and render the view
+            function(entries) {
+                
+                // set selectedDsd
+                self.setComponentsStuff(entries);
+                
+                // load components
+                // thisView.viewManager.callView("View_CubeVizModule_Dialog");
+                
+                // save given elements, doublings were ignored!
+                self.collection.reset("hashedUrl");
+                self.collection.addList(entries);
+                
+                // render given elements
+                self.render();
+            }
+        );
+    }
+    
+    /**
+     *
+     */
+    public render() {
+        var list = $("#cubviz-component-listBox"),
+            optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
+            selectedComponentDimensions = CubeViz_Links_Module.selectedComponents.dimensions,
+            selectedDimension = null,
+            tmp = null;
+            
+        // empty list(DOM) to avoid listing outdated items
+        list.empty();
+        
+        // output loaded data
+        $(this.collection._).each(function(i, dimension){
+            
+            if ( undefined !== selectedComponentDimensions ) {
+                selectedDimension = selectedComponentDimensions[dimension["hashedUrl"]];
+                dimension["selectedElementCount"] = _.keys(selectedDimension["elements"]).length;
+            } else {
+                dimension["selectedElementCount"] = 1;
+            }
+            
+            // set general element count
+            dimension["elementCount"] = _.size(dimension["elements"]);
+            
+            list.append(optionTpl(dimension));
+        });
+        
+        return this;
     }
     
     /**

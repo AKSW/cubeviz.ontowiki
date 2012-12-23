@@ -41,9 +41,15 @@ var CubeViz_Collection = (function () {
     };
     CubeViz_Collection.prototype.addList = function (list) {
         var self = this;
-        $(list).each(function (i, element) {
-            self.add(element);
-        });
+        if(true == _.isArray(list)) {
+            $(list).each(function (i, element) {
+                self.add(element);
+            });
+        } else {
+            if(true == _.isObject(list)) {
+                this.addList(_.values(list));
+            }
+        }
     };
     CubeViz_Collection.prototype.get = function (id) {
         var self = this;
@@ -284,7 +290,6 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         });
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
-        console.log("change");
         var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
         var selectedElement = this.collection.get(selectedElementId);
 
@@ -332,16 +337,17 @@ var View_CubeVizModule_DataSet = (function (_super) {
             self.collection.reset("hashedUrl");
             self.collection.addList(entries);
             self.render();
+            self.viewManager.renderView("View_CubeVizModule_Component");
         });
     };
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
-        console.log("change DS");
         var selectedElementId = $("#cubeviz-dataSet-list").val();
         var selectedElement = this["collection"].get(selectedElementId);
 
         this.setSelectedDS([
-            selectedElement.attributes
+            selectedElement
         ]);
+        this.viewManager.renderView("View_CubeVizModule_Component");
     };
     View_CubeVizModule_DataSet.prototype.render = function () {
         $("#cubeviz-dataSet-list").remove();
@@ -360,14 +366,60 @@ var View_CubeVizModule_DataSet = (function (_super) {
         return this;
     };
     View_CubeVizModule_DataSet.prototype.setSelectedDS = function (entries) {
-        if(0 == entries.length) {
+        if(0 === entries.length || undefined === entries) {
             CubeViz_Links_Module.selectedDS = {
             };
-            console.log("onComplete_LoadDataSets");
-            console.log("no data sets were loaded");
+            throw new Error("View_CubeVizModule_DataSet: No data sets were loaded!");
         } else {
             CubeViz_Links_Module.selectedDS = entries[0];
         }
     };
     return View_CubeVizModule_DataSet;
+})(View_Abstract);
+var View_CubeVizModule_Component = (function (_super) {
+    __extends(View_CubeVizModule_Component, _super);
+    function View_CubeVizModule_Component(attachedTo, viewManager) {
+        _super.call(this, "View_CubeVizModule_Component", attachedTo, viewManager);
+    }
+    View_CubeVizModule_Component.prototype.regenerateLinkCode = function () {
+        CubeViz_Links_Module.linkCode = null;
+        CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
+            CubeViz_Links_Module.linkCode = newLinkCode;
+        });
+    };
+    View_CubeVizModule_Component.prototype.initialize = function () {
+        var self = this;
+        DataCube_Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, function (entries) {
+            self.setComponentsStuff(entries);
+            self.collection.reset("hashedUrl");
+            self.collection.addList(entries);
+            self.render();
+        });
+    };
+    View_CubeVizModule_Component.prototype.render = function () {
+        var list = $("#cubviz-component-listBox");
+        var optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text());
+        var selectedComponentDimensions = CubeViz_Links_Module.selectedComponents.dimensions;
+        var selectedDimension = null;
+        var tmp = null;
+
+        list.empty();
+        $(this.collection._).each(function (i, dimension) {
+            if(undefined !== selectedComponentDimensions) {
+                selectedDimension = selectedComponentDimensions[dimension["hashedUrl"]];
+                dimension["selectedElementCount"] = _.keys(selectedDimension["elements"]).length;
+            } else {
+                dimension["selectedElementCount"] = 1;
+            }
+            dimension["elementCount"] = _.size(dimension["elements"]);
+            list.append(optionTpl(dimension));
+        });
+        return this;
+    };
+    View_CubeVizModule_Component.prototype.setComponentsStuff = function (entries) {
+        CubeViz_Links_Module.components.dimensions = entries;
+        CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
+        this.regenerateLinkCode();
+    };
+    return View_CubeVizModule_Component;
 })(View_Abstract);
