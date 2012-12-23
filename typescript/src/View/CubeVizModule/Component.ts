@@ -1,6 +1,5 @@
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
-/// <reference path="..\..\..\DeclarationSourceFiles\libraries\Backbone.d.ts" />
 
 /**
  * Declare variables that are used in the HTML too
@@ -20,26 +19,14 @@ class View_CubeVizModule_Component extends View_Abstract {
      */
     public regenerateLinkCode() : void
     {
-        // if selectedComponents.dimension was null, there must be an change event
-        // for DSD or DS, so force recreation of a new linkcode
-        CubeViz_Links_Module.linkCode = null;
         
-        CubeViz_ConfigurationLink.saveToServerFile ( 
-            CubeViz_Links_Module,
-            CubeViz_UI_ChartConfig,
-            function ( newLinkCode ) {
-                // Save new generated linkCode
-                CubeViz_Links_Module.linkCode = newLinkCode;
-                // TODO handle case if it was not possible to 
-                //      generate a new linkcode
-            }
-        );
     }
     
     /**
      *
      */
-    public initialize() {
+    public initialize() 
+    {
         
         var self = this;
         
@@ -72,7 +59,8 @@ class View_CubeVizModule_Component extends View_Abstract {
     /**
      *
      */
-    public render() {
+    public render() 
+    {
         var list = $("#cubviz-component-listBox"),
             optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
             selectedComponentDimensions = CubeViz_Links_Module.selectedComponents.dimensions,

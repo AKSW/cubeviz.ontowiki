@@ -1,6 +1,5 @@
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
-/// <reference path="..\..\..\DeclarationSourceFiles\libraries\Backbone.d.ts" />
 
 declare var CubeViz_Links_Module: any;
 

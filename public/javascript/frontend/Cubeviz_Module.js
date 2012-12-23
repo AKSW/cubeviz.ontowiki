@@ -382,10 +382,6 @@ var View_CubeVizModule_Component = (function (_super) {
         _super.call(this, "View_CubeVizModule_Component", attachedTo, viewManager);
     }
     View_CubeVizModule_Component.prototype.regenerateLinkCode = function () {
-        CubeViz_Links_Module.linkCode = null;
-        CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
-            CubeViz_Links_Module.linkCode = newLinkCode;
-        });
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
         var self = this;
@@ -422,4 +418,51 @@ var View_CubeVizModule_Component = (function (_super) {
         this.regenerateLinkCode();
     };
     return View_CubeVizModule_Component;
+})(View_Abstract);
+var View_CubeVizModule_Footer = (function (_super) {
+    __extends(View_CubeVizModule_Footer, _super);
+    function View_CubeVizModule_Footer(attachedTo, viewManager) {
+        _super.call(this, "View_CubeVizModule_Footer", attachedTo, viewManager);
+    }
+    View_CubeVizModule_Footer.prototype.changeLink = function () {
+        if(undefined == $("#cubeviz-footer-permaLinkButton").data("oldValue")) {
+            $("#cubeviz-footer-permaLinkButton").data("oldValue", $("#cubeviz-footer-permaLinkButton").attr("value").toString()).attr("value", ">>").animate({
+                width: 31
+            }, 450, "linear", function () {
+                var position = $("#cubeviz-footer-permaLinkButton").position();
+                $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
+                var link = CubeViz_Links_Module.cubevizPath + "?m=" + encodeURIComponent(CubeViz_Links_Module.modelUrl) + "&lC=" + CubeViz_Links_Module.linkCode;
+                var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#cubeviz-footer-permaLink").html());
+                $("#cubeviz-footer-permaLinkMenu").animate({
+                    width: 'toggle'
+                }, 450);
+                $("#cubeviz-footer-permaLink").show().html(url);
+            });
+        } else {
+            $("#cubeviz-footer-permaLinkMenu").fadeOut(450, function () {
+                $("#cubeviz-footer-permaLinkButton").animate({
+                    width: 75
+                }, 450).attr("value", $("#cubeviz-footer-permaLinkButton").data("oldValue").toString()).data("oldValue", undefined);
+            });
+        }
+    };
+    View_CubeVizModule_Footer.prototype.initialize = function () {
+        var self = this;
+        this.render();
+    };
+    View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function () {
+        var self = this;
+        CubeViz_Links_Module.linkCode = null;
+        CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
+            CubeViz_Links_Module.linkCode = newLinkCode;
+            self.changeLink();
+        });
+    };
+    View_CubeVizModule_Footer.prototype.render = function () {
+        this.delegateEvents({
+            "click #cubeviz-footer-permaLinkButton": this.onClick_permaLinkButton
+        });
+        return this;
+    };
+    return View_CubeVizModule_Footer;
 })(View_Abstract);
