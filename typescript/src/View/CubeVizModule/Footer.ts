@@ -17,56 +17,38 @@ class View_CubeVizModule_Footer extends View_Abstract {
     /**
      *
      */
-    public changeLink() 
+    public changePermaLinkButton() 
     {
         // Open perma link menu and show link
-        if ( undefined == $("#cubeviz-footer-permaLinkButton").data ( "oldValue" ) ) {
-            
-            $("#cubeviz-footer-permaLinkButton")
-                .data ( "oldValue", $("#cubeviz-footer-permaLinkButton").attr ("value").toString() )
-                .attr ( "value", ">>")
-                .animate(
-                    { width: 31 }, 
-                    450, 
-                    "linear",
-                    function() {                        
-                        var position = $("#cubeviz-footer-permaLinkButton").position();
-                
-                        $("#cubeviz-footer-permaLinkMenu")
-                            .css ( "top", position.top + 2 )
-                            .css ( "left", position.left + 32 );
-                            
-                        // build link to show later on
-                        var link = CubeViz_Links_Module.cubevizPath
-                                   + "?m=" + encodeURIComponent (CubeViz_Links_Module.modelUrl)
-                                   + "&lC=" + CubeViz_Links_Module.linkCode;
-                            
-                        var url = $("<a></a>")
-                            .attr ( "href", link )
-                            .attr ( "target", "_self" )
-                            .html ( $("#cubeviz-footer-permaLink").html () );
-                            
-                        $("#cubeviz-footer-permaLinkMenu").animate({width:'toggle'},450);
-                        
-                        $("#cubeviz-footer-permaLink")
-                            .show()
-                            .html ( url );
-                    }
-                );        
-        
-        // Close perma link menu
+        // if ( undefined == $("#cubeviz-footer-permaLinkButton").data ( "oldValue" ) ) {
+        var value:string = "";
+        console.log("this.collection.get(buttonVal)");
+        console.log(this.collection.get("buttonVal"));
+        if(undefined == this.collection.get("buttonVal")) {         
+            this.collection.add({
+                id: "buttonVal", 
+                value: $("#cubeviz-footer-permaLinkButton").attr ("value").toString()
+            });
+            this.showLink(">>");
         } else {
-            
-            $("#cubeviz-footer-permaLinkMenu").fadeOut ( 
-                450,
-                function () {
-                    $("#cubeviz-footer-permaLinkButton")
-                        .animate({width:75}, 450)
-                        .attr ( "value", $("#cubeviz-footer-permaLinkButton").data("oldValue").toString())
-                        .data ( "oldValue", undefined );
-                }
-            );
+            value = this.collection.get("buttonVal").value;
+            this.collection.remove("buttonVal");
+            this.closeLink(value);
         }
+    }
+    
+    /**
+     *
+     */
+    public closeLink(label:string) {
+        $("#cubeviz-footer-permaLinkMenu").fadeOut ( 
+            450,
+            function () {
+                $("#cubeviz-footer-permaLinkButton")
+                    .animate({width:75}, 450)
+                    .attr ( "value", label);
+            }
+        );
     }
     
     /**
@@ -99,7 +81,7 @@ class View_CubeVizModule_Footer extends View_Abstract {
                 //      generate a new linkcode
                 
                 // change perma link button
-                self.changeLink();
+                self.changePermaLinkButton();
             }
         );
     }
@@ -115,5 +97,41 @@ class View_CubeVizModule_Footer extends View_Abstract {
         });
         
         return this;
+    }
+    
+    /**
+     *
+     */
+    public showLink(label:string) {
+        $("#cubeviz-footer-permaLinkButton")
+            .attr ( "value", label)
+            .animate(
+                { width: 31 }, 
+                450, 
+                "linear",
+                function() {                        
+                    var position = $("#cubeviz-footer-permaLinkButton").position();
+            
+                    $("#cubeviz-footer-permaLinkMenu")
+                        .css ("top", position.top + 2)
+                        .css ("left", position.left + 32);
+                        
+                    // build link to show later on
+                    var link = CubeViz_Links_Module.cubevizPath
+                               + "?m=" + encodeURIComponent (CubeViz_Links_Module.modelUrl)
+                               + "&lC=" + CubeViz_Links_Module.linkCode;
+                        
+                    var url = $("<a></a>")
+                        .attr ("href", link)
+                        .attr ("target", "_self")
+                        .html ($("#cubeviz-footer-permaLink").html ());
+                        
+                    $("#cubeviz-footer-permaLinkMenu").animate({width:'toggle'},450);
+                    
+                    $("#cubeviz-footer-permaLink")
+                        .show ()
+                        .html ( url );
+                }
+        ); 
     }
 }

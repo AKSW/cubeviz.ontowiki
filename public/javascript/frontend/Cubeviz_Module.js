@@ -63,8 +63,9 @@ var CubeViz_Collection = (function () {
         return 1 == t.length ? t[0] : undefined;
     };
     CubeViz_Collection.prototype.remove = function (id) {
+        var self = this;
         this._ = _.reject(this._, function (element) {
-            return element[this.idKey] === id;
+            return element[self.idKey] === id;
         });
     };
     CubeViz_Collection.prototype.reset = function (idKey) {
@@ -424,27 +425,28 @@ var View_CubeVizModule_Footer = (function (_super) {
     function View_CubeVizModule_Footer(attachedTo, viewManager) {
         _super.call(this, "View_CubeVizModule_Footer", attachedTo, viewManager);
     }
-    View_CubeVizModule_Footer.prototype.changeLink = function () {
-        if(undefined == $("#cubeviz-footer-permaLinkButton").data("oldValue")) {
-            $("#cubeviz-footer-permaLinkButton").data("oldValue", $("#cubeviz-footer-permaLinkButton").attr("value").toString()).attr("value", ">>").animate({
-                width: 31
-            }, 450, "linear", function () {
-                var position = $("#cubeviz-footer-permaLinkButton").position();
-                $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
-                var link = CubeViz_Links_Module.cubevizPath + "?m=" + encodeURIComponent(CubeViz_Links_Module.modelUrl) + "&lC=" + CubeViz_Links_Module.linkCode;
-                var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#cubeviz-footer-permaLink").html());
-                $("#cubeviz-footer-permaLinkMenu").animate({
-                    width: 'toggle'
-                }, 450);
-                $("#cubeviz-footer-permaLink").show().html(url);
+    View_CubeVizModule_Footer.prototype.changePermaLinkButton = function () {
+        var value = "";
+        console.log("this.collection.get(buttonVal)");
+        console.log(this.collection.get("buttonVal"));
+        if(undefined == this.collection.get("buttonVal")) {
+            this.collection.add({
+                id: "buttonVal",
+                value: $("#cubeviz-footer-permaLinkButton").attr("value").toString()
             });
+            this.showLink(">>");
         } else {
-            $("#cubeviz-footer-permaLinkMenu").fadeOut(450, function () {
-                $("#cubeviz-footer-permaLinkButton").animate({
-                    width: 75
-                }, 450).attr("value", $("#cubeviz-footer-permaLinkButton").data("oldValue").toString()).data("oldValue", undefined);
-            });
+            value = this.collection.get("buttonVal").value;
+            this.collection.remove("buttonVal");
+            this.closeLink(value);
         }
+    };
+    View_CubeVizModule_Footer.prototype.closeLink = function (label) {
+        $("#cubeviz-footer-permaLinkMenu").fadeOut(450, function () {
+            $("#cubeviz-footer-permaLinkButton").animate({
+                width: 75
+            }, 450).attr("value", label);
+        });
     };
     View_CubeVizModule_Footer.prototype.initialize = function () {
         var self = this;
@@ -455,7 +457,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         CubeViz_Links_Module.linkCode = null;
         CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
             CubeViz_Links_Module.linkCode = newLinkCode;
-            self.changeLink();
+            self.changePermaLinkButton();
         });
     };
     View_CubeVizModule_Footer.prototype.render = function () {
@@ -463,6 +465,20 @@ var View_CubeVizModule_Footer = (function (_super) {
             "click #cubeviz-footer-permaLinkButton": this.onClick_permaLinkButton
         });
         return this;
+    };
+    View_CubeVizModule_Footer.prototype.showLink = function (label) {
+        $("#cubeviz-footer-permaLinkButton").attr("value", label).animate({
+            width: 31
+        }, 450, "linear", function () {
+            var position = $("#cubeviz-footer-permaLinkButton").position();
+            $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
+            var link = CubeViz_Links_Module.cubevizPath + "?m=" + encodeURIComponent(CubeViz_Links_Module.modelUrl) + "&lC=" + CubeViz_Links_Module.linkCode;
+            var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#cubeviz-footer-permaLink").html());
+            $("#cubeviz-footer-permaLinkMenu").animate({
+                width: 'toggle'
+            }, 450);
+            $("#cubeviz-footer-permaLink").show().html(url);
+        });
     };
     return View_CubeVizModule_Footer;
 })(View_Abstract);
