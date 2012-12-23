@@ -79,8 +79,9 @@ class CubeViz_Collection
      */
     public remove(id:string) : void
     {
+        var self = this;
         this._ = _.reject(this._, function(element){ 
-            return element[this.idKey] === id; 
+            return element[self.idKey] === id; 
         });
     }
     
