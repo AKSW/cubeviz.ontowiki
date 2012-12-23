@@ -11,28 +11,26 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
      */
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
-        super(attachedTo, viewManager);
-        this.id = "View_CubeVizModule_DataStructureDefintion";
+        super("View_CubeVizModule_DataStructureDefintion", attachedTo, viewManager);
+        this.initialize();
     }
     
     /**
      * If new option was selected
      */
     public onChange_list(event) : void 
-    {        
-        console.log ("change");
-        
+    {
+        console.log("change");
         var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
-            selectedElement = this["collection"].get(selectedElementId),
-            thisView = this["thisView"];
+            selectedElement = this.collection.get(selectedElementId);
         
         // TODO: remember previous selection
         
         // set new selected data structure definition
-        thisView.setSelectedDSD([selectedElement.attributes]);
-        
+        this.setSelectedDSD([selectedElement]);
+    
         // reset data set view
-        thisView.viewManager.callView("View_CubeVizModule_DataSet");
+        // this.viewManager.callView("View_CubeVizModule_DataSet");
     }
     
     /**
@@ -42,13 +40,6 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     {        
         var self = this;
         
-        this.events = {
-            "change #cubeviz-dataStructureDefinition-list" : this.onChange_list
-        };
-    
-        // every function that uses 'this' as the current object should be in here
-        _.bindAll(this, "render", "onChange_list"); 
-        
         // load all data structure definitions from server
         DataCube_DataStructureDefinition.loadAll(
             
@@ -56,14 +47,14 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
             // and render the view
             function(entries) {
                                 
-                // set selectedDsd
+                // set selected data structure definition
                 self.setSelectedDSD(entries);
                 
-                // save given elements
-                $(entries).each(function(i, element){
-                    element["id"] = element["hashedUrl"];
-                    self.collection.add(element);
-                });
+                // save given elements, doublings were ignored!
+                self.collection.reset("hashedUrl");
+                self.collection.addList(entries);
+                
+                console.log(self.collection._);
                 
                 // render given elements
                 self.render();
@@ -86,17 +77,20 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
         optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
         
         // output loaded data
-        $(this.collection.models).each(function(i, element){
+        $(this.collection._).each(function(i, element){
             
             // set selected variable, if element url is equal to selected dsd
-            element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url
+            element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url
                 ? " selected" : "";
 
-            list.append(optionTpl(element.attributes));
+            list.append(optionTpl(element));
         
         });
-    
-        this.delegateEvents(this.events);
+
+        // Delegate events to new items of the template
+        this.delegateEvents({
+            "change #cubeviz-dataStructureDefinition-list" : this.onChange_list
+        });
         
         return this;
     }

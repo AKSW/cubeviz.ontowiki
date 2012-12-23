@@ -3,14 +3,14 @@
  */
 class View_Manager {
     
-    private _allViews = [];
+    private _allViews:CubeViz_Collection;
     
     /**
      * Constructor
      */
     constructor() 
     {
-        this._allViews = [];
+        this._allViews = new CubeViz_Collection;
     }
     
     /**
@@ -23,13 +23,7 @@ class View_Manager {
         // set autostart property
         autostart = true == autostart ? true : false;
         
-        // first remove view instance
-        if(false !== this.get(id)) {
-            this.remove(id);
-        } 
-        
-        // add view
-        this._allViews.push({id:id, attachedTo:attachedTo, autostart:autostart});
+        this._allViews.add({id:id, attachedTo:attachedTo, autostart:autostart});
         
         return this;
     }
@@ -41,12 +35,7 @@ class View_Manager {
      */
     public get(id:string) : any
     {
-        for(var i=0;i<this._allViews.length;++i){
-            if(id == this._allViews[i].id) {
-                return this._allViews[i];
-            }
-        }
-        return false;
+        return this._allViews.get(id);
     }
     
     /**
@@ -54,12 +43,15 @@ class View_Manager {
      * @param id ID of the view.
      * @return void
      */
-    public renderView(id:string) : void
+    public renderView(id:string) : View_Manager
     {
-        if(false != this.get(id)) {
+        var view = this.get(id);
+        if(undefined !== view) {
             // render view
-            eval ("new " + id + "(\"" + this.get(id).attachedTo + "\", this);");
+            eval ("new " + id + "(\"" + view.attachedTo + "\", this);");
         }
+        
+        return this;
     }
     
     /**
@@ -67,30 +59,25 @@ class View_Manager {
      * @param id ID of the view to remove.
      * @return bool True if element with given id was found and removed, false otherwise.
      */
-    public remove(id:string) : bool
+    public remove(id:string) : View_Manager
     {
-        for(var i=0;i<this._allViews.length;++i){            
-            // if view was found, delete entry
-            if(id == this._allViews[i].id) {
-                delete this._allViews[i];
-                this._allViews.splice(i,1);
-                return true;
-            }
-        }
-        return false;
+        this._allViews.remove(id);
+        return this;
     }
     
     /**
      * Renders all views, which have property autostart=true
      * @return void
      */
-    public render() : void
+    public render() : View_Manager
     {
-        for(var i=0;i<this._allViews.length;++i){            
-            // if view was found
-            if(true == this._allViews[i].autostart){
-                this.renderView(this._allViews[i].id);
+        var self = this;
+        $(this._allViews._).each(function(i, view){
+            // if view's autostart was set to true
+            if(true == view["autostart"]){
+                self.renderView(view["id"]);
             }
-        }
+        });
+        return this;
     }
 }
