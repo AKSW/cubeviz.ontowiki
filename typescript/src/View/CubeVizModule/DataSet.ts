@@ -8,15 +8,12 @@ class View_CubeVizModule_DataSet extends View_Abstract {
         
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
-        super(attachedTo, viewManager);        
-        this.id = "View_CubeVizModule_DataSet";
+        super("View_CubeVizModule_DataSet", attachedTo, viewManager);        
     }
     
     public initialize() : void 
     {
-        var self = this;   
-        // every function that uses 'this' as the current object should be in here
-        _.bindAll(this, "render", "onChange_list"); 
+        var self = this;
         
         /**
          * Load all data sets
@@ -33,10 +30,8 @@ class View_CubeVizModule_DataSet extends View_Abstract {
                 self.setSelectedDS(entries);
                 
                 // save given elements
-                $(entries).each(function(i, element){
-                    element["id"] = element["hashedUrl"];
-                    self.collection.add(element);
-                });
+                self.collection.reset("hashedUrl");
+                self.collection.addList(entries);
                 
                 // render given elements
                 self.render();
@@ -52,17 +47,18 @@ class View_CubeVizModule_DataSet extends View_Abstract {
      */
     public onChange_list() : void 
     {
+        console.log("change DS");
+        
         var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
-            selectedElement = this["collection"].get(selectedElementId),
-            thisView = this["thisView"];
+            selectedElement = this["collection"].get(selectedElementId);
 
         // TODO: remember previous selection
 
         // set new selected data set
-        thisView.setSelectedDS([selectedElement.attributes]);
+        this.setSelectedDS([selectedElement.attributes]);
 
         // reset component view
-        thisView.viewManager.callView("View_CubeVizModule_Component");
+        // this.viewManager.callView("View_CubeVizModule_Component");
     }
     
     /**
@@ -73,19 +69,24 @@ class View_CubeVizModule_DataSet extends View_Abstract {
         $("#cubeviz-dataSet-list").remove();
                 
         var listTpl = $("#cubeviz-dataSet-tpl-list").text();
-        this["el"].append(listTpl);
+        this.el.append(listTpl);
         
         var list = $("#cubeviz-dataSet-list"),
             optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
         
         // output loaded data
-        $(this.collection.models).each(function(i, element){
+        $(this.collection._).each(function(i, element){
             
             // set selected variable, if element url is equal to selected dsd
-            element.attributes["selected"] = element.attributes["url"] == CubeViz_Links_Module.selectedDSD.url
+            element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url
                 ? " selected" : "";
                 
-            list.append(optionTpl(element.attributes));
+            list.append(optionTpl(element));
+        });
+        
+        // Delegate events to new items of the template
+        this.delegateEvents({
+            "change #cubeviz-dataSet-list" : this.onChange_list
         });
         
         return this;

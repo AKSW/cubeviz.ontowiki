@@ -12,25 +12,6 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
         super("View_CubeVizModule_DataStructureDefintion", attachedTo, viewManager);
-        this.initialize();
-    }
-    
-    /**
-     * If new option was selected
-     */
-    public onChange_list(event) : void 
-    {
-        console.log("change");
-        var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
-            selectedElement = this.collection.get(selectedElementId);
-        
-        // TODO: remember previous selection
-        
-        // set new selected data structure definition
-        this.setSelectedDSD([selectedElement]);
-    
-        // reset data set view
-        // this.viewManager.callView("View_CubeVizModule_DataSet");
     }
     
     /**
@@ -54,15 +35,31 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 self.collection.reset("hashedUrl");
                 self.collection.addList(entries);
                 
-                console.log(self.collection._);
-                
                 // render given elements
                 self.render();
                 
                 // load data set view
-                // self.viewManager.renderView("View_CubeVizModule_DataSet");
+                self.viewManager.renderView("View_CubeVizModule_DataSet");
             }
         );
+    }
+    
+    /**
+     * If new option was selected
+     */
+    public onChange_list(event) : void 
+    {
+        console.log("change");
+        var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
+            selectedElement = this.collection.get(selectedElementId);
+        
+        // TODO: remember previous selection
+        
+        // set new selected data structure definition
+        this.setSelectedDSD([selectedElement]);
+    
+        // reset data set view
+        this.viewManager.renderView("View_CubeVizModule_DataSet");
     }
     
     /**
@@ -71,7 +68,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     public render() : View_Abstract
     {
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
-        this["el"].append(listTpl);
+        this.el.append(listTpl);
         
         var list = $("#cubeviz-dataStructureDefinition-list"),
         optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());

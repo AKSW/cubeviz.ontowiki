@@ -3,6 +3,10 @@
 class CubeViz_Collection 
 {
     public idKey:string;
+    
+    /**
+     * Contains all the elements of the collection
+     */
     public _:any[];
     
     /**

@@ -18,6 +18,11 @@ class View_Abstract {
     /**
      * 
      */
+    public el:any;
+    
+    /**
+     * 
+     */
     public id:string;
     
     /**
@@ -33,18 +38,23 @@ class View_Abstract {
         // set properties
         this.attachedTo = attachedTo;
         this.autostart = false;
-        this["el"] = $(attachedTo);
+        this.el = $(attachedTo);
         this.id = "view" || id;
         this.collection = new CubeViz_Collection;
         this.viewManager = viewManager;
+        
+        this.initialize();
     }
     
     /**
-     * 
+     * Binds events to DOM elements (using $.proxy!)
+     * @return void
+     * @throws Error
      */
-    public delegateEvents (events?:any) : any 
+    public delegateEvents (events?:any) : void 
     {
-        if(undefined == events) return;
+        if(undefined == events) 
+            return;
         
         for (var key in events) {
             var method = events[key];
@@ -54,14 +64,22 @@ class View_Abstract {
             if (!method) {
                 throw new Error('Method "' + events[key] + '" does not exist');
             }
+            
             var eventName = key.substr(0, key.indexOf(" "));
             var selector = key.substr(key.indexOf(" ")+1);
             
             // bind given event
+            // want to find out more about the proxy method?
+            // have a look at: http://www.jimmycuadra.com/posts/understanding-jquery-14s-proxy-method
             $(selector).on(
                 eventName, 
                 $.proxy(method, this)
             );
         }
     }
+    
+    /**
+     * 
+     */
+    public initialize() {}
 }
