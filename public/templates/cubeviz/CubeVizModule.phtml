@@ -194,20 +194,15 @@
 
 <!-- Component-Dimension -->
 <script id="cubeviz-component-tpl-listBoxItem" type="text/template">
-    <div class="sidebar-left-data-selection-dims-box-label-value">    
+    <div class="cubeviz-component-box">    
         <div class="cubeviz-component-title" id="dialog-{label}-selected-items">
             <%= label %>&nbsp;(<%= selectedElementCount %> / <%= elementCount %>)
         </div>
-        <div>
-            Explanation text
-        </div>
-        <div id="open-dialog-{hashedUrl}-selector" 
-               class="open-dialog-selector" 
-               label="{label}" 
-               hashedUrl="{hashedUrl}" 
-               typeUrl="{typeUrl}" url="{url}">
+        <small>Explanation text</small>
+        <br/>
+        <a id="open-dialog-{hashedUrl}-selector" class="open-dialog-selector">
             <?php echo $this->_translate->_('Select elements of interest'); ?>
-        </div>        
+        </a>        
     </div>    
 </script>
 

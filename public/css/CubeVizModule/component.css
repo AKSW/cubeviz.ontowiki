@@ -2,3 +2,8 @@
     font-weight: bold;
     font-size: 13px;
 }
+
+.cubeviz-component-box {
+    margin-top: 9px;
+    margin-left: 4px;
+}
