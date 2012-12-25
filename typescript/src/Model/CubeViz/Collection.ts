@@ -2,30 +2,38 @@
 
 class CubeViz_Collection 
 {
+    /**
+     * Name of the ID to identify elements(Objects) in the collection.
+     */
     public idKey:string;
     
     /**
-     * Contains all the elements of the collection
+     * Contains all the elements of the collection.
      */
     public _:any[];
     
     /**
-     * 
+     * Constructor
+     * @param idKey Name of the key to use in a future collection.
      */
-    constructor(idKey?:string) 
+    constructor(idKey:string) 
     {
         this.reset(idKey);
     }
     
     /**
-     * 
+     * Add a new element to the collection. If it already exists, it will be ignored
+     * except option.merge = true.
+     * @param element Element to add, usally an object
+     * @param option Further configuration, e.g. merge=true means replace the element 
+     *        if already exists.
+     * @return CubeViz_Collection Itself, for chaining.
      */
-    public add(element:any, option?:any) : bool
+    public add(element:any, option?:any) : CubeViz_Collection
     {
         // if it does not exists in the list, add it
         if(undefined === this.get(element[this.idKey])) {
             this._.push(element);
-            return true;
             
         // if it does exists and option.merge is true, add it 
         } else if ((undefined !== option && undefined !== option["merge"] 
@@ -35,13 +43,15 @@ class CubeViz_Collection
         }
         
         // otherwise do nothing
-        return false;
+        return this;
     }
     
     /**
-     * 
+     * Add a list to the collection. 
+     * @param list Objects and arrays are possible to use.
+     * @return CubeViz_Collection Itself, for chaining.
      */
-    public addList(list) 
+    public addList(list) : CubeViz_Collection
     {
         var self = this;
         
@@ -56,9 +66,13 @@ class CubeViz_Collection
         } else if(true == _.isObject(list)){
             this.addList(_.values(list));
         }
+        
+        return self;
     }
     
     /**
+     * Get element by id. 
+     * @param id ID of the element.
      * @return any|undefined Found object or undefined.
      */
     public get(id:string) : any
@@ -75,9 +89,11 @@ class CubeViz_Collection
     }
     
     /**
-     * 
+     * Remove element by id.
+     * @param id ID f the element.
+     * @return CubeViz_Collection Itself, for chaining.
      */
-    public remove(id:string) : void
+    public remove(id:string) : CubeViz_Collection
     {
         var self = this;
         this._ = _.reject(this._, function(element){ 
@@ -86,18 +102,22 @@ class CubeViz_Collection
     }
     
     /**
-     * 
+     * Reset collection. Reset idKey too, if you like or use the old one.
+     * @param idKey Optional, new idKey. If undefined, it will use the old one.
+     * @return CubeViz_Collection Itself, for chaining.
      */
-    public reset(idKey?:string)
+    public reset(idKey?:string) : CubeViz_Collection
     {        
-        this.idKey = undefined === idKey ? "id" : idKey;
+        this.idKey = undefined === idKey ? this.idKey : idKey;
         this._ = [];
+        return this;
     }
     
     /**
-     * 
+     * Size of the collection
+     * @param int Size.
      */
-    public size() 
+    public size() : int
     {
         return _.size(this._);
     }
