@@ -31,8 +31,9 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 self.setSelectedDSD(entries);
                 
                 // save given elements, doublings were ignored!
-                self.collection.reset("hashedUrl");
-                self.collection.addList(entries);
+                self.collection
+                        .reset("hashedUrl")
+                        .addList(entries);
                 
                 // render given elements
                 self.render();
@@ -61,10 +62,20 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     }
     
     /**
+     *
+     */
+    public onClick_questionmark() {
+        $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+    }
+    
+    /**
      * 
      */
     public render() : View_Abstract
     {
+        /**
+         * Data structure definitions list
+         */
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
         this.el.append(listTpl);
         
@@ -81,10 +92,23 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
             list.append(optionTpl(element));
         
         });
-
-        // Delegate events to new items of the template
+        
+        /**
+         * Question mark dialog
+         */
+        $("#cubeviz-dataStructureDefinition-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
+        
+        /**
+         * Delegate events to new items of the template
+         */
         this.delegateEvents({
-            "change #cubeviz-dataStructureDefinition-list" : this.onChange_list
+            "change #cubeviz-dataStructureDefinition-list" : this.onChange_list,
+            "click #cubeviz-dataStructureDefinition-questionMark": this.onClick_questionmark
         });
         
         return this;
@@ -95,13 +119,13 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
      */
     public setSelectedDSD(entries:any[]) : void 
     {
-        // if at least one data structure definition, than load data sets for first one
-        if(0 == entries.length) {
+        // if nothing was given
+        if(0 == entries.length || undefined === entries) {
             // todo: handle case that no data structure definition were loaded!
             CubeViz_Links_Module.selectedDSD = {};
-            console.log("onComplete_LoadDataStructureDefinitions");
-            console.log("no data structure definitions were loaded");
-             
+            throw new Error ("View_CubeVizModule_DataStructureDefinition: No dsd's were loaded!");
+        
+        // if at least one data structure definition, than load data sets for first one     
         } else {
             CubeViz_Links_Module.selectedDSD = entries[0];
         }

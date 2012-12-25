@@ -28,8 +28,10 @@
          * Add views to view manager
          */
         viewManager
-            // These views will added and executed on render() call. (second parameter 
-            // causes that)
+            /**
+             * These views will added and executed on render() call. (second parameter 
+             * causes that)
+             */
             .add(
                 "View_CubeVizModule_DataStructureDefintion",
                 "#cubviz-dataStructureDefinition-container",
@@ -37,7 +39,9 @@
             )
             .add("View_CubeVizModule_Footer", "#cubeviz-footer-container", true)
         
-            // These views will only added but not executed on render() call.
+            /**
+             * These views will only added but not executed on render() call.
+             */
             .add("View_CubeVizModule_DataSet", "#cubviz-dataSet-container")
             .add("View_CubeVizModule_Component", "#cubviz-component-container")
         
@@ -73,7 +77,7 @@
                     <?php echo $this->_translate->_('Select group of interest'); ?>
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
-                         class="cubeviz-icon-micro"
+                         class="cubeviz-icon-micro clickable"
                          id="cubeviz-dataStructureDefinition-questionMark"
                          title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
@@ -86,7 +90,7 @@
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
                          title="<?php echo $this->_translate->_('Click for more information'); ?>" 
-                         class="cubeviz-icon-micro"/>
+                         class="cubeviz-icon-micro clickable"/>
                 </div>
             </div>
 			
@@ -99,7 +103,7 @@
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
                          title="<?php echo $this->_translate->_('Click for more information'); ?>" 
-                         class="cubeviz-icon-micro"/>
+                         class="cubeviz-icon-micro clickable"/>
                 </div>
                 <div id="cubviz-component-listBox">
                 </div>
@@ -123,6 +127,21 @@
 
 <!-- Later on, after all loading is complete, it will contain a dialog instance -->
 <div id="dimensionDialogContainer"></div>
+
+
+<!-- 
+    #########
+    DIALOGS
+    #########
+-->
+<div id="cubeviz-dataStructureDefinition-dialog" style="display: none;">
+    <h2>Select group of interest</h2>
+    A group of interest contains data about a particular field of interest, for
+    instance about countries. Following the structure given by the 
+    <a href="http://www.w3.org/TR/vocab-data-cube/" target="_blank">DataCube vocabulary</a>, 
+    users are able to select specific structural elements of the DataCube.
+</div>
+
 
 <!-- 
     #########
@@ -171,7 +190,7 @@
     </div>    
 </script>
 
-<!-- Dialog -->
+<!-- Dialogs -->
 <script id="cubeviz-template-cubeVizModule-DimensionBox" type="text/template">
     <div class="dialog" id="dialog-{label}">
         <div class="dialog-header">

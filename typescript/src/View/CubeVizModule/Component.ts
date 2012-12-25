@@ -15,14 +15,6 @@ class View_CubeVizModule_Component extends View_Abstract {
     }
     
     /**
-     * 
-     */
-    public regenerateLinkCode() : void
-    {
-        
-    }
-    
-    /**
      *
      */
     public initialize() 
@@ -47,8 +39,9 @@ class View_CubeVizModule_Component extends View_Abstract {
                 // thisView.viewManager.callView("View_CubeVizModule_Dialog");
                 
                 // save given elements, doublings were ignored!
-                self.collection.reset("hashedUrl");
-                self.collection.addList(entries);
+                self.collection
+                        .reset("hashedUrl")
+                        .addList(entries);
                 
                 // render given elements
                 self.render();
@@ -102,7 +95,5 @@ class View_CubeVizModule_Component extends View_Abstract {
         // e.g. Year (2003), Country (Germany)
         CubeViz_Links_Module.selectedComponents.dimensions =
             DataCube_Component.getDefaultSelectedDimensions ( entries );
-            
-        this.regenerateLinkCode();
     }
 }

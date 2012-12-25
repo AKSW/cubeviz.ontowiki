@@ -94,7 +94,7 @@ class View_CubeVizModule_DataSet extends View_Abstract {
      */
     public setSelectedDS(entries) : void 
     {
-        // 
+        // if nothing was given
         if(0 === entries.length || undefined === entries) {
             // todo: handle case that no data sets were loaded
             CubeViz_Links_Module.selectedDS = {};

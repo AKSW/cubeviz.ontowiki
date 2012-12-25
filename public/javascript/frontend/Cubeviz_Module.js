@@ -286,8 +286,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var self = this;
         DataCube_DataStructureDefinition.loadAll(function (entries) {
             self.setSelectedDSD(entries);
-            self.collection.reset("hashedUrl");
-            self.collection.addList(entries);
+            self.collection.reset("hashedUrl").addList(entries);
             self.render();
             self.viewManager.renderView("View_CubeVizModule_DataSet");
         });
@@ -301,6 +300,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         ]);
         this.viewManager.renderView("View_CubeVizModule_DataSet");
     };
+    View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
+        $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+    };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
         this.el.append(listTpl);
@@ -311,17 +313,23 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
+        $("#cubeviz-dataStructureDefinition-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
         this.delegateEvents({
-            "change #cubeviz-dataStructureDefinition-list": this.onChange_list
+            "change #cubeviz-dataStructureDefinition-list": this.onChange_list,
+            "click #cubeviz-dataStructureDefinition-questionMark": this.onClick_questionmark
         });
         return this;
     };
     View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDSD = function (entries) {
-        if(0 == entries.length) {
+        if(0 == entries.length || undefined === entries) {
             CubeViz_Links_Module.selectedDSD = {
             };
-            console.log("onComplete_LoadDataStructureDefinitions");
-            console.log("no data structure definitions were loaded");
+            throw new Error("View_CubeVizModule_DataStructureDefinition: No dsd's were loaded!");
         } else {
             CubeViz_Links_Module.selectedDSD = entries[0];
         }
@@ -384,14 +392,11 @@ var View_CubeVizModule_Component = (function (_super) {
     function View_CubeVizModule_Component(attachedTo, viewManager) {
         _super.call(this, "View_CubeVizModule_Component", attachedTo, viewManager);
     }
-    View_CubeVizModule_Component.prototype.regenerateLinkCode = function () {
-    };
     View_CubeVizModule_Component.prototype.initialize = function () {
         var self = this;
         DataCube_Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, function (entries) {
             self.setComponentsStuff(entries);
-            self.collection.reset("hashedUrl");
-            self.collection.addList(entries);
+            self.collection.reset("hashedUrl").addList(entries);
             self.render();
         });
     };
@@ -418,7 +423,6 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.setComponentsStuff = function (entries) {
         CubeViz_Links_Module.components.dimensions = entries;
         CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
-        this.regenerateLinkCode();
     };
     return View_CubeVizModule_Component;
 })(View_Abstract);
