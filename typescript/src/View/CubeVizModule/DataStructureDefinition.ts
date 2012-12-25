@@ -74,7 +74,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     public render() : View_Abstract
     {
         /**
-         * Data structure definitions list
+         * List
          */
         var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
         this.el.append(listTpl);

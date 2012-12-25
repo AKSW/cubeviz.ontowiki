@@ -59,10 +59,20 @@ class View_CubeVizModule_DataSet extends View_Abstract {
     }
     
     /**
+     *
+     */
+    public onClick_questionmark() {
+        $("#cubeviz-dataSet-dialog").dialog("open");
+    }
+    
+    /**
      * 
      */
     public render() : View_Abstract
     {
+        /**
+         * List
+         */
         $("#cubeviz-dataSet-list").remove();
                 
         var listTpl = $("#cubeviz-dataSet-tpl-list").text();
@@ -81,9 +91,22 @@ class View_CubeVizModule_DataSet extends View_Abstract {
             list.append(optionTpl(element));
         });
         
-        // Delegate events to new items of the template
+        /**
+         * Question mark dialog
+         */
+        $("#cubeviz-dataSet-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
+        
+        /**
+         * Delegate events to new items of the template
+         */
         this.delegateEvents({
-            "change #cubeviz-dataSet-list" : this.onChange_list
+            "change #cubeviz-dataSet-list" : this.onChange_list,            
+            "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
         });
         
         return this;

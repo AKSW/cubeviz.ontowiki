@@ -52,8 +52,18 @@ class View_CubeVizModule_Component extends View_Abstract {
     /**
      *
      */
+    public onClick_questionmark() {
+        $("#cubeviz-component-dialog").dialog("open");
+    }
+    
+    /**
+     *
+     */
     public render() 
     {
+        /**
+         * List
+         */
         var list = $("#cubviz-component-listBox"),
             optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
             selectedComponentDimensions = CubeViz_Links_Module.selectedComponents.dimensions,
@@ -77,6 +87,23 @@ class View_CubeVizModule_Component extends View_Abstract {
             dimension["elementCount"] = _.size(dimension["elements"]);
             
             list.append(optionTpl(dimension));
+        });
+        
+        /**
+         * Question mark dialog
+         */
+        $("#cubeviz-component-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
+        
+        /**
+         * Delegate events to new items of the template
+         */
+        this.delegateEvents({         
+            "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         
         return this;

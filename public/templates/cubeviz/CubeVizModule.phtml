@@ -71,7 +71,7 @@
             
             <br/>
             
-            <!-- Select data structure-->
+            <!-- Data structure definition section -->
             <div id="cubviz-dataStructureDefinition-container">
                 <div style="width: 100%; font-size: 12px; font-weight:bold; margin-bottom:2px;">
                     <?php echo $this->_translate->_('Select group of interest'); ?>
@@ -83,27 +83,30 @@
                 </div>
             </div>
             
-            <!-- Select data set -->
+            <!-- Data set section -->
             <div id="cubviz-dataSet-container">
                 <div style="width: 100%; float:left; font-size: 12px; font-weight:bold; margin-bottom:2px;">
                     <?php echo $this->_translate->_('Select part of group'); ?>
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
-                         title="<?php echo $this->_translate->_('Click for more information'); ?>" 
-                         class="cubeviz-icon-micro clickable"/>
+                         class="cubeviz-icon-micro clickable"
+                         id="cubeviz-dataSet-questionMark"
+                         title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
             </div>
 			
             <!-- Visual seperator -->
             <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
             
+            <!-- Component section -->
             <div id="cubviz-component-container">
 				<div style="width: 100%; font-size: 12px; font-weight: bold;">
                     <?php echo $this->_translate->_('Select axis elements'); ?>
                     &nbsp;
                     <img src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
-                         title="<?php echo $this->_translate->_('Click for more information'); ?>" 
-                         class="cubeviz-icon-micro clickable"/>
+                         class="cubeviz-icon-micro clickable"
+                         id="cubeviz-component-questionMark"
+                         title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
                 <div id="cubviz-component-listBox">
                 </div>
@@ -140,6 +143,24 @@
     instance about countries. Following the structure given by the 
     <a href="http://www.w3.org/TR/vocab-data-cube/" target="_blank">DataCube vocabulary</a>, 
     users are able to select specific structural elements of the DataCube.
+</div>
+
+<div id="cubeviz-dataSet-dialog" style="display: none;">
+    <h2>Select part of group</h2>
+    Each structural element of a DataCube contains data sets. A data set is the
+    major entity: it groups statistical data about a specific topic, called
+    observations. 
+</div>
+
+<div id="cubeviz-component-dialog" style="display: none;">
+    <h2>Select axis elements</h2>
+    Each data set contains statistical data. These data is a collection of so-called 
+    observations. Under an observation you can picture a point in a room. This point
+    has coordinates which locates him at a specific position in this room. In general 
+    these coordinates are 3 dimensional: height, width and deep. In the DataCube context
+    these coordinates are dimensions and it is possible to have more than these 3.
+    But these dimension are not positions in a room, you may think, but could be 
+    everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
 </div>
 
 

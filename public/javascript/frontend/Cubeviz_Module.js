@@ -360,6 +360,9 @@ var View_CubeVizModule_DataSet = (function (_super) {
         ]);
         this.viewManager.renderView("View_CubeVizModule_Component");
     };
+    View_CubeVizModule_DataSet.prototype.onClick_questionmark = function () {
+        $("#cubeviz-dataSet-dialog").dialog("open");
+    };
     View_CubeVizModule_DataSet.prototype.render = function () {
         $("#cubeviz-dataSet-list").remove();
         var listTpl = $("#cubeviz-dataSet-tpl-list").text();
@@ -371,8 +374,15 @@ var View_CubeVizModule_DataSet = (function (_super) {
             element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
+        $("#cubeviz-dataSet-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
         this.delegateEvents({
-            "change #cubeviz-dataSet-list": this.onChange_list
+            "change #cubeviz-dataSet-list": this.onChange_list,
+            "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
         });
         return this;
     };
@@ -400,6 +410,9 @@ var View_CubeVizModule_Component = (function (_super) {
             self.render();
         });
     };
+    View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
+        $("#cubeviz-component-dialog").dialog("open");
+    };
     View_CubeVizModule_Component.prototype.render = function () {
         var list = $("#cubviz-component-listBox");
         var optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text());
@@ -417,6 +430,15 @@ var View_CubeVizModule_Component = (function (_super) {
             }
             dimension["elementCount"] = _.size(dimension["elements"]);
             list.append(optionTpl(dimension));
+        });
+        $("#cubeviz-component-dialog").dialog({
+            "autoOpen": false,
+            "draggable": false,
+            "hide": "slow",
+            "show": "slow"
+        });
+        this.delegateEvents({
+            "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         return this;
     };
