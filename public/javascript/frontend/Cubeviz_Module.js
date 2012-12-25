@@ -30,14 +30,13 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.add = function (element, option) {
         if(undefined === this.get(element[this.idKey])) {
             this._.push(element);
-            return true;
         } else {
             if((undefined !== option && undefined !== option["merge"] && option["merge"] == true)) {
                 this.remove(element[this.idKey]);
                 this._.push(element);
             }
         }
-        return false;
+        return this;
     };
     CubeViz_Collection.prototype.addList = function (list) {
         var self = this;
@@ -50,6 +49,7 @@ var CubeViz_Collection = (function () {
                 this.addList(_.values(list));
             }
         }
+        return self;
     };
     CubeViz_Collection.prototype.get = function (id) {
         var self = this;
@@ -67,10 +67,12 @@ var CubeViz_Collection = (function () {
         this._ = _.reject(this._, function (element) {
             return element[self.idKey] === id;
         });
+        return this;
     };
     CubeViz_Collection.prototype.reset = function (idKey) {
-        this.idKey = undefined === idKey ? "id" : idKey;
+        this.idKey = undefined === idKey ? (undefined === this.idKey ? "id" : this.idKey) : idKey;
         this._ = [];
+        return this;
     };
     CubeViz_Collection.prototype.size = function () {
         return _.size(this._);
@@ -427,8 +429,6 @@ var View_CubeVizModule_Footer = (function (_super) {
     }
     View_CubeVizModule_Footer.prototype.changePermaLinkButton = function () {
         var value = "";
-        console.log("this.collection.get(buttonVal)");
-        console.log(this.collection.get("buttonVal"));
         if(undefined == this.collection.get("buttonVal")) {
             this.collection.add({
                 id: "buttonVal",

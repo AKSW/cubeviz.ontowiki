@@ -20,16 +20,20 @@ class View_CubeVizModule_Footer extends View_Abstract {
     public changePermaLinkButton() 
     {
         // Open perma link menu and show link
-        // if ( undefined == $("#cubeviz-footer-permaLinkButton").data ( "oldValue" ) ) {
         var value:string = "";
-        console.log("this.collection.get(buttonVal)");
-        console.log(this.collection.get("buttonVal"));
-        if(undefined == this.collection.get("buttonVal")) {         
+        
+        // If no buttonVal is set, we see the Permalink button,
+        // so transform it to see the link
+        if(undefined == this.collection.get("buttonVal")) {
+            // remember old perma link button label, because of the language
             this.collection.add({
                 id: "buttonVal", 
                 value: $("#cubeviz-footer-permaLinkButton").attr ("value").toString()
             });
             this.showLink(">>");
+            
+        // We see the link, so transform it back to the Permalink button,
+        // we saw before.
         } else {
             value = this.collection.get("buttonVal").value;
             this.collection.remove("buttonVal");

@@ -16,7 +16,7 @@ class CubeViz_Collection
      * Constructor
      * @param idKey Name of the key to use in a future collection.
      */
-    constructor(idKey:string) 
+    constructor(idKey?:string) 
     {
         this.reset(idKey);
     }
@@ -99,6 +99,8 @@ class CubeViz_Collection
         this._ = _.reject(this._, function(element){ 
             return element[self.idKey] === id; 
         });
+        
+        return this;
     }
     
     /**
@@ -108,16 +110,18 @@ class CubeViz_Collection
      */
     public reset(idKey?:string) : CubeViz_Collection
     {        
-        this.idKey = undefined === idKey ? this.idKey : idKey;
+        this.idKey = undefined === idKey 
+            ? ( undefined === this.idKey ? "id" : this.idKey ) 
+            : idKey;
         this._ = [];
         return this;
     }
     
     /**
      * Size of the collection
-     * @param int Size.
+     * @param number Size.
      */
-    public size() : int
+    public size() : number
     {
         return _.size(this._);
     }
