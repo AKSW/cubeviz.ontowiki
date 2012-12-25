@@ -7,8 +7,11 @@
 declare var CubeViz_Links_Module: any;
 declare var CubeViz_UI_ChartConfig: any;
 
-class View_CubeVizModule_Component extends View_Abstract {
-        
+class View_CubeVizModule_Component extends View_Abstract 
+{
+    /**
+     * 
+     */    
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
         super("View_CubeVizModule_Component", attachedTo, viewManager);
@@ -17,9 +20,49 @@ class View_CubeVizModule_Component extends View_Abstract {
     /**
      *
      */
-    public initialize() 
-    {
+    public configureSetupComponentDialog() {
+        var backupCollection = this.collection._,
+            dialogTpl = _.template(
+                $("#cubeviz-component-tpl-setupComponentDialog").text()
+            ),
+            hashedUrl:string = "",
+            self = this;
         
+        // empty collection
+        this.collection.reset();
+        
+        // go through all components and create a reference to dialog container
+        $(backupCollection).each(function(i, component){
+            
+            hashedUrl = component["hashedUrl"];
+            
+            // set dialog reference and template
+            $("#cubeviz-component-setupDialogContainer").append(
+                dialogTpl({label: "Foo", hashedUrl:hashedUrl})
+            );
+            
+            component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + 
+                                               hashedUrl);
+            
+            component["dialogReference"].dialog({
+                    "autoOpen": false,
+                    "draggable": false,
+                    "hide": "slow",
+                    "show": "slow"
+                })
+                .attr("hashedUrl", component["hashedUrl"]);
+            
+            self.collection.add(component);
+        });
+        
+        
+    }
+    
+    /**
+     *
+     */
+    public initialize() 
+    {        
         var self = this;
         
         // load all data structure definitions from server
@@ -35,9 +78,6 @@ class View_CubeVizModule_Component extends View_Abstract {
                 // set selectedDsd
                 self.setComponentsStuff(entries);
                 
-                // load components
-                // thisView.viewManager.callView("View_CubeVizModule_Dialog");
-                
                 // save given elements, doublings were ignored!
                 self.collection
                         .reset("hashedUrl")
@@ -52,8 +92,19 @@ class View_CubeVizModule_Component extends View_Abstract {
     /**
      *
      */
+    public onClick_setupComponentOpener(event) {
+        var hashedUrl = $(event.target).attr("hashedUrl"),
+            component = this.collection.get(hashedUrl);
+        
+        component["dialogReference"]
+            .dialog("open");
+    }
+    
+    /**
+     *
+     */
     public onClick_questionmark() {
-        $("#cubeviz-component-dialog").dialog("open");
+        $("#cubeviz-component-questionMarkDialog").dialog("open");
     }
     
     /**
@@ -92,17 +143,20 @@ class View_CubeVizModule_Component extends View_Abstract {
         /**
          * Question mark dialog
          */
-        $("#cubeviz-component-dialog").dialog({
+        $("#cubeviz-component-questionMarkDialog").dialog({
             "autoOpen": false,
             "draggable": false,
             "hide": "slow",
             "show": "slow"
         });
         
+        this.configureSetupComponentDialog();
+        
         /**
          * Delegate events to new items of the template
          */
         this.delegateEvents({         
+            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         

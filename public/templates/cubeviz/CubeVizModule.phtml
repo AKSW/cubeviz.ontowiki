@@ -152,7 +152,7 @@
     observations. 
 </div>
 
-<div id="cubeviz-component-dialog" style="display: none;">
+<div id="cubeviz-component-questionMarkDialog" style="display: none;">
     <h2>Select axis elements</h2>
     Each data set contains statistical data. These data is a collection of so-called 
     observations. Under an observation you can picture a point in a room. This point
@@ -163,6 +163,9 @@
     everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
 </div>
 
+<div id="cubeviz-component-setupDialogContainer" style="display: none;">
+    <!-- Will contain the dialogs for setup the dimensions -->
+</div>
 
 <!-- 
     #########
@@ -195,35 +198,30 @@
 <!-- Component-Dimension -->
 <script id="cubeviz-component-tpl-listBoxItem" type="text/template">
     <div class="cubeviz-component-box">    
-        <div class="cubeviz-component-title" id="dialog-{label}-selected-items">
+        <div class="cubeviz-component-title">
             <%= label %>&nbsp;(<%= selectedElementCount %> / <%= elementCount %>)
         </div>
         <small>Explanation text</small>
         <br/>
-        <a id="open-dialog-{hashedUrl}-selector" class="open-dialog-selector">
+        <a class="cubeviz-component-setupComponentOpener" hashedUrl="<%= hashedUrl %>">
             <?php echo $this->_translate->_('Select elements of interest'); ?>
         </a>        
     </div>    
 </script>
 
 <!-- Dialogs -->
-<script id="cubeviz-template-cubeVizModule-DimensionBox" type="text/template">
-    <div class="dialog" id="dialog-{label}">
-        <div class="dialog-header">
-            <div class="dialog-header-label">{label}</div>
-            <div style="float:right;">
-                <input type="button" id="dialog-btn-close-{hashedUrl}" class="minibutton submit" hashedUrl="{hashedUrl}" label="{label}" typeUrl="{typeUrl}" url="{url}" value="<?php echo $this->_translate->_('Update and close'); ?>">
-            </div>
-        </div>
-        <div class="dialog-components">
-            <ul>
-                <% _.each(list, function(name) { %> 
-                    <li>
-                        <input type="checkbox" name="<%= url %>" class="dialog-checkbox-<%= hashedUrl %>" value="<%= property %>" propertyLabel="<%= propertyLabel %>" property="<%= property %>"/>
-                        <label class="dialog-listitem-value"><%= propertyLabel %></label>
-                    </li>
-                <% }); %>
-            </ul>
-        </div>
-    </div>    
+<script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
+    <div id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>">
+        <h2><%= label %></h2>
+        <p>Dimension Meta Information</p>
+        <small>Hookline, whats possible here?</small>
+        <div class="dialog-components"></div>
+    </div>
+</script>
+
+<script id="cubeviz-component-tpl-dialogComponents" type="text/template">
+    <li>
+        <input type="checkbox" name="<%= url %>" class="dialog-checkbox-<%= hashedUrl %>" value="<%= property %>" propertyLabel="<%= propertyLabel %>" property="<%= property %>"/>
+        <label class="dialog-listitem-value"><%= propertyLabel %></label>
+    </li>
 </script>

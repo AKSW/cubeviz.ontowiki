@@ -3,8 +3,8 @@
 
 declare var CubeViz_Links_Module: any;
 
-class View_CubeVizModule_DataSet extends View_Abstract {
-        
+class View_CubeVizModule_DataSet extends View_Abstract 
+{        
     constructor(attachedTo:string, viewManager:View_Manager) 
     {
         super("View_CubeVizModule_DataSet", attachedTo, viewManager);        
