@@ -660,6 +660,15 @@
 }
 
 
+
+
+/**
+ * GENERAL
+ */
+.clickable {
+    cursor: pointer;
+}
+
 /**
  * ICONS
  */
