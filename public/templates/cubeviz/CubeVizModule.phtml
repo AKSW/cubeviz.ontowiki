@@ -206,7 +206,7 @@
         <a class="cubeviz-component-setupComponentOpener" hashedUrl="<%= hashedUrl %>">
             <?php echo $this->_translate->_('Select elements of interest'); ?>
         </a>        
-    </div>    
+    </div>
 </script>
 
 <!-- Dialogs -->
@@ -215,13 +215,24 @@
         <h2><%= label %></h2>
         <p>Dimension Meta Information</p>
         <small>Hookline, whats possible here?</small>
-        <div class="dialog-components"></div>
+        
+        <ul class="cubeviz-component-setupComponentElements"></ul>
+        
+        
+        <br/>
+        <input type="checkbox" value=""/>
+        <label><?php echo $this->_translate->_('Deselect all items'); ?></label>
+        
+        <div style="margin-top:10px;">
+            <input type="button" value="<?php echo $this->_translate->_('Close and apply changes'); ?>">
+            <input type="button" value="<?php echo $this->_translate->_('Close and update chart'); ?>">
+        </div>
     </div>
 </script>
 
-<script id="cubeviz-component-tpl-dialogComponents" type="text/template">
+<script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
     <li>
-        <input type="checkbox" name="<%= url %>" class="dialog-checkbox-<%= hashedUrl %>" value="<%= property %>" propertyLabel="<%= propertyLabel %>" property="<%= property %>"/>
-        <label class="dialog-listitem-value"><%= propertyLabel %></label>
+        <input type="checkbox" name="<%= hashedProperty %>" value="<%= property %>"/>
+        <label><%= propertyLabel %></label>
     </li>
 </script>

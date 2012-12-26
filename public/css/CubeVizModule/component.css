@@ -1,9 +1,21 @@
-.cubeviz-component-title {
+.cubeviz-component-title 
+{
     font-weight: bold;
     font-size: 13px;
 }
 
-.cubeviz-component-box {
+.cubeviz-component-box 
+{
     margin-top: 9px;
     margin-left: 4px;
+}
+
+.cubeviz-component-setupComponentElements{
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.cubeviz-component-setupComponentElements li{
+    
 }

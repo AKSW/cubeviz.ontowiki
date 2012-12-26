@@ -419,10 +419,22 @@ var View_CubeVizModule_Component = (function (_super) {
             component["dialogReference"].dialog({
                 "autoOpen": false,
                 "draggable": false,
+                "height": 500,
                 "hide": "slow",
-                "show": "slow"
+                "show": "slow",
+                "width": 700
             }).attr("hashedUrl", hashedUrl);
+            self.configureSetupComponentElements(component);
             self.collection.add(component);
+        });
+    };
+    View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
+        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
+        var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
+        var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
+
+        $(component.elements).each(function (i, element) {
+            elementList.append(elementTpl(element));
         });
     };
     View_CubeVizModule_Component.prototype.initialize = function () {

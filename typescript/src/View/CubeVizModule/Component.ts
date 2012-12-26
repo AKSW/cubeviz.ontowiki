@@ -20,7 +20,8 @@ class View_CubeVizModule_Component extends View_Abstract
     /**
      *
      */
-    public configureSetupComponentDialog() {
+    public configureSetupComponentDialog() 
+    {
         var backupCollection = this.collection._,
             dialogTpl = _.template(
                 $("#cubeviz-component-tpl-setupComponentDialog").text()
@@ -40,22 +41,41 @@ class View_CubeVizModule_Component extends View_Abstract
             $("#cubeviz-component-setupDialogContainer").append(
                 dialogTpl({label: "Foo", hashedUrl:hashedUrl})
             );
-            
+                        
             component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + 
                                                hashedUrl);
             
             component["dialogReference"].dialog({
                     "autoOpen": false,
                     "draggable": false,
+                    "height": 500,
                     "hide": "slow",
-                    "show": "slow"
+                    "show": "slow",
+                    "width": 700
                 })
                 .attr("hashedUrl", hashedUrl);
+                
+            //
+            self.configureSetupComponentElements(component);
             
             self.collection.add(component);
         });
-        
-        
+    }
+    
+    /**
+     *
+     */
+    public configureSetupComponentElements(component:any) 
+    {
+        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
+            elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
+            elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
+
+        // Go through all elements of the given component ..
+        $(component.elements).each(function(i, element){
+            // ... add new item to element list
+            elementList.append(elementTpl(element));
+        });
     }
     
     /**
@@ -92,7 +112,8 @@ class View_CubeVizModule_Component extends View_Abstract
     /**
      *
      */
-    public onClick_setupComponentOpener(event) {
+    public onClick_setupComponentOpener(event) 
+    {
         var component:any = this.collection.get($(event.target).attr("hashedUrl"));
         component.dialogReference.dialog("open");
     }
@@ -100,7 +121,8 @@ class View_CubeVizModule_Component extends View_Abstract
     /**
      *
      */
-    public onClick_questionmark() {
+    public onClick_questionmark() 
+    {
         $("#cubeviz-component-questionMarkDialog").dialog("open");
     }
     
