@@ -434,14 +434,16 @@ var View_CubeVizModule_Component = (function (_super) {
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
         var selectedDimensions = CubeViz_Links_Module.selectedComponents.dimensions[component.hashedUrl].elements;
+        var setElementChecked = null;
 
         component.elements.sort(function (a, b) {
             return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
         });
         $(component.elements).each(function (i, element) {
-            if(undefined !== _.find(selectedDimensions, function (dim) {
+            setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
                 return dim.property == element["property"];
-            })) {
+            });
+            if(true === setElementChecked) {
                 element["checked"] = " checked=\"checked\"";
             } else {
                 element["checked"] = "";
@@ -456,6 +458,9 @@ var View_CubeVizModule_Component = (function (_super) {
             self.collection.reset("hashedUrl").addList(entries);
             self.render();
         });
+    };
+    View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
+        $("#cubeviz-component-setupComponentDialog-" + $(event.target).attr("hashedUrl") + " [type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         var component = this.collection.get($(event.target).attr("hashedUrl"));
@@ -490,6 +495,7 @@ var View_CubeVizModule_Component = (function (_super) {
         });
         this.configureSetupComponentDialog();
         this.delegateEvents({
+            "click .cubeviz-component-setupComponentDeselectButton": this.onClick_deselectedAllComponentElements,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });

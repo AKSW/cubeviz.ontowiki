@@ -72,7 +72,8 @@ class View_CubeVizModule_Component extends View_Abstract
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
             selectedDimensions = CubeViz_Links_Module.selectedComponents
-                                 .dimensions[component.hashedUrl].elements;
+                                 .dimensions[component.hashedUrl].elements,
+            setElementChecked = null;
 
         // sort elements by label, ascending
         component.elements.sort(function(a, b) {
@@ -127,6 +128,15 @@ class View_CubeVizModule_Component extends View_Abstract
                 self.render();
             }
         );
+    }
+    
+    /**
+     *
+     */
+    public onClick_deselectedAllComponentElements(event) 
+    {
+        $("#cubeviz-component-setupComponentDialog-" + $(event.target).attr("hashedUrl") + 
+          " [type=\"checkbox\"]").attr("checked", false);
     }
     
     /**
@@ -195,8 +205,14 @@ class View_CubeVizModule_Component extends View_Abstract
          * Delegate events to new items of the template
          */
         this.delegateEvents({         
-            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
-            "click #cubeviz-component-questionMark": this.onClick_questionmark
+            "click .cubeviz-component-setupComponentDeselectButton": 
+                this.onClick_deselectedAllComponentElements,
+                
+            "click .cubeviz-component-setupComponentOpener": 
+                this.onClick_setupComponentOpener,
+            
+            "click #cubeviz-component-questionMark": 
+                this.onClick_questionmark,
         });
         
         return this;
