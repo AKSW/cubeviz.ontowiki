@@ -70,16 +70,26 @@ class View_CubeVizModule_Component extends View_Abstract
     {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
-            elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
+            elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
+            selectedDimensions = CubeViz_Links_Module.selectedComponents
+                                 .dimensions[component.hashedUrl].elements;
 
-        // sort objects by label, ascending
+        // sort elements by label, ascending
         component.elements.sort(function(a, b) {
            return a.propertyLabel.toUpperCase()
                     .localeCompare(b.propertyLabel.toUpperCase());
-        })
-
+        });
+        
         // Go through all elements of the given component ..
         $(component.elements).each(function(i, element){
+            
+            if(undefined !== _.find(selectedDimensions, function(dim){ 
+                return dim.property == element["property"]; 
+            })){
+                element["checked"] = " checked=\"checked\"";
+            } else {
+                element["checked"] = "";
+            }
             // ... add new item to element list
             elementList.append(elementTpl(element));
         });

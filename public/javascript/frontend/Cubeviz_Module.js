@@ -433,11 +433,19 @@ var View_CubeVizModule_Component = (function (_super) {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
+        var selectedDimensions = CubeViz_Links_Module.selectedComponents.dimensions[component.hashedUrl].elements;
 
         component.elements.sort(function (a, b) {
             return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
         });
         $(component.elements).each(function (i, element) {
+            if(undefined !== _.find(selectedDimensions, function (dim) {
+                return dim.property == element["property"];
+            })) {
+                element["checked"] = " checked=\"checked\"";
+            } else {
+                element["checked"] = "";
+            }
             elementList.append(elementTpl(element));
         });
     };
