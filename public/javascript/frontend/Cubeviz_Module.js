@@ -419,7 +419,7 @@ var View_CubeVizModule_Component = (function (_super) {
             component["dialogReference"].dialog({
                 "autoOpen": false,
                 "draggable": false,
-                "height": 500,
+                "height": 485,
                 "hide": "slow",
                 "show": "slow",
                 "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
