@@ -83,9 +83,12 @@ class View_CubeVizModule_Component extends View_Abstract
         // Go through all elements of the given component ..
         $(component.elements).each(function(i, element){
             
-            if(undefined !== _.find(selectedDimensions, function(dim){ 
+            // check if current element will be checked
+            setElementChecked = undefined !== _.find(selectedDimensions, function(dim){ 
                 return dim.property == element["property"]; 
-            })){
+            });
+            
+            if(true === setElementChecked){
                 element["checked"] = " checked=\"checked\"";
             } else {
                 element["checked"] = "";
