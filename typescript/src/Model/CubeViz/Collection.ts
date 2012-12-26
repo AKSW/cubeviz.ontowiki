@@ -104,16 +104,19 @@ class CubeViz_Collection
     }
     
     /**
-     * Reset collection. Reset idKey too, if you like or use the old one.
+     * Reset collection. Reset idKey too, if you like or use the old one(idKey=undefined).
      * @param idKey Optional, new idKey. If undefined, it will use the old one.
      * @return CubeViz_Collection Itself, for chaining.
      */
     public reset(idKey?:string) : CubeViz_Collection
     {        
         this.idKey = undefined === idKey 
+            // if nothing was given, check own idKey 
             ? ( undefined === this.idKey ? "id" : this.idKey ) 
             : idKey;
+        // empty array which contains all the element of the collection
         this._ = [];
+        
         return this;
     }
     
