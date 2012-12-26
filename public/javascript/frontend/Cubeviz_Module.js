@@ -421,7 +421,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 "draggable": false,
                 "hide": "slow",
                 "show": "slow"
-            }).attr("hashedUrl", component["hashedUrl"]);
+            }).attr("hashedUrl", hashedUrl);
             self.collection.add(component);
         });
     };
@@ -434,10 +434,8 @@ var View_CubeVizModule_Component = (function (_super) {
         });
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
-        var hashedUrl = $(event.target).attr("hashedUrl");
-        var component = this.collection.get(hashedUrl);
-
-        component["dialogReference"].dialog("open");
+        var component = this.collection.get($(event.target).attr("hashedUrl"));
+        component.dialogReference.dialog("open");
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         $("#cubeviz-component-questionMarkDialog").dialog("open");

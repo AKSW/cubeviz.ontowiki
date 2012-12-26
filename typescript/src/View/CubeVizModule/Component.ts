@@ -50,7 +50,7 @@ class View_CubeVizModule_Component extends View_Abstract
                     "hide": "slow",
                     "show": "slow"
                 })
-                .attr("hashedUrl", component["hashedUrl"]);
+                .attr("hashedUrl", hashedUrl);
             
             self.collection.add(component);
         });
@@ -93,11 +93,8 @@ class View_CubeVizModule_Component extends View_Abstract
      *
      */
     public onClick_setupComponentOpener(event) {
-        var hashedUrl = $(event.target).attr("hashedUrl"),
-            component = this.collection.get(hashedUrl);
-        
-        component["dialogReference"]
-            .dialog("open");
+        var component:any = this.collection.get($(event.target).attr("hashedUrl"));
+        component.dialogReference.dialog("open");
     }
     
     /**
