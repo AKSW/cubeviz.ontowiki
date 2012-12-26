@@ -218,14 +218,20 @@
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
+        <a><?php echo $this->_translate->_('Deselect all items'); ?></a>
         
         <br/>
-        <input type="checkbox" value=""/>
-        <label><?php echo $this->_translate->_('Deselect all items'); ?></label>
-        
-        <div style="margin-top:10px;">
-            <input type="button" value="<?php echo $this->_translate->_('Close and apply changes'); ?>">
-            <input type="button" value="<?php echo $this->_translate->_('Close and update chart'); ?>">
+        <br/>
+        <div style="margin-top:5px;">
+            
+            <input class="minibutton submit"
+                    type="button"
+                    value="<?php echo $this->_translate->_('Close and apply changes'); ?>"/>
+            
+            <input class="minibutton submit"
+                    type="button"
+                    value="<?php echo $this->_translate->_('Close and update chart'); ?>"/>
+                    
         </div>
     </div>
 </script>
