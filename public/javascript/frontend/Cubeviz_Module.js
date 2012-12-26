@@ -422,6 +422,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 "height": 500,
                 "hide": "slow",
                 "show": "slow",
+                "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
                 "width": 700
             }).attr("hashedUrl", hashedUrl);
             self.configureSetupComponentElements(component);
@@ -433,6 +434,9 @@ var View_CubeVizModule_Component = (function (_super) {
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
 
+        component.elements.sort(function (a, b) {
+            return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
+        });
         $(component.elements).each(function (i, element) {
             elementList.append(elementTpl(element));
         });

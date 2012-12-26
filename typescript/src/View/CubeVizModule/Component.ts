@@ -51,6 +51,7 @@ class View_CubeVizModule_Component extends View_Abstract
                     "height": 500,
                     "hide": "slow",
                     "show": "slow",
+                    "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
                     "width": 700
                 })
                 .attr("hashedUrl", hashedUrl);
@@ -70,6 +71,12 @@ class View_CubeVizModule_Component extends View_Abstract
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
+
+        // sort objects by label, ascending
+        component.elements.sort(function(a, b) {
+           return a.propertyLabel.toUpperCase()
+                    .localeCompare(b.propertyLabel.toUpperCase());
+        })
 
         // Go through all elements of the given component ..
         $(component.elements).each(function(i, element){

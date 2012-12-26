@@ -11,8 +11,8 @@ class DataCube_Component {
      * Loads all component dimensions, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllDimensions (dsdUrl:string, dsUrl:string, callback) {
-        
+    static loadAllDimensions (dsdUrl:string, dsUrl:string, callback) 
+    {
         $.ajax({
             url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
             data: {
@@ -35,8 +35,8 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllDimensions (entries:any, callback) {
-        
+    static prepareLoadedAllDimensions (entries:any, callback) 
+    {
         entries = JSON.parse (entries);
                                 
         // sort objects by label, ascending
@@ -60,8 +60,8 @@ class DataCube_Component {
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (dsdUrl:string, dsUrl:string, callback) {
-        
+    static loadAllMeasures (dsdUrl:string, dsUrl:string, callback) 
+    {
         $.ajax({
             url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
             data: {
@@ -84,8 +84,8 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllMeasures (entries:any, callback) {
-        
+    static prepareLoadedAllMeasures (entries:any, callback) 
+    {
         entries = JSON.parse (entries);        
                                 
         // sort objects by label, ascending
@@ -108,8 +108,8 @@ class DataCube_Component {
     /**
      * 
      */
-    static getDefaultSelectedDimensions ( componentDimensions ) : Object {
-        
+    static getDefaultSelectedDimensions ( componentDimensions ) : Object 
+    {
         componentDimensions = $.parseJSON(JSON.stringify(componentDimensions));
         
         var result:Object = {};
