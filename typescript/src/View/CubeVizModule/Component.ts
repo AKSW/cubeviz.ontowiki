@@ -7,14 +7,14 @@
 declare var CubeViz_Links_Module: any;
 declare var CubeViz_UI_ChartConfig: any;
 
-class View_CubeVizModule_Component extends View_Abstract 
+class View_CubeVizModule_Component extends CubeViz_View_Abstract 
 {
     /**
      * 
      */    
-    constructor(attachedTo:string, viewManager:View_Manager) 
+    constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
-        super("View_CubeVizModule_Component", attachedTo, viewManager);
+        super("View_CubeVizModule_Component", attachedTo, app);
     }
     
     /**

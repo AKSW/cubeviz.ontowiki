@@ -22,21 +22,17 @@
     $(document).ready(function(){
         
         // initialize view manager to handle all the used views
-        var viewManager = new View_Manager();
+        var app = new CubeViz_View_Application();
         
         /**
-         * Add views to view manager
+         * Add views
          */
-        viewManager
+        app
             /**
              * These views will added and executed on render() call. (second parameter 
              * causes that)
              */
-            .add(
-                "View_CubeVizModule_DataStructureDefintion",
-                "#cubviz-dataStructureDefinition-container",
-                true
-            )
+            .add("View_CubeVizModule_DataStructureDefintion", "#cubviz-dataStructureDefinition-container",true)
             .add("View_CubeVizModule_Footer", "#cubeviz-footer-container", true)
         
             /**

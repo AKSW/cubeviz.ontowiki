@@ -3,14 +3,14 @@
 
 declare var CubeViz_Links_Module: any;
 
-class View_CubeVizModule_DataStructureDefintion extends View_Abstract 
+class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract 
 {
     /**
      * 
      */
-    constructor(attachedTo:string, viewManager:View_Manager) 
+    constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
-        super("View_CubeVizModule_DataStructureDefintion", attachedTo, viewManager);
+        super("View_CubeVizModule_DataStructureDefintion", attachedTo, app);
     }
     
     /**
@@ -39,7 +39,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
                 self.render();
                 
                 // load data set view
-                self.viewManager.renderView("View_CubeVizModule_DataSet");
+                self.app.renderView("View_CubeVizModule_DataSet");
             }
         );
     }
@@ -58,7 +58,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
         this.setSelectedDSD([selectedElement]);
     
         // reset data set view
-        this.viewManager.renderView("View_CubeVizModule_DataSet");
+        this.app.renderView("View_CubeVizModule_DataSet");
     }
     
     /**
@@ -71,7 +71,7 @@ class View_CubeVizModule_DataStructureDefintion extends View_Abstract
     /**
      * 
      */
-    public render() : View_Abstract
+    public render() : CubeViz_View_Abstract
     {
         /**
          * List

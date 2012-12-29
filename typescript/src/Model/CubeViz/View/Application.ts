@@ -1,7 +1,7 @@
 /**
  * 
  */
-class View_Manager {
+class CubeViz_View_Application {
     
     private _allViews:CubeViz_Collection;
     
@@ -18,7 +18,7 @@ class View_Manager {
      * @param view View instance to add.
      * @param autostart True if view has to be rendered on render() call, false or nothing otherwise.
      */
-    public add(id:string, attachedTo:string, autostart?:bool) : View_Manager
+    public add(id:string, attachedTo:string, autostart?:bool) : CubeViz_View_Application
     {
         // set autostart property
         autostart = true == autostart ? true : false;
@@ -31,7 +31,7 @@ class View_Manager {
     /**
      * Get a particular view.
      * @param id ID of the view.
-     * @return View_Abstract|bool View instance, if found, false otherwise.
+     * @return CubeViz_View_Abstract|bool View instance, if found, false otherwise.
      */
     public get(id:string) : any
     {
@@ -43,7 +43,7 @@ class View_Manager {
      * @param id ID of the view.
      * @return void
      */
-    public renderView(id:string) : View_Manager
+    public renderView(id:string) : CubeViz_View_Application
     {
         var view = this.get(id);
         if(undefined !== view) {
@@ -59,7 +59,7 @@ class View_Manager {
      * @param id ID of the view to remove.
      * @return bool True if element with given id was found and removed, false otherwise.
      */
-    public remove(id:string) : View_Manager
+    public remove(id:string) : CubeViz_View_Application
     {
         this._allViews.remove(id);
         return this;
@@ -69,7 +69,7 @@ class View_Manager {
      * Renders all views, which have property autostart=true
      * @return void
      */
-    public render() : View_Manager
+    public render() : CubeViz_View_Application
     {
         var self = this;
         $(this._allViews._).each(function(i, view){

@@ -79,6 +79,75 @@ var CubeViz_Collection = (function () {
     };
     return CubeViz_Collection;
 })();
+var CubeViz_View_Abstract = (function () {
+    function CubeViz_View_Abstract(id, attachedTo, app) {
+        this.attachedTo = attachedTo;
+        this.autostart = false;
+        this.el = $(attachedTo);
+        this.id = "view" || id;
+        this.collection = new CubeViz_Collection();
+        this.app = app;
+        this.initialize();
+    }
+    CubeViz_View_Abstract.prototype.delegateEvents = function (events) {
+        if(undefined == events) {
+            return;
+        }
+        for(var key in events) {
+            var method = events[key];
+            if(!_.isFunction(method)) {
+                method = this[events[key]];
+            }
+            if(!method) {
+                throw new Error('Method "' + events[key] + '" does not exist');
+            }
+            var eventName = key.substr(0, key.indexOf(" "));
+            var selector = key.substr(key.indexOf(" ") + 1);
+            $(selector).on(eventName, $.proxy(method, this));
+        }
+    };
+    CubeViz_View_Abstract.prototype.initialize = function () {
+    };
+    return CubeViz_View_Abstract;
+})();
+var CubeViz_View_Application = (function () {
+    function CubeViz_View_Application() {
+        this._allViews = new CubeViz_Collection();
+    }
+    CubeViz_View_Application.prototype.add = function (id, attachedTo, autostart) {
+        autostart = true == autostart ? true : false;
+        this._allViews.add({
+            id: id,
+            attachedTo: attachedTo,
+            autostart: autostart
+        });
+        return this;
+    };
+    CubeViz_View_Application.prototype.get = function (id) {
+        return this._allViews.get(id);
+    };
+    CubeViz_View_Application.prototype.renderView = function (id) {
+        var view = this.get(id);
+        if(undefined !== view) {
+            eval("new " + id + "(\"" + view.attachedTo + "\", this);");
+        }
+        return this;
+    };
+    CubeViz_View_Application.prototype.remove = function (id) {
+        this._allViews.remove(id);
+        return this;
+    };
+    CubeViz_View_Application.prototype.render = function () {
+        var self = this;
+        $(this._allViews._).each(function (i, view) {
+            if(true == view["autostart"]) {
+                self.renderView(view["id"]);
+            }
+        });
+        return this;
+    };
+    return CubeViz_View_Application;
+})();
 var DataCube_DataStructureDefinition = (function () {
     function DataCube_DataStructureDefinition() { }
     DataCube_DataStructureDefinition.loadAll = function loadAll(callback) {
@@ -203,75 +272,6 @@ var DataCube_Component = (function () {
     }
     return DataCube_Component;
 })();
-var View_Abstract = (function () {
-    function View_Abstract(id, attachedTo, viewManager) {
-        this.attachedTo = attachedTo;
-        this.autostart = false;
-        this.el = $(attachedTo);
-        this.id = "view" || id;
-        this.collection = new CubeViz_Collection();
-        this.viewManager = viewManager;
-        this.initialize();
-    }
-    View_Abstract.prototype.delegateEvents = function (events) {
-        if(undefined == events) {
-            return;
-        }
-        for(var key in events) {
-            var method = events[key];
-            if(!_.isFunction(method)) {
-                method = this[events[key]];
-            }
-            if(!method) {
-                throw new Error('Method "' + events[key] + '" does not exist');
-            }
-            var eventName = key.substr(0, key.indexOf(" "));
-            var selector = key.substr(key.indexOf(" ") + 1);
-            $(selector).on(eventName, $.proxy(method, this));
-        }
-    };
-    View_Abstract.prototype.initialize = function () {
-    };
-    return View_Abstract;
-})();
-var View_Manager = (function () {
-    function View_Manager() {
-        this._allViews = new CubeViz_Collection();
-    }
-    View_Manager.prototype.add = function (id, attachedTo, autostart) {
-        autostart = true == autostart ? true : false;
-        this._allViews.add({
-            id: id,
-            attachedTo: attachedTo,
-            autostart: autostart
-        });
-        return this;
-    };
-    View_Manager.prototype.get = function (id) {
-        return this._allViews.get(id);
-    };
-    View_Manager.prototype.renderView = function (id) {
-        var view = this.get(id);
-        if(undefined !== view) {
-            eval("new " + id + "(\"" + view.attachedTo + "\", this);");
-        }
-        return this;
-    };
-    View_Manager.prototype.remove = function (id) {
-        this._allViews.remove(id);
-        return this;
-    };
-    View_Manager.prototype.render = function () {
-        var self = this;
-        $(this._allViews._).each(function (i, view) {
-            if(true == view["autostart"]) {
-                self.renderView(view["id"]);
-            }
-        });
-        return this;
-    };
-    return View_Manager;
-})();
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
@@ -279,8 +279,8 @@ var __extends = this.__extends || function (d, b) {
 }
 var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
-    function View_CubeVizModule_DataStructureDefintion(attachedTo, viewManager) {
-        _super.call(this, "View_CubeVizModule_DataStructureDefintion", attachedTo, viewManager);
+    function View_CubeVizModule_DataStructureDefintion(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_DataStructureDefintion", attachedTo, app);
     }
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
         var self = this;
@@ -288,7 +288,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             self.setSelectedDSD(entries);
             self.collection.reset("hashedUrl").addList(entries);
             self.render();
-            self.viewManager.renderView("View_CubeVizModule_DataSet");
+            self.app.renderView("View_CubeVizModule_DataSet");
         });
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
@@ -298,7 +298,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.setSelectedDSD([
             selectedElement
         ]);
-        this.viewManager.renderView("View_CubeVizModule_DataSet");
+        this.app.renderView("View_CubeVizModule_DataSet");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
         $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
@@ -335,11 +335,11 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         }
     };
     return View_CubeVizModule_DataStructureDefintion;
-})(View_Abstract);
+})(CubeViz_View_Abstract);
 var View_CubeVizModule_DataSet = (function (_super) {
     __extends(View_CubeVizModule_DataSet, _super);
-    function View_CubeVizModule_DataSet(attachedTo, viewManager) {
-        _super.call(this, "View_CubeVizModule_DataSet", attachedTo, viewManager);
+    function View_CubeVizModule_DataSet(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_DataSet", attachedTo, app);
     }
     View_CubeVizModule_DataSet.prototype.initialize = function () {
         var self = this;
@@ -348,7 +348,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
             self.collection.reset("hashedUrl");
             self.collection.addList(entries);
             self.render();
-            self.viewManager.renderView("View_CubeVizModule_Component");
+            self.app.renderView("View_CubeVizModule_Component");
         });
     };
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
@@ -358,7 +358,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.setSelectedDS([
             selectedElement
         ]);
-        this.viewManager.renderView("View_CubeVizModule_Component");
+        this.app.renderView("View_CubeVizModule_Component");
     };
     View_CubeVizModule_DataSet.prototype.onClick_questionmark = function () {
         $("#cubeviz-dataSet-dialog").dialog("open");
@@ -396,11 +396,11 @@ var View_CubeVizModule_DataSet = (function (_super) {
         }
     };
     return View_CubeVizModule_DataSet;
-})(View_Abstract);
+})(CubeViz_View_Abstract);
 var View_CubeVizModule_Component = (function (_super) {
     __extends(View_CubeVizModule_Component, _super);
-    function View_CubeVizModule_Component(attachedTo, viewManager) {
-        _super.call(this, "View_CubeVizModule_Component", attachedTo, viewManager);
+    function View_CubeVizModule_Component(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_Component", attachedTo, app);
     }
     View_CubeVizModule_Component.prototype.configureSetupComponentDialog = function () {
         var backupCollection = this.collection._;
@@ -506,11 +506,11 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
     };
     return View_CubeVizModule_Component;
-})(View_Abstract);
+})(CubeViz_View_Abstract);
 var View_CubeVizModule_Footer = (function (_super) {
     __extends(View_CubeVizModule_Footer, _super);
-    function View_CubeVizModule_Footer(attachedTo, viewManager) {
-        _super.call(this, "View_CubeVizModule_Footer", attachedTo, viewManager);
+    function View_CubeVizModule_Footer(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_Footer", attachedTo, app);
     }
     View_CubeVizModule_Footer.prototype.changePermaLinkButton = function () {
         var value = "";
@@ -566,4 +566,4 @@ var View_CubeVizModule_Footer = (function (_super) {
         });
     };
     return View_CubeVizModule_Footer;
-})(View_Abstract);
+})(CubeViz_View_Abstract);

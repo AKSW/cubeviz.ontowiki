@@ -3,11 +3,11 @@
 
 declare var CubeViz_Links_Module: any;
 
-class View_CubeVizModule_DataSet extends View_Abstract 
+class View_CubeVizModule_DataSet extends CubeViz_View_Abstract 
 {        
-    constructor(attachedTo:string, viewManager:View_Manager) 
+    constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
-        super("View_CubeVizModule_DataSet", attachedTo, viewManager);        
+        super("View_CubeVizModule_DataSet", attachedTo, app);        
     }
     
     public initialize() : void 
@@ -36,7 +36,7 @@ class View_CubeVizModule_DataSet extends View_Abstract
                 self.render();
                 
                 // load components
-                self.viewManager.renderView("View_CubeVizModule_Component");
+                self.app.renderView("View_CubeVizModule_Component");
             }
         );
     }
@@ -55,7 +55,7 @@ class View_CubeVizModule_DataSet extends View_Abstract
         this.setSelectedDS([selectedElement]);
 
         // reset component view
-        this.viewManager.renderView("View_CubeVizModule_Component");
+        this.app.renderView("View_CubeVizModule_Component");
     }
     
     /**
@@ -68,7 +68,7 @@ class View_CubeVizModule_DataSet extends View_Abstract
     /**
      * 
      */
-    public render() : View_Abstract
+    public render() : CubeViz_View_Abstract
     {
         /**
          * List

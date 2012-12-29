@@ -1,12 +1,11 @@
 src/Model/CubeViz/ConfigurationLink.ts
 src/Model/CubeViz/Collection.ts
+src/Model/CubeViz/View/Abstract.ts
+src/Model/CubeViz/View/Application.ts
 
 src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/DataSet.ts
 src/Model/DataCube/Component.ts
-
-src/Model/View/Abstract.ts
-src/Model/View/Manager.ts
 
 src/View/CubeVizModule/DataStructureDefinition.ts
 src/View/CubeVizModule/DataSet.ts

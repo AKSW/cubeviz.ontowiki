@@ -1,8 +1,16 @@
 /**
  * 
  */
-class View_Abstract {
+class CubeViz_View_Abstract {
     
+    /**
+     * Reference to application which called this instance
+     */
+    public app:CubeViz_View_Application;    
+    
+    /**
+     * 
+     */
     public autostart:bool;
     
     /**
@@ -24,16 +32,11 @@ class View_Abstract {
      * 
      */
     public id:string;
-    
-    /**
-     * Reference to view manager which called this instance
-     */
-    public viewManager:View_Manager;    
         
     /**
      * 
      */
-    constructor(id:string, attachedTo:string, viewManager:View_Manager) 
+    constructor(id:string, attachedTo:string, app:CubeViz_View_Application) 
     {        
         // set properties
         this.attachedTo = attachedTo;
@@ -41,7 +44,7 @@ class View_Abstract {
         this.el = $(attachedTo);
         this.id = "view" || id;
         this.collection = new CubeViz_Collection;
-        this.viewManager = viewManager;
+        this.app = app;
         
         this.initialize();
     }
