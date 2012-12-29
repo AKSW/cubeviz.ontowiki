@@ -17,7 +17,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          */
         DataCube_DataSet.loadAll(
         
-            CubeViz_Links_Module.selectedDSD.url,
+            this.app._.data.selectedDSD.url,
             
             // after all elements were loaded, add them to collection
             // and render the view
@@ -34,7 +34,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
                 self.render();
                 
                 // load components
-                // self.app.renderView("View_CubeVizModule_Component");
+                self.app.renderView("View_CubeVizModule_Component");
             }
         );
     }
@@ -113,12 +113,12 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         // if nothing was given
         if(0 === entries.length || undefined === entries) {
             // todo: handle case that no data sets were loaded
-            CubeViz_Links_Module.selectedDS = {};
+            this.app._.data.selectedDS = {};
             throw new Error ("View_CubeVizModule_DataSet: No data sets were loaded!");
         
         // if at least one data structure definition, than load data sets for first one
         } else {
-            CubeViz_Links_Module.selectedDS = entries[0];
+            this.app._.data.selectedDS = entries[0];
         }
     }
 }

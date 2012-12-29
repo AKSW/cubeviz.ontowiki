@@ -20,6 +20,9 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         
         // load all data structure definitions from server
         DataCube_DataStructureDefinition.loadAll(
+        
+            this.app._.backend.url,            
+            this.app._.backend.modelUrl,
             
             // after all elements were loaded, add them to collection
             // and render the view
@@ -75,13 +78,14 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
          * List of items
          */        
         var list = $("#cubeviz-dataStructureDefinition-list"),
-        optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
+            optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text()),
+            self = this;
         
         // output loaded data
         $(this.collection._).each(function(i, element){
             
             // set selected variable, if element url is equal to selected dsd
-            element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url
+            element["selected"] = element["url"] == self.app._.data.selectedDSD.url
                 ? " selected" : "";
 
             list.append(optionTpl(element));
@@ -117,12 +121,12 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         // if nothing was given
         if(0 == entries.length || undefined === entries) {
             // todo: handle case that no data structure definition were loaded!
-            CubeViz_Links_Module.selectedDSD = {};
+            this.app._.data.selectedDSD = {};
             throw new Error ("View_CubeVizModule_DataStructureDefinition: No dsd's were loaded!");
         
         // if at least one data structure definition, than load data sets for first one     
         } else {
-            CubeViz_Links_Module.selectedDSD = entries[0];
+            this.app._.data.selectedDSD = entries[0];
         }
     }
 }

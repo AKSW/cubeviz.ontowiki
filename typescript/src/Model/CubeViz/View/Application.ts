@@ -17,7 +17,7 @@ class CubeViz_View_Application {
     /**
      * Data container
      */
-    public _:{};
+    public _:any;
     
     /**
      * Constructor

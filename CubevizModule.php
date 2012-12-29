@@ -101,7 +101,7 @@ class CubevizModule extends OntoWiki_Module
         $backend['id']              = 'backend';
         $backend['imagesPath']      = $baseImagesPath;
         $backend['modelUrl']        = $modelIri;
-        $backend['path']            = $this->_config->staticUrlBase . 'cubeviz/';
+        $backend['url']             = $this->_config->staticUrlBase . 'cubeviz/';
         $backend['sparqlEndpoint']  = 'local'; 
         
         $this->view->cubeVizBackend = json_encode($backend, JSON_FORCE_OBJECT);

@@ -174,11 +174,11 @@ var CubeViz_View_Application = (function () {
 })();
 var DataCube_DataStructureDefinition = (function () {
     function DataCube_DataStructureDefinition() { }
-    DataCube_DataStructureDefinition.loadAll = function loadAll(callback) {
+    DataCube_DataStructureDefinition.loadAll = function loadAll(url, modelUrl, callback) {
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "getdatastructuredefinitions/",
+            url: url + "getdatastructuredefinitions/",
             data: {
-                m: CubeViz_Links_Module["modelUrl"]
+                m: modelUrl
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             console.log("DataStructureDefinition > loadAll > error");
@@ -308,7 +308,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     }
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
         var self = this;
-        DataCube_DataStructureDefinition.loadAll(function (entries) {
+        DataCube_DataStructureDefinition.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, function (entries) {
             self.setSelectedDSD(entries);
             self.collection.reset("hashedUrl").addList(entries);
             self.render();
@@ -330,9 +330,10 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var list = $("#cubeviz-dataStructureDefinition-list");
         var optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
+        var self = this;
 
         $(this.collection._).each(function (i, element) {
-            element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url ? " selected" : "";
+            element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
         $("#cubeviz-dataStructureDefinition-dialog").dialog({
@@ -349,11 +350,11 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     };
     View_CubeVizModule_DataStructureDefintion.prototype.setSelectedDSD = function (entries) {
         if(0 == entries.length || undefined === entries) {
-            CubeViz_Links_Module.selectedDSD = {
+            this.app._.data.selectedDSD = {
             };
             throw new Error("View_CubeVizModule_DataStructureDefinition: No dsd's were loaded!");
         } else {
-            CubeViz_Links_Module.selectedDSD = entries[0];
+            this.app._.data.selectedDSD = entries[0];
         }
     };
     return View_CubeVizModule_DataStructureDefintion;
@@ -365,11 +366,12 @@ var View_CubeVizModule_DataSet = (function (_super) {
     }
     View_CubeVizModule_DataSet.prototype.initialize = function () {
         var self = this;
-        DataCube_DataSet.loadAll(CubeViz_Links_Module.selectedDSD.url, function (entries) {
+        DataCube_DataSet.loadAll(this.app._.data.selectedDSD.url, function (entries) {
             self.setSelectedDS(entries);
             self.collection.reset("hashedUrl");
             self.collection.addList(entries);
             self.render();
+            self.app.renderView("View_CubeVizModule_Component");
         });
     };
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
@@ -406,11 +408,11 @@ var View_CubeVizModule_DataSet = (function (_super) {
     };
     View_CubeVizModule_DataSet.prototype.setSelectedDS = function (entries) {
         if(0 === entries.length || undefined === entries) {
-            CubeViz_Links_Module.selectedDS = {
+            this.app._.data.selectedDS = {
             };
             throw new Error("View_CubeVizModule_DataSet: No data sets were loaded!");
         } else {
-            CubeViz_Links_Module.selectedDS = entries[0];
+            this.app._.data.selectedDS = entries[0];
         }
     };
     return View_CubeVizModule_DataSet;
@@ -471,7 +473,7 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
         var self = this;
-        DataCube_Component.loadAllDimensions(CubeViz_Links_Module.selectedDSD.url, CubeViz_Links_Module.selectedDS.url, function (entries) {
+        DataCube_Component.loadAllDimensions(this.app._.data.selectedDSD.url, this.app._.data.selectedDS.url, function (entries) {
             self.setComponentsStuff(entries);
             self.collection.reset("hashedUrl").addList(entries);
             self.render();
@@ -520,8 +522,8 @@ var View_CubeVizModule_Component = (function (_super) {
         return this;
     };
     View_CubeVizModule_Component.prototype.setComponentsStuff = function (entries) {
-        CubeViz_Links_Module.components.dimensions = entries;
-        CubeViz_Links_Module.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
+        this.app._.data.components.dimensions = entries;
+        this.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
     };
     return View_CubeVizModule_Component;
 })(CubeViz_View_Abstract);

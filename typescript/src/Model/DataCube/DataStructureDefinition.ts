@@ -7,12 +7,10 @@ class DataCube_DataStructureDefinition {
     /**
      * result: JSON
      */
-    static loadAll (callback) {
+    static loadAll (url, modelUrl, callback) {
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "getdatastructuredefinitions/",
-            data: {
-                m: CubeViz_Links_Module ["modelUrl"]
-            }
+            url: url + "getdatastructuredefinitions/",
+            data: { m: modelUrl }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             console.log ( "DataStructureDefinition > loadAll > error" );

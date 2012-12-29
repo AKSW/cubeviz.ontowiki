@@ -103,8 +103,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // load all data structure definitions from server
         DataCube_Component.loadAllDimensions(
         
-            CubeViz_Links_Module.selectedDSD.url,                    
-            CubeViz_Links_Module.selectedDS.url,
+            this.app._.data.selectedDSD.url,                    
+            this.app._.data.selectedDS.url,
             
             // after all elements were loaded, add them to collection
             // and render the view
@@ -218,12 +218,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public setComponentsStuff(entries) : void 
     {        
         // save pulled component dimensions
-        CubeViz_Links_Module.components.dimensions = entries;
+        this.app._.data.components.dimensions = entries;
         
         // set default values for selected component dimensions list
         // for each componentDimension first entry will be selected
         // e.g. Year (2003), Country (Germany)
-        CubeViz_Links_Module.selectedComponents.dimensions =
+        this.app._.data.selectedComponents.dimensions =
             DataCube_Component.getDefaultSelectedDimensions ( entries );
     }
 }
