@@ -10,10 +10,7 @@
         /**
          * Add data to application instance
          */
-        app._ = {
-                "backend":  <?php echo $this->cubeVizBackend; ?>,
-                "data":     <?php echo $this->cubeVizData; ?>
-            }
+        app._ = <?php echo $this->cubeVizConfig; ?>
         
         /**
          * Add views
@@ -30,7 +27,7 @@
              * These views will only added but not executed on render() call.
              */
             .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
-            .add("View_CubeVizModule_Component", "#cubviz-component-container")
+            .add("View_CubeVizModule_Component", "#cubviz-component-listBox")
         
             // run all autostart views
             .render();

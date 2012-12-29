@@ -1,31 +1,22 @@
 /// <reference path="..\..\..\declaration\jquery.d.ts" />
 
-declare var CubeViz_Links_Module: any;
-
 /**
  * Represents a component which can be a dimension or a measure.
  */
 class DataCube_Component {
     
     /**
-     * Loads all component dimensions, specified by model uri, data structure definition, dataset
-     * and component type.
+     * Loads all component dimensions, specified by model uri, data structure 
+     * definition, dataset and component type.
      */
-    static loadAllDimensions (dsdUrl:string, dsUrl:string, callback) 
+    static loadAllDimensions (url, modelUrl, dsdUrl, dsUrl, callback) : void
     {
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
-            data: {
-                m: CubeViz_Links_Module.modelUrl,
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                cT: "dimension" // possible: dimension, measure
-            }
+            url: url + "getcomponents/",
+            data: { m: modelUrl, dsdUrl: dsdUrl, dsUrl: dsUrl, cT: "dimension" }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "Component > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error( "loadAllDimensions error: " + xhr ["responseText"] );
         })
         .done( function (entries) { 
             DataCube_Component.prepareLoadedAllDimensions (entries, callback); 
@@ -35,9 +26,9 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllDimensions (entries:any, callback) 
+    static prepareLoadedAllDimensions (entries, callback) : void
     {
-        entries = JSON.parse (entries);
+        entries = JSON.parse(entries);
                                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {
@@ -53,30 +44,23 @@ class DataCube_Component {
         }
         
         // call callback function with prepared entries
-        callback ( tmpEntries );
+        callback(tmpEntries);
     }
     
     /**
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (dsdUrl:string, dsUrl:string, callback) 
+    static loadAllMeasures (url, modelUrl, dsdUrl, dsUrl, callback) : void
     {
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "getcomponents/",
-            data: {
-                m: CubeViz_Links_Module.modelUrl,
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                cT: "measure" // possible: dimension, measure
-            }
+            url: url + "getcomponents/",
+            data: { m: modelUrl, dsdUrl: dsdUrl, dsUrl: dsUrl, cT: "measure" }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "Component > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error( "loadAllMeasures error: " + xhr ["responseText"] );
         })
-        .done( function (entries) { 
+        .done(function(entries){ 
             DataCube_Component.prepareLoadedAllMeasures (entries, callback); 
         });
     }
@@ -84,7 +68,7 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllMeasures (entries:any, callback) 
+    static prepareLoadedAllMeasures (entries:any, callback) : void 
     {
         entries = JSON.parse (entries);        
                                 
@@ -102,7 +86,7 @@ class DataCube_Component {
         }
         
         // call callback function with prepared entries
-        callback ( tmpEntries );
+        callback(tmpEntries);
     }
     
     /**
@@ -114,6 +98,7 @@ class DataCube_Component {
         
         var result:Object = {};
     
+        // TODO use underscore or jQuerys each!
         for ( var dimensionHashedUrl in componentDimensions ) {
             
             result [dimensionHashedUrl] = componentDimensions [dimensionHashedUrl];

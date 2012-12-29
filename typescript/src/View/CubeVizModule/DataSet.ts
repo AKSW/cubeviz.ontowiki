@@ -3,11 +3,17 @@
 
 class View_CubeVizModule_DataSet extends CubeViz_View_Abstract 
 {        
+    /**
+     * 
+     */
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_CubeVizModule_DataSet", attachedTo, app);        
     }
     
+    /**
+     * 
+     */
     public initialize() : void 
     {
         var self = this;
@@ -17,12 +23,13 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          */
         DataCube_DataSet.loadAll(
         
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.url,
             
             // after all elements were loaded, add them to collection
             // and render the view
-            function(entries) {
-                
+            function(entries) {                
                 // set selectedDsd
                 self.setSelectedDS(entries);
                 
@@ -59,7 +66,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_questionmark() {
+    public onClick_questionmark() 
+    {
         $("#cubeviz-dataSet-dialog").dialog("open");
     }
     
@@ -72,13 +80,14 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          * List of items
          */        
         var list = $("#cubeviz-dataSet-list"),
-            optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
+            optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text()),
+            self = this;
         
         // output loaded data
         $(this.collection._).each(function(i, element){
             
             // set selected variable, if element url is equal to selected dsd
-            element["selected"] = element["url"] == CubeViz_Links_Module.selectedDSD.url
+            element["selected"] = element["url"] == self.app._.data.selectedDSD.url
                 ? " selected" : "";
                 
             list.append(optionTpl(element));

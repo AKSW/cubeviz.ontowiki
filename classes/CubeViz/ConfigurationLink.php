@@ -53,27 +53,26 @@ class CubeViz_ConfigurationLink
             if (true == isset ($c [0])) {
                 
                 // contains stuff e.g. selectedDSD, ...
-                $readedConfig ['CubeViz_Links_Module'] = json_decode($c [0], true);
+                $readedConfig ['data'] = json_decode($c[0], true);
                 
                 // contains UI chart config information
-                $readedConfig ['CubeViz_UI_ChartConfig'] = json_decode($c [1], true);
-                if(null == $readedConfig ['CubeViz_UI_ChartConfig']) 
-                    $readedConfig ['CubeViz_UI_ChartConfig'] = array();
+                $readedConfig ['ui'] = json_decode($c [1], true);
+                if(null == $readedConfig ['ui']) $readedConfig ['ui'] = array();
             
             // no content in file, set default values
             } else {
                 
-                $readedConfig ['CubeViz_Links_Module'] = array (
-                    'backend'               => '',
+                $readedConfig ['backend'] = array('backend' => '');
+                $readedConfig ['data'] = array(
                     'components'            => array(),
                     'selectedDSD'           => array(),
                     'selectedDS'            => array(),
-                    'selectedComponents'    => array (
-                        'dimensions'    => array(),
-                        'measures'      => array()
+                    'selectedComponents'    => array(
+                        'dimensions'        => array(),
+                        'measures'          => array()
                     )
                 );
-                $readedConfig ['CubeViz_UI_ChartConfig'] = array();
+                $readedConfig ['ui'] = array();
             }
             
             return $readedConfig;
@@ -99,8 +98,8 @@ class CubeViz_ConfigurationLink
             }
 			
             // write all parameters line by line
-			fwrite($fh, json_encode ( $config['cubeVizLinksModule'] ) . "\n"); // CubeViz_Config_Module
-			fwrite($fh, json_encode ( $config['uiChartConfig'] ) . "\n"); // cubeVizUIChartConfig
+			fwrite($fh, json_encode ( $config['data'] ) . "\n");
+			fwrite($fh, json_encode ( $config['ui'] ) . "\n");
 			chmod ($filePath, 0755);
 			fclose($fh);
 		} 

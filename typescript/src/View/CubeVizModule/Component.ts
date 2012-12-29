@@ -65,8 +65,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
-            selectedDimensions = CubeViz_Links_Module.selectedComponents
-                                 .dimensions[component.hashedUrl].elements,
+            selectedDimensions = this.app._.data.selectedComponents
+                                                 .dimensions[component.hashedUrl]
+                                                 .elements,
             setElementChecked = null;
 
         // sort elements by label, ascending
@@ -103,7 +104,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // load all data structure definitions from server
         DataCube_Component.loadAllDimensions(
         
-            this.app._.data.selectedDSD.url,                    
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
+            this.app._.data.selectedDSD.url,
             this.app._.data.selectedDS.url,
             
             // after all elements were loaded, add them to collection
@@ -160,12 +163,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          */
         var list = $("#cubviz-component-listBox"),
             optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
-            selectedComponentDimensions = CubeViz_Links_Module.selectedComponents.dimensions,
+            selectedComponentDimensions = this.app._.data.selectedComponents.dimensions,
             selectedDimension = null,
             tmp = null;
-            
-        // empty list(DOM) to avoid listing outdated items
-        list.empty();
         
         // output loaded data
         $(this.collection._).each(function(i, dimension){

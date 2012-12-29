@@ -67,14 +67,15 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
         // if selectedComponents.dimension was null, there must be an change event
         // for DSD or DS, so force recreation of a new linkcode
-        CubeViz_Links_Module.linkCode = null;
+        this.app._.data.linkCode = null;
         
         CubeViz_ConfigurationLink.saveToServerFile ( 
-            CubeViz_Links_Module,
-            {}, // CubeViz_UI_ChartConfig,
+            this.app._.backend.url,
+            this.app._.data,
+            this.app._.ui,
             function ( newLinkCode ) {
                 // Save new generated linkCode
-                CubeViz_Links_Module.linkCode = newLinkCode;
+                self.app._.data.linkCode = newLinkCode;
                 // TODO handle case if it was not possible to 
                 //      generate a new linkcode
                 
@@ -100,7 +101,10 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     /**
      *
      */
-    public showLink(label:string) {
+    public showLink(label:string) 
+    {
+        var self = this;
+        
         $("#cubeviz-footer-permaLinkButton")
             .attr ( "value", label)
             .animate(
@@ -115,9 +119,9 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                         .css ("left", position.left + 32);
                         
                     // build link to show later on
-                    var link = CubeViz_Links_Module.cubevizPath
-                               + "?m=" + encodeURIComponent (CubeViz_Links_Module.modelUrl)
-                               + "&lC=" + CubeViz_Links_Module.linkCode;
+                    var link = self.app._.backend.url
+                               + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                               + "&lC=" + self.app._.data.linkCode;
                         
                     var url = $("<a></a>")
                         .attr ("href", link)

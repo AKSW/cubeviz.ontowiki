@@ -91,40 +91,32 @@ class CubevizModule extends OntoWiki_Module
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-                				
-        /**
-         * Set backend container with backend related information
-         */
-        $backend = array();
-        $backend['context']         = 'development'; // TODO get it from doap.n3
-        $backend['database']        = $this->_owApp->getConfig()->store->backend;
-        $backend['id']              = 'backend';
-        $backend['imagesPath']      = $baseImagesPath;
-        $backend['modelUrl']        = $modelIri;
-        $backend['url']             = $this->_config->staticUrlBase . 'cubeviz/';
-        $backend['sparqlEndpoint']  = 'local'; 
-        
-        $this->view->cubeVizBackend = json_encode($backend, JSON_FORCE_OBJECT);
         
         /**
          * Set data container with CubeViz related information
          */
-        $data = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $data = $data->read ($linkCode); // TODO move to configuration file
-
-        $data['id']         = 'data';
-        $data['linkCode']   = $linkCode;
+        $config = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $config = $config->read ($linkCode); 
         
-        $this->view->cubeVizData = json_encode($data, JSON_FORCE_OBJECT);
-    
+        $config['data']['linkCode'] = '' == $linkCode ? $linkCode : $config['data']['linkCode'];
+                				
         /**
-         * Contains UI chart config information
-         * TODO Replace that
-        $this->view->CubeViz_UI_ChartConfig = json_encode(
-            $c['CubeViz_UI_ChartConfig'],
-            JSON_FORCE_OBJECT
-        );*/
-    
+         * Set backend container with backend related information
+         */
+        $config['backend'] = array(
+            'context'           => 'development', // TODO get it from doap.n3
+            'database'          => $this->_owApp->getConfig()->store->backend,
+            'imagesPath'        => $baseImagesPath,
+            'modelUrl'          => $modelIri,
+            'url'               => $this->_config->staticUrlBase . 'cubeviz/',
+            'sparqlEndpoint'    => 'local'
+        );
+                
+        /**
+         * Set ui container
+         */
+        $this->view->cubeVizConfig = json_encode($config, JSON_FORCE_OBJECT);
+        
         /**
          * fill template with content and give generated HTML back
          */

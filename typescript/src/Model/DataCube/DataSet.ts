@@ -1,26 +1,20 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
-declare var CubeViz_Links_Module: any;
-
-class DataCube_DataSet {
-    
+class DataCube_DataSet 
+{    
     /**
      * 
      */
-    static loadAll (dsdUrl, callback) {
+    static loadAll (url, modelUrl, dsdUrl, callback) : void
+    {
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "getdatasets/",
-            data: {
-                m: CubeViz_Links_Module.modelUrl,
-                dsdUrl: dsdUrl
-            }
+            url: url + "getdatasets/",
+            data: { m: modelUrl, dsdUrl: dsdUrl }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "DataSet > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error( "loadAll error: " + xhr ["responseText"] );
         })
-        .done( function (entries) { 
+        .done(function(entries){ 
             DataCube_DataSet.prepareLoadedDataSets (entries, callback); 
         });
     }
@@ -28,13 +22,13 @@ class DataCube_DataSet {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedDataSets ( entries, callback ) {
-        
+    static prepareLoadedDataSets ( entries, callback ) : void
+    {
         // set standard values
         // nothing yet
         
         // sort objects by label, ascending
-        entries.sort(function(a, b) {
+        entries.sort(function(a, b){
            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
         });
         

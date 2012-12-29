@@ -5,7 +5,7 @@ class CubeViz_ConfigurationLink {
     /**
      * 
      */
-    static saveToServerFile (cubeVizLinksModule:Object, cubeVizUIChartConfig:Object, callback) {
+    static saveToServerFile (url, cubeVizLinksModule:Object, cubeVizUIChartConfig:Object, callback) {
         
         // Setup Ajax
         $.ajaxSetup({"async": true, "cache": false, "type": "POST"}); 
@@ -13,16 +13,14 @@ class CubeViz_ConfigurationLink {
         
         // Execute Ajax 
         $.ajax({
-            url: CubeViz_Links_Module.cubevizPath + "savelinktofile/",
+            url: url + "savelinktofile/",
             data: {
                 "cubeVizLinksModule": cubeVizLinksModule,
                 "cubeVizUIChartConfig": cubeVizUIChartConfig
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "ConfigurationLink > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error( "saveToServerFile error: " + xhr ["responseText"] );
         })
         .done( function (result) { 
             callback ( JSON.parse(result) );
