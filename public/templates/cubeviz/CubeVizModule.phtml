@@ -29,7 +29,7 @@
             /**
              * These views will only added but not executed on render() call.
              */
-            .add("View_CubeVizModule_DataSet", "#cubviz-dataSet-listContainer")
+            .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
             .add("View_CubeVizModule_Component", "#cubviz-component-container")
         
             // run all autostart views
@@ -68,7 +68,8 @@
                          id="cubeviz-dataStructureDefinition-questionMark"
                          title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
-                <div id="cubviz-dataStructureDefinition-listContainer"></div>
+                <select name="cubeviz-dataStructureDefinition-list" 
+                         id="cubeviz-dataStructureDefinition-list"></select>
             </div>
             
             <!-- Data set section -->
@@ -81,7 +82,7 @@
                          id="cubeviz-dataSet-questionMark"
                          title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
-                <div id="cubviz-dataSet-listContainer"></div>
+                <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
             </div>
 			
             <!-- Visual seperator -->
@@ -97,8 +98,7 @@
                          id="cubeviz-component-questionMark"
                          title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
                 </div>
-                <div id="cubviz-component-listBox">
-                </div>
+                <div id="cubviz-component-listBox"></div>
 			</div>
             
             <div id="cubeviz-footer-container">				
@@ -116,10 +116,6 @@
 		</div>
 	</div>
 </div>
-
-<!-- Later on, after all loading is complete, it will contain a dialog instance -->
-<div id="dimensionDialogContainer"></div>
-
 
 <!-- 
     #########
@@ -162,11 +158,6 @@
     #########
 -->
 <!-- Data Structure Definition -->
-<script id="cubeviz-dataStructureDefinition-tpl-list" type="text/template">
-    <select name="cubeviz-dataStructureDefinition-list" id="cubeviz-dataStructureDefinition-list">
-    </select>
-</script>
-
 <script id="cubeviz-dataStructureDefinition-tpl-listOption" type="text/template">
     <option value="<%= hashedUrl %>"<%= selected %>>
         <%= label %>
@@ -174,10 +165,6 @@
 </script>
 
 <!-- Data Set -->
-<script id="cubeviz-dataSet-tpl-list" type="text/template">
-    <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
-</script>
-
 <script id="cubeviz-dataSet-tpl-listOption" type="text/template">
     <option value="<%= hashedUrl %>"<%= selected %>>
         <%= label %>

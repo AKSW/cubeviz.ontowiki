@@ -107,7 +107,14 @@ var CubeViz_View_Abstract = (function () {
         }
     };
     CubeViz_View_Abstract.prototype.destroy = function () {
-        this.el.off().empty();
+        this.el.off();
+        if(true === this.el.is("div")) {
+            this.el.empty();
+        } else {
+            if(true === this.el.is("select")) {
+                this.el.find("option").remove();
+            }
+        }
         this.collection.reset();
         return this;
     };
@@ -142,12 +149,10 @@ var CubeViz_View_Application = (function () {
         if(true === _.isUndefined(view)) {
         } else {
             if(true === alreadyRendered) {
-                console.log("destroy view " + id);
                 renderedView.destroy();
                 this._renderedViews.remove(id);
             }
             eval("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
-            console.log("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
         }
         return this;
     };
@@ -323,8 +328,6 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
-        var listTpl = $("#cubeviz-dataStructureDefinition-tpl-list").text();
-        this.el.append(listTpl);
         var list = $("#cubeviz-dataStructureDefinition-list");
         var optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
 
@@ -382,9 +385,6 @@ var View_CubeVizModule_DataSet = (function (_super) {
         $("#cubeviz-dataSet-dialog").dialog("open");
     };
     View_CubeVizModule_DataSet.prototype.render = function () {
-        console.log("DS render");
-        var listTpl = $("#cubeviz-dataSet-tpl-list").text();
-        this.el.append(listTpl);
         var list = $("#cubeviz-dataSet-list");
         var optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
 

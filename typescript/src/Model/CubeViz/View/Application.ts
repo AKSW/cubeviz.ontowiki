@@ -70,16 +70,14 @@ class CubeViz_View_Application {
             
         // otherwise ...
         } else {        
-            // If view was already rendered, destroy old instance and re-render it
+            // ... if view was already rendered, destroy old instance and ...
             if(true === alreadyRendered) {
-                console.log("destroy view " + id);
                 renderedView.destroy();
                 this._renderedViews.remove(id);
             }
             
-            // render view
+            // ... render view
             eval ("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
-            console.log ("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
         }
         
         return this;

@@ -69,11 +69,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     public render() : CubeViz_View_Abstract
     {        
         /**
-         * List
-         */                
-        var listTpl = $("#cubeviz-dataSet-tpl-list").text();
-        this.el.append(listTpl);
-        
+         * List of items
+         */        
         var list = $("#cubeviz-dataSet-list"),
             optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
         

@@ -86,9 +86,18 @@ class CubeViz_View_Abstract {
      */
     public destroy() : CubeViz_View_Abstract
     {
-        this.el
-            .off()
-            .empty();
+        // Unbind all events
+        this.el.off();
+        
+        // if el is a div, empty it
+        if(true === this.el.is("div")) {
+            this.el.empty();
+            
+        // if el is a select box, delete all of its option's
+        } else if (true === this.el.is("select")) {
+            this.el.find("option").remove();
+        }
+        // TODO what is with other types?
         
         this.collection.reset();
         
