@@ -1,12 +1,6 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-/**
- * Declare variables that are used in the HTML too
- */
-declare var CubeViz_Links_Module: any;
-declare var CubeViz_UI_ChartConfig: any;
-
 class View_CubeVizModule_Component extends CubeViz_View_Abstract 
 {
     /**

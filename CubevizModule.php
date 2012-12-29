@@ -93,37 +93,37 @@ class CubevizModule extends OntoWiki_Module
         $this->view->cubevizImagesPath = $baseImagesPath;
                 				
         /**
-         * Set CubeViz_Links_Module
-         * Contains loaded configuration for given hashcode or default values.
+         * Set backend container with backend related information
          */
-        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $c = $c->read ($linkCode);
+        $backend = array();
+        $backend['context']         = 'development'; // TODO get it from doap.n3
+        $backend['database']        = $this->_owApp->getConfig()->store->backend;
+        $backend['id']              = 'backend';
+        $backend['imagesPath']      = $baseImagesPath;
+        $backend['modelUrl']        = $modelIri;
+        $backend['path']            = $this->_config->staticUrlBase . 'cubeviz/';
+        $backend['sparqlEndpoint']  = 'local'; 
+        
+        $this->view->cubeVizBackend = json_encode($backend, JSON_FORCE_OBJECT);
+        
+        /**
+         * Set data container with CubeViz related information
+         */
+        $data = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $data = $data->read ($linkCode); // TODO move to configuration file
 
-        $c['CubeViz_Links_Module'] ['backend']           = $this->_owApp->getConfig()->store->backend;
-        $c['CubeViz_Links_Module'] ['linkCode']          = $linkCode;
-        $c['CubeViz_Links_Module'] ['cubevizPath']       = $this->_config->staticUrlBase . 'cubeviz/';
-        $c['CubeViz_Links_Module'] ['modelUrl']          = $modelIri;
-        $c['CubeViz_Links_Module'] ['sparqlEndpoint']    = 'local'; 
-        $this->view->CubeViz_Links_Module = json_encode($c['CubeViz_Links_Module'], JSON_FORCE_OBJECT);
+        $data['id']         = 'data';
+        $data['linkCode']   = $linkCode;
+        
+        $this->view->cubeVizData = json_encode($data, JSON_FORCE_OBJECT);
     
         /**
          * Contains UI chart config information
-         */
+         * TODO Replace that
         $this->view->CubeViz_UI_ChartConfig = json_encode(
             $c['CubeViz_UI_ChartConfig'],
             JSON_FORCE_OBJECT
-        );
-    
-        /**
-         * 
-         */
-        $this->view->CubeViz_Config = json_encode(
-            array(
-                'context'       => 'development', // TODO get it from doap.n3
-                'imagesPath'    => $baseImagesPath
-            ), 
-            JSON_FORCE_OBJECT
-        );
+        );*/
     
         /**
          * fill template with content and give generated HTML back

@@ -3,14 +3,30 @@
  */
 class CubeViz_View_Application {
     
+    /**
+     * 
+     */
     private _allViews:CubeViz_Collection;
+    
+    
+    /**
+     * 
+     */
+    private _renderedViews:CubeViz_Collection;
+    
+    /**
+     * Data container
+     */
+    public _:{};
     
     /**
      * Constructor
      */
     constructor() 
     {
-        this._allViews = new CubeViz_Collection;
+        this._allViews      = new CubeViz_Collection;
+        this._renderedViews = new CubeViz_Collection;
+        this._              = {};
     }
     
     /**
@@ -45,10 +61,25 @@ class CubeViz_View_Application {
      */
     public renderView(id:string) : CubeViz_View_Application
     {
-        var view = this.get(id);
-        if(undefined !== view) {
+        var view = this.get(id),
+            renderedView = this._renderedViews.get(id),
+            alreadyRendered = undefined !== renderedView;
+        
+        // do nothing, if view does not exists
+        if(true === _.isUndefined(view)) {
+            
+        // otherwise ...
+        } else {        
+            // If view was already rendered, destroy old instance and re-render it
+            if(true === alreadyRendered) {
+                console.log("destroy view " + id);
+                renderedView.destroy();
+                this._renderedViews.remove(id);
+            }
+            
             // render view
-            eval ("new " + id + "(\"" + view.attachedTo + "\", this);");
+            eval ("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
+            console.log ("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
         }
         
         return this;
@@ -62,6 +93,7 @@ class CubeViz_View_Application {
     public remove(id:string) : CubeViz_View_Application
     {
         this._allViews.remove(id);
+        this._renderedViews.remove(id);
         return this;
     }
     

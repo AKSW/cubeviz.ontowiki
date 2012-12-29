@@ -1,8 +1,6 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-declare var CubeViz_Links_Module: any;
-
 class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract 
 {
     /**

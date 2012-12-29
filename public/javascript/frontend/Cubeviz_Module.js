@@ -81,12 +81,12 @@ var CubeViz_Collection = (function () {
 })();
 var CubeViz_View_Abstract = (function () {
     function CubeViz_View_Abstract(id, attachedTo, app) {
+        this.app = app;
         this.attachedTo = attachedTo;
         this.autostart = false;
         this.el = $(attachedTo);
-        this.id = "view" || id;
         this.collection = new CubeViz_Collection();
-        this.app = app;
+        this.id = id || "view";
         this.initialize();
     }
     CubeViz_View_Abstract.prototype.delegateEvents = function (events) {
@@ -106,6 +106,11 @@ var CubeViz_View_Abstract = (function () {
             $(selector).on(eventName, $.proxy(method, this));
         }
     };
+    CubeViz_View_Abstract.prototype.destroy = function () {
+        this.el.off().empty();
+        this.collection.reset();
+        return this;
+    };
     CubeViz_View_Abstract.prototype.initialize = function () {
     };
     return CubeViz_View_Abstract;
@@ -113,6 +118,9 @@ var CubeViz_View_Abstract = (function () {
 var CubeViz_View_Application = (function () {
     function CubeViz_View_Application() {
         this._allViews = new CubeViz_Collection();
+        this._renderedViews = new CubeViz_Collection();
+        this._ = {
+        };
     }
     CubeViz_View_Application.prototype.add = function (id, attachedTo, autostart) {
         autostart = true == autostart ? true : false;
@@ -128,13 +136,24 @@ var CubeViz_View_Application = (function () {
     };
     CubeViz_View_Application.prototype.renderView = function (id) {
         var view = this.get(id);
-        if(undefined !== view) {
-            eval("new " + id + "(\"" + view.attachedTo + "\", this);");
+        var renderedView = this._renderedViews.get(id);
+        var alreadyRendered = undefined !== renderedView;
+
+        if(true === _.isUndefined(view)) {
+        } else {
+            if(true === alreadyRendered) {
+                console.log("destroy view " + id);
+                renderedView.destroy();
+                this._renderedViews.remove(id);
+            }
+            eval("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
+            console.log("this._renderedViews.add (new " + id + "(\"" + view.attachedTo + "\", this));");
         }
         return this;
     };
     CubeViz_View_Application.prototype.remove = function (id) {
         this._allViews.remove(id);
+        this._renderedViews.remove(id);
         return this;
     };
     CubeViz_View_Application.prototype.render = function () {
@@ -348,7 +367,6 @@ var View_CubeVizModule_DataSet = (function (_super) {
             self.collection.reset("hashedUrl");
             self.collection.addList(entries);
             self.render();
-            self.app.renderView("View_CubeVizModule_Component");
         });
     };
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
@@ -364,7 +382,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         $("#cubeviz-dataSet-dialog").dialog("open");
     };
     View_CubeVizModule_DataSet.prototype.render = function () {
-        $("#cubeviz-dataSet-list").remove();
+        console.log("DS render");
         var listTpl = $("#cubeviz-dataSet-tpl-list").text();
         this.el.append(listTpl);
         var list = $("#cubeviz-dataSet-list");
@@ -540,7 +558,8 @@ var View_CubeVizModule_Footer = (function (_super) {
     View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function () {
         var self = this;
         CubeViz_Links_Module.linkCode = null;
-        CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, CubeViz_UI_ChartConfig, function (newLinkCode) {
+        CubeViz_ConfigurationLink.saveToServerFile(CubeViz_Links_Module, {
+        }, function (newLinkCode) {
             CubeViz_Links_Module.linkCode = newLinkCode;
             self.changePermaLinkButton();
         });

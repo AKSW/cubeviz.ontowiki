@@ -39,12 +39,12 @@ class CubeViz_View_Abstract {
     constructor(id:string, attachedTo:string, app:CubeViz_View_Application) 
     {        
         // set properties
+        this.app = app;
         this.attachedTo = attachedTo;
         this.autostart = false;
         this.el = $(attachedTo);
-        this.id = "view" || id;
         this.collection = new CubeViz_Collection;
-        this.app = app;
+        this.id = id || "view";
         
         this.initialize();
     }
@@ -79,6 +79,20 @@ class CubeViz_View_Abstract {
                 $.proxy(method, this)
             );
         }
+    }
+    
+    /**
+     * Unbind all events, remove element and reset collection 
+     */
+    public destroy() : CubeViz_View_Abstract
+    {
+        this.el
+            .off()
+            .empty();
+        
+        this.collection.reset();
+        
+        return this;
     }
     
     /**

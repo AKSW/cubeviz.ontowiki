@@ -1,12 +1,6 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-/**
- * Declare variables that are used in the HTML too
- */
-declare var CubeViz_Links_Module: any;
-declare var CubeViz_UI_ChartConfig: any;
-
 class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
     constructor(attachedTo:string, app:CubeViz_View_Application) 
@@ -77,7 +71,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
         CubeViz_ConfigurationLink.saveToServerFile ( 
             CubeViz_Links_Module,
-            CubeViz_UI_ChartConfig,
+            {}, // CubeViz_UI_ChartConfig,
             function ( newLinkCode ) {
                 // Save new generated linkCode
                 CubeViz_Links_Module.linkCode = newLinkCode;

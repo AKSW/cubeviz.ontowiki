@@ -1,8 +1,6 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-declare var CubeViz_Links_Module: any;
-
 class View_CubeVizModule_DataSet extends CubeViz_View_Abstract 
 {        
     constructor(attachedTo:string, app:CubeViz_View_Application) 
@@ -36,7 +34,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
                 self.render();
                 
                 // load components
-                self.app.renderView("View_CubeVizModule_Component");
+                // self.app.renderView("View_CubeVizModule_Component");
             }
         );
     }
@@ -69,12 +67,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      * 
      */
     public render() : CubeViz_View_Abstract
-    {
+    {        
         /**
          * List
-         */
-        $("#cubeviz-dataSet-list").remove();
-                
+         */                
         var listTpl = $("#cubeviz-dataSet-tpl-list").text();
         this.el.append(listTpl);
         
