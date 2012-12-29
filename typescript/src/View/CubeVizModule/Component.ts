@@ -1,5 +1,5 @@
-/// <reference path="..\..\..\DeclarationSourceFiles\libraries\jquery.d.ts" />
-/// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
 /**
  * Declare variables that are used in the HTML too

@@ -1,4 +1,4 @@
-/// <reference path="..\..\..\DeclarationSourceFiles\libraries\Underscore.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
 class CubeViz_Collection 
 {

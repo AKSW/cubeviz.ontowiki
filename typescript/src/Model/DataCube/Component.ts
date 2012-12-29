@@ -1,4 +1,4 @@
-/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\..\..\declaration\jquery.d.ts" />
 
 declare var CubeViz_Links_Module: any;
 
