@@ -22,7 +22,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             // remember old perma link button label, because of the language
             this.collection.add({
                 id: "buttonVal", 
-                value: $("#cubeviz-footer-permaLinkButton").attr ("value").toString()
+                value: $("#cubeviz-footer-permaLinkButton").attr("value").toString()
             });
             this.showLink(">>");
             
@@ -44,7 +44,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             function () {
                 $("#cubeviz-footer-permaLinkButton")
                     .animate({width:75}, 450)
-                    .attr ( "value", label);
+                    .attr("value", label);
             }
         );
     }

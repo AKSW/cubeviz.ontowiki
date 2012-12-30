@@ -51,7 +51,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     opacity: 0.5
                 },
                 show: "slow",
-                title: $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
                 width: 700
             })
             // attach hashedUrl

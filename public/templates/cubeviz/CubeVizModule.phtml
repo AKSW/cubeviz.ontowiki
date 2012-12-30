@@ -185,11 +185,10 @@
 </script>
 
 <!-- Dialogs -->
-<script id="cubeviz-component-tpl-setupComponentDialogTitle" type="text/template">
-    <?php echo $this->_translate->_('Set component elements'); ?>
-</script>
 <script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
-    <div id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>" class="cubeviz-component-setupComponentDialog">
+    <div class="cubeviz-component-setupComponentDialog"
+         id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>"
+         title="<?php echo $this->_translate->_('Set component elements'); ?>">
         <h2><%= label %></h2>
         <p>Dimension Meta Information</p>
         <small>Hookline, whats possible here?</small>
