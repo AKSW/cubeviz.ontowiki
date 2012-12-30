@@ -616,3 +616,23 @@ var View_CubeVizModule_Footer = (function (_super) {
     };
     return View_CubeVizModule_Footer;
 })(CubeViz_View_Abstract);
+var View_IndexAction_Visualization = (function (_super) {
+    __extends(View_IndexAction_Visualization, _super);
+    function View_IndexAction_Visualization(attachedTo, app) {
+        _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
+    }
+    View_IndexAction_Visualization.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
+        return this;
+    };
+    View_IndexAction_Visualization.prototype.initialize = function () {
+        var self = this;
+    };
+    View_IndexAction_Visualization.prototype.render = function () {
+        this.delegateEvents({
+        });
+        return this;
+    };
+    return View_IndexAction_Visualization;
+})(CubeViz_View_Abstract);

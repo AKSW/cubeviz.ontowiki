@@ -41,13 +41,14 @@ class CubevizController extends OntoWiki_Controller_Component {
          * Including javascript files for this action
          */
         // Libraries
-        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/CryptoJs/md5-min.js', 'text/javascript');
-        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript');
-        $this->view->headScript()->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');
+        $this->view->headScript()
+            ->appendFile($baseJavascriptPath.'libraries/CryptoJs/md5-min.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript')
         
         // Generated Javascript
-        $this->view->headScript()->appendFile($baseJavascriptPath.'frontend/Cubeviz_Viz.js', 'text/javascript');
-        $this->view->headScript()->appendFile($basePath.'ChartConfig.js', 'text/javascript');
+            ->appendFile($baseJavascriptPath.'Main.js', 'text/javascript')
+            ->appendFile($basePath.'ChartConfig.js', 'text/javascript');
     
     
         /**

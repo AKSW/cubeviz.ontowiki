@@ -63,19 +63,20 @@ class CubevizModule extends OntoWiki_Module
          */
         $this->view->headScript()
             ->prependFile ($baseJavascriptPath.'libraries/json2.js', 'text/javascript')
-            ->prependFile ($baseJavascriptPath.'libraries/json-template.min.js', 'text/javascript')
             ->prependFile ($baseJavascriptPath.'libraries/underscore.js', 'text/javascript')
-            ->prependFile ($baseJavascriptPath.'frontend/Cubeviz_Module.js', 'text/javascript');
+            ->prependFile ($baseJavascriptPath.'Main.js', 'text/javascript');
             
         
         /**
          * Including css files for this action
          */
-        $this->view->headLink()->prependStylesheet($baseCssPath.'main.css');
-        $this->view->headLink()->prependStylesheet($baseCssPath.'CubeVizModule/component.css');
-        $this->view->headLink()->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css');
-        $this->view->headLink()->prependStylesheet($baseCssPath.'CubeVizModule/dataStructureDefinition.css');
-        $this->view->headLink()->prependStylesheet($baseCssPath.'CubeVizModule/footer.css');
+        $this->view->headLink()
+            ->prependStylesheet($baseCssPath.'main.css')
+            ->prependStylesheet($baseCssPath.'CubeVizModule/component.css')
+            ->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css')
+            ->prependStylesheet($baseCssPath.'CubeVizModule/dataStructureDefinition.css')
+            ->prependStylesheet($baseCssPath.'CubeVizModule/footer.css');
+        
         
         /**
          * Model information

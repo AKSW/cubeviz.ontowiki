@@ -11,3 +11,5 @@ src/View/CubeVizModule/DataStructureDefinition.ts
 src/View/CubeVizModule/DataSet.ts
 src/View/CubeVizModule/Component.ts
 src/View/CubeVizModule/Footer.ts
+
+src/View/IndexAction/Visualization.ts
