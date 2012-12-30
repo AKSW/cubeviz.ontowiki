@@ -14,57 +14,60 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public configureSetupComponentDialog() 
+    public configureSetupComponentDialog(component:any, componentBox, opener) 
     {
-        var backupCollection = this.collection._,
-            dialogTpl = _.template(
+        var dialogTpl = _.template(
                 $("#cubeviz-component-tpl-setupComponentDialog").text()
             ),
-            div = null,
-            hashedUrl:string = "",
             self = this;
-        
-        // empty collection
-        this.collection.reset();
-        
-        // go through all components and create a reference to dialog container
-        $(backupCollection).each(function(i, component){
-            
-            hashedUrl = component["hashedUrl"];
 
-            // set dialog reference and template
-            $("#cubeviz-component-setupDialogContainer").append(
-                dialogTpl({label: component["label"], hashedUrl:hashedUrl})
-            );
-            
-            div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
-            
-            // setup dialog
-            div.dialog({
-                autoOpen: false,
-                draggable: false,
-                height: 485,
-                hide: "slow",
-                modal: true,
-                overlay: {
-                    "background-color": "#FFFFFF",
-                    opacity: 0.5
-                },
-                show: "slow",
-                width: 700
-            })
-            // attach hashedUrl
-            .data("hashedUrl", hashedUrl);
-            
-            // attach hashedUrl to deselect all elements
-            $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
-                .data("dialogDiv", div);
-                
-            // configure elements of the dialog
-            self.configureSetupComponentElements(component);
-            
-            self.collection.add(component);
+        // set dialog reference and template
+        $("#cubeviz-component-setupDialogContainer").append(
+            dialogTpl({label: component.label, hashedUrl:component.hashedUrl})
+        );
+        
+        var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
+        
+        div
+        .data("componentBox", componentBox)
+        .data("hashedUrl", component.hashedUrl)
+        
+        // setup dialog
+        .dialog({
+            autoOpen: false,
+            closeOnEscape: false,
+            draggable: false,
+            height: 485,
+            hide: "slow",
+            modal: true,
+            open: function(event,ui){
+                $(".ui-dialog-titlebar-close", $(this).parent()).hide();
+            },
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow",
+            width: 700
         });
+        
+        // attach dialog div to deselect button
+        $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
+            .data("dialogDiv", div);
+        
+        // attach dialog div to dialog opener link
+        opener.data("dialogDiv", div);
+        
+        // attach dialog div to "close and apply" button
+        $($(div.children().last()).children().get(0))
+            .data("dialogDiv", div);
+            
+        // attach dialog div to "close and update" button
+        $($(div.children().last()).children().get(1))
+            .data("dialogDiv", div);
+            
+        // configure elements of the dialog
+        this.configureSetupComponentElements(component);
     }
     
     /**
@@ -162,13 +165,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onBeforeClose_setupComponentDialog(event, ui) : void
-    {
+    public onClose_setupComponentDialog(event) : void
+    {        
         // extract and set necessary elements and data
-        var dialogDiv = $($($(event.target).parents().get(2)).children().get(1)),
+        var dialogDiv = $(event.target),
             elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
+            componentBox = dialogDiv.data("componentBox"),
             hashedUrl = dialogDiv.data("hashedUrl"),
-            componentBox = $("#cubeviz-component-box-" + hashedUrl),
             input = null,
             inputLabel = null,
             selectedElements = [];
@@ -227,7 +230,29 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_deselectedAllComponentElements(event) 
+    public onClick_closeAndApply(event) : void 
+    {
+        $(event.target).data("dialogDiv")
+            .dialog("close");
+            
+        // simply apply changes
+    }
+    
+    /**
+     *
+     */
+    public onClick_closeAndUpdate(event) : void
+    {
+        $(event.target).data("dialogDiv")
+            .dialog("close");
+            
+        // update graph visualization
+    }
+    
+    /**
+     *
+     */
+    public onClick_deselectedAllComponentElements(event) : void
     {
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
@@ -237,17 +262,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_setupComponentOpener(event) 
+    public onClick_setupComponentOpener(event) : void
     {
-        var hashedUrl = $(event.target).data("hashedUrl");
-        $("#cubeviz-component-setupComponentDialog-" + hashedUrl)
-            .dialog("open");
+        $(event.target).data("dialogDiv").dialog("open");
     }
     
     /**
      *
      */
-    public onClick_questionmark() 
+    public onClick_questionmark() : void
     {
         $("#cubeviz-component-questionMarkDialog").dialog("open");
     }
@@ -255,20 +278,25 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public render() 
+    public render()
     {
         /**
-         * List
+         * List elements
          */
-        var list = $("#cubviz-component-listBox"),
-            option:any = null,
+        var backendCollection = this.collection._,
+            list = $("#cubviz-component-listBox"),
+            componentBox:any = null,
             optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
             selectedComponentDimensions = this.app._.data.selectedComponents.dimensions,
             selectedDimension = null,
+            self = this,
             tmp = null;
+            
+        // empty list
+        this.collection.reset();
         
         // output loaded data
-        $(this.collection._).each(function(i, dimension){
+        $(backendCollection).each(function(i, dimension){
             
             if ( undefined !== selectedComponentDimensions ) {
                 selectedDimension = selectedComponentDimensions[dimension["hashedUrl"]];
@@ -281,14 +309,24 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dimension["elementCount"] = _.size(dimension["elements"]);
             
             // build html out of template
-            option = $(optionTpl(dimension));
+            componentBox = $(optionTpl(dimension));
             
             // get opener link
-            $(option.find(".cubeviz-component-setupComponentOpener").get(0))
+            $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
                 .data("hashedUrl", dimension["hashedUrl"]);
             
             // add option to list
-            list.append(option);
+            list.append(componentBox);
+            
+            // configure associated dialog
+            self.configureSetupComponentDialog(
+                dimension,
+                componentBox,
+                // link to open the dialog
+                $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
+            );
+            
+            self.collection.add(dimension);
         });
         
         /**
@@ -306,12 +344,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             show: "slow"
         });
         
-        this.configureSetupComponentDialog();
-        
         /**
          * Delegate events to new items of the template
          */
         this.delegateEvents({         
+            "click .cubeviz-component-closeAndApply": 
+                this.onClick_closeAndApply,
+                
+            "click .cubeviz-component-closeAndUpdate": 
+                this.onClick_closeAndUpdate,
+                
             "click .cubeviz-component-setupComponentDeselectButton": 
                 this.onClick_deselectedAllComponentElements,
                 
@@ -321,8 +363,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click #cubeviz-component-questionMark": 
                 this.onClick_questionmark,
             
-            "dialogbeforeclose .cubeviz-component-setupComponentDialog": 
-                this.onBeforeClose_setupComponentDialog
+            "dialogclose .cubeviz-component-setupComponentDialog": 
+                this.onClose_setupComponentDialog
         });
         
         return this;
