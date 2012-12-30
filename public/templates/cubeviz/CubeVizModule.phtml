@@ -5,17 +5,17 @@
     $(document).ready(function(){
         
         // initialize view manager to handle all the used views
-        var app = new CubeViz_View_Application();
+        var cubeVizModule = new CubeViz_View_Application();
         
         /**
          * Add data to application instance
          */
-        app._ = <?php echo $this->cubeVizConfig; ?>
+        cubeVizModule._ = <?php echo $this->cubeVizConfig; ?>
         
         /**
          * Add views
          */
-        app
+        cubeVizModule
             /**
              * These views will added and executed on render() call. (second parameter 
              * causes that)

@@ -1,19 +1,34 @@
-<script>
+<script type="text/javascript">
     /**
-     * Contains loaded configuration for given hashcode
+     * Initialize the application
      */
-    var CubeViz_Links_Module = <?php echo $this->CubeViz_Links_Module; ?>;
+    $(document).ready(function(){
+        
+        // initialize view manager to handle all the used views
+        var cubeVizIndex = new CubeViz_View_Application();
+        
+        /**
+         * Add data to application instance
+         */
+        cubeVizIndex._ = <?php echo $this->cubeVizConfig; ?>
+        
+        /**
+         * Add views
+         */
+        cubeVizIndex
+            /**
+             * These views will added and executed on render() call. (second parameter 
+             * causes that)
+             */
+        
+            /**
+             * These views will only added but not executed on render() call.
+             */
+        
+            // run all autostart views
+            .render();
+    });
     
-    /**
-     * Contains system information related only to CubeViz
-     */
-    var CubeViz_Config = <?php echo $this->CubeViz_Config; ?>;
-    
-    /**
-     * For the future
-     * Will be contains all relevant information about the UI
-     */
-    var CubeViz_UI_ChartConfig = <?php echo $this->CubeViz_UI_ChartConfig; ?>;
 </script>
 
 

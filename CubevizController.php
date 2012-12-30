@@ -91,37 +91,29 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->cubevizImagesPath = $baseImagesPath;
                 				
         /**
-         * Set CubeViz_Links_Module
-         * Contains loaded configuration for given hashcode or default values.
+         * Set data container with CubeViz related information
          */
-        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $c = $c->read ($linkCode);
-
-        $c['CubeViz_Links_Module'] ['backend']           = $this->_owApp->getConfig()->store->backend;
-        $c['CubeViz_Links_Module'] ['linkCode']          = $linkCode;
-        $c['CubeViz_Links_Module'] ['cubevizPath']       = $this->_config->staticUrlBase . 'cubeviz/';
-        $c['CubeViz_Links_Module'] ['modelUrl']          = $modelIri;
-        $c['CubeViz_Links_Module'] ['sparqlEndpoint']    = 'local'; 
-        $this->view->CubeViz_Links_Module = json_encode($c['CubeViz_Links_Module'], JSON_FORCE_OBJECT);
-    
+        $config = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $config = $config->read ($linkCode); 
+        
+        $config['data']['linkCode'] = '' == $linkCode ? $linkCode : $config['data']['linkCode'];
+                				
         /**
-         * Contains UI chart config information
+         * Set backend container with backend related information
          */
-        $this->view->CubeViz_UI_ChartConfig = json_encode(
-            $c['CubeViz_UI_ChartConfig'],
-            JSON_FORCE_OBJECT
+        $config['backend'] = array(
+            'context'           => 'development', // TODO get it from doap.n3
+            'database'          => $this->_owApp->getConfig()->store->backend,
+            'imagesPath'        => $baseImagesPath,
+            'modelUrl'          => $modelIri,
+            'url'               => $this->_config->staticUrlBase . 'cubeviz/',
+            'sparqlEndpoint'    => 'local'
         );
-    
+                
         /**
-         * 
+         * Set ui container
          */
-        $this->view->CubeViz_Config = json_encode(
-            array(
-                'context'       => 'development', // TODO get it from doap.n3
-                'imagesPath'    => $baseImagesPath
-            ), 
-            JSON_FORCE_OBJECT
-        );    
+        $this->view->cubeVizConfig = json_encode($config, JSON_FORCE_OBJECT);  
 	}
 	
 	public function getdatafromlinkcodeAction() {

@@ -2,6 +2,8 @@ var CubeViz_ConfigurationLink = (function () {
     function CubeViz_ConfigurationLink() { }
     CubeViz_ConfigurationLink.saveToServerFile = function saveToServerFile(url, data, ui, callback) {
         var oldAjaxSetup = $.ajaxSetup();
+        var oldSupportOrs = $.support.cors;
+
         $.ajaxSetup({
             "async": true,
             "cache": false,
@@ -16,10 +18,11 @@ var CubeViz_ConfigurationLink = (function () {
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             $.ajaxSetup(oldAjaxSetup);
+            $.support.cors = oldSupportOrs;
             throw new Error("saveToServerFile error: " + xhr["responseText"]);
         }).done(function (result) {
             $.ajaxSetup(oldAjaxSetup);
-            console.log(result);
+            $.support.cors = oldSupportOrs;
             callback(JSON.parse(result));
         });
     }
@@ -331,10 +334,15 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             list.append(optionTpl(element));
         });
         $("#cubeviz-dataStructureDefinition-dialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         this.delegateEvents({
             "change #cubeviz-dataStructureDefinition-list": this.onChange_list,
@@ -390,10 +398,15 @@ var View_CubeVizModule_DataSet = (function (_super) {
             list.append(optionTpl(element));
         });
         $("#cubeviz-dataSet-dialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         this.delegateEvents({
             "change #cubeviz-dataSet-list": this.onChange_list,
@@ -433,13 +446,18 @@ var View_CubeVizModule_Component = (function (_super) {
             }));
             div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
             div.dialog({
-                "autoOpen": false,
-                "draggable": false,
-                "height": 485,
-                "hide": "slow",
-                "show": "slow",
-                "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
-                "width": 700
+                autoOpen: false,
+                draggable: false,
+                height: 485,
+                hide: "slow",
+                modal: true,
+                overlay: {
+                    "background-color": "#FFFFFF",
+                    opacity: 0.5
+                },
+                show: "slow",
+                title: $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
+                width: 700
             }).attr("hashedUrl", hashedUrl);
             self.configureSetupComponentElements(component);
             self.collection.add(component);
@@ -486,11 +504,12 @@ var View_CubeVizModule_Component = (function (_super) {
         });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
-        $("#cubeviz-component-setupComponentDialog-" + $(event.target).attr("hashedUrl") + " [type=\"checkbox\"]").attr("checked", false);
+        var hashedUrl = $(event.target).attr("hashedUrl");
+        $("#cubeviz-component-setupComponentDialog-" + hashedUrl + " [type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
-        var component = this.collection.get($(event.target).attr("hashedUrl"));
-        component.dialogReference.dialog("open");
+        var hashedUrl = $(event.target).attr("hashedUrl");
+        $("#cubeviz-component-setupComponentDialog-" + hashedUrl).dialog("open");
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         $("#cubeviz-component-questionMarkDialog").dialog("open");
@@ -513,10 +532,15 @@ var View_CubeVizModule_Component = (function (_super) {
             list.append(optionTpl(dimension));
         });
         $("#cubeviz-component-questionMarkDialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         this.configureSetupComponentDialog();
         this.delegateEvents({
