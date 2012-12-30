@@ -157,6 +157,72 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
+    public onBeforeClose_setupComponentDialog(event, ui) : void
+    {
+        // extract and set necessary elements and data
+        var dialogDiv = $($($(event.target).parents().get(2)).children().get(1)),
+            elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
+            hashedUrl = dialogDiv.attr("hashedUrl"),
+            componentBox = $("#cubeviz-component-box-" + hashedUrl),
+            input = null,
+            inputLabel = null,
+            selectedElements = [];
+        
+        // if some items next to the close button was clicked, this event could
+        // be executed, so prevent invalid hashedUrl's
+        if(undefined === hashedUrl) {
+            return;
+        }
+            
+        /**
+         * Go through all checkboxes and save their data if checked
+         */
+        $(elementList).each(function(i, element){
+            
+            // extract required elements
+            input       = $($(element).children().get(0));
+            inputLabel  = $($(element).children().get(1));
+            
+            // add only elements if they were checked
+            if("checked" === input.attr("checked")) {
+                selectedElements.push({
+                    hashedProperty: input.attr("name"),
+                    property: input.val(),
+                    propertyLabel: inputLabel.html()
+                });
+            }
+        });
+        
+        // if nothing was selected, set the first item per default
+        if(0 == _.size(selectedElements)) {
+            console.log("prevent for null");
+            selectedElements = [];
+            // add item as new instance to avoid simply copy the reference
+            selectedElements.push(JSON.parse(JSON.stringify(
+                this.app._.data.components.dimensions[hashedUrl].elements[0]
+            )));
+            
+            // recheck the first checkbox of the elements list
+            $($(dialogDiv.find(".cubeviz-component-setupComponentElements")
+                .children().get(0))
+                .children().get(0))
+                .attr("checked", true);
+        }        
+        
+        // save updated element list
+        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
+        
+        /**
+         * Update selected elements counter
+         */
+        $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
+            selectedElements.length
+        );
+    }
+    
+    /**
+     *
+     */
     public onClick_deselectedAllComponentElements(event) 
     {
         var hashedUrl = $(event.target).attr("hashedUrl");
@@ -241,6 +307,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             "click #cubeviz-component-questionMark": 
                 this.onClick_questionmark,
+            
+            "dialogbeforeclose .cubeviz-component-setupComponentDialog": 
+                this.onBeforeClose_setupComponentDialog
         });
         
         return this;

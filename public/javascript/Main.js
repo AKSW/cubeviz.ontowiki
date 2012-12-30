@@ -503,6 +503,40 @@ var View_CubeVizModule_Component = (function (_super) {
             self.render();
         });
     };
+    View_CubeVizModule_Component.prototype.onBeforeClose_setupComponentDialog = function (event, ui) {
+        var dialogDiv = $($($(event.target).parents().get(2)).children().get(1));
+        var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
+        var hashedUrl = dialogDiv.attr("hashedUrl");
+        var componentBox = $("#cubeviz-component-box-" + hashedUrl);
+        var input = null;
+        var inputLabel = null;
+        var selectedElements = [];
+
+        if(undefined === hashedUrl) {
+            return;
+        }
+        $(elementList).each(function (i, element) {
+            input = $($(element).children().get(0));
+            inputLabel = $($(element).children().get(1));
+            if("checked" === input.attr("checked")) {
+                selectedElements.push({
+                    hashedProperty: input.attr("name"),
+                    property: input.val(),
+                    propertyLabel: inputLabel.html()
+                });
+            }
+        });
+        if(0 == _.size(selectedElements)) {
+            console.log("prevent for null");
+            selectedElements = [];
+            selectedElements.push(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[hashedUrl].elements[0])));
+            $($(dialogDiv.find(".cubeviz-component-setupComponentElements").children().get(0)).children().get(0)).attr("checked", true);
+        }
+        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
+        console.log("selectedElements");
+        console.log(selectedElements);
+        $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
+    };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
         var hashedUrl = $(event.target).attr("hashedUrl");
         $("#cubeviz-component-setupComponentDialog-" + hashedUrl + " [type=\"checkbox\"]").attr("checked", false);
@@ -546,7 +580,8 @@ var View_CubeVizModule_Component = (function (_super) {
         this.delegateEvents({
             "click .cubeviz-component-setupComponentDeselectButton": this.onClick_deselectedAllComponentElements,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
-            "click #cubeviz-component-questionMark": this.onClick_questionmark
+            "click #cubeviz-component-questionMark": this.onClick_questionmark,
+            "dialogbeforeclose .cubeviz-component-setupComponentDialog": this.onBeforeClose_setupComponentDialog
         });
         return this;
     };

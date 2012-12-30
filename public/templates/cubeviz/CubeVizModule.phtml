@@ -170,9 +170,11 @@
 
 <!-- Component-Dimension -->
 <script id="cubeviz-component-tpl-listBoxItem" type="text/template">
-    <div class="cubeviz-component-box">    
+    <div class="cubeviz-component-box" id="cubeviz-component-box-<%= hashedUrl %>">    
         <div class="cubeviz-component-title">
-            <%= label %>&nbsp;(<%= selectedElementCount %> / <%= elementCount %>)
+            <%= label %>&nbsp;
+            (<span class="cubeviz-component-selectedCount"><%= selectedElementCount %></span> 
+            / <%= elementCount %>)
         </div>
         <small>Explanation text</small>
         <br/>
@@ -187,7 +189,7 @@
     <?php echo $this->_translate->_('Set component elements'); ?>
 </script>
 <script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
-    <div id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>">
+    <div id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>" class="cubeviz-component-setupComponentDialog">
         <h2><%= label %></h2>
         <p>Dimension Meta Information</p>
         <small>Hookline, whats possible here?</small>
