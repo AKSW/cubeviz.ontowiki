@@ -96,10 +96,15 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
          * Question mark dialog
          */
         $("#cubeviz-dataStructureDefinition-dialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         
         /**

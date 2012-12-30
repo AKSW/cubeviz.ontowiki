@@ -97,10 +97,15 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          * Question mark dialog
          */
         $("#cubeviz-dataSet-dialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         
         /**

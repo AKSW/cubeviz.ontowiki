@@ -40,13 +40,18 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
             
             div.dialog({
-                "autoOpen": false,
-                "draggable": false,
-                "height": 485,
-                "hide": "slow",
-                "show": "slow",
-                "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
-                "width": 700
+                autoOpen: false,
+                draggable: false,
+                height: 485,
+                hide: "slow",
+                modal: true,
+                overlay: {
+                    "background-color": "#FFFFFF",
+                    opacity: 0.5
+                },
+                show: "slow",
+                title: $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
+                width: 700
             })
             .attr("hashedUrl", hashedUrl);
                 
@@ -154,7 +159,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_deselectedAllComponentElements(event) 
     {
-        $("#cubeviz-component-setupComponentDialog-" + $(event.target).attr("hashedUrl") + 
+        var hashedUrl = $(event.target).attr("hashedUrl");
+        $("#cubeviz-component-setupComponentDialog-" + hashedUrl + 
           " [type=\"checkbox\"]").attr("checked", false);
     }
     
@@ -163,8 +169,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_setupComponentOpener(event) 
     {
-        var component:any = this.collection.get($(event.target).attr("hashedUrl"));
-        component.dialogReference.dialog("open");
+        var hashedUrl = $(event.target).attr("hashedUrl");
+        $("#cubeviz-component-setupComponentDialog-" + hashedUrl)
+            .dialog("open");
     }
     
     /**
@@ -209,10 +216,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          * Question mark dialog
          */
         $("#cubeviz-component-questionMarkDialog").dialog({
-            "autoOpen": false,
-            "draggable": false,
-            "hide": "slow",
-            "show": "slow"
+            autoOpen: false,
+            draggable: false,
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow"
         });
         
         this.configureSetupComponentDialog();
