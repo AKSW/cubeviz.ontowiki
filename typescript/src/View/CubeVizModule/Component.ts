@@ -33,7 +33,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             // set dialog reference and template
             $("#cubeviz-component-setupDialogContainer").append(
-                dialogTpl({label: "Foo", hashedUrl:hashedUrl})
+                dialogTpl({label: component["label"], hashedUrl:hashedUrl})
             );
                         
             component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + 
@@ -92,6 +92,28 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             // ... add new item to element list
             elementList.append(elementTpl(element));
         });
+    }
+    
+    /**
+     *
+     */
+    public destroy() : CubeViz_View_Abstract
+    {
+        // 
+        $(this.collection._).each(function(i, c){
+            // set dialog to initial state
+            c["dialogReference"].dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
+        });
+        
+        $("#cubeviz-component-setupDialogContainer").empty();
+        
+        super.destroy();
+        
+        // Question mark dialog
+        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
+        
+        return this;
     }
     
     /**

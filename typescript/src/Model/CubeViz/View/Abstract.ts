@@ -82,7 +82,9 @@ class CubeViz_View_Abstract {
     }
     
     /**
-     * Unbind all events, remove element and reset collection 
+     * Unbind all events, empty (empty it, delete all of its elements) element and 
+     * reset its collection .
+     * @return CubeViz_View_Abstract Itself, for chaining.
      */
     public destroy() : CubeViz_View_Abstract
     {

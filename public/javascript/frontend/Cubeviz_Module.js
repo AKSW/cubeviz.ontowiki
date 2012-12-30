@@ -423,7 +423,7 @@ var View_CubeVizModule_Component = (function (_super) {
         $(backupCollection).each(function (i, component) {
             hashedUrl = component["hashedUrl"];
             $("#cubeviz-component-setupDialogContainer").append(dialogTpl({
-                label: "Foo",
+                label: component["label"],
                 hashedUrl: hashedUrl
             }));
             component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
@@ -450,6 +450,23 @@ var View_CubeVizModule_Component = (function (_super) {
         component.elements.sort(function (a, b) {
             return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
         });
+        console.log("");
+        console.log("configureSetupComponentElements -----------------");
+        console.log("");
+        console.log("component.elements");
+        console.log(component.elements);
+        console.log("");
+        console.log("dialogDiv");
+        console.log(dialogDiv);
+        console.log("");
+        console.log("dialogDiv > children");
+        console.log(dialogDiv.children());
+        console.log("");
+        console.log("");
+        console.log("elementList");
+        console.log(elementList);
+        console.log("");
+        console.log("loop");
         $(component.elements).each(function (i, element) {
             setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
                 return dim.property == element["property"];
@@ -461,6 +478,19 @@ var View_CubeVizModule_Component = (function (_super) {
             }
             elementList.append(elementTpl(element));
         });
+        console.log("");
+        console.log("elementList nach loop");
+        console.log(elementList);
+    };
+    View_CubeVizModule_Component.prototype.destroy = function () {
+        $(this.collection._).each(function (i, c) {
+            c["dialogReference"].dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
+        });
+        $("#cubeviz-component-setupDialogContainer").empty();
+        _super.prototype.destroy.call(this);
+        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
+        return this;
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
         var self = this;
