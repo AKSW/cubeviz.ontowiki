@@ -458,7 +458,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 show: "slow",
                 width: 700
             }).data("hashedUrl", hashedUrl);
-            $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("hashedUrl", hashedUrl);
+            $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("dialogDiv", div);
             self.configureSetupComponentElements(component);
             self.collection.add(component);
         });
@@ -535,8 +535,7 @@ var View_CubeVizModule_Component = (function (_super) {
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
-        var hashedUrl = $(event.target).data("hashedUrl");
-        $("#cubeviz-component-setupComponentDialog-" + hashedUrl + " [type=\"checkbox\"]").attr("checked", false);
+        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         var hashedUrl = $(event.target).data("hashedUrl");

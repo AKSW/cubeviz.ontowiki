@@ -58,7 +58,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             // attach hashedUrl to deselect all elements
             $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
-                .data("hashedUrl", hashedUrl);
+                .data("dialogDiv", div);
                 
             // configure elements of the dialog
             self.configureSetupComponentElements(component);
@@ -229,9 +229,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_deselectedAllComponentElements(event) 
     {
-        var hashedUrl = $(event.target).data("hashedUrl");
-        $("#cubeviz-component-setupComponentDialog-" + hashedUrl + 
-          " [type=\"checkbox\"]").attr("checked", false);
+        $(event.target).data("dialogDiv")
+            .find("[type=\"checkbox\"]")
+            .attr("checked", false);
     }
     
     /**
