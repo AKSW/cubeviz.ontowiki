@@ -458,7 +458,8 @@ var View_CubeVizModule_Component = (function (_super) {
                 show: "slow",
                 title: $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
                 width: 700
-            }).attr("hashedUrl", hashedUrl);
+            }).data("hashedUrl", hashedUrl);
+            $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("hashedUrl", hashedUrl);
             self.configureSetupComponentElements(component);
             self.collection.add(component);
         });
@@ -506,7 +507,7 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.onBeforeClose_setupComponentDialog = function (event, ui) {
         var dialogDiv = $($($(event.target).parents().get(2)).children().get(1));
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
-        var hashedUrl = dialogDiv.attr("hashedUrl");
+        var hashedUrl = dialogDiv.data("hashedUrl");
         var componentBox = $("#cubeviz-component-box-" + hashedUrl);
         var input = null;
         var inputLabel = null;
@@ -527,22 +528,19 @@ var View_CubeVizModule_Component = (function (_super) {
             }
         });
         if(0 == _.size(selectedElements)) {
-            console.log("prevent for null");
             selectedElements = [];
             selectedElements.push(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[hashedUrl].elements[0])));
             $($(dialogDiv.find(".cubeviz-component-setupComponentElements").children().get(0)).children().get(0)).attr("checked", true);
         }
         this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
-        console.log("selectedElements");
-        console.log(selectedElements);
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
-        var hashedUrl = $(event.target).attr("hashedUrl");
+        var hashedUrl = $(event.target).data("hashedUrl");
         $("#cubeviz-component-setupComponentDialog-" + hashedUrl + " [type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
-        var hashedUrl = $(event.target).attr("hashedUrl");
+        var hashedUrl = $(event.target).data("hashedUrl");
         $("#cubeviz-component-setupComponentDialog-" + hashedUrl).dialog("open");
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
@@ -550,6 +548,8 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.render = function () {
         var list = $("#cubviz-component-listBox");
+        var opener = null;
+        var option = null;
         var optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text());
         var selectedComponentDimensions = this.app._.data.selectedComponents.dimensions;
         var selectedDimension = null;
@@ -563,7 +563,10 @@ var View_CubeVizModule_Component = (function (_super) {
                 dimension["selectedElementCount"] = 1;
             }
             dimension["elementCount"] = _.size(dimension["elements"]);
-            list.append(optionTpl(dimension));
+            option = $(optionTpl(dimension));
+            opener = $(option.find(".cubeviz-component-setupComponentOpener").get(0));
+            opener.data("hashedUrl", dimension["hashedUrl"]);
+            list.append(option);
         });
         $("#cubeviz-component-questionMarkDialog").dialog({
             autoOpen: false,

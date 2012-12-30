@@ -31,7 +31,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         $(backupCollection).each(function(i, component){
             
             hashedUrl = component["hashedUrl"];
-            
+
             // set dialog reference and template
             $("#cubeviz-component-setupDialogContainer").append(
                 dialogTpl({label: component["label"], hashedUrl:hashedUrl})
@@ -39,6 +39,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
             
+            // setup dialog
             div.dialog({
                 autoOpen: false,
                 draggable: false,
@@ -53,9 +54,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 title: $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
                 width: 700
             })
-            .attr("hashedUrl", hashedUrl);
+            // attach hashedUrl
+            .data("hashedUrl", hashedUrl);
+            
+            // attach hashedUrl to deselect all elements
+            $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
+                .data("hashedUrl", hashedUrl);
                 
-            //
+            // configure elements of the dialog
             self.configureSetupComponentElements(component);
             
             self.collection.add(component);
@@ -162,7 +168,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // extract and set necessary elements and data
         var dialogDiv = $($($(event.target).parents().get(2)).children().get(1)),
             elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
-            hashedUrl = dialogDiv.attr("hashedUrl"),
+            hashedUrl = dialogDiv.data("hashedUrl"),
             componentBox = $("#cubeviz-component-box-" + hashedUrl),
             input = null,
             inputLabel = null,
@@ -195,7 +201,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         // if nothing was selected, set the first item per default
         if(0 == _.size(selectedElements)) {
-            console.log("prevent for null");
             selectedElements = [];
             // add item as new instance to avoid simply copy the reference
             selectedElements.push(JSON.parse(JSON.stringify(
@@ -225,7 +230,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_deselectedAllComponentElements(event) 
     {
-        var hashedUrl = $(event.target).attr("hashedUrl");
+        var hashedUrl = $(event.target).data("hashedUrl");
         $("#cubeviz-component-setupComponentDialog-" + hashedUrl + 
           " [type=\"checkbox\"]").attr("checked", false);
     }
@@ -235,7 +240,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_setupComponentOpener(event) 
     {
-        var hashedUrl = $(event.target).attr("hashedUrl");
+        var hashedUrl = $(event.target).data("hashedUrl");
         $("#cubeviz-component-setupComponentDialog-" + hashedUrl)
             .dialog("open");
     }
@@ -257,6 +262,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          * List
          */
         var list = $("#cubviz-component-listBox"),
+            option:any = null,
             optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
             selectedComponentDimensions = this.app._.data.selectedComponents.dimensions,
             selectedDimension = null,
@@ -275,7 +281,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             // set general element count
             dimension["elementCount"] = _.size(dimension["elements"]);
             
-            list.append(optionTpl(dimension));
+            // build html out of template
+            option = $(optionTpl(dimension));
+            
+            // get opener link
+            $(option.find(".cubeviz-component-setupComponentOpener").get(0))
+                .data("hashedUrl", dimension["hashedUrl"]);
+            
+            // add option to list
+            list.append(option);
         });
         
         /**
