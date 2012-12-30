@@ -20,6 +20,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dialogTpl = _.template(
                 $("#cubeviz-component-tpl-setupComponentDialog").text()
             ),
+            div = null,
             hashedUrl:string = "",
             self = this;
         
@@ -35,20 +36,19 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             $("#cubeviz-component-setupDialogContainer").append(
                 dialogTpl({label: component["label"], hashedUrl:hashedUrl})
             );
-                        
-            component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + 
-                                               hashedUrl);
             
-            component["dialogReference"].dialog({
-                    "autoOpen": false,
-                    "draggable": false,
-                    "height": 485,
-                    "hide": "slow",
-                    "show": "slow",
-                    "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
-                    "width": 700
-                })
-                .attr("hashedUrl", hashedUrl);
+            div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
+            
+            div.dialog({
+                "autoOpen": false,
+                "draggable": false,
+                "height": 485,
+                "hide": "slow",
+                "show": "slow",
+                "title": $("#cubeviz-component-tpl-setupComponentDialogTitle").text(),
+                "width": 700
+            })
+            .attr("hashedUrl", hashedUrl);
                 
             //
             self.configureSetupComponentElements(component);
@@ -102,7 +102,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // 
         $(this.collection._).each(function(i, c){
             // set dialog to initial state
-            c["dialogReference"].dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).dialog("destroy");
             $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
         });
         

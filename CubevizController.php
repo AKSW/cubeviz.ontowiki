@@ -230,14 +230,14 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 		
-        // Save parameter
-		$config['cubeVizLinksModule'] = $this->_request->getParam('cubeVizLinksModule');
-		$config['uiChartConfig'] = $this->_request->getParam('uiChartConfig');
-		
-		$configuration = $this->_getConfiguration ();
+        // write given parameter to file
+		$lC = $this->_getConfiguration ()->write(
+            $this->_request->getParam('data'),
+            $this->_request->getParam('ui')
+        );
         
-        // write given parameter to file and send back result
-		$this->_response->setBody(json_encode($configuration->write($config)));
+        // send back result
+		$this->_response->setBody(json_encode($lC));
 	}
 
     /**

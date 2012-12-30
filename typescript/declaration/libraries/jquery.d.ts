@@ -159,7 +159,7 @@ interface JQueryStatic {
     ajaxPrefilter(dataTypes: string, handler: (opts: any, originalOpts: any, jqXHR: JQueryXHR) => any): any;
     ajaxPrefilter(handler: (opts: any, originalOpts: any, jqXHR: JQueryXHR) => any): any;
 
-    ajaxSetup(options: any);
+    ajaxSetup(options?: any);
 
     get(url: string, data?: any, success?: any, dataType?: any): JQueryXHR;
     getJSON(url: string, data?: any, success?: any): JQueryXHR;

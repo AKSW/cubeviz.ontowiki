@@ -1,6 +1,7 @@
 var CubeViz_ConfigurationLink = (function () {
     function CubeViz_ConfigurationLink() { }
-    CubeViz_ConfigurationLink.saveToServerFile = function saveToServerFile(url, cubeVizLinksModule, cubeVizUIChartConfig, callback) {
+    CubeViz_ConfigurationLink.saveToServerFile = function saveToServerFile(url, data, ui, callback) {
+        var oldAjaxSetup = $.ajaxSetup();
         $.ajaxSetup({
             "async": true,
             "cache": false,
@@ -8,14 +9,17 @@ var CubeViz_ConfigurationLink = (function () {
         });
         $.support.cors = true;
         $.ajax({
-            url: url + "savelinktofile/",
-            data: {
-                "cubeVizLinksModule": cubeVizLinksModule,
-                "cubeVizUIChartConfig": cubeVizUIChartConfig
+            "url": url + "savelinktofile/",
+            "data": {
+                "data": data,
+                "ui": ui
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
+            $.ajaxSetup(oldAjaxSetup);
             throw new Error("saveToServerFile error: " + xhr["responseText"]);
         }).done(function (result) {
+            $.ajaxSetup(oldAjaxSetup);
+            console.log(result);
             callback(JSON.parse(result));
         });
     }
@@ -416,6 +420,7 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.configureSetupComponentDialog = function () {
         var backupCollection = this.collection._;
         var dialogTpl = _.template($("#cubeviz-component-tpl-setupComponentDialog").text());
+        var div = null;
         var hashedUrl = "";
         var self = this;
 
@@ -426,8 +431,8 @@ var View_CubeVizModule_Component = (function (_super) {
                 label: component["label"],
                 hashedUrl: hashedUrl
             }));
-            component["dialogReference"] = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
-            component["dialogReference"].dialog({
+            div = $("#cubeviz-component-setupComponentDialog-" + hashedUrl);
+            div.dialog({
                 "autoOpen": false,
                 "draggable": false,
                 "height": 485,
@@ -450,23 +455,6 @@ var View_CubeVizModule_Component = (function (_super) {
         component.elements.sort(function (a, b) {
             return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
         });
-        console.log("");
-        console.log("configureSetupComponentElements -----------------");
-        console.log("");
-        console.log("component.elements");
-        console.log(component.elements);
-        console.log("");
-        console.log("dialogDiv");
-        console.log(dialogDiv);
-        console.log("");
-        console.log("dialogDiv > children");
-        console.log(dialogDiv.children());
-        console.log("");
-        console.log("");
-        console.log("elementList");
-        console.log(elementList);
-        console.log("");
-        console.log("loop");
         $(component.elements).each(function (i, element) {
             setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
                 return dim.property == element["property"];
@@ -478,13 +466,10 @@ var View_CubeVizModule_Component = (function (_super) {
             }
             elementList.append(elementTpl(element));
         });
-        console.log("");
-        console.log("elementList nach loop");
-        console.log(elementList);
     };
     View_CubeVizModule_Component.prototype.destroy = function () {
         $(this.collection._).each(function (i, c) {
-            c["dialogReference"].dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).dialog("destroy");
             $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
         });
         $("#cubeviz-component-setupDialogContainer").empty();
@@ -574,7 +559,6 @@ var View_CubeVizModule_Footer = (function (_super) {
         });
     };
     View_CubeVizModule_Footer.prototype.initialize = function () {
-        var self = this;
         this.render();
     };
     View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function () {

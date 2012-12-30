@@ -31,7 +31,8 @@ class CubeViz_ConfigurationLink
     /**
      * Constructor
      */
-    public function __construct($path) {
+    public function __construct($path) 
+    {
         $this->_hashDirectory = $path;
         $this->_links = array ();
 	}
@@ -41,8 +42,8 @@ class CubeViz_ConfigurationLink
      * @param $linkCode Name of the file (name = hash code)
      * @return array Array with different kinds of information
 	 */
-	public function read($linkCode) {
-        
+	public function read($linkCode) 
+    {
 		if (true === file_exists($this->_hashDirectory . $linkCode) ) {
             
             $readedConfig = array ();
@@ -83,9 +84,13 @@ class CubeViz_ConfigurationLink
     /**
      * Writes a given configuration to a file
      */
-	public function write($config) {
+	public function write($data, $ui) 
+    {
         // compute hashcode for the given configuration
-        $fileName = $this->_filePrefix . $this->generateHash ($config);
+        $fileName = $this->_filePrefix . $this->generateHash ($data, $ui);
+        
+        $data['linkCode'] = $fileName;
+        
 		$filePath = $this->_hashDirectory . $fileName;
         				
 		if( false == file_exists($filePath) ) {
@@ -98,8 +103,8 @@ class CubeViz_ConfigurationLink
             }
 			
             // write all parameters line by line
-			fwrite($fh, json_encode ( $config['data'] ) . "\n");
-			fwrite($fh, json_encode ( $config['ui'] ) . "\n");
+			fwrite($fh, json_encode ( $data ) . "\n");
+			fwrite($fh, json_encode ( $ui ) . "\n");
 			chmod ($filePath, 0755);
 			fclose($fh);
 		} 
@@ -110,9 +115,9 @@ class CubeViz_ConfigurationLink
     
     /**
      * 
-     */
-	
-	private function generateHash ($config) {		
-		return hash ( 'sha256', json_encode ( $config ) );
+     */	
+	private function generateHash ($data, $ui) 
+    {		
+		return hash ( 'sha256', json_encode ( $data ) . json_encode ( $ui ) );
 	}
 }

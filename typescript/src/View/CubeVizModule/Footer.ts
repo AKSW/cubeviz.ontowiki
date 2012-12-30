@@ -54,7 +54,6 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
      */
     public initialize() 
     {        
-        var self = this;
         this.render();
     }
     
