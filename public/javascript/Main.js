@@ -680,3 +680,41 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     return View_IndexAction_Visualization;
 })(CubeViz_View_Abstract);
+var View_IndexAction_Header = (function (_super) {
+    __extends(View_IndexAction_Header, _super);
+    function View_IndexAction_Header(attachedTo, app) {
+        _super.call(this, "View_IndexAction_Header", attachedTo, app);
+    }
+    View_IndexAction_Header.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        $("#cubeviz-header-questionMarkHeadline").dialog("destroy");
+        return this;
+    };
+    View_IndexAction_Header.prototype.initialize = function () {
+        var self = this;
+        this.render();
+    };
+    View_IndexAction_Header.prototype.onClick_questionMark = function () {
+        $("#cubeviz-header-dialogBox").dialog("open");
+    };
+    View_IndexAction_Header.prototype.render = function () {
+        $("#cubeviz-header-dialogBox").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: "auto",
+            hide: "slow",
+            modal: true,
+            overlay: {
+                "background-color": "#FFFFFF",
+                opacity: 0.5
+            },
+            show: "slow",
+            width: 400
+        });
+        this.delegateEvents({
+            "click #cubeviz-header-questionMarkHeadline": this.onClick_questionMark
+        });
+        return this;
+    };
+    return View_IndexAction_Header;
+})(CubeViz_View_Abstract);

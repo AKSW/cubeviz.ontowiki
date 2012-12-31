@@ -13,3 +13,4 @@ src/View/CubeVizModule/Component.ts
 src/View/CubeVizModule/Footer.ts
 
 src/View/IndexAction/Visualization.ts
+src/View/IndexAction/Header.ts
