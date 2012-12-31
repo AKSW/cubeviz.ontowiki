@@ -20,7 +20,8 @@
              * These views will added and executed on render() call. (second parameter 
              * causes that)
              */
-            .add("View_IndexAction_Header", "#cubeviz-header", true)
+            .add("View_IndexAction_Header", "", true)
+            .add("View_IndexAction_Visualization", "", true)
         
             /**
              * These views will only added but not executed on render() call.
@@ -32,16 +33,16 @@
     
 </script>
 
-<h2 id="cubeviz-header">
+<h2 id="cubeviz-index-header">
     CubeViz - Visualization of the <?php echo $this->CubeViz_ModelInformation['rdfs:label']; ?>
     &nbsp;
     <img class="cubeviz-icon-small"
-          id="cubeviz-header-questionMarkHeadline" 
+          id="cubeviz-index-headerQuestionMarkHeadline" 
           src="<?php echo $this->cubevizImagesPath; ?>i.png" 
           title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
 </h2>
 
-<div id="container"></div>
+<div id="cubeviz-index-visualization"></div>
 
 <div id="chartSelection" scrolling="no"></div>
 
@@ -61,7 +62,7 @@
 <!-- 
     
 -->
-<div id="cubeviz-Index-NothingFoundNotificationContainer" style="display:none;">
+<div id="cubeviz-visualization-nothingFoundNotificationContainer">
     
     <div id="cubeviz-Index-NothingFoundBox">
         
@@ -112,7 +113,7 @@
 <!-- 
     Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
 -->
-<div id="cubeviz-header-dialogBox">
+<div id="cubeviz-index-headerDialogBox">
     
     <!-- Label -->
     <h2><?php echo $this->CubeViz_ModelInformation ['rdfs:label']; ?></h2>

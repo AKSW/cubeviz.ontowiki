@@ -177,52 +177,6 @@ var CubeViz_View_Application = (function () {
     };
     return CubeViz_View_Application;
 })();
-var DataCube_DataStructureDefinition = (function () {
-    function DataCube_DataStructureDefinition() { }
-    DataCube_DataStructureDefinition.loadAll = function loadAll(url, modelUrl, callback) {
-        $.ajax({
-            url: url + "getdatastructuredefinitions/",
-            data: {
-                m: modelUrl
-            }
-        }).error(function (xhr, ajaxOptions, thrownError) {
-            throw new Error("loadAll error: " + xhr["responseText"]);
-        }).done(function (entries) {
-            DataCube_DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
-        });
-    }
-    DataCube_DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
-        entries = JSON.parse(entries);
-        entries.sort(function (a, b) {
-            return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
-        });
-        callback(entries);
-    }
-    return DataCube_DataStructureDefinition;
-})();
-var DataCube_DataSet = (function () {
-    function DataCube_DataSet() { }
-    DataCube_DataSet.loadAll = function loadAll(url, modelUrl, dsdUrl, callback) {
-        $.ajax({
-            url: url + "getdatasets/",
-            data: {
-                m: modelUrl,
-                dsdUrl: dsdUrl
-            }
-        }).error(function (xhr, ajaxOptions, thrownError) {
-            throw new Error("loadAll error: " + xhr["responseText"]);
-        }).done(function (entries) {
-            DataCube_DataSet.prepareLoadedDataSets(entries, callback);
-        });
-    }
-    DataCube_DataSet.prepareLoadedDataSets = function prepareLoadedDataSets(entries, callback) {
-        entries.sort(function (a, b) {
-            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
-        });
-        callback(entries);
-    }
-    return DataCube_DataSet;
-})();
 var DataCube_Component = (function () {
     function DataCube_Component() { }
     DataCube_Component.loadAllDimensions = function loadAllDimensions(url, modelUrl, dsdUrl, dsUrl, callback) {
@@ -292,6 +246,183 @@ var DataCube_Component = (function () {
         return result;
     }
     return DataCube_Component;
+})();
+var DataCube_DataSet = (function () {
+    function DataCube_DataSet() { }
+    DataCube_DataSet.loadAll = function loadAll(url, modelUrl, dsdUrl, callback) {
+        $.ajax({
+            url: url + "getdatasets/",
+            data: {
+                m: modelUrl,
+                dsdUrl: dsdUrl
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("loadAll error: " + xhr["responseText"]);
+        }).done(function (entries) {
+            DataCube_DataSet.prepareLoadedDataSets(entries, callback);
+        });
+    }
+    DataCube_DataSet.prepareLoadedDataSets = function prepareLoadedDataSets(entries, callback) {
+        entries.sort(function (a, b) {
+            return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
+        });
+        callback(entries);
+    }
+    return DataCube_DataSet;
+})();
+var DataCube_DataStructureDefinition = (function () {
+    function DataCube_DataStructureDefinition() { }
+    DataCube_DataStructureDefinition.loadAll = function loadAll(url, modelUrl, callback) {
+        $.ajax({
+            url: url + "getdatastructuredefinitions/",
+            data: {
+                m: modelUrl
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("loadAll error: " + xhr["responseText"]);
+        }).done(function (entries) {
+            DataCube_DataStructureDefinition.prepareLoadedDataStructureDefinitions(entries, callback);
+        });
+    }
+    DataCube_DataStructureDefinition.prepareLoadedDataStructureDefinitions = function prepareLoadedDataStructureDefinitions(entries, callback) {
+        entries = JSON.parse(entries);
+        entries.sort(function (a, b) {
+            return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
+        });
+        callback(entries);
+    }
+    return DataCube_DataStructureDefinition;
+})();
+var DataCube_Observation = (function () {
+    function DataCube_Observation() {
+        this._axes = {
+        };
+        this._selectedDimensionUris = [];
+    }
+    DataCube_Observation.prototype.addAxisEntryPointsTo = function (uri, value, dimensionValues) {
+        for(var dimensionUri in dimensionValues) {
+            dimensionValues[dimensionUri] = {
+                "value": dimensionValues[dimensionUri],
+                "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
+            };
+        }
+        this["_axes"][uri][value].push(dimensionValues);
+    };
+    DataCube_Observation.prototype.extractSelectedDimensionUris = function (elements) {
+        var resultList = [];
+        for(var i in elements) {
+            resultList.push(elements[i]["typeUrl"]);
+        }
+        return resultList;
+    };
+    DataCube_Observation.prototype.getAxisElements = function (axisUri) {
+        if(undefined === this["_axes"][axisUri]) {
+            return this["_axes"][axisUri];
+        } else {
+            console.log("\nNo elements found given axisUri: " + axisUri);
+            return {
+            };
+        }
+    };
+    DataCube_Observation.prototype.initialize = function (entries, selectedComponentDimensions, measureUri) {
+        if(false === _.isArray(entries) || 0 == _.size(entries)) {
+            throw new Error("\nEntries is empty or not an array!");
+            return;
+        }
+        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
+        var dimensionValues = {
+        };
+        var measureObj = {
+        };
+        var selecDimUri = "";
+        var selecDimVal = "";
+
+        this["_axes"][measureUri] = this["_axes"][measureUri] || {
+        };
+        for(var mainIndex in entries) {
+            dimensionValues = {
+            };
+            measureObj = {
+            };
+            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
+            for(var i in this["_selectedDimensionUris"]) {
+                selecDimUri = this["_selectedDimensionUris"][i];
+                if(undefined == entries[mainIndex][selecDimUri]) {
+                    console.log("Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri);
+                    continue;
+                }
+                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                dimensionValues[selecDimUri] = selecDimVal;
+                if(undefined == this["_axes"][selecDimUri]) {
+                    this["_axes"][selecDimUri] = {
+                    };
+                }
+                if(undefined == this["_axes"][selecDimUri][selecDimVal]) {
+                    this["_axes"][selecDimUri][selecDimVal] = [];
+                }
+                measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
+                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
+            }
+            this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
+        }
+        return this;
+    };
+    DataCube_Observation.loadAll = function loadAll(url, linkCode, callback) {
+        $.ajax({
+            url: url + "getobservations/",
+            data: {
+                lC: linkCode
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("loadAll error: " + xhr["responseText"]);
+        }).done(function (entries) {
+            DataCube_Observation.prepareLoadedResultObservations(entries, callback);
+        });
+    }
+    DataCube_Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries, callback) {
+        var parse = $.parseJSON(entries);
+        if(null == parse) {
+            callback(entries);
+        } else {
+            callback(parse);
+        }
+    }
+    DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
+        var mode = undefined == mode ? "ascending" : mode;
+        var sortedKeys = [];
+        var sortedObj = {
+        };
+
+        for(var i in this["_axes"][axisUri]) {
+            sortedKeys.push(i);
+        }
+        switch(mode) {
+            case "descending": {
+                sortedKeys.sort(function (a, b) {
+                    a = a.toString().toLowerCase();
+                    b = b.toString().toLowerCase();
+                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+                });
+                break;
+
+            }
+            default: {
+                sortedKeys.sort(function (a, b) {
+                    a = a.toString().toLowerCase();
+                    b = b.toString().toLowerCase();
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                break;
+
+            }
+        }
+        for(var i in sortedKeys) {
+            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
+        }
+        this["_axes"][axisUri] = sortedObj;
+        return this;
+    };
+    return DataCube_Observation;
 })();
 var __extends = this.__extends || function (d, b) {
     function __() { this.constructor = d; }
@@ -667,11 +798,15 @@ var View_IndexAction_Visualization = (function (_super) {
     }
     View_IndexAction_Visualization.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
-        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
         return this;
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
         var self = this;
+        console.log(this.app._.data.linkCode);
+        DataCube_Observation.loadAll(this.app._.backend.url, this.app._.data.linkCode, function (entries) {
+            console.log("entries:");
+            console.log(entries);
+        });
     };
     View_IndexAction_Visualization.prototype.render = function () {
         this.delegateEvents({
@@ -687,7 +822,7 @@ var View_IndexAction_Header = (function (_super) {
     }
     View_IndexAction_Header.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
-        $("#cubeviz-header-questionMarkHeadline").dialog("destroy");
+        $("#cubeviz-index-headerDialogBox").dialog("destroy");
         return this;
     };
     View_IndexAction_Header.prototype.initialize = function () {
@@ -695,10 +830,10 @@ var View_IndexAction_Header = (function (_super) {
         this.render();
     };
     View_IndexAction_Header.prototype.onClick_questionMark = function () {
-        $("#cubeviz-header-dialogBox").dialog("open");
+        $("#cubeviz-index-headerDialogBox").dialog("open");
     };
     View_IndexAction_Header.prototype.render = function () {
-        $("#cubeviz-header-dialogBox").dialog({
+        $("#cubeviz-index-headerDialogBox").dialog({
             autoOpen: false,
             draggable: false,
             height: "auto",
@@ -712,7 +847,7 @@ var View_IndexAction_Header = (function (_super) {
             width: 400
         });
         this.delegateEvents({
-            "click #cubeviz-header-questionMarkHeadline": this.onClick_questionMark
+            "click #cubeviz-index-headerQuestionMarkHeadline": this.onClick_questionMark
         });
         return this;
     };

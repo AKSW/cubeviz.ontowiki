@@ -19,7 +19,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         super.destroy();
         
         // Question mark dialog
-        $("#cubeviz-header-dialogBox").dialog("destroy");
+        $("#cubeviz-index-headerDialogBox").dialog("destroy");
         
         return this;
     }
@@ -39,7 +39,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public onClick_questionMark() 
     {
-        $("#cubeviz-header-dialogBox").dialog("open");
+        $("#cubeviz-index-headerDialogBox").dialog("open");
     }
 
     /**
@@ -47,7 +47,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public render() 
     {        
-        $("#cubeviz-header-dialogBox").dialog({
+        $("#cubeviz-index-headerDialogBox").dialog({
             autoOpen: false,
             draggable: false,
             height: "auto",
@@ -65,7 +65,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
          * Delegate events to new items of the template
          */
         this.delegateEvents({
-            "click #cubeviz-header-questionMarkHeadline": this.onClick_questionMark
+            "click #cubeviz-index-headerQuestionMarkHeadline": this.onClick_questionMark
         });
         
         return this;

@@ -1,13 +1,13 @@
 /**
  * Questionmark next to Model label
  */
-#cubeviz-header-questionMarkHeadline {
+#cubeviz-index-headerQuestionMarkHeadline {
     cursor: pointer;
     opacity:0.2;
     filter:alpha(opacity=20);
 }
 
-#cubeviz-header-questionMarkHeadline:hover {
+#cubeviz-index-headerQuestionMarkHeadline:hover {
     cursor: pointer;
     opacity:0.5;
     filter:alpha(opacity=50);
