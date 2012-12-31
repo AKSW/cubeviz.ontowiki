@@ -10,7 +10,8 @@
         /**
          * Add data to application instance
          */
-        cubeVizIndex._ = <?php echo $this->cubeVizConfig; ?>
+        cubeVizIndex._ = <?php echo $this->cubeVizConfig; ?>;
+        cubeVizIndex._["chartConfig"] = CubeViz_ChartConfig;
         
         /**
          * Add views
@@ -33,6 +34,7 @@
     
 </script>
 
+<!-- Header -->
 <h2 id="cubeviz-index-header">
     CubeViz - Visualization of the <?php echo $this->CubeViz_ModelInformation['rdfs:label']; ?>
     &nbsp;
@@ -42,9 +44,14 @@
           title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
 </h2>
 
+<!-- Chart visualization -->
 <div id="cubeviz-index-visualization"></div>
 
-<div id="chartSelection" scrolling="no"></div>
+<!-- Legend part -->
+<div id="cubeviz-index-legend"></div>
+
+<!-- Chart selection menu -->
+<div id="cubeviz-index-visualizationSelection" scrolling="no"></div>
 
 
 <!-- 

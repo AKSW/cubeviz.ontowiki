@@ -149,7 +149,7 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$c = $c->read ($linkCode);
         
         // ... get and return observations
-		$this->_response->setBody($query->getObservations($c ['CubeViz_Links_Module']));
+		$this->_response->setBody($query->getObservations($c ['data']));
 	}
     
     /**

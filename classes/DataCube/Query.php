@@ -243,9 +243,9 @@ class DataCube_Query {
         // Case: link configuration was found and loaded
         if ( 0 < count ( $linkConfiguration ) ) {
             // Extract and save neccessary parameters from link configuration
-            $selectedComponents = $linkConfiguration ['selectedComponents'];
-            $dataSetUrl = $linkConfiguration ['selectedDS']['url'];		
-            $selCompDims = $linkConfiguration ['selectedComponents']['dimensions'];
+            $selectedComponents = $linkConfiguration['selectedComponents'];
+            $dataSetUrl = $linkConfiguration['selectedDS']['url'];		
+            $selCompDims = $linkConfiguration['selectedComponents']['dimensions'];
         } 
         
         // Case: no link configuration was given
