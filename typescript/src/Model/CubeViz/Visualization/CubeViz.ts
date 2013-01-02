@@ -1,17 +1,17 @@
-class Visualization_CubeViz {
+class CubeViz_Visualization_CubeViz {
     
     /**
      * 
      */
-    static load (chartName:string) : Visualization_CubeViz_Visualization {
+    static load (chartName:string) : CubeViz_Visualization_CubeViz_Visualization 
+    {
         switch ( chartName ) {
             
-            case 'Visualization_CubeViz_Table':
-                return new Visualization_CubeViz_Table ();
+            case "CubeViz_Visualization_CubeViz_Table":
+                return new CubeViz_Visualization_CubeViz_Table ();
             
             default: 
-                System.out ( "CubeViz - load" );
-                System.out ( "Invalid chartName (" + chartName + ") given!" );
+                throw new Error("Invalid chartName ("+ chartName +") given!");
                 return;
         }
     }    

@@ -200,7 +200,7 @@ var CubeViz_Visualization_Controller = (function () {
     }
     CubeViz_Visualization_Controller.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
         for(var i in charts) {
-            if(className == charts[i]["class"]) {
+            if(className == charts[i].class) {
                 return charts[i];
             }
         }
@@ -220,35 +220,35 @@ var CubeViz_Visualization_Controller = (function () {
         }
         return propertyUri;
     }
-    CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(retrievedData, selectedDimensions, measures) {
+    CubeViz_Visualization_Controller.getMeasure = function getMeasure(selectedComponentMeasures) {
+        var keys = _.keys(selectedComponentMeasures);
+        return selectedComponentMeasures[_.first(keys)];
+    }
+    CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(selectedComponentDimensions) {
         var multipleDimensions = [];
-        var tmp = [];
-
-        for(var hashedUrl in selectedDimensions) {
-            if(1 < selectedDimensions[hashedUrl]["elements"]["length"]) {
+        _.each(selectedComponentDimensions, function (selectedComponentDimension, uri) {
+            if(2 <= _.size(selectedComponentDimension.elements)) {
                 multipleDimensions.push({
-                    "label": selectedDimensions[hashedUrl]["label"],
-                    "elements": selectedDimensions[hashedUrl]["elements"]
+                    elements: selectedComponentDimension.elements,
+                    label: selectedComponentDimension.label
                 });
             }
-        }
+        });
         return multipleDimensions;
     }
-    CubeViz_Visualization_Controller.getNumberOfMultipleDimensions = function getNumberOfMultipleDimensions(retrievedData, selectedDimensions, measures) {
-        return CubeViz_Visualization_Controller.getMultipleDimensions(retrievedData, selectedDimensions, measures).length;
+    CubeViz_Visualization_Controller.getNumberOfMultipleDimensions = function getNumberOfMultipleDimensions(selectedComponentDimensions) {
+        return _.size(CubeViz_Visualization_Controller.getMultipleDimensions(selectedComponentDimensions));
     }
-    CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(retrievedData, selectedDimensions, measures) {
+    CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(selectedComponentDimensions) {
         var oneElementDimensions = [];
-        var tmp = [];
-
-        for(var hashedUrl in selectedDimensions) {
-            if(1 == selectedDimensions[hashedUrl]["elements"]["length"]) {
+        _.each(selectedComponentDimensions, function (selectedComponentDimension) {
+            if(1 == _.size(selectedComponentDimension.elements)) {
                 oneElementDimensions.push({
-                    "label": selectedDimensions[hashedUrl]["label"],
-                    "elements": selectedDimensions[hashedUrl]["elements"]
+                    elements: selectedComponentDimension.elements,
+                    label: selectedComponentDimension.label
                 });
             }
-        }
+        });
         return oneElementDimensions;
     }
     CubeViz_Visualization_Controller.getVisualizationType = function getVisualizationType(className) {
@@ -266,6 +266,370 @@ var CubeViz_Visualization_Controller = (function () {
     }
     return CubeViz_Visualization_Controller;
 })();
+var CubeViz_Visualization_CubeViz = (function () {
+    function CubeViz_Visualization_CubeViz() { }
+    CubeViz_Visualization_CubeViz.load = function load(chartName) {
+        switch(chartName) {
+            case "CubeViz_Visualization_CubeViz_Table": {
+                return new CubeViz_Visualization_CubeViz_Table();
+
+            }
+            default: {
+                throw new Error("Invalid chartName (" + chartName + ") given!");
+                return;
+
+            }
+        }
+    }
+    return CubeViz_Visualization_CubeViz;
+})();
+var CubeViz_Visualization_CubeViz_Visualization = (function () {
+    function CubeViz_Visualization_CubeViz_Visualization() { }
+    CubeViz_Visualization_CubeViz_Visualization.prototype.init = function (data, chartConfig) {
+        this.chartConfig = chartConfig;
+        this.data = data;
+        this.retrievedObservations = data.retrievedObservations;
+    };
+    CubeViz_Visualization_CubeViz_Visualization.prototype.render = function () {
+    };
+    return CubeViz_Visualization_CubeViz_Visualization;
+})();
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+}
+var CubeViz_Visualization_CubeViz_Table = (function (_super) {
+    __extends(CubeViz_Visualization_CubeViz_Table, _super);
+    function CubeViz_Visualization_CubeViz_Table() {
+        _super.apply(this, arguments);
+
+        this._generatedStructure = [];
+        this._generatedStructure_Components = [];
+        this._generatedObservations = [];
+    }
+    CubeViz_Visualization_CubeViz_Table.prototype.generatedObservations = function (cubeVizLinksModule) {
+        this._generatedObservations = [];
+        var entries = cubeVizLinksModule.retrievedObservations;
+        var elements = {
+        };
+        var link = "";
+        var observation = new DataCube_Observation();
+
+        observation.initialize(entries, cubeVizLinksModule["selectedComponents"]["dimensions"], cubeVizLinksModule.selectedComponents.measures[0].url);
+        var necUris = observation["_selectedDimensionUris"];
+        necUris.push(cubeVizLinksModule.selectedComponents.measures[0].url);
+        necUris.push("http://www.w3.org/2000/01/rdf-schema#label");
+        for(var i in entries) {
+            var entry = {
+                "entries": []
+            };
+            for(var uri in entries[i]) {
+                if(-1 != $.inArray(uri, necUris)) {
+                    entry["entries"].push("<br/><div class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + "<a href=\"" + uri + "\" target=\"_blank\">" + CubeViz_Visualization_Controller.getDimensionOrMeasureLabel(cubeVizLinksModule.selectedComponents.dimensions, cubeVizLinksModule.selectedComponents.measures, uri) + "</a>" + "</div>");
+                }
+            }
+            this["_generatedObservations"].push(entry);
+            break;
+        }
+        for(i in entries) {
+            var entry = {
+                "entries": []
+            };
+            for(var uri in entries[i]) {
+                if(-1 != $.inArray(uri, necUris)) {
+                    link = undefined != entries[i][uri][0]["label"] ? entries[i][uri][0]["label"] : entries[i][uri][0]["value"];
+                    if(false === _s.include(entries[i][uri][0]["value"], "http://")) {
+                        entry["entries"].push(link);
+                    } else {
+                        entry["entries"].push("<a href=\"" + entries[i][uri][0]["value"] + "\" target=\"_blank\">" + link + "</a>");
+                    }
+                }
+            }
+            this["_generatedObservations"].push(entry);
+        }
+        this["_generatedObservations"].sort(function (a, b) {
+            return a["entries"][0].toUpperCase().localeCompare(b["entries"][0].toUpperCase());
+        });
+    };
+    CubeViz_Visualization_CubeViz_Table.prototype.generateStructure = function (cubeVizLinksModule) {
+        var link = null;
+        this["_generatedStructure"] = [];
+        backgroundColor = CubeViz_Visualization_Controller.getColor(cubeVizLinksModule["selectedDSD"]["url"]);
+        link = "<span style=\"background-color:" + backgroundColor + ";width:5px !important;height:5px !important;margin-right:4px;\">&nbsp;</span>";
+        link += "<a href=\"" + cubeVizLinksModule["selectedDSD"]["url"] + "\" target=\"_blank\">" + cubeVizLinksModule["selectedDSD"]["label"] + "</a>";
+        this["_generatedStructure"].push(link);
+        backgroundColor = CubeViz_Visualization_Controller.getColor(cubeVizLinksModule["selectedDS"]["url"]);
+        link = "<span style=\"background-color:" + backgroundColor + ";width:5px !important;height:5px !important;margin-left:5px;margin-right:4px;\">&nbsp;</span>";
+        link += "<a href=\"" + cubeVizLinksModule["selectedDS"]["url"] + "\" target=\"_blank\">" + cubeVizLinksModule["selectedDS"]["label"] + "</a>";
+        this["_generatedStructure"].push(link);
+        var backgroundColor = "";
+        var data = "";
+        var entry = {
+        };
+
+        for(var dim in cubeVizLinksModule["selectedComponents"]["dimensions"]) {
+            dim = cubeVizLinksModule["selectedComponents"]["dimensions"][dim];
+            entry = {
+                "label": dim["label"],
+                "typeUrl": dim["typeUrl"],
+                "entries": []
+            };
+            for(var i in dim["elements"]) {
+                backgroundColor = CubeViz_Visualization_Controller.getColor(dim["elements"][i]["property"]);
+                data = "<span style=\"background-color:" + backgroundColor + ";width:5px !important;height:5px !important;margin-right:4px;\">&nbsp;</span>";
+                data += "<a href=\"" + dim["elements"][i]["property"] + "\" target=\"_blank\">" + dim["elements"][i]["propertyLabel"] + "</a>";
+                entry["entries"].push(data);
+            }
+            this["_generatedStructure_Components"].push(entry);
+        }
+    };
+    CubeViz_Visualization_CubeViz_Table.prototype.init = function (data, chartConfig) {
+        _super.prototype.init.call(this, data, chartConfig);
+        this.generateStructure(data);
+        this.generatedObservations(data);
+    };
+    CubeViz_Visualization_CubeViz_Table.prototype.render = function () {
+        console.log("TODO implement Table.ts");
+    };
+    return CubeViz_Visualization_CubeViz_Table;
+})(CubeViz_Visualization_CubeViz_Visualization);
+var CubeViz_Visualization_HighCharts = (function () {
+    function CubeViz_Visualization_HighCharts() { }
+    CubeViz_Visualization_HighCharts.load = function load(chartName) {
+        switch(chartName) {
+            case "CubeViz_Visualization_HighCharts_Area": {
+                return new CubeViz_Visualization_HighCharts_Area();
+
+            }
+            case "CubeViz_Visualization_HighCharts_AreaSpline": {
+                return new CubeViz_Visualization_HighCharts_AreaSpline();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Bar": {
+                return new CubeViz_Visualization_HighCharts_Bar();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Column": {
+                return new CubeViz_Visualization_HighCharts_Column();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Line": {
+                return new CubeViz_Visualization_HighCharts_Line();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Pie": {
+                return new CubeViz_Visualization_HighCharts_Pie();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Polar": {
+                return new CubeViz_Visualization_HighCharts_Polar();
+
+            }
+            case "CubeViz_Visualization_HighCharts_Spline": {
+                return new CubeViz_Visualization_HighCharts_Spline();
+
+            }
+            default: {
+                throw new Error("Unknown chart name (" + chartName + ")!");
+                return;
+
+            }
+        }
+    }
+    return CubeViz_Visualization_HighCharts;
+})();
+var CubeViz_Visualization_HighCharts_Chart = (function () {
+    function CubeViz_Visualization_HighCharts_Chart() {
+        this.xAxis = {
+            "categories": []
+        };
+        this.series = [];
+        this.chartConfig = {
+        };
+    }
+    CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (dsdLabel, dsLabel, selectedComponentDimensions) {
+        var oneElementDimensions = CubeViz_Visualization_Controller.getOneElementDimensions(selectedComponentDimensions);
+        var builtTitle = dsdLabel + " - " + dsLabel;
+
+        _.each(oneElementDimensions, function (dimension) {
+            builtTitle += " - " + _.first(dimension.elements).propertyLabel;
+        });
+        return builtTitle;
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (selectedComponentDimensions, selectedComponentMeasures, retrievedObservations, measureUri, dsdLabel, dsLabel, classDefaultConfig) {
+        var forXAxis = null;
+        var forSeries = null;
+        var multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions(selectedComponentDimensions);
+        var observation = new DataCube_Observation();
+        var self = this;
+
+        this.chartConfig = classDefaultConfig;
+        this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, selectedComponentDimensions);
+        _.each(selectedComponentDimensions, function (selectedComponentDimension) {
+            if(null == forXAxis) {
+                forXAxis = selectedComponentDimension.typeUrl;
+            } else {
+                forSeries = selectedComponentDimension.typeUrl;
+            }
+        });
+        observation.initialize(retrievedObservations, selectedComponentDimensions, measureUri);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
+        _.each(xAxisElements, function (value) {
+            self.xAxis.categories.push(CubeViz_Visualization_Controller.getLabelForPropertyUri(value, forXAxis, selectedComponentDimensions));
+        });
+        var found = false;
+        var i = 0;
+        var length = _.keys(xAxisElements).length;
+        var obj = {
+        };
+        var seriesElements = observation.getAxisElements(forSeries);
+
+        this.series = [];
+        _.each(seriesElements, function (seriesEntry) {
+            obj = {
+                name: CubeViz_Visualization_Controller.getLabelForPropertyUri(seriesEntry, forSeries, selectedComponentDimensions),
+                data: [],
+                color: CubeViz_Visualization_Controller.getColor(seriesEntry)
+            };
+            _.each(xAxisElements, function (xAxisElement) {
+                found = false;
+                _.each(xAxisElement, function (ele) {
+                    if(true === found) {
+                        return;
+                    }
+                    _.each(ele[measureUri].ref, function (relatedElementValue) {
+                        if(true === found) {
+                            return;
+                        }
+                        if(seriesEntry == relatedElementValue[forSeries].value) {
+                            var floatValue = parseFloat(relatedElementValue);
+                            obj.data.push(true == _.isNaN(floatValue) ? null : floatValue);
+                            found = true;
+                        }
+                    });
+                });
+                if(false == found) {
+                    obj.data.push(null);
+                }
+            });
+            this.series.push(obj);
+        });
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {
+        this.chartConfig.xAxis = this.xAxis;
+        this.chartConfig.series = this.series;
+        return this.chartConfig;
+    };
+    return CubeViz_Visualization_HighCharts_Chart;
+})();
+var CubeViz_Visualization_HighCharts_Area = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Area, _super);
+    function CubeViz_Visualization_HighCharts_Area() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Area;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_AreaSpline = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_AreaSpline, _super);
+    function CubeViz_Visualization_HighCharts_AreaSpline() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_AreaSpline;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Bar = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Bar, _super);
+    function CubeViz_Visualization_HighCharts_Bar() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Bar;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Column = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Column, _super);
+    function CubeViz_Visualization_HighCharts_Column() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Column;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Line = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Line, _super);
+    function CubeViz_Visualization_HighCharts_Line() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Line;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Pie, _super);
+    function CubeViz_Visualization_HighCharts_Pie() {
+        _super.apply(this, arguments);
+
+    }
+    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (selectedComponentDimensions, selectedComponentMeasures, retrievedObservations, measureUri, dsdLabel, dsLabel, chartConfig) {
+        this.series = [
+            {
+                "data": []
+            }
+        ];
+        var multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions(selectedComponentDimensions);
+        if(1 < _.size(multipleDimensions)) {
+            throw new Error("Pie chart is only suitable for one dimension!");
+            return;
+        }
+        var seriesData = [];
+        var forXAxis = multipleDimensions[0].elements[0].typeUrl;
+        var observation = new DataCube_Observation();
+
+        this.chartConfig = chartConfig;
+        this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, selectedComponentDimensions);
+        observation.initialize(retrievedObservations, selectedComponentDimensions, measureUri);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
+        seriesData.push({
+            type: "pie",
+            name: this.chartConfig.title.text,
+            data: []
+        });
+        this.chartConfig.colors = [];
+        _.each(xAxisElements, function (xAxisElement, uri) {
+            var floatValue = parseFloat(xAxisElement[0][measureUri].value);
+            if(true === isNaN(floatValue)) {
+                floatValue = null;
+            }
+            var label = CubeViz_Visualization_Controller.getLabelForPropertyUri(uri, forXAxis, selectedComponentDimensions);
+            seriesData[0].data.push([
+                label, 
+                floatValue
+            ]);
+            this.chartConfig.colors.push(CubeViz_Visualization_Controller.getColor(uri));
+        });
+        this.series = seriesData;
+    };
+    CubeViz_Visualization_HighCharts_Pie.prototype.getRenderResult = function () {
+        this.chartConfig.series = this.series;
+        return this.chartConfig;
+    };
+    return CubeViz_Visualization_HighCharts_Pie;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Polar = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Polar, _super);
+    function CubeViz_Visualization_HighCharts_Polar() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Polar;
+})(CubeViz_Visualization_HighCharts_Chart);
+var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts_Spline, _super);
+    function CubeViz_Visualization_HighCharts_Spline() {
+        _super.apply(this, arguments);
+
+    }
+    return CubeViz_Visualization_HighCharts_Spline;
+})(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_Component = (function () {
     function DataCube_Component() { }
     DataCube_Component.loadAllDimensions = function loadAllDimensions(url, modelUrl, dsdUrl, dsUrl, callback) {
@@ -392,30 +756,30 @@ var DataCube_Observation = (function () {
         for(var dimensionUri in dimensionValues) {
             dimensionValues[dimensionUri] = {
                 "value": dimensionValues[dimensionUri],
-                "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
+                "ref": this._axes[dimensionUri][dimensionValues[dimensionUri]]
             };
         }
-        this["_axes"][uri][value].push(dimensionValues);
+        this._axes[uri][value].push(dimensionValues);
     };
     DataCube_Observation.prototype.extractSelectedDimensionUris = function (elements) {
         var resultList = [];
-        for(var i in elements) {
-            resultList.push(elements[i]["typeUrl"]);
-        }
+        _.each(elements, function (element) {
+            resultList.push(element.typeUrl);
+        });
         return resultList;
     };
     DataCube_Observation.prototype.getAxisElements = function (axisUri) {
-        if(undefined === this["_axes"][axisUri]) {
-            return this["_axes"][axisUri];
+        if(undefined === this["axes"][axisUri]) {
+            return this["axes"][axisUri];
         } else {
             console.log("\nNo elements found given axisUri: " + axisUri);
             return {
             };
         }
     };
-    DataCube_Observation.prototype.initialize = function (entries, selectedComponentDimensions, measureUri) {
-        if(false === _.isArray(entries) || 0 == _.size(entries)) {
-            throw new Error("\nEntries is empty or not an array!");
+    DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
+        if(true !== _.isArray(retrievedObservations) || 0 == _.size(retrievedObservations)) {
+            console.log("\nEntries is empty or not an array!");
             return;
         }
         this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(selectedComponentDimensions);
@@ -428,19 +792,19 @@ var DataCube_Observation = (function () {
 
         this["_axes"][measureUri] = this["_axes"][measureUri] || {
         };
-        for(var mainIndex in entries) {
+        for(var mainIndex in retrievedObservations) {
             dimensionValues = {
             };
             measureObj = {
             };
-            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
+            this["_axes"][measureUri][retrievedObservations[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][retrievedObservations[mainIndex][measureUri][0]["value"]] || [];
             for(var i in this["_selectedDimensionUris"]) {
                 selecDimUri = this["_selectedDimensionUris"][i];
-                if(undefined == entries[mainIndex][selecDimUri]) {
+                if(undefined == retrievedObservations[mainIndex][selecDimUri]) {
                     console.log("Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri);
                     continue;
                 }
-                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                selecDimVal = retrievedObservations[mainIndex][selecDimUri][0]["value"];
                 dimensionValues[selecDimUri] = selecDimVal;
                 if(undefined == this["_axes"][selecDimUri]) {
                     this["_axes"][selecDimUri] = {
@@ -449,14 +813,17 @@ var DataCube_Observation = (function () {
                 if(undefined == this["_axes"][selecDimUri][selecDimVal]) {
                     this["_axes"][selecDimUri][selecDimVal] = [];
                 }
-                measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
+                measureObj[measureUri] = retrievedObservations[mainIndex][measureUri][0]["value"];
                 this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
             }
-            this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
+            this.addAxisEntryPointsTo(measureUri, retrievedObservations[mainIndex][measureUri][0]["value"], dimensionValues);
         }
+        console.log("this._axes");
+        console.log(this._axes);
         return this;
     };
     DataCube_Observation.loadAll = function loadAll(url, linkCode) {
+        var self = this;
         $.ajax({
             url: url + "getobservations/",
             data: {
@@ -465,16 +832,10 @@ var DataCube_Observation = (function () {
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("loadAll error: " + xhr["responseText"]);
         }).done(function (entries) {
-            DataCube_Observation.prepareLoadedResultObservations(entries);
+            $(self).trigger("loadComplete", [
+                $.parseJSON(entries)
+            ]);
         });
-    }
-    DataCube_Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries) {
-        var parse = $.parseJSON(entries);
-        if(null == parse) {
-            $(this).trigger("loadComplete", entries);
-        } else {
-            $(this).trigger("loadComplete", parse);
-        }
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         var mode = undefined == mode ? "ascending" : mode;
@@ -482,7 +843,7 @@ var DataCube_Observation = (function () {
         var sortedObj = {
         };
 
-        for(var i in this["_axes"][axisUri]) {
+        for(var i in this["axes"][axisUri]) {
             sortedKeys.push(i);
         }
         switch(mode) {
@@ -506,18 +867,13 @@ var DataCube_Observation = (function () {
             }
         }
         for(var i in sortedKeys) {
-            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
+            sortedObj[sortedKeys[i]] = this._axes[axisUri][sortedKeys[i]];
         }
-        this["_axes"][axisUri] = sortedObj;
+        this._axes[axisUri] = sortedObj;
         return this;
     };
     return DataCube_Observation;
 })();
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-}
 var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
     function View_CubeVizModule_DataStructureDefintion(attachedTo, app) {
@@ -717,9 +1073,14 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.initialize = function () {
         var self = this;
         DataCube_Component.loadAllDimensions(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.url, function (entries) {
-            self.setComponentsStuff(entries);
+            self.app._.data.components.dimensions = entries;
+            self.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
             self.collection.reset("hashedUrl").addList(entries);
-            self.render();
+            DataCube_Component.loadAllMeasures(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data.selectedDSD.url, self.app._.data.selectedDS.url, function (entries) {
+                self.app._.data.components.measures = entries;
+                self.app._.data.selectedComponents.measures = entries;
+                self.render();
+            });
         });
     };
     View_CubeVizModule_Component.prototype.onClose_setupComponentDialog = function (event) {
@@ -814,10 +1175,6 @@ var View_CubeVizModule_Component = (function (_super) {
         });
         return this;
     };
-    View_CubeVizModule_Component.prototype.setComponentsStuff = function (entries) {
-        this.app._.data.components.dimensions = entries;
-        this.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
-    };
     return View_CubeVizModule_Component;
 })(CubeViz_View_Abstract);
 var View_CubeVizModule_Footer = (function (_super) {
@@ -884,23 +1241,26 @@ var View_IndexAction_Visualization = (function (_super) {
     __extends(View_IndexAction_Visualization, _super);
     function View_IndexAction_Visualization(attachedTo, app) {
         _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
-        console.log("constructor");
-        console.log(app);
     }
     View_IndexAction_Visualization.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (entries) {
-        this.app._.data.retrievedObservations = entries;
-        this.app._.data.numberOfMultipleDimensions = CubeViz_Visualization_Controller.getNumberOfMultipleDimensions(entries, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures);
-        if(0 < _.size(entries)) {
-            this.renderChart(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class);
+    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
+        console.log("Visualization -> load Observations");
+        console.log(retrievedObservations);
+        this.app._.data.retrievedObservations = retrievedObservations;
+        var numberOfMultipleDimensions = CubeViz_Visualization_Controller.getNumberOfMultipleDimensions(this.app._.data.selectedComponents.dimensions);
+        if(1 <= _.size(retrievedObservations)) {
+            this.renderChart(this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures, this.app._.data.retrievedObservations, CubeViz_Visualization_Controller.getMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label, this.app._.chartConfig[numberOfMultipleDimensions].charts[0].class, this.app._.chartConfig[numberOfMultipleDimensions].charts[0].defaultConfig);
         } else {
         }
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
+        var componentsFullyLoaded;
         var self = this;
+        var stop = false;
+
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
         obs.loadAll(this.app._.backend.url, this.app._.data.linkCode);
@@ -910,11 +1270,8 @@ var View_IndexAction_Visualization = (function (_super) {
         });
         return this;
     };
-    View_IndexAction_Visualization.prototype.renderChart = function (className) {
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(className, charts);
+    View_IndexAction_Visualization.prototype.renderChart = function (selectedComponentDimensions, selectedComponentMeasures, retrievedObservations, measureUrl, dsdLabel, dsLabel, className, classDefaultConfig) {
         var type = CubeViz_Visualization_Controller.getVisualizationType(className);
-
         switch(type) {
             case "CubeViz": {
                 console.log("render cubeviz visz");
@@ -922,7 +1279,9 @@ var View_IndexAction_Visualization = (function (_super) {
 
             }
             default: {
-                console.log("render highcharts chart");
+                var chart = CubeViz_Visualization_HighCharts.load(className);
+                chart.init(selectedComponentDimensions, selectedComponentMeasures, retrievedObservations, measureUrl, dsdLabel, dsLabel, classDefaultConfig);
+                new Highcharts.Chart(chart.getRenderResult());
                 break;
 
             }

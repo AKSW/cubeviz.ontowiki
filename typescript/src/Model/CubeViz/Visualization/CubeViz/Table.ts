@@ -1,11 +1,12 @@
-/// <reference path="..\DeclarationSourceFiles\jsontemplate.d.ts" />
-/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\..\..\..\..\declaration\libraries\jquery.d.ts" />
+/// <reference path="..\..\..\..\..\declaration\libraries\Underscore.d.ts" />
+/// <reference path="..\..\..\..\..\declaration\libraries\Underscore.string.d.ts" />
 
 /**
  * Fits for all kinds of dimensions
  */
-class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
-    
+class CubeViz_Visualization_CubeViz_Table extends CubeViz_Visualization_CubeViz_Visualization 
+{    
     /**
      * 
      */
@@ -24,9 +25,10 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
     /**
      * 
      */
-    public generatedObservations (cubeVizLinksModule:Object[], entries:Object[]) : void {
-        
-        this["_generatedObservations"] = [];
+    public generatedObservations (cubeVizLinksModule:any) : void
+    {
+        this._generatedObservations = [];
+        var entries = cubeVizLinksModule.retrievedObservations;
         
         /**
          * header contains all the selected labels and and the measure
@@ -38,23 +40,25 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
          */
         var elements:Object = {},
             link = "",
-            observation = new Observation ();
+            observation = new DataCube_Observation ();
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending        
         observation.initialize ( 
             entries, 
             cubeVizLinksModule["selectedComponents"]["dimensions"], 
-            Visualization_Controller.getMeasureTypeUrl()
+            cubeVizLinksModule.selectedComponents.measures[0].url // type url
         );
         
         var necUris = observation["_selectedDimensionUris"];
-        necUris.push ( Visualization_Controller.getMeasureTypeUrl() );
+        // necUris.push ( CubeViz_Visualization_Controller.getMeasureTypeUrl() );
+        necUris.push ( cubeVizLinksModule.selectedComponents.measures[0].url );
         necUris.push ( "http://www.w3.org/2000/01/rdf-schema#label" );
         
         /**
          * Header
          */
+        // TODO $.each
         for (var i in entries) {
             
             var entry = {"entries": []};
@@ -63,7 +67,12 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
                 if ( -1 != $.inArray ( uri, necUris ) ) {
                     entry ["entries"].push (
                         "<br/><div class=\"Vis_CV_Table_ObservationsHeaderLabel\">" + 
-                            "<a href=\"" + uri + "\" target=\"_blank\">" + Visualization_Controller.getDimensionOrMeasureLabel (uri) + "</a>" +
+                            "<a href=\"" + uri + "\" target=\"_blank\">" + 
+                            CubeViz_Visualization_Controller.getDimensionOrMeasureLabel (
+                                cubeVizLinksModule.selectedComponents.dimensions,
+                                cubeVizLinksModule.selectedComponents.measures,
+                                uri
+                            ) + "</a>" +
                         "</div>"
                     );
                 }
@@ -88,7 +97,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
                         : entries [i][uri][0]["value"];
                         
                     // if value is not an URI 
-                    if ( false == System.contains (entries [i][uri][0]["value"], "http://") ) {
+                    if (false === _s.include (entries [i][uri][0]["value"], "http://")) {
                         entry ["entries"].push (link);
                         
                     // if value IS an URI, save it as link
@@ -123,7 +132,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
         this["_generatedStructure"] = [];
         
         // add Data Structure Definition
-        backgroundColor = Visualization_Controller.getColor (cubeVizLinksModule ["selectedDSD"]["url"]);
+        backgroundColor = CubeViz_Visualization_Controller.getColor (cubeVizLinksModule ["selectedDSD"]["url"]);
                 
         link = "<span style=\"background-color:" + backgroundColor +";width:5px !important;height:5px !important;margin-right:4px;\">&nbsp;</span>";
                 
@@ -132,7 +141,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
         this["_generatedStructure"].push (link);
         
         // add Data Set
-        backgroundColor = Visualization_Controller.getColor (cubeVizLinksModule ["selectedDS"]["url"]);
+        backgroundColor = CubeViz_Visualization_Controller.getColor (cubeVizLinksModule ["selectedDS"]["url"]);
                 
         link = "<span style=\"background-color:" + backgroundColor +";width:5px !important;height:5px !important;margin-left:5px;margin-right:4px;\">&nbsp;</span>";
         
@@ -158,7 +167,7 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
             
             for ( var i in dim["elements"] ) {
                 
-                backgroundColor = Visualization_Controller.getColor (dim["elements"][i]["property"]);
+                backgroundColor = CubeViz_Visualization_Controller.getColor (dim["elements"][i]["property"]);
                 
                 data = "<span style=\"background-color:" + backgroundColor +";width:5px !important;height:5px !important;margin-right:4px;\">&nbsp;</span>";
                 
@@ -176,30 +185,34 @@ class Visualization_CubeViz_Table extends Visualization_CubeViz_Visualization {
     /**
      * 
      */
-    public init (entries:Object[], cubeVizLinksModule:Object[], chartConfig:Object[] ) : void {
-        super.init ( entries, cubeVizLinksModule, chartConfig );
+    public init (data:any, chartConfig:any) : void 
+    {
+        super.init ( data, chartConfig );
         
         /**
          * Generates data for data structure definition, data set and selected component dimensions
          */
-        this.generateStructure (cubeVizLinksModule);
+        this.generateStructure (data);
         
         /**
          * Generates data for result observations
          */
-        this.generatedObservations (cubeVizLinksModule, entries);
+        this.generatedObservations (data);
     }
     
     /**
      * 
      */
-    public render () : void {
+    public render () : void 
+    {
+        console.log("TODO implement Table.ts");
+        /*
         var tpl = jsontemplate.Template(templateVisualization_CubeViz_Table);
         
         $("#container").html (tpl.expand({
             "generatedStructure": this["_generatedStructure"],
             "generatedStructure_Components": this["_generatedStructure_Components"],
             "generatedObservations": this["_generatedObservations"]
-        }));
+        }));*/
     }
 }

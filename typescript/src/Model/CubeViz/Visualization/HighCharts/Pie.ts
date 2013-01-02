@@ -1,87 +1,97 @@
 /**
  * Fits if you have exactly 1 multiple dimensions.
  */
-class Visualization_HighCharts_Pie extends Visualization_HighCharts_Chart {
-        
-    /**
-     * formally yAxis
-     */
-    private series = [{"data":[]}];
-    
-    /**
-     * Complete chart configuration for a certain chart
-     */
-    private chartConfig = {};
-    
-    
+class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCharts_Chart 
+{    
     /**
      * 
      */
-    public init ( entries:any, cubeVizLinksModule:Object, chartConfig:Object ) : void {
+    public init ( selectedComponentDimensions:any, selectedComponentMeasures:any, 
+        retrievedObservations, measureUri, dsdLabel:string, dsLabel:string, 
+        chartConfig:any ) : void 
+    {
+                
+        this.series = [{"data":[]}];
                 
         // this array MUST contains only ONE entry!
-        var selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
-            measures = cubeVizLinksModule ["selectedComponents"]["measures"],
-            multipleDimensions = Visualization_Controller.getMultipleDimensions ( 
-                entries, selectedComponentDimensions, measures
+        var // selectedComponentDimensions = data.selectedComponents.dimensions, 
+            // measures = data.selectedComponents.measures,
+            multipleDimensions:any = CubeViz_Visualization_Controller.getMultipleDimensions ( 
+                selectedComponentDimensions
             );
             
         // stop execution, if it contains more than one entry
-        if ( 1 < multipleDimensions ["length"] ) {
-            System.out ( "Pie chart is only suitable for one dimension!" );
-            System.out ( multipleDimensions );
+        if ( 1 < _.size(multipleDimensions) ) {
+            throw new Error ( "Pie chart is only suitable for one dimension!" );
             return;
         }
         
-        var data = [],
-            forXAxis = multipleDimensions [0]["elements"][0]["typeUrl"],
-            measureUri = Visualization_Controller.getMeasureTypeUrl (),
-            observation = new Observation (); 
+        var seriesData = [],
+            forXAxis = multipleDimensions[0].elements[0].typeUrl,
+            // CubeViz_Visualization_Controller.getMeasureTypeUrl (),
+            // measureUri = data.selectedComponents.measures[0].url,
+            observation = new DataCube_Observation (); 
         
         // save given chart config
-        this ["chartConfig"] = chartConfig;
+        this.chartConfig = chartConfig;
         
         /**
          * Build chart title
          */
-        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries); 
+        this.chartConfig.title.text = this.buildChartTitle (
+            dsdLabel, dsLabel, selectedComponentDimensions
+        ); 
                 
-        observation.initialize ( entries, selectedComponentDimensions, measureUri );
+        /**
+         * Initialize observation
+         */
+        observation.initialize ( 
+            retrievedObservations, 
+            selectedComponentDimensions, 
+            measureUri 
+        );
         
         var xAxisElements = observation
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
             
-        data.push ({ "type": "pie", name: this ["chartConfig"]["title"]["text"], "data": [] });
+        seriesData.push ({ 
+            type: "pie", 
+            name: this.chartConfig.title.text, 
+            data: [] 
+        });
         
-        this ["chartConfig"]["colors"] = [];
+        this.chartConfig.colors = [];
               
         /**
          * Fill data series
          */
-        for ( var value in xAxisElements ) {
-            var floatValue:any = parseFloat(xAxisElements[value][0][measureUri]["value"]);
-            if (isNaN(floatValue)) {
+        // for ( var value in xAxisElements ) {
+        _.each(xAxisElements, function(xAxisElement, uri){
+            // var?
+            var floatValue:any = parseFloat(xAxisElement[0][measureUri].value);
+            if (true === isNaN(floatValue)) {
                 floatValue = null;
             } 
-            var label:any = Visualization_Controller.getLabelForPropertyUri (value, forXAxis, selectedComponentDimensions );
-            data[0]["data"].push([label, floatValue]) ;
+            // var?
+            var label:any = CubeViz_Visualization_Controller.getLabelForPropertyUri (
+                uri, forXAxis, selectedComponentDimensions
+            );
+            seriesData[0].data.push([label, floatValue]) ;
             
             // set color based on the URI
-            this ["chartConfig"]["colors"].push (Visualization_Controller.getColor(value));
-        }
+            this.chartConfig.colors.push (CubeViz_Visualization_Controller.getColor(uri));
+        });
         
-        this["series"] = data;
-        
-        System.out ( "generated piechart-series:" );
-        System.out ( this["series"] );
+        this.series = seriesData;
     }
     
     /**
      * 
      */
-    public getRenderResult () : Object {
-        this.chartConfig ["series"] = this ["series"];
+    public getRenderResult () : Object 
+    {
+        this.chartConfig.series = this.series;
         return this.chartConfig;
     }
 }

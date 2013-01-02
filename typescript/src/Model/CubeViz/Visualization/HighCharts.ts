@@ -1,38 +1,37 @@
-class Visualization_HighCharts {
+class CubeViz_Visualization_HighCharts {
     
     /**
      * 
      */
-    static load (chartName:string) : Visualization_HighCharts_Chart {
+    static load (chartName:string) : CubeViz_Visualization_HighCharts_Chart {
         switch ( chartName ) {
             
-            case 'Visualization_HighCharts_Area':
-                return new Visualization_HighCharts_Area ();
+            case "CubeViz_Visualization_HighCharts_Area":
+                return new CubeViz_Visualization_HighCharts_Area ();
             
-            case 'Visualization_HighCharts_AreaSpline':
-                return new Visualization_HighCharts_AreaSpline ();
+            case "CubeViz_Visualization_HighCharts_AreaSpline":
+                return new CubeViz_Visualization_HighCharts_AreaSpline ();
             
-            case 'Visualization_HighCharts_Bar':
-                return new Visualization_HighCharts_Bar ();
+            case "CubeViz_Visualization_HighCharts_Bar":
+                return new CubeViz_Visualization_HighCharts_Bar ();
             
-            case 'Visualization_HighCharts_Column':
-                return new Visualization_HighCharts_Column ();
+            case "CubeViz_Visualization_HighCharts_Column":
+                return new CubeViz_Visualization_HighCharts_Column ();
             
-            case 'Visualization_HighCharts_Line':
-                return new Visualization_HighCharts_Line ();
+            case "CubeViz_Visualization_HighCharts_Line":
+                return new CubeViz_Visualization_HighCharts_Line ();
             
-            case 'Visualization_HighCharts_Pie':
-                return new Visualization_HighCharts_Pie ();
+            case "CubeViz_Visualization_HighCharts_Pie":
+                return new CubeViz_Visualization_HighCharts_Pie ();
             
-            case 'Visualization_HighCharts_Polar':
-                return new Visualization_HighCharts_Polar ();
+            case "CubeViz_Visualization_HighCharts_Polar":
+                return new CubeViz_Visualization_HighCharts_Polar ();
             
-            case 'Visualization_HighCharts_Spline':
-                return new Visualization_HighCharts_Spline ();
+            case "CubeViz_Visualization_HighCharts_Spline":
+                return new CubeViz_Visualization_HighCharts_Spline ();
             
             default: 
-                System.out ( "HighCharts - load" );
-                System.out ( "Invalid chartName (" + chartName + ") given!" );
+                throw new Error("Unknown chart name (" + chartName + ")!");
                 return;
         }
     }

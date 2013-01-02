@@ -64,6 +64,7 @@ class CubevizModule extends OntoWiki_Module
         $this->view->headScript()
             ->prependFile ($baseJavascriptPath.'libraries/json2.js', 'text/javascript')
             ->prependFile ($baseJavascriptPath.'libraries/underscore.js', 'text/javascript')
+            ->prependFile ($baseJavascriptPath.'libraries/underscore.string.js', 'text/javascript')
             ->prependFile ($baseJavascriptPath.'Main.js', 'text/javascript');
             
         

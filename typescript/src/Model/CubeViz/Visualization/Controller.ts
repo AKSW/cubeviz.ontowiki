@@ -18,7 +18,7 @@ class CubeViz_Visualization_Controller {
     /**
      * 
      */
-    static getDimensionOrMeasureLabel (dimensions, measures, uri:string) : string 
+    static getDimensionOrMeasureLabel (dimensions:any, measures:any, uri:string) : string 
     {
         if ( "http://www.w3.org/2000/01/rdf-schema#label" == uri ) {
             return "Label";
@@ -49,7 +49,7 @@ class CubeViz_Visualization_Controller {
     static getFromChartConfigByClass ( className:string, charts:Object[] ) : string 
     {
         for ( var i in charts ) {
-            if ( className == charts [i]["class"] ) {
+            if ( className == charts [i].class ) {
                 return charts [i];
             }
         }
@@ -84,62 +84,71 @@ class CubeViz_Visualization_Controller {
     }
     
     /**
-     * @return Object[]
+     *
      */
-    static getMultipleDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                    measures:Object[] ) : Object [] 
+    static getMeasure(selectedComponentMeasures) : any
     {
-        // assign selected dimensions to xAxis and series (yAxis)
-        var multipleDimensions:Object[] = [],
-            tmp:Object[] = [];
+        var keys = _.keys(selectedComponentMeasures);
+        return selectedComponentMeasures[_.first(keys)];
+    }
+    
+    /**
+     * Extract all dimensions out of selected dimension list which have at least
+     * 2 elements.
+     * @param selectedDimensions Object wich selectedDimensions
+     * @return any
+     */
+    static getMultipleDimensions(selectedComponentDimensions:any) : any[] 
+    {
+        var multipleDimensions:any[] = [];
         
-        for ( var hashedUrl in selectedDimensions ) {
+        _.each(selectedComponentDimensions, function(selectedComponentDimension, uri){
                         
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 < selectedDimensions [hashedUrl] ["elements"]["length"] ) {
-                
-                multipleDimensions.push ( {
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
-                } ); 
+            if(2 <= _.size(selectedComponentDimension.elements)) {                
+                multipleDimensions.push({
+                    elements: selectedComponentDimension.elements,
+                    label: selectedComponentDimension.label
+                });
             }
-        }
+        });
         
         return multipleDimensions;
     }
     
     /**
-     * @return integer at least 0
+     * Count number of selected dimensions.
+     * @param selectedComponentDimensions Object with selected component dimensions
+     * @return number Integer, at least 0
      */
-    static getNumberOfMultipleDimensions ( retrievedData:Object[], 
-        selectedDimensions:Object[], measures:Object[] ) : number 
+    static getNumberOfMultipleDimensions(selectedComponentDimensions:any) : number 
     {
-        return CubeViz_Visualization_Controller.getMultipleDimensions (
-            retrievedData, selectedDimensions, measures
-        ).length;
+        return _.size(CubeViz_Visualization_Controller.getMultipleDimensions(
+            selectedComponentDimensions
+        ));
     }
     
     /**
-     * @return Object[]
+     * Get all dimensions which contain only one element.
+     * @param selectedComponentDimensions Object containing selected dimensions
+     * @return any[]
      */
-    static getOneElementDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                      measures:Object[] ) : Object [] 
+    static getOneElementDimensions ( selectedComponentDimensions ) : any [] 
     {
         // assign selected dimensions to xAxis and series (yAxis)
-        var oneElementDimensions:Object[] = [],
-            tmp:Object[] = [];
+        var oneElementDimensions:any[] = [];
             
-        // TODO $.each
-        for ( var hashedUrl in selectedDimensions ) 
-        {
+        // for ( var hashedUrl in selectedDimensions ) 
+        _.each(selectedComponentDimensions, function(selectedComponentDimension){
+            
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 == selectedDimensions [hashedUrl] ["elements"]["length"] ) {
+            if(1 == _.size(selectedComponentDimension.elements)){
                 oneElementDimensions.push({
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
+                    elements: selectedComponentDimension.elements,
+                    label: selectedComponentDimension.label
                 }); 
             }
-        }
+        });
         
         return oneElementDimensions;
     }

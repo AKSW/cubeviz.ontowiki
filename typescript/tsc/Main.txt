@@ -5,6 +5,21 @@ src/Model/CubeViz/View/Application.ts
 
 src/Model/CubeViz/Visualization/Controller.ts
 
+src/Model/CubeViz/Visualization/CubeViz.ts
+src/Model/CubeViz/Visualization/CubeViz/Visualization.ts
+src/Model/CubeViz/Visualization/CubeViz/Table.ts
+
+src/Model/CubeViz/Visualization/HighCharts.ts
+src/Model/CubeViz/Visualization/HighCharts/Chart.ts
+src/Model/CubeViz/Visualization/HighCharts/Area.ts
+src/Model/CubeViz/Visualization/HighCharts/AreaSpline.ts
+src/Model/CubeViz/Visualization/HighCharts/Bar.ts
+src/Model/CubeViz/Visualization/HighCharts/Column.ts
+src/Model/CubeViz/Visualization/HighCharts/Line.ts
+src/Model/CubeViz/Visualization/HighCharts/Pie.ts
+src/Model/CubeViz/Visualization/HighCharts/Polar.ts
+src/Model/CubeViz/Visualization/HighCharts/Spline.ts
+
 src/Model/DataCube/Component.ts
 src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts

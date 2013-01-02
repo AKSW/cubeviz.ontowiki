@@ -148,16 +148,37 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             // and render the view
             function(entries) {
                 
-                // set selectedDsd
-                self.setComponentsStuff(entries);
+                // save pulled component dimensions
+                self.app._.data.components.dimensions = entries;
+                
+                // set default values for selected component dimensions list
+                // for each componentDimension first entry will be selected
+                // e.g. Year (2003), Country (Germany)
+                self.app._.data.selectedComponents.dimensions =
+                    DataCube_Component.getDefaultSelectedDimensions ( entries );
                 
                 // save given elements, doublings were ignored!
                 self.collection
                         .reset("hashedUrl")
                         .addList(entries);
                 
-                // render given elements
-                self.render();
+                DataCube_Component.loadAllMeasures(
+                
+                    self.app._.backend.url,
+                    self.app._.backend.modelUrl,
+                    self.app._.data.selectedDSD.url,
+                    self.app._.data.selectedDS.url,
+                    
+                    function(entries) {
+                        
+                        // set components (measures)
+                        self.app._.data.components.measures = entries;
+                        self.app._.data.selectedComponents.measures = entries;
+                        
+                        // render given elements
+                        self.render();
+                    }
+                );
             }
         );
     }
@@ -368,20 +389,5 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         });
         
         return this;
-    }
-    
-    /**
-     * 
-     */
-    public setComponentsStuff(entries) : void 
-    {        
-        // save pulled component dimensions
-        this.app._.data.components.dimensions = entries;
-        
-        // set default values for selected component dimensions list
-        // for each componentDimension first entry will be selected
-        // e.g. Year (2003), Country (Germany)
-        this.app._.data.selectedComponents.dimensions =
-            DataCube_Component.getDefaultSelectedDimensions ( entries );
     }
 }
