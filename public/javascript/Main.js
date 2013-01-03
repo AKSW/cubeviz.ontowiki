@@ -179,9 +179,46 @@ var CubeViz_View_Application = (function () {
 })();
 var CubeViz_Visualization_Controller = (function () {
     function CubeViz_Visualization_Controller() { }
+    CubeViz_Visualization_Controller.prototype.isCircularObject = function (obj, parents, tree) {
+        parents = parents || [];
+        tree = tree || [];
+        if(!obj || false === _.isObject(obj)) {
+            return false;
+        }
+        var keys = _.keys(obj);
+        var i = keys.length - 1;
+        var value;
+
+        parents.push(obj);
+        for(; i >= 0; --i) {
+            value = obj[keys[i]];
+            if(value && true === _.isObject(obj)) {
+                tree.push(keys[i]);
+                if(parents.indexOf(obj) >= 0) {
+                    return true;
+                }
+                if(arguments.callee(value, parents, tree)) {
+                    return tree.join('.');
+                }
+                tree.pop();
+            }
+        }
+        parents.pop();
+        return false;
+    };
     CubeViz_Visualization_Controller.getColor = function getColor(uri) {
-        uri = "" + CryptoJS.MD5(uri);
-        return "#" + uri.substr((uri["length"] - 6), 6);
+        var color = "#FFFFFF";
+        if(true === _.isString(uri) || true === _.isNumber(uri)) {
+            color = "" + CryptoJS.MD5(uri);
+            color = "#" + color.substr((color["length"] - 6), 6);
+        } else {
+            if(false === this.isCircularObject && true === _.isObject(uri)) {
+                color = JSON.stringify(uri);
+                color = "#" + color.substr((color["length"] - 6), 6);
+            } else {
+            }
+        }
+        return color;
     }
     CubeViz_Visualization_Controller.getDimensionOrMeasureLabel = function getDimensionOrMeasureLabel(uri, CubeViz_Links_Module) {
         if("http://www.w3.org/2000/01/rdf-schema#label" == uri) {

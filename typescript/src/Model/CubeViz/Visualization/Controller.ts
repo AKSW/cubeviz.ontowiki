@@ -3,16 +3,69 @@
 /**
  * Provides functions to decide which visualization to load
  */
-class CubeViz_Visualization_Controller {
+class CubeViz_Visualization_Controller 
+{    
+    /**
+     * Copied and adapted from: http://stackoverflow.com/a/13619725
+     * @param obj Variable to check
+     * @return bool True if variable is a circular object, false otherwise
+     */
+    public isCircularObject (obj:any, parents?:any, tree?:any) : bool
+    {
+        parents = parents || [];
+        tree = tree || [];
+
+        if (!obj || false === _.isObject(obj))
+            return false;
+
+        var keys = _.keys(obj), 
+            i = keys.length - 1, 
+            value;
+
+        parents.push(obj); // add self to current path
+
+        for (; i >= 0; --i){
+            value = obj[keys[i]];
+            if (value && true === _.isObject(obj)) {
+                tree.push(keys[i]);
+                
+                if (parents.indexOf(obj) >= 0)
+                    return true;
+                    
+                // check child nodes
+                if (arguments.callee(value, parents, tree))
+                    return tree.join('.');
+                tree.pop();
+            }
+        }
+
+        parents.pop();
+        return false;
+    }
     
     /**
      * Extract a hex color code for a given URI (using hash algorithm).
      * @param uri string
      * @return string Generated hex color code
      */
-    static getColor ( uri:string ) : string {
-        uri = "" + CryptoJS.MD5 (uri);
-        return "#" + uri.substr((uri["length"]-6), 6);
+    static getColor ( uri:string ) : string 
+    {
+        var color:string = "#FFFFFF";
+        
+        // uri is string or number
+        if(true === _.isString(uri) || true === _.isNumber(uri)) {
+            color = "" + CryptoJS.MD5 (uri);
+            color = "#" + color.substr((color["length"]-6), 6);
+            
+        // uri is object (but not a circular one!)
+        } else if (false === this.isCircularObject && true === _.isObject(uri)) {
+            color = JSON.stringify(uri);
+            color = "#" + color.substr((color["length"]-6), 6);
+        } else {
+            
+        }
+        
+        return color;
     }
     
     /**
