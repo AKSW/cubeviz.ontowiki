@@ -1,8 +1,8 @@
 /**
  * 
  */
-class CubeViz_View_Abstract {
-    
+class CubeViz_View_Abstract 
+{    
     /**
      * Reference to application which called this instance
      */
@@ -58,14 +58,16 @@ class CubeViz_View_Abstract {
     {
         if(undefined == events) 
             return;
+            
+        var self = this;
         
-        for (var key in events) {
-            var method = events[key];
-            if (!_.isFunction(method)) {
-                method = this[events[key]];
+        // for (var key in events) {
+        _.each(events, function(method, key){
+            if (false === _.isFunction(method)) {
+                method = self[method];
             }
             if (!method) {
-                throw new Error('Method "' + events[key] + '" does not exist');
+                throw new Error("Method " + method + " does not exist");
             }
             
             var eventName = key.substr(0, key.indexOf(" "));
@@ -74,11 +76,8 @@ class CubeViz_View_Abstract {
             // bind given event
             // want to find out more about the proxy method?
             // have a look at: http://www.jimmycuadra.com/posts/understanding-jquery-14s-proxy-method
-            $(selector).on(
-                eventName, 
-                $.proxy(method, this)
-            );
-        }
+            $(selector).on(eventName, $.proxy(method, self));
+        });
     }
     
     /**

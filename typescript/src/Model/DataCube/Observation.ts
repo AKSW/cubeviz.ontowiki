@@ -70,10 +70,9 @@ class DataCube_Observation {
     /**
      * @param entries Array of objects which are retrieved observations.
      */
-    public initialize ( retrievedObservations:any[],
-                         selectedComponentDimensions:Object[],
-                         measureUri:string ) : DataCube_Observation {
-        
+    public initialize ( retrievedObservations:any[], selectedComponentDimensions:Object[],
+        measureUri:string ) : DataCube_Observation 
+    {
         if ( true !== _.isArray ( retrievedObservations ) 
              || 0 == retrievedObservations ["length"] ) {
             console.log ("\nEntries is empty or not an array!");
@@ -81,7 +80,7 @@ class DataCube_Observation {
         }
         
         // save uri's of selected component dimensions
-        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(
+        this._selectedDimensionUris = this.extractSelectedDimensionUris(
             selectedComponentDimensions
         );
         
@@ -92,10 +91,9 @@ class DataCube_Observation {
             self = this;
         
         // if the measureUri element or sub one is not set, set default values
-        this["_axes"][measureUri] = this["_axes"][measureUri] || {};
+        this._axes[measureUri] = this._axes[measureUri] || {};
         
         // create an array for each selected dimension uri and save given values
-        // for ( var mainIndex in entries ) {        
         _.each(retrievedObservations, function(observation){
         
             /**
@@ -115,7 +113,6 @@ class DataCube_Observation {
                 self._axes[measureUri][ observation[measureUri][0].value ] || [];
               
             // generate temporary list of selected dimension values in the current entry
-            // for ( var i in this["_selectedDimensionUris"] ) {
             _.each(self._selectedDimensionUris, function(selecDimUri){
                                                 
                 if (undefined == selecDimUri) {
@@ -190,14 +187,17 @@ class DataCube_Observation {
     /**
      * @param mode Possible values: ascending (default), descending
      */
-    public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation {
-        var mode = undefined == mode ? "ascending" : mode,
-            sortedKeys = [], sortedObj = {};
+    public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation 
+    {
+        var mode = true === _.isUndefined(mode) ? "ascending" : mode,
+            sortedKeys = [], 
+            sortedObj = {},
+            self = this;
 
         // Separate keys and sort them
-        for (var i in this["_axes"][axisUri]){        
-            sortedKeys.push(i);
-        }
+        _.each(this._axes[axisUri], function(e, key){
+            sortedKeys.push(key);
+        });
         
         switch ( mode ) {
             case "descending": 
@@ -216,12 +216,12 @@ class DataCube_Observation {
                 break;
         }
 
-        // Reconstruct sorted obj based on keys
-        for (var i in sortedKeys){
-            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
-        }
+        // Reconstructing previously sorted obj based on keys
+        _.each(sortedKeys, function(key){
+            sortedObj[key] = self._axes[axisUri][key];
+        });
         
-        this["_axes"][axisUri] = sortedObj;
+        this._axes[axisUri] = sortedObj;
         
         return this;
     }

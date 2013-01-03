@@ -4,21 +4,25 @@
 class CubeViz_Visualization_HighCharts_Chart 
 {
     public chartConfig:any;
+    public xAxis:any;
     
     /**
      * Returns the chart title for the given data.
+     * @param dsdLabel Label of the selected data structure definition
+     * @param dsLabel Label of the selected data set
+     * @param oneElementDimensions List of all one element dimensions
+     * @return string Title for the given data
      */
     public buildChartTitle ( dsdLabel:string, dsLabel:string, oneElementDimensions:any[]) : string 
-    {
-        // build first part of chart title
-        var builtTitle = dsdLabel + " - " + dsLabel;
+    {        
+        var builtTitle = "";
         
-        for ( var i in oneElementDimensions ) {
-            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
-        }
+        _.each(oneElementDimensions, function(dimension){
+            builtTitle += " - " + dimension.elements[0].propertyLabel;
+        });
         
-        return builtTitle;
-    } 
+        return dsdLabel + " - " + dsLabel + " - " + builtTitle;
+    }
     
     /**
      * Initialize a chart instance.
@@ -40,26 +44,31 @@ class CubeViz_Visualization_HighCharts_Chart
     { 
         var forXAxis = null,
             forSeries = null,
-            observation = new DataCube_Observation (); 
+            observation = new DataCube_Observation (),
+            self = this; 
         
         // save given chart config
-        this ["chartConfig"] = chartConfig;
+        this.chartConfig = chartConfig;
+        
+        if(true === _.isUndefined(self.chartConfig.xAxis)){
+            this.chartConfig.xAxis = {categories: []};
+        }
         
         /**
          * Build chart title
          */
-        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (
+        this.chartConfig.title.text = this.buildChartTitle (
             dsdLabel, dsLabel, oneElementDimensions
         );        
 
         // assign selected dimensions to xAxis and series (yAxis)
-        for ( var hashedUrl in selectedComponentDimensions ) {
+        _.each(selectedComponentDimensions, function(selectedDimension){
             if ( null == forXAxis ) {
-                forXAxis = selectedComponentDimensions[hashedUrl]["typeUrl"];
+                forXAxis = selectedDimension.typeUrl;
             } else {
-                forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
+                forSeries = selectedDimension.typeUrl;
             }
-        }
+        });
         
         // If set, switch axes
         /*if ( true == CubeViz_Data ["_highchart_switchAxes"] ) {
@@ -71,88 +80,87 @@ class CubeViz_Visualization_HighCharts_Chart
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
-        var xAxisElements:Object = observation
+        var xAxisElements:any = observation
             .sortAxis(forXAxis, "ascending")
             .getAxesElements(forXAxis);
             
-        if(undefined === this ["xAxis"]) {
-            this ["xAxis"] = {"categories": []};
-        }
-            
-        for ( var value in xAxisElements ) {
-            this ["xAxis"]["categories"].push (
-                CubeViz_Visualization_Controller.getLabelForPropertyUri ( forXAxis, value, selectedComponentDimensions )
+        // put labels for properties to the axis
+        _.each(xAxisElements, function(element, propertyUrl){
+            self.chartConfig.xAxis.categories.push(
+                CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
+                    forXAxis, propertyUrl, selectedComponentDimensions
+                )
             );
-        }
+        });
         
         // now we will care about the series
         var found:bool = false,
             i:number = 0,
-            length:number = _.keys(xAxisElements).length, // System.countProperties (xAxisElements),
-            obj:Object = {},
+            length:number = _.keys(xAxisElements).length,
+            obj:any = {},
             seriesElements:any = observation.getAxesElements(forSeries);
             
-        this["series"] = [];
+        self.chartConfig.series = [];
 
-        for ( var seriesEntry in seriesElements ) {
+        _.each(seriesElements, function(seriesElement, seriesKey){
             
             // this represents one item of the series array (of highcharts)
             obj = { 
-                "name": CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    forSeries, seriesEntry, selectedComponentDimensions
-                ),
-                "data": [],
-                "color": CubeViz_Visualization_Controller.getColor ( seriesEntry )
+                color: CubeViz_Visualization_Controller.getColor(seriesKey),
+                data: [],
+                name: CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
+                    forSeries, seriesKey, selectedComponentDimensions
+                )
             };
             
             // iterate over all x axis elements
-            for ( var xAxisEntry in xAxisElements ) {
+            _.each(xAxisElements, function(xAxisValue, xAxisKey){
                 
                 found = false;
                 
                 // check for each entry of the x axis, if one of its entries contains a ref 
                 // to the the given seriesEntry
-                for ( var i in xAxisElements[xAxisEntry] ) {
+                _.each(xAxisValue, function(value, key){
+                    
+                    // stop further execution because we found our related value
+                    if(true == found){
+                        return;
+                    }
                     
                     // if one of the xAxis entries fits with given seriesEntry, so push the related value 
                     // into the obj [data] array
-                    for ( var j in xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"] ) {                                                
-                        if ( seriesEntry == xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"][j][forSeries]["value"] ) {
-                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][selectedMeasureUri]["value"]);
+                    _.each(value[selectedMeasureUri].ref, function(refValue, refKey){
+                        if ( seriesKey == refValue[forSeries].value){
+                            var floatValue = parseFloat(value[selectedMeasureUri].value);
                             if (isNaN(floatValue)) {
                                 floatValue = null;
                             } 
                                
-                            obj ["data"].push ( floatValue );
+                            obj.data.push ( floatValue );
                             found = true;
                             
                             // .. break this loop ...
-                            break;
+                            return;
                         }
-                    }
-                    // ... and this loop, because we found our related value
-                    if ( true == found ) {
-                        break;
-                    }                     
-                }                
+                    });
+                });
+                
                 // Push null, if it was not possible to found the related value, to prevent highcharts sort 
                 // valid values at the beginning because it violates the order of entries
                 if ( false == found ) {
-                    obj ["data"].push ( null );
+                    obj.data.push ( null );
                 }
-            }
+            });
             
-            this["series"].push (obj);
-        }
+            self.chartConfig.series.push (obj);
+        });
     }
     
     /**
      * 
      */
-    public getRenderResult () : Object 
-    {
-        this["chartConfig"]["xAxis"] = this ["xAxis"];
-        this["chartConfig"]["series"] = this ["series"];        
+    public getRenderResult () : any 
+    {       
         return this.chartConfig;
     }
 }
