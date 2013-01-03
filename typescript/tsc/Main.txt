@@ -1,5 +1,6 @@
 src/Model/CubeViz/ConfigurationLink.ts
 src/Model/CubeViz/Collection.ts
+src/Model/CubeViz/Visualization.ts
 src/Model/CubeViz/View/Abstract.ts
 src/Model/CubeViz/View/Application.ts
 

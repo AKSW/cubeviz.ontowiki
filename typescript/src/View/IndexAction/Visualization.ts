@@ -97,7 +97,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     
                 default: // HighCharts
                     
-                    var chart = CubeViz_Visualization_HighCharts.load(className);
+                    var hC = new CubeViz_Visualization_HighCharts();
+                    var chart = hC.load(className);
                     
                     // init chart instance
                     chart.init(

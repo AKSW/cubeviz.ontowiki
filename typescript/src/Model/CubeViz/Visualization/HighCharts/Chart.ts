@@ -99,7 +99,7 @@ class CubeViz_Visualization_HighCharts_Chart
             // this represents one item of the series array (of highcharts)
             obj = { 
                 "name": CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    seriesEntry, forSeries, selectedComponentDimensions
+                    forSeries, seriesEntry, selectedComponentDimensions
                 ),
                 "data": [],
                 "color": CubeViz_Visualization_Controller.getColor ( seriesEntry )

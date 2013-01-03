@@ -1,18 +1,14 @@
-class CubeViz_Visualization_CubeViz {
-    
+class CubeViz_Visualization_CubeViz extends CubeViz_Visualization
+{    
     /**
      * 
      */
-    static load (chartName:string) : CubeViz_Visualization_CubeViz_Visualization 
+    constructor()
     {
-        switch ( chartName ) {
-            
-            case "CubeViz_Visualization_CubeViz_Table":
-                return new CubeViz_Visualization_CubeViz_Table ();
-            
-            default: 
-                throw new Error("Invalid chartName ("+ chartName +") given!");
-                return;
-        }
-    }    
+        super();        
+        
+        this.name = "CubeViz";
+        
+        this.supportedClassNames = ["CubeViz_Visualization_CubeViz_Table"];
+    }
 }

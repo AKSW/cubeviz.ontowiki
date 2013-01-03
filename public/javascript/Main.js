@@ -84,6 +84,28 @@ var CubeViz_Collection = (function () {
     };
     return CubeViz_Collection;
 })();
+var CubeViz_Visualization = (function () {
+    function CubeViz_Visualization() {
+    }
+    CubeViz_Visualization.prototype.getName = function () {
+        return this.name;
+    };
+    CubeViz_Visualization.prototype.getSupportedClassNames = function () {
+        return this.supportedClassNames;
+    };
+    CubeViz_Visualization.prototype.load = function (c) {
+        if(true === this.isResponsibleFor(c)) {
+            var chartInstance;
+            eval("chartInstance = new " + c + "();");
+            return chartInstance;
+        }
+        throw new Error("Invalid c (" + c + ") given!");
+    };
+    CubeViz_Visualization.prototype.isResponsibleFor = function (className) {
+        return _.contains(this.getSupportedClassNames(), className);
+    };
+    return CubeViz_Visualization;
+})();
 var CubeViz_View_Abstract = (function () {
     function CubeViz_View_Abstract(id, attachedTo, app) {
         this.app = app;
@@ -274,10 +296,17 @@ var CubeViz_Visualization_Controller = (function () {
         return oneElementDimensions;
     }
     CubeViz_Visualization_Controller.getVisualizationType = function getVisualizationType(className) {
-        if("Visualization_CubeViz_Table" == className) {
-            return "CubeViz";
+        var cV = new CubeViz_Visualization_CubeViz();
+        var hC = new CubeViz_Visualization_HighCharts();
+
+        if(true === hC.isResponsibleFor(className)) {
+            return hC.getName();
+        } else {
+            if(true === cV.isResponsibleFor(className)) {
+                return cV.getName();
+            }
         }
-        return "HighCharts";
+        throw new Error("Unknown className " + className);
     }
     CubeViz_Visualization_Controller.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
@@ -288,23 +317,22 @@ var CubeViz_Visualization_Controller = (function () {
     }
     return CubeViz_Visualization_Controller;
 })();
-var CubeViz_Visualization_CubeViz = (function () {
-    function CubeViz_Visualization_CubeViz() { }
-    CubeViz_Visualization_CubeViz.load = function load(chartName) {
-        switch(chartName) {
-            case "CubeViz_Visualization_CubeViz_Table": {
-                return new CubeViz_Visualization_CubeViz_Table();
-
-            }
-            default: {
-                throw new Error("Invalid chartName (" + chartName + ") given!");
-                return;
-
-            }
-        }
+var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+}
+var CubeViz_Visualization_CubeViz = (function (_super) {
+    __extends(CubeViz_Visualization_CubeViz, _super);
+    function CubeViz_Visualization_CubeViz() {
+        _super.call(this);
+        this.name = "CubeViz";
+        this.supportedClassNames = [
+            "CubeViz_Visualization_CubeViz_Table"
+        ];
     }
     return CubeViz_Visualization_CubeViz;
-})();
+})(CubeViz_Visualization);
 var CubeViz_Visualization_CubeViz_Visualization = (function () {
     function CubeViz_Visualization_CubeViz_Visualization() { }
     CubeViz_Visualization_CubeViz_Visualization.prototype.init = function (data, chartConfig) {
@@ -316,11 +344,6 @@ var CubeViz_Visualization_CubeViz_Visualization = (function () {
     };
     return CubeViz_Visualization_CubeViz_Visualization;
 })();
-var __extends = this.__extends || function (d, b) {
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-}
 var CubeViz_Visualization_CubeViz_Table = (function (_super) {
     __extends(CubeViz_Visualization_CubeViz_Table, _super);
     function CubeViz_Visualization_CubeViz_Table() {
@@ -329,10 +352,12 @@ var CubeViz_Visualization_CubeViz_Table = (function (_super) {
     }
     return CubeViz_Visualization_CubeViz_Table;
 })(CubeViz_Visualization_CubeViz_Visualization);
-var CubeViz_Visualization_HighCharts = (function () {
-    function CubeViz_Visualization_HighCharts() { }
-    CubeViz_Visualization_HighCharts.getSupportedClassNames = function getSupportedClassNames() {
-        return [
+var CubeViz_Visualization_HighCharts = (function (_super) {
+    __extends(CubeViz_Visualization_HighCharts, _super);
+    function CubeViz_Visualization_HighCharts() {
+        _super.call(this);
+        this.name = "HighCharts";
+        this.supportedClassNames = [
             "CubeViz_Visualization_HighCharts_Area", 
             "CubeViz_Visualization_HighCharts_AreaSpline", 
             "CubeViz_Visualization_HighCharts_Bar", 
@@ -343,19 +368,8 @@ var CubeViz_Visualization_HighCharts = (function () {
             "CubeViz_Visualization_HighCharts_Spline"
         ];
     }
-    CubeViz_Visualization_HighCharts.load = function load(c) {
-        if(true === CubeViz_Visualization_HighCharts.isResponsibleFor(c)) {
-            var chartInstance;
-            eval("chartInstance = new " + c + "();");
-            return chartInstance;
-        }
-        throw new Error("Invalid c (" + c + ") given!");
-    }
-    CubeViz_Visualization_HighCharts.isResponsibleFor = function isResponsibleFor(className) {
-        return _.contains(CubeViz_Visualization_HighCharts.getSupportedClassNames(), className);
-    }
     return CubeViz_Visualization_HighCharts;
-})();
+})(CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
     CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (dsdLabel, dsLabel, oneElementDimensions) {
@@ -399,7 +413,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         this["series"] = [];
         for(var seriesEntry in seriesElements) {
             obj = {
-                "name": CubeViz_Visualization_Controller.getLabelForPropertyUri(seriesEntry, forSeries, selectedComponentDimensions),
+                "name": CubeViz_Visualization_Controller.getLabelForPropertyUri(forSeries, seriesEntry, selectedComponentDimensions),
                 "data": [],
                 "color": CubeViz_Visualization_Controller.getColor(seriesEntry)
             };
@@ -1152,7 +1166,8 @@ var View_IndexAction_Visualization = (function (_super) {
 
                 }
                 default: {
-                    var chart = CubeViz_Visualization_HighCharts.load(className);
+                    var hC = new CubeViz_Visualization_HighCharts();
+                    var chart = hC.load(className);
                     chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
                     new Highcharts.Chart(chart.getRenderResult());
                     break;
