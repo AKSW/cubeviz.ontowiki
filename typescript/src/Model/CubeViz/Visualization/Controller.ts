@@ -18,26 +18,25 @@ class CubeViz_Visualization_Controller
         if (!obj || false === _.isObject(obj))
             return false;
 
-        var keys = _.keys(obj), 
-            i = keys.length - 1, 
-            value;
+        var keys = _.keys(obj);
 
         parents.push(obj); // add self to current path
 
-        for (; i >= 0; --i){
-            value = obj[keys[i]];
-            if (value && true === _.isObject(obj)) {
-                tree.push(keys[i]);
+        // go through all keys and check each property value of the given object
+        _.each(keys, function(key){
+            if (obj[key] && true === _.isObject(obj)) {
+                tree.push(key);
                 
                 if (parents.indexOf(obj) >= 0)
                     return true;
                     
                 // check child nodes
-                if (arguments.callee(value, parents, tree))
-                    return tree.join('.');
+                if (arguments.callee(obj[key], parents, tree))
+                    return tree.join(".");
+                
                 tree.pop();
             }
-        }
+        });
 
         parents.pop();
         return false;
@@ -76,12 +75,17 @@ class CubeViz_Visualization_Controller
      */
     static getFromChartConfigByClass(className:string, charts:any[]) : any 
     {
-        for ( var i in charts ) {
-            if ( className == charts [i]["class"] ) {
-                return charts [i];
+        var result = undefined;
+        
+        _.each(charts, function(chart){
+            if(true === _.isUndefined(result)){
+                if(className == chart.class) {
+                    result = chart;
+                }
             }
-        }
-        return undefined;
+        });
+        
+        return result;
     }    
     
     /**
@@ -94,25 +98,30 @@ class CubeViz_Visualization_Controller
     static getLabelForPropertyUri(dimensionTypeUrl:string, propertyUrl:string, 
         selectedComponentDimensions:any) : string 
     {
-        var dim:any = {};
-                
-        for ( var hashedUrl in selectedComponentDimensions ) {
-            
-            dim = selectedComponentDimensions[hashedUrl];
-            
-            // Stop if the given dimension was found (by type)
-            if ( dim["typeUrl"] == dimensionTypeUrl ) {
-                
-                for ( var i in dim["elements"] ) {
-                    if ( dim["elements"][i]["property"] == propertyUrl ) {
-                        return dim["elements"][i]["propertyLabel"];
-                    }
-                }
+        var label = propertyUrl;
+        
+        // go through all selected component dimensions 
+        _.each(selectedComponentDimensions, function(selectedComponentDimension, hashedUrl){
+
+            // stop further execution if label was found
+            if (label !== propertyUrl){
+                return;
             }
-        }
+
+            // stop if the given dimension was found (by type)
+            if ( selectedComponentDimension.typeUrl == dimensionTypeUrl ) {
+                
+                // check each dimension element
+                _.each(selectedComponentDimension.elements, function(element){
+                    if ( element.property == propertyUrl ) {
+                        label = element.propertyLabel;
+                    }
+                });
+            }
+        });
         
         // if nothing was found, simply return the given propertyUrl
-        return propertyUrl;
+        return label;
     }
     
     /**
@@ -136,12 +145,9 @@ class CubeViz_Visualization_Controller
         // assign selected dimensions to xAxis and series (yAxis)
         var multipleDimensions:any[] = [];
         
-        // for ( var hashedUrl in selectedDimensions ) {
         _.each(selectedComponentDimensions, function(selectedDimension){
                         
-            if(2 > _.size(selectedDimension.elements)) {
-                return;
-            }
+            if(2 > _.size(selectedDimension.elements)) { return; }
             
             // Only put entry to multipleDimensions if it have at least 2 elements    
             multipleDimensions.push ({
@@ -198,9 +204,10 @@ class CubeViz_Visualization_Controller
     /**
      * Update ChartConfig entry with new value. Required e.g. for chart selection menu.
      */
-    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) {
+    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) 
+    {
         for ( var i in charts ) {
-            if ( className == charts [i]["class"] ) {
+            if(className == charts [i].class) {
                 charts [i] = newValue;
             }
         }

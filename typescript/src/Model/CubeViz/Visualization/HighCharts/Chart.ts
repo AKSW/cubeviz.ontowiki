@@ -94,7 +94,8 @@ class CubeViz_Visualization_HighCharts_Chart
         });
         
         // now we will care about the series
-        var found:bool = false,
+        var floatValue = 0,
+            found:bool = false,
             i:number = 0,
             length:number = _.keys(xAxisElements).length,
             obj:any = {},
@@ -131,7 +132,8 @@ class CubeViz_Visualization_HighCharts_Chart
                     // into the obj [data] array
                     _.each(value[selectedMeasureUri].ref, function(refValue, refKey){
                         if ( seriesKey == refValue[forSeries].value){
-                            var floatValue = parseFloat(value[selectedMeasureUri].value);
+                            floatValue = parseFloat(value[selectedMeasureUri].value);
+                            
                             if (isNaN(floatValue)) {
                                 floatValue = null;
                             } 

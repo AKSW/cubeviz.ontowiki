@@ -59,9 +59,12 @@ class CubeViz_View_Abstract
         if(undefined == events) 
             return;
             
-        var self = this;
+        var eventName = "",
+            selector = "",
+            self = this;
         
-        // for (var key in events) {
+        // iterate over events's properties: each property/value pair represents
+        // a event type with event target and the method
         _.each(events, function(method, key){
             if (false === _.isFunction(method)) {
                 method = self[method];
@@ -70,8 +73,8 @@ class CubeViz_View_Abstract
                 throw new Error("Method " + method + " does not exist");
             }
             
-            var eventName = key.substr(0, key.indexOf(" "));
-            var selector = key.substr(key.indexOf(" ")+1);
+            eventName = key.substr(0, key.indexOf(" "));
+            selector = key.substr(key.indexOf(" ")+1);
             
             // bind given event
             // want to find out more about the proxy method?
