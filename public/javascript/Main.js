@@ -331,47 +331,28 @@ var CubeViz_Visualization_CubeViz_Table = (function (_super) {
 })(CubeViz_Visualization_CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts = (function () {
     function CubeViz_Visualization_HighCharts() { }
-    CubeViz_Visualization_HighCharts.load = function load(chartName) {
-        switch(chartName) {
-            case 'CubeViz_Visualization_HighCharts_Area': {
-                return new CubeViz_Visualization_HighCharts_Area();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_AreaSpline': {
-                return new CubeViz_Visualization_HighCharts_AreaSpline();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Bar': {
-                return new CubeViz_Visualization_HighCharts_Bar();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Column': {
-                return new CubeViz_Visualization_HighCharts_Column();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Line': {
-                return new CubeViz_Visualization_HighCharts_Line();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Pie': {
-                return new CubeViz_Visualization_HighCharts_Pie();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Polar': {
-                return new CubeViz_Visualization_HighCharts_Polar();
-
-            }
-            case 'CubeViz_Visualization_HighCharts_Spline': {
-                return new CubeViz_Visualization_HighCharts_Spline();
-
-            }
-            default: {
-                console.log("HighCharts - load");
-                console.log("Invalid chartName (" + chartName + ") given!");
-                return;
-
-            }
+    CubeViz_Visualization_HighCharts.getSupportedClassNames = function getSupportedClassNames() {
+        return [
+            "CubeViz_Visualization_HighCharts_Area", 
+            "CubeViz_Visualization_HighCharts_AreaSpline", 
+            "CubeViz_Visualization_HighCharts_Bar", 
+            "CubeViz_Visualization_HighCharts_Column", 
+            "CubeViz_Visualization_HighCharts_Line", 
+            "CubeViz_Visualization_HighCharts_Pie", 
+            "CubeViz_Visualization_HighCharts_Polar", 
+            "CubeViz_Visualization_HighCharts_Spline"
+        ];
+    }
+    CubeViz_Visualization_HighCharts.load = function load(c) {
+        if(true === CubeViz_Visualization_HighCharts.isResponsibleFor(c)) {
+            var chartInstance;
+            eval("chartInstance = new " + c + "();");
+            return chartInstance;
         }
+        throw new Error("Invalid c (" + c + ") given!");
+    }
+    CubeViz_Visualization_HighCharts.isResponsibleFor = function isResponsibleFor(className) {
+        return _.contains(CubeViz_Visualization_HighCharts.getSupportedClassNames(), className);
     }
     return CubeViz_Visualization_HighCharts;
 })();
