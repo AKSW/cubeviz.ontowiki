@@ -8,18 +8,10 @@ class CubeViz_Visualization_HighCharts_Chart
     /**
      * Returns the chart title for the given data.
      */
-    public buildChartTitle ( cubeVizLinksModule:Object, retrievedObservations:Object[] ) : string {
-        
-        var dsdLabel = cubeVizLinksModule ["selectedDSD"]["label"],
-            dsLabel = cubeVizLinksModule ["selectedDS"]["label"],
-            
-            oneElementDimensions = CubeViz_Visualization_Controller.getOneElementDimensions (
-                retrievedObservations, 
-                cubeVizLinksModule ["selectedComponents"]["dimensions"],
-                cubeVizLinksModule ["selectedComponents"]["measures"]
-            ),
-            // build first part of chart title
-            builtTitle = dsdLabel + " - " + dsLabel;
+    public buildChartTitle ( dsdLabel:string, dsLabel:string, oneElementDimensions:any[]) : string 
+    {
+        // build first part of chart title
+        var builtTitle = dsdLabel + " - " + dsLabel;
         
         for ( var i in oneElementDimensions ) {
             builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
@@ -31,28 +23,25 @@ class CubeViz_Visualization_HighCharts_Chart
     /**
      * 
      */
-    public init ( entries:any, cubeVizLinksModule:Object, chartConfig:any, className ) : void { 
+    public init (className:string, chartConfig:any, retrievedComponents:any[], 
+        selectedComponentDimensions:any, oneElementDimensions, multipleDimensions, 
+        selectedComponentMeasures:any, measureUri:string, dsdLabel:string,
+        dsLabel:string ) : void 
+    { 
     
         var forXAxis = null,
             forSeries = null,
-            selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
-            measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
-            measureUri = CubeViz_Visualization_Controller.getMeasureTypeUrl (cubeVizLinksModule),
-            multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions ( 
-                selectedComponentDimensions
-            ),
             observation = new DataCube_Observation (); 
         
         // save given chart config
         this ["chartConfig"] = chartConfig;
         
-        console.log(" chart init > chartConfig");
-        console.log(chartConfig);
-        
         /**
          * Build chart title
          */
-        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries);        
+        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (
+            dsdLabel, dsLabel, oneElementDimensions
+        );        
 
         // assign selected dimensions to xAxis and series (yAxis)
         for ( var hashedUrl in selectedComponentDimensions ) {
@@ -72,7 +61,7 @@ class CubeViz_Visualization_HighCharts_Chart
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize ( entries, selectedComponentDimensions, measureUri );
+        observation.initialize ( retrievedComponents, selectedComponentDimensions, measureUri );
         var xAxisElements:Object = observation
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
@@ -92,7 +81,7 @@ class CubeViz_Visualization_HighCharts_Chart
             i:number = 0,
             length:number = _.keys(xAxisElements).length, // System.countProperties (xAxisElements),
             obj:Object = {},
-            seriesElements:Object = observation.getAxisElements ( forSeries );
+            seriesElements:any = observation.getAxisElements ( forSeries );
             
         this["series"] = [];
 
@@ -146,10 +135,6 @@ class CubeViz_Visualization_HighCharts_Chart
             
             this["series"].push (obj);
         }
-        
-        console.log ( "" );
-        console.log ( "generated series:" );
-        console.log ( this["series"] );
     }
     
     /**

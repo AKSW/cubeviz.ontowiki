@@ -27,9 +27,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public onComplete_loadObservations(event, retrievedObservations) : void
     {
-        console.log("Visualization -> load Observations");
-        console.log(retrievedObservations);
-        
         // save retrieved observations
         this.app._.data.retrievedObservations = retrievedObservations;
             
@@ -71,7 +68,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             // get chart name
             var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
             
-                className = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts [0].class,
+                className = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class,
             
                 // get class
                 fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
@@ -102,20 +99,28 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     
                     var chart = CubeViz_Visualization_HighCharts.load(className);
                     
-                    console.log("before chart.init");   
-                    
                     // init chart instance
                     chart.init(
-                        this.app._.data.retrievedObservations,
-                        this.app._.data,
+                        this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class,
                         fromChartConfig.defaultConfig,
-                        this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class
+                        this.app._.data.retrievedObservations,
+                        this.app._.data.selectedComponents.dimensions,
+                        CubeViz_Visualization_Controller.getOneElementDimensions (
+                            this.app._.data.retrievedObservations, 
+                            this.app._.data.selectedComponents.dimensions,
+                            this.app._.data.selectedComponents.measures
+                        ),
+                        CubeViz_Visualization_Controller.getMultipleDimensions ( 
+                            this.app._.data.selectedComponents.dimensions
+                        ),
+                        this.app._.data.selectedComponents.measures,
+                        CubeViz_Visualization_Controller.getMeasureTypeUrl(
+                            this.app._.data
+                        ),
+                        this.app._.data.selectedDSD.label,
+                        this.app._.data.selectedDS.label
                     );
                     
-                    console.log("before Highcharts.Chart");                   
-                            
-                    console.log(chart.getRenderResult());
-                            
                     // show chart
                     new Highcharts.Chart(chart.getRenderResult());
                 
@@ -154,8 +159,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
-        });
+        // this.delegateEvents({});
         
         return this;
     }

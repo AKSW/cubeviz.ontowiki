@@ -363,30 +363,20 @@ var CubeViz_Visualization_HighCharts = (function () {
 })();
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
-    CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (cubeVizLinksModule, retrievedObservations) {
-        var dsdLabel = cubeVizLinksModule["selectedDSD"]["label"];
-        var dsLabel = cubeVizLinksModule["selectedDS"]["label"];
-        var oneElementDimensions = CubeViz_Visualization_Controller.getOneElementDimensions(retrievedObservations, cubeVizLinksModule["selectedComponents"]["dimensions"], cubeVizLinksModule["selectedComponents"]["measures"]);
+    CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (dsdLabel, dsLabel, oneElementDimensions) {
         var builtTitle = dsdLabel + " - " + dsLabel;
-
         for(var i in oneElementDimensions) {
             builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
         }
         return builtTitle;
     };
-    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (entries, cubeVizLinksModule, chartConfig, className) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (className, chartConfig, retrievedComponents, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedComponentMeasures, measureUri, dsdLabel, dsLabel) {
         var forXAxis = null;
         var forSeries = null;
-        var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
-        var measures = cubeVizLinksModule["selectedComponents"]["measures"];
-        var measureUri = CubeViz_Visualization_Controller.getMeasureTypeUrl(cubeVizLinksModule);
-        var multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions(selectedComponentDimensions);
         var observation = new DataCube_Observation();
 
         this["chartConfig"] = chartConfig;
-        console.log(" chart init > chartConfig");
-        console.log(chartConfig);
-        this["chartConfig"]["title"]["text"] = this.buildChartTitle(cubeVizLinksModule, entries);
+        this["chartConfig"]["title"]["text"] = this.buildChartTitle(dsdLabel, dsLabel, oneElementDimensions);
         for(var hashedUrl in selectedComponentDimensions) {
             if(null == forXAxis) {
                 forXAxis = selectedComponentDimensions[hashedUrl]["typeUrl"];
@@ -394,7 +384,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
         }
-        observation.initialize(entries, selectedComponentDimensions, measureUri);
+        observation.initialize(retrievedComponents, selectedComponentDimensions, measureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         if(undefined === this["xAxis"]) {
             this["xAxis"] = {
@@ -442,9 +432,6 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             }
             this["series"].push(obj);
         }
-        console.log("");
-        console.log("generated series:");
-        console.log(this["series"]);
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {
         this["chartConfig"]["xAxis"] = this["xAxis"];
@@ -1147,8 +1134,6 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
-        console.log("Visualization -> load Observations");
-        console.log(retrievedObservations);
         this.app._.data.retrievedObservations = retrievedObservations;
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.render();
@@ -1173,10 +1158,7 @@ var View_IndexAction_Visualization = (function (_super) {
                 }
                 default: {
                     var chart = CubeViz_Visualization_HighCharts.load(className);
-                    console.log("before chart.init");
-                    chart.init(this.app._.data.retrievedObservations, this.app._.data, fromChartConfig.defaultConfig, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class);
-                    console.log("before Highcharts.Chart");
-                    console.log(chart.getRenderResult());
+                    chart.init(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class, fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getMeasureTypeUrl(this.app._.data), this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
                     new Highcharts.Chart(chart.getRenderResult());
                     break;
 
@@ -1184,8 +1166,6 @@ var View_IndexAction_Visualization = (function (_super) {
             }
         } else {
         }
-        this.delegateEvents({
-        });
         return this;
     };
     return View_IndexAction_Visualization;
