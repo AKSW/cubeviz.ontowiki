@@ -1,42 +1,29 @@
 /**
- * Mother class for all HighCharts charts
+ * 
  */
 class CubeViz_Visualization_HighCharts_Chart 
 {
-    /**
-     * 
-     */
-    public xAxis:any = {"categories": []};
-    
-    /**
-     * formally yAxis
-     */
-    public series = [];
-    
-    /**
-     * Complete chart configuration for a certain chart
-     */
-    public chartConfig:any = {};    
+    public chartConfig:any;
     
     /**
      * Returns the chart title for the given data.
      */
-    public buildChartTitle(dsdLabel:string, dsLabel:string, selectedComponentDimensions:any) : string 
-    {
-        var //dsdLabel = data.selectedDSD.label, 
-            //dsLabel = data.selectedDS.label,
+    public buildChartTitle ( cubeVizLinksModule:Object, retrievedObservations:Object[] ) : string {
+        
+        var dsdLabel = cubeVizLinksModule ["selectedDSD"]["label"],
+            dsLabel = cubeVizLinksModule ["selectedDS"]["label"],
             
-            // extract dimensions which only contain 1 element
             oneElementDimensions = CubeViz_Visualization_Controller.getOneElementDimensions (
-                selectedComponentDimensions
+                retrievedObservations, 
+                cubeVizLinksModule ["selectedComponents"]["dimensions"],
+                cubeVizLinksModule ["selectedComponents"]["measures"]
             ),
-            
             // build first part of chart title
             builtTitle = dsdLabel + " - " + dsLabel;
         
-        _.each(oneElementDimensions, function(dimension){
-            builtTitle += " - " + _.first(dimension.elements).propertyLabel;
-        });
+        for ( var i in oneElementDimensions ) {
+            builtTitle += " - " + oneElementDimensions[i]["elements"][0]["propertyLabel"];
+        }
         
         return builtTitle;
     } 
@@ -44,45 +31,40 @@ class CubeViz_Visualization_HighCharts_Chart
     /**
      * 
      */
-    public init ( selectedComponentDimensions:any, selectedComponentMeasures:any, 
-        retrievedObservations, measureUri, dsdLabel:string, dsLabel:string, 
-        classDefaultConfig:any ) : void 
-    {
+    public init ( entries:any, cubeVizLinksModule:Object, chartConfig:any, className ) : void { 
+    
         var forXAxis = null,
             forSeries = null,
-            // selectedComponentDimensions = data.selectedComponents.dimensions, 
-            // measures = data.selectedComponents.measures, 
-            // measureUri = CubeViz_Visualization_Controller.getMeasure(data).uri,
+            selectedComponentDimensions = cubeVizLinksModule ["selectedComponents"]["dimensions"], 
+            measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
+            measureUri = CubeViz_Visualization_Controller.getMeasureTypeUrl (cubeVizLinksModule),
             multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions ( 
-                selectedComponentDimensions
+                entries, selectedComponentDimensions, measures
             ),
-            observation = new DataCube_Observation,
-            // selectedDimensions = data.selectedComponents.dimensions,
-            self = this; 
+            observation = new DataCube_Observation (); 
         
         // save given chart config
-        this.chartConfig = classDefaultConfig;
+        this ["chartConfig"] = chartConfig;
+        
+        console.log(" chart init > chartConfig");
+        console.log(chartConfig);
         
         /**
          * Build chart title
          */
-        this.chartConfig.title.text = this.buildChartTitle (
-            dsdLabel, dsLabel, selectedComponentDimensions
-        );        
+        this ["chartConfig"]["title"]["text"] = this.buildChartTitle (cubeVizLinksModule, entries);        
 
-        // assign selected dimensions to xAxis and series (yAxis)        
-        // $(selectedDimensions).each(function(i, dimension){
-        _.each(selectedComponentDimensions, function(selectedComponentDimension){
+        // assign selected dimensions to xAxis and series (yAxis)
+        for ( var hashedUrl in selectedComponentDimensions ) {
             if ( null == forXAxis ) {
-                forXAxis = selectedComponentDimension.typeUrl;
+                forXAxis = selectedComponentDimensions[hashedUrl]["typeUrl"];
             } else {
-                forSeries = selectedComponentDimension.typeUrl;
+                forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
-        });
+        }
         
         // If set, switch axes
-        // TODO maybe use > ui.viszGeneral.highCharts.switchAxes
-        /*if ( true == data["_highchart_switchAxes"] ) {
+        /*if ( true == CubeViz_Data ["_highchart_switchAxes"] ) {
             var tmp = forXAxis;
             forXAxis = forSeries;
             forSeries = tmp;
@@ -90,98 +72,93 @@ class CubeViz_Visualization_HighCharts_Chart
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize ( 
-            retrievedObservations, 
-            selectedComponentDimensions, 
-            measureUri 
-        );
-        
-        var xAxisElements:any = observation.sortAxis ( forXAxis, "ascending" )
-                                           .getAxisElements ( forXAxis );
+        observation.initialize ( entries, selectedComponentDimensions, measureUri );
+        var xAxisElements:Object = observation
+            .sortAxis ( forXAxis, "ascending" )
+            .getAxisElements ( forXAxis );
             
-        // $(xAxisElements).each(function(value, e){
-        _.each(xAxisElements, function(value){
-            self.xAxis.categories.push(
-                CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    value, forXAxis, selectedComponentDimensions 
-                )
+        if(undefined === this ["xAxis"]) {
+            this ["xAxis"] = {"categories": []};
+        }
+            
+        for ( var value in xAxisElements ) {
+            this ["xAxis"]["categories"].push (
+                CubeViz_Visualization_Controller.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
             );
-        });
+        }
         
         // now we will care about the series
         var found:bool = false,
             i:number = 0,
-            length:number = _.keys(xAxisElements).length,
-            obj:any = {},
+            length:number = _.keys(xAxisElements).length, // System.countProperties (xAxisElements),
+            obj:Object = {},
             seriesElements:Object = observation.getAxisElements ( forSeries );
             
-        this.series = [];
+        this["series"] = [];
 
-        
-        // for ( var seriesEntry in seriesElements ) 
-        // $(seriesElements).each(function(seriesEntry, element){
-        _.each(seriesElements, function(seriesEntry){
+        for ( var seriesEntry in seriesElements ) {
             
             // this represents one item of the series array (of highcharts)
             obj = { 
-                name: CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    seriesEntry, forSeries, selectedComponentDimensions 
+                "name": CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
+                    seriesEntry, forSeries, selectedComponentDimensions
                 ),
-                data: [],
-                color: CubeViz_Visualization_Controller.getColor ( seriesEntry )
+                "data": [],
+                "color": CubeViz_Visualization_Controller.getColor ( seriesEntry )
             };
             
             // iterate over all x axis elements
-            // for ( var xAxisEntry in xAxisElements ) {
-            // $(xAxisElements).each(function(xAxisEntry, xAxisElement){
-            _.each(xAxisElements, function(xAxisElement){
+            for ( var xAxisEntry in xAxisElements ) {
                 
                 found = false;
                 
                 // check for each entry of the x axis, if one of its entries contains a ref 
                 // to the the given seriesEntry
-                // for ( var i in xAxisElements[xAxisEntry] ) {
-                // $(xAxisElement).each(function(i, ele){
-                _.each(xAxisElement, function(ele){
-                    
-                    if(true === found) return;
+                for ( var i in xAxisElements[xAxisEntry] ) {
                     
                     // if one of the xAxis entries fits with given seriesEntry, so push the related value 
                     // into the obj [data] array
-                    // for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {
-                    _.each(ele[measureUri].ref, function(relatedElementValue){
-                        
-                        if(true === found) return;
-                        
-                        if (seriesEntry == relatedElementValue[forSeries].value) {
-                            // TODO using var necessary?
-                            var floatValue = parseFloat(relatedElementValue);
-                            
-                            obj.data.push(true == _.isNaN(floatValue) ? null : floatValue);
+                    for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
+                        if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                            if (isNaN(floatValue)) {
+                                floatValue = null;
+                            } 
+                               
+                            obj ["data"].push ( floatValue );
                             found = true;
+                            
+                            // .. break this loop ...
+                            break;
                         }
-                        
-                    });
-                });
-                          
+                    }
+                    // ... and this loop, because we found our related value
+                    if ( true == found ) {
+                        break;
+                    }                     
+                }                
                 // Push null, if it was not possible to found the related value, to prevent highcharts sort 
                 // valid values at the beginning because it violates the order of entries
                 if ( false == found ) {
-                    obj.data.push ( null );
+                    obj ["data"].push ( null );
                 }
-            });
+            }
             
-            this.series.push (obj);
-        });
+            this["series"].push (obj);
+        }
+        
+        console.log ( "" );
+        console.log ( "generated series:" );
+        console.log ( this["series"] );
     }
     
     /**
      * 
      */
     public getRenderResult () : Object 
-    { 
-        this.chartConfig.xAxis  = this.xAxis;
-        this.chartConfig.series = this.series;        
+    {
+        this["chartConfig"]["xAxis"] = this ["xAxis"];
+        this["chartConfig"]["series"] = this ["series"];        
         return this.chartConfig;
     }
 }

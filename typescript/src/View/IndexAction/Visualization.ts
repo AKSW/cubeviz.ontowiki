@@ -35,57 +35,16 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // get number of multiple dimensions
         var numberOfMultipleDimensions = 
             CubeViz_Visualization_Controller.getNumberOfMultipleDimensions(
-                this.app._.data.selectedComponents.dimensions
-            );
-        
-        // If at least one observation was retrieved
-        if ( 1 <= _.size(retrievedObservations) ) {
-                                
-            /**
-             * Render chart with the given data
-             */
-            this.renderChart ( 
-                this.app._.data.selectedComponents.dimensions,
-                this.app._.data.selectedComponents.measures,
-                this.app._.data.retrievedObservations,
-                CubeViz_Visualization_Controller.getMeasure(
-                    this.app._.data.selectedComponents.measures
-                ).typeUrl,
-                this.app._.data.selectedDSD.label,
-                this.app._.data.selectedDS.label,
-                this.app._.chartConfig[numberOfMultipleDimensions]
-                    .charts[0].class,
-                this.app._.chartConfig[numberOfMultipleDimensions]
-                    .charts[0].defaultConfig
+                this.app._.data, this.app._.data.selectedComponents.dimensions,
+                this.app._.data.selectedComponents.measures
             );
             
-            /**
-             * Setup click event for chartSelection item's
-             *
-            ChartSelector.init ( 
-                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
-                Viz_Event.onClick_ChartSelectionItem
-            );*/
-        } 
+            
+            
+        this.app._.data.numberOfMultipleDimensions = numberOfMultipleDimensions;
         
-        // If nothing was retrieved
-        else {
-            
-            /**
-            $("#container")
-                .html ("")
-                .append ($("#cubeviz-Index-NothingFoundNotificationContainer").html());
-                
-            
-            
-             * Notification: Empty data retrieved
-             *
-            $("#cubeviz-Index-NothingFoundNotificationLink").click(Viz_Event.onClick_NothingFoundNotificationLink);
-                
-            Viz_Main.closeChartSelection();
-            Viz_Main.closeChartSelectionMenu();
-            Viz_Main.hideMenuDongle();*/
-        }
+        
+        this.render();
     }
     
     /**
@@ -126,14 +85,103 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
          */
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
-        obs.loadAll(this.app._.backend.url, this.app._.data.linkCode);
+        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
     }
 
     /**
      *
      */
     public render() 
-    {        
+    {
+        // If at least one observation was retrieved
+        if ( 1 <= _.size(this.app._.data.retrievedObservations) ) {
+                            
+            /**
+             * Render chart with the given data
+             */            
+            // get chart name
+            var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
+            
+                className = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts [0].class,
+            
+                // get class
+                fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                    className, charts
+                ),
+                  
+                type = CubeViz_Visualization_Controller.getVisualizationType(className);
+            
+            switch ( type ) 
+            {
+                case "CubeViz":
+                    
+                    console.log("render cubeviz visz");
+                    /*
+                    var visz = Visualization_CubeViz.load ( className );
+                    
+                    visz.init (
+                        CubeViz_Data ["retrievedObservations"], 
+                        CubeViz_Links_Module,
+                        fromChartConfig ["defaultConfig"]
+                    );
+                    
+                    visz.render ();*/
+                
+                    break;
+                    
+                default: // HighCharts
+                    
+                    var chart = CubeViz_Visualization_HighCharts.load(className);
+                    
+                    console.log("before chart.init");   
+                    
+                    // init chart instance
+                    chart.init(
+                        this.app._.data.retrievedObservations,
+                        this.app._.data,
+                        fromChartConfig.defaultConfig,
+                        this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class
+                    );
+                    
+                    console.log("before Highcharts.Chart");                   
+                            
+                    console.log(chart.getRenderResult());
+                            
+                    // show chart
+                    new Highcharts.Chart(chart.getRenderResult());
+                
+                    break;
+            }
+            
+            /**
+             * Setup click event for chartSelection item's
+             *
+            ChartSelector.init ( 
+                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
+                Viz_Event.onClick_ChartSelectionItem
+            );*/
+        } 
+        
+        // If nothing was retrieved
+        else {
+            
+            /**
+            $("#container")
+                .html ("")
+                .append ($("#cubeviz-Index-NothingFoundNotificationContainer").html());
+                
+            
+            
+             * Notification: Empty data retrieved
+             *
+            $("#cubeviz-Index-NothingFoundNotificationLink").click(Viz_Event.onClick_NothingFoundNotificationLink);
+                
+            Viz_Main.closeChartSelection();
+            Viz_Main.closeChartSelectionMenu();
+            Viz_Main.hideMenuDongle();*/
+        }
+        
+        
         /**
          * Delegate events to new items of the template
          */
@@ -141,58 +189,5 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         });
         
         return this;
-    }
-    
-    /**
-     *
-     */
-    public renderChart(selectedComponentDimensions:any, selectedComponentMeasures:any,
-        retrievedObservations:any, measureUrl:string, dsdLabel:string, 
-        dsLabel:string, className:string, classDefaultConfig:any) : void
-    {
-        // get chart name
-        var // charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
-        
-            // get class
-            /*fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                className, chartsConfig
-            ),
-*/            
-            type = CubeViz_Visualization_Controller.getVisualizationType(className);
-        
-        switch ( type ) 
-        {
-            case "CubeViz":
-                
-                console.log("render cubeviz visz");
-                /*
-                var visz = Visualization_CubeViz.load ( className );
-                
-                visz.init (
-                    CubeViz_Data ["retrievedObservations"], 
-                    CubeViz_Links_Module,
-                    fromChartConfig ["defaultConfig"]
-                );
-                
-                visz.render ();*/
-            
-                break;
-                
-            default: // HighCharts
-                
-                var chart = CubeViz_Visualization_HighCharts.load(className);
-                
-                // init chart instance
-                chart.init(
-                    selectedComponentDimensions, selectedComponentMeasures,
-                    retrievedObservations, measureUrl, dsdLabel, dsLabel,
-                    classDefaultConfig
-                );                        
-                        
-                // show chart
-                new Highcharts.Chart(chart.getRenderResult());
-            
-                break;
-        }
     }
 }

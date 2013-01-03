@@ -1,4 +1,4 @@
-/// <reference path="..\..\..\declaration\jquery.d.ts" />
+/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
 /**
  * Represents a component which can be a dimension or a measure.
@@ -6,17 +6,24 @@
 class DataCube_Component {
     
     /**
-     * Loads all component dimensions, specified by model uri, data structure 
-     * definition, dataset and component type.
+     * Loads all component dimensions, specified by model uri, data structure definition, dataset
+     * and component type.
      */
-    static loadAllDimensions (url, modelUrl, dsdUrl, dsUrl, callback) : void
-    {
+    static loadAllDimensions (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
+        
         $.ajax({
-            url: url + "getcomponents/",
-            data: { m: modelUrl, dsdUrl: dsdUrl, dsUrl: dsUrl, cT: "dimension" }
+            url: url + "getcomponents", // CubeViz_Links_Module.cubevizPath + "getcomponents/",
+            data: {
+                m: modelUrl, // CubeViz_Links_Module["modelUrl"],
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                cT: "dimension" // possible: dimension, measure
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error( "loadAllDimensions error: " + xhr ["responseText"] );
+            console.log ( "Component > loadAll > error" );
+            console.log ( "response text: " + xhr.responseText );
+            console.log ( "error: " + thrownError );
         })
         .done( function (entries) { 
             DataCube_Component.prepareLoadedAllDimensions (entries, callback); 
@@ -26,9 +33,9 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllDimensions (entries, callback) : void
-    {
-        entries = JSON.parse(entries);
+    static prepareLoadedAllDimensions (entries:any, callback) {
+        
+        entries = JSON.parse (entries);
                                 
         // sort objects by label, ascending
         entries.sort(function(a, b) {
@@ -40,27 +47,34 @@ class DataCube_Component {
         // 
         for ( var i in entries ) {            
             // establish a new structure where the key is the label of the dimension
-            tmpEntries[entries[i].hashedUrl] = entries[i];
+            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
         }
         
         // call callback function with prepared entries
-        callback(tmpEntries);
+        callback ( tmpEntries );
     }
     
     /**
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (url, modelUrl, dsdUrl, dsUrl, callback) : void
-    {
+    static loadAllMeasures (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
+        
         $.ajax({
-            url: url + "getcomponents/",
-            data: { m: modelUrl, dsdUrl: dsdUrl, dsUrl: dsUrl, cT: "measure" }
+            url: url + "getcomponents", // CubeViz_Links_Module.cubevizPath + "getcomponents/",
+            data: {
+                m: modelUrl, // CubeViz_Links_Module["modelUrl"],
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                cT: "measure" // possible: dimension, measure
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error( "loadAllMeasures error: " + xhr ["responseText"] );
+            console.log ( "Component > loadAll > error" );
+            console.log ( "response text: " + xhr.responseText );
+            console.log ( "error: " + thrownError );
         })
-        .done(function(entries){ 
+        .done( function (entries) { 
             DataCube_Component.prepareLoadedAllMeasures (entries, callback); 
         });
     }
@@ -68,8 +82,8 @@ class DataCube_Component {
     /**
      * Set default values, sort objects by label etc.
      */
-    static prepareLoadedAllMeasures (entries:any, callback) : void 
-    {
+    static prepareLoadedAllMeasures (entries:any, callback) {
+        
         entries = JSON.parse (entries);        
                                 
         // sort objects by label, ascending
@@ -82,23 +96,22 @@ class DataCube_Component {
         // 
         for ( var i in entries ) {            
             // establish a new structure where the key is the label of the dimension
-            tmpEntries[entries[i].hashedUrl] = entries[i];
+            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
         }
         
         // call callback function with prepared entries
-        callback(tmpEntries);
+        callback ( tmpEntries );
     }
     
     /**
      * 
      */
-    static getDefaultSelectedDimensions ( componentDimensions ) : Object 
-    {
-        componentDimensions = $.parseJSON(JSON.stringify(componentDimensions));
+    static getDefaultSelectedDimensions ( componentDimensions ) : Object {
+        
+        componentDimensions = $.parseJSON(JSON.stringify (componentDimensions)); // System.deepCopy ( componentDimensions );
         
         var result:Object = {};
     
-        // TODO use underscore or jQuerys each!
         for ( var dimensionHashedUrl in componentDimensions ) {
             
             result [dimensionHashedUrl] = componentDimensions [dimensionHashedUrl];

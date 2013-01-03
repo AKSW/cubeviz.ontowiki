@@ -5,7 +5,7 @@ class DataCube_Observation {
     /**
      * 
      */
-    public _axes:any = {};
+    private _axes:Object = {};
     
     /**
      * 
@@ -15,9 +15,8 @@ class DataCube_Observation {
     /**
      * 
      */
-    private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void 
-    {
-
+    private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void {
+                                                
         for ( var dimensionUri in dimensionValues ) {
             
             // Set current value and reference to axes dimension element
@@ -26,24 +25,21 @@ class DataCube_Observation {
                 "value" : dimensionValues [dimensionUri],
                 
                 // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
-                "ref" : this._axes[dimensionUri][dimensionValues [dimensionUri]]
+                "ref" : this ["_axes"][dimensionUri][dimensionValues [dimensionUri]]
             };
         }
         
-        this._axes[uri][value].push ( dimensionValues );
-    } 
+        this ["_axes"][uri][value].push ( dimensionValues );
+    }    
         
     /**
      * 
      */
-    private extractSelectedDimensionUris ( elements:any[] ) : string[] 
-    {
-        var resultList:string[] = [];    
-          
-        _.each(elements, function(element){
-            resultList.push ( element.typeUrl );
-        });
-        
+    private extractSelectedDimensionUris ( elements:Object[] ) : string[] {
+        var resultList:string[] = [];        
+        for ( var i in elements ) {
+            resultList.push ( elements [i]["typeUrl"] );
+        }
         return resultList;
     }
 
@@ -51,8 +47,8 @@ class DataCube_Observation {
      * 
      */
     public getAxisElements ( axisUri:string ) : Object {
-        if(undefined === this["axes"][axisUri]) {
-            return this ["axes"][axisUri];
+        if ( false === _.isUndefined( this ["_axes"][axisUri] ) ) {
+            return this ["_axes"][axisUri];
         } else {
             console.log ("\nNo elements found given axisUri: " + axisUri);
             return {};
@@ -62,11 +58,12 @@ class DataCube_Observation {
     /**
      * @param entries Array of objects which are pulled observations.
      */
-    public initialize ( retrievedObservations:any[], selectedComponentDimensions:any[],
-        measureUri:string ) : DataCube_Observation 
-    {        
-        if ( true !== _.isArray ( retrievedObservations ) || 0 == _.size(retrievedObservations) ) {
-            console.log("\nEntries is empty or not an array!");
+    public initialize ( entries:Object[],
+                         selectedComponentDimensions:Object[],
+                         measureUri:string ) : DataCube_Observation {
+        
+        if ( true !== _.isArray ( entries ) || 0 == entries ["length"] ) {
+            console.log ("\nEntries is empty or not an array!");
             return;
         }
         
@@ -79,43 +76,23 @@ class DataCube_Observation {
         this["_axes"][measureUri] = this["_axes"][measureUri] || {};
         
         // create an array for each selected dimension uri and save given values
-        for ( var mainIndex in retrievedObservations ) {        
+        for ( var mainIndex in entries ) {        
             
             /**
-             * Example:
-             * { 
-             * 
-             *      http://data.lod2.eu/scoreboard/properties/indicator: Object
-             *          http://data.lod2.eu/scoreboard/indicators/FOA_cit_Country_ofpubs: Array[1]
-             *              0: Object
-             *                  http://data.lod2.eu/scoreboard/properties/value: Object
-             *                      ref: Array[1]
-             *                          0: Object
-             *                              http://data.lod2.eu/scoreboard/properties/indicator: Object
-             *                                  ...
-             *                              http://data.lod2.eu/scoreboard/properties/year: Object
-             *                                  ...
-             *                      value: 0.083333298563957
-             * 
-             *      http://data.lod2.eu/scoreboard/properties/value: Object
-             *          0.083333298563957: Array[1]
-             *              0: Object
-             *                  http://data.lod2.eu/scoreboard/properties/indicator: Object
-             *                      ref: Array[1]
-             *                      value: "http://data.lod2.eu/scoreboard/indicators/FOA_cit_Country_ofpubs"
-             *                  http://data.lod2.eu/scoreboard/properties/year: Object
-             *                      ref: Array[1]
-             *                      value: "2001"
-             * ...
-             * }
+             * e.g. 
+             *  {
+             *      "http:// ... /country": "Germany",
+             *      "http:// ... /country": "England",
+             *      ...
+             *  }
              */
             dimensionValues = {};
             
             // e.g. ["http:// ... /value"] = "0.9";
             measureObj = {};  
             
-            this["_axes"][measureUri][ retrievedObservations[mainIndex][measureUri][0]["value"] ] = 
-                this["_axes"][measureUri][ retrievedObservations[mainIndex][measureUri][0]["value"] ] || [];
+            this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] = 
+                this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] || [];
               
             // generate temporary list of selected dimension values in the current entry
             for ( var i in this["_selectedDimensionUris"] ) {
@@ -123,12 +100,12 @@ class DataCube_Observation {
                 // save current selected dimension, to save space
                 selecDimUri = this["_selectedDimensionUris"][i];
                 
-                if (undefined == retrievedObservations[mainIndex][selecDimUri]) {
+                if (undefined == entries[mainIndex][selecDimUri]) {
                     console.log ( "Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri );
                     continue;
                 }
                 
-                selecDimVal = retrievedObservations[mainIndex][selecDimUri][0]["value"];
+                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
@@ -142,7 +119,7 @@ class DataCube_Observation {
                     this ["_axes"][selecDimUri][selecDimVal] = [];
                 }
                 
-                measureObj [measureUri] = retrievedObservations[mainIndex][measureUri][0]["value"];
+                measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
                                 
                 // set references for current dimension                
                 this.addAxisEntryPointsTo (
@@ -152,7 +129,7 @@ class DataCube_Observation {
             
             // fill pointsTo array for measure value
             this.addAxisEntryPointsTo ( 
-                measureUri, retrievedObservations[mainIndex][measureUri][0]["value"], dimensionValues
+                measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues
             );            
         }
         
@@ -162,33 +139,48 @@ class DataCube_Observation {
     /**
      * 
      */
-    static loadAll (url:string, linkCode:string) 
-    {
-        var self = this;
-        
+    static loadAll (linkCode:string, url) {
         $.ajax({
-            url: url + "getobservations/",
-            data: { lC: linkCode }
+            url: url + "getobservations/", // CubeViz_Links_Module ["cubevizPath"] + "getobservations/",
+            data: {
+                lC: linkCode
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error( "loadAll error: " + xhr ["responseText"] );
+            console.log ( "Observation > loadAll > error" );
+            console.log ( "response text: " + xhr.responseText );
+            console.log ( "error: " + thrownError );
         })
-        .done( function (entries) {
-            $(self).trigger("loadComplete", [$.parseJSON (entries)]);
+        .done( function (entries) { 
+            DataCube_Observation.prepareLoadedResultObservations ( entries );
         });
+    }
+    
+    /**
+     * 
+     */
+    static prepareLoadedResultObservations (entries) {
+        // TODO: fix it, because sometimes you got JSON from server, 
+        // sometimes not, than you have to parse it
+        var parse = $.parseJSON ( entries );
+        if ( null == parse ) {
+            // callback ( entries );
+            $(this).trigger("loadComplete", [entries]);
+        } else {
+            // callback ( parse );
+            $(this).trigger("loadComplete", [parse]);
+        }
     }
 
     /**
      * @param mode Possible values: ascending (default), descending
      */
-    public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation 
-    {
+    public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation {
         var mode = undefined == mode ? "ascending" : mode,
             sortedKeys = [], sortedObj = {};
 
         // Separate keys and sort them
-        // TODO port to $().each
-        for (var i in this["axes"][axisUri]){        
+        for (var i in this["_axes"][axisUri]){        
             sortedKeys.push(i);
         }
         
@@ -210,12 +202,11 @@ class DataCube_Observation {
         }
 
         // Reconstruct sorted obj based on keys
-        // TODO port to $().each
         for (var i in sortedKeys){
-            sortedObj[sortedKeys[i]] = this._axes[axisUri][sortedKeys[i]];
+            sortedObj[sortedKeys[i]] = this["_axes"][axisUri][sortedKeys[i]];
         }
         
-        this._axes[axisUri] = sortedObj;
+        this["_axes"][axisUri] = sortedObj;
         
         return this;
     }

@@ -10,33 +10,37 @@ class CubeViz_Visualization_Controller {
      * @param uri string
      * @return string Generated hex color code
      */
-    static getColor ( uri:string ) : string 
-    {
-        return "#" + CryptoJS.MD5 (uri).substr((CryptoJS.MD5 (uri).length-6), 6);
+    static getColor ( uri:string ) : string {
+        uri = "" + CryptoJS.MD5 (uri);
+        return "#" + uri.substr((uri["length"]-6), 6);
     }
     
     /**
      * 
      */
-    static getDimensionOrMeasureLabel (dimensions:any, measures:any, uri:string) : string 
-    {
+    static getDimensionOrMeasureLabel (uri:string, CubeViz_Links_Module) : string {
+        
         if ( "http://www.w3.org/2000/01/rdf-schema#label" == uri ) {
             return "Label";
         }
         
         // return the first value
-        // TODO $.each
-        for ( var dim in dimensions ) { 
-            if (uri == dimensions[dim].typeUrl) {
-                return dimensions[dim].label; 
+        for ( var dim in CubeViz_Links_Module["selectedComponents"]["dimensions"] ) { 
+            
+            dim = CubeViz_Links_Module["selectedComponents"]["dimensions"][dim];
+            
+            if ( uri == dim ["typeUrl"] ) {
+                return dim ["label"]; 
             }
         }
         
         // return the first value
-        // TODO $.each
-        for(var mea in measures) { 
-            if ( uri == measures[mea]["typeUrl"] ) {
-                return measures[mea]["label"]; 
+        for ( var mea in CubeViz_Links_Module["selectedComponents"]["measures"] ) { 
+            
+            mea = CubeViz_Links_Module["selectedComponents"]["measures"][mea];
+            
+            if ( uri == mea ["typeUrl"] ) {
+                return mea ["label"]; 
             }
         }
         
@@ -46,10 +50,9 @@ class CubeViz_Visualization_Controller {
     /**
      * 
      */
-    static getFromChartConfigByClass ( className:string, charts:Object[] ) : string 
-    {
+    static getFromChartConfigByClass ( className:string, charts:Object[] ) : string {
         for ( var i in charts ) {
-            if ( className == charts [i].class ) {
+            if ( className == charts [i]["class"] ) {
                 return charts [i];
             }
         }
@@ -58,22 +61,19 @@ class CubeViz_Visualization_Controller {
     /**
      * Returns the label of the given property uri.
      */
-    static getLabelForPropertyUri ( propertyUri:string, dimensionType:string, 
-        selectedDimensions:Object[] ) : string 
-    {
-        var dim:any = {};
+    static getLabelForPropertyUri ( propertyUri:string, dimensionType:string, selectedDimensions:Object[] ) : string {
+        var dim:Object = {};
                 
-        // TODO $.each
         for ( var hashedUrl in selectedDimensions ) {
             
             dim = selectedDimensions[hashedUrl];
             
             // Stop if the given dimension was found (by type)
-            if ( dim.typeUrl == dimensionType ) {
+            if ( dim["typeUrl"] == dimensionType ) {
                 
                 for ( var i in dim["elements"] ) {
-                    if ( dim.elements[i].property == propertyUri ) {
-                        return dim.elements[i].propertyLabel;
+                    if ( dim["elements"][i]["property"] == propertyUri ) {
+                        return dim["elements"][i]["propertyLabel"];
                     }
                 }
             }
@@ -84,71 +84,82 @@ class CubeViz_Visualization_Controller {
     }
     
     /**
-     *
+     * Extract the uri of the measure value
      */
-    static getMeasure(selectedComponentMeasures) : any
-    {
-        var keys = _.keys(selectedComponentMeasures);
-        return selectedComponentMeasures[_.first(keys)];
+    static getMeasure (CubeViz_Links_Module:any) : string {
+        // return the first value
+        for ( var hashedTypeUrl in CubeViz_Links_Module["selectedComponents"]["measures"] ) { 
+            return CubeViz_Links_Module["selectedComponents"]["measures"][hashedTypeUrl]; 
+        }
     }
     
     /**
-     * Extract all dimensions out of selected dimension list which have at least
-     * 2 elements.
-     * @param selectedDimensions Object wich selectedDimensions
-     * @return any
+     * Extract the uri of the measure value
      */
-    static getMultipleDimensions(selectedComponentDimensions:any) : any[] 
-    {
-        var multipleDimensions:any[] = [];
+    static getMeasureTypeUrl (CubeViz_Links_Module) : string {
+        var m = CubeViz_Visualization_Controller.getMeasure (CubeViz_Links_Module);
+        return m ["typeUrl"];
+    }
+    
+    /**
+     * @return Object[]
+     */
+    static getMultipleDimensions ( retrievedData:Object[], selectedDimensions:Object[],
+                                    measures:Object[] ) : Object [] {
+                                                
+        // assign selected dimensions to xAxis and series (yAxis)
+        var multipleDimensions:Object[] = [],
+            tmp:Object[] = [];
         
-        _.each(selectedComponentDimensions, function(selectedComponentDimension, uri){
+        for ( var hashedUrl in selectedDimensions ) {
                         
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if(2 <= _.size(selectedComponentDimension.elements)) {                
-                multipleDimensions.push({
-                    elements: selectedComponentDimension.elements,
-                    label: selectedComponentDimension.label
-                });
+            if ( 1 < selectedDimensions [hashedUrl] ["elements"]["length"] ) {
+                
+                multipleDimensions.push ( {
+                    "label" : selectedDimensions [hashedUrl]["label"],
+                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
+                } ); 
             }
-        });
+        }
         
         return multipleDimensions;
     }
     
     /**
-     * Count number of selected dimensions.
-     * @param selectedComponentDimensions Object with selected component dimensions
-     * @return number Integer, at least 0
+     * @return integer at least 0
      */
-    static getNumberOfMultipleDimensions(selectedComponentDimensions:any) : number 
-    {
-        return _.size(CubeViz_Visualization_Controller.getMultipleDimensions(
-            selectedComponentDimensions
-        ));
+    static getNumberOfMultipleDimensions ( retrievedData:Object[], 
+                                            selectedDimensions:Object[],
+                                            measures:Object[] ) : number {
+                                                
+        var dims = CubeViz_Visualization_Controller.getMultipleDimensions (
+            retrievedData, selectedDimensions, measures
+        );
+        
+        return dims ["length"];
     }
     
     /**
-     * Get all dimensions which contain only one element.
-     * @param selectedComponentDimensions Object containing selected dimensions
-     * @return any[]
+     * @return Object[]
      */
-    static getOneElementDimensions ( selectedComponentDimensions ) : any [] 
-    {
+    static getOneElementDimensions ( retrievedData:Object[], selectedDimensions:Object[],
+                                      measures:Object[] ) : Object [] {
+                                                
         // assign selected dimensions to xAxis and series (yAxis)
-        var oneElementDimensions:any[] = [];
+        var oneElementDimensions:Object[] = [],
+            tmp:Object[] = [];
             
-        // for ( var hashedUrl in selectedDimensions ) 
-        _.each(selectedComponentDimensions, function(selectedComponentDimension){
-            
+        for ( var hashedUrl in selectedDimensions ) {
+                        
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if(1 == _.size(selectedComponentDimension.elements)){
-                oneElementDimensions.push({
-                    elements: selectedComponentDimension.elements,
-                    label: selectedComponentDimension.label
-                }); 
+            if ( 1 == selectedDimensions [hashedUrl] ["elements"]["length"] ) {
+                oneElementDimensions.push ( {
+                    "label" : selectedDimensions [hashedUrl]["label"],
+                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
+                } ); 
             }
-        });
+        }
         
         return oneElementDimensions;
     }
@@ -156,8 +167,7 @@ class CubeViz_Visualization_Controller {
     /**
      * 
      */
-    static getVisualizationType (className:string) : string 
-    {
+    static getVisualizationType (className:string) : string {
         if ( "Visualization_CubeViz_Table" == className ) {
             return "CubeViz";
         }
@@ -167,11 +177,8 @@ class CubeViz_Visualization_Controller {
     /**
      * Update ChartConfig entry with new value. Required e.g. for chart selection menu.
      */
-    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) 
-    {
-        // TODO $.each
-        for ( var i in charts ) 
-        {
+    static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) {
+        for ( var i in charts ) {
             if ( className == charts [i]["class"] ) {
                 charts [i] = newValue;
             }
