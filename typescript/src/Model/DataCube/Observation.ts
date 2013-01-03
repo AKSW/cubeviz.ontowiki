@@ -13,21 +13,27 @@ class DataCube_Observation {
     private _selectedDimensionUris:string[] = [];
         
     /**
-     * 
+     * Add new entry point to axes object
+     * @param uri Uri of component dimension
+     * @param value Value of component dimension
+     * @param dimensionValues Object to add
+     * @return void
      */
     private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void 
     {
-        for ( var dimensionUri in dimensionValues ) 
-        {
+        var self = this;
+        
+        _.each(dimensionValues, function(dimensionValue, dimensionUri){
+
             // Set current value and reference to axes dimension element
             dimensionValues [dimensionUri] = { 
                 // e.g. value: "Germany"
-                "value" : dimensionValues [dimensionUri],
+                "value" : dimensionValue,
                 
                 // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
-                "ref" : this ["_axes"][dimensionUri][dimensionValues [dimensionUri]]
+                "ref" : self["_axes"][dimensionUri][dimensionValue]
             };
-        }
+        });
         
         this ["_axes"][uri][value].push ( dimensionValues );
     }    
@@ -35,49 +41,63 @@ class DataCube_Observation {
     /**
      * 
      */
-    private extractSelectedDimensionUris ( elements:Object[] ) : string[] {
+    private extractSelectedDimensionUris ( elements:Object[] ) : string[] 
+    {
         var resultList:string[] = [];        
-        for ( var i in elements ) {
-            resultList.push ( elements [i]["typeUrl"] );
-        }
+        
+        _.each(elements, function(element){
+            resultList.push(element.typeUrl);
+        });
+        
         return resultList;
     }
 
     /**
-     * 
+     * Get axes elements by uri
+     * @param uri Uri to identify axes element
+     * @return any Values of axes element
      */
-    public getAxisElements ( axisUri:string ) : Object {
-        if ( false === _.isUndefined( this ["_axes"][axisUri] ) ) {
-            return this ["_axes"][axisUri];
+    public getAxesElements ( uri:string ) : any 
+    {
+        if ( false === _.isUndefined( this ["_axes"][uri] ) ) {
+            return this ["_axes"][uri];
         } else {
-            console.log ("\nNo elements found given axisUri: " + axisUri);
+            console.log ("\nNo elements found given axisUri: " + uri);
             return {};
         }
     }
 
     /**
-     * @param entries Array of objects which are pulled observations.
+     * @param entries Array of objects which are retrieved observations.
      */
-    public initialize ( entries:Object[],
+    public initialize ( retrievedObservations:any[],
                          selectedComponentDimensions:Object[],
                          measureUri:string ) : DataCube_Observation {
         
-        if ( true !== _.isArray ( entries ) || 0 == entries ["length"] ) {
+        if ( true !== _.isArray ( retrievedObservations ) 
+             || 0 == retrievedObservations ["length"] ) {
             console.log ("\nEntries is empty or not an array!");
             return;
         }
         
         // save uri's of selected component dimensions
-        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris ( selectedComponentDimensions );
+        this["_selectedDimensionUris"] = this.extractSelectedDimensionUris(
+            selectedComponentDimensions
+        );
         
-        var dimensionValues = {}, measureObj = {}, selecDimUri = "", selecDimVal = "";
+        var dimensionValues = {}, 
+            measureObj = {}, 
+            selecDimUri = "", 
+            selecDimVal = "",
+            self = this;
         
         // if the measureUri element or sub one is not set, set default values
         this["_axes"][measureUri] = this["_axes"][measureUri] || {};
         
         // create an array for each selected dimension uri and save given values
-        for ( var mainIndex in entries ) {        
-            
+        // for ( var mainIndex in entries ) {        
+        _.each(retrievedObservations, function(observation){
+        
             /**
              * e.g. 
              *  {
@@ -91,47 +111,42 @@ class DataCube_Observation {
             // e.g. ["http:// ... /value"] = "0.9";
             measureObj = {};  
             
-            this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] = 
-                this["_axes"][measureUri][ entries[mainIndex][measureUri][0]["value"] ] || [];
+            self._axes[measureUri][ observation[measureUri][0].value ] = 
+                self._axes[measureUri][ observation[measureUri][0].value ] || [];
               
             // generate temporary list of selected dimension values in the current entry
-            for ( var i in this["_selectedDimensionUris"] ) {
-                                
-                // save current selected dimension, to save space
-                selecDimUri = this["_selectedDimensionUris"][i];
-                
-                if (undefined == entries[mainIndex][selecDimUri]) {
-                    console.log ( "Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri );
-                    continue;
+            // for ( var i in this["_selectedDimensionUris"] ) {
+            _.each(self._selectedDimensionUris, function(selecDimUri){
+                                                
+                if (undefined == selecDimUri) {
+                    return;
                 }
                 
-                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                selecDimVal = observation[selecDimUri][0].value;
                 
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
                 // e.g. ["_axes"]["http:// ... /country"] = {};
-                if ( undefined == this ["_axes"] [selecDimUri] ) {
-                    this ["_axes"][selecDimUri] = {};
+                if ( undefined == self._axes[selecDimUri] ) {
+                    self._axes[selecDimUri] = {};
                 }
                     
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
-                if ( undefined == this ["_axes"] [selecDimUri][selecDimVal] ) {
-                    this ["_axes"][selecDimUri][selecDimVal] = [];
+                if ( undefined == self._axes[selecDimUri][selecDimVal] ) {
+                    self._axes[selecDimUri][selecDimVal] = [];
                 }
                 
-                measureObj [measureUri] = entries[mainIndex][measureUri][0]["value"];
+                measureObj [measureUri] = observation[measureUri][0].value;
                                 
                 // set references for current dimension                
-                this.addAxisEntryPointsTo (
-                    this["_selectedDimensionUris"][i], selecDimVal, measureObj
-                );
-            }
+                self.addAxisEntryPointsTo (selecDimUri, selecDimVal, measureObj);
+            });
             
             // fill pointsTo array for measure value
-            this.addAxisEntryPointsTo ( 
-                measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues
+            self.addAxisEntryPointsTo ( 
+                measureUri, observation[measureUri][0].value, dimensionValues
             );            
-        }
+        });
         
         return this;
     }

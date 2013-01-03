@@ -72,8 +72,8 @@ class CubeViz_Visualization_HighCharts_Chart
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
         var xAxisElements:Object = observation
-            .sortAxis ( forXAxis, "ascending" )
-            .getAxisElements ( forXAxis );
+            .sortAxis(forXAxis, "ascending")
+            .getAxesElements(forXAxis);
             
         if(undefined === this ["xAxis"]) {
             this ["xAxis"] = {"categories": []};
@@ -90,7 +90,7 @@ class CubeViz_Visualization_HighCharts_Chart
             i:number = 0,
             length:number = _.keys(xAxisElements).length, // System.countProperties (xAxisElements),
             obj:Object = {},
-            seriesElements:any = observation.getAxisElements ( forSeries );
+            seriesElements:any = observation.getAxesElements(forSeries);
             
         this["series"] = [];
 

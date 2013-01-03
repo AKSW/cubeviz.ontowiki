@@ -394,7 +394,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             }
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         if(undefined === this["xAxis"]) {
             this["xAxis"] = {
                 "categories": []
@@ -408,7 +408,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         var length = _.keys(xAxisElements).length;
         var obj = {
         };
-        var seriesElements = observation.getAxisElements(forSeries);
+        var seriesElements = observation.getAxesElements(forSeries);
 
         this["series"] = [];
         for(var seriesEntry in seriesElements) {
@@ -640,32 +640,33 @@ var DataCube_Observation = (function () {
         this._selectedDimensionUris = [];
     }
     DataCube_Observation.prototype.addAxisEntryPointsTo = function (uri, value, dimensionValues) {
-        for(var dimensionUri in dimensionValues) {
+        var self = this;
+        _.each(dimensionValues, function (dimensionValue, dimensionUri) {
             dimensionValues[dimensionUri] = {
-                "value": dimensionValues[dimensionUri],
-                "ref": this["_axes"][dimensionUri][dimensionValues[dimensionUri]]
+                "value": dimensionValue,
+                "ref": self["_axes"][dimensionUri][dimensionValue]
             };
-        }
+        });
         this["_axes"][uri][value].push(dimensionValues);
     };
     DataCube_Observation.prototype.extractSelectedDimensionUris = function (elements) {
         var resultList = [];
-        for(var i in elements) {
-            resultList.push(elements[i]["typeUrl"]);
-        }
+        _.each(elements, function (element) {
+            resultList.push(element.typeUrl);
+        });
         return resultList;
     };
-    DataCube_Observation.prototype.getAxisElements = function (axisUri) {
-        if(false === _.isUndefined(this["_axes"][axisUri])) {
-            return this["_axes"][axisUri];
+    DataCube_Observation.prototype.getAxesElements = function (uri) {
+        if(false === _.isUndefined(this["_axes"][uri])) {
+            return this["_axes"][uri];
         } else {
-            console.log("\nNo elements found given axisUri: " + axisUri);
+            console.log("\nNo elements found given axisUri: " + uri);
             return {
             };
         }
     };
-    DataCube_Observation.prototype.initialize = function (entries, selectedComponentDimensions, measureUri) {
-        if(true !== _.isArray(entries) || 0 == entries["length"]) {
+    DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
+        if(true !== _.isArray(retrievedObservations) || 0 == retrievedObservations["length"]) {
             console.log("\nEntries is empty or not an array!");
             return;
         }
@@ -676,35 +677,34 @@ var DataCube_Observation = (function () {
         };
         var selecDimUri = "";
         var selecDimVal = "";
+        var self = this;
 
         this["_axes"][measureUri] = this["_axes"][measureUri] || {
         };
-        for(var mainIndex in entries) {
+        _.each(retrievedObservations, function (observation) {
             dimensionValues = {
             };
             measureObj = {
             };
-            this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] = this["_axes"][measureUri][entries[mainIndex][measureUri][0]["value"]] || [];
-            for(var i in this["_selectedDimensionUris"]) {
-                selecDimUri = this["_selectedDimensionUris"][i];
-                if(undefined == entries[mainIndex][selecDimUri]) {
-                    console.log("Nothing found for mainIndex=" + mainIndex + " and selecDimUri=" + selecDimUri);
-                    continue;
+            self._axes[measureUri][observation[measureUri][0].value] = self._axes[measureUri][observation[measureUri][0].value] || [];
+            _.each(self._selectedDimensionUris, function (selecDimUri) {
+                if(undefined == selecDimUri) {
+                    return;
                 }
-                selecDimVal = entries[mainIndex][selecDimUri][0]["value"];
+                selecDimVal = observation[selecDimUri][0].value;
                 dimensionValues[selecDimUri] = selecDimVal;
-                if(undefined == this["_axes"][selecDimUri]) {
-                    this["_axes"][selecDimUri] = {
+                if(undefined == self._axes[selecDimUri]) {
+                    self._axes[selecDimUri] = {
                     };
                 }
-                if(undefined == this["_axes"][selecDimUri][selecDimVal]) {
-                    this["_axes"][selecDimUri][selecDimVal] = [];
+                if(undefined == self._axes[selecDimUri][selecDimVal]) {
+                    self._axes[selecDimUri][selecDimVal] = [];
                 }
-                measureObj[measureUri] = entries[mainIndex][measureUri][0]["value"];
-                this.addAxisEntryPointsTo(this["_selectedDimensionUris"][i], selecDimVal, measureObj);
-            }
-            this.addAxisEntryPointsTo(measureUri, entries[mainIndex][measureUri][0]["value"], dimensionValues);
-        }
+                measureObj[measureUri] = observation[measureUri][0].value;
+                self.addAxisEntryPointsTo(selecDimUri, selecDimVal, measureObj);
+            });
+            self.addAxisEntryPointsTo(measureUri, observation[measureUri][0].value, dimensionValues);
+        });
         return this;
     };
     DataCube_Observation.loadAll = function loadAll(linkCode, url) {
