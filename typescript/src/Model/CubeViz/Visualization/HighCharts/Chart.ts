@@ -39,7 +39,7 @@ class CubeViz_Visualization_HighCharts_Chart
             measures = cubeVizLinksModule ["selectedComponents"]["measures"], 
             measureUri = CubeViz_Visualization_Controller.getMeasureTypeUrl (cubeVizLinksModule),
             multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions ( 
-                entries, selectedComponentDimensions, measures
+                selectedComponentDimensions
             ),
             observation = new DataCube_Observation (); 
         

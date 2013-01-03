@@ -232,23 +232,18 @@ var CubeViz_Visualization_Controller = (function () {
         var m = CubeViz_Visualization_Controller.getMeasure(CubeViz_Links_Module);
         return m["typeUrl"];
     }
-    CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(retrievedData, selectedDimensions, measures) {
+    CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(selectedDimensions) {
         var multipleDimensions = [];
-        var tmp = [];
-
-        for(var hashedUrl in selectedDimensions) {
-            if(1 < selectedDimensions[hashedUrl]["elements"]["length"]) {
-                multipleDimensions.push({
-                    "label": selectedDimensions[hashedUrl]["label"],
-                    "elements": selectedDimensions[hashedUrl]["elements"]
-                });
+        _.each(selectedDimensions, function (selectedDimension) {
+            if(2 > _.size(selectedDimension.elements)) {
+                return;
             }
-        }
+            multipleDimensions.push({
+                elements: selectedDimension.elements,
+                label: selectedDimension.label
+            });
+        });
         return multipleDimensions;
-    }
-    CubeViz_Visualization_Controller.getNumberOfMultipleDimensions = function getNumberOfMultipleDimensions(retrievedData, selectedDimensions, measures) {
-        var dims = CubeViz_Visualization_Controller.getMultipleDimensions(retrievedData, selectedDimensions, measures);
-        return dims["length"];
     }
     CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(retrievedData, selectedDimensions, measures) {
         var oneElementDimensions = [];
@@ -385,7 +380,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         var selectedComponentDimensions = cubeVizLinksModule["selectedComponents"]["dimensions"];
         var measures = cubeVizLinksModule["selectedComponents"]["measures"];
         var measureUri = CubeViz_Visualization_Controller.getMeasureTypeUrl(cubeVizLinksModule);
-        var multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions(entries, selectedComponentDimensions, measures);
+        var multipleDimensions = CubeViz_Visualization_Controller.getMultipleDimensions(selectedComponentDimensions);
         var observation = new DataCube_Observation();
 
         this["chartConfig"] = chartConfig;
@@ -1155,15 +1150,10 @@ var View_IndexAction_Visualization = (function (_super) {
         console.log("Visualization -> load Observations");
         console.log(retrievedObservations);
         this.app._.data.retrievedObservations = retrievedObservations;
-        var numberOfMultipleDimensions = CubeViz_Visualization_Controller.getNumberOfMultipleDimensions(this.app._.data, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures);
-        this.app._.data.numberOfMultipleDimensions = numberOfMultipleDimensions;
+        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.render();
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
-        var componentsFullyLoaded;
-        var self = this;
-        var stop = false;
-
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
         obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);

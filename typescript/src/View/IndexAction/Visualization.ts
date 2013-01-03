@@ -30,19 +30,15 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         console.log("Visualization -> load Observations");
         console.log(retrievedObservations);
         
+        // save retrieved observations
         this.app._.data.retrievedObservations = retrievedObservations;
-        
-        // get number of multiple dimensions
-        var numberOfMultipleDimensions = 
-            CubeViz_Visualization_Controller.getNumberOfMultipleDimensions(
-                this.app._.data, this.app._.data.selectedComponents.dimensions,
-                this.app._.data.selectedComponents.measures
-            );
             
-            
-            
-        this.app._.data.numberOfMultipleDimensions = numberOfMultipleDimensions;
-        
+        // compute and save number of multiple dimensions
+        this.app._.data.numberOfMultipleDimensions = _.size(
+            CubeViz_Visualization_Controller.getMultipleDimensions (
+                this.app._.data.selectedComponents.dimensions
+            )
+        );
         
         this.render();
     }
@@ -52,36 +48,9 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public initialize() 
     {        
-        var componentsFullyLoaded,
-            self = this,
-            stop = false;
-/*        var i = 0;
-        var checkLoadStatus = function(nxt?:any) {
-            console.log("");
-            console.log("waited " + i++);
-            
-            // check if all components are loaded
-            componentsFullyLoaded = false === _.isUndefined(self.app._.data.components.dimensions)
-                                 && false === _.isUndefined(self.app._.data.components.measures)
-                                 && false === _.isUndefined(self.app._.data.selectedComponents.dimensions)
-                                 && false === _.isUndefined(self.app._.data.selectedComponents.measures);
-                                 
-            if(true === componentsFullyLoaded) stop = true;
-            
-            console.log("");
-            console.log(self.app._.data);
-            console.log("");
-            
-            if ( stop == false ) {
-                $(document).delay(400).queue(checkLoadStatus);
-                nxt();
-            }
-        };
-
-        checkLoadStatus();    */    
-        
         /**
-         * Load observations based on pre-configured data structure definition and data set.
+         * Load observations based on pre-configured data structure definition and 
+         * data set. Function onComplete_loadObservations will handle incoming data.
          */
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));

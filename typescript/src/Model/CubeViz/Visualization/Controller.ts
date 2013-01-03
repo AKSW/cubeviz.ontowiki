@@ -104,40 +104,26 @@ class CubeViz_Visualization_Controller {
     /**
      * @return Object[]
      */
-    static getMultipleDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                    measures:Object[] ) : Object [] {
-                                                
+    static getMultipleDimensions(selectedDimensions:any[]) : Object [] 
+    {
         // assign selected dimensions to xAxis and series (yAxis)
-        var multipleDimensions:Object[] = [],
-            tmp:Object[] = [];
+        var multipleDimensions:any[] = [];
         
-        for ( var hashedUrl in selectedDimensions ) {
+        // for ( var hashedUrl in selectedDimensions ) {
+        _.each(selectedDimensions, function(selectedDimension){
                         
-            // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 < selectedDimensions [hashedUrl] ["elements"]["length"] ) {
-                
-                multipleDimensions.push ( {
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
-                } ); 
+            if(2 > _.size(selectedDimension.elements)) {
+                return;
             }
-        }
+            
+            // Only put entry to multipleDimensions if it have at least 2 elements    
+            multipleDimensions.push ({
+                elements: selectedDimension.elements,
+                label: selectedDimension.label
+            }); 
+        });
         
         return multipleDimensions;
-    }
-    
-    /**
-     * @return integer at least 0
-     */
-    static getNumberOfMultipleDimensions ( retrievedData:Object[], 
-                                            selectedDimensions:Object[],
-                                            measures:Object[] ) : number {
-                                                
-        var dims = CubeViz_Visualization_Controller.getMultipleDimensions (
-            retrievedData, selectedDimensions, measures
-        );
-        
-        return dims ["length"];
     }
     
     /**
