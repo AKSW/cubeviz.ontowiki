@@ -105,17 +105,15 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                         this.app._.data.retrievedObservations,
                         this.app._.data.selectedComponents.dimensions,
                         CubeViz_Visualization_Controller.getOneElementDimensions (
-                            this.app._.data.retrievedObservations, 
-                            this.app._.data.selectedComponents.dimensions,
-                            this.app._.data.selectedComponents.measures
+                            this.app._.data.selectedComponents.dimensions
                         ),
                         CubeViz_Visualization_Controller.getMultipleDimensions ( 
                             this.app._.data.selectedComponents.dimensions
                         ),
                         this.app._.data.selectedComponents.measures,
-                        CubeViz_Visualization_Controller.getMeasureTypeUrl(
-                            this.app._.data
-                        ),
+                        CubeViz_Visualization_Controller.getSelectedMeasure(
+                            this.app._.data.selectedComponents.measures
+                        ).typeUrl,
                         this.app._.data.selectedDSD.label,
                         this.app._.data.selectedDS.label
                     );

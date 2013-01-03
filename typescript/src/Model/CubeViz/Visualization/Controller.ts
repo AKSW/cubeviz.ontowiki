@@ -10,7 +10,7 @@ class CubeViz_Visualization_Controller
      * @param obj Variable to check
      * @return bool True if variable is a circular object, false otherwise
      */
-    public isCircularObject (obj:any, parents?:any, tree?:any) : bool
+    public isCircularObject(obj:any, parents?:any, tree?:any) : bool
     {
         parents = parents || [];
         tree = tree || [];
@@ -44,22 +44,22 @@ class CubeViz_Visualization_Controller
     }
     
     /**
-     * Extract a hex color code for a given URI (using hash algorithm).
-     * @param uri string
+     * Compute a hex color code for a given variable (usally a string) using hash algorithm.
+     * @param variable Variable (usally a string) to generate a color based on
      * @return string Generated hex color code
      */
-    static getColor ( uri:string ) : string 
+    static getColor(variable:any) : string 
     {
         var color:string = "#FFFFFF";
         
         // uri is string or number
-        if(true === _.isString(uri) || true === _.isNumber(uri)) {
-            color = "" + CryptoJS.MD5 (uri);
+        if(true === _.isString(variable) || true === _.isNumber(variable)) {
+            color = "" + CryptoJS.MD5 (variable);
             color = "#" + color.substr((color["length"]-6), 6);
             
         // uri is object (but not a circular one!)
-        } else if (false === this.isCircularObject && true === _.isObject(uri)) {
-            color = JSON.stringify(uri);
+        } else if (false === this.isCircularObject && true === _.isObject(variable)) {
+            color = JSON.stringify(variable);
             color = "#" + color.substr((color["length"]-6), 6);
         } else {
             
@@ -69,101 +69,75 @@ class CubeViz_Visualization_Controller
     }
     
     /**
-     * 
+     * Returns chart config object by given class name.
+     * @param className Name of the class(chart)
+     * @param charts List of chart objects (must have class property)
+     * @return any|undefined Chart object if found, undefined otherwise.
      */
-    static getDimensionOrMeasureLabel (uri:string, CubeViz_Links_Module) : string {
-        
-        if ( "http://www.w3.org/2000/01/rdf-schema#label" == uri ) {
-            return "Label";
-        }
-        
-        // return the first value
-        for ( var dim in CubeViz_Links_Module["selectedComponents"]["dimensions"] ) { 
-            
-            dim = CubeViz_Links_Module["selectedComponents"]["dimensions"][dim];
-            
-            if ( uri == dim ["typeUrl"] ) {
-                return dim ["label"]; 
-            }
-        }
-        
-        // return the first value
-        for ( var mea in CubeViz_Links_Module["selectedComponents"]["measures"] ) { 
-            
-            mea = CubeViz_Links_Module["selectedComponents"]["measures"][mea];
-            
-            if ( uri == mea ["typeUrl"] ) {
-                return mea ["label"]; 
-            }
-        }
-        
-        return uri;
-    }
-    
-    /**
-     * 
-     */
-    static getFromChartConfigByClass ( className:string, charts:Object[] ) : string {
+    static getFromChartConfigByClass(className:string, charts:any[]) : any 
+    {
         for ( var i in charts ) {
             if ( className == charts [i]["class"] ) {
                 return charts [i];
             }
         }
+        return undefined;
     }    
     
     /**
-     * Returns the label of the given property uri.
+     * Returns the label of certain element of a selected dimension.
+     * @param dimensionTypeUrl Url of a certain dimension
+     * @param propertyUrl Property uri of a certain dimension element
+     * @param selectedComponentDimensions Object which contains selected dimensions
+     * @return string Label or given propertyUrl, if nothing was found.
      */
-    static getLabelForPropertyUri ( propertyUri:string, dimensionType:string, selectedDimensions:Object[] ) : string {
-        var dim:Object = {};
+    static getLabelForPropertyUri(dimensionTypeUrl:string, propertyUrl:string, 
+        selectedComponentDimensions:any) : string 
+    {
+        var dim:any = {};
                 
-        for ( var hashedUrl in selectedDimensions ) {
+        for ( var hashedUrl in selectedComponentDimensions ) {
             
-            dim = selectedDimensions[hashedUrl];
+            dim = selectedComponentDimensions[hashedUrl];
             
             // Stop if the given dimension was found (by type)
-            if ( dim["typeUrl"] == dimensionType ) {
+            if ( dim["typeUrl"] == dimensionTypeUrl ) {
                 
                 for ( var i in dim["elements"] ) {
-                    if ( dim["elements"][i]["property"] == propertyUri ) {
+                    if ( dim["elements"][i]["property"] == propertyUrl ) {
                         return dim["elements"][i]["propertyLabel"];
                     }
                 }
             }
         }
         
-        // if nothing was found, simply return the given propertyUri
-        return propertyUri;
+        // if nothing was found, simply return the given propertyUrl
+        return propertyUrl;
     }
     
     /**
      * Extract the uri of the measure value
      */
-    static getMeasure (CubeViz_Links_Module:any) : string {
+    static getSelectedMeasure(selectedComponentMeasures:any) : any
+    {
         // return the first value
-        for ( var hashedTypeUrl in CubeViz_Links_Module["selectedComponents"]["measures"] ) { 
-            return CubeViz_Links_Module["selectedComponents"]["measures"][hashedTypeUrl]; 
+        for ( var hashedTypeUrl in selectedComponentMeasures ) { 
+            return selectedComponentMeasures[hashedTypeUrl]; 
         }
     }
     
     /**
-     * Extract the uri of the measure value
+     * Get a list of all multiple (at least 2 elements) selected dimensions.
+     * @param selectedComponentDimensions Object which contains all selected dimensions. 
+     * @return any[] Array of found selected multiple dimensions.
      */
-    static getMeasureTypeUrl (CubeViz_Links_Module) : string {
-        var m = CubeViz_Visualization_Controller.getMeasure (CubeViz_Links_Module);
-        return m ["typeUrl"];
-    }
-    
-    /**
-     * @return Object[]
-     */
-    static getMultipleDimensions(selectedDimensions:any[]) : Object [] 
+    static getMultipleDimensions(selectedComponentDimensions:any[]) : any [] 
     {
         // assign selected dimensions to xAxis and series (yAxis)
         var multipleDimensions:any[] = [];
         
         // for ( var hashedUrl in selectedDimensions ) {
-        _.each(selectedDimensions, function(selectedDimension){
+        _.each(selectedComponentDimensions, function(selectedDimension){
                         
             if(2 > _.size(selectedDimension.elements)) {
                 return;
@@ -180,23 +154,23 @@ class CubeViz_Visualization_Controller
     }
     
     /**
-     * @return Object[]
+     * Get a list of all (exactly!) one element selected dimensions.
+     * @param selectedComponentDimensions Object which contains all selected dimensions. 
+     * @return any[] Array of found selected one element dimensions.
      */
-    static getOneElementDimensions ( retrievedData:Object[], selectedDimensions:Object[],
-                                      measures:Object[] ) : Object [] {
-                                                
+    static getOneElementDimensions (selectedComponentDimensions:any[]) : any [] 
+    {
         // assign selected dimensions to xAxis and series (yAxis)
-        var oneElementDimensions:Object[] = [],
-            tmp:Object[] = [];
+        var oneElementDimensions:Object[] = [];
             
-        for ( var hashedUrl in selectedDimensions ) {
+        for ( var hashedUrl in selectedComponentDimensions ) {
                         
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 == selectedDimensions [hashedUrl] ["elements"]["length"] ) {
-                oneElementDimensions.push ( {
-                    "label" : selectedDimensions [hashedUrl]["label"],
-                    "elements" : selectedDimensions [hashedUrl] ["elements"] 
-                } ); 
+            if ( 1 == selectedComponentDimensions [hashedUrl] ["elements"]["length"] ) {
+                oneElementDimensions.push({
+                    elements: selectedComponentDimensions [hashedUrl] ["elements"],
+                    label: selectedComponentDimensions [hashedUrl]["label"]
+                }); 
             }
         }
         

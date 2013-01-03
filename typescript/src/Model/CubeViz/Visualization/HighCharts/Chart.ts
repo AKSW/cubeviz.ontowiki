@@ -81,7 +81,7 @@ class CubeViz_Visualization_HighCharts_Chart
             
         for ( var value in xAxisElements ) {
             this ["xAxis"]["categories"].push (
-                CubeViz_Visualization_Controller.getLabelForPropertyUri ( value, forXAxis, selectedComponentDimensions )
+                CubeViz_Visualization_Controller.getLabelForPropertyUri ( forXAxis, value, selectedComponentDimensions )
             );
         }
         
