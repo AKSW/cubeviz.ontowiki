@@ -370,7 +370,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         }
         return builtTitle;
     };
-    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (className, chartConfig, retrievedComponents, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedComponentMeasures, measureUri, dsdLabel, dsLabel) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedComponentMeasures, selectedMeasureUri, dsdLabel, dsLabel) {
         var forXAxis = null;
         var forSeries = null;
         var observation = new DataCube_Observation();
@@ -384,7 +384,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 forSeries = selectedComponentDimensions[hashedUrl]["typeUrl"];
             }
         }
-        observation.initialize(retrievedComponents, selectedComponentDimensions, measureUri);
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxisElements(forXAxis);
         if(undefined === this["xAxis"]) {
             this["xAxis"] = {
@@ -411,9 +411,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             for(var xAxisEntry in xAxisElements) {
                 found = false;
                 for(var i in xAxisElements[xAxisEntry]) {
-                    for(var j in xAxisElements[xAxisEntry][i][measureUri]["ref"]) {
-                        if(seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"]) {
-                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                    for(var j in xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"]) {
+                        if(seriesEntry == xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"][j][forSeries]["value"]) {
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][selectedMeasureUri]["value"]);
                             if(isNaN(floatValue)) {
                                 floatValue = null;
                             }
@@ -1158,7 +1158,7 @@ var View_IndexAction_Visualization = (function (_super) {
                 }
                 default: {
                     var chart = CubeViz_Visualization_HighCharts.load(className);
-                    chart.init(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class, fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getMeasureTypeUrl(this.app._.data), this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
+                    chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measures), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getMeasureTypeUrl(this.app._.data), this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
                     new Highcharts.Chart(chart.getRenderResult());
                     break;
 

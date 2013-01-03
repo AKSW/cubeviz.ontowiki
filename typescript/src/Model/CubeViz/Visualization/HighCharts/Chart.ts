@@ -21,14 +21,23 @@ class CubeViz_Visualization_HighCharts_Chart
     } 
     
     /**
-     * 
+     * Initialize a chart instance.
+     * @param chartConfig Related chart configuration
+     * @param retrievedObservations Array of retrieved observations 
+     * @param selectedComponentDimensions
+     * @param oneElementDimensions
+     * @param multipleDimensions
+     * @param selectedComponentMeasures
+     * @param selectedMeasureUri Uri of selected measure
+     * @param dsdLabel Label of selected data structure definition
+     * @param dsLabel Label of selected data set
+     * @return void
      */
-    public init (className:string, chartConfig:any, retrievedComponents:any[], 
+    public init (chartConfig:any, retrievedObservations:any[], 
         selectedComponentDimensions:any, oneElementDimensions, multipleDimensions, 
-        selectedComponentMeasures:any, measureUri:string, dsdLabel:string,
+        selectedComponentMeasures:any, selectedMeasureUri:string, dsdLabel:string,
         dsLabel:string ) : void 
     { 
-    
         var forXAxis = null,
             forSeries = null,
             observation = new DataCube_Observation (); 
@@ -61,7 +70,7 @@ class CubeViz_Visualization_HighCharts_Chart
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize ( retrievedComponents, selectedComponentDimensions, measureUri );
+        observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
         var xAxisElements:Object = observation
             .sortAxis ( forXAxis, "ascending" )
             .getAxisElements ( forXAxis );
@@ -107,9 +116,9 @@ class CubeViz_Visualization_HighCharts_Chart
                     
                     // if one of the xAxis entries fits with given seriesEntry, so push the related value 
                     // into the obj [data] array
-                    for ( var j in xAxisElements[xAxisEntry][i][measureUri]["ref"] ) {                                                
-                        if ( seriesEntry == xAxisElements[xAxisEntry][i][measureUri]["ref"][j][forSeries]["value"] ) {
-                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][measureUri]["value"]);
+                    for ( var j in xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"] ) {                                                
+                        if ( seriesEntry == xAxisElements[xAxisEntry][i][selectedMeasureUri]["ref"][j][forSeries]["value"] ) {
+                            var floatValue = parseFloat(xAxisElements[xAxisEntry][i][selectedMeasureUri]["value"]);
                             if (isNaN(floatValue)) {
                                 floatValue = null;
                             } 

@@ -101,7 +101,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     
                     // init chart instance
                     chart.init(
-                        this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class,
                         fromChartConfig.defaultConfig,
                         this.app._.data.retrievedObservations,
                         this.app._.data.selectedComponents.dimensions,
