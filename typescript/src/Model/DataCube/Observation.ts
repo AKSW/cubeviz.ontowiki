@@ -15,10 +15,10 @@ class DataCube_Observation {
     /**
      * 
      */
-    private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void {
-                                                
-        for ( var dimensionUri in dimensionValues ) {
-            
+    private addAxisEntryPointsTo ( uri:string, value:any, dimensionValues:Object ) : void 
+    {
+        for ( var dimensionUri in dimensionValues ) 
+        {
             // Set current value and reference to axes dimension element
             dimensionValues [dimensionUri] = { 
                 // e.g. value: "Germany"

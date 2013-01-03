@@ -44,11 +44,10 @@ class DataCube_Component {
         
         var tmpEntries = {};
         
-        // 
-        for ( var i in entries ) {            
+        _.each(entries, function(component){
             // establish a new structure where the key is the label of the dimension
-            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
-        }
+            tmpEntries[component.hashedUrl] = component;
+        });
         
         // call callback function with prepared entries
         callback ( tmpEntries );
@@ -94,30 +93,30 @@ class DataCube_Component {
         var tmpEntries = {};
         
         // 
-        for ( var i in entries ) {            
+        _.each(entries, function(measure){         
             // establish a new structure where the key is the label of the dimension
-            tmpEntries [ entries [i] ["hashedUrl"] ] = entries [i];
-        }
+            tmpEntries[measure.hashedUrl] = measure;
+        });
         
         // call callback function with prepared entries
         callback ( tmpEntries );
     }
     
     /**
-     * 
+     * Creates a predefined collection of selected dimensions.
+     * @param componentDimensions Object contain all component dimensions.
+     * @return any Object containing hashed urls as properties and exactly one element.
      */
-    static getDefaultSelectedDimensions ( componentDimensions ) : Object {
+    static getDefaultSelectedDimensions ( componentDimensions ) : any 
+    {        
+        componentDimensions = $.parseJSON(JSON.stringify (componentDimensions));
         
-        componentDimensions = $.parseJSON(JSON.stringify (componentDimensions)); // System.deepCopy ( componentDimensions );
-        
-        var result:Object = {};
+        var result:any = {};
     
-        for ( var dimensionHashedUrl in componentDimensions ) {
-            
-            result [dimensionHashedUrl] = componentDimensions [dimensionHashedUrl];
-            
-            result [dimensionHashedUrl]["elements"] = [ result [dimensionHashedUrl].elements [0] ];
-        }
+        _.each(componentDimensions, function(componentDimension, dimensionHashedUrl){            
+            result[dimensionHashedUrl] = componentDimension;
+            result[dimensionHashedUrl].elements = [componentDimension.elements [0]];
+        });
         
         return result;
     }

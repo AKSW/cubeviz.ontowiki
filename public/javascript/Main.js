@@ -539,9 +539,9 @@ var DataCube_Component = (function () {
         });
         var tmpEntries = {
         };
-        for(var i in entries) {
-            tmpEntries[entries[i]["hashedUrl"]] = entries[i];
-        }
+        _.each(entries, function (component) {
+            tmpEntries[component.hashedUrl] = component;
+        });
         callback(tmpEntries);
     }
     DataCube_Component.loadAllMeasures = function loadAllMeasures(url, modelUrl, dsdUrl, dsUrl, callback) {
@@ -568,21 +568,21 @@ var DataCube_Component = (function () {
         });
         var tmpEntries = {
         };
-        for(var i in entries) {
-            tmpEntries[entries[i]["hashedUrl"]] = entries[i];
-        }
+        _.each(entries, function (measure) {
+            tmpEntries[measure.hashedUrl] = measure;
+        });
         callback(tmpEntries);
     }
     DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
         componentDimensions = $.parseJSON(JSON.stringify(componentDimensions));
         var result = {
         };
-        for(var dimensionHashedUrl in componentDimensions) {
-            result[dimensionHashedUrl] = componentDimensions[dimensionHashedUrl];
-            result[dimensionHashedUrl]["elements"] = [
-                result[dimensionHashedUrl].elements[0]
+        _.each(componentDimensions, function (componentDimension, dimensionHashedUrl) {
+            result[dimensionHashedUrl] = componentDimension;
+            result[dimensionHashedUrl].elements = [
+                componentDimension.elements[0]
             ];
-        }
+        });
         return result;
     }
     return DataCube_Component;
