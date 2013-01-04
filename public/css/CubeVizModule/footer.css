@@ -1,4 +1,5 @@
-#cubeviz-footer-container{
+#cubeviz-footer-container
+{
     float: none; 
     clear: both; 
     margin-top: 15px; 
@@ -11,10 +12,21 @@
     max-width: 100%;
 }
 
-#cubeviz-footer-permaLinkButton{
+#cubeviz-footer-permaLinkButton
+{
     font-size: 11px;
 }
 
-#cubeviz-footer-permaLink{
+#cubeviz-footer-permaLink
+{
     display: none;
+}
+
+#cubeviz-footer-showVisualizationButton
+{
+    padding-top: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    font-size: 11px;
 }

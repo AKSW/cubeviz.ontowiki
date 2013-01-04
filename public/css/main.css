@@ -413,14 +413,6 @@
     cursor: pointer;
 }
 
-#showUpdateVisualizationButton {
-    padding-top: 2px;
-    padding-left: 4px;
-    padding-right: 3px;
-    padding-bottom: 4px;
-    font-size: 11px;
-}
-
 #permaLinkButton {
     font-size:11px;
 }

@@ -1,6 +1,8 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
+declare var cubeVizIndex;
+
 class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
     constructor(attachedTo:string, app:CubeViz_View_Application) 
@@ -60,7 +62,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     /**
      *
      */
-    public onClick_permaLinkButton() 
+    public onClick_permaLinkButton(event) 
     {
         var self = this;
         
@@ -68,7 +70,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         // for DSD or DS, so force recreation of a new linkcode
         this.app._.data.linkCode = null;
         
-        CubeViz_ConfigurationLink.saveToServerFile ( 
+        CubeViz_ConfigurationLink.saveToServer ( 
             this.app._.backend.url,
             this.app._.data,
             this.app._.ui,
@@ -87,11 +89,45 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     /**
      *
      */
+    public onClick_showVisualization(event) 
+    {
+        var self = this;
+        
+        try {
+            // if cubeVizIndex is not set, it provokes a runtime exception
+            _.isUndefined(cubeVizIndex);
+            
+            // cubeVizIndex is set, so we can arrange it to re-render visualization 
+            // view
+            console.log("update viz");
+            
+        } catch (ex) {
+            
+            // update link code
+            CubeViz_ConfigurationLink.saveToServer(
+                this.app._.backend.url,
+                this.app._.data,
+                this.app._.ui,
+                
+                function(updatedLinkCode){
+                    // refresh page and show visualization for the latest linkCode
+                    window.location.href = self.app._.backend.url
+                        + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                        + "&lC=" + updatedLinkCode;
+                }
+            );
+        }
+    }
+    
+    /**
+     *
+     */
     public render() 
     {
         // Delegate events to new items of the template
         this.delegateEvents({
-            "click #cubeviz-footer-permaLinkButton" : this.onClick_permaLinkButton
+            "click #cubeviz-footer-permaLinkButton": this.onClick_permaLinkButton,
+            "click #cubeviz-footer-showVisualizationButton": this.onClick_showVisualization
         });
         
         return this;
@@ -127,11 +163,12 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                         .attr ("target", "_self")
                         .html ($("#cubeviz-footer-permaLink").html ());
                         
-                    $("#cubeviz-footer-permaLinkMenu").animate({width:'toggle'},450);
+                    $("#cubeviz-footer-permaLinkMenu")
+                        .animate({width:"toggle"},450);
                     
                     $("#cubeviz-footer-permaLink")
-                        .show ()
-                        .html ( url );
+                        .show()
+                        .html(url);
                 }
         ); 
     }

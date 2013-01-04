@@ -1,11 +1,14 @@
 <script type="text/javascript">
+    
+    var cubeVizModule;
+    
     /**
      * Initialize the application
      */
     $(document).ready(function(){
         
         // initialize view manager to handle all the used views
-        var cubeVizModule = new CubeViz_View_Application();
+        cubeVizModule = new CubeViz_View_Application();
         
         /**
          * Add data to application instance
@@ -100,13 +103,19 @@
             
             <div id="cubeviz-footer-container">				
                 <span style="float:left;">
-                    <input type="button" id="cubeviz-footer-permaLinkButton" value="<?php echo $this->_translate->_('Permalink'); ?>" class="minibutton submit"/>
+                    <input class="minibutton submit"
+                            id="cubeviz-footer-permaLinkButton"
+                            type="button"
+                            value="<?php echo $this->_translate->_('Permalink'); ?>"/>
                     <span id="cubeviz-footer-permaLinkMenu">
                         <span id="cubeviz-footer-permaLink">Link</span>
                     </span>
                 </span>
                 <span style="float:right;">
-                    <input type="button" value="<?php echo $this->_translate->_('Show Visualization'); ?>" id="showUpdateVisualizationButton" class="minibutton submit"/>
+                    <input class="minibutton submit"
+                            id="cubeviz-footer-showVisualizationButton"
+                            type="button" 
+                            value="<?php echo $this->_translate->_('Show Visualization'); ?>"/>
                 </span>
             </div>
             

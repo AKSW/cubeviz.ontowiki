@@ -1,11 +1,11 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
-class CubeViz_ConfigurationLink {
-    
+class CubeViz_ConfigurationLink 
+{    
     /**
      * 
      */
-    static saveToServerFile (url, data:Object, ui:Object, callback) : void
+    static saveToServer (url, data:Object, ui:Object, callback) : void
     {
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
