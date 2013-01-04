@@ -1,38 +1,32 @@
 <script type="text/javascript">
     
-    var cubeVizIndex;
+    // initialize view manager to handle all the used views
+    var cubeVizApp = new CubeViz_View_Application;
     
     /**
      * Initialize the application
      */
     $(document).ready(function(){
         
-        // initialize view manager to handle all the used views
-        cubeVizIndex = new CubeViz_View_Application();
-        
         /**
          * Add data to application instance
          */
-        cubeVizIndex._ = <?php echo $this->cubeVizConfig; ?>;
-        cubeVizIndex._.chartConfig = CubeViz_ChartConfig;
+        cubeVizApp._ = <?php echo $this->cubeVizConfig; ?>;
+        cubeVizApp._.chartConfig = CubeViz_ChartConfig;
         
         /**
          * Add views
          */
-        cubeVizIndex
+        cubeVizApp
             /**
              * These views will added and executed on render() call. (second parameter 
              * causes that)
              */
             .add("View_IndexAction_Header", "", true)
             .add("View_IndexAction_Visualization", "cubeviz-index-visualization", true)
-        
-            /**
-             * These views will only added but not executed on render() call.
-             */
             .add("View_IndexAction_VisualizationSelector", "cubeviz-visualizationselector-menu")
         
-            // run all autostart views
+            // render autostart marked views
             .render();
     });
     

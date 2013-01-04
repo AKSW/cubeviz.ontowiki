@@ -1,8 +1,8 @@
 /**
  * 
  */
-class CubeViz_View_Application {
-    
+class CubeViz_View_Application 
+{    
     /**
      * 
      */
