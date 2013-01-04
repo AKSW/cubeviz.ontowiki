@@ -73,7 +73,14 @@ class CubeViz_ConfigurationLink
                         'measures'          => array()
                     )
                 );
-                $readedConfig ['ui'] = array();
+                $readedConfig ['ui'] = array(
+                    'visualization'         => array(
+                        'class'             => ''
+                    ),
+                    'visualizationSettings' => array(
+                        'relatedToClass'    => ''
+                    )
+                );
             }
             
             return $readedConfig;

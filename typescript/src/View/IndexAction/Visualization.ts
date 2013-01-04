@@ -41,7 +41,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public onClick_nothingFoundNotificationLink(event) 
     {
-        console.log("click");
         $("#cubeviz-visualization-nothingFoundFurtherExplanation")
             .slideDown("slow");
     }
@@ -71,6 +70,11 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     {
         // If at least one observation was retrieved
         if ( 1 <= _.size(this.app._.data.retrievedObservations) ) {
+                    
+            // set default className
+            this.app._.ui.visualization.class = this.app._.chartConfig[
+                this.app._.data.numberOfMultipleDimensions
+            ].charts[0].class;
                             
             /**
              * Render chart with the given data
@@ -78,14 +82,14 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             // get chart name
             var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
             
-                className = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class,
-            
                 // get class
                 fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                    className, charts
+                    this.app._.ui.visualization.class, charts
                 ),
                   
-                type = CubeViz_Visualization_Controller.getVisualizationType(className);
+                type = CubeViz_Visualization_Controller.getVisualizationType(
+                    this.app._.ui.visualization.class
+                );
             
             switch ( type ) 
             {
@@ -115,7 +119,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     var hC = new CubeViz_Visualization_HighCharts();
                     
                     // load specific chart instance
-                    var chart = hC.load(className);
+                    var chart = hC.load(this.app._.ui.visualization.class);
                     
                     // init chart instance
                     chart.init(
@@ -171,6 +175,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             "click #cubeviz-visualization-nothingFoundNotificationLink":
                 this.onClick_nothingFoundNotificationLink
         });
+        
+        this.app.renderView("View_IndexAction_VisualizationSelector");
         
         return this;
     }

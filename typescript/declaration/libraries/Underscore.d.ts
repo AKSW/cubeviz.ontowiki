@@ -181,6 +181,13 @@ interface UnderscoreStatic {
      Chaining
     *****/
     chain(object: any): UnderscoreWrappedObject;
+    
+    /****
+     Plugins
+    *****/
+    
+    // Underscore.string
+    isBlank(str:string) : bool;
 }
 
 declare var _: UnderscoreStatic;

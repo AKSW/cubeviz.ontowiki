@@ -1166,64 +1166,6 @@ var View_CubeVizModule_Footer = (function (_super) {
     };
     return View_CubeVizModule_Footer;
 })(CubeViz_View_Abstract);
-var View_IndexAction_Visualization = (function (_super) {
-    __extends(View_IndexAction_Visualization, _super);
-    function View_IndexAction_Visualization(attachedTo, app) {
-        _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
-    }
-    View_IndexAction_Visualization.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-        return this;
-    };
-    View_IndexAction_Visualization.prototype.initialize = function () {
-        var obs = DataCube_Observation;
-        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
-        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
-    };
-    View_IndexAction_Visualization.prototype.onClick_nothingFoundNotificationLink = function (event) {
-        console.log("click");
-        $("#cubeviz-visualization-nothingFoundFurtherExplanation").slideDown("slow");
-    };
-    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
-        this.app._.data.retrievedObservations = retrievedObservations;
-        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
-        this.render();
-    };
-    View_IndexAction_Visualization.prototype.render = function () {
-        if(1 <= _.size(this.app._.data.retrievedObservations)) {
-            var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
-            var className = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
-            var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(className, charts);
-            var type = CubeViz_Visualization_Controller.getVisualizationType(className);
-
-            switch(type) {
-                case "CubeViz": {
-                    console.log("render cubeviz visz");
-                    break;
-
-                }
-                default: {
-                    if(false === _.isUndefined(this.app._.generatedVisualization)) {
-                        this.app._.generatedVisualization.destroy();
-                    }
-                    var hC = new CubeViz_Visualization_HighCharts();
-                    var chart = hC.load(className);
-                    chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
-                    this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
-                    break;
-
-                }
-            }
-        } else {
-            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
-        }
-        this.delegateEvents({
-            "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
-        });
-        return this;
-    };
-    return View_IndexAction_Visualization;
-})(CubeViz_View_Abstract);
 var View_IndexAction_Header = (function (_super) {
     __extends(View_IndexAction_Header, _super);
     function View_IndexAction_Header(attachedTo, app) {
@@ -1261,4 +1203,106 @@ var View_IndexAction_Header = (function (_super) {
         return this;
     };
     return View_IndexAction_Header;
+})(CubeViz_View_Abstract);
+var View_IndexAction_Visualization = (function (_super) {
+    __extends(View_IndexAction_Visualization, _super);
+    function View_IndexAction_Visualization(attachedTo, app) {
+        _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
+    }
+    View_IndexAction_Visualization.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_IndexAction_Visualization.prototype.initialize = function () {
+        var obs = DataCube_Observation;
+        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
+        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+    };
+    View_IndexAction_Visualization.prototype.onClick_nothingFoundNotificationLink = function (event) {
+        $("#cubeviz-visualization-nothingFoundFurtherExplanation").slideDown("slow");
+    };
+    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
+        this.app._.data.retrievedObservations = retrievedObservations;
+        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
+        this.render();
+    };
+    View_IndexAction_Visualization.prototype.render = function () {
+        if(1 <= _.size(this.app._.data.retrievedObservations)) {
+            this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
+            var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
+            var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+            var type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
+
+            switch(type) {
+                case "CubeViz": {
+                    console.log("render cubeviz visz");
+                    break;
+
+                }
+                default: {
+                    if(false === _.isUndefined(this.app._.generatedVisualization)) {
+                        this.app._.generatedVisualization.destroy();
+                    }
+                    var hC = new CubeViz_Visualization_HighCharts();
+                    var chart = hC.load(this.app._.ui.visualization.class);
+                    chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
+                    this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
+                    break;
+
+                }
+            }
+        } else {
+            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
+        }
+        this.delegateEvents({
+            "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
+        });
+        this.app.renderView("View_IndexAction_VisualizationSelector");
+        return this;
+    };
+    return View_IndexAction_Visualization;
+})(CubeViz_View_Abstract);
+var View_IndexAction_VisualizationSelector = (function (_super) {
+    __extends(View_IndexAction_VisualizationSelector, _super);
+    function View_IndexAction_VisualizationSelector(attachedTo, app) {
+        _super.call(this, "View_IndexAction_VisualizationSelector", attachedTo, app);
+    }
+    View_IndexAction_VisualizationSelector.prototype.initialize = function () {
+        console.log("this.app._.ui (for class " + this.app._.ui.visualization.class + ")");
+        console.log(this.app._.ui);
+        console.log("this.app._.chartConfig");
+        console.log(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        this.render();
+    };
+    View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
+        var chartObject = undefined;
+        if(true === _.isUndefined($(event.target).data("chartObject"))) {
+            var selectorItemDiv = $($(event.target).parent());
+            chartObject = selectorItemDiv.data("chartObject");
+        } else {
+            chartObject = $(event.target).data("chartObject");
+        }
+        console.log(chartObject);
+    };
+    View_IndexAction_VisualizationSelector.prototype.render = function () {
+        var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
+        var chartItem;
+        var charts = this.app._.chartConfig[numberOfMultDims].charts;
+        var selectorItemTpl = _.template($("#cubeviz-visualizationselector-tpl-selectorItem").text());
+        var self = this;
+
+        _.each(charts, function (chartObject) {
+            chartItem = $(selectorItemTpl(chartObject));
+            chartItem.data("chartObject", chartObject);
+            if(self.app._.ui.visualization.class == chartObject.class) {
+                chartItem.addClass("cubeviz-visualizationselector-selectedSelectorItem");
+            }
+            $("#cubeviz-visualizationselector-menu").append(chartItem);
+        });
+        this.delegateEvents({
+            "click .cubeviz-visualizationselector-selectorItem": this.onClick_selectorItem
+        });
+        return this;
+    };
+    return View_IndexAction_VisualizationSelector;
 })(CubeViz_View_Abstract);
