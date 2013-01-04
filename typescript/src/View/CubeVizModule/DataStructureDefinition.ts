@@ -39,8 +39,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
                 // render given elements
                 self.render();
                 
-                // load data set view
-                self.app.renderView("View_CubeVizModule_DataSet");
+                // trigger event
+                self.triggerGlobalEvent("onComplete_loadDSD");
             }
         );
     }
@@ -58,8 +58,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         // set new selected data structure definition
         this.setSelectedDSD([selectedElement]);
     
-        // reset data set view
-        this.app.renderView("View_CubeVizModule_DataSet");
+        // trigger event
+        this.triggerGlobalEvent("onChange_selectedDSD");
     }
     
     /**
@@ -110,7 +110,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "change #cubeviz-dataStructureDefinition-list" : this.onChange_list,
             "click #cubeviz-dataStructureDefinition-questionMark": this.onClick_questionmark
         });

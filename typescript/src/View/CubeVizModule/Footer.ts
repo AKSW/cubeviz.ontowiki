@@ -137,7 +137,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     public render() 
     {
         // Delegate events to new items of the template
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "click #cubeviz-footer-permaLinkButton": this.onClick_permaLinkButton,
             "click #cubeviz-footer-showVisualizationButton": this.onClick_showVisualization
         });

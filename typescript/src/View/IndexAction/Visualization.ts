@@ -171,7 +171,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "click #cubeviz-visualization-nothingFoundNotificationLink":
                 this.onClick_nothingFoundNotificationLink
         });

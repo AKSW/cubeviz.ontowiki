@@ -64,7 +64,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "click #cubeviz-index-headerQuestionMarkHeadline": this.onClick_questionMark
         });
         

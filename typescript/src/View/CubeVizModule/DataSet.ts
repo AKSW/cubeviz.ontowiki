@@ -8,7 +8,21 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      */
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
-        super("View_CubeVizModule_DataSet", attachedTo, app);        
+        super("View_CubeVizModule_DataSet", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onChange_selectedDSD",
+                handler: this.onChange_selectedDSD
+            },
+            {
+                name:    "onComplete_loadDSD",
+                handler: this.onComplete_loadDSD
+            }
+        ]);        
     }
     
     /**
@@ -40,8 +54,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
                 // render given elements
                 self.render();
                 
-                // load components
-                self.app.renderView("View_CubeVizModule_Component");
+                // trigger event
+                self.triggerGlobalEvent("onComplete_loadDS");
             }
         );
     }
@@ -54,13 +68,21 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
             selectedElement = this["collection"].get(selectedElementId);
 
-        // TODO: remember previous selection
-
         // set new selected data set
         this.setSelectedDS([selectedElement]);
 
-        // reset component view
-        this.app.renderView("View_CubeVizModule_Component");
+        // trigger event
+        this.triggerGlobalEvent("onChange_selectedDS");
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDSD(event, data) 
+    {
+        this
+            .destroy()
+            .initialize();
     }
     
     /**
@@ -69,6 +91,14 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     public onClick_questionmark() 
     {
         $("#cubeviz-dataSet-dialog").dialog("open");
+    }
+    
+    /**
+     *
+     */
+    public onComplete_loadDSD(event, data) 
+    {
+        this.onChange_selectedDSD(event, data);
     }
     
     /**
@@ -111,7 +141,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "change #cubeviz-dataSet-list" : this.onChange_list,            
             "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
         });

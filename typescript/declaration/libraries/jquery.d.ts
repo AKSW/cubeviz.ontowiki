@@ -221,6 +221,7 @@ interface JQueryStatic {
     /******
      EVENTS
     *******/
+    Event(name:string, eventProperties?:any): JQueryEventObject;
     proxy(context: any, name: any): any;
 
     /*********

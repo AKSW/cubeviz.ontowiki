@@ -1,25 +1,25 @@
 <script type="text/javascript">
         
+    var cubeVizApp = cubeVizApp || undefined;
+    
+    if(true === _.isUndefined(cubeVizApp)){
+        cubeVizApp = new CubeViz_View_Application;
+    }
+        
     /**
      * Initialize the application
      */
     $(document).ready(function(){
-        /**
-         * Add views
-         */
+        cubeVizApp._ = <?php echo $this->cubeVizConfig; ?>;
+        
         cubeVizApp
             /**
-             * These views will only added
+             * add and render views
              */
-            .add("View_CubeVizModule_DataStructureDefintion", "#cubviz-dataStructureDefinition-listContainer")
-            .add("View_CubeVizModule_Footer", "#cubeviz-footer-container")
-    
+            .renderView("View_CubeVizModule_DataStructureDefintion", "#cubviz-dataStructureDefinition-listContainer")
+            .renderView("View_CubeVizModule_Footer", "#cubeviz-footer-container")    
             .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
-            .add("View_CubeVizModule_Component", "#cubviz-component-listBox")
-        
-            // manually render view
-            .renderView("View_CubeVizModule_DataStructureDefintion")
-            .renderView("View_CubeVizModule_Footer");
+            .add("View_CubeVizModule_Component", "#cubviz-component-listBox");
     });
     
 </script>

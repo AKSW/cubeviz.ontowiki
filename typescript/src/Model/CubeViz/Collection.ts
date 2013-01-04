@@ -71,6 +71,16 @@ class CubeViz_Collection
     }
     
     /**
+     * Checks if an element with given id exists in this collection.
+     * @param id
+     * @return bool True if element exists, false otherwise.
+     */
+    public exists(id:string) : bool 
+    {
+        return false === _.isUndefined(this.get(id));
+    }
+    
+    /**
      * Get element by id. 
      * @param id ID of the element.
      * @return any|undefined Found object or undefined.

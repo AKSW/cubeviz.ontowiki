@@ -45,8 +45,15 @@ class CubeViz_View_Abstract
         this.el = $(attachedTo);
         this.collection = new CubeViz_Collection;
         this.id = id || "view";
-        
-        this.initialize();
+    }
+    
+    /**
+     *
+     */
+    public bindGlobalEvents(events:any[]) : CubeViz_View_Abstract
+    {
+        this.app.bindGlobalEvents(events, this);
+        return this;
     }
     
     /**
@@ -54,9 +61,9 @@ class CubeViz_View_Abstract
      * @return void
      * @throws Error
      */
-    public delegateEvents (events?:any) : void 
+    public bindUserInterfaceEvents (events?:any) : void 
     {
-        if(undefined == events) 
+        if(true === _.isUndefined(events) || 0 == _.size(events) ) 
             return;
             
         var eventName = "",
@@ -112,4 +119,13 @@ class CubeViz_View_Abstract
      * 
      */
     public initialize() {}
+    
+    /**
+     *
+     */
+    public triggerGlobalEvent(eventName:string, data?:any) : CubeViz_View_Abstract
+    {
+        this.app.triggerEvent(eventName, data:any);
+        return this;
+    }
 }

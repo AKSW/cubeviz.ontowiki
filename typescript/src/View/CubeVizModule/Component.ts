@@ -9,6 +9,20 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_CubeVizModule_Component", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onComplete_loadDS",
+                handler: this.onComplete_loadDS
+            },
+            {
+                name:    "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            },
+        ]); 
     }
     
     /**
@@ -186,6 +200,65 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
+    public onChange_selectedDS(event, data) 
+    {
+        this
+            .destroy()
+            .initialize();
+    }
+    
+    /**
+     *
+     */
+    public onClick_closeAndApply(event) : void 
+    {
+        $(event.target).data("dialogDiv")
+            .dialog("close");
+            
+        // simply apply changes
+    }
+    
+    /**
+     *
+     */
+    public onClick_closeAndUpdate(event) : void
+    {
+        $(event.target).data("dialogDiv")
+            .dialog("close");
+            
+        // update graph visualization
+    }
+    
+    /**
+     *
+     */
+    public onClick_deselectedAllComponentElements(event) : void
+    {
+        $(event.target).data("dialogDiv")
+            .find("[type=\"checkbox\"]")
+            .attr("checked", false);
+    }
+    
+    /**
+     *
+     */
+    public onClick_setupComponentOpener(event) : void
+    {
+        $(event.target).data("dialogDiv").dialog("open");
+    }
+    
+    /**
+     *
+     */
+    public onClick_questionmark() : void
+    {
+        $("#cubeviz-component-questionMarkDialog").dialog("open");
+    }
+    
+    
+    /**
+     *
+     */
     public onClose_setupComponentDialog(event) : void
     {        
         // extract and set necessary elements and data
@@ -251,49 +324,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_closeAndApply(event) : void 
+    public onComplete_loadDS(event, data) 
     {
-        $(event.target).data("dialogDiv")
-            .dialog("close");
-            
-        // simply apply changes
-    }
-    
-    /**
-     *
-     */
-    public onClick_closeAndUpdate(event) : void
-    {
-        $(event.target).data("dialogDiv")
-            .dialog("close");
-            
-        // update graph visualization
-    }
-    
-    /**
-     *
-     */
-    public onClick_deselectedAllComponentElements(event) : void
-    {
-        $(event.target).data("dialogDiv")
-            .find("[type=\"checkbox\"]")
-            .attr("checked", false);
-    }
-    
-    /**
-     *
-     */
-    public onClick_setupComponentOpener(event) : void
-    {
-        $(event.target).data("dialogDiv").dialog("open");
-    }
-    
-    /**
-     *
-     */
-    public onClick_questionmark() : void
-    {
-        $("#cubeviz-component-questionMarkDialog").dialog("open");
+        // use another event handler for this event
+        this.onChange_selectedDS(event, data);
     }
     
     /**
@@ -368,7 +402,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({         
+        this.bindUserInterfaceEvents({         
             "click .cubeviz-component-closeAndApply": 
                 this.onClick_closeAndApply,
                 

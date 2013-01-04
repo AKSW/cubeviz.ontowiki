@@ -85,7 +85,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.delegateEvents({
+        this.bindUserInterfaceEvents({
             "click .cubeviz-visualizationselector-selectorItem":
                 this.onClick_selectorItem
         });
