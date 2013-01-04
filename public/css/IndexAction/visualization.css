@@ -1,57 +1,36 @@
 /**
  * Notification about empty chart
  */
-#cubeviz-Index-NothingFoundBox {
+#cubeviz-visualization-nothingFoundNotificationContainer
+{
+    display: none;
+}
+
+#cubeviz-visualization-nothingFoundBox
+{
     height: 100%;
     width: 100%;
-    margin-top: 17%;
+    margin-top: 8%;
 }
  
-#cubeviz-Index-NothingFoundFurtherExplanation {
+#cubeviz-visualization-nothingFoundFurtherExplanation
+{
     width: 50%;
     text-align: left;
     display: none;
 }
 
-#cubeviz-Index-NothingFoundNotification {
+#cubeviz-visualization-nothingFoundNotification
+{
     width: 50%;
     text-align: left;
     font-weight: bold;
 }
 
-#cubeviz-Index-NothingFoundNotificationLink {
+#cubeviz-visualization-nothingFoundNotificationLink
+{
     text-align: left;
     cursor: pointer;
     font-style: italic;
     font-weight: normal;
 }
-
-
-/**
- * 
- */
-#cubeviz-Index-DialogboxHeadline {
-    display: none;
-    z-index: 100;
-}
-
-/**
- * Questionmark next to Model label
- */
-#cubeviz-Index-questionMarkHeadline {
-    cursor: pointer;
-    opacity:0.2;
-    filter:alpha(opacity=20);
-}
-
-#cubeviz-Index-questionMarkHeadline:hover {
-    cursor: pointer;
-    opacity:0.5;
-    filter:alpha(opacity=50);
-}
-
-
-
-/**
- * CLASSES
- */

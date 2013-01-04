@@ -45,6 +45,24 @@ class CubeViz_View_Application {
     }
     
     /**
+     * Destroy a certain view
+     * @param id ID of the view.
+     * @return CubeViz_View_Application Itself
+     */
+    public destroyView(id:string) : CubeViz_View_Application
+    {
+        var renderedView = this._renderedViews.get(id),
+            alreadyRendered = undefined !== renderedView;
+        
+        if(true === alreadyRendered) {
+            renderedView.destroy();
+            this._renderedViews.remove(id);
+        }
+        
+        return this;
+    }
+    
+    /**
      * Get a particular view.
      * @param id ID of the view.
      * @return CubeViz_View_Abstract|bool View instance, if found, false otherwise.
@@ -57,7 +75,7 @@ class CubeViz_View_Application {
     /**
      * Re-initialize and render a particular view, if it exists.
      * @param id ID of the view.
-     * @return void
+     * @return CubeViz_View_Application Itself
      */
     public renderView(id:string) : CubeViz_View_Application
     {
@@ -86,7 +104,7 @@ class CubeViz_View_Application {
     /**
      * Removes an element.
      * @param id ID of the view to remove.
-     * @return bool True if element with given id was found and removed, false otherwise.
+     * @return CubeViz_View_Application Itself
      */
     public remove(id:string) : CubeViz_View_Application
     {
@@ -97,7 +115,7 @@ class CubeViz_View_Application {
     
     /**
      * Renders all views, which have property autostart=true
-     * @return void
+     * @return CubeViz_View_Application Itself
      */
     public render() : CubeViz_View_Application
     {

@@ -25,6 +25,30 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     /**
      *
      */
+    public initialize() 
+    {        
+        /**
+         * Load observations based on pre-configured data structure definition and 
+         * data set. Function onComplete_loadObservations will handle incoming data.
+         */
+        var obs = DataCube_Observation;
+        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
+        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+    }
+    
+    /**
+     *
+     */
+    public onClick_nothingFoundNotificationLink(event) 
+    {
+        console.log("click");
+        $("#cubeviz-visualization-nothingFoundFurtherExplanation")
+            .slideDown("slow");
+    }
+     
+    /**
+     *
+     */
     public onComplete_loadObservations(event, retrievedObservations) : void
     {
         // save retrieved observations
@@ -38,20 +62,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         );
         
         this.render();
-    }
-    
-    /**
-     *
-     */
-    public initialize() 
-    {        
-        /**
-         * Load observations based on pre-configured data structure definition and 
-         * data set. Function onComplete_loadObservations will handle incoming data.
-         */
-        var obs = DataCube_Observation;
-        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
-        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
     }
 
     /**
@@ -97,7 +107,14 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     
                 default: // HighCharts
                     
+                    // if chart was created before, first destroy this instance
+                    if(false === _.isUndefined(this.app._.generatedVisualization)){
+                        this.app._.generatedVisualization.destroy();
+                    }
+                    
                     var hC = new CubeViz_Visualization_HighCharts();
+                    
+                    // load specific chart instance
                     var chart = hC.load(className);
                     
                     // init chart instance
@@ -120,7 +137,9 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                     );
                     
                     // show chart
-                    new Highcharts.Chart(chart.getRenderResult());
+                    this.app._.generatedVisualization = new Highcharts.Chart(
+                        chart.getRenderResult()
+                    );
                 
                     break;
             }
@@ -137,27 +156,21 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // If nothing was retrieved
         else {
             
-            /**
-            $("#container")
+            $("#cubeviz-index-visualization")
                 .html ("")
-                .append ($("#cubeviz-Index-NothingFoundNotificationContainer").html());
-                
-            
-            
-             * Notification: Empty data retrieved
-             *
-            $("#cubeviz-Index-NothingFoundNotificationLink").click(Viz_Event.onClick_NothingFoundNotificationLink);
-                
-            Viz_Main.closeChartSelection();
-            Viz_Main.closeChartSelectionMenu();
-            Viz_Main.hideMenuDongle();*/
+                .append (
+                    $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
+                );
         }
         
         
         /**
          * Delegate events to new items of the template
          */
-        // this.delegateEvents({});
+        this.delegateEvents({
+            "click #cubeviz-visualization-nothingFoundNotificationLink":
+                this.onClick_nothingFoundNotificationLink
+        });
         
         return this;
     }

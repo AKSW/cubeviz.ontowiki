@@ -168,6 +168,16 @@ var CubeViz_View_Application = (function () {
         });
         return this;
     };
+    CubeViz_View_Application.prototype.destroyView = function (id) {
+        var renderedView = this._renderedViews.get(id);
+        var alreadyRendered = undefined !== renderedView;
+
+        if(true === alreadyRendered) {
+            renderedView.destroy();
+            this._renderedViews.remove(id);
+        }
+        return this;
+    };
     CubeViz_View_Application.prototype.get = function (id) {
         return this._allViews.get(id);
     };
@@ -1165,15 +1175,19 @@ var View_IndexAction_Visualization = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
-        this.app._.data.retrievedObservations = retrievedObservations;
-        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
-        this.render();
-    };
     View_IndexAction_Visualization.prototype.initialize = function () {
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
         obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+    };
+    View_IndexAction_Visualization.prototype.onClick_nothingFoundNotificationLink = function (event) {
+        console.log("click");
+        $("#cubeviz-visualization-nothingFoundFurtherExplanation").slideDown("slow");
+    };
+    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
+        this.app._.data.retrievedObservations = retrievedObservations;
+        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
+        this.render();
     };
     View_IndexAction_Visualization.prototype.render = function () {
         if(1 <= _.size(this.app._.data.retrievedObservations)) {
@@ -1189,16 +1203,23 @@ var View_IndexAction_Visualization = (function (_super) {
 
                 }
                 default: {
+                    if(false === _.isUndefined(this.app._.generatedVisualization)) {
+                        this.app._.generatedVisualization.destroy();
+                    }
                     var hC = new CubeViz_Visualization_HighCharts();
                     var chart = hC.load(className);
                     chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
-                    new Highcharts.Chart(chart.getRenderResult());
+                    this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
                     break;
 
                 }
             }
         } else {
+            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
         }
+        this.delegateEvents({
+            "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
+        });
         return this;
     };
     return View_IndexAction_Visualization;
