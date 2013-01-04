@@ -1,7 +1,7 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-declare var cubeVizIndex;
+declare var cubeVizIndex:CubeViz_View_Application;
 
 class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
@@ -99,7 +99,19 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             
             // cubeVizIndex is set, so we can arrange it to re-render visualization 
             // view
-            console.log("update viz");
+            
+            // update link code
+            CubeViz_ConfigurationLink.saveToServer(
+                this.app._.backend.url,
+                this.app._.data,
+                this.app._.ui,
+                function(updatedLinkCode){
+                    self.updateData(cubeVizIndex, updatedLinkCode);
+                    
+                    // let application re-render the visualization view
+                    cubeVizIndex.renderView("View_IndexAction_Visualization");
+                }
+            );
             
         } catch (ex) {
             
@@ -171,5 +183,16 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                         .html(url);
                 }
         ); 
+    }
+
+    /**
+     *
+     */
+    public updateData(cubeVizIndex:CubeViz_View_Application, updatedLinkCode:string) : void 
+    {
+        // update link code
+        this.app._.data.linkCode = updatedLinkCode;
+        
+        cubeVizIndex._.data.linkCode = updatedLinkCode;
     }
 }

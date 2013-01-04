@@ -1118,7 +1118,10 @@ var View_CubeVizModule_Footer = (function (_super) {
         var self = this;
         try  {
             _.isUndefined(cubeVizIndex);
-            console.log("update viz");
+            CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (updatedLinkCode) {
+                self.updateData(cubeVizIndex, updatedLinkCode);
+                cubeVizIndex.renderView("View_IndexAction_Visualization");
+            });
         } catch (ex) {
             CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (updatedLinkCode) {
                 window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&lC=" + updatedLinkCode;
@@ -1146,6 +1149,10 @@ var View_CubeVizModule_Footer = (function (_super) {
             }, 450);
             $("#cubeviz-footer-permaLink").show().html(url);
         });
+    };
+    View_CubeVizModule_Footer.prototype.updateData = function (cubeVizIndex, updatedLinkCode) {
+        this.app._.data.linkCode = updatedLinkCode;
+        cubeVizIndex._.data.linkCode = updatedLinkCode;
     };
     return View_CubeVizModule_Footer;
 })(CubeViz_View_Abstract);
