@@ -1275,14 +1275,16 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.render();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
-        var chartObject = undefined;
-        if(true === _.isUndefined($(event.target).data("chartObject"))) {
+        var chartClass = undefined;
+        if(true === _.isUndefined($(event.target).data("class"))) {
             var selectorItemDiv = $($(event.target).parent());
-            chartObject = selectorItemDiv.data("chartObject");
+            chartClass = selectorItemDiv.data("class");
         } else {
-            chartObject = $(event.target).data("chartObject");
+            chartClass = $(event.target).data("class");
         }
-        console.log(chartObject);
+        this.app._.ui.visualization.class = chartClass;
+        console.log(chartClass);
+        cubeVizIndex.renderView("View_IndexAction_Visualization");
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
@@ -1293,7 +1295,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 
         _.each(charts, function (chartObject) {
             chartItem = $(selectorItemTpl(chartObject));
-            chartItem.data("chartObject", chartObject);
+            chartItem.data("class", chartObject.class);
             if(self.app._.ui.visualization.class == chartObject.class) {
                 chartItem.addClass("cubeviz-visualizationselector-selectedSelectorItem");
             }

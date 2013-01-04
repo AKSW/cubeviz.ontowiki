@@ -30,17 +30,21 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public onClick_selectorItem(event) 
     {
-        var chartObject = undefined;
+        var chartClass = undefined;
         
         // check if chartConfigIndex is attached to div or div's image
-        if(true === _.isUndefined($(event.target).data("chartObject"))) {
+        if(true === _.isUndefined($(event.target).data("class"))) {
             var selectorItemDiv = $($(event.target).parent());
-            chartObject = selectorItemDiv.data("chartObject");
+            chartClass = selectorItemDiv.data("class");
         } else {
-            chartObject = $(event.target).data("chartObject");
+            chartClass = $(event.target).data("class");
         }
         
-        console.log(chartObject);
+        this.app._.ui.visualization.class = chartClass;
+        
+        console.log(chartClass);
+        
+        cubeVizIndex.renderView("View_IndexAction_Visualization");
     }
     
     /**
@@ -64,7 +68,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             
             // attach data to chart item
             chartItem
-                .data("chartObject", chartObject);
+                .data("class", chartObject.class);
                 
             // If current chart object is the selected visualization ...
             if(self.app._.ui.visualization.class == chartObject.class) {
