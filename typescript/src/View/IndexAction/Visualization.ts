@@ -18,6 +18,10 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             {
                 name:    "onStart_application",
                 handler: this.onStart_application
+            },
+            {
+                name:    "onChange_visualizationClass",
+                handler: this.onChange_visualizationClass
             }
         ]);
     }
@@ -44,6 +48,14 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         var obs = DataCube_Observation;
         $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
         obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+    }
+    
+    /**
+     *
+     */
+    public onChange_visualizationClass() 
+    {
+        this.renderChart();
     }
     
     /**
@@ -91,90 +103,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // If at least one observation was retrieved
         if ( 1 <= _.size(this.app._.data.retrievedObservations) ) {
                     
-            // set default className
-            this.app._.ui.visualization.class = this.app._.chartConfig[
-                this.app._.data.numberOfMultipleDimensions
-            ].charts[0].class;
-                            
-            /**
-             * Render chart with the given data
-             */            
-            // get chart name
-            var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
-            
-                // get class
-                fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                    this.app._.ui.visualization.class, charts
-                ),
-                  
-                type = CubeViz_Visualization_Controller.getVisualizationType(
-                    this.app._.ui.visualization.class
-                );
-            
-            switch ( type ) 
-            {
-                case "CubeViz":
-                    
-                    console.log("render cubeviz visz");
-                    /*
-                    var visz = Visualization_CubeViz.load ( className );
-                    
-                    visz.init (
-                        CubeViz_Data ["retrievedObservations"], 
-                        CubeViz_Links_Module,
-                        fromChartConfig ["defaultConfig"]
-                    );
-                    
-                    visz.render ();*/
-                
-                    break;
-                    
-                default: // HighCharts
-                    
-                    // if chart was created before, first destroy this instance
-                    if(false === _.isUndefined(this.app._.generatedVisualization)){
-                        this.app._.generatedVisualization.destroy();
-                    }
-                    
-                    var hC = new CubeViz_Visualization_HighCharts();
-                    
-                    // load specific chart instance
-                    var chart = hC.load(this.app._.ui.visualization.class);
-                    
-                    // init chart instance
-                    chart.init(
-                        fromChartConfig.defaultConfig,
-                        this.app._.data.retrievedObservations,
-                        this.app._.data.selectedComponents.dimensions,
-                        CubeViz_Visualization_Controller.getOneElementDimensions (
-                            this.app._.data.selectedComponents.dimensions
-                        ),
-                        CubeViz_Visualization_Controller.getMultipleDimensions ( 
-                            this.app._.data.selectedComponents.dimensions
-                        ),
-                        this.app._.data.selectedComponents.measures,
-                        CubeViz_Visualization_Controller.getSelectedMeasure(
-                            this.app._.data.selectedComponents.measures
-                        ).typeUrl,
-                        this.app._.data.selectedDSD.label,
-                        this.app._.data.selectedDS.label
-                    );
-                    
-                    // show chart
-                    this.app._.generatedVisualization = new Highcharts.Chart(
-                        chart.getRenderResult()
-                    );
-                
-                    break;
-            }
-            
-            /**
-             * Setup click event for chartSelection item's
-             *
-            ChartSelector.init ( 
-                CubeViz_ChartConfig [CubeViz_Data ["numberOfMultipleDimensions"]]["charts"],
-                Viz_Event.onClick_ChartSelectionItem
-            );*/
+            this.renderChart();
         } 
         
         // If nothing was retrieved
@@ -196,8 +125,82 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 this.onClick_nothingFoundNotificationLink
         });
         
-        // this.app.renderView("View_IndexAction_VisualizationSelector");
-        
         return this;
+    }
+    
+    /**
+     *
+     */
+    public renderChart() : void
+    {
+        // set default className
+        if(true === _.isUndefined(this.app._.ui.visualization.class)
+           || 0 == this.app._.ui.visualization.class.length) {
+            this.app._.ui.visualization.class = this.app._.chartConfig[
+                this.app._.data.numberOfMultipleDimensions
+            ].charts[0].class;
+        }        
+        
+        /**
+         * Render chart with the given data
+         */            
+        // get chart name
+        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
+        
+            // get class
+            fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.class, charts
+            ),
+              
+            type = CubeViz_Visualization_Controller.getVisualizationType(
+                this.app._.ui.visualization.class
+            );
+        
+        switch ( type ) 
+        {
+            case "CubeViz":
+                
+                console.log("render cubeviz visz");
+                
+                break;
+                
+            default: // HighCharts
+                
+                // if chart was created before, first destroy this instance
+                if(false === _.isUndefined(this.app._.generatedVisualization)){
+                    this.app._.generatedVisualization.destroy();
+                }
+                
+                var hC = new CubeViz_Visualization_HighCharts();
+                
+                // load specific chart instance
+                var chart = hC.load(this.app._.ui.visualization.class);
+                
+                // init chart instance
+                chart.init(
+                    fromChartConfig.defaultConfig,
+                    this.app._.data.retrievedObservations,
+                    this.app._.data.selectedComponents.dimensions,
+                    CubeViz_Visualization_Controller.getOneElementDimensions (
+                        this.app._.data.selectedComponents.dimensions
+                    ),
+                    CubeViz_Visualization_Controller.getMultipleDimensions ( 
+                        this.app._.data.selectedComponents.dimensions
+                    ),
+                    this.app._.data.selectedComponents.measures,
+                    CubeViz_Visualization_Controller.getSelectedMeasure(
+                        this.app._.data.selectedComponents.measures
+                    ).typeUrl,
+                    this.app._.data.selectedDSD.label,
+                    this.app._.data.selectedDS.label
+                );
+                
+                // show chart
+                this.app._.generatedVisualization = new Highcharts.Chart(
+                    chart.getRenderResult()
+                );
+            
+                break;
+        }
     }
 }

@@ -52,9 +52,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
         this.app._.ui.visualization.class = chartClass;
         
-        console.log(chartClass);
-        
-        // cubeVizIndex.renderView("View_IndexAction_Visualization");
+        this.triggerGlobalEvent("onChange_visualizationClass");
     }
     
     /**
