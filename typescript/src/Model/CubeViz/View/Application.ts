@@ -85,7 +85,14 @@ class CubeViz_View_Application
     }
     
     /**
-     * @param events
+     * From a view you have the possibility to bind event handlers to the application
+     * the view is running in. If one of the global event is triggered it will 
+     * run all the associated event handlers.
+     * @param events An array of event objects: each object has a name (for instance
+     *               onChange_visualizationName) and a handler (function)
+     * @param callee The instance (usally a view) which calls this method (used in 
+     *               combination with $.proxy to bind this to callee)
+     * @param CubeViz_View_Application Itself
      */
     public bindGlobalEvents(events:any[], callee:any) : CubeViz_View_Application
     {
@@ -107,6 +114,8 @@ class CubeViz_View_Application
              *  }
              * 
              *  hint: handler should named as the event itself
+             *  hint2: event name is oriented on W3C standard, but separates the
+             *         logical unit from the event itself via an underline.
              */
              
             $(self).on(event.name, $.proxy(event.handler, callee));
@@ -161,7 +170,10 @@ class CubeViz_View_Application
     }
     
     /**
-     * @param eventName
+     * Triggers a global event. Other view may listen to this event and execute
+     * their event handlers.
+     * @param eventName Name of the event to fire
+     * @param data Additional data to pass through the event handler as second parameter
      * @return CubeViz_View_Application Itself
      */
     public triggerEvent(eventName:string, data?:any) : CubeViz_View_Application
