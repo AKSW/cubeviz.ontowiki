@@ -9,6 +9,16 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_CubeVizModule_DataStructureDefintion", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
     }
     
     /**
@@ -67,6 +77,14 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
      */
     public onClick_questionmark() {
         $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+    }
+    
+    /**
+     *
+     */
+    public onStart_application(event, data) 
+    {
+        this.initialize();
     }
     
     /**

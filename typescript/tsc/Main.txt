@@ -34,3 +34,5 @@ src/View/CubeVizModule/Footer.ts
 src/View/IndexAction/Header.ts
 src/View/IndexAction/Visualization.ts
 src/View/IndexAction/VisualizationSelector.ts
+
+src/View/Run.ts

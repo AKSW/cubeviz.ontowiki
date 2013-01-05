@@ -62,10 +62,11 @@ class CubevizModule extends OntoWiki_Module
          * Including javascript files for this action
          */
         $this->view->headScript()
-            ->prependFile ($baseJavascriptPath.'libraries/json2.js', 'text/javascript')
-            ->prependFile ($baseJavascriptPath.'libraries/underscore.js', 'text/javascript')
-            ->prependFile ($baseJavascriptPath.'libraries/underscore.string.js', 'text/javascript')
-            ->prependFile ($baseJavascriptPath.'Main.js', 'text/javascript');
+            ->prependFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
+            ->prependFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
+            ->prependFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
+            ->prependFile ($baseJavascriptPath. 'Main.js',                          'text/javascript')
+            ->prependFile ($basePath.           'ChartConfig.js',                   'text/javascript');
             
         
         /**
@@ -113,11 +114,10 @@ class CubevizModule extends OntoWiki_Module
             'url'               => $this->_config->staticUrlBase . 'cubeviz/',
             'sparqlEndpoint'    => 'local'
         );
-                
-        /**
-         * Set ui container
-         */
-        $this->view->cubeVizConfig = json_encode($config, JSON_FORCE_OBJECT);
+       
+        $this->view->headScript()
+            ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+            ->appendScript('cubeVizApp._.chartConfig = CubeViz_ChartConfig;');
         
         /**
          * fill template with content and give generated HTML back

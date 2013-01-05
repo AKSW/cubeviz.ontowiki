@@ -8,6 +8,16 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_CubeVizModule_Footer", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
     }
     
     /**
@@ -109,7 +119,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                     self.updateData(cubeVizIndex, updatedLinkCode);
                     
                     // let application re-render the visualization view
-                    cubeVizIndex.renderView("View_IndexAction_Visualization");
+                    // cubeVizIndex.renderView("View_IndexAction_Visualization");
                 }
             );
             
@@ -129,6 +139,14 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                 }
             );
         }
+    }
+    
+    /**
+     *
+     */
+    public onStart_application() 
+    {
+        this.initialize();
     }
     
     /**

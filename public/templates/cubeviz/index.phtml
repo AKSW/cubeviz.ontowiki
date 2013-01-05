@@ -1,27 +1,8 @@
 <script type="text/javascript">
-    
-    // initialize view manager to handle all the used views
-    var cubeVizApp = cubeVizApp || undefined;
-    
-    if(true === _.isUndefined(cubeVizApp)){
-        cubeVizApp = new CubeViz_View_Application;
-    }
-    
-    /**
-     * Initialize the application
-     */
-    $(document).ready(function(){
-        
-        cubeVizApp._.chartConfig = CubeViz_ChartConfig;
-        cubeVizApp
-            /**
-             * add and render views
-             */
-            .renderView("View_IndexAction_Header", "")
-            .renderView("View_IndexAction_Visualization", "cubeviz-index-visualization")
-            .renderView("View_IndexAction_VisualizationSelector", "cubeviz-visualizationselector-menu");
-    });
-    
+    cubeVizApp
+        .add("View_IndexAction_Header", "")
+        .add("View_IndexAction_Visualization", "cubeviz-index-visualization")
+        .add("View_IndexAction_VisualizationSelector", "cubeviz-visualizationselector-menu");
 </script>
 
 <div style="margin-left: 6px; margin-top: 10px;">

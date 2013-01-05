@@ -44,12 +44,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->headScript()
             ->appendFile($baseJavascriptPath.'libraries/CryptoJs/md5-min.js', 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
-            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript')
-        
-        // Generated Javascript
-            ->appendFile($baseJavascriptPath.'Main.js', 'text/javascript')
-            ->appendFile($basePath.'ChartConfig.js', 'text/javascript');
-    
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');    
     
         /**
          * Including css files for this action
@@ -93,31 +88,6 @@ class CubevizController extends OntoWiki_Controller_Component {
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-                				
-        /**
-         * Set data container with CubeViz related information
-         */
-        $config = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $config = $config->read ($linkCode); 
-        
-        $config['data']['linkCode'] = '' == $linkCode ? $linkCode : $config['data']['linkCode'];
-                				
-        /**
-         * Set backend container with backend related information
-         */
-        $config['backend'] = array(
-            'context'           => 'development', // TODO get it from doap.n3
-            'database'          => $this->_owApp->getConfig()->store->backend,
-            'imagesPath'        => $baseImagesPath,
-            'modelUrl'          => $modelIri,
-            'url'               => $this->_config->staticUrlBase . 'cubeviz/',
-            'sparqlEndpoint'    => 'local'
-        );
-                
-        /**
-         * Set ui container
-         */
-        $this->view->cubeVizConfig = json_encode($config, JSON_FORCE_OBJECT);  
 	}
 	
 	public function getdatafromlinkcodeAction() {

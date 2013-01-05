@@ -156,8 +156,8 @@ var CubeViz_View_Abstract = (function () {
     };
     CubeViz_View_Abstract.prototype.initialize = function () {
     };
-    CubeViz_View_Abstract.prototype.triggerGlobalEvent = function (eventName) {
-        this.app.triggerEvent(eventName);
+    CubeViz_View_Abstract.prototype.triggerGlobalEvent = function (eventName, data) {
+        this.app.triggerEvent(eventName, data);
         return this;
     };
     return CubeViz_View_Abstract;
@@ -192,13 +192,18 @@ var CubeViz_View_Application = (function () {
         return this._viewInstances.get(id);
     };
     CubeViz_View_Application.prototype.bindGlobalEvents = function (events, callee) {
+        console.log("");
+        console.log(">>>>>>>>>>>>>>>>>> bindGlobalEvents for:");
+        console.log(events);
         if(true === _.isUndefined(events) || 0 == _.size(events)) {
             return this;
         }
         var self = this;
         _.each(events, function (event) {
+            console.log("bind " + event.name + " from " + event.from);
             $(self).on(event.name, $.proxy(event.handler, callee));
         });
+        console.log("");
         return this;
     };
     CubeViz_View_Application.prototype.renderView = function (id, attachedTo) {
@@ -217,6 +222,8 @@ var CubeViz_View_Application = (function () {
         return this;
     };
     CubeViz_View_Application.prototype.triggerEvent = function (eventName, data) {
+        console.log(" >> Trigger > " + eventName);
+        eval("console.log(arguments.callee.caller.caller);");
         $(this).trigger(eventName, [
             data
         ]);
@@ -800,6 +807,13 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
     function View_CubeVizModule_DataStructureDefintion(attachedTo, app) {
         _super.call(this, "View_CubeVizModule_DataStructureDefintion", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application,
+                from: "View_CubeVizModule_DataStructureDefintion"
+            }
+        ]);
     }
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
         var self = this;
@@ -821,6 +835,10 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
         $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+    };
+    View_CubeVizModule_DataStructureDefintion.prototype.onStart_application = function (event, data) {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onStart_application");
+        this.initialize();
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
         var list = $("#cubeviz-dataStructureDefinition-list");
@@ -894,7 +912,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.triggerGlobalEvent("onChange_selectedDS");
     };
     View_CubeVizModule_DataSet.prototype.onChange_selectedDSD = function (event, data) {
-        this.initialize();
+        this.destroy().initialize();
     };
     View_CubeVizModule_DataSet.prototype.onClick_questionmark = function () {
         $("#cubeviz-dataSet-dialog").dialog("open");
@@ -1136,6 +1154,13 @@ var View_CubeVizModule_Footer = (function (_super) {
     __extends(View_CubeVizModule_Footer, _super);
     function View_CubeVizModule_Footer(attachedTo, app) {
         _super.call(this, "View_CubeVizModule_Footer", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application,
+                from: "View_CubeVizModule_DataStructureDefintion"
+            }
+        ]);
     }
     View_CubeVizModule_Footer.prototype.changePermaLinkButton = function () {
         var value = "";
@@ -1175,13 +1200,16 @@ var View_CubeVizModule_Footer = (function (_super) {
             _.isUndefined(cubeVizIndex);
             CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (updatedLinkCode) {
                 self.updateData(cubeVizIndex, updatedLinkCode);
-                cubeVizIndex.renderView("View_IndexAction_Visualization");
             });
         } catch (ex) {
             CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (updatedLinkCode) {
                 window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&lC=" + updatedLinkCode;
             });
         }
+    };
+    View_CubeVizModule_Footer.prototype.onStart_application = function () {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>> FOOOOTER > onStart_application");
+        this.initialize();
     };
     View_CubeVizModule_Footer.prototype.render = function () {
         this.bindUserInterfaceEvents({
@@ -1302,7 +1330,6 @@ var View_IndexAction_Visualization = (function (_super) {
         this.bindUserInterfaceEvents({
             "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
         });
-        this.app.renderView("View_IndexAction_VisualizationSelector");
         return this;
     };
     return View_IndexAction_Visualization;
@@ -1329,7 +1356,6 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         }
         this.app._.ui.visualization.class = chartClass;
         console.log(chartClass);
-        cubeVizIndex.renderView("View_IndexAction_Visualization");
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
@@ -1353,3 +1379,8 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     return View_IndexAction_VisualizationSelector;
 })(CubeViz_View_Abstract);
+var cubeVizApp = new CubeViz_View_Application();
+$(document).ready(function () {
+    console.log("ready called in RUN");
+    cubeVizApp.triggerEvent("onStart_application");
+});
