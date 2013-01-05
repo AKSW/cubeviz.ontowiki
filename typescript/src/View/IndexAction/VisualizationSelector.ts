@@ -9,6 +9,16 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_IndexAction_VisualizationSelector", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onComplete_loadObservations",
+                handler: this.onComplete_loadObservations
+            }
+        ]);
     }
     
     /**
@@ -44,7 +54,15 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
         console.log(chartClass);
         
-        cubeVizIndex.renderView("View_IndexAction_Visualization");
+        // cubeVizIndex.renderView("View_IndexAction_Visualization");
+    }
+    
+    /**
+     *
+     */
+    public onComplete_loadObservations() 
+    {
+        this.initialize();
     }
     
     /**

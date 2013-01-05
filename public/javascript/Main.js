@@ -192,18 +192,13 @@ var CubeViz_View_Application = (function () {
         return this._viewInstances.get(id);
     };
     CubeViz_View_Application.prototype.bindGlobalEvents = function (events, callee) {
-        console.log("");
-        console.log(">>>>>>>>>>>>>>>>>> bindGlobalEvents for:");
-        console.log(events);
         if(true === _.isUndefined(events) || 0 == _.size(events)) {
             return this;
         }
         var self = this;
         _.each(events, function (event) {
-            console.log("bind " + event.name + " from " + event.from);
             $(self).on(event.name, $.proxy(event.handler, callee));
         });
-        console.log("");
         return this;
     };
     CubeViz_View_Application.prototype.renderView = function (id, attachedTo) {
@@ -222,8 +217,6 @@ var CubeViz_View_Application = (function () {
         return this;
     };
     CubeViz_View_Application.prototype.triggerEvent = function (eventName, data) {
-        console.log(" >> Trigger > " + eventName);
-        eval("console.log(arguments.callee.caller.caller);");
         $(this).trigger(eventName, [
             data
         ]);
@@ -810,8 +803,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.bindGlobalEvents([
             {
                 name: "onStart_application",
-                handler: this.onStart_application,
-                from: "View_CubeVizModule_DataStructureDefintion"
+                handler: this.onStart_application
             }
         ]);
     }
@@ -837,7 +829,6 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onStart_application = function (event, data) {
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onStart_application");
         this.initialize();
     };
     View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
@@ -1157,8 +1148,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         this.bindGlobalEvents([
             {
                 name: "onStart_application",
-                handler: this.onStart_application,
-                from: "View_CubeVizModule_DataStructureDefintion"
+                handler: this.onStart_application
             }
         ]);
     }
@@ -1208,7 +1198,6 @@ var View_CubeVizModule_Footer = (function (_super) {
         }
     };
     View_CubeVizModule_Footer.prototype.onStart_application = function () {
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>> FOOOOTER > onStart_application");
         this.initialize();
     };
     View_CubeVizModule_Footer.prototype.render = function () {
@@ -1243,6 +1232,12 @@ var View_IndexAction_Header = (function (_super) {
     __extends(View_IndexAction_Header, _super);
     function View_IndexAction_Header(attachedTo, app) {
         _super.call(this, "View_IndexAction_Header", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
     }
     View_IndexAction_Header.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -1255,6 +1250,9 @@ var View_IndexAction_Header = (function (_super) {
     };
     View_IndexAction_Header.prototype.onClick_questionMark = function () {
         $("#cubeviz-index-headerDialogBox").dialog("open");
+    };
+    View_IndexAction_Header.prototype.onStart_application = function () {
+        this.initialize();
     };
     View_IndexAction_Header.prototype.render = function () {
         $("#cubeviz-index-headerDialogBox").dialog({
@@ -1281,6 +1279,12 @@ var View_IndexAction_Visualization = (function (_super) {
     __extends(View_IndexAction_Visualization, _super);
     function View_IndexAction_Visualization(attachedTo, app) {
         _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
     }
     View_IndexAction_Visualization.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -1297,7 +1301,11 @@ var View_IndexAction_Visualization = (function (_super) {
     View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
         this.app._.data.retrievedObservations = retrievedObservations;
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
+        this.triggerGlobalEvent("onComplete_loadObservations");
         this.render();
+    };
+    View_IndexAction_Visualization.prototype.onStart_application = function () {
+        this.initialize();
     };
     View_IndexAction_Visualization.prototype.render = function () {
         if(1 <= _.size(this.app._.data.retrievedObservations)) {
@@ -1338,6 +1346,12 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     __extends(View_IndexAction_VisualizationSelector, _super);
     function View_IndexAction_VisualizationSelector(attachedTo, app) {
         _super.call(this, "View_IndexAction_VisualizationSelector", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onComplete_loadObservations",
+                handler: this.onComplete_loadObservations
+            }
+        ]);
     }
     View_IndexAction_VisualizationSelector.prototype.initialize = function () {
         console.log("this.app._.ui (for class " + this.app._.ui.visualization.class + ")");
@@ -1356,6 +1370,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         }
         this.app._.ui.visualization.class = chartClass;
         console.log(chartClass);
+    };
+    View_IndexAction_VisualizationSelector.prototype.onComplete_loadObservations = function () {
+        this.initialize();
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
@@ -1381,6 +1398,5 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
-    console.log("ready called in RUN");
     cubeVizApp.triggerEvent("onStart_application");
 });

@@ -10,6 +10,16 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
         super("View_IndexAction_Visualization", attachedTo, app);
+        
+        // publish event handlers to application:
+        // if one of these events get triggered, the associated handler will
+        // be executed to handle it
+        this.bindGlobalEvents([
+            {
+                name:    "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
     }
     
     /**
@@ -60,7 +70,17 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             )
         );
         
+        this.triggerGlobalEvent("onComplete_loadObservations");
+        
         this.render();
+    }
+    
+    /**
+     *
+     */
+    public onStart_application() 
+    {
+        this.initialize();
     }
 
     /**
@@ -176,7 +196,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 this.onClick_nothingFoundNotificationLink
         });
         
-        this.app.renderView("View_IndexAction_VisualizationSelector");
+        // this.app.renderView("View_IndexAction_VisualizationSelector");
         
         return this;
     }
