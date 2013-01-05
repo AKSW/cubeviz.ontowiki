@@ -125,7 +125,7 @@ class CubeViz_View_Abstract
      */
     public triggerGlobalEvent(eventName:string, data?:any) : CubeViz_View_Abstract
     {
-        this.app.triggerEvent(eventName, data:any);
+        this.app.triggerEvent(eventName, data);
         return this;
     }
 }
