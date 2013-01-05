@@ -6,7 +6,7 @@ class CubeViz_ConfigurationLink
      * 
      */
     static saveToServer (url, data:Object, ui:Object, callback) : void
-    {
+    {        
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
             oldSupportOrs = $.support.cors;
@@ -21,12 +21,16 @@ class CubeViz_ConfigurationLink
             "data": { "data": data, "ui": ui }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
+            
+            // set old ajax config
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
             
             throw new Error( "saveToServerFile error: " + xhr ["responseText"] );
         })
         .done( function (result) { 
+            
+            // set old ajax config
             $.ajaxSetup(oldAjaxSetup); 
             $.support.cors = oldSupportOrs;
             

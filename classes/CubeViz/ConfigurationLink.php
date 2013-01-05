@@ -37,13 +37,99 @@ class CubeViz_ConfigurationLink
         $this->_links = array ();
 	}
     
+    /**
+     *
+     */
+    public function loadStandardData($config, &$model) 
+    {
+        $query = new DataCube_Query($model);
+        
+        // if no data structure definitions were selected
+        if(0 === count($config['data']['dataStructureDefinitions'])) {
+            $config['data']['dataStructureDefinitions'] = $query->getDataStructureDefinitions();
+        } 
+        
+        // if no data structure definition was selected
+        if(0 === count($config['data']['selectedDSD'])) {
+            $config['data']['selectedDSD'] = $config['data']['dataStructureDefinitions'][0];
+        }
+                
+        // if no data structure definitions were selected
+        if(0 === count($config['data']['dataSets'])) {
+            $config['data']['dataSets'] = $query->getDataSets($config['data']['selectedDSD']['url']);
+        } 
+        
+        // if no data sets were selected
+        if(0 === count($config['data']['selectedDS'])) {
+            $config['data']['selectedDS'] = $config['data']['dataSets'][0];
+        }
+        
+        // if no components were selected
+        if(0 === count($config['data']['components'])) {
+            
+            /**
+             * Dimensions
+             */
+            $dimensions = $query->getComponents(
+                $config['data']['selectedDSD']['url'],
+                $config['data']['selectedDS']['url'],
+                DataCube_UriOf::Dimension
+            );
+            
+            // set components
+            $config['data']['components']['dimensions'] = array();
+            foreach ($dimensions as $dimension) {
+                $config['data']['components']['dimensions']
+                    [$dimension['hashedUrl']] = $dimension;
+            }
+            
+            // set selectedComponents
+            $config['data']['selectedComponents']['dimensions'] = array();
+            foreach ($dimensions as $dimension) {
+                
+                $dimension['elements'] = array(
+                    $dimension['elements'][0]
+                );
+                
+                $config['data']['selectedComponents']['dimensions']
+                    [$dimension['hashedUrl']] = $dimension;
+            }
+            
+            /**
+             * Measures
+             */
+            $measures = $query->getComponents(
+                $config['data']['selectedDSD']['url'],
+                $config['data']['selectedDS']['url'],
+                DataCube_UriOf::Measure
+            );
+            
+            // set measures
+            $config['data']['components']['measures'] = array();
+            foreach ($measures as $measure) {
+                $config['data']['components']['measures']
+                    [$measure['hashedUrl']] = $measure;
+            }
+            
+            // set selectedComponents
+            $config['data']['selectedComponents']['measures'] = array();
+            foreach ($measures as $measure) {
+                $config['data']['selectedComponents']['measures']
+                    [$measure['hashedUrl']] = $measure;
+            }
+        }
+        
+        return $config;
+    }
+    
 	/**
 	 * Read configuration from a json file in links folder
      * @param $linkCode Name of the file (name = hash code)
      * @return array Array with different kinds of information
 	 */
-	public function read($linkCode) 
+	public function read($linkCode, &$model) 
     {
+        // If link code file exists, try to load content
 		if (true === file_exists($this->_hashDirectory . $linkCode) ) {
             
             $readedConfig = array ();
@@ -59,33 +145,41 @@ class CubeViz_ConfigurationLink
                 // contains UI chart config information
                 $readedConfig ['ui'] = json_decode($c [1], true);
                 if(null == $readedConfig ['ui']) $readedConfig ['ui'] = array();
-            
-            // no content in file, set default values
-            } else {
                 
-                $readedConfig ['backend'] = array('backend' => '');
-                $readedConfig ['data'] = array(
-                    'components'            => array(),
-                    'selectedDSD'           => array(),
-                    'selectedDS'            => array(),
-                    'selectedComponents'    => array(
-                        'dimensions'        => array(),
-                        'measures'          => array()
-                    )
-                );
-                $readedConfig ['ui'] = array(
-                    'visualization'         => array(
-                        'class'             => ''
-                    ),
-                    'visualizationSettings' => array(
-                        'relatedToClass'    => ''
-                    )
-                );
-            }
-            
-            return $readedConfig;
+                return $readedConfig;
+            } 
 		}
-		return false;
+        
+        // Otherwise set standard values
+        $readedConfig ['backend'] = array('backend' => '');
+        $readedConfig ['data'] = array(
+            'dataStructureDefinitions'  => array(),
+            'dataSets'                  => array(),
+            'components'                => array(),
+            'selectedDSD'               => array(),
+            'selectedDS'                => array(),
+            'selectedComponents'        => array(
+                'dimensions'            => array(),
+                'measures'              => array()
+            )
+        );
+        $readedConfig ['ui'] = array(
+            'visualization'             => array(
+                'class'                 => ''
+            ),
+            'visualizationSettings'     => array(
+                'relatedToClass'        => ''
+            )
+        );
+        
+        $readedConfig = $this->loadStandardData($readedConfig, $model);
+        
+        // set link code
+        $readedConfig['data']['linkCode'] = $this->write(
+            $readedConfig['data'], $readedConfig['ui']
+        );
+        
+		return $readedConfig;
 	}
 	
     /**

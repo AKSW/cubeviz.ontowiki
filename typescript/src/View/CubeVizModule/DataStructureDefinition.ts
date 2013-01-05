@@ -26,33 +26,13 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
      */
     public initialize() : void
     {        
-        var self = this;
+        // save given elements, doublings were ignored!
+        this.collection
+            .reset("hashedUrl")
+            .addList(this.app._.data.dataStructureDefinitions);
         
-        // load all data structure definitions from server
-        DataCube_DataStructureDefinition.loadAll(
-        
-            this.app._.backend.url,            
-            this.app._.backend.modelUrl,
-            
-            // after all elements were loaded, add them to collection
-            // and render the view
-            function(entries) {
-                                
-                // set selected data structure definition
-                self.setSelectedDSD(entries);
-                
-                // save given elements, doublings were ignored!
-                self.collection
-                        .reset("hashedUrl")
-                        .addList(entries);
-                
-                // render given elements
-                self.render();
-                
-                // trigger event
-                self.triggerGlobalEvent("onComplete_loadDSD");
-            }
-        );
+        // render given elements
+        this.render();
     }
     
     /**
@@ -66,7 +46,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         // TODO: remember previous selection
         
         // set new selected data structure definition
-        this.setSelectedDSD([selectedElement]);
+        this.app._.data.selectedDSD = selectedElement;
     
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDSD");
@@ -134,22 +114,5 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         });
         
         return this;
-    }
-    
-    /**
-     * 
-     */
-    public setSelectedDSD(entries:any[]) : void 
-    {
-        // if nothing was given
-        if(0 == entries.length || undefined === entries) {
-            // todo: handle case that no data structure definition were loaded!
-            this.app._.data.selectedDSD = {};
-            throw new Error ("View_CubeVizModule_DataStructureDefinition: No dsd's were loaded!");
-        
-        // if at least one data structure definition, than load data sets for first one     
-        } else {
-            this.app._.data.selectedDSD = entries[0];
-        }
     }
 }

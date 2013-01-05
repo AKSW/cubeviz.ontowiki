@@ -8,16 +8,18 @@
  * @package Extensions
  * @subpackage Cubeviz
  * @author Ivan Ermilov 
+ * @author Konrad Abicht 
  */
-class DataCube_Query {
-    
+class DataCube_Query 
+{    
     protected $_model = null;
     protected $_store = null;
     
     /**
      * Constructor
      */
-    public function __construct (&$model) {
+    public function __construct (&$model)
+    {
         $this->_model = $model;
         $this->_store = $model->getStore();
     }
@@ -26,8 +28,8 @@ class DataCube_Query {
 	 * Returns array of Data Structure Definitions 
      * @return array
 	 */ 
-	public function getDataStructureDefinitions () {   
-		
+	public function getDataStructureDefinitions ()
+    {
 		$result = array();
         
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);

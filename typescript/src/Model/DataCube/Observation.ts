@@ -31,11 +31,11 @@ class DataCube_Observation {
                 "value" : dimensionValue,
                 
                 // e.g. ref: this ["_axes"] ["http://.../country"] ["Germany"]
-                "ref" : self["_axes"][dimensionUri][dimensionValue]
+                "ref" : self._axes[dimensionUri][dimensionValue]
             };
         });
         
-        this ["_axes"][uri][value].push ( dimensionValues );
+        this._axes[uri][value].push ( dimensionValues );
     }    
         
     /**
@@ -59,8 +59,8 @@ class DataCube_Observation {
      */
     public getAxesElements ( uri:string ) : any 
     {
-        if ( false === _.isUndefined( this ["_axes"][uri] ) ) {
-            return this ["_axes"][uri];
+        if(false === _.isUndefined(this._axes[uri])) {
+            return this._axes[uri];
         } else {
             console.log ("\nNo elements found given axisUri: " + uri);
             return {};
@@ -153,15 +153,11 @@ class DataCube_Observation {
      */
     static loadAll (linkCode:string, url) {
         $.ajax({
-            url: url + "getobservations/", // CubeViz_Links_Module ["cubevizPath"] + "getobservations/",
-            data: {
-                lC: linkCode
-            }
+            url: url + "getobservations/",
+            data: {lC: linkCode}
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "Observation > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error ("Observation loadAll error: " + xhr.responseText);
         })
         .done( function (entries) { 
             DataCube_Observation.prepareLoadedResultObservations ( entries );
@@ -189,13 +185,14 @@ class DataCube_Observation {
      */
     public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation 
     {
-        var mode = true === _.isUndefined(mode) ? "ascending" : mode,
+        var axesEntries = this._axes[axisUri],
+            mode = true === _.isUndefined(mode) ? "ascending" : mode,
             sortedKeys = [], 
             sortedObj = {},
             self = this;
 
         // Separate keys and sort them
-        _.each(this._axes[axisUri], function(e, key){
+        _.each(axesEntries, function(e, key){
             sortedKeys.push(key);
         });
         

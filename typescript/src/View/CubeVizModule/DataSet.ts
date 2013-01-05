@@ -19,8 +19,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
                 handler: this.onChange_selectedDSD
             },
             {
-                name:    "onComplete_loadDSD",
-                handler: this.onComplete_loadDSD
+                name:    "onStart_application",
+                handler: this.onStart_application
             }
         ]);        
     }
@@ -30,34 +30,11 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      */
     public initialize() : void 
     {
-        var self = this;
+        // save given elements
+        this.collection.reset("hashedUrl");
+        this.collection.addList(this.app._.data.dataSets);
         
-        /**
-         * Load all data sets
-         */
-        DataCube_DataSet.loadAll(
-        
-            this.app._.backend.url,
-            this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.url,
-            
-            // after all elements were loaded, add them to collection
-            // and render the view
-            function(entries) {                
-                // set selectedDsd
-                self.setSelectedDS(entries);
-                
-                // save given elements
-                self.collection.reset("hashedUrl");
-                self.collection.addList(entries);
-                
-                // render given elements
-                self.render();
-                
-                // trigger event
-                self.triggerGlobalEvent("onComplete_loadDS");
-            }
-        );
+        this.render();
     }
     
     /**
@@ -69,7 +46,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
             selectedElement = this["collection"].get(selectedElementId);
 
         // set new selected data set
-        this.setSelectedDS([selectedElement]);
+        this.app._.data.selectedDS = selectedElement;
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDS");
@@ -79,10 +56,38 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      *
      */
     public onChange_selectedDSD(event, data) 
-    {
-        this
-            .destroy()
-            .initialize();
+    {        
+        this.destroy();
+        
+        var self = this;
+        
+        /**
+         * Load all data sets based on new selectedDSD
+         */
+        DataCube_DataSet.loadAll(
+        
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
+            this.app._.data.selectedDSD.url,
+            
+            // after all elements were loaded, add them to collection
+            // and render the view
+            function(entries) {
+    
+                // set default data set
+                self.app._.data.selectedDS = entries[0];
+
+                // save given elements
+                self.collection.reset("hashedUrl");
+                self.collection.addList(entries);
+                
+                // trigger event
+                self.triggerGlobalEvent("onChange_selectedDS");
+                
+                // render given elements
+                self.render();
+            }
+        );
     }
     
     /**
@@ -102,6 +107,14 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     }
     
     /**
+     *
+     */
+    public onStart_application() 
+    {
+        this.initialize();
+    }
+    
+    /**
      * 
      */
     public render() : CubeViz_View_Abstract
@@ -109,7 +122,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         /**
          * List of items
          */        
-        var list = $("#cubeviz-dataSet-list"),
+        var list = $(this.attachedTo),
             optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text()),
             self = this;
         
@@ -147,22 +160,5 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         });
         
         return this;
-    }
-    
-    /**
-     * 
-     */
-    public setSelectedDS(entries) : void 
-    {
-        // if nothing was given
-        if(0 === entries.length || undefined === entries) {
-            // todo: handle case that no data sets were loaded
-            this.app._.data.selectedDS = {};
-            throw new Error ("View_CubeVizModule_DataSet: No data sets were loaded!");
-        
-        // if at least one data structure definition, than load data sets for first one
-        } else {
-            this.app._.data.selectedDS = entries[0];
-        }
     }
 }

@@ -118,7 +118,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         
         // load configuration which is associated with given linkCode
 		$c = $this->_getConfiguration (); 	
-		$c = $c->read ($linkCode);
+		$c = $c->read ($linkCode, $this->_owApp->selectedModel);
         
         // ... get and return observations
 		$this->_response->setBody($query->getObservations($c ['data']));

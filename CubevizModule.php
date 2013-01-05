@@ -98,10 +98,8 @@ class CubevizModule extends OntoWiki_Module
         /**
          * Set data container with CubeViz related information
          */
-        $config = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $config = $config->read ($linkCode); 
-        
-        $config['data']['linkCode'] = '' == $linkCode ? $linkCode : $config['data']['linkCode'];
+        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $config = $c->read ($linkCode, $model);
                 				
         /**
          * Set backend container with backend related information

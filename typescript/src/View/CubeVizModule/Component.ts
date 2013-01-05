@@ -15,13 +15,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onComplete_loadDS",
-                handler: this.onComplete_loadDS
-            },
-            {
                 name:    "onChange_selectedDS",
                 handler: this.onChange_selectedDS
             },
+            {
+                name:    "onStart_application",
+                handler: this.onStart_application
+            }
         ]); 
     }
     
@@ -90,6 +90,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public configureSetupComponentElements(component:any) 
     {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
+            componentElements = _.toArray(component.elements),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
             selectedDimensions = this.app._.data.selectedComponents
@@ -98,23 +99,23 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             setElementChecked = null;
 
         // sort elements by label, ascending
-        component.elements.sort(function(a, b) {
+        componentElements.sort(function(a, b) {
            return a.propertyLabel.toUpperCase()
                     .localeCompare(b.propertyLabel.toUpperCase());
         });
         
         // Go through all elements of the given component ..
-        $(component.elements).each(function(i, element){
+        _.each(componentElements, function(element){
             
             // check if current element will be checked
             setElementChecked = undefined !== _.find(selectedDimensions, function(dim){ 
-                return dim.property == element["property"]; 
+                return dim.property == element.property; 
             });
             
             if(true === setElementChecked){
-                element["checked"] = " checked=\"checked\"";
+                element.checked = " checked=\"checked\"";
             } else {
-                element["checked"] = "";
+                element.checked = "";
             }
             // ... add new item to element list
             elementList.append(elementTpl(element));
@@ -147,10 +148,25 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      *
      */
     public initialize() 
-    {        
-        var self = this;
+    {
+        // save given elements
+        this.collection.reset("hashedUrl");
+        this.collection.addList(this.app._.data.components.dimensions);
+     
+        this.render();
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDS(event, data) 
+    {
+        this.destroy();
         
-        // load all data structure definitions from server
+        var componentsExists = false === _.isUndefined(this.app._.data.components.dimensions),
+            selectedComponentsExists = false === _.isUndefined(this.app._.data.selectedComponents.dimensions),
+            self = this;
+        
         DataCube_Component.loadAllDimensions(
         
             this.app._.backend.url,
@@ -173,9 +189,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
                 // save given elements, doublings were ignored!
                 self.collection
-                        .reset("hashedUrl")
-                        .addList(entries);
+                    .reset("hashedUrl")
+                    .addList(entries);
                 
+                
+                /**
+                 * Load measures
+                 */
                 DataCube_Component.loadAllMeasures(
                 
                     self.app._.backend.url,
@@ -200,19 +220,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onChange_selectedDS(event, data) 
-    {
-        this
-            .destroy()
-            .initialize();
-    }
-    
-    /**
-     *
-     */
     public onClick_closeAndApply(event) : void 
     {
-        $(event.target).data("dialogDiv")
+        $(event.target)
+            .data("dialogDiv")
             .dialog("close");
             
         // simply apply changes
@@ -333,8 +344,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public render()
+    public onStart_application() 
     {
+        this.initialize();
+    }
+    
+    /**
+     *
+     */
+    public render()
+    {        
         /**
          * List elements
          */
@@ -351,24 +370,24 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.collection.reset();
         
         // output loaded data
-        $(backendCollection).each(function(i, dimension){
+        _.each(backendCollection, function(dimension){
             
             if ( undefined !== selectedComponentDimensions ) {
-                selectedDimension = selectedComponentDimensions[dimension["hashedUrl"]];
-                dimension["selectedElementCount"] = _.keys(selectedDimension["elements"]).length;
+                selectedDimension = selectedComponentDimensions[dimension.hashedUrl];
+                dimension.selectedElementCount = _.keys(selectedDimension.elements).length;
             } else {
-                dimension["selectedElementCount"] = 1;
+                dimension.selectedElementCount = 1;
             }
             
             // set general element count
-            dimension["elementCount"] = _.size(dimension["elements"]);
+            dimension.elementCount = _.size(dimension.elements);
             
             // build html out of template
             componentBox = $(optionTpl(dimension));
             
             // get opener link
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
-                .data("hashedUrl", dimension["hashedUrl"]);
+                .data("hashedUrl", dimension.hashedUrl);
             
             // add option to list
             list.append(componentBox);
@@ -379,6 +398,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 componentBox,
                 // link to open the dialog
                 $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
+            );
+            
+            /**
+             * Update selected elements counter
+             */
+            $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
+                dimension.selectedElementCount
             );
             
             self.collection.add(dimension);
