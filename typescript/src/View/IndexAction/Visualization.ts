@@ -89,13 +89,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // If at least one observation was retrieved
         if ( 1 <= _.size(this.app._.data.retrievedObservations) ) {
             
-            // Dynamiclly set visualization container height
-            var container:any = $(this.attachedTo).offset();
-            
-            $(this.attachedTo).css ( 
-                "height", $(window).height() - container.top - 20
-            );
-            
             this.renderChart();
         } 
         
@@ -126,6 +119,13 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public renderChart() : void
     {
+        // Dynamiclly set visualization container height
+        var container:any = $(this.attachedTo).offset();
+        
+        $(this.attachedTo).css ( 
+            "height", $(window).height() - container.top - 20
+        );
+        
         // set default className
         if(true === _.isUndefined(this.app._.ui.visualization.class)
            || 0 == this.app._.ui.visualization.class.length) {

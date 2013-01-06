@@ -1339,8 +1339,6 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     View_IndexAction_Visualization.prototype.render = function () {
         if(1 <= _.size(this.app._.data.retrievedObservations)) {
-            var container = $(this.attachedTo).offset();
-            $(this.attachedTo).css("height", $(window).height() - container.top - 20);
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
@@ -1351,6 +1349,8 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
+        var container = $(this.attachedTo).offset();
+        $(this.attachedTo).css("height", $(window).height() - container.top - 20);
         if(true === _.isUndefined(this.app._.ui.visualization.class) || 0 == this.app._.ui.visualization.class.length) {
             this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
         }
@@ -1421,19 +1421,19 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
-        var chartItem;
+        var viszItem;
         var charts = this.app._.chartConfig[numberOfMultDims].charts;
         var selectorItemTpl = _.template($("#cubeviz-visualizationselector-tpl-selectorItem").text());
         var self = this;
 
         _.each(charts, function (chartObject) {
-            chartItem = $(selectorItemTpl(chartObject));
-            chartItem.data("class", chartObject.class);
+            viszItem = $(selectorItemTpl(chartObject));
+            viszItem.data("class", chartObject.class);
             if(self.app._.ui.visualization.class == chartObject.class) {
-                chartItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
+                viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
             }
-            chartItem.on("click", $.proxy(self.onClick_selectorItem, self));
-            $("#cubeviz-visualizationselector-menu").append(chartItem);
+            viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
+            $("#cubeviz-visualizationselector-menu").append(viszItem);
         });
         this.bindUserInterfaceEvents({
         });
