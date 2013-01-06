@@ -15,8 +15,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onComplete_loadObservations",
-                handler: this.onComplete_loadObservations
+                name:    "onStart_application",
+                handler: this.onStart_application
             }
         ]);
     }
@@ -59,6 +59,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      *
      */
     public onComplete_loadObservations() 
+    {
+        this.initialize();
+    }
+    
+    /**
+     *
+     */
+    public onStart_application() 
     {
         this.initialize();
     }

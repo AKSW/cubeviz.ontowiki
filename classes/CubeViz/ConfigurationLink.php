@@ -53,6 +53,18 @@ class CubeViz_ConfigurationLink
         if(0 === count($config['data']['selectedDSD'])) {
             $config['data']['selectedDSD'] = $config['data']['dataStructureDefinitions'][0];
         }
+        
+        // if no numberOfMultipleDimensions was set
+        if(1 > (int) $config['data']['numberOfMultipleDimensions']) {
+            $config['data']['numberOfMultipleDimensions'] = 0;
+            
+            $dsds = $config['data']['dataStructureDefinitions'];
+            foreach ($dsds as $ds) {
+                if(0 < count($ds ['elements'])) {
+                    ++$config['data']['numberOfMultipleDimensions'];
+                }
+            }
+        }
                 
         // if no data structure definitions were selected
         if(0 === count($config['data']['dataSets'])) {
@@ -119,6 +131,19 @@ class CubeViz_ConfigurationLink
             }
         }
         
+        // if no retrievedObservations were selected
+        if(0 === count($config['data']['retrievedObservations'])){
+            
+            $selectedComponents = $linkConfiguration['selectedComponents'];
+            $dataSetUrl = $linkConfiguration['selectedDS']['url'];		
+            $selCompDims = $linkConfiguration['selectedComponents']['dimensions'];
+            
+            $config['data']['retrievedObservations'] = $query->getObservations(array(
+                'selectedComponents' => $config['data']['selectedComponents'],
+                'selectedDS' => array('url' => $config['selectedDS']['url'])
+            ));
+        }
+        
         return $config;
     }
     
@@ -156,12 +181,14 @@ class CubeViz_ConfigurationLink
             'dataStructureDefinitions'  => array(),
             'dataSets'                  => array(),
             'components'                => array(),
+            'numberOfMultipleDimensions'=> 0,
             'selectedDSD'               => array(),
             'selectedDS'                => array(),
             'selectedComponents'        => array(
                 'dimensions'            => array(),
                 'measures'              => array()
-            )
+            ),
+            'retrievedObservations'     => array()
         );
         $readedConfig ['ui'] = array(
             'visualization'             => array(

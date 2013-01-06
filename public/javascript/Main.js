@@ -691,8 +691,8 @@ var DataCube_Observation = (function () {
         }
     };
     DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
-        if(true !== _.isArray(retrievedObservations) || 0 == retrievedObservations["length"]) {
-            console.log("\nEntries is empty or not an array!");
+        if(0 == _.size(retrievedObservations)) {
+            console.log("\nEntries is empty!");
             return;
         }
         this._selectedDimensionUris = this.extractSelectedDimensionUris(selectedComponentDimensions);
@@ -1313,21 +1313,13 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
-        var obs = DataCube_Observation;
-        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
-        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+        this.render();
     };
     View_IndexAction_Visualization.prototype.onChange_visualizationClass = function () {
         this.renderChart();
     };
     View_IndexAction_Visualization.prototype.onClick_nothingFoundNotificationLink = function (event) {
         $("#cubeviz-visualization-nothingFoundFurtherExplanation").slideDown("slow");
-    };
-    View_IndexAction_Visualization.prototype.onComplete_loadObservations = function (event, retrievedObservations) {
-        this.app._.data.retrievedObservations = retrievedObservations;
-        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
-        this.triggerGlobalEvent("onComplete_loadObservations");
-        this.render();
     };
     View_IndexAction_Visualization.prototype.onStart_application = function () {
         this.initialize();
@@ -1378,8 +1370,8 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         _super.call(this, "View_IndexAction_VisualizationSelector", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onComplete_loadObservations",
-                handler: this.onComplete_loadObservations
+                name: "onStart_application",
+                handler: this.onStart_application
             }
         ]);
     }
@@ -1402,6 +1394,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onChange_visualizationClass");
     };
     View_IndexAction_VisualizationSelector.prototype.onComplete_loadObservations = function () {
+        this.initialize();
+    };
+    View_IndexAction_VisualizationSelector.prototype.onStart_application = function () {
         this.initialize();
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {

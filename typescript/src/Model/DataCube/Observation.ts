@@ -73,9 +73,8 @@ class DataCube_Observation {
     public initialize ( retrievedObservations:any[], selectedComponentDimensions:Object[],
         measureUri:string ) : DataCube_Observation 
     {
-        if ( true !== _.isArray ( retrievedObservations ) 
-             || 0 == retrievedObservations ["length"] ) {
-            console.log ("\nEntries is empty or not an array!");
+        if(0 == _.size(retrievedObservations)) {
+            console.log ("\nEntries is empty!");
             return;
         }
         

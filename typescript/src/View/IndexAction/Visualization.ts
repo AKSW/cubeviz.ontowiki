@@ -41,13 +41,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public initialize() 
     {        
-        /**
-         * Load observations based on pre-configured data structure definition and 
-         * data set. Function onComplete_loadObservations will handle incoming data.
-         */
-        var obs = DataCube_Observation;
-        $(obs).on("loadComplete", $.proxy(this.onComplete_loadObservations, this));
-        obs.loadAll(this.app._.data.linkCode, this.app._.backend.url);
+        this.render();
     }
     
     /**
@@ -65,26 +59,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     {
         $("#cubeviz-visualization-nothingFoundFurtherExplanation")
             .slideDown("slow");
-    }
-     
-    /**
-     *
-     */
-    public onComplete_loadObservations(event, retrievedObservations) : void
-    {
-        // save retrieved observations
-        this.app._.data.retrievedObservations = retrievedObservations;
-            
-        // compute and save number of multiple dimensions
-        this.app._.data.numberOfMultipleDimensions = _.size(
-            CubeViz_Visualization_Controller.getMultipleDimensions (
-                this.app._.data.selectedComponents.dimensions
-            )
-        );
-        
-        this.triggerGlobalEvent("onComplete_loadObservations");
-        
-        this.render();
     }
     
     /**
