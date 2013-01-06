@@ -1326,6 +1326,8 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     View_IndexAction_Visualization.prototype.render = function () {
         if(1 <= _.size(this.app._.data.retrievedObservations)) {
+            var container = $(this.attachedTo).offset();
+            $(this.attachedTo).css("height", $(window).height() - container.top - 20);
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
