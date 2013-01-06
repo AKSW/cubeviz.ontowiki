@@ -10,7 +10,8 @@
     padding-bottom: 5px;
 }
 
-.cubeviz-visualizationselector-selectorItem
+.cubeviz-visualizationselector-selectorItem, 
+    .cubeviz-visualizationselector-selectedSelectorItem
 {
     float: left;
     margin-left: 6px;
@@ -40,12 +41,7 @@
 {
     opacity:1.0;
     filter:alpha(opacity=100);
-    border-width: 1px 1px 1px 1px;
-	border-style: solid;
-	border-color: #868686;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
-    padding: 2px;
+    border-color: #6F6F6F;
 }
 
 

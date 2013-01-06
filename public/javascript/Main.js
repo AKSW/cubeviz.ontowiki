@@ -1399,13 +1399,18 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
         var chartClass = undefined;
+        var selectorItemDiv = null;
+
         if(true === _.isUndefined($(event.target).data("class"))) {
-            var selectorItemDiv = $($(event.target).parent());
+            selectorItemDiv = $($(event.target).parent());
             chartClass = selectorItemDiv.data("class");
         } else {
-            chartClass = $(event.target).data("class");
+            selectorItemDiv = $(event.target);
+            chartClass = selectorItemDiv.data("class");
         }
         this.app._.ui.visualization.class = chartClass;
+        $(".cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectedSelectorItem").addClass("cubeviz-visualizationselector-selectorItem");
+        selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
         this.triggerGlobalEvent("onChange_visualizationClass");
     };
     View_IndexAction_VisualizationSelector.prototype.onComplete_loadObservations = function () {
@@ -1427,10 +1432,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             if(self.app._.ui.visualization.class == chartObject.class) {
                 chartItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
             }
+            chartItem.on("click", $.proxy(self.onClick_selectorItem, self));
             $("#cubeviz-visualizationselector-menu").append(chartItem);
         });
         this.bindUserInterfaceEvents({
-            "click .cubeviz-visualizationselector-selectorItem": this.onClick_selectorItem
         });
         return this;
     };
