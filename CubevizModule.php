@@ -109,6 +109,10 @@ class CubevizModule extends OntoWiki_Module
             'database'          => $this->_owApp->getConfig()->store->backend,
             'imagesPath'        => $baseImagesPath,
             'modelUrl'          => $modelIri,
+            'uiParts'           => array(
+                'module'        => array('isLoaded'=> false),
+                'index'         => array('isLoaded'=> false)
+            ),
             'url'               => $this->_config->staticUrlBase . 'cubeviz/',
             'sparqlEndpoint'    => 'local'
         );

@@ -243,15 +243,38 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_closeAndApply(event) : void 
     {
-        var dialogDiv = $(event.target).data("dialogDiv");
+        // The dialog the clicked button is attached to
+        var dialogDiv = $(event.target).data("dialogDiv"),
+            self = this;
         
         // save changes in dialog div
         this.readAndSaveSetupComponentDialogChanges(dialogDiv);
         
-        // close dialog
-        $(event.target)
-            .data("dialogDiv")
-            .dialog("close");
+        // update link code and later on, retrievedObservations
+        CubeViz_ConfigurationLink.saveToServer(
+            this.app._.backend.url,
+            this.app._.data,
+            this.app._.ui,            
+            function(updatedLinkCode){
+                
+                // update observations
+                var obs = DataCube_Observation;
+                
+                // set event handler
+                $(obs).on(
+                    "loadComplete", 
+                    $.proxy(self.onComplete_loadObservations, self)
+                );
+                
+                // start loading new retrievedObservations
+                obs.loadAll(updatedLinkCode, self.app._.backend.url);
+                            
+                // close dialog
+                $(event.target)
+                    .data("dialogDiv")
+                    .dialog("close");
+            }
+        );
     }
     
     /**
@@ -373,7 +396,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         // save updated element list
         this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
-        
+                
         /**
          * Update selected elements counter
          */
@@ -389,6 +412,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     {
         // use another event handler for this event
         this.onChange_selectedDS(event, data);
+    }
+    
+    /**
+     *
+     */
+    public onComplete_loadObservations(event, updatedRetrievedObservations) 
+    {
+        console.log("updatedRetrievedObservations");
+        console.log(updatedRetrievedObservations);
+        this.app._.data.retrievedObservations = updatedRetrievedObservations;
     }
     
     /**

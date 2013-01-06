@@ -16,12 +16,16 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onStart_application",
-                handler: this.onStart_application
-            },
-            {
                 name:    "onChange_visualizationClass",
                 handler: this.onChange_visualizationClass
+            },
+            {
+                name:    "onReRender_visualization",
+                handler: this.onReRender_visualization
+            },
+            {
+                name:    "onStart_application",
+                handler: this.onStart_application
             }
         ]);
     }
@@ -59,6 +63,14 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     {
         $("#cubeviz-visualization-nothingFoundFurtherExplanation")
             .slideDown("slow");
+    }
+    
+    /**
+     *
+     */
+    public onReRender_visualization() 
+    {
+        this.render();
     }
     
     /**

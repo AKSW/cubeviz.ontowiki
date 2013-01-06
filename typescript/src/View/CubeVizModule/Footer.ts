@@ -130,27 +130,13 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     {
         var self = this;
         
-        try {
-            // if cubeVizIndex is not set, it provokes a runtime exception
-            _.isUndefined(cubeVizIndex);
+        // if module + indexAction stuff was loaded
+        if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             
-            // cubeVizIndex is set, so we can arrange it to re-render visualization 
-            // view
+            this.triggerGlobalEvent("onReRender_visualization");
             
-            // update link code
-            CubeViz_ConfigurationLink.saveToServer(
-                this.app._.backend.url,
-                this.app._.data,
-                this.app._.ui,
-                function(updatedLinkCode){
-                    self.updateData(cubeVizIndex, updatedLinkCode);
-                    
-                    // let application re-render the visualization view
-                    // cubeVizIndex.renderView("View_IndexAction_Visualization");
-                }
-            );
-            
-        } catch (ex) {
+        // if you are only in the module
+        } else {
             
             // update link code
             CubeViz_ConfigurationLink.saveToServer(
@@ -228,16 +214,5 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                         .html(url);
                 }
         ); 
-    }
-
-    /**
-     *
-     */
-    public updateData(cubeVizIndex:CubeViz_View_Application, updatedLinkCode:string) : void 
-    {
-        // update link code
-        this.app._.data.linkCode = updatedLinkCode;
-        
-        cubeVizIndex._.data.linkCode = updatedLinkCode;
     }
 }
