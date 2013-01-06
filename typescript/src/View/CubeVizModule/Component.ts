@@ -159,13 +159,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onChange_selectedDS(event, data) 
+    public loadComponentDimensions(callback) : void 
     {
-        this.destroy();
-        
-        var componentsExists = false === _.isUndefined(this.app._.data.components.dimensions),
-            selectedComponentsExists = false === _.isUndefined(this.app._.data.selectedComponents.dimensions),
-            self = this;
+        var self = this;
         
         DataCube_Component.loadAllDimensions(
         
@@ -192,29 +188,54 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     .reset("hashedUrl")
                     .addList(entries);
                 
-                
-                /**
-                 * Load measures
-                 */
-                DataCube_Component.loadAllMeasures(
-                
-                    self.app._.backend.url,
-                    self.app._.backend.modelUrl,
-                    self.app._.data.selectedDSD.url,
-                    self.app._.data.selectedDS.url,
-                    
-                    function(entries) {
-                        
-                        // set components (measures)
-                        self.app._.data.components.measures = entries;
-                        self.app._.data.selectedComponents.measures = entries;
-                        
-                        // render given elements
-                        self.render();
-                    }
-                );
+                callback();               
             }
         );
+    }
+    
+    /**
+     * Load new measures.
+     * @param callback Function to call the load is complete
+     */
+    public loadComponentMeasures(callback) : void 
+    {
+        var self = this;
+        
+        /**
+         * Load measures
+         */
+        DataCube_Component.loadAllMeasures(
+        
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
+            this.app._.data.selectedDSD.url,
+            this.app._.data.selectedDS.url,
+            
+            function(entries) {
+                
+                // set components (measures)
+                self.app._.data.components.measures = entries;
+                self.app._.data.selectedComponents.measures = entries;
+                
+                // execute given callback method
+                callback();
+            }
+        );
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDS(event, data) 
+    {
+        var self = this;
+        
+        this.destroy();
+        
+        this.loadComponentDimensions(function(){
+            // Load measures
+            self.loadComponentMeasures($.proxy(self, "render"));
+        });
     }
     
     /**

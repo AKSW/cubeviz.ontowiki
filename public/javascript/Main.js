@@ -745,7 +745,6 @@ var DataCube_Observation = (function () {
         });
     }
     DataCube_Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries) {
-        console.log(entries);
         var parse = $.parseJSON(entries);
         if(null == parse) {
             $(this).trigger("loadComplete", [
@@ -1012,21 +1011,28 @@ var View_CubeVizModule_Component = (function (_super) {
         this.collection.addList(this.app._.data.components.dimensions);
         this.render();
     };
-    View_CubeVizModule_Component.prototype.onChange_selectedDS = function (event, data) {
-        this.destroy();
-        var componentsExists = false === _.isUndefined(this.app._.data.components.dimensions);
-        var selectedComponentsExists = false === _.isUndefined(this.app._.data.selectedComponents.dimensions);
+    View_CubeVizModule_Component.prototype.loadComponentDimensions = function (callback) {
         var self = this;
-
         DataCube_Component.loadAllDimensions(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.url, function (entries) {
             self.app._.data.components.dimensions = entries;
             self.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
             self.collection.reset("hashedUrl").addList(entries);
-            DataCube_Component.loadAllMeasures(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data.selectedDSD.url, self.app._.data.selectedDS.url, function (entries) {
-                self.app._.data.components.measures = entries;
-                self.app._.data.selectedComponents.measures = entries;
-                self.render();
-            });
+            callback();
+        });
+    };
+    View_CubeVizModule_Component.prototype.loadComponentMeasures = function (callback) {
+        var self = this;
+        DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.url, function (entries) {
+            self.app._.data.components.measures = entries;
+            self.app._.data.selectedComponents.measures = entries;
+            callback();
+        });
+    };
+    View_CubeVizModule_Component.prototype.onChange_selectedDS = function (event, data) {
+        var self = this;
+        this.destroy();
+        this.loadComponentDimensions(function () {
+            self.loadComponentMeasures($.proxy(self, "render"));
         });
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndApply = function (event) {
