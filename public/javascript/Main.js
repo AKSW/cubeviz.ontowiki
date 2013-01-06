@@ -1036,10 +1036,19 @@ var View_CubeVizModule_Component = (function (_super) {
         });
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndApply = function (event) {
+        var dialogDiv = $(event.target).data("dialogDiv");
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
         $(event.target).data("dialogDiv").dialog("close");
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
-        $(event.target).data("dialogDiv").dialog("close");
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var self = this;
+
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
+        CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (updatedLinkCode) {
+            $(event.target).data("dialogDiv").dialog("close");
+            window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&lC=" + updatedLinkCode;
+        });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
@@ -1050,8 +1059,7 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         $("#cubeviz-component-questionMarkDialog").dialog("open");
     };
-    View_CubeVizModule_Component.prototype.onClose_setupComponentDialog = function (event) {
-        var dialogDiv = $(event.target);
+    View_CubeVizModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv) {
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
         var componentBox = dialogDiv.data("componentBox");
         var hashedUrl = dialogDiv.data("hashedUrl");
@@ -1080,6 +1088,7 @@ var View_CubeVizModule_Component = (function (_super) {
         }
         this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
+        console.log("update complete");
     };
     View_CubeVizModule_Component.prototype.onComplete_loadDS = function (event, data) {
         this.onChange_selectedDS(event, data);
@@ -1129,8 +1138,7 @@ var View_CubeVizModule_Component = (function (_super) {
             "click .cubeviz-component-closeAndUpdate": this.onClick_closeAndUpdate,
             "click .cubeviz-component-setupComponentDeselectButton": this.onClick_deselectedAllComponentElements,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
-            "click #cubeviz-component-questionMark": this.onClick_questionmark,
-            "dialogclose .cubeviz-component-setupComponentDialog": this.onClose_setupComponentDialog
+            "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         return this;
     };

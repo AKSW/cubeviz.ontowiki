@@ -243,11 +243,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_closeAndApply(event) : void 
     {
+        var dialogDiv = $(event.target).data("dialogDiv");
+        
+        // save changes in dialog div
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
+        
+        // close dialog
         $(event.target)
             .data("dialogDiv")
             .dialog("close");
-            
-        // simply apply changes
     }
     
     /**
@@ -255,10 +259,30 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_closeAndUpdate(event) : void
     {
-        $(event.target).data("dialogDiv")
-            .dialog("close");
+        var dialogDiv = $(event.target).data("dialogDiv"),
+            self = this;
+        
+        // save changes in dialog div
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
+        
+        // update link code
+        CubeViz_ConfigurationLink.saveToServer(
+            this.app._.backend.url,
+            this.app._.data,
+            this.app._.ui,
             
-        // update graph visualization
+            function(updatedLinkCode){
+                
+                $(event.target)
+                    .data("dialogDiv")
+                    .dialog("close");
+                
+                // refresh page and show visualization for the latest linkCode
+                window.location.href = self.app._.backend.url
+                    + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                    + "&lC=" + updatedLinkCode;
+            }
+        );
     }
     
     /**
@@ -291,11 +315,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClose_setupComponentDialog(event) : void
+    public readAndSaveSetupComponentDialogChanges(dialogDiv) : void
     {        
         // extract and set necessary elements and data
-        var dialogDiv = $(event.target),
-            elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
+        var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
             componentBox = dialogDiv.data("componentBox"),
             hashedUrl = dialogDiv.data("hashedUrl"),
             input = null,
@@ -463,10 +486,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 this.onClick_setupComponentOpener,
             
             "click #cubeviz-component-questionMark": 
-                this.onClick_questionmark,
-            
-            "dialogclose .cubeviz-component-setupComponentDialog": 
-                this.onClose_setupComponentDialog
+                this.onClick_questionmark
         });
         
         return this;
