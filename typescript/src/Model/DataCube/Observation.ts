@@ -150,7 +150,8 @@ class DataCube_Observation {
     /**
      * 
      */
-    static loadAll (linkCode:string, url) {
+    static loadAll (linkCode:string, url:string, callback) 
+    {        
         $.ajax({
             url: url + "getobservations/",
             data: {lC: linkCode}
@@ -159,23 +160,22 @@ class DataCube_Observation {
             throw new Error ("Observation loadAll error: " + xhr.responseText);
         })
         .done( function (entries) { 
-            DataCube_Observation.prepareLoadedResultObservations ( entries );
+            DataCube_Observation.prepareLoadedResultObservations(entries, callback);
         });
     }
     
     /**
      * 
      */
-    static prepareLoadedResultObservations (entries) {
+    static prepareLoadedResultObservations (entries, callback)
+    {
         // TODO: fix it, because sometimes you got JSON from server, 
         // sometimes not, than you have to parse it
         var parse = $.parseJSON ( entries );
         if ( null == parse ) {
-            // callback ( entries );
-            $(this).trigger("loadComplete", [entries]);
+            callback ( entries );
         } else {
-            // callback ( parse );
-            $(this).trigger("loadComplete", [parse]);
+            callback ( parse );
         }
     }
 

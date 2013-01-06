@@ -246,29 +246,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // The dialog the clicked button is attached to
         var dialogDiv = $(event.target).data("dialogDiv"),
             self = this;
-        
+            
         // save changes in dialog div
-        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
-        
-        // update link code and later on, retrievedObservations
-        CubeViz_ConfigurationLink.saveToServer(
-            this.app._.backend.url,
-            this.app._.data,
-            this.app._.ui,            
-            function(updatedLinkCode){
-                
-                // update observations
-                var obs = DataCube_Observation;
-                
-                // set event handler
-                $(obs).on(
-                    "loadComplete", 
-                    $.proxy(self.onComplete_loadObservations, self)
-                );
-                
-                // start loading new retrievedObservations
-                obs.loadAll(updatedLinkCode, self.app._.backend.url);
-                            
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv,
+            function(){
                 // close dialog
                 $(event.target)
                     .data("dialogDiv")
@@ -286,26 +267,32 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             self = this;
         
         // save changes in dialog div
-        this.readAndSaveSetupComponentDialogChanges(dialogDiv);
-        
-        // update link code
-        CubeViz_ConfigurationLink.saveToServer(
-            this.app._.backend.url,
-            this.app._.data,
-            this.app._.ui,
-            
-            function(updatedLinkCode){
+        this.readAndSaveSetupComponentDialogChanges(dialogDiv,
+            function(){
+                    
+                // if module + indexAction stuff was loaded
+                if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
+                    
+                    self.triggerGlobalEvent("onReRender_visualization");
+
+                    $(event.target)
+                        .data("dialogDiv")
+                        .dialog("close");
+                    
+                // if you are only in the module
+                } else {
+                    
+                    $(event.target)
+                        .data("dialogDiv")
+                        .dialog("close");
                 
-                $(event.target)
-                    .data("dialogDiv")
-                    .dialog("close");
-                
-                // refresh page and show visualization for the latest linkCode
-                window.location.href = self.app._.backend.url
-                    + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                    + "&lC=" + updatedLinkCode;
+                    // refresh page and show visualization for the latest linkCode
+                    window.location.href = self.app._.backend.url
+                        + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                        + "&lC=" + self.app._.data.linkCode;
+                }
             }
-        );
+        );        
     }
     
     /**
@@ -344,7 +331,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public readAndSaveSetupComponentDialogChanges(dialogDiv) : void
+    public readAndSaveSetupComponentDialogChanges(dialogDiv, callback) : void
     {        
         // extract and set necessary elements and data
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
@@ -352,7 +339,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             hashedUrl = dialogDiv.data("hashedUrl"),
             input = null,
             inputLabel = null,
-            selectedElements = [];
+            selectedElements = [],
+            self = this;
         
         // if some items next to the close button was clicked, this event could
         // be executed, so prevent invalid hashedUrl's
@@ -402,6 +390,26 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          */
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
             selectedElements.length
+        );
+        
+        // update link code
+        CubeViz_ConfigurationLink.saveToServer(
+            this.app._.backend.url,
+            this.app._.data,
+            this.app._.ui,
+            function(updatedLinkCode){ 
+                self.app._.data.linkCode = updatedLinkCode;
+
+                // based on updatedLinkCode, load new observations
+                DataCube_Observation.loadAll(updatedLinkCode,self.app._.backend.url,
+                    function(newEntities){
+                        // save new observations
+                        self.app._.data.retrievedObservations = newEntities;
+                
+                        callback();
+                    }
+                );
+            }
         );
     }
     
