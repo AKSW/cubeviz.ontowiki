@@ -1088,7 +1088,6 @@ var View_CubeVizModule_Component = (function (_super) {
         }
         this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
-        console.log("update complete");
     };
     View_CubeVizModule_Component.prototype.onComplete_loadDS = function (event, data) {
         this.onChange_selectedDS(event, data);
@@ -1150,6 +1149,14 @@ var View_CubeVizModule_Footer = (function (_super) {
         _super.call(this, "View_CubeVizModule_Footer", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onChange_selectedDSD",
+                handler: this.onChange_selectedDSD
+            }, 
+            {
+                name: "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            }, 
+            {
                 name: "onStart_application",
                 handler: this.onStart_application
             }
@@ -1157,7 +1164,7 @@ var View_CubeVizModule_Footer = (function (_super) {
     }
     View_CubeVizModule_Footer.prototype.changePermaLinkButton = function () {
         var value = "";
-        if(undefined == this.collection.get("buttonVal")) {
+        if(true == _.isUndefined(this.collection.get("buttonVal"))) {
             this.collection.add({
                 id: "buttonVal",
                 value: $("#cubeviz-footer-permaLinkButton").attr("value").toString()
@@ -1178,6 +1185,14 @@ var View_CubeVizModule_Footer = (function (_super) {
     };
     View_CubeVizModule_Footer.prototype.initialize = function () {
         this.render();
+    };
+    View_CubeVizModule_Footer.prototype.onChange_selectedDS = function () {
+        this.onChange_selectedDSD();
+    };
+    View_CubeVizModule_Footer.prototype.onChange_selectedDSD = function () {
+        if(false === _.isUndefined(this.collection.get("buttonVal"))) {
+            this.changePermaLinkButton();
+        }
     };
     View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function (event) {
         var self = this;

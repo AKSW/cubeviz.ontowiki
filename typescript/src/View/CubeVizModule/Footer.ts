@@ -14,6 +14,14 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onChange_selectedDSD",
+                handler: this.onChange_selectedDSD
+            },
+            {
+                name:    "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -30,7 +38,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         
         // If no buttonVal is set, we see the Permalink button,
         // so transform it to see the link
-        if(undefined == this.collection.get("buttonVal")) {
+        if(true == _.isUndefined(this.collection.get("buttonVal"))) {
             // remember old perma link button label, because of the language
             this.collection.add({
                 id: "buttonVal", 
@@ -67,6 +75,25 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     public initialize() 
     {        
         this.render();
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDS()
+    {
+        this.onChange_selectedDSD();
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDSD() 
+    {
+        // Close permaLink button if it is still open
+        if(false === _.isUndefined(this.collection.get("buttonVal"))){
+            this.changePermaLinkButton();
+        }
     }
     
     /**
