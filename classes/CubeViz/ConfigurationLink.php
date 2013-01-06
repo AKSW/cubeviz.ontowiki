@@ -59,8 +59,9 @@ class CubeViz_ConfigurationLink
             $config['data']['numberOfMultipleDimensions'] = 0;
             
             $dsds = $config['data']['dataStructureDefinitions'];
+            
             foreach ($dsds as $ds) {
-                if(0 < count($ds ['elements'])) {
+                if(true === isset($ds ['elements']) && 0 < count($ds ['elements'])) {
                     ++$config['data']['numberOfMultipleDimensions'];
                 }
             }
@@ -134,13 +135,9 @@ class CubeViz_ConfigurationLink
         // if no retrievedObservations were selected
         if(0 === count($config['data']['retrievedObservations'])){
             
-            $selectedComponents = $linkConfiguration['selectedComponents'];
-            $dataSetUrl = $linkConfiguration['selectedDS']['url'];		
-            $selCompDims = $linkConfiguration['selectedComponents']['dimensions'];
-            
             $config['data']['retrievedObservations'] = $query->getObservations(array(
                 'selectedComponents' => $config['data']['selectedComponents'],
-                'selectedDS' => array('url' => $config['selectedDS']['url'])
+                'selectedDS' => array('url' => $config['data']['selectedDS']['url'])
             ));
         }
         
