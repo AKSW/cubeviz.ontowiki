@@ -1055,6 +1055,7 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         $(event.target).data("dialogDiv").dialog("open");
+        $(".ui-widget-overlay").css("height", screen.height + (screen.height * 0.5));
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         $("#cubeviz-component-questionMarkDialog").dialog("open");

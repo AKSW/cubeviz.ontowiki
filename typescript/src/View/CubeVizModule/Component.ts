@@ -301,6 +301,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public onClick_setupComponentOpener(event) : void
     {
         $(event.target).data("dialogDiv").dialog("open");
+    
+        // Change overlay height (jQueryUI dialog)
+        // TODO find a better place for that!
+        $(".ui-widget-overlay").css(
+            "height", screen.height + (screen.height*0.5)
+        );
     }
     
     /**
