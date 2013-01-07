@@ -137,13 +137,26 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public showMenuDongle(selectorItemDiv:any) 
     {
-        var offset:any = selectorItemDiv.offset(),
-            position:any = selectorItemDiv.position(),
-            dongleDiv:any = $("#cubeviz-visualizationselector-dongleDiv");
+        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
+        
+            // get chart config
+            fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.class, charts
+            );
             
-        dongleDiv
-            .css("top", offset.top - 48)
-            .css("left", offset.left - 285)
-            .fadeIn("slow");
+        // show dongle if menu options are available
+        if(false === _.isUndefined(fromChartConfig.options)
+           && 0 < _.size(fromChartConfig.options)) {
+            
+            var offset:any = selectorItemDiv.offset(),
+                position:any = selectorItemDiv.position(),
+                dongleDiv:any = $("#cubeviz-visualizationselector-dongleDiv");
+            
+            // positioning and show dongle
+            dongleDiv
+                .css("top", offset.top - 48)
+                .css("left", offset.left - 285)
+                .fadeIn("slow");
+        }
     }
 }
