@@ -1433,10 +1433,6 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         ]);
     }
     View_IndexAction_VisualizationSelector.prototype.initialize = function () {
-        console.log("this.app._.ui (for class " + this.app._.ui.visualization.class + ")");
-        console.log(this.app._.ui);
-        console.log("this.app._.chartConfig");
-        console.log(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         this.render();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
@@ -1453,6 +1449,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.app._.ui.visualization.class = chartClass;
         $(".cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectedSelectorItem").addClass("cubeviz-visualizationselector-selectorItem");
         selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
+        this.showMenuDongle(selectorItemDiv);
         this.triggerGlobalEvent("onChange_visualizationClass");
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
@@ -1481,6 +1478,14 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.bindUserInterfaceEvents({
         });
         return this;
+    };
+    View_IndexAction_VisualizationSelector.prototype.showMenuDongle = function (selectorItemDiv) {
+        console.log("showMenuDongle");
+        var offset = selectorItemDiv.offset();
+        var position = selectorItemDiv.position();
+        var dongleDiv = $("#cubeviz-visualizationselector-dongleDiv");
+
+        dongleDiv.css("top", offset.top - 48).css("left", offset.left - 285).fadeIn("slow");
     };
     return View_IndexAction_VisualizationSelector;
 })(CubeViz_View_Abstract);

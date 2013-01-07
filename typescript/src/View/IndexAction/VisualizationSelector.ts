@@ -30,12 +30,6 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public initialize() : void
     {
-        console.log("this.app._.ui (for class " + this.app._.ui.visualization.class + ")");
-        console.log(this.app._.ui);
-                
-        console.log("this.app._.chartConfig");
-        console.log(this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        
         this.render();
     }
     
@@ -68,6 +62,9 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         selectorItemDiv
             .removeClass("cubeviz-visualizationselector-selectorItem")
             .addClass("cubeviz-visualizationselector-selectedSelectorItem");
+            
+        // show dongle under selected item
+        this.showMenuDongle(selectorItemDiv);
         
         this.triggerGlobalEvent("onChange_visualizationClass");
     }
@@ -133,5 +130,20 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         this.bindUserInterfaceEvents({});
         
         return this;
+    }
+    
+    /**
+     *
+     */
+    public showMenuDongle(selectorItemDiv:any) 
+    {
+        var offset:any = selectorItemDiv.offset(),
+            position:any = selectorItemDiv.position(),
+            dongleDiv:any = $("#cubeviz-visualizationselector-dongleDiv");
+            
+        dongleDiv
+            .css("top", offset.top - 48)
+            .css("left", offset.left - 285)
+            .fadeIn("slow");
     }
 }
