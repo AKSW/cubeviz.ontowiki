@@ -395,7 +395,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         _.each(oneElementDimensions, function (dimension) {
             builtTitle += " - " + dimension.elements[0].propertyLabel;
         });
-        return dsdLabel + " - " + dsLabel + " - " + builtTitle;
+        return dsdLabel + " - " + dsLabel + builtTitle;
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedComponentMeasures, selectedMeasureUri, dsdLabel, dsLabel) {
         var forXAxis = null;
@@ -404,10 +404,13 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         var self = this;
 
         this.chartConfig = chartConfig;
+        this.chartConfig.series = [];
         if(true === _.isUndefined(self.chartConfig.xAxis)) {
             this.chartConfig.xAxis = {
                 categories: []
             };
+        } else {
+            this.chartConfig.xAxis.categories = [];
         }
         this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, oneElementDimensions);
         _.each(selectedComponentDimensions, function (selectedDimension) {
@@ -1382,15 +1385,17 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
-        var container = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - container.top - 20);
-        if(true === _.isUndefined(this.app._.ui.visualization.class) || 0 == this.app._.ui.visualization.class.length) {
-            this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
-        }
+        var offset = $(this.attachedTo).offset();
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 20);
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
-        var type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
+        var type = null;
 
+        if(true === _.isUndefined(fromChartConfig)) {
+            this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
+            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+        }
+        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
         switch(type) {
             case "CubeViz": {
                 console.log("render cubeviz visz");

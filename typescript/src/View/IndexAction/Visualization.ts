@@ -100,8 +100,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 .append (
                     $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
                 );
-        }
-        
+        }        
         
         /**
          * Delegate events to new items of the template
@@ -120,35 +119,40 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public renderChart() : void
     {
         // Dynamiclly set visualization container height
-        var container:any = $(this.attachedTo).offset();
-        
+        var offset:any = $(this.attachedTo).offset();
         $(this.attachedTo).css ( 
-            "height", $(window).height() - container.top - 20
-        );
+            "height", $(window).height() - offset.top - 20
+        );        
         
-        // set default className
-        if(true === _.isUndefined(this.app._.ui.visualization.class)
-           || 0 == this.app._.ui.visualization.class.length) {
-            this.app._.ui.visualization.class = this.app._.chartConfig[
-                this.app._.data.numberOfMultipleDimensions
-            ].charts[0].class;
-        }        
-        
-        /**
-         * Render chart with the given data
-         */            
         // get chart name
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
         
-            // get class
+            // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class, charts
             ),
-              
-            type = CubeViz_Visualization_Controller.getVisualizationType(
-                this.app._.ui.visualization.class
-            );
+                
+            type = null;
         
+        // set default className
+        if(true === _.isUndefined(fromChartConfig)) {
+            this.app._.ui.visualization.class = this.app._.chartConfig[
+                this.app._.data.numberOfMultipleDimensions
+            ].charts[0].class;
+            
+            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.class, charts
+            );
+        }
+        
+        // determine if using HighCharts or CubeViz
+        type = CubeViz_Visualization_Controller.getVisualizationType(
+            this.app._.ui.visualization.class
+        );
+        
+        /**
+         * Render chart with the given data
+         */
         switch ( type ) 
         {
             case "CubeViz":

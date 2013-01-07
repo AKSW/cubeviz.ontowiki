@@ -20,7 +20,7 @@ class CubeViz_Visualization_HighCharts_Chart
             builtTitle += " - " + dimension.elements[0].propertyLabel;
         });
         
-        return dsdLabel + " - " + dsLabel + " - " + builtTitle;
+        return dsdLabel + " - " + dsLabel + builtTitle;
     }
     
     /**
@@ -49,8 +49,15 @@ class CubeViz_Visualization_HighCharts_Chart
         // save given chart config
         this.chartConfig = chartConfig;
         
+        /**
+         * Empty array's we want to fill later
+         */
+        this.chartConfig.series = [];
+        
         if(true === _.isUndefined(self.chartConfig.xAxis)){
             this.chartConfig.xAxis = {categories: []};
+        } else {
+            this.chartConfig.xAxis.categories = [];
         }
         
         /**
