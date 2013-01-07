@@ -5,14 +5,14 @@ class CubeViz_ConfigurationLink
     /**
      * 
      */
-    static saveToServer (url, data:Object, ui:Object, callback) : void
+    static saveToServer (url, data:any, ui:any, callback) : void
     {        
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
             oldSupportOrs = $.support.cors;
         
         // Setup ajax
-        $.ajaxSetup({"async": true, "cache": false, "type": "POST"}); 
+        $.ajaxSetup({async: true, cache: false, type: "POST"}); 
         $.support.cors = true;
         
         // Execute Ajax 

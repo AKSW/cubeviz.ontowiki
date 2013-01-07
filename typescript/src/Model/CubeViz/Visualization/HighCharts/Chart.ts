@@ -4,7 +4,6 @@
 class CubeViz_Visualization_HighCharts_Chart 
 {
     public chartConfig:any;
-    public xAxis:any;
     
     /**
      * Returns the chart title for the given data.
