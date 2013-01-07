@@ -54,19 +54,26 @@ class CubeViz_ConfigurationLink
             $config['data']['selectedDSD'] = $config['data']['dataStructureDefinitions'][0];
         }
         
-        // if no numberOfMultipleDimensions was set
-        if(1 > (int) $config['data']['numberOfMultipleDimensions']) {
-            $config['data']['numberOfMultipleDimensions'] = 0;
+        // number of multiple dimensions
+        $config['data']['numberOfMultipleDimensions'] = 0;
             
-            $dsds = $config['data']['dataStructureDefinitions'];
-            
-            foreach ($dsds as $ds) {
-                if(true === isset($ds ['elements']) && 0 < count($ds ['elements'])) {
-                    ++$config['data']['numberOfMultipleDimensions'];
-                }
+        $dsds = $config['data']['dataStructureDefinitions'];
+        
+        foreach ($dsds as $ds) {
+            if(true === isset($ds ['elements']) && 0 < count($ds ['elements'])) {
+                ++$config['data']['numberOfMultipleDimensions'];
             }
         }
-                
+        
+        // number of one element dimensions
+        $config['data']['numberOfOneElementDimensions'] = 0;
+        
+        foreach ($dsds as $ds) {
+            if(true === isset($ds ['elements']) && 1 == count($ds ['elements'])) {
+                ++$config['data']['numberOfOneElementDimensions'];
+            }
+        }
+                        
         // if no data structure definitions were selected
         if(0 === count($config['data']['dataSets'])) {
             $config['data']['dataSets'] = $query->getDataSets($config['data']['selectedDSD']['url']);
