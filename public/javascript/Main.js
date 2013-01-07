@@ -523,21 +523,12 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         var observation = new DataCube_Observation();
         var self = this;
 
-        console.log("");
-        console.log("");
-        console.log("PIE");
-        console.log("multipleDimensions");
-        console.log(multipleDimensions);
-        console.log("forXAxis");
-        console.log(forXAxis);
         this.chartConfig = chartConfig;
         this.chartConfig.series = [];
         this.chartConfig.colors = [];
         this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, oneElementDimensions);
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
-        console.log("xAxisElements:");
-        console.log(xAxisElements);
         this.chartConfig.series.push({
             type: "pie",
             name: this.chartConfig.title.text,
@@ -555,8 +546,6 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             ]);
             self.chartConfig.colors.push(CubeViz_Visualization_Controller.getColor(propertyUrl));
         });
-        console.log("this.chartConfig");
-        console.log(this.chartConfig);
     };
     return CubeViz_Visualization_HighCharts_Pie;
 })(CubeViz_Visualization_HighCharts_Chart);
@@ -1475,10 +1464,6 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var selectorItemTpl = _.template($("#cubeviz-visualizationselector-tpl-selectorItem").text());
         var self = this;
 
-        console.log("numberOfMultDims");
-        console.log(numberOfMultDims);
-        console.log("charts");
-        console.log(charts);
         _.each(charts, function (chartObject) {
             viszItem = $(selectorItemTpl(chartObject));
             viszItem.data("class", chartObject.class);

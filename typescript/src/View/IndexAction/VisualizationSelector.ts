@@ -15,6 +15,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onReRender_visualization",
+                handler: this.onReRender_visualization
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -71,8 +75,9 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onComplete_loadObservations() 
+    public onReRender_visualization() 
     {
+        this.destroy();
         this.initialize();
     }
     

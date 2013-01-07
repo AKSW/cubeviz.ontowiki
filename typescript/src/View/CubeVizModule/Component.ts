@@ -385,12 +385,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // save updated element list
         this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
                 
-        /**
-         * Update selected elements counter
-         */
+        // Update selected elements counter
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
             selectedElements.length
         );
+        
+        // update number of X dimensions
+        this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
+            getMultipleDimensions (this.app._.data.selectedComponents.dimensions));
+        this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
+            getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
         // update link code
         CubeViz_ConfigurationLink.saveToServer(
