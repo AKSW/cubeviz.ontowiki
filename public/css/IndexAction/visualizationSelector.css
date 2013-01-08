@@ -1,4 +1,4 @@
-#cubeviz-visualizationselector-menu
+#cubeviz-visualizationselector-selector
 {
     position: absolute;
     right: 20px;
@@ -45,16 +45,32 @@
 }
 
 /**
+ * Menu
+ */
+#cubeviz-visualizationselector-menu
+{
+    display: none;
+    position: absolute;
+    z-index: 101;
+    padding: 6px;
+    width: 220px;
+    height: auto;    
+    box-shadow: 0 0 13px rgba(0, 0, 0, 0.31);
+    border: 1px solid #C4C4C4;
+    background-color: #F9F9F9;
+}
+
+/**
  * Menu dongle
  */
-#cubeviz-visualizationselector-dongleDiv
+#cubeviz-visualizationselector-menuDongleDiv
 {
     display: none;
     position: absolute;
     z-index: 100;
 }
 
-#cubeviz-visualizationselector-dongleImg
+#cubeviz-visualizationselector-menuDongleImg
 {    
     width: 30px;
     height: 5px;

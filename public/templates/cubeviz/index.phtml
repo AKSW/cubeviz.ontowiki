@@ -25,10 +25,13 @@
     <!-- Legend part -->
     <div id="cubeviz-index-legend"></div>
 
-    <!-- Visualization selector menu  -->
+    <!-- Visualization selector -->
+    <div id="cubeviz-visualizationselector-selector"></div>
+
+    <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu"></div>
-    <div id="cubeviz-visualizationselector-dongleDiv" class="cubeviz-clickable">
-        <img id="cubeviz-visualizationselector-dongleImg" 
+    <div id="cubeviz-visualizationselector-menuDongleDiv" class="cubeviz-clickable">
+        <img id="cubeviz-visualizationselector-menuDongleImg" 
               src="<?php echo $this->cubevizImagesPath; ?>menuDongle.png"/>
     </div>
 </div>
@@ -40,6 +43,15 @@
     <div class="cubeviz-visualizationselector-selectorItem cubeviz-clickable">
         <img class="cubeviz-icon-normal" 
              src="<?php echo $this->cubevizImagesPath; ?><%= icon %>"/>
+    </div>
+</script>
+
+<script id="cubeviz-visualizationselector-tpl-menuItem" type="text/template">
+    <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
+        <div style="float:left; margin-left:3px; font-size:12px;"><%= label %></div>
+        <div style="float:right">
+            <select id="cubeviz-visualizationselector-menuSelect" class=""></select>
+        </div>
     </div>
 </script>
 

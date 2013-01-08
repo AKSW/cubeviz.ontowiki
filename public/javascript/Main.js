@@ -1436,21 +1436,25 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.render();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
-        var chartClass = undefined;
+        var prevClass = "";
         var selectorItemDiv = null;
 
         if(true === _.isUndefined($(event.target).data("class"))) {
             selectorItemDiv = $($(event.target).parent());
-            chartClass = selectorItemDiv.data("class");
+            this.app._.ui.visualization.class = selectorItemDiv.data("class");
         } else {
             selectorItemDiv = $(event.target);
-            chartClass = selectorItemDiv.data("class");
+            this.app._.ui.visualization.class = selectorItemDiv.data("class");
         }
-        this.app._.ui.visualization.class = chartClass;
-        $(".cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectedSelectorItem").addClass("cubeviz-visualizationselector-selectorItem");
-        selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
-        this.showMenuDongle(selectorItemDiv);
-        this.triggerGlobalEvent("onChange_visualizationClass");
+        prevClass = $($(".cubeviz-visualizationselector-selectedSelectorItem").get(0)).data("class");
+        if(prevClass == this.app._.ui.visualization.class) {
+            this.showMenu(selectorItemDiv);
+        } else {
+            $(".cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectedSelectorItem").addClass("cubeviz-visualizationselector-selectorItem");
+            selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
+            this.showMenuDongle(selectorItemDiv);
+            this.triggerGlobalEvent("onChange_visualizationClass");
+        }
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -1471,13 +1475,19 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             viszItem.data("class", chartObject.class);
             if(self.app._.ui.visualization.class == chartObject.class) {
                 viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
+                self.showMenuDongle(viszItem);
             }
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
-            $("#cubeviz-visualizationselector-menu").append(viszItem);
+            $("#cubeviz-visualizationselector-selector").append(viszItem);
         });
         this.bindUserInterfaceEvents({
         });
         return this;
+    };
+    View_IndexAction_VisualizationSelector.prototype.showMenu = function (selectorItemDiv) {
+        var offset = selectorItemDiv.offset();
+        $("#cubeviz-visualizationselector-menu").empty();
+        $("#cubeviz-visualizationselector-menu").css("top", offset.top - 37).css("left", offset.left - 486).fadeIn("slow").html("fOOOOOOO");
     };
     View_IndexAction_VisualizationSelector.prototype.showMenuDongle = function (selectorItemDiv) {
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
@@ -1486,7 +1496,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options)) {
             var offset = selectorItemDiv.offset();
             var position = selectorItemDiv.position();
-            var dongleDiv = $("#cubeviz-visualizationselector-dongleDiv");
+            var dongleDiv = $("#cubeviz-visualizationselector-menuDongleDiv");
 
             dongleDiv.css("top", offset.top - 48).css("left", offset.left - 285).fadeIn("slow");
         }

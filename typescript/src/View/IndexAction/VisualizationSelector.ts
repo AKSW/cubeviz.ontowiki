@@ -38,35 +38,57 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public onClick_selectorItem(event) 
     {
-        var chartClass = undefined,
-            selectorItemDiv = null;
+        var prevClass:string = "",
+            selectorItemDiv:any = null;
         
+        /**
+         * Extract associated class
+         */
         // check if chartConfigIndex is attached to div or div's image
+        // and than extract associated visualization class
         if(true === _.isUndefined($(event.target).data("class"))) {
             selectorItemDiv = $($(event.target).parent());
-            chartClass = selectorItemDiv.data("class");
+            this.app._.ui.visualization.class = selectorItemDiv.data("class");
         } else {
             selectorItemDiv = $(event.target);
-            chartClass = selectorItemDiv.data("class");
+            this.app._.ui.visualization.class = selectorItemDiv.data("class");
         }
         
-        // update visualization class
-        this.app._.ui.visualization.class = chartClass;
-        
-        // give all selector items the same class
-        $(".cubeviz-visualizationselector-selectedSelectorItem")
-            .removeClass("cubeviz-visualizationselector-selectedSelectorItem")
-            .addClass("cubeviz-visualizationselector-selectorItem");
-        
-        // style update of clicked item
-        selectorItemDiv
-            .removeClass("cubeviz-visualizationselector-selectorItem")
-            .addClass("cubeviz-visualizationselector-selectedSelectorItem");
+        /**
+         * If the same item was clicked twice, show menu (if it exists)
+         */
+        prevClass = $($(".cubeviz-visualizationselector-selectedSelectorItem").get(0)).data("class");
+        if(prevClass == this.app._.ui.visualization.class) {
             
-        // show dongle under selected item
-        this.showMenuDongle(selectorItemDiv);
+            this.showMenu(selectorItemDiv);
+            
+        // if another item was the previously was clicked    
+        } else {
         
-        this.triggerGlobalEvent("onChange_visualizationClass");
+            /**
+             * Change layout of the items
+             */
+            // give all selector items the same class
+            $(".cubeviz-visualizationselector-selectedSelectorItem")
+                .removeClass("cubeviz-visualizationselector-selectedSelectorItem")
+                .addClass("cubeviz-visualizationselector-selectorItem");
+            
+            // style update of clicked item
+            selectorItemDiv
+                .removeClass("cubeviz-visualizationselector-selectorItem")
+                .addClass("cubeviz-visualizationselector-selectedSelectorItem");
+                
+            /**
+             * Dongle
+             */
+            // show dongle under selected item
+            this.showMenuDongle(selectorItemDiv);
+        
+            /**
+             * Trigger global event
+             */
+            this.triggerGlobalEvent("onChange_visualizationClass");
+        }
     }
     
     /**
@@ -114,13 +136,15 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 viszItem
                     .addClass("cubeviz-visualizationselector-selectedSelectorItem")
                     .removeClass("cubeviz-visualizationselector-selectorItem");
+                
+                self.showMenuDongle(viszItem);
             }
             
             // set click event
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             
-            // append chart item to menu
-            $("#cubeviz-visualizationselector-menu")
+            // append chart item to selector
+            $("#cubeviz-visualizationselector-selector")
                 .append(viszItem);
         });
         
@@ -130,6 +154,22 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         this.bindUserInterfaceEvents({});
         
         return this;
+    }
+    
+    /**
+     *
+     */
+    public showMenu(selectorItemDiv:any) 
+    {
+        var offset = selectorItemDiv.offset();
+        
+        $("#cubeviz-visualizationselector-menu").empty();
+        
+        $("#cubeviz-visualizationselector-menu")
+            .css ("top", offset.top - 37)
+            .css ("left", offset.left - 486)
+            .fadeIn ("slow")
+            .html ("fOOOOOOO");
     }
     
     /**
@@ -150,7 +190,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             
             var offset:any = selectorItemDiv.offset(),
                 position:any = selectorItemDiv.position(),
-                dongleDiv:any = $("#cubeviz-visualizationselector-dongleDiv");
+                dongleDiv:any = $("#cubeviz-visualizationselector-menuDongleDiv");
             
             // positioning and show dongle
             dongleDiv
