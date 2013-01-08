@@ -29,7 +29,31 @@
     <div id="cubeviz-visualizationselector-selector"></div>
 
     <!-- Visualization selector > menu + dongle -->    
-    <div id="cubeviz-visualizationselector-menu"></div>
+    <div id="cubeviz-visualizationselector-menu">
+        
+        <div id="cubeviz-visualizationselector-menuHeader">
+            <?php echo $this->_translate->_('Configure the visualization'); ?>
+        </div>
+        
+        <div id="cubeviz-visualizationselector-menuItems"></div>
+        <br/>
+        <br/>
+        <div style="clear:both;">
+            <span style="float:left;">
+                <input class="cubeviz-minibutton cubeviz-clickable"
+                        style="font-size: 13px; font-weight: bold;"
+                        title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>"
+                        type="button" 
+                        value="<?php echo $this->_translate->_('Update'); ?>">
+            </span>
+            <span style="float:right;">
+                <input class="cubeviz-minibutton cubeviz-clickable"
+                        title="<?php echo $this->_translate->_('Update visualization and close this menu'); ?>"
+                        type="button" 
+                        value="<?php echo $this->_translate->_('Close and update'); ?>">
+            </span>
+        </div>
+    </div>
     <div id="cubeviz-visualizationselector-menuDongleDiv" class="cubeviz-clickable">
         <img id="cubeviz-visualizationselector-menuDongleImg" 
               src="<?php echo $this->cubevizImagesPath; ?>menuDongle.png"/>
@@ -50,7 +74,7 @@
     <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
         <div style="float:left; margin-left:3px; font-size:12px;"><%= label %></div>
         <div style="float:right">
-            <select id="cubeviz-visualizationselector-menuSelect" class=""></select>
+            <select class="cubeviz-visualizationselector-menuSelectbox"></select>
         </div>
     </div>
 </script>

@@ -43,3 +43,18 @@
 .cubeviz-ul-basic li {
     margin-top: 5px;
 }
+
+/**
+ * FORMULAS
+ */
+.cubeviz-minibutton
+{
+    font-size: 11px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;    
+    border: 1px solid #C4C4C4;
+	border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px 5px 5px 5px;
+}

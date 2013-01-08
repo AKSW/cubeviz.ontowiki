@@ -52,12 +52,30 @@
     display: none;
     position: absolute;
     z-index: 101;
-    padding: 6px;
+    padding: 10px;
     width: 220px;
     height: auto;    
     box-shadow: 0 0 13px rgba(0, 0, 0, 0.31);
     border: 1px solid #C4C4C4;
     background-color: #F9F9F9;
+}
+
+#cubeviz-visualizationselector-menuHeader
+{
+    width: 100%;
+    height: 30px;
+    margin: 0px;
+    padding-left: 3px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.cubeviz-visualizationselector-menuSelectbox
+{
+    min-width: 100px;
+    max-width: 100px;
+    width: 100px;
+    border: 1px solid #ABABAB;
 }
 
 /**
