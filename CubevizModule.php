@@ -71,7 +71,7 @@ class CubevizModule extends OntoWiki_Module
         // If this module is in the development context
         if('development' === $this->_privateConfig->get('context')) {
             $this->view->headScript()
-                ->appendFile ($baseJavascriptPath. 'libraries/qunit.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'libraries/munit.js', 'text/javascript')
                 ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript');
         }
         

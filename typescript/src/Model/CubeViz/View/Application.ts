@@ -59,32 +59,6 @@ class CubeViz_View_Application
         return this;
     }
     
-    /**
-     * Destroy a certain view
-     * @param id ID of the view.
-     * @return CubeViz_View_Application Itself
-     */
-    public destroyView(id:string) : CubeViz_View_Application
-    {
-        var view = this._viewInstances.get(id);
-        
-        if(true === view.alreadyRendered) {
-            view.destroy();
-            this._viewInstances.get(id).alreadyRendered = false;
-        }
-        
-        return this;
-    }
-    
-    /**
-     * Get a particular view.
-     * @param id ID of the view.
-     * @return CubeViz_View_Abstract|bool View instance, if found, false otherwise.
-     */
-    public get(id:string) : any
-    {
-        return this._viewInstances.get(id);
-    }
     
     /**
      * From a view you have the possibility to bind event handlers to the application
@@ -96,7 +70,7 @@ class CubeViz_View_Application
      *               combination with $.proxy to bind this to callee)
      * @param CubeViz_View_Application Itself
      */
-    public bindGlobalEvents(events:any[], callee:any) : CubeViz_View_Application
+    public bindGlobalEvents(events:any[], callee?:any) : CubeViz_View_Application
     {
         if(true === _.isUndefined(events) || 0 == _.size(events) ) 
             return this;
@@ -127,24 +101,45 @@ class CubeViz_View_Application
     }
     
     /**
-     * Re-initialize and render a particular view, if it exists.
+     * Destroy a certain view
      * @param id ID of the view.
-     * @param attachedTo ID or class of a DOM element
      * @return CubeViz_View_Application Itself
      */
-    public renderView(id:string, attachedTo?:string) : CubeViz_View_Application
-    {
-        // add view to list if it does not exist yet
-        this
-            .add(id, attachedTo)
-
-        // ... if view was already rendered, destroy old instance and ...
-            .destroyView(id)
-        
-        // ... initialize view (with initialize it, you render it)
-            .get(id).instance.initialize();
+    public destroyView(id:string) : CubeViz_View_Application
+    {        
+        this._viewInstances.get(id).instance.destroy();
         
         return this;
+    }
+    
+    /**
+     * Get a particular view.
+     * @param id ID of the view.
+     * @return CubeViz_View_Abstract|bool View instance, if found, false otherwise.
+     */
+    public get(id:string) : any
+    {
+        return this._viewInstances.get(id);
+    }
+    
+    /**
+     *
+     */
+    public getDataCopy() 
+    {
+        var backup = [
+            this._.data.retrievedObservations, 
+            this._.generatedVisualization, 
+        ]; 
+        this._.data.retrievedObservations = undefined;
+        this._.generatedVisualization = undefined;
+        
+        var result = $.parseJSON(JSON.stringify(this._));
+        
+        this._.data.retrievedObservations = backup[0];
+        this._.generatedVisualization = backup[1];
+        
+        return result;
     }
     
     /**
@@ -172,9 +167,30 @@ class CubeViz_View_Application
     }
     
     /**
+     * Re-initialize and render a particular view, if it exists.
+     * @param id ID of the view.
+     * @param attachedTo ID or class of a DOM element
+     * @return CubeViz_View_Application Itself
+     */
+    public renderView(id:string, attachedTo?:string) : CubeViz_View_Application
+    {
+        // add view to list if it does not exist yet
+        this
+            .add(id, attachedTo)
+
+        // ... if view was already rendered, destroy old instance and ...
+            .destroyView(id)
+        
+        // ... initialize view (with initialize it, you render it)
+            .get(id).instance.initialize();
+        
+        return this;
+    }
+    
+    /**
      * Reset all views and this application instance
      */
-    public reset() 
+    public reset() : CubeViz_View_Application
     {
         // kill all set events
         $(this).off();
@@ -186,6 +202,24 @@ class CubeViz_View_Application
                 .destroyView(view.id)
                 .add(view.id, view.attachedTo, true);
         });
+        
+        return this;
+    }
+    
+    /**
+     *
+     */
+    public restoreDataCopy(copy:any) : CubeViz_View_Application
+    {
+        var backup = [
+            this._.data.retrievedObservations
+        ];
+        
+        this._ = $.parseJSON(JSON.stringify(copy));
+        
+        this._.data.retrievedObservations = backup[0];
+        
+        return this;
     }
     
     /**
@@ -198,6 +232,15 @@ class CubeViz_View_Application
     public triggerEvent(eventName:string, data?:any) : CubeViz_View_Application
     {
         $(this).trigger(eventName, [data]);
+        return this;
+    }
+    
+    /**
+     *
+     */
+    public unbindEvent(eventName) : CubeViz_View_Application
+    {
+        $(this).off(eventName);
         return this;
     }
 }

@@ -28,6 +28,19 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
+    public destroy() : CubeViz_View_Abstract
+    {
+        super.destroy();
+        $("#cubeviz-visualizationselector-selector").empty();
+        this
+            .hideDongle()
+            .hideMenu();
+        return this;
+    }
+    
+    /**
+     *
+     */
     public hideDongle() 
     {
         $("#cubeviz-visualizationselector-menuDongleDiv")
@@ -49,7 +62,6 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public initialize() : void
     {
-        this.triggerGlobalEvent("onInit_visualizationSelector");
         this.render();
     }
     
@@ -58,6 +70,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public onClick_selectorItem(event) 
     {
+        this.triggerGlobalEvent("onBeforeClick_selectorItem");
+        
         var prevClass:string = "",
             selectorItemDiv:any = null;
         
@@ -114,6 +128,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
              */
             this.triggerGlobalEvent("onChange_visualizationClass");
         }
+        
+        this.triggerGlobalEvent("onAfterClick_selectorItem");
     }
     
     /**
@@ -138,6 +154,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
+        this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
+        
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions,
             viszItem,
             charts = this.app._.chartConfig[numberOfMultDims].charts,
@@ -178,6 +196,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
          */
         this.bindUserInterfaceEvents({});
         
+        this.triggerGlobalEvent("onAfterRender_visualizationSelector");
+        
         return this;
     }
     
@@ -195,14 +215,15 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             
             menuItem:any,
             menuItemTpl:any = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text()),
+            menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html(),
             offset:any = selectorItemDiv.offset(),
             selectBox:any,
             valueOption:any;
         
         if(false === _.isUndefined(fromChartConfig.options)
            && 0 < _.size(fromChartConfig.options)
-           && "" == $("#cubeviz-visualizationselector-menuItems").html()) 
-        {            
+           && ( "" == menuItemsHtml || null == menuItemsHtml ))
+        {
             // go through all the options for this visz item
             _.each(fromChartConfig.options, function(option){
                 

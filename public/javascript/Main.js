@@ -184,17 +184,6 @@ var CubeViz_View_Application = (function () {
         this._viewInstances.add(viewObj, options);
         return this;
     };
-    CubeViz_View_Application.prototype.destroyView = function (id) {
-        var view = this._viewInstances.get(id);
-        if(true === view.alreadyRendered) {
-            view.destroy();
-            this._viewInstances.get(id).alreadyRendered = false;
-        }
-        return this;
-    };
-    CubeViz_View_Application.prototype.get = function (id) {
-        return this._viewInstances.get(id);
-    };
     CubeViz_View_Application.prototype.bindGlobalEvents = function (events, callee) {
         if(true === _.isUndefined(events) || 0 == _.size(events)) {
             return this;
@@ -205,9 +194,25 @@ var CubeViz_View_Application = (function () {
         });
         return this;
     };
-    CubeViz_View_Application.prototype.renderView = function (id, attachedTo) {
-        this.add(id, attachedTo).destroyView(id).get(id).instance.initialize();
+    CubeViz_View_Application.prototype.destroyView = function (id) {
+        this._viewInstances.get(id).instance.destroy();
         return this;
+    };
+    CubeViz_View_Application.prototype.get = function (id) {
+        return this._viewInstances.get(id);
+    };
+    CubeViz_View_Application.prototype.getDataCopy = function () {
+        var backup = [
+            this._.data.retrievedObservations, 
+            this._.generatedVisualization, 
+            
+        ];
+        this._.data.retrievedObservations = undefined;
+        this._.generatedVisualization = undefined;
+        var result = $.parseJSON(JSON.stringify(this._));
+        this._.data.retrievedObservations = backup[0];
+        this._.generatedVisualization = backup[1];
+        return result;
     };
     CubeViz_View_Application.prototype.remove = function (id) {
         this._viewInstances.remove(id);
@@ -220,17 +225,34 @@ var CubeViz_View_Application = (function () {
         });
         return this;
     };
+    CubeViz_View_Application.prototype.renderView = function (id, attachedTo) {
+        this.add(id, attachedTo).destroyView(id).get(id).instance.initialize();
+        return this;
+    };
     CubeViz_View_Application.prototype.reset = function () {
         $(this).off();
         var self = this;
         _.each(this._viewInstances._, function (view) {
             self.destroyView(view.id).add(view.id, view.attachedTo, true);
         });
+        return this;
+    };
+    CubeViz_View_Application.prototype.restoreDataCopy = function (copy) {
+        var backup = [
+            this._.data.retrievedObservations
+        ];
+        this._ = $.parseJSON(JSON.stringify(copy));
+        this._.data.retrievedObservations = backup[0];
+        return this;
     };
     CubeViz_View_Application.prototype.triggerEvent = function (eventName, data) {
         $(this).trigger(eventName, [
             data
         ]);
+        return this;
+    };
+    CubeViz_View_Application.prototype.unbindEvent = function (eventName) {
+        $(this).off(eventName);
         return this;
     };
     return CubeViz_View_Application;
@@ -1443,6 +1465,13 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             }
         ]);
     }
+    View_IndexAction_VisualizationSelector.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        $("#cubeviz-visualizationselector-selector").empty();
+        this.hideDongle();
+        this.hideMenu();
+        return this;
+    };
     View_IndexAction_VisualizationSelector.prototype.hideDongle = function () {
         $("#cubeviz-visualizationselector-menuDongleDiv").fadeOut("slow");
     };
@@ -1455,6 +1484,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.render();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
+        this.triggerGlobalEvent("onBeforeClick_selectorItem");
         var prevClass = "";
         var selectorItemDiv = null;
 
@@ -1476,6 +1506,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             this.showMenuDongle(selectorItemDiv);
             this.triggerGlobalEvent("onChange_visualizationClass");
         }
+        this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -1485,6 +1516,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.initialize();
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
+        this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
         var viszItem;
         var charts = this.app._.chartConfig[numberOfMultDims].charts;
@@ -1503,6 +1535,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         });
         this.bindUserInterfaceEvents({
         });
+        this.triggerGlobalEvent("onAfterRender_visualizationSelector");
         return this;
     };
     View_IndexAction_VisualizationSelector.prototype.showMenu = function (selectorItemDiv) {
@@ -1510,11 +1543,12 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
         var menuItem;
         var menuItemTpl = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text());
+        var menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html();
         var offset = selectorItemDiv.offset();
         var selectBox;
         var valueOption;
 
-        if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options) && "" == $("#cubeviz-visualizationselector-menuItems").html()) {
+        if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options) && ("" == menuItemsHtml || null == menuItemsHtml)) {
             _.each(fromChartConfig.options, function (option) {
                 menuItem = $(menuItemTpl(option));
                 selectBox = $(menuItem.find(".cubeviz-visualizationselector-menuSelectbox").get(0));
