@@ -49,6 +49,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public initialize() : void
     {
+        this.triggerGlobalEvent("onInit_visualizationSelector");
         this.render();
     }
     

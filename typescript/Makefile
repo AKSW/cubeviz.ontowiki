@@ -6,6 +6,7 @@ default:
 build-javascript:	
 	@echo "Build Javascript file, out of TypeScript files ..."
 	tsc --out ../public/javascript/Main.js @tsc/Main.txt
+	tsc --out ../public/javascript/Test.js @tsc/Test.txt
 
 install-typescript:
 	sudo apt-get install npm && sudo npm install -g typescript

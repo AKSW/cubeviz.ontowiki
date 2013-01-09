@@ -68,6 +68,12 @@ class CubevizModule extends OntoWiki_Module
             ->prependFile ($baseJavascriptPath. 'Main.js',                          'text/javascript')
             ->prependFile ($basePath.           'ChartConfig.js',                   'text/javascript');
             
+        // If this module is in the development context
+        if('development' === $this->_privateConfig->get('context')) {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'libraries/qunit.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript');
+        }
         
         /**
          * Including css files for this action

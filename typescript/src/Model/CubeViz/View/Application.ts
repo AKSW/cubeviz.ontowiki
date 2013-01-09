@@ -40,9 +40,11 @@ class CubeViz_View_Application
      * @param view View instance to add.
      * @param attachedTo Class or id of a certain DOM element.
      */
-    public add(id:string, attachedTo:string) : CubeViz_View_Application
+    public add(id:string, attachedTo:string, merge?:bool) : CubeViz_View_Application
     {        
-        var viewObj = {
+        var options:any = true === merge ? {merge:true} : undefined,
+            
+            viewObj = {
             alreadyRendered: false,
             attachedTo:attachedTo,
             id:id,
@@ -52,7 +54,7 @@ class CubeViz_View_Application
         // create instance of the given view class
         eval ("viewObj.instance = new " + id + "(\"" + attachedTo + "\", this);");
         
-        this._viewInstances.add(viewObj);
+        this._viewInstances.add(viewObj, options);
         
         return this;
     }
@@ -167,6 +169,23 @@ class CubeViz_View_Application
             self.renderView(view.id, view.attachedTo);
         });
         return this;
+    }
+    
+    /**
+     * Reset all views and this application instance
+     */
+    public reset() 
+    {
+        // kill all set events
+        $(this).off();
+        
+        var self = this;
+        
+        _.each(this._viewInstances._, function(view){
+            self
+                .destroyView(view.id)
+                .add(view.id, view.attachedTo, true);
+        });
     }
     
     /**

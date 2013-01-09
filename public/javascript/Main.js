@@ -169,15 +169,19 @@ var CubeViz_View_Application = (function () {
         this._ = {
         };
     }
-    CubeViz_View_Application.prototype.add = function (id, attachedTo) {
+    CubeViz_View_Application.prototype.add = function (id, attachedTo, merge) {
+        var options = true === merge ? {
+            merge: true
+        } : undefined;
         var viewObj = {
             alreadyRendered: false,
             attachedTo: attachedTo,
             id: id,
             instance: null
         };
+
         eval("viewObj.instance = new " + id + "(\"" + attachedTo + "\", this);");
-        this._viewInstances.add(viewObj);
+        this._viewInstances.add(viewObj, options);
         return this;
     };
     CubeViz_View_Application.prototype.destroyView = function (id) {
@@ -215,6 +219,13 @@ var CubeViz_View_Application = (function () {
             self.renderView(view.id, view.attachedTo);
         });
         return this;
+    };
+    CubeViz_View_Application.prototype.reset = function () {
+        $(this).off();
+        var self = this;
+        _.each(this._viewInstances._, function (view) {
+            self.destroyView(view.id).add(view.id, view.attachedTo, true);
+        });
     };
     CubeViz_View_Application.prototype.triggerEvent = function (eventName, data) {
         $(this).trigger(eventName, [
@@ -1536,7 +1547,5 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
-    console.log("cubeVizApp._:");
-    console.log(cubeVizApp._);
     cubeVizApp.triggerEvent("onStart_application");
 });
