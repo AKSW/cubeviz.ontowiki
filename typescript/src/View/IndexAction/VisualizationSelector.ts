@@ -53,8 +53,13 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public hideMenu() : View_IndexAction_VisualizationSelector
     {
+        this.triggerGlobalEvent("onBeforeHide_visualizationSelectorMenu");
+        
         $("#cubeviz-visualizationselector-menu").fadeOut("slow");
         $("#cubeviz-visualizationselector-menuItems").html("");
+        
+        this.triggerGlobalEvent("onAfterHide_visualizationSelectorMenu");
+        
         return this;
     }
     
@@ -64,6 +69,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     public initialize() : void
     {
         this.render();
+    }
+    
+    /**
+     *
+     */
+    public onClick_closeMenu() 
+    {
+        this.hideMenu();
     }
     
     /**
@@ -131,6 +144,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         }
         
         this.triggerGlobalEvent("onAfterClick_selectorItem");
+    }
+    
+    /**
+     *
+     */
+    public onClick_updateVisz() 
+    {
+        
     }
     
     /**
@@ -207,6 +228,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public showMenu(selectorItemDiv:any) 
     {
+        this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
+        
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
         
             // get chart config
@@ -257,12 +280,22 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 $("#cubeviz-visualizationselector-menuItems").append(menuItem);
             });
             
+            $("#cubeviz-visualizationselector-closeMenu").click($.proxy(
+                this.onClick_closeMenu
+            , this));
+            
+            $("#cubeviz-visualizationselector-updateVisz").click($.proxy(
+                this.onClick_closeMenu
+            , this));
+            
             // show menu
             $("#cubeviz-visualizationselector-menu")
                 .css ("top", offset.top - 37)
                 .css ("left", offset.left - 495)
                 .fadeIn ("slow");
         }
+        
+        this.triggerGlobalEvent("onAfterShow_visualizationSelectorMenu");
     }
     
     /**

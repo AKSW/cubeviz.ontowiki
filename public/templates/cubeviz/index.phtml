@@ -38,20 +38,19 @@
         <div id="cubeviz-visualizationselector-menuItems"></div>
         <br/>
         <br/>
-        <div style="clear:both;">
-            <span style="float:left;">
-                <input class="cubeviz-minibutton cubeviz-clickable"
-                        style="font-size: 13px; font-weight: bold;"
-                        title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>"
-                        type="button" 
-                        value="<?php echo $this->_translate->_('Update'); ?>">
-            </span>
-            <span style="float:right;">
-                <input class="cubeviz-minibutton cubeviz-clickable"
-                        title="<?php echo $this->_translate->_('Update visualization and close this menu'); ?>"
-                        type="button" 
-                        value="<?php echo $this->_translate->_('Close and update'); ?>">
-            </span>
+        <div style="clear:both; text-align:right;">
+            <input class="cubeviz-minibutton cubeviz-clickable"
+                    id="cubeviz-visualizationselector-closeMenu"
+                    title="<?php echo $this->_translate->_('Close this menu without apply changes'); ?>"
+                    type="button" 
+                    value="<?php echo $this->_translate->_('Close'); ?>">
+            &nbsp;&nbsp;&nbsp;
+            <input class="cubeviz-minibutton cubeviz-clickable"
+                    id="cubeviz-visualizationselector-updateVisz"
+                    style="font-weight: bold;"
+                    title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>"
+                    type="button" 
+                    value="<?php echo $this->_translate->_('Update'); ?>">
         </div>
     </div>
     <div id="cubeviz-visualizationselector-menuDongleDiv" class="cubeviz-clickable">

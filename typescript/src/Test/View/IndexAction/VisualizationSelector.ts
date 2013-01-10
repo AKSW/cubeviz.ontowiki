@@ -42,7 +42,7 @@ cubeViz_tests.push(function(){
         this.assertTrue(secondItemsClass == viszClassBeforeItemClick);
     };
     
-    // Bind real test function to a global event and trigger application start
+    // Bind real test function to a global event
     cubeVizApp.bindGlobalEvents([{ 
         name: "onAfterClick_selectorItem", handler: $.proxy(t, this)
     }]);
@@ -70,7 +70,7 @@ cubeViz_tests.push(function(){
         } 
     };
     
-    // Bind real test function to a global event and trigger application start
+    // Bind real test function to a global event
     cubeVizApp.bindGlobalEvents([{ 
         name: "onAfterClick_selectorItem", handler: $.proxy(t, this)
     }]);
@@ -98,13 +98,11 @@ cubeViz_tests.push(function(){
     var t = function () {
         // is that the thirth click? > yes!
         if(true == isThirdClick) {            
-            this.assertTrue(
-                0 == $("#cubeviz-visualizationselector-menuItems").children().length
-            );
+            this.assertTrue(0 == menuItems.length);
         } 
     };
     
-    // Bind real test function to a global event and trigger application start
+    // Bind real test function to a global event
     cubeVizApp.bindGlobalEvents([{ 
         name: "onAfterClick_selectorItem", handler: $.proxy(t, this)
     }]);
@@ -118,4 +116,35 @@ cubeViz_tests.push(function(){
     // thirth click > menu must disappear
     isThirdClick = true;
     $(firstItem).click();
+});
+
+/**
+ * Test after click to close menu button, menu has to be closed
+ */
+cubeViz_tests.push(function(){
+    cubeVizApp.triggerEvent("onStart_application");
+    
+    var items = $("#cubeviz-visualizationselector-selector").children(),
+        secondItem = $(items[1]),
+        menuReadyToClose = false;
+        
+    // after menu hiding is finished
+    var t_afterHideMenu = function () {
+        if(true === menuReadyToClose) {
+            var menuItems = $("#cubeviz-visualizationselector-menuItems").children();
+            this.assertEquals(0, menuItems.length, "menuItems.length: " + menuItems.length);
+        }
+    };
+    
+    // Bind real test function to a global event
+    cubeVizApp.bindGlobalEvents([{
+        name: "onAfterHide_visualizationSelectorMenu", 
+        handler: $.proxy(t_afterHideMenu, this)
+    }]);
+    
+    // two clicks on the same item > menu will appear
+    $(secondItem).click();
+    
+    menuReadyToClose = true;
+    $(secondItem).click();
 });

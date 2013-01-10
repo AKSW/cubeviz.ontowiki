@@ -1476,12 +1476,17 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         return this;
     };
     View_IndexAction_VisualizationSelector.prototype.hideMenu = function () {
+        this.triggerGlobalEvent("onBeforeHide_visualizationSelectorMenu");
         $("#cubeviz-visualizationselector-menu").fadeOut("slow");
         $("#cubeviz-visualizationselector-menuItems").html("");
+        this.triggerGlobalEvent("onAfterHide_visualizationSelectorMenu");
         return this;
     };
     View_IndexAction_VisualizationSelector.prototype.initialize = function () {
         this.render();
+    };
+    View_IndexAction_VisualizationSelector.prototype.onClick_closeMenu = function () {
+        this.hideMenu();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_selectorItem = function (event) {
         this.triggerGlobalEvent("onBeforeClick_selectorItem");
@@ -1507,6 +1512,8 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             this.triggerGlobalEvent("onChange_visualizationClass");
         }
         this.triggerGlobalEvent("onAfterClick_selectorItem");
+    };
+    View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -1539,6 +1546,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         return this;
     };
     View_IndexAction_VisualizationSelector.prototype.showMenu = function (selectorItemDiv) {
+        this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
         var menuItem;
@@ -1562,8 +1570,11 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
                 });
                 $("#cubeviz-visualizationselector-menuItems").append(menuItem);
             });
+            $("#cubeviz-visualizationselector-closeMenu").click($.proxy(this.onClick_closeMenu, this));
+            $("#cubeviz-visualizationselector-updateVisz").click($.proxy(this.onClick_closeMenu, this));
             $("#cubeviz-visualizationselector-menu").css("top", offset.top - 37).css("left", offset.left - 495).fadeIn("slow");
         }
+        this.triggerGlobalEvent("onAfterShow_visualizationSelectorMenu");
     };
     View_IndexAction_VisualizationSelector.prototype.showMenuDongle = function (selectorItemDiv) {
         var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;

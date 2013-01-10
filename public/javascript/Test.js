@@ -89,7 +89,7 @@ cubeViz_tests.push(function () {
 
     var t = function () {
         if(true == isThirdClick) {
-            this.assertTrue(0 == $("#cubeviz-visualizationselector-menuItems").children().length);
+            this.assertTrue(0 == menuItems.length);
         }
     };
     cubeVizApp.bindGlobalEvents([
@@ -102,4 +102,26 @@ cubeViz_tests.push(function () {
     $(secondItem).click();
     isThirdClick = true;
     $(firstItem).click();
+});
+cubeViz_tests.push(function () {
+    cubeVizApp.triggerEvent("onStart_application");
+    var items = $("#cubeviz-visualizationselector-selector").children();
+    var secondItem = $(items[1]);
+    var menuReadyToClose = false;
+
+    var t_afterHideMenu = function () {
+        if(true === menuReadyToClose) {
+            var menuItems = $("#cubeviz-visualizationselector-menuItems").children();
+            this.assertEquals(0, menuItems.length, "menuItems.length: " + menuItems.length);
+        }
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterHide_visualizationSelectorMenu",
+            handler: $.proxy(t_afterHideMenu, this)
+        }
+    ]);
+    $(secondItem).click();
+    menuReadyToClose = true;
+    $(secondItem).click();
 });
