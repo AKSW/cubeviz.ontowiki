@@ -41,20 +41,21 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public hideDongle() 
+    public hideDongle() : View_IndexAction_VisualizationSelector
     {
         $("#cubeviz-visualizationselector-menuDongleDiv")
             .fadeOut("slow");
+        return this;
     }
     
     /**
      *
      */
-    public hideMenu() 
+    public hideMenu() : View_IndexAction_VisualizationSelector
     {
-        $("#cubeviz-visualizationselector-menu").fadeOut("slow", function(){
-            $("#cubeviz-visualizationselector-menuItems").html("");
-        });
+        $("#cubeviz-visualizationselector-menu").fadeOut("slow");
+        $("#cubeviz-visualizationselector-menuItems").html("");
+        return this;
     }
     
     /**

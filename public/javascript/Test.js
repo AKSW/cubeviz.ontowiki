@@ -9,7 +9,6 @@ var cubeviz_setupTest = function () {
     cubeVizApp.reset();
 };
 var cubeviz_tearDownTest = function () {
-    cubeVizApp.restoreDataCopy(cubeVizAppDataCopy).reset().triggerEvent("onStart_application");
 };
 var cubeviz_startTests = function () {
     var testSuite = new MUNIT.Test(cubeViz_tests);
@@ -79,4 +78,28 @@ cubeViz_tests.push(function () {
     $(secondItem).click();
     isSecondClick = true;
     $(secondItem).click();
+});
+cubeViz_tests.push(function () {
+    cubeVizApp.triggerEvent("onStart_application");
+    var isThirdClick = false;
+    var items = $("#cubeviz-visualizationselector-selector").children();
+    var firstItem = $(items[0]);
+    var secondItem = $(items[1]);
+    var menuItems = $("#cubeviz-visualizationselector-menuItems").children();
+
+    var t = function () {
+        if(true == isThirdClick) {
+            this.assertTrue(0 == $("#cubeviz-visualizationselector-menuItems").children().length);
+        }
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterClick_selectorItem",
+            handler: $.proxy(t, this)
+        }
+    ]);
+    $(secondItem).click();
+    $(secondItem).click();
+    isThirdClick = true;
+    $(firstItem).click();
 });

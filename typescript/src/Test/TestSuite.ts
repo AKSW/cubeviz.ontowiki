@@ -25,16 +25,11 @@ var cubeviz_setupTest = function(){
 /**
  * will be called after a test finished
  */
-var cubeviz_tearDownTest = function(){
-    // Reset data
-    cubeVizApp
-        .restoreDataCopy(cubeVizAppDataCopy)
-    // Reset whole application
-        .reset()
-        .triggerEvent("onStart_application");
-};
+var cubeviz_tearDownTest = function(){};
 
-// START all tests
+/**
+ * START all tests
+ */
 var cubeviz_startTests = function(){
     
     // load all tests

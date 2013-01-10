@@ -1,2 +1,2 @@
 src/Test/TestSuite.ts
-src/Test/Module/IndexAction/VisualizationSelector.ts
+src/Test/View/IndexAction/VisualizationSelector.ts

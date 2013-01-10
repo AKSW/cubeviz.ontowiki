@@ -82,3 +82,40 @@ cubeViz_tests.push(function(){
     isSecondClick = true;
     $(secondItem).click();
 });
+
+/**
+ * Test after show the menu, and click to another item, let it disappear
+ */
+cubeViz_tests.push(function(){
+    cubeVizApp.triggerEvent("onStart_application");
+    
+    var isThirdClick = false,
+        items = $("#cubeviz-visualizationselector-selector").children(),
+        firstItem = $(items[0]),
+        secondItem = $(items[1]),
+        menuItems = $("#cubeviz-visualizationselector-menuItems").children();
+        
+    var t = function () {
+        // is that the thirth click? > yes!
+        if(true == isThirdClick) {            
+            this.assertTrue(
+                0 == $("#cubeviz-visualizationselector-menuItems").children().length
+            );
+        } 
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterClick_selectorItem", handler: $.proxy(t, this)
+    }]);
+    
+    // first click > dongle will appear
+    $(secondItem).click();
+    
+    // second click > menu will appear
+    $(secondItem).click();
+    
+    // thirth click > menu must disappear
+    isThirdClick = true;
+    $(firstItem).click();
+});

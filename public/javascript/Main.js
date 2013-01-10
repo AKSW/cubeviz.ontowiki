@@ -1468,17 +1468,17 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     View_IndexAction_VisualizationSelector.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         $("#cubeviz-visualizationselector-selector").empty();
-        this.hideDongle();
-        this.hideMenu();
+        this.hideDongle().hideMenu();
         return this;
     };
     View_IndexAction_VisualizationSelector.prototype.hideDongle = function () {
         $("#cubeviz-visualizationselector-menuDongleDiv").fadeOut("slow");
+        return this;
     };
     View_IndexAction_VisualizationSelector.prototype.hideMenu = function () {
-        $("#cubeviz-visualizationselector-menu").fadeOut("slow", function () {
-            $("#cubeviz-visualizationselector-menuItems").html("");
-        });
+        $("#cubeviz-visualizationselector-menu").fadeOut("slow");
+        $("#cubeviz-visualizationselector-menuItems").html("");
+        return this;
     };
     View_IndexAction_VisualizationSelector.prototype.initialize = function () {
         this.render();
