@@ -35,15 +35,17 @@ MUNIT.Test = function(tests) {
 
 	tests = tests || [];
 
-	this.assertTrue = function(value) {
+	this.assertTrue = function(value, message) {
 		if(value !== true) {
-			throw new MUNIT.AssertException('Expected true, got ' + value);
+            var message = message || 'Expected true, got ' + value;
+			throw new MUNIT.AssertException(message);
 		}
 	}
 
-	this.assertEquals = function(expectedValue, actualValue) {
+	this.assertEquals = function(expectedValue, actualValue, message) {
 		if(expectedValue != actualValue) {
-			throw new MUNIT.AssertException('Expected ' + expectedValue + ', got ' + actualValue);
+            var message = message || "Expected " + expectedValue + ", got " + actualValue;
+			throw new MUNIT.AssertException(message);
 		}
 	}
 
