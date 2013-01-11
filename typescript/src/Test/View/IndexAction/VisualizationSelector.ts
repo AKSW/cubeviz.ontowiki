@@ -8,7 +8,7 @@ cubeViz_tests.push(function(){
     var t = function() 
     {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions,
-            expectItems = cubeVizApp._.chartConfig[numberOfMultDims].charts,
+            expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts,
             foundItems = $("#cubeviz-visualizationselector-selector").children();
         
         this.assertTrue(expectItems.length == foundItems.length);

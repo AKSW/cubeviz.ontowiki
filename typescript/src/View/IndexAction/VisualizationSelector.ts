@@ -154,7 +154,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
-                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             );
             
         // update visualization setting class entry, based on what the user selected
@@ -198,7 +198,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions,
             viszItem,
-            charts = this.app._.chartConfig[numberOfMultDims].charts,
+            charts = this.app._.backend.chartConfig[numberOfMultDims].charts,
             selectorItemTpl = _.template(
                 $("#cubeviz-visualizationselector-tpl-selectorItem").text()
             ),
@@ -255,7 +255,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
-                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
             
             menuItem:any,
@@ -373,7 +373,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public showMenuDongle(selectorItemDiv:any) 
     {
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
+        var charts = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
         
             // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (

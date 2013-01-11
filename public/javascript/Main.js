@@ -1456,13 +1456,13 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var type = null;
         var visualizationSetting = null;
 
         if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+            this.app._.ui.visualization.class = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
+            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         }
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
@@ -1553,7 +1553,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         this.triggerGlobalEvent("onReRender_visualization");
     };
@@ -1568,7 +1568,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
         var viszItem;
-        var charts = this.app._.chartConfig[numberOfMultDims].charts;
+        var charts = this.app._.backend.chartConfig[numberOfMultDims].charts;
         var selectorItemTpl = _.template($("#cubeviz-visualizationselector-tpl-selectorItem").text());
         var self = this;
 
@@ -1592,7 +1592,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
         var alreadySetSelected = false;
         var defaultValue = "";
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var menuItem;
         var menuItemTpl = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text());
         var menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html();
@@ -1644,7 +1644,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onAfterShow_visualizationSelectorMenu");
     };
     View_IndexAction_VisualizationSelector.prototype.showMenuDongle = function (selectorItemDiv) {
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
+        var charts = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
 
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options)) {

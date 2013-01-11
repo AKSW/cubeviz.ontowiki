@@ -128,7 +128,7 @@ class CubevizModule extends OntoWiki_Module
        
         $this->view->headScript()
             ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
-            ->appendScript('cubeVizApp._.chartConfig = CubeViz_ChartConfig;');
+            ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
         
         /**
          * fill template with content and give generated HTML back

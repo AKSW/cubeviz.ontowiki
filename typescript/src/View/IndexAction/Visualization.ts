@@ -122,20 +122,20 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
-                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),                
             type:string = null, 
             visualizationSetting:any = null;            
         
         // set default className
         if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.class = this.app._.chartConfig[
+            this.app._.ui.visualization.class = this.app._.backend.chartConfig[
                 this.app._.data.numberOfMultipleDimensions
             ].charts[0].class;
             
             fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
-                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             );
         }
         

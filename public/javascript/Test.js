@@ -27,7 +27,7 @@ var cubeviz_startTests = function () {
 cubeViz_tests.push(function () {
     var t = function () {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions;
-        var expectItems = cubeVizApp._.chartConfig[numberOfMultDims].charts;
+        var expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts;
         var foundItems = $("#cubeviz-visualizationselector-selector").children();
 
         this.assertTrue(expectItems.length == foundItems.length);
