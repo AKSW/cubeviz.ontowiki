@@ -207,7 +207,8 @@ class CubeViz_ConfigurationLink
                     'retrievedObservations'         => array()
                 ), $model);                
                 
-                $config = $this->write($config, 'data');
+                $hash = $this->write($config, 'data');
+                $config['hash'] = $hash;
                 
                 break;
             
@@ -227,7 +228,8 @@ class CubeViz_ConfigurationLink
                     )
                 );
                 
-                $config = $this->write($config, 'ui');
+                $hash = $this->write($config, 'ui');
+                $config['hash'] = $hash;
                   
                 break;
                 
@@ -277,7 +279,7 @@ class CubeViz_ConfigurationLink
             fclose($fh);
         } 
         
-        return $content;
+        return $content['hash'];
     }
     
     /**

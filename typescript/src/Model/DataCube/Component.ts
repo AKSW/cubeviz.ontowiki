@@ -12,18 +12,16 @@ class DataCube_Component {
     static loadAllDimensions (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
         
         $.ajax({
-            url: url + "getcomponents", // CubeViz_Links_Module.cubevizPath + "getcomponents/",
+            url: url + "getcomponents",
             data: {
-                m: modelUrl, // CubeViz_Links_Module["modelUrl"],
+                m: modelUrl, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
                 cT: "dimension" // possible: dimension, measure
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "Component > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error ("loadAllDimensions: " + xhr.responseText);
         })
         .done( function (entries) { 
             DataCube_Component.prepareLoadedAllDimensions (entries, callback); 
@@ -60,18 +58,16 @@ class DataCube_Component {
     static loadAllMeasures (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
         
         $.ajax({
-            url: url + "getcomponents", // CubeViz_Links_Module.cubevizPath + "getcomponents/",
+            url: url + "getcomponents",
             data: {
-                m: modelUrl, // CubeViz_Links_Module["modelUrl"],
+                m: modelUrl, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
                 cT: "measure" // possible: dimension, measure
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            console.log ( "Component > loadAll > error" );
-            console.log ( "response text: " + xhr.responseText );
-            console.log ( "error: " + thrownError );
+            throw new Error ("loadAllMeasures: " + xhr.responseText);
         })
         .done( function (entries) { 
             DataCube_Component.prepareLoadedAllMeasures (entries, callback); 

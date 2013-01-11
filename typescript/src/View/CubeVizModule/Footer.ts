@@ -121,16 +121,16 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         } else {
             
             // update link code
-            CubeViz_ConfigurationLink.saveToServer(
+            CubeViz_ConfigurationLink.save(
                 this.app._.backend.url,
                 this.app._.data,
-                this.app._.ui,
-                
-                function(updatedLinkCode){
+                "data",
+                function(updatedDataHash){                    
                     // refresh page and show visualization for the latest linkCode
                     window.location.href = self.app._.backend.url
                         + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                        + "&lC=" + updatedLinkCode;
+                        + "&cv_dataHash=" + updatedDataHash
+                        + "&cv_uiHash=" + self.app._.ui.hash;
                 }
             );
         }
@@ -181,7 +181,8 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                     // build link to show later on
                     var link = self.app._.backend.url
                                + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                               + "&lC=" + self.app._.data.linkCode;
+                               + "&cv_dataHash=" + self.app._.data.hash
+                               + "&cv_uiHash=" + self.app._.ui.hash;
                         
                     var url = $("<a></a>")
                         .attr ("href", link)

@@ -171,11 +171,11 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         );
         
         // update link code
-        CubeViz_ConfigurationLink.saveToServer(
+        CubeViz_ConfigurationLink.save(
             this.app._.backend.url,
-            this.app._.data,
             this.app._.ui,
-            function(updatedLinkCode){ self.app._.data.linkCode = updatedLinkCode; }
+            "ui",
+            function(updatedUiHash){ self.app._.ui.hash = updatedUiHash; }
         );
         
         this.triggerGlobalEvent("onReRender_visualization");

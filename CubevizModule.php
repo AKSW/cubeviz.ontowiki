@@ -97,7 +97,7 @@ class CubevizModule extends OntoWiki_Module
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-                
+
         /**
          * Set backend container with backend related information
          */
@@ -108,14 +108,14 @@ class CubevizModule extends OntoWiki_Module
          * Get hashes from parameter list
          */
         // hash for data
-        $dataHash = NULL == $this->_request->getParam ('dataHash') 
+        $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
             ? CubeViz_ConfigurationLink::$filePrefForDataHash 
-            : $this->_request->getParam ('dataHash');
+            : $this->_request->getParam ('cv_dataHash');
         
         // hash for ui
-        $uiHash = NULL == $this->_request->getParam ('uiHash') 
+        $uiHash = NULL == $this->_request->getParam ('cv_uiHash') 
             ? CubeViz_ConfigurationLink::$filePrefForUiHash 
-            : $this->_request->getParam ('uiHash');
+            : $this->_request->getParam ('cv_uiHash');
         
         /**
          * Read information from files according to given hases

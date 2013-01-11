@@ -150,11 +150,11 @@ class DataCube_Observation {
     /**
      * 
      */
-    static loadAll (linkCode:string, url:string, callback) 
+    static loadAll (dataHash:string, url:string, callback) 
     {        
         $.ajax({
             url: url + "getobservations/",
-            data: {lC: linkCode}
+            data: {cv_dataHash: dataHash}
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             throw new Error ("Observation loadAll error: " + xhr.responseText);

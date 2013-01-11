@@ -72,20 +72,26 @@ class CubevizController extends OntoWiki_Controller_Component {
                    ->set('Visualization for '. $modelInformation ['rdfs:label']);
         
         $on = $this->_owApp->getNavigation();
-        $on->disableNavigation (); // disable OntoWiki's Navigation
-    
+        $on->disableNavigation (); // disable OntoWiki's Navigation    
+        
+        /**
+         * Set backend container with backend related information
+         */
+        $context = null === $this->_privateConfig->get('context') 
+            ? 'production' : $this->_privateConfig->get('context');
+        
         /**
          * Get hashes from parameter list
          */
         // hash for data
-        $dataHash = NULL == $this->_request->getParam ('dataHash') 
+        $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
             ? CubeViz_ConfigurationLink::$filePrefForDataHash 
-            : $this->_request->getParam ('dataHash');
+            : $this->_request->getParam ('cv_dataHash');
         
         // hash for ui
-        $uiHash = NULL == $this->_request->getParam ('uiHash') 
+        $uiHash = NULL == $this->_request->getParam ('cv_uiHash') 
             ? CubeViz_ConfigurationLink::$filePrefForUiHash 
-            : $this->_request->getParam ('uiHash');
+            : $this->_request->getParam ('cv_uiHash');
         
         /**
          * Read information from files according to given hases
@@ -117,43 +123,35 @@ class CubevizController extends OntoWiki_Controller_Component {
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-    }
-    
-    public function getdatafromlinkcodeAction() {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();     
-
-        // load configuration which is associated with given linkCode
-        $configuration = $this->_getConfiguration ();
-        $configuration = $configuration->read ($this->_request->getParam('lC'));
         
-        // send back readed configuration
-        // $configuration [0] contains stuff e.g. selectedDSD, ...
-        //                [1] contains UI chart config information
-		$this->_response->setBody(json_encode($configuration));	
-	}
-	
-	public function getobservationsAction() {
-		
+        $this->view->headScript()
+            ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+            ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
+    }
+
+    /**
+     *
+     */
+    public function getobservationsAction() 
+    {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();   
              
-        // linkCode (each linkcode represents a particular configuration of CubeViz)
-		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
-        $linkConfiguration = array ();
+        // data hash
+        $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
+            ? '' : $this->_request->getParam ('cv_dataHash');
         
         // init Query and model
-		$query = new DataCube_Query ( $this->_owApp->selectedModel );
+        $query = new DataCube_Query ( $this->_owApp->selectedModel );
         
         // load configuration which is associated with given linkCode
-		$c = $this->_getConfiguration (); 	
-		$c = $c->read ($linkCode, $this->_owApp->selectedModel);
+        $c = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
         
         // ... get and return observations
-		$this->_response->setBody(
-            json_encode($query->getObservations($c ['data']), JSON_FORCE_OBJECT)
+        $this->_response->setBody(
+            json_encode($query->getObservations($c), JSON_FORCE_OBJECT)
         );
-	}
+    }
     
     /**
      * 
@@ -196,17 +194,23 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->_helper->layout->disableLayout();
 		
 		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
-		$dsUrl = $this->_request->getParam('dsUrl'); // Data Set
-		$componentType = $this->_request->getParam('cT'); // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
+		
+        // Data Structure Definition
+        $dsdUrl = $this->_request->getParam('dsdUrl');
+		
+        // Data Set
+        $dsUrl = $this->_request->getParam('dsUrl');
+        
+        // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
+		$componentType = $this->_request->getParam('cT'); 
 				
-		if($componentType == "measure") {
+		if($componentType == 'measure') {
 			$componentType = DataCube_UriOf::Measure;
-		} else if($componentType == "dimension") {
+		} else if($componentType == 'dimension') {
 			$componentType = DataCube_UriOf::Dimension;
 		} else {
             // stop execution, because it is not a $componentType that i understand
-            $this->_response->setBody("Unknown cT parameter! Given was: " . $componentType);
+            $this->_response->setBody('Unknown cT parameter! Given was: '. $componentType);
             return;
         }
 		
@@ -215,26 +219,26 @@ class CubevizController extends OntoWiki_Controller_Component {
 		try {
 			$this->_response->setBody(json_encode($query->getComponents($dsdUrl, $dsUrl, $componentType)));
 		} catch(CubeViz_Exception $e) {
+			// send error message back
 			$this->_response->setBody($e->getMessage());
-			//error message
 		}        
 	}
 	
 	/**
 	 * 
 	 */
-	public function savelinktofileAction() {
+	public function savecontenttofileAction() {
 		$this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 		
-        // write given parameter to file
-		$lC = $this->_getConfiguration ()->write(
-            $this->_request->getParam('data'),
-            $this->_request->getParam('ui')
+        // write given content to file
+		$hash = $this->_getConfiguration()->write(
+            $this->_request->getParam('content'),
+            $this->_request->getParam('type')
         );
         
         // send back result
-		$this->_response->setBody(json_encode($lC));
+		$this->_response->setBody(json_encode($hash));
 	}
 
     /**

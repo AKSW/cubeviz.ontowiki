@@ -1,11 +1,16 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
 class CubeViz_ConfigurationLink 
-{    
+{        
     /**
-     * 
+     * Saves data or ui information to the server, usally in a file.
+     * @param url Url to CubeViz
+     * @param content Usally an object to save
+     * @param type Determine if its "ui" or "data"
+     * @param callback Function to call after saving is complete
+     * @return void
      */
-    static saveToServer (url, data:any, ui:any, callback) : void
+    static save (url, content, type, callback) : void
     {        
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
@@ -17,8 +22,8 @@ class CubeViz_ConfigurationLink
         
         // Execute Ajax 
         $.ajax({
-            "url": url + "savelinktofile/",
-            "data": { "data": data, "ui": ui }
+            "url": url + "savecontenttofile/",
+            "data": { type: type, content: content }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             
@@ -26,15 +31,15 @@ class CubeViz_ConfigurationLink
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
             
-            throw new Error( "saveToServerFile error: " + xhr ["responseText"] );
+            throw new Error( "save error: " + xhr ["responseText"] );
         })
-        .done( function (result) { 
+        .done(function (generatedHash){ 
             
             // set old ajax config
             $.ajaxSetup(oldAjaxSetup); 
             $.support.cors = oldSupportOrs;
             
-            callback ( JSON.parse(result) );
+            callback(JSON.parse(generatedHash));
         });
     }
 }
