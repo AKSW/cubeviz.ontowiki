@@ -205,7 +205,10 @@ class CubeViz_ConfigurationLink
                 'class'                 => ''
             ),
             // will contain information/settings for each visualization class
-            'visualizationSettings'     => array()
+            'visualizationSettings'     => array(
+                // dirty hack, without it, jQuery does not transmit empty array
+                0                       => null
+            )
         );
         
         $readedConfig = $this->loadStandardData($readedConfig, $model);
