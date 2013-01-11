@@ -10,11 +10,11 @@ class CubevizController extends OntoWiki_Controller_Component {
     public function init () {
         parent::init();
         $loader = Zend_Loader_Autoloader::getInstance();
-		$loader->registerNamespace('CubeViz_');
-		$loader->registerNamespace('DataCube_');
-		$path = __DIR__;
-		set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
-		
+        $loader->registerNamespace('CubeViz_');
+        $loader->registerNamespace('DataCube_');
+        $path = __DIR__;
+        set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
+
     }
     
     /**
@@ -34,7 +34,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
         $baseJavascriptPath = $basePath .'public/javascript/';
         $baseCssPath = $basePath .'public/css/';
-		$this->view->cubevizImagesPath = $baseImagesPath = $basePath .'public/images/';
+        $this->view->cubevizImagesPath = $baseImagesPath = $basePath .'public/images/';
     
     
         /**
@@ -56,10 +56,10 @@ class CubevizController extends OntoWiki_Controller_Component {
             ->prependStylesheet($baseCssPath.'/IndexAction/visualizationSelector.css');
         
     
-		/**
+        /**
          * Load model information
          */
-		$model = $this->_owApp->selectedModel;
+        $model = $this->_owApp->selectedModel;
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         $modelInformation = $this->_getModelInformation($modelStore, $model, $modelIri);
@@ -74,30 +74,59 @@ class CubevizController extends OntoWiki_Controller_Component {
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation
     
-		/**
-         * Set LinkCode (each linkcode represents a particular configuration of CubeViz)
+        /**
+         * Get hashes from parameter list
          */
-		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
+        // hash for data
+        $dataHash = NULL == $this->_request->getParam ('dataHash') 
+            ? CubeViz_ConfigurationLink::$filePrefForDataHash 
+            : $this->_request->getParam ('dataHash');
+        
+        // hash for ui
+        $uiHash = NULL == $this->_request->getParam ('uiHash') 
+            ? CubeViz_ConfigurationLink::$filePrefForUiHash 
+            : $this->_request->getParam ('uiHash');
+        
+        /**
+         * Read information from files according to given hases
+         */
+        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $config = array();
+        $config['data'] = $c->read ($dataHash, $model);
+        $config['ui'] = $c->read ($uiHash, $model);
+
+        $config['backend'] = array(
+            'context'           => $context, 
+            'database'          => $this->_owApp->getConfig()->store->backend,
+            'imagesPath'        => $baseImagesPath,
+            'modelUrl'          => $modelIri,
+            'uiParts'           => array(
+                'module'        => array('isLoaded'=> false),
+                'index'         => array('isLoaded'=> false)
+            ),
+            'url'               => $this->_config->staticUrlBase . 'cubeviz/',
+            'sparqlEndpoint'    => 'local'
+        );
                 
         /**
          * Save model information
          */
         $this->view->CubeViz_ModelInformation = $modelInformation;
         
-		/**
+        /**
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-	}
-	
-	public function getdatafromlinkcodeAction() {
-		$this->_helper->viewRenderer->setNoRender();
+    }
+    
+    public function getdatafromlinkcodeAction() {
+        $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();     
-		
+
         // load configuration which is associated with given linkCode
-		$configuration = $this->_getConfiguration ();
+        $configuration = $this->_getConfiguration ();
         $configuration = $configuration->read ($this->_request->getParam('lC'));
-				
+        
         // send back readed configuration
         // $configuration [0] contains stuff e.g. selectedDSD, ...
         //                [1] contains UI chart config information

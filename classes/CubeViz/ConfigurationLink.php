@@ -13,20 +13,20 @@
  */ 
 class CubeViz_ConfigurationLink
 {   
-	/**
+    /**
      * Path to the links folder
      */
     protected $_hashDirectory = '';    
 
-	/**
-     * filePrefix for hashes
+    /**
+     * filePrefix for dataHash
      */
-    protected $_filePrefix = 'cubeviz-hash-';
+    public static $filePrefForDataHash = 'dataHash-';
     
     /**
-     * Needs to be public to be accessible through json_encode interface
+     * filePrefix for uiHash
      */
-    protected $_links = null;
+    public static $filePrefForUiHash = 'uiHash-';
     
     /**
      * Constructor
@@ -34,64 +34,63 @@ class CubeViz_ConfigurationLink
     public function __construct($path) 
     {
         $this->_hashDirectory = $path;
-        $this->_links = array ();
-	}
+    }
     
     /**
      *
      */
-    public function loadStandardData($config, &$model) 
+    public function loadStandardConfigForData($config, &$model) 
     {
         $query = new DataCube_Query($model);
         
         // if no data structure definitions were selected
-        if(0 === count($config['data']['dataStructureDefinitions'])) {
-            $config['data']['dataStructureDefinitions'] = $query->getDataStructureDefinitions();
+        if(0 === count($config['dataStructureDefinitions'])) {
+            $config['dataStructureDefinitions'] = $query->getDataStructureDefinitions();
         } 
         
         // if no data structure definition was selected
-        if(0 === count($config['data']['selectedDSD'])) {
-            $config['data']['selectedDSD'] = $config['data']['dataStructureDefinitions'][0];
+        if(0 === count($config['selectedDSD'])) {
+            $config['selectedDSD'] = $config['dataStructureDefinitions'][0];
         }
                         
         // if no data structure definitions were selected
-        if(0 === count($config['data']['dataSets'])) {
-            $config['data']['dataSets'] = $query->getDataSets($config['data']['selectedDSD']['url']);
+        if(0 === count($config['dataSets'])) {
+            $config['dataSets'] = $query->getDataSets($config['selectedDSD']['url']);
         } 
         
         // if no data sets were selected
-        if(0 === count($config['data']['selectedDS'])) {
-            $config['data']['selectedDS'] = $config['data']['dataSets'][0];
+        if(0 === count($config['selectedDS'])) {
+            $config['selectedDS'] = $config['dataSets'][0];
         }
         
         // if no components were selected
-        if(0 === count($config['data']['components'])) {
+        if(0 === count($config['components'])) {
             
             /**
              * Dimensions
              */
             $dimensions = $query->getComponents(
-                $config['data']['selectedDSD']['url'],
-                $config['data']['selectedDS']['url'],
+                $config['selectedDSD']['url'],
+                $config['selectedDS']['url'],
                 DataCube_UriOf::Dimension
             );
             
             // set components
-            $config['data']['components']['dimensions'] = array();
+            $config['components']['dimensions'] = array();
             foreach ($dimensions as $dimension) {
-                $config['data']['components']['dimensions']
+                $config['components']['dimensions']
                     [$dimension['hashedUrl']] = $dimension;
             }
             
             // set selectedComponents
-            $config['data']['selectedComponents']['dimensions'] = array();
+            $config['selectedComponents']['dimensions'] = array();
             foreach ($dimensions as $dimension) {
                 
                 $dimension['elements'] = array(
                     $dimension['elements'][0]
                 );
                 
-                $config['data']['selectedComponents']['dimensions']
+                $config['selectedComponents']['dimensions']
                     [$dimension['hashedUrl']] = $dimension;
             }
             
@@ -99,165 +98,193 @@ class CubeViz_ConfigurationLink
              * Measures
              */
             $measures = $query->getComponents(
-                $config['data']['selectedDSD']['url'],
-                $config['data']['selectedDS']['url'],
+                $config['selectedDSD']['url'],
+                $config['selectedDS']['url'],
                 DataCube_UriOf::Measure
             );
             
             // set measures
-            $config['data']['components']['measures'] = array();
+            $config['components']['measures'] = array();
             foreach ($measures as $measure) {
-                $config['data']['components']['measures']
+                $config['components']['measures']
                     [$measure['hashedUrl']] = $measure;
             }
             
             // set selectedComponents
-            $config['data']['selectedComponents']['measures'] = array();
+            $config['selectedComponents']['measures'] = array();
             foreach ($measures as $measure) {
-                $config['data']['selectedComponents']['measures']
+                $config['selectedComponents']['measures']
                     [$measure['hashedUrl']] = $measure;
             }
         }
         
         // number of multiple dimensions
-        $config['data']['numberOfMultipleDimensions'] = 0;
+        $config['numberOfMultipleDimensions'] = 0;
             
-        foreach ($config['data']['selectedComponents']['dimensions'] as $dim) {
+        foreach ($config['selectedComponents']['dimensions'] as $dim) {
             if(1 < count($dim ['elements'])) {
-                ++$config['data']['numberOfMultipleDimensions'];
+                ++$config['numberOfMultipleDimensions'];
             }
         }
         
         // number of one element dimensions
-        $config['data']['numberOfOneElementDimensions'] = 0;
+        $config['numberOfOneElementDimensions'] = 0;
         
-        foreach ($config['data']['selectedComponents']['dimensions'] as $dim) {
+        foreach ($config['selectedComponents']['dimensions'] as $dim) {
             if(1 == count($dim ['elements'])) {
-                ++$config['data']['numberOfOneElementDimensions'];
+                ++$config['numberOfOneElementDimensions'];
             }
         }
         
         // if no retrievedObservations were selected
-        if(0 === count($config['data']['retrievedObservations'])){
+        if(0 === count($config['retrievedObservations'])){
             
-            $config['data']['retrievedObservations'] = $query->getObservations(array(
-                'selectedComponents' => $config['data']['selectedComponents'],
-                'selectedDS' => array('url' => $config['data']['selectedDS']['url'])
+            $config['retrievedObservations'] = $query->getObservations(array(
+                'selectedComponents' => $config['selectedComponents'],
+                'selectedDS' => array('url' => $config['selectedDS']['url'])
             ));
         }
         
         return $config;
     }
     
-	/**
-	 * Read configuration from a json file in links folder
-     * @param $linkCode Name of the file (name = hash code)
-     * @return array Array with different kinds of information
-	 */
-	public function read($linkCode, &$model) 
+    /**
+     *
+     */
+    public function read($hash, &$model) 
     {
-        // If link code file exists, try to load content
-		if (true === file_exists($this->_hashDirectory . $linkCode) ) {
-            
-            $readedConfig = array ();
-            
-            $c = file($this->_hashDirectory . $linkCode);
+        /**
+         * load and return file content, if file exists
+         */
+        if(true === file_exists($this->_hashDirectory . $hash)){
+            $c = file($this->_hashDirectory . $hash);
             
             // if configuration file contains information
-            if (true == isset ($c [0])) {
-                
+            if (true == isset ($c [0])) {                
                 // contains stuff e.g. selectedDSD, ...
-                $readedConfig ['data'] = json_decode($c[0], true);
-                
-                // contains UI chart config information
-                $readedConfig ['ui'] = json_decode($c [1], true);
-                if(null == $readedConfig ['ui']) $readedConfig ['ui'] = array();
-                
-                return $readedConfig;
-            } 
-		}
-        
-        // Otherwise set standard values
-        $readedConfig ['backend'] = array('backend' => '');
+                return json_decode($c[0], true);
+            }
+        }
         
         /**
-         * Information about the data cube itself and what was selected
+         * If you are here, either the file does not exists or there was nothing
+         * to read in the file's first line.
+         * 
+         * ... so now set standard values.
          */
-        $readedConfig ['data'] = array(
-            'dataStructureDefinitions'  => array(),
-            'dataSets'                  => array(),
-            'components'                => array(),
-            'numberOfMultipleDimensions'=> 0,
-            'selectedDSD'               => array(),
-            'selectedDS'                => array(),
-            'selectedComponents'        => array(
-                'dimensions'            => array(),
-                'measures'              => array()
-            ),
-            'retrievedObservations'     => array()
-        );
+        $config = array();
+        $type = '';
         
-        /**
-         * Information about the user interface
-         */
-        $readedConfig ['ui'] = array(
-            'visualization'             => array(
-                'class'                 => ''
-            ),
-            // will contain information/settings for each visualization class
-            'visualizationSettings'     => array(
-                // dirty hack, without it, jQuery does not transmit empty array
-                0                       => null
-            )
-        );
+        $filePrefData = CubeViz_ConfigurationLink::$filePrefForDataHash;
+        $filePrefUi= CubeViz_ConfigurationLink::$filePrefForUiHash;
         
-        $readedConfig = $this->loadStandardData($readedConfig, $model);
+        // determine which type the hash is:
+        if($filePrefData == substr($hash, 0, strlen($filePrefData))) {
+            $type = 'data';
+        } elseif($filePrefUi == substr($hash, 0, strlen($filePrefUi))){
+            $type = 'ui';
+        }
         
-        // set link code
-        $readedConfig['data']['linkCode'] = $this->write(
-            $readedConfig['data'], $readedConfig['ui']
-        );
+        switch($type) {
+            
+            /**
+             * Information about the data cube itself and what was selected
+             */
+            case 'data':
+            
+                $config = $this->loadStandardConfigForData(array(
+                    'dataStructureDefinitions'      => array(),
+                    'dataSets'                      => array(),
+                    'components'                    => array(),
+                    'numberOfOneElementDimensions'  => 0,
+                    'numberOfMultipleDimensions'    => 0,
+                    'selectedDSD'                   => array(),
+                    'selectedDS'                    => array(),
+                    'selectedComponents'            => array(
+                        'dimensions'                => array(),
+                        'measures'                  => array()
+                    ),
+                    'retrievedObservations'         => array()
+                ), $model);                
+                
+                $config = $this->write($config, 'data');
+                
+                break;
+            
+            /**
+             * Information about the user interface
+             */
+            case 'ui':
+            
+                $config = array(
+                    'visualization'                 => array(
+                        'class'                     => ''
+                    ),
+                    // will contain information/settings for each visualization class
+                    'visualizationSettings'         => array(
+                        // dirty hack, without it, jQuery does not transmit empty array
+                        0                           => null
+                    )
+                );
+                
+                $config = $this->write($config, 'ui');
+                  
+                break;
+                
+            // something went wrong, hash type unknown
+            default: return null; break;
+        }
         
-		return $readedConfig;
-	}
-	
+        return $config;
+    }
+    
     /**
-     * Writes a given configuration to a file
+     *
      */
-	public function write($data, $ui) 
+    public function write($content, $type) 
     {
-        // compute hashcode for the given configuration
-        $fileName = $this->_filePrefix . $this->generateHash ($data, $ui);
+        $filename = '';
         
-        $data['linkCode'] = $fileName;
+        if('data' == $type) {
+            $filename = CubeViz_ConfigurationLink::$filePrefForDataHash;
+        } elseif('ui' == $type) {
+            $filename = CubeViz_ConfigurationLink::$filePrefForUiHash;
+        } else {
+            // in this case something went wrong!
+            return;
+        }
         
-		$filePath = $this->_hashDirectory . $fileName;
-        				
-		if( false == file_exists($filePath) ) {
+        // attach hash based on the given string
+        $filename .= $this->generateHash ($content);
+        
+        $content['hash'] = $filename;
+        
+        // set full file path
+        $filePath = $this->_hashDirectory . $filename;
+        
+        if(false == file_exists($filePath)) {
             
             // can't open the file: throw exception
-            if ( false === ( $fh = fopen($filePath, 'w') ) ) {
+            if(false === ($fh = fopen($filePath, 'w'))) {
                 $m = 'No write permissions for '. $filePath;
                 throw new CubeViz_Exception ( $m );
                 return $m;
             }
-			
+
             // write all parameters line by line
-			fwrite($fh, json_encode ( $data ) . "\n");
-			fwrite($fh, json_encode ( $ui ) . "\n");
-			chmod ($filePath, 0755);
-			fclose($fh);
-		} 
+            fwrite($fh, json_encode($content)."\n");
+            chmod ($filePath, 0755);
+            fclose($fh);
+        } 
         
-        // return generated hashCode (=fileName)
-        return $fileName;
-	}
+        return $content;
+    }
     
     /**
      * 
      */	
-	private function generateHash ($data, $ui) 
-    {		
-		return hash ( 'sha256', json_encode ( $data ) . json_encode ( $ui ) );
-	}
+    private function generateHash ($content) 
+    {
+        return hash('sha256', json_encode($content));
+    }
 }

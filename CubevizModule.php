@@ -19,12 +19,12 @@ class CubevizModule extends OntoWiki_Module
     {
         $this->session = $this->_owApp->session;
         
-		$loader = Zend_Loader_Autoloader::getInstance();
-		$loader->registerNamespace('CubeViz_');
-		$loader->registerNamespace('DataCube_');
-		$path = __DIR__;
-		set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
-	}
+        $loader = Zend_Loader_Autoloader::getInstance();
+        $loader->registerNamespace('CubeViz_');
+        $loader->registerNamespace('DataCube_');
+        $path = __DIR__;
+        set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
+    }
 
     public function getTitle() 
     {
@@ -93,26 +93,38 @@ class CubevizModule extends OntoWiki_Module
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         
-		// linkCode (each linkcode represents a particular configuration of CubeViz)
-		$linkCode = NULL == $this->_request->getParam ('lC') ? '' : $this->_request->getParam ('lC');
-                
         /**
          * Set view and some of its properties.
          */
         $this->view->cubevizImagesPath = $baseImagesPath;
-        
-        /**
-         * Set data container with CubeViz related information
-         */
-        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $config = $c->read ($linkCode, $model);
-                				
+                
         /**
          * Set backend container with backend related information
          */
         $context = null === $this->_privateConfig->get('context') 
             ? 'production' : $this->_privateConfig->get('context');
-            
+        
+        /**
+         * Get hashes from parameter list
+         */
+        // hash for data
+        $dataHash = NULL == $this->_request->getParam ('dataHash') 
+            ? CubeViz_ConfigurationLink::$filePrefForDataHash 
+            : $this->_request->getParam ('dataHash');
+        
+        // hash for ui
+        $uiHash = NULL == $this->_request->getParam ('uiHash') 
+            ? CubeViz_ConfigurationLink::$filePrefForUiHash 
+            : $this->_request->getParam ('uiHash');
+        
+        /**
+         * Read information from files according to given hases
+         */
+        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+        $config = array();
+        $config['data'] = $c->read ($dataHash, $model);
+        $config['ui'] = $c->read ($uiHash, $model);
+
         $config['backend'] = array(
             'context'           => $context, 
             'database'          => $this->_owApp->getConfig()->store->backend,
