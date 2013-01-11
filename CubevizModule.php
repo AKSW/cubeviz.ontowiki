@@ -110,8 +110,11 @@ class CubevizModule extends OntoWiki_Module
         /**
          * Set backend container with backend related information
          */
+        $context = null === $this->_privateConfig->get('context') 
+            ? 'production' : $this->_privateConfig->get('context');
+            
         $config['backend'] = array(
-            'context'           => 'development', // TODO get it from doap.n3
+            'context'           => $context, 
             'database'          => $this->_owApp->getConfig()->store->backend,
             'imagesPath'        => $baseImagesPath,
             'modelUrl'          => $modelIri,
