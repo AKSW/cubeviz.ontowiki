@@ -249,52 +249,95 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     {
         this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
         
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
+        var alreadySetSelected:bool = false,
+            defaultValue:string = "",
         
             // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class, charts
+                this.app._.ui.visualization.class,
+                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
             
             menuItem:any,
-            menuItemTpl:any = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text()),
+            menuItemTpl:any = _.template(
+                $("#cubeviz-visualizationselector-tpl-menuItem").text()
+            ),
             menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html(),
             offset:any = selectorItemDiv.offset(),
             selectBox:any,
+            shortCutViszSettings:any = this.app._.ui.visualizationSettings
+                [this.app._.ui.visualization.class],
             valueOption:any;
         
         if(false === _.isUndefined(fromChartConfig.options)
            && 0 < _.size(fromChartConfig.options)
            && ( "" == menuItemsHtml || null == menuItemsHtml ))
-        {
+        {            
             // go through all the options for this visz item
             _.each(fromChartConfig.options, function(option){
+                
+                alreadySetSelected = false;
                 
                 // template > DOM element
                 menuItem = $(menuItemTpl(option));
                 
                 // get selectbox
                 selectBox = $(menuItem.find(".cubeviz-visualizationselector-menuSelectbox").get(0));
+                                
+                // find default value, if it exists or use given default one
+                defaultValue = CubeViz_Visualization_Controller.getObjectValueByKeyString (
+                    option.key, 
+                    shortCutViszSettings
+                );
                 
-                // set default value
                 valueOption = $("<option/>");
-                valueOption
-                    .text(option.defaultValue.label)
-                    .val(option.defaultValue.value);
                 
-                selectBox
-                    .append(valueOption);
+                selectBox.data("key", option.key);
                 
-                selectBox
-                    .data("key", option.key);
+                // try to restore previously set default value for this option
+                if(false == _.isUndefined(defaultValue)){
+                    _.each(option.values, function(value){
+                        
+                        value.value = value.value.toString();
+                        
+                        // if something was set before, use that as default!
+                        if(defaultValue.toString() == value.value
+                            && false == alreadySetSelected){
+                            valueOption = $("<option/>");
+                            valueOption
+                                .text(value.label)
+                                .val(value.value)
+                                .attr("selected", "selected");
+                            
+                            selectBox.append(valueOption);
+                            
+                            alreadySetSelected = true;
+                        }
+                    });
+                }
                 
-                // go through the rest of the values for this particular option
+                // add all values
                 _.each(option.values, function(value){
+                    
+                    value.value = value.value.toString();
+                    
+                    if(false == _.isUndefined(defaultValue)
+                        && defaultValue.toString() == value.value) {
+                        return;
+                    }
                     
                     valueOption = $("<option/>");
                     valueOption
                         .text(value.label)
                         .val(value.value);
+                    
+                    // if nothing was set before, use default value from chartConfig
+                    if(false === alreadySetSelected 
+                        && false === _.isUndefined(value.isDefault)
+                        && true === value.isDefault) {
+                        valueOption.attr("selected", "selected");
+                        alreadySetSelected = true;
+                    }
                     
                     selectBox.append(valueOption);
                 });

@@ -337,6 +337,19 @@ var CubeViz_Visualization_Controller = (function () {
         });
         return multipleDimensions;
     }
+    CubeViz_Visualization_Controller.getObjectValueByKeyString = function getObjectValueByKeyString(keyString, objToAccess) {
+        var call = "objToAccess";
+        var result = undefined;
+
+        try  {
+            _.each(keyString.split("."), function (key) {
+                call += "." + key;
+            });
+            eval("result = " + call);
+        } catch (ex) {
+        }
+        return result;
+    }
     CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(selectedComponentDimensions) {
         var oneElementDimensions = [];
         _.each(selectedComponentDimensions, function (selectedDimension) {
@@ -1577,26 +1590,47 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.showMenu = function (selectorItemDiv) {
         this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+        var alreadySetSelected = false;
+        var defaultValue = "";
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var menuItem;
         var menuItemTpl = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text());
         var menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html();
         var offset = selectorItemDiv.offset();
         var selectBox;
+        var shortCutViszSettings = this.app._.ui.visualizationSettings[this.app._.ui.visualization.class];
         var valueOption;
 
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options) && ("" == menuItemsHtml || null == menuItemsHtml)) {
             _.each(fromChartConfig.options, function (option) {
+                alreadySetSelected = false;
                 menuItem = $(menuItemTpl(option));
                 selectBox = $(menuItem.find(".cubeviz-visualizationselector-menuSelectbox").get(0));
+                defaultValue = CubeViz_Visualization_Controller.getObjectValueByKeyString(option.key, shortCutViszSettings);
                 valueOption = $("<option/>");
-                valueOption.text(option.defaultValue.label).val(option.defaultValue.value);
-                selectBox.append(valueOption);
                 selectBox.data("key", option.key);
+                if(false == _.isUndefined(defaultValue)) {
+                    _.each(option.values, function (value) {
+                        value.value = value.value.toString();
+                        if(defaultValue.toString() == value.value && false == alreadySetSelected) {
+                            valueOption = $("<option/>");
+                            valueOption.text(value.label).val(value.value).attr("selected", "selected");
+                            selectBox.append(valueOption);
+                            alreadySetSelected = true;
+                        }
+                    });
+                }
                 _.each(option.values, function (value) {
+                    value.value = value.value.toString();
+                    if(false == _.isUndefined(defaultValue) && defaultValue.toString() == value.value) {
+                        return;
+                    }
                     valueOption = $("<option/>");
                     valueOption.text(value.label).val(value.value);
+                    if(false === alreadySetSelected && false === _.isUndefined(value.isDefault) && true === value.isDefault) {
+                        valueOption.attr("selected", "selected");
+                        alreadySetSelected = true;
+                    }
                     selectBox.append(valueOption);
                 });
                 $("#cubeviz-visualizationselector-menuItems").append(menuItem);
