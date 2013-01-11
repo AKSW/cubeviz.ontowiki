@@ -33,8 +33,8 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -59,8 +59,8 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -105,17 +105,17 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "" , "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -123,8 +123,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
@@ -150,27 +150,27 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
                         "values": [
+                            { "label": "Bar", "value": "bar", "isDefault": true },
                             { "label": "Column", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     },
                     {
-                        /* System default for _highchart_switchAxes is false! */
+                        /* System default for _cubeVizVisz.doSwitchingAxes is false! */
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -178,8 +178,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
@@ -209,8 +209,8 @@ var CubeViz_ChartConfig = {
                 "options": [   
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
+                            { "label": "Line", "value": "line", "isDefault": true },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" },
@@ -220,19 +220,19 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
-                        /* System default for _highchart_switchAxes is false! */
+                        /* System default for _cubeVizVisz.doSwitchingAxes is false! */
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -240,8 +240,8 @@ var CubeViz_ChartConfig = {
                     },   
                     {
                         "label": "Inverted",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "chart.inverted",
@@ -249,8 +249,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
@@ -343,27 +343,27 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Bar", "value": "bar" } ],
                         "values": [
+                            { "label": "Bar", "value": "bar", "isDefault": true },
                             { "label": "Column", "value": "column" }
                         ],
                         "key": "chart.type",
                         "type": "array"
                     },
                     {
-                        /* System default fpr _highchart_switchAxes is false! */
+                        /* System default fpr _cubeVizVisz.doSwitchingAxes is false! */
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -371,8 +371,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Stacking",
-                        "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Normal", "value": "normal" },
                             { "label": "Percentage", "value": "percent" }
                         ],
@@ -381,8 +381,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
@@ -412,8 +412,8 @@ var CubeViz_ChartConfig = {
                 "options": [
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
+                            { "label": "Line", "value": "line", "isDefault": true },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" },
@@ -424,19 +424,19 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
-                        /* System default fpr _highchart_switchAxes is false! */
+                        /* System default fpr _cubeVizVisz.doSwitchingAxes is false! */
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "Stacking",
-                        "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Normal", "value": "normal" },
                             { "label": "Percentage", "value": "percent" }
                         ],
@@ -445,8 +445,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
@@ -476,8 +476,8 @@ var CubeViz_ChartConfig = {
                 "options": [   
                     {
                         "label": "Type",
-                        "defaultValue": [ { "label": "Line", "value": "line" } ],
                         "values": [
+                            { "label": "Line", "value": "line", "isDefault": true },
                             { "label": "Spline", "value": "spline" },
                             { "label": "Area", "value": "area" },
                             { "label": "AreaSpline", "value": "areaspline" },
@@ -487,19 +487,19 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     },
                     {
-                        /* System default fpr _highchart_switchAxes is false! */
+                        /* System default fpr _cubeVizVisz.doSwitchingAxes is false! */
                         "label": "Switching axes",
-                        "defaultValue" : [ { "label": "No", "value": false } ],
                         "values": [
+                            { "label": "No", "value": false, "isDefault": true },
                             { "label": "Yes", "value": true }
                         ],
-                        "key": "_highchart_switchAxes",
+                        "key": "_cubeVizVisz.doSwitchingAxes",
                         "type": "array"
                     },
                     {
                         "label": "Stacking",
-                        "defaultValue": [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Normal", "value": "normal" },
                             { "label": "Percentage", "value": "percent" }
                         ],
@@ -508,8 +508,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "DataLabels",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "plotOptions.series.dataLabels.enabled",
@@ -517,8 +517,8 @@ var CubeViz_ChartConfig = {
                     },   
                     {
                         "label": "Inverted",
-                        "defaultValue" : [ { "label": "None", "value": "" } ],
                         "values": [
+                            { "label": "None", "value": "", "isDefault": true },
                             { "label": "Yes", "value": "true" }
                         ],
                         "key": "chart.inverted",
@@ -526,8 +526,8 @@ var CubeViz_ChartConfig = {
                     },
                     {
                         "label": "Scale",
-                        "defaultValue" : [ { "label": "Linear", "value": "linear" } ],
                         "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
                             { "label": "Logarithmic", "value": "logarithmic" }
                         ],
                         "key": "yAxis.type",
