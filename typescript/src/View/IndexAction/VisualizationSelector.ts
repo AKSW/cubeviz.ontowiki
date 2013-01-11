@@ -150,8 +150,26 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      *
      */
     public onClick_updateVisz() 
-    {
+    {        
+        // get chart config
+        var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.class,
+                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+            );
+            
+        // update visualization setting class entry, based on what the user selected
+        // before in the menu
+        // hint: the function will generate a new object (using JSON transformation)
+        //       to avoid changing the orginally ChartConfig.js entry given from 
+        //       the server
+        this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = 
+            CubeViz_Visualization_Controller.updateVisualizationSettings(
+                $(".cubeviz-visualizationselector-menuItemValue"),
+                this.app._.ui.visualizationSettings[this.app._.ui.visualization.class],
+                fromChartConfig.defaultConfig
+        );
         
+        this.triggerGlobalEvent("onReRender_visualization");
     }
     
     /**
@@ -206,6 +224,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             }
             
             // set click event
+            viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             
             // append chart item to selector
@@ -263,7 +282,11 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                     .text(option.defaultValue.label)
                     .val(option.defaultValue.value);
                 
-                selectBox.append(valueOption);
+                selectBox
+                    .append(valueOption);
+                
+                selectBox
+                    .data("key", option.key);
                 
                 // go through the rest of the values for this particular option
                 _.each(option.values, function(value){
@@ -280,12 +303,16 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 $("#cubeviz-visualizationselector-menuItems").append(menuItem);
             });
             
-            $("#cubeviz-visualizationselector-closeMenu").click($.proxy(
+            // close button events
+            $("#cubeviz-visualizationselector-closeMenu").off("click");
+            $("#cubeviz-visualizationselector-closeMenu").on("click", $.proxy(
                 this.onClick_closeMenu
             , this));
             
-            $("#cubeviz-visualizationselector-updateVisz").click($.proxy(
-                this.onClick_closeMenu
+            // update button events
+            $("#cubeviz-visualizationselector-updateVisz").off("click");
+            $("#cubeviz-visualizationselector-updateVisz").on("click", $.proxy(
+                this.onClick_updateVisz
             , this));
             
             // show menu

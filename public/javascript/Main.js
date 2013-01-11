@@ -366,6 +366,29 @@ var CubeViz_Visualization_Controller = (function () {
             }
         }
     }
+    CubeViz_Visualization_Controller.updateVisualizationSettings = function updateVisualizationSettings(menuItemValues, visualizationSetting, chartConfigEntryDefaultConfig) {
+        var call = "";
+        var optionKey = "";
+        var optionVal = "";
+        var updatedSetting = visualizationSetting || {
+        };
+
+        if(0 === _.keys(updatedSetting).length) {
+            updatedSetting = chartConfigEntryDefaultConfig;
+        }
+        updatedSetting = $.parseJSON(JSON.stringify(updatedSetting));
+        _.each(menuItemValues, function (menuItemValue) {
+            optionKey = $(menuItemValue).data("key");
+            optionVal = $(menuItemValue).val();
+            call = "updatedSetting";
+            _.each(optionKey.split("."), function (key) {
+                call += "." + key;
+                eval(call + " = " + call + " || {};");
+            });
+            eval(call + " = optionVal;");
+        });
+        return updatedSetting;
+    }
     return CubeViz_Visualization_Controller;
 })();
 var __extends = this.__extends || function (d, b) {
@@ -453,6 +476,13 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 forSeries = selectedDimension.typeUrl;
             }
         });
+        this.chartConfig._cubeVizVisz = this.chartConfig._cubeVizVisz || {
+        };
+        if("true" == this.chartConfig._cubeVizVisz.doSwitchingAxes) {
+            var tmp = forXAxis;
+            forXAxis = forSeries;
+            forSeries = tmp;
+        }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         _.each(xAxisElements, function (element, propertyUrl) {
@@ -1277,12 +1307,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         }
     };
     View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function (event) {
-        var self = this;
-        this.app._.data.linkCode = null;
-        CubeViz_ConfigurationLink.saveToServer(this.app._.backend.url, this.app._.data, this.app._.ui, function (newLinkCode) {
-            self.app._.data.linkCode = newLinkCode;
-            self.changePermaLinkButton();
-        });
+        this.changePermaLinkButton();
     };
     View_CubeVizModule_Footer.prototype.onClick_showVisualization = function (event) {
         var self = this;
@@ -1418,17 +1443,18 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
-        var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 20);
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var type = null;
+        var visualizationSetting = null;
 
         if(true === _.isUndefined(fromChartConfig)) {
             this.app._.ui.visualization.class = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         }
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
+        var offset = $(this.attachedTo).offset();
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 20);
         switch(type) {
             case "CubeViz": {
                 console.log("render cubeviz visz");
@@ -1441,7 +1467,7 @@ var View_IndexAction_Visualization = (function (_super) {
                 }
                 var hC = new CubeViz_Visualization_HighCharts();
                 var chart = hC.load(this.app._.ui.visualization.class);
-                chart.init(fromChartConfig.defaultConfig, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
+                chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
                 this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
                 break;
 
@@ -1514,6 +1540,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
+        this.triggerGlobalEvent("onReRender_visualization");
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -1537,6 +1566,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
                 viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
                 self.showMenuDongle(viszItem);
             }
+            viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             $("#cubeviz-visualizationselector-selector").append(viszItem);
         });
@@ -1563,6 +1593,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
                 valueOption = $("<option/>");
                 valueOption.text(option.defaultValue.label).val(option.defaultValue.value);
                 selectBox.append(valueOption);
+                selectBox.data("key", option.key);
                 _.each(option.values, function (value) {
                     valueOption = $("<option/>");
                     valueOption.text(value.label).val(value.value);
@@ -1570,8 +1601,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
                 });
                 $("#cubeviz-visualizationselector-menuItems").append(menuItem);
             });
-            $("#cubeviz-visualizationselector-closeMenu").click($.proxy(this.onClick_closeMenu, this));
-            $("#cubeviz-visualizationselector-updateVisz").click($.proxy(this.onClick_closeMenu, this));
+            $("#cubeviz-visualizationselector-closeMenu").off("click");
+            $("#cubeviz-visualizationselector-closeMenu").on("click", $.proxy(this.onClick_closeMenu, this));
+            $("#cubeviz-visualizationselector-updateVisz").off("click");
+            $("#cubeviz-visualizationselector-updateVisz").on("click", $.proxy(this.onClick_updateVisz, this));
             $("#cubeviz-visualizationselector-menu").css("top", offset.top - 37).css("left", offset.left - 495).fadeIn("slow");
         }
         this.triggerGlobalEvent("onAfterShow_visualizationSelectorMenu");
@@ -1592,5 +1625,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
+    console.log("cubeVizApp._:");
+    console.log(cubeVizApp._);
     cubeVizApp.triggerEvent("onStart_application");
 });

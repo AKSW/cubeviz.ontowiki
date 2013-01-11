@@ -207,4 +207,49 @@ class CubeViz_Visualization_Controller
             }
         }
     }
+    
+    /**
+     * Generates an updated visualization setting entry based on what the user 
+     * selected before in the menu.
+     * @param menuItemValues List of all menu item values (usally a selectbox)
+     * @param visualizationSetting Entry of visualization settings for current visz class
+     * @param chartConfigEntryDefaultConfig Entry with default config for the visz class
+     * @return any Updated entry
+     */
+    static updateVisualizationSettings(menuItemValues:any, visualizationSetting:any,
+        chartConfigEntryDefaultConfig:any) : any
+    {
+        var call:string = "",
+            optionKey:string = "", optionVal:string = "",
+            updatedSetting:any = visualizationSetting || {};
+            
+        // visualization setting entry is an empty object, nothing was selected
+        // before for the given visz class; in this case simply use default config
+        // from the chartConfig
+        if(0 === _.keys(updatedSetting).length){
+            updatedSetting = chartConfigEntryDefaultConfig;
+        }
+        
+        // create a clone of the given setting to avoid changing the orginally
+        // one (ChartConfig.js entry) given from the server
+        updatedSetting = $.parseJSON(JSON.stringify(updatedSetting));
+        
+        // go through all 
+        _.each(menuItemValues, function(menuItemValue){
+            
+            // extract key and values from menu item value
+            optionKey = $(menuItemValue).data("key");
+            optionVal = $(menuItemValue).val();
+            
+            // split key and set value
+            call = "updatedSetting";
+            _.each(optionKey.split("."), function(key){
+                call += "." + key;
+                eval ( call + " = " + call + " || {};" );
+            });
+            eval ( call + " = optionVal;" );
+        });
+        
+        return updatedSetting;
+    }
 }

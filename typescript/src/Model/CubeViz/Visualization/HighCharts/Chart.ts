@@ -77,11 +77,12 @@ class CubeViz_Visualization_HighCharts_Chart
         });
         
         // If set, switch axes
-        /*if ( true == CubeViz_Data ["_highchart_switchAxes"] ) {
+        this.chartConfig._cubeVizVisz = this.chartConfig._cubeVizVisz || {};
+        if ( "true" == this.chartConfig._cubeVizVisz.doSwitchingAxes) {
             var tmp = forXAxis;
             forXAxis = forSeries;
             forSeries = tmp;
-        }*/
+        }
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending

@@ -119,20 +119,13 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public renderChart() : void
     {
         // Dynamiclly set visualization container height
-        var offset:any = $(this.attachedTo).offset();
-        $(this.attachedTo).css ( 
-            "height", $(window).height() - offset.top - 20
-        );        
-        
-        // get chart name
-        var charts = this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts,
-        
-            // get chart config
-            fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class, charts
-            ),
-                
-            type = null;
+        // get chart config
+        var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.class,
+                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+            ),                
+            type:string = null, 
+            visualizationSetting:any = null;            
         
         // set default className
         if(true === _.isUndefined(fromChartConfig)) {
@@ -141,14 +134,27 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             ].charts[0].class;
             
             fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class, charts
+                this.app._.ui.visualization.class,
+                this.app._.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             );
         }
+        
+        // extract visualization settings
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings(
+            [],
+            this.app._.ui.visualizationSettings[this.app._.ui.visualization.class],
+            fromChartConfig.defaultConfig
+        );
         
         // determine if using HighCharts or CubeViz
         type = CubeViz_Visualization_Controller.getVisualizationType(
             this.app._.ui.visualization.class
         );
+        
+        var offset:any = $(this.attachedTo).offset();
+        $(this.attachedTo).css ( 
+            "height", $(window).height() - offset.top - 20
+        );  
         
         /**
          * Render chart with the given data
@@ -175,7 +181,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 
                 // init chart instance
                 chart.init(
-                    fromChartConfig.defaultConfig,
+                    visualizationSetting,
                     this.app._.data.retrievedObservations,
                     this.app._.data.selectedComponents.dimensions,
                     CubeViz_Visualization_Controller.getOneElementDimensions (
