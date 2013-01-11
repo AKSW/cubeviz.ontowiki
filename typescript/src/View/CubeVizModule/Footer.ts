@@ -100,27 +100,9 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
      *
      */
     public onClick_permaLinkButton(event) 
-    {
-        var self = this;
-        
-        // if selectedComponents.dimension was null, there must be an change event
-        // for DSD or DS, so force recreation of a new linkcode
-        this.app._.data.linkCode = null;
-        
-        CubeViz_ConfigurationLink.saveToServer ( 
-            this.app._.backend.url,
-            this.app._.data,
-            this.app._.ui,
-            function ( newLinkCode ) {
-                // Save new generated linkCode
-                self.app._.data.linkCode = newLinkCode;
-                // TODO handle case if it was not possible to 
-                //      generate a new linkcode
-                
-                // change perma link button
-                self.changePermaLinkButton();
-            }
-        );
+    {        
+        // change perma link button
+        this.changePermaLinkButton();
     }
     
     /**
