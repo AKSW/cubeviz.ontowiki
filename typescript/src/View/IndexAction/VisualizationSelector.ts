@@ -155,7 +155,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
-            );
+            ),
+            self = this;
             
         // update visualization setting class entry, based on what the user selected
         // before in the menu
@@ -167,6 +168,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 $(".cubeviz-visualizationselector-menuItemValue"),
                 this.app._.ui.visualizationSettings[this.app._.ui.visualization.class],
                 fromChartConfig.defaultConfig
+        );
+        
+        // update link code
+        CubeViz_ConfigurationLink.saveToServer(
+            this.app._.backend.url,
+            this.app._.data,
+            this.app._.ui,
+            function(updatedLinkCode){ self.app._.data.linkCode = updatedLinkCode; }
         );
         
         this.triggerGlobalEvent("onReRender_visualization");
