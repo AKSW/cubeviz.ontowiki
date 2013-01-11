@@ -157,6 +157,26 @@ class CubeViz_Visualization_Controller
     }
     
     /**
+     *
+     */
+    static getObjectValueByKeyString(keyString:string, objToAccess:any) 
+    {
+        var call = "objToAccess",
+            result = undefined;        
+
+        try {
+            // split key and build access string
+            // example: objToAccess.foo.bar
+            _.each(keyString.split("."), function(key){
+                call += "." + key;
+            });
+            eval ( "result = " + call );
+        } catch (ex) {}
+        
+        return result;
+    }
+    
+    /**
      * Get a list of all (exactly!) one element selected dimensions.
      * @param selectedComponentDimensions Object which contains all selected dimensions. 
      * @return any[] Array of found selected one element dimensions.
@@ -207,7 +227,7 @@ class CubeViz_Visualization_Controller
             }
         }
     }
-    
+        
     /**
      * Generates an updated visualization setting entry based on what the user 
      * selected before in the menu.
