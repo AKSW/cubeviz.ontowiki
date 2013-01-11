@@ -121,7 +121,9 @@ class CubevizController extends OntoWiki_Controller_Component {
 		$c = $c->read ($linkCode, $this->_owApp->selectedModel);
         
         // ... get and return observations
-		$this->_response->setBody($query->getObservations($c ['data']));
+		$this->_response->setBody(
+            json_encode($query->getObservations($c ['data']), JSON_FORCE_OBJECT)
+        );
 	}
     
     /**

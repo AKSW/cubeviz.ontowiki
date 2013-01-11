@@ -53,26 +53,6 @@ class CubeViz_ConfigurationLink
         if(0 === count($config['data']['selectedDSD'])) {
             $config['data']['selectedDSD'] = $config['data']['dataStructureDefinitions'][0];
         }
-        
-        // number of multiple dimensions
-        $config['data']['numberOfMultipleDimensions'] = 0;
-            
-        $dsds = $config['data']['dataStructureDefinitions'];
-        
-        foreach ($dsds as $ds) {
-            if(true === isset($ds ['elements']) && 0 < count($ds ['elements'])) {
-                ++$config['data']['numberOfMultipleDimensions'];
-            }
-        }
-        
-        // number of one element dimensions
-        $config['data']['numberOfOneElementDimensions'] = 0;
-        
-        foreach ($dsds as $ds) {
-            if(true === isset($ds ['elements']) && 1 == count($ds ['elements'])) {
-                ++$config['data']['numberOfOneElementDimensions'];
-            }
-        }
                         
         // if no data structure definitions were selected
         if(0 === count($config['data']['dataSets'])) {
@@ -139,6 +119,24 @@ class CubeViz_ConfigurationLink
             }
         }
         
+        // number of multiple dimensions
+        $config['data']['numberOfMultipleDimensions'] = 0;
+            
+        foreach ($config['data']['selectedComponents']['dimensions'] as $dim) {
+            if(1 < count($dim ['elements'])) {
+                ++$config['data']['numberOfMultipleDimensions'];
+            }
+        }
+        
+        // number of one element dimensions
+        $config['data']['numberOfOneElementDimensions'] = 0;
+        
+        foreach ($config['data']['selectedComponents']['dimensions'] as $dim) {
+            if(1 == count($dim ['elements'])) {
+                ++$config['data']['numberOfOneElementDimensions'];
+            }
+        }
+        
         // if no retrievedObservations were selected
         if(0 === count($config['data']['retrievedObservations'])){
             
@@ -181,6 +179,10 @@ class CubeViz_ConfigurationLink
         
         // Otherwise set standard values
         $readedConfig ['backend'] = array('backend' => '');
+        
+        /**
+         * Information about the data cube itself and what was selected
+         */
         $readedConfig ['data'] = array(
             'dataStructureDefinitions'  => array(),
             'dataSets'                  => array(),
@@ -194,13 +196,16 @@ class CubeViz_ConfigurationLink
             ),
             'retrievedObservations'     => array()
         );
+        
+        /**
+         * Information about the user interface
+         */
         $readedConfig ['ui'] = array(
             'visualization'             => array(
                 'class'                 => ''
             ),
-            'visualizationSettings'     => array(
-                'relatedToClass'        => ''
-            )
+            // will contain information/settings for each visualization class
+            'visualizationSettings'     => array()
         );
         
         $readedConfig = $this->loadStandardData($readedConfig, $model);

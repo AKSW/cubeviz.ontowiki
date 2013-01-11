@@ -358,7 +358,7 @@ class DataCube_Query
             $tmp [] = $tmpEntry;
         }
         
-        return json_encode($tmp, JSON_FORCE_OBJECT);
+        return $tmp;
 	}
     
     private function isUrl($url) {
