@@ -281,6 +281,9 @@ class CubevizController extends OntoWiki_Controller_Component {
                 $modelInformation [$compactPredicateUri] = 
                     $modelResource [$modelIri][$predicateUri][0]['content'];
             }
+            if(false === isset($modelInformation [$compactPredicateUri])){
+                $modelInformation [$compactPredicateUri] = '';
+            }
         }
         return $modelInformation;
     }
