@@ -55,8 +55,8 @@
     padding-top: 2px;
     padding-bottom: 2px;    
     border: 1px solid #C4C4C4;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
 }
 
 .cubeviz-button
@@ -67,6 +67,6 @@
     padding-top: 3px;
     padding-bottom: 3px;    
     border: 1px solid #C4C4C4;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
 }

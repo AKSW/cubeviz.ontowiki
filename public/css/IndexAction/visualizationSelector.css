@@ -19,10 +19,10 @@
     filter: alpha(opacity=50);
     padding: 2px;
     border-width: 1px 1px 1px 1px;
-	border-style: solid;
-	border-color: #C2C2C2;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
+    border-style: solid;
+    border-color: #C2C2C2;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
 }
 
 .cubeviz-visualizationselector-selectorItem:hover
@@ -30,10 +30,10 @@
     opacity: 1.0;
     filter: alpha(opacity=100);
     border-width: 1px 1px 1px 1px;
-	border-style: solid;
-	border-color: #C6C6C6;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
+    border-style: solid;
+    border-color: #C6C6C6;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
     padding: 2px;
 }
 
