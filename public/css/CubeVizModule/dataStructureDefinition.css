@@ -1,10 +1,13 @@
-#cubviz-dataStructureDefinition-container {
+#cubviz-dataStructureDefinition-container
+{
     margin-top: -10px; 
     margin-left: 2px; 
     clear: both;
 }
 
-#cubeviz-dataStructureDefinition-list  {
+#cubeviz-dataStructureDefinition-list
+{
+    margin-top: 6px;
     min-width: 242px;
     max-width: 242px;
     width: 242px;
