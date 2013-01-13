@@ -174,22 +174,24 @@
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
-        <a class="cubeviz-component-setupComponentDeselectButton">
-            <?php echo $this->_translate->_('Deselect all items'); ?>
-        </a>
+        <div style="float:left;">            
+            <a class="cubeviz-component-setupComponentDeselectButton">
+                <?php echo $this->_translate->_('Deselect all items'); ?>
+            </a>
+        </div>
         
-        <div style="margin-top:10px;">
-            
-            <input class="cubeviz-component-closeAndApply minibutton submit"
+        <br/>
+        
+        <div style="float:right;">            
+            <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
                     type="button"
-                    value="<?php echo $this->_translate->_('Close and apply changes'); ?>"/>
+                    value="<?php echo $this->_translate->_('Cancel'); ?>"/>
             
             &nbsp;&nbsp;&nbsp;
             
-            <input class="cubeviz-component-closeAndUpdate minibutton submit"
+            <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
                     type="button"
                     value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
-                    
         </div>
     </div>
 </script>

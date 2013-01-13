@@ -51,7 +51,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             autoOpen: false,
             closeOnEscape: false,
             draggable: false,
-            height: 485,
+            height: 475,
             hide: "slow",
             modal: true,
             open: function(event,ui){
@@ -61,6 +61,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
+            resizable: false,
             show: "slow",
             width: 700
         });
@@ -239,27 +240,23 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     }
     
     /**
-     *
+     * Close dialog without apply changes
+     * @param event Event targets to clicked button
      */
-    public onClick_closeAndApply(event) : void 
+    public onClick_cancel(event) : void 
     {
         // The dialog the clicked button is attached to
-        var dialogDiv = $(event.target).data("dialogDiv"),
-            self = this;
+        var dialogDiv = $(event.target).data("dialogDiv");
             
-        // save changes in dialog div
-        this.readAndSaveSetupComponentDialogChanges(dialogDiv,
-            function(){
-                // close dialog
-                $(event.target)
-                    .data("dialogDiv")
-                    .dialog("close");
-            }
-        );
+        // close dialog
+        $(event.target)
+            .data("dialogDiv")
+            .dialog("close");
     }
     
     /**
-     *
+     * Apply changes, update data and close dialog
+     * @param event Event targets to clicked button
      */
     public onClick_closeAndUpdate(event) : void
     {
@@ -526,8 +523,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({         
-            "click .cubeviz-component-closeAndApply": 
-                this.onClick_closeAndApply,
+            "click .cubeviz-component-cancel": 
+                this.onClick_cancel,
                 
             "click .cubeviz-component-closeAndUpdate": 
                 this.onClick_closeAndUpdate,
