@@ -73,12 +73,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // attach dialog div to dialog opener link
         opener.data("dialogDiv", div);
         
-        // attach dialog div to "close and apply" button
-        $($(div.children().last()).children().get(0))
+        // attach dialog div to "cancel" button
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().first())
             .data("dialogDiv", div);
             
         // attach dialog div to "close and update" button
-        $($(div.children().last()).children().get(1))
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().last())
             .data("dialogDiv", div);
             
         // configure elements of the dialog

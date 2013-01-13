@@ -1072,8 +1072,8 @@ var View_CubeVizModule_Component = (function (_super) {
         });
         $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
-        $($(div.children().last()).children().get(0)).data("dialogDiv", div);
-        $($(div.children().last()).children().get(1)).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().last()).data("dialogDiv", div);
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
