@@ -939,7 +939,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
             "change #cubeviz-dataStructureDefinition-list": this.onChange_list,
@@ -1014,7 +1016,9 @@ var View_CubeVizModule_DataSet = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
             "change #cubeviz-dataSet-list": this.onChange_list,
@@ -1052,7 +1056,7 @@ var View_CubeVizModule_Component = (function (_super) {
             autoOpen: false,
             closeOnEscape: false,
             draggable: false,
-            height: 485,
+            height: "auto",
             hide: "slow",
             modal: true,
             open: function (event, ui) {
@@ -1062,13 +1066,14 @@ var View_CubeVizModule_Component = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
+            resizable: false,
             show: "slow",
             width: 700
         });
         $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
-        $($(div.children().last()).children().get(0)).data("dialogDiv", div);
-        $($(div.children().last()).children().get(1)).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-setupComponentButton")).children().last()).data("dialogDiv", div);
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
@@ -1133,13 +1138,9 @@ var View_CubeVizModule_Component = (function (_super) {
             self.loadComponentMeasures($.proxy(self, "render"));
         });
     };
-    View_CubeVizModule_Component.prototype.onClick_closeAndApply = function (event) {
+    View_CubeVizModule_Component.prototype.onClick_cancel = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
-        var self = this;
-
-        this.readAndSaveSetupComponentDialogChanges(dialogDiv, function () {
-            $(event.target).data("dialogDiv").dialog("close");
-        });
+        $(event.target).data("dialogDiv").dialog("close");
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
@@ -1251,10 +1252,11 @@ var View_CubeVizModule_Component = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
-            "click .cubeviz-component-closeAndApply": this.onClick_closeAndApply,
+            "click .cubeviz-component-cancel": this.onClick_cancel,
             "click .cubeviz-component-closeAndUpdate": this.onClick_closeAndUpdate,
             "click .cubeviz-component-setupComponentDeselectButton": this.onClick_deselectedAllComponentElements,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,

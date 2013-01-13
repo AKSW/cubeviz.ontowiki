@@ -102,7 +102,9 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         
         /**
