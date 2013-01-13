@@ -147,8 +147,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
             overlay: {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
-            },
-            show: "slow"
+            },            
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         
         /**

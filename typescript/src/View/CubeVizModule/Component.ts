@@ -51,7 +51,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             autoOpen: false,
             closeOnEscape: false,
             draggable: false,
-            height: 475,
+            height: "auto",
             hide: "slow",
             modal: true,
             open: function(event,ui){
@@ -516,7 +516,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            show: "slow",
+            width: 500
         });
         
         /**

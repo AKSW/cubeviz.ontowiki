@@ -99,30 +99,66 @@
     DIALOGS
     #########
 -->
-<div id="cubeviz-dataStructureDefinition-dialog" style="display: none;">
-    <h2>Select group of interest</h2>
-    A group of interest contains data about a particular field of interest, for
-    instance about countries. Following the structure given by the 
-    <a href="http://www.w3.org/TR/vocab-data-cube/" target="_blank">DataCube vocabulary</a>, 
-    users are able to select specific structural elements of the DataCube.
+<div id="cubeviz-dataStructureDefinition-dialog" 
+      style="display: none;"
+      title="<?php echo $this->_translate->_('Information'); ?>">
+    <div style="margin-top: 4px; float: right;">
+        <img class="cubeviz-icon-small"
+              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+    </div>
+    <div style="float: left;">
+        <h2>Select group of interest</h2>
+    </div>
+    <br/>
+    <br/>
+    <div style="clear: both;">
+        A group of interest contains data about a particular field of interest, for
+        instance about countries. Following the structure given by the 
+        <a href="http://www.w3.org/TR/vocab-data-cube/" target="_blank">DataCube vocabulary</a>, 
+        users are able to select specific structural elements of the DataCube.
+    </div>
 </div>
 
-<div id="cubeviz-dataSet-dialog" style="display: none;">
-    <h2>Select part of group</h2>
-    Each structural element of a DataCube contains data sets. A data set is the
-    major entity: it groups statistical data about a specific topic, called
-    observations. 
+<div id="cubeviz-dataSet-dialog" 
+      style="display: none;"
+      title="<?php echo $this->_translate->_('Information'); ?>">
+    <div style="margin-top: 4px; float: right;">
+        <img class="cubeviz-icon-small"
+              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+    </div>
+    <div style="float: left;">
+        <h2>Select part of group</h2>
+    </div>
+    <br/>
+    <br/>
+    <div style="clear: both;">
+        Each structural element of a DataCube contains data sets. A data set is the
+        major entity: it groups statistical data about a specific topic, called
+        observations. 
+    </div>
 </div>
 
-<div id="cubeviz-component-questionMarkDialog" style="display: none;">
-    <h2>Select axis elements</h2>
-    Each data set contains statistical data. These data is a collection of so-called 
-    observations. Under an observation you can picture a point in a room. This point
-    has coordinates which locates him at a specific position in this room. In general 
-    these coordinates are 3 dimensional: height, width and deep. In the DataCube context
-    these coordinates are dimensions and it is possible to have more than these 3.
-    But these dimension are not positions in a room, you may think, but could be 
-    everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
+<div id="cubeviz-component-questionMarkDialog" 
+     style="display: none;"
+     title="<?php echo $this->_translate->_('Information'); ?>">
+    <div style="margin-top: 4px; float: right;">
+        <img class="cubeviz-icon-small"
+              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+    </div>
+    <div style="float: left;">
+        <h2>Select axis elements</h2>
+    </div>
+    <br/>
+    <br/>
+    <div style="clear: both;">
+        Each data set contains statistical data. These data is a collection of so-called 
+        observations. Under an observation you can picture a point in a room. This point
+        has coordinates which locates him at a specific position in this room. In general 
+        these coordinates are 3 dimensional: height, width and deep. In the DataCube context
+        these coordinates are dimensions and it is possible to have more than these 3.
+        But these dimension are not positions in a room, you may think, but could be 
+        everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
+    </div>
 </div>
 
 <div id="cubeviz-component-setupDialogContainer" style="display: none;">
@@ -167,31 +203,42 @@
 <!-- Dialogs -->
 <script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
     <div class="cubeviz-component-setupComponentDialog"
-         id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>">
-        <h2><%= label %></h2>
-        <p>Dimension Meta Information</p>
-        <small>Hookline, whats possible here?</small>
-        
-        <ul class="cubeviz-component-setupComponentElements"></ul>
-        
-        <div style="float:left;">            
-            <a class="cubeviz-component-setupComponentDeselectButton">
-                <?php echo $this->_translate->_('Deselect all items'); ?>
-            </a>
+         id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>"
+         title="<?php echo $this->_translate->_('Select elements of interest'); ?>">
+        <div style="margin-top: 4px; float: right;">
+            <img class="cubeviz-icon-small"
+                  src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
-        
+        <div style="float: left;">
+            <h2><%= label %></h2>
+        </div>
         <br/>
-        
-        <div style="float:right;">            
-            <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
-                    type="button"
-                    value="<?php echo $this->_translate->_('Cancel'); ?>"/>
+        <br/>
+        <div style="clear: both;">
+            <p>Dimension Meta Information</p>
+            <small>Hookline, whats possible here?</small>
             
-            &nbsp;&nbsp;&nbsp;
+            <ul class="cubeviz-component-setupComponentElements"></ul>
             
-            <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
-                    type="button"
-                    value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
+            <div style="float:left;">            
+                <a class="cubeviz-component-setupComponentDeselectButton">
+                    <?php echo $this->_translate->_('Deselect all items'); ?>
+                </a>
+            </div>
+            
+            <br/>
+            
+            <div style="float:right;">            
+                <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
+                        type="button"
+                        value="<?php echo $this->_translate->_('Cancel'); ?>"/>
+                
+                &nbsp;&nbsp;&nbsp;
+                
+                <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
+                        type="button"
+                        value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
+            </div>
         </div>
     </div>
 </script>

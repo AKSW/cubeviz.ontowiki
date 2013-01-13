@@ -939,7 +939,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
             "change #cubeviz-dataStructureDefinition-list": this.onChange_list,
@@ -1014,7 +1016,9 @@ var View_CubeVizModule_DataSet = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            resizable: false,
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
             "change #cubeviz-dataSet-list": this.onChange_list,
@@ -1052,7 +1056,7 @@ var View_CubeVizModule_Component = (function (_super) {
             autoOpen: false,
             closeOnEscape: false,
             draggable: false,
-            height: 475,
+            height: "auto",
             hide: "slow",
             modal: true,
             open: function (event, ui) {
@@ -1248,7 +1252,8 @@ var View_CubeVizModule_Component = (function (_super) {
                 "background-color": "#FFFFFF",
                 opacity: 0.5
             },
-            show: "slow"
+            show: "slow",
+            width: 500
         });
         this.bindUserInterfaceEvents({
             "click .cubeviz-component-cancel": this.onClick_cancel,
