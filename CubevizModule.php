@@ -23,7 +23,11 @@ class CubevizModule extends OntoWiki_Module
         $loader->registerNamespace('CubeViz_');
         $loader->registerNamespace('DataCube_');
         $path = __DIR__;
-        set_include_path(get_include_path() . PATH_SEPARATOR . $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR);
+        set_include_path(
+            get_include_path() . PATH_SEPARATOR . 
+            $path . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
+            $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR
+        );
     }
 
     public function getTitle() 
@@ -94,59 +98,27 @@ class CubevizModule extends OntoWiki_Module
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         
-        /**
-         * Set view and some of its properties.
-         */
-        $this->view->cubevizImagesPath = $baseImagesPath;
-
-        /**
-         * Set backend container with backend related information
-         */
-        $context = null === $this->_privateConfig->get('context') 
-            ? 'production' : $this->_privateConfig->get('context');
+        CubeViz_ViewHelper::$isCubeVizModuleLoaded = true;
         
-        // if cubeVizApp was not loaded yet
-        if(false === isset($this->view->isCubeVizAppLoaded)) {
-            
-            /**
-             * Get hashes from parameter list
-             */
-            // hash for data
-            $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
-                ? CubeViz_ConfigurationLink::$filePrefForDataHash 
-                : $this->_request->getParam ('cv_dataHash');
-            
-            // hash for ui
-            $uiHash = NULL == $this->_request->getParam ('cv_uiHash') 
-                ? CubeViz_ConfigurationLink::$filePrefForUiHash 
-                : $this->_request->getParam ('cv_uiHash');
-            
-            /**
-             * Read information from files according to given hases
-             */
-            $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-            $config = array();
-            $config['data'] = $c->read ($dataHash, $model);
-            $config['ui'] = $c->read ($uiHash, $model);
-
-            $config['backend'] = array(
-                'context'           => $context, 
-                'database'          => $this->_owApp->getConfig()->store->backend,
-                'imagesPath'        => $baseImagesPath,
-                'modelUrl'          => $modelIri,
-                'uiParts'           => array(
-                    'module'        => array('isLoaded'=> false),
-                    'index'         => array('isLoaded'=> false)
-                ),
-                'url'               => $this->_config->staticUrlBase . 'cubeviz/',
-                'sparqlEndpoint'    => 'local'
-            );
-           
+        // init cubeVizApp
+        $config = CubeViz_ViewHelper::initApp(
+            $this->view,
+            $model,
+            $this->_owApp->getConfig()->store->backend,
+            $this->_owApp->erfurt->getCacheDir(),
+            CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri),
+            $this->_privateConfig->get('context'),
+            $modelIri,
+            $this->_config->staticUrlBase,
+            $baseImagesPath,
+            $this->_request->getParam ('cv_dataHash'),
+            $this->_request->getParam ('cv_uiHash') 
+        );
+        
+        if(null !== $config) {
             $this->view->headScript()
-                ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
-                ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
-            
-            $this->view->isCubeVizAppLoaded = true;
+                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+                 ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
         }
         
         /**

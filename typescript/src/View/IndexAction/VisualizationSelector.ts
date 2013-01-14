@@ -175,7 +175,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             this.app._.backend.url,
             this.app._.ui,
             "ui",
-            function(updatedUiHash){ self.app._.ui.hash = updatedUiHash; }
+            function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
         );
         
         this.triggerGlobalEvent("onReRender_visualization");

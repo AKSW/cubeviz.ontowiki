@@ -120,19 +120,42 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         // if you are only in the module
         } else {
             
-            // update link code
-            CubeViz_ConfigurationLink.save(
-                this.app._.backend.url,
-                this.app._.data,
-                "data",
-                function(updatedDataHash){                    
-                    // refresh page and show visualization for the latest linkCode
-                    window.location.href = self.app._.backend.url
-                        + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                        + "&cv_dataHash=" + updatedDataHash
-                        + "&cv_uiHash=" + self.app._.ui.hash;
-                }
-            );
+            if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
+                DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url,
+                    function(newEntities){
+                        // save new observations
+                        self.app._.data.retrievedObservations = newEntities;
+                
+                        // update link code
+                        CubeViz_ConfigurationLink.save(
+                            self.app._.backend.url,
+                            self.app._.data,
+                            "data",
+                            function(updatedDataHash){            
+                                // refresh page and show visualization for the latest linkCode
+                                window.location.href = self.app._.backend.url
+                                    + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                                    + "&cv_dataHash=" + updatedDataHash
+                                    + "&cv_uiHash=" + self.app._.backend.uiHash;
+                            }
+                        );
+                    }
+                );
+            } else {
+                // update link code
+                CubeViz_ConfigurationLink.save(
+                    this.app._.backend.url,
+                    this.app._.data,
+                    "data",
+                    function(updatedDataHash){            
+                        // refresh page and show visualization for the latest linkCode
+                        window.location.href = self.app._.backend.url
+                            + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                            + "&cv_dataHash=" + updatedDataHash
+                            + "&cv_uiHash=" + self.app._.backend.uiHash;
+                    }
+                );
+            }
         }
     }
     
@@ -181,8 +204,8 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                     // build link to show later on
                     var link = self.app._.backend.url
                                + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                               + "&cv_dataHash=" + self.app._.data.hash
-                               + "&cv_uiHash=" + self.app._.ui.hash;
+                               + "&cv_dataHash=" + self.app._.backend.dataHash
+                               + "&cv_uiHash=" + self.app._.backend.uiHash;
                         
                     var url = $("<a></a>")
                         .attr ("href", link)

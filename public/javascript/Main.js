@@ -1149,11 +1149,8 @@ var View_CubeVizModule_Component = (function (_super) {
         this.readAndSaveSetupComponentDialogChanges(dialogDiv, function () {
             if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
                 self.triggerGlobalEvent("onReRender_visualization");
-                $(event.target).data("dialogDiv").dialog("close");
-            } else {
-                $(event.target).data("dialogDiv").dialog("close");
-                window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.data.hash + "&cv_uiHash=" + self.app._.ui.hash;
             }
+            $(event.target).data("dialogDiv").dialog("close");
         });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
@@ -1198,13 +1195,11 @@ var View_CubeVizModule_Component = (function (_super) {
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url, function (newEntities) {
-                self.app._.data.retrievedObservations = newEntities;
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                    self.app._.data.hash = updatedDataHash;
-                    callback();
-                });
+        DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url, function (newEntities) {
+            self.app._.data.retrievedObservations = newEntities;
+            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                self.app._.backend.dataHash = updatedDataHash;
+                callback();
             });
         });
     };
@@ -1327,9 +1322,18 @@ var View_CubeVizModule_Footer = (function (_super) {
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             this.triggerGlobalEvent("onReRender_visualization");
         } else {
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-                window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.ui.hash;
-            });
+            if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
+                DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url, function (newEntities) {
+                    self.app._.data.retrievedObservations = newEntities;
+                    CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                        window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+                    });
+                });
+            } else {
+                CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
+                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+                });
+            }
         }
     };
     View_CubeVizModule_Footer.prototype.onStart_application = function () {
@@ -1349,7 +1353,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         }, 450, "linear", function () {
             var position = $("#cubeviz-footer-permaLinkButton").position();
             $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
-            var link = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.data.hash + "&cv_uiHash=" + self.app._.ui.hash;
+            var link = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
             var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#cubeviz-footer-permaLink").html());
             $("#cubeviz-footer-permaLinkMenu").animate({
                 width: "toggle"
@@ -1558,7 +1562,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 
         this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.ui, "ui", function (updatedUiHash) {
-            self.app._.ui.hash = updatedUiHash;
+            self.app._.backend.uiHash = updatedUiHash;
         });
         this.triggerGlobalEvent("onReRender_visualization");
     };

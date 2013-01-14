@@ -271,24 +271,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
                     
                     self.triggerGlobalEvent("onReRender_visualization");
-
-                    $(event.target)
-                        .data("dialogDiv")
-                        .dialog("close");
-                    
-                // if you are only in the module
-                } else {
-                    
-                    $(event.target)
-                        .data("dialogDiv")
-                        .dialog("close");
-                
-                    // refresh page and show visualization according to latest dataHash
-                    window.location.href = self.app._.backend.url +
-                        "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                        + "&cv_dataHash="  + self.app._.data.hash
-                        + "&cv_uiHash="    + self.app._.ui.hash;
                 }
+                
+                // if only module was loaded, move reloading stuff to footer.ts
+                $(event.target)
+                    .data("dialogDiv")
+                    .dialog("close");
             }
         );        
     }
@@ -394,37 +382,30 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
             getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
-        // update hash, load new observations and execute callback
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, 
-            "data", function(updatedDataHash){ 
+        // based on updatedLinkCode, load new observations
+        DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url,
+            function(newEntities){
+                
+                // save new observations
+                self.app._.data.retrievedObservations = newEntities;
         
-            // based on updatedLinkCode, load new observations
-            DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url,
-                function(newEntities){
-                    
-                    // save new observations
-                    self.app._.data.retrievedObservations = newEntities;
-            
-                    CubeViz_ConfigurationLink.save(
-                        self.app._.backend.url,
-                        self.app._.data,
-                        "data",
-                        function(updatedDataHash){ 
-            
-                            self.app._.data.hash = updatedDataHash;
-            
-                            callback();
-                        }
-                    );
-                }
-            );
-        });
+                CubeViz_ConfigurationLink.save(
+                    self.app._.backend.url,
+                    self.app._.data,
+                    "data",
+                    function(updatedDataHash){             
+                        self.app._.backend.dataHash = updatedDataHash;            
+                        callback();
+                    }
+                );
+            }
+        );
     }
     
     /**
      *
      */
-    public onComplete_loadDS(event, data) 
+    public onComplete_loadDS(event, data)
     {
         // use another event handler for this event
         this.onChange_selectedDS(event, data);

@@ -157,10 +157,12 @@ class CubeViz_ConfigurationLink
          * load and return file content, if file exists
          */
         if(true === file_exists($this->_hashDirectory . $hash)){
+            
             $c = file($this->_hashDirectory . $hash);
             
             // if configuration file contains information
             if (true == isset ($c [0])) {
+                
                 // contains stuff e.g. selectedDSD, ...
                 return json_decode($c[0], true);
             }
@@ -207,8 +209,7 @@ class CubeViz_ConfigurationLink
                     'retrievedObservations'         => array()
                 ), $model);                
                 
-                $hash = $this->write($config, 'data');
-                $config['hash'] = $hash;
+                $this->write($config, 'data');
                 
                 break;
             
@@ -228,13 +229,12 @@ class CubeViz_ConfigurationLink
                     )
                 );
                 
-                $hash = $this->write($config, 'ui');
-                $config['hash'] = $hash;
+                $this->write($config, 'ui');
                   
                 break;
                 
             // something went wrong, hash type unknown
-            default: return null; break;
+            default: return null;
         }
         
         return $config;
@@ -257,10 +257,7 @@ class CubeViz_ConfigurationLink
         }
         
         // attach hash based on the given string
-        $content['hash'] = '';
         $filename .= $this->generateHash ($content);
-        
-        $content['hash'] = $filename;
         
         // set full file path
         $filePath = $this->_hashDirectory . $filename;
@@ -280,7 +277,7 @@ class CubeViz_ConfigurationLink
             fclose($fh);
         } 
         
-        return $content['hash'];
+        return $filename;
     }
     
     /**
