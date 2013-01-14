@@ -4,6 +4,5 @@
 
 interface CryptoJS { 
     MD5 (value:string): string;
-    SHA512 (value:string): string;
 }
 declare var CryptoJS: CryptoJS;
