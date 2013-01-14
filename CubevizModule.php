@@ -105,43 +105,49 @@ class CubevizModule extends OntoWiki_Module
         $context = null === $this->_privateConfig->get('context') 
             ? 'production' : $this->_privateConfig->get('context');
         
-        /**
-         * Get hashes from parameter list
-         */
-        // hash for data
-        $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
-            ? CubeViz_ConfigurationLink::$filePrefForDataHash 
-            : $this->_request->getParam ('cv_dataHash');
-        
-        // hash for ui
-        $uiHash = NULL == $this->_request->getParam ('cv_uiHash') 
-            ? CubeViz_ConfigurationLink::$filePrefForUiHash 
-            : $this->_request->getParam ('cv_uiHash');
-        
-        /**
-         * Read information from files according to given hases
-         */
-        $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
-        $config = array();
-        $config['data'] = $c->read ($dataHash, $model);
-        $config['ui'] = $c->read ($uiHash, $model);
+        // if cubeVizApp was not loaded yet
+        if(false === isset($this->view->isCubeVizAppLoaded)) {
+            
+            /**
+             * Get hashes from parameter list
+             */
+            // hash for data
+            $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
+                ? CubeViz_ConfigurationLink::$filePrefForDataHash 
+                : $this->_request->getParam ('cv_dataHash');
+            
+            // hash for ui
+            $uiHash = NULL == $this->_request->getParam ('cv_uiHash') 
+                ? CubeViz_ConfigurationLink::$filePrefForUiHash 
+                : $this->_request->getParam ('cv_uiHash');
+            
+            /**
+             * Read information from files according to given hases
+             */
+            $c = new CubeViz_ConfigurationLink($this->_owApp->erfurt->getCacheDir());
+            $config = array();
+            $config['data'] = $c->read ($dataHash, $model);
+            $config['ui'] = $c->read ($uiHash, $model);
 
-        $config['backend'] = array(
-            'context'           => $context, 
-            'database'          => $this->_owApp->getConfig()->store->backend,
-            'imagesPath'        => $baseImagesPath,
-            'modelUrl'          => $modelIri,
-            'uiParts'           => array(
-                'module'        => array('isLoaded'=> false),
-                'index'         => array('isLoaded'=> false)
-            ),
-            'url'               => $this->_config->staticUrlBase . 'cubeviz/',
-            'sparqlEndpoint'    => 'local'
-        );
-       
-        $this->view->headScript()
-            ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
-            ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
+            $config['backend'] = array(
+                'context'           => $context, 
+                'database'          => $this->_owApp->getConfig()->store->backend,
+                'imagesPath'        => $baseImagesPath,
+                'modelUrl'          => $modelIri,
+                'uiParts'           => array(
+                    'module'        => array('isLoaded'=> false),
+                    'index'         => array('isLoaded'=> false)
+                ),
+                'url'               => $this->_config->staticUrlBase . 'cubeviz/',
+                'sparqlEndpoint'    => 'local'
+            );
+           
+            $this->view->headScript()
+                ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+                ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
+            
+            $this->view->isCubeVizAppLoaded = true;
+        }
         
         /**
          * fill template with content and give generated HTML back
