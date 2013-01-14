@@ -278,7 +278,7 @@ var CubeViz_ChartConfig = {
                         "color": "#000000"
                     },
                     "tooltip": {
-                    	"percentageDecimals": "1"
+                        "percentageDecimals": "1"
                     },
                     "plotOptions": {
                         "pie": {

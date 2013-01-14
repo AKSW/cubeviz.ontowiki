@@ -157,77 +157,77 @@ class CubevizController extends OntoWiki_Controller_Component {
      * 
      */
     public function getdatastructuredefinitionsAction() {
-		$this->_helper->viewRenderer->setNoRender();
+        $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		
-		$query = new DataCube_Query($model);
-				
+        
+        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+        
+        $query = new DataCube_Query($model);
+                
         $this->_response->setBody(json_encode($query->getDataStructureDefinitions()));
-	}
-	
-	/**
-	 * 
-	 */
-	public function getdatasetsAction() {
-		$this->_helper->viewRenderer->setNoRender();
+    }
+    
+    /**
+     * 
+     */
+    public function getdatasetsAction() {
+        $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		$dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
-						
-		$query = new DataCube_Query($model);
+        
+        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+        $dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
+                        
+        $query = new DataCube_Query($model);
 
         $this->_response
             ->setHeader('Cache-Control', 'no-cache, must-revalidate')
             ->setHeader('Content-Type', 'application/json')
             ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
             ->setBody(json_encode($query->getDataSets($dsdUrl)));
-	}
-	
-	/**
-	 * 
-	 */
-	public function getcomponentsAction() {
-		$this->_helper->viewRenderer->setNoRender();
+    }
+    
+    /**
+     * 
+     */
+    public function getcomponentsAction() {
+        $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-		
-		$model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-		
+        
+        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
+        
         // Data Structure Definition
         $dsdUrl = $this->_request->getParam('dsdUrl');
-		
+        
         // Data Set
         $dsUrl = $this->_request->getParam('dsUrl');
         
         // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
-		$componentType = $this->_request->getParam('cT'); 
-				
-		if($componentType == 'measure') {
-			$componentType = DataCube_UriOf::Measure;
-		} else if($componentType == 'dimension') {
-			$componentType = DataCube_UriOf::Dimension;
-		} else {
+        $componentType = $this->_request->getParam('cT'); 
+                
+        if($componentType == 'measure') {
+            $componentType = DataCube_UriOf::Measure;
+        } else if($componentType == 'dimension') {
+            $componentType = DataCube_UriOf::Dimension;
+        } else {
             // stop execution, because it is not a $componentType that i understand
             $this->_response->setBody('Unknown cT parameter! Given was: '. $componentType);
             return;
         }
-		
-		$query = new DataCube_Query($model);
-				
-		try {
-			$this->_response->setBody(json_encode($query->getComponents($dsdUrl, $dsUrl, $componentType)));
-		} catch(CubeViz_Exception $e) {
-			// send error message back
-			$this->_response->setBody($e->getMessage());
-		}        
-	}
-	
-	/**
-	 * 
-	 */
-	public function savecontenttofileAction() {
+        
+        $query = new DataCube_Query($model);
+                
+        try {
+            $this->_response->setBody(json_encode($query->getComponents($dsdUrl, $dsUrl, $componentType)));
+        } catch(CubeViz_Exception $e) {
+            // send error message back
+            $this->_response->setBody($e->getMessage());
+        }        
+    }
+    
+    /**
+     * 
+     */
+    public function savecontenttofileAction() {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 
@@ -247,7 +247,7 @@ class CubevizController extends OntoWiki_Controller_Component {
     protected function _getConfiguration () {
         $cacheDir = $this->_owApp->erfurt->getCacheDir();
         if (null === $this->_configuration) {
-    		$this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
+            $this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
         } 
         return $this->_configuration;
     }

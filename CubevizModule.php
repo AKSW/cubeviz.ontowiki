@@ -37,7 +37,7 @@ class CubevizModule extends OntoWiki_Module
      */
     public function shouldShow()
     {
-		if (true == isset($this->_owApp->selectedModel)) {
+        if (true == isset($this->_owApp->selectedModel)) {
             $q = new DataCube_Query ( $this->_owApp->selectedModel );
             return $q->containsDataCubeInformation();
         } 
