@@ -19,14 +19,14 @@ class CubeViz_ConfigurationLink
     protected $_hashDirectory = '';    
 
     /**
-     * filePrefix for dataHash
+     * filePrefix for cv_dataHash
      */
-    public static $filePrefForDataHash = 'dataHash-';
+    public static $filePrefForDataHash = 'cv_dataHash-';
     
     /**
-     * filePrefix for uiHash
+     * filePrefix for cv_uiHash
      */
-    public static $filePrefForUiHash = 'uiHash-';
+    public static $filePrefForUiHash = 'cv_uiHash-';
     
     /**
      * Constructor
@@ -160,7 +160,7 @@ class CubeViz_ConfigurationLink
             $c = file($this->_hashDirectory . $hash);
             
             // if configuration file contains information
-            if (true == isset ($c [0])) {                
+            if (true == isset ($c [0])) {
                 // contains stuff e.g. selectedDSD, ...
                 return json_decode($c[0], true);
             }
@@ -257,13 +257,14 @@ class CubeViz_ConfigurationLink
         }
         
         // attach hash based on the given string
+        $content['hash'] = '';
         $filename .= $this->generateHash ($content);
         
         $content['hash'] = $filename;
         
         // set full file path
         $filePath = $this->_hashDirectory . $filename;
-        
+
         if(false == file_exists($filePath)) {
             
             // can't open the file: throw exception
@@ -287,6 +288,6 @@ class CubeViz_ConfigurationLink
      */	
     private function generateHash ($content) 
     {
-        return hash('sha256', json_encode($content));
+        return md5(json_encode($content));
     }
 }

@@ -228,18 +228,18 @@ class CubevizController extends OntoWiki_Controller_Component {
 	 * 
 	 */
 	public function savecontenttofileAction() {
-		$this->_helper->viewRenderer->setNoRender();
+        $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-		
+
         // write given content to file
-		$hash = $this->_getConfiguration()->write(
+        $hash = $this->_getConfiguration()->write(
             $this->_request->getParam('content'),
             $this->_request->getParam('type')
         );
-        
+
         // send back result
-		$this->_response->setBody(json_encode($hash));
-	}
+        $this->_response->setBody(json_encode($hash));
+    }
 
     /**
      *

@@ -1152,7 +1152,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 $(event.target).data("dialogDiv").dialog("close");
             } else {
                 $(event.target).data("dialogDiv").dialog("close");
-                window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&dataHash=" + self.app._.data.hash + "&uiHash=" + self.app._.ui.hash;
+                window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.data.hash + "&cv_uiHash=" + self.app._.ui.hash;
             }
         });
     };
@@ -1199,10 +1199,12 @@ var View_CubeVizModule_Component = (function (_super) {
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            self.app._.data.hash = updatedDataHash;
             DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.data.retrievedObservations = newEntities;
-                callback();
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                    self.app._.data.hash = updatedDataHash;
+                    callback();
+                });
             });
         });
     };
