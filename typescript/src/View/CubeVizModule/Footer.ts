@@ -14,8 +14,8 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onChange_selectedDSD",
-                handler: this.onChange_selectedDSD
+                name:    "onAfterChange_selectedDSD",
+                handler: this.onAfterChange_selectedDSD
             },
             {
                 name:    "onChange_selectedDS",
@@ -82,13 +82,13 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
      */
     public onChange_selectedDS()
     {
-        this.onChange_selectedDSD();
+        this.onAfterChange_selectedDSD();
     }
     
     /**
      *
      */
-    public onChange_selectedDSD() 
+    public onAfterChange_selectedDSD() 
     {
         // Close permaLink button if it is still open
         if(false === _.isUndefined(this.collection.get("buttonVal"))){

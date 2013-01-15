@@ -15,8 +15,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onChange_selectedDSD",
-                handler: this.onChange_selectedDSD
+                name:    "onAfterChange_selectedDSD",
+                handler: this.onAfterChange_selectedDSD
             },
             {
                 name:    "onStart_application",
@@ -67,7 +67,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     /**
      *
      */
-    public onChange_selectedDSD(event, data) 
+    public onAfterChange_selectedDSD(event, data) 
     {        
         this.destroy();
         
@@ -115,7 +115,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      */
     public onComplete_loadDSD(event, data) 
     {
-        this.onChange_selectedDSD(event, data);
+        this.onAfterChange_selectedDSD(event, data);
     }
     
     /**

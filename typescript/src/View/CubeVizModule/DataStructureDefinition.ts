@@ -54,6 +54,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
      */
     public onChange_list(event) : void 
     {
+        this.triggerGlobalEvent("onBeforeChange_selectedDSD");
+        
         var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
             selectedElement = this.collection.get(selectedElementId);
         
@@ -62,8 +64,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         // set new selected data structure definition
         this.app._.data.selectedDSD = selectedElement;
     
-        // trigger event
-        this.triggerGlobalEvent("onChange_selectedDSD");
+        this.triggerGlobalEvent("onAfterChange_selectedDSD");
     }
     
     /**
