@@ -1,5 +1,8 @@
 src/Test/TestSuite.ts
 
+src/Model/CubeViz/View/Helper.ts
+src/Test/Model/CubeViz/View/Helper.ts
+
 src/Test/View/CubeVizModule/DataStructureDefinition.ts
 src/Test/View/CubeVizModule/DataSet.ts
 src/Test/View/CubeVizModule/Component.ts

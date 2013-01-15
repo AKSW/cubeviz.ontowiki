@@ -24,6 +24,119 @@ var cubeviz_startTests = function () {
     });
     console.log("\n-----\n" + cubeViz_testCounter + " tests run, " + cubeViz_testFailCounter + " failed");
 };
+var CubeViz_View_Helper = (function () {
+    function CubeViz_View_Helper() { }
+    CubeViz_View_Helper.attachDialogTo = function attachDialogTo(domElement, options) {
+        var defaultOptions = {
+        };
+        var options = options || {
+        };
+
+        defaultOptions.autoOpen = options.autoOpen || false;
+        defaultOptions.closeOnEscape = options.closeOnEscape || false;
+        defaultOptions.draggable = options.draggable || false;
+        defaultOptions.height = options.height || "auto";
+        defaultOptions.hide = options.hide || "slow";
+        defaultOptions.modal = options.modal || true;
+        defaultOptions.overlay = options.overlay || {
+            "background-color": "#FFFFFF",
+            opacity: 0.5
+        };
+        defaultOptions.resizable = options.resizable || false;
+        defaultOptions.show = options.show || "slow";
+        defaultOptions.width = options.width || "700";
+        if(true === _.isUndefined(options.showCross) || false === options.showCross) {
+            defaultOptions.open = function (event, ui) {
+                $(".ui-dialog-titlebar-close", $(this).parent()).hide();
+            };
+        }
+        ; ;
+        domElement.dialog(defaultOptions);
+        domElement.data("hasDialog", true);
+    }
+    CubeViz_View_Helper.closeDialog = function closeDialog(domElement) {
+        domElement.dialog("close");
+        domElement.data("isDialogOpen", false);
+    }
+    CubeViz_View_Helper.openDialog = function openDialog(domElement) {
+        domElement.dialog("open");
+        domElement.data("isDialogOpen", true);
+        $(".ui-widget-overlay").css("height", 2 * screen.height);
+    }
+    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
+        domElement.dialog("destroy");
+        domElement.data("isDialogOpen", false);
+    }
+    return CubeViz_View_Helper;
+})();
+cubeViz_tests.push(function () {
+    var t = function () {
+        var div = $("<div></div>");
+        var hasDialog = div.data("hasDialog");
+
+        this.assertTrue(true !== hasDialog, "true !== " + hasDialog);
+        CubeViz_View_Helper.attachDialogTo(div);
+        hasDialog = div.data("hasDialog");
+        this.assertTrue(true === hasDialog, "true === " + hasDialog);
+        CubeViz_View_Helper.openDialog(div);
+        hasDialog = div.data("hasDialog");
+        this.assertTrue(true === hasDialog, "true === " + hasDialog);
+        CubeViz_View_Helper.closeDialog(div);
+        hasDialog = div.data("hasDialog");
+        this.assertTrue(true === hasDialog, "true === " + hasDialog);
+        CubeViz_View_Helper.destroyDialog(div);
+        hasDialog = div.data("hasDialog");
+        this.assertTrue(true === hasDialog, "true === " + hasDialog);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var div = $("<div></div>");
+        CubeViz_View_Helper.attachDialogTo(div);
+        var isDialogOpen = div.data("isDialogOpen");
+        this.assertTrue(true !== isDialogOpen, "false === " + isDialogOpen);
+        CubeViz_View_Helper.openDialog(div);
+        var isDialogOpen = div.data("isDialogOpen");
+        this.assertTrue(true === isDialogOpen, "true === " + isDialogOpen);
+        CubeViz_View_Helper.closeDialog(div);
+        isDialogOpen = div.data("isDialogOpen");
+        this.assertTrue(false === isDialogOpen, "false === " + isDialogOpen);
+        CubeViz_View_Helper.destroyDialog(div);
+        isDialogOpen = div.data("isDialogOpen");
+        this.assertTrue(false === isDialogOpen, "false === " + isDialogOpen);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var div = $("<div></div>");
+        CubeViz_View_Helper.attachDialogTo(div);
+        CubeViz_View_Helper.openDialog(div);
+        var currentOverlayHeight = $(".ui-widget-overlay").css("height");
+        var doubleScreenHeight = (2 * screen.height) + "px";
+
+        this.assertTrue(currentOverlayHeight === doubleScreenHeight, currentOverlayHeight + " === " + doubleScreenHeight);
+        CubeViz_View_Helper.closeDialog(div);
+        CubeViz_View_Helper.destroyDialog(div);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
 cubeViz_tests.push(function () {
     var t = function () {
         var listEntries = $("#cubeviz-dataStructureDefinition-list").children();
