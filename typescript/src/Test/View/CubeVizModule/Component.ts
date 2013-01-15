@@ -21,7 +21,6 @@ cubeViz_tests.push(function(){
     }]).triggerEvent("onStart_application");
 });
 
-
 /**
  * Test questionMark dialog is open on click of the icon
  */
@@ -54,5 +53,82 @@ cubeViz_tests.push(function(){
     // Bind real test function to a global event
     cubeVizApp.bindGlobalEvents([{ 
         name: "onAfterRender_component", handler: $.proxy(t_dialogIsClosed, this)
+    }]).triggerEvent("onStart_application");
+});
+
+/**
+ * Test if select component elements dialog was created as expected
+ */
+cubeViz_tests.push(function(){
+    
+    // real test function
+    var t = function() 
+    {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
+            firstComponentHashedUrl = givenComponentDimensionKeys[0],
+            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+                                      givenComponentDimensionKeys[0],
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            listEntries = $(listDOMElement).children();
+            
+        // for the loop
+        var checkbox:any, checkboxName:string, checkboxValue:any, 
+            checkboxChecked:string, dimensionToCheck:any, label:any, self = this;
+        
+        // go through all entries and check exactly each property to match
+        _.each(listEntries, function(listEntry){
+            /**
+             * Save variables
+             */
+            checkbox = $($(listEntry).children().first());
+            checkboxName = checkbox.attr("name");
+            checkboxValue = checkbox.val();
+            checkboxChecked = true == checkbox.is(":checked") 
+                              ? " checked=\"checked\"" : "";
+            label = $($(listEntry).children().last()).html();
+            dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+            
+            /**
+             * Check checkbox
+             */
+            // check name (hashedProperty)
+            self.assertTrue(
+                true === _.isObject( _.find(
+                    dimensionToCheck.elements,
+                    function(ele){ return checkboxName == ele.hashedProperty; }
+                ))
+            );
+            
+            // check value (property)
+            self.assertTrue(
+                true === _.isObject( _.find(
+                    dimensionToCheck.elements,
+                    function(ele){ return checkboxValue == ele.property; }
+                ))
+            );
+            
+            // check if checked
+            self.assertTrue(
+                true === _.isObject( _.find(
+                    dimensionToCheck.elements,
+                    function(ele){ return checkboxChecked == ele.checked; }
+                ))
+            );
+            
+            /**
+             * Check label
+             */
+            self.assertTrue(
+                true === _.isObject( _.find(
+                    dimensionToCheck.elements,
+                    function(ele){ return label == ele.propertyLabel; }
+                ))
+            );
+        });
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterRender_component", handler: $.proxy(t, this)
     }]).triggerEvent("onStart_application");
 });

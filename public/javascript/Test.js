@@ -244,6 +244,50 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     var t = function () {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
+        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
+        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listEntries = $(listDOMElement).children();
+
+        var checkbox;
+        var checkboxName;
+        var checkboxValue;
+        var checkboxChecked;
+        var dimensionToCheck;
+        var label;
+        var self = this;
+
+        _.each(listEntries, function (listEntry) {
+            checkbox = $($(listEntry).children().first());
+            checkboxName = checkbox.attr("name");
+            checkboxValue = checkbox.val();
+            checkboxChecked = true == checkbox.is(":checked") ? " checked=\"checked\"" : "";
+            label = $($(listEntry).children().last()).html();
+            dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+            self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                return checkboxName == ele.hashedProperty;
+            })));
+            self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                return checkboxValue == ele.property;
+            })));
+            self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                return checkboxChecked == ele.checked;
+            })));
+            self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                return label == ele.propertyLabel;
+            })));
+        });
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions;
         var expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts;
         var foundItems = $("#cubeviz-visualizationselector-selector").children();
