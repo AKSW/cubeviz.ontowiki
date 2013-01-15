@@ -96,6 +96,41 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     var t = function () {
+        var listEntries = $("#cubviz-component-listBox").children();
+        var givenComponentDimensions = _.keys(cubeVizApp._.data.components.dimensions);
+
+        this.assertTrue(listEntries.length == givenComponentDimensions.length, listEntries.length + " == " + givenComponentDimensions.length);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t_dialogIsClosed = function () {
+        var hasDialog = $("#cubeviz-component-dialog").data("hasDialog");
+        var isDialogOpen = $("#cubeviz-component-dialog").data("isDialogOpen");
+
+        this.assertTrue(hasDialog === true, "Component: hasDialog: " + hasDialog);
+        this.assertTrue(isDialogOpen !== true, "Component: isDialogOpen: " + isDialogOpen);
+        $("#cubeviz-component-questionMark").click($.proxy(t_dialogIsOpen, this));
+        $("#cubeviz-component-questionMark").click();
+    };
+    var t_dialogIsOpen = function () {
+        var isDialogOpen = $("#cubeviz-component-dialog").data("isDialogOpen");
+        this.assertTrue(isDialogOpen === true, "Component: isDialogOpen: " + isDialogOpen);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t_dialogIsClosed, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions;
         var expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts;
         var foundItems = $("#cubeviz-visualizationselector-selector").children();

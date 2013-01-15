@@ -121,9 +121,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         super.destroy();
         
         // Question mark dialog
-        CubeViz_View_Helper.destroyDialog(
-            $("#cubeviz-component-questionMarkDialog")
-        );
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         
         return this;
     }
@@ -279,9 +277,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_questionmark() : void
     {
-        CubeViz_View_Helper.openDialog(
-            $("#cubeviz-component-questionMarkDialog")
-        );
+        CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
     }
     
     
@@ -405,6 +401,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public render()
     {        
+        this.triggerGlobalEvent("onBeforeRender_component");
+        
         /**
          * List elements
          */
@@ -465,7 +463,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          * Question mark dialog
          */
         CubeViz_View_Helper.attachDialogTo(
-            $("#cubeviz-component-questionMarkDialog"),
+            $("#cubeviz-component-dialog"),
             {closeOnEscape: true, showCross: true, width: 500}
         );
         
@@ -488,6 +486,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click #cubeviz-component-questionMark": 
                 this.onClick_questionmark
         });
+        
+        this.triggerGlobalEvent("onAfterRender_component");
         
         return this;
     }

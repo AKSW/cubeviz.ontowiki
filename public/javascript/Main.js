@@ -1125,7 +1125,7 @@ var View_CubeVizModule_Component = (function (_super) {
         });
         $("#cubeviz-component-setupDialogContainer").empty();
         _super.prototype.destroy.call(this);
-        CubeViz_View_Helper.destroyDialog($("#cubeviz-component-questionMarkDialog"));
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         return this;
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
@@ -1178,7 +1178,7 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
-        CubeViz_View_Helper.openDialog($("#cubeviz-component-questionMarkDialog"));
+        CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
     };
     View_CubeVizModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
@@ -1232,6 +1232,7 @@ var View_CubeVizModule_Component = (function (_super) {
         this.initialize();
     };
     View_CubeVizModule_Component.prototype.render = function () {
+        this.triggerGlobalEvent("onBeforeRender_component");
         var backendCollection = this.collection._;
         var list = $("#cubviz-component-listBox");
         var componentBox = null;
@@ -1257,7 +1258,7 @@ var View_CubeVizModule_Component = (function (_super) {
             $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.selectedElementCount);
             self.collection.add(dimension);
         });
-        CubeViz_View_Helper.attachDialogTo($("#cubeviz-component-questionMarkDialog"), {
+        CubeViz_View_Helper.attachDialogTo($("#cubeviz-component-dialog"), {
             closeOnEscape: true,
             showCross: true,
             width: 500
@@ -1269,6 +1270,7 @@ var View_CubeVizModule_Component = (function (_super) {
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
+        this.triggerGlobalEvent("onAfterRender_component");
         return this;
     };
     return View_CubeVizModule_Component;
