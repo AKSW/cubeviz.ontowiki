@@ -25,8 +25,8 @@ cubeViz_tests.push(function(){
  * Test questionMark dialog is open on click of the icon
  */
 cubeViz_tests.push(function(){
-    
-    // real test function
+
+    // test if dialog is closed
     var t_dialogIsClosed = function() 
     {
         var hasDialog = $("#cubeviz-dataStructureDefinition-dialog").data("hasDialog"),
@@ -34,6 +34,20 @@ cubeViz_tests.push(function(){
 
         this.assertTrue( hasDialog === true, "DSD: hasDialog: " + hasDialog);
         this.assertTrue( isDialogOpen !== true, "DSD: isDialogOpen: " + isDialogOpen);
+        
+        // set click handler for test function and simulate click afterwards
+        $("#cubeviz-dataStructureDefinition-questionMark").click(
+            $.proxy(t_dialogIsOpen, this)
+        );
+        
+        $("#cubeviz-dataStructureDefinition-questionMark").click();
+    };
+
+    // test if dialog was opened after click to questionmark
+    var t_dialogIsOpen = function() 
+    {
+        var isDialogOpen = $("#cubeviz-dataStructureDefinition-dialog").data("isDialogOpen");
+        this.assertTrue( isDialogOpen === true, "DSD: isDialogOpen: " + isDialogOpen);
     };
     
     // Bind real test function to a global event and trigger application start

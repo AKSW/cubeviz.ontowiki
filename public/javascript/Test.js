@@ -45,6 +45,14 @@ cubeViz_tests.push(function () {
 
         this.assertTrue(hasDialog === true, "DSD: hasDialog: " + hasDialog);
         this.assertTrue(isDialogOpen !== true, "DSD: isDialogOpen: " + isDialogOpen);
+        $("#cubeviz-dataStructureDefinition-questionMark").click($.proxy(t_dialogIsOpen, this));
+        $("#cubeviz-dataStructureDefinition-questionMark").click();
+    };
+    var t_dialogIsOpen = function () {
+        var isDialogOpen = $("#cubeviz-dataStructureDefinition-dialog").data("isDialogOpen");
+        console.log("isDialogOpen");
+        console.log(isDialogOpen);
+        this.assertTrue(isDialogOpen === true, "DSD: isDialogOpen: " + isDialogOpen);
     };
     cubeVizApp.bindGlobalEvents([
         {

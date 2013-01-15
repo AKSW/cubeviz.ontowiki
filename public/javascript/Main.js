@@ -951,11 +951,12 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.render();
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
+        this.triggerGlobalEvent("onBeforeChange_selectedDSD");
         var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
         var selectedElement = this.collection.get(selectedElementId);
 
         this.app._.data.selectedDSD = selectedElement;
-        this.triggerGlobalEvent("onChange_selectedDSD");
+        this.triggerGlobalEvent("onAfterChange_selectedDSD");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
         CubeViz_View_Helper.openDialog($("#cubeviz-dataStructureDefinition-dialog"));
@@ -992,8 +993,8 @@ var View_CubeVizModule_DataSet = (function (_super) {
         _super.call(this, "View_CubeVizModule_DataSet", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onChange_selectedDSD",
-                handler: this.onChange_selectedDSD
+                name: "onAfterChange_selectedDSD",
+                handler: this.onAfterChange_selectedDSD
             }, 
             {
                 name: "onStart_application",
@@ -1018,7 +1019,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.app._.data.selectedDS = selectedElement;
         this.triggerGlobalEvent("onChange_selectedDS");
     };
-    View_CubeVizModule_DataSet.prototype.onChange_selectedDSD = function (event, data) {
+    View_CubeVizModule_DataSet.prototype.onAfterChange_selectedDSD = function (event, data) {
         this.destroy();
         var self = this;
         DataCube_DataSet.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, function (entries) {
@@ -1033,7 +1034,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSet-dialog"));
     };
     View_CubeVizModule_DataSet.prototype.onComplete_loadDSD = function (event, data) {
-        this.onChange_selectedDSD(event, data);
+        this.onAfterChange_selectedDSD(event, data);
     };
     View_CubeVizModule_DataSet.prototype.onStart_application = function () {
         this.initialize();
@@ -1276,8 +1277,8 @@ var View_CubeVizModule_Footer = (function (_super) {
         _super.call(this, "View_CubeVizModule_Footer", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onChange_selectedDSD",
-                handler: this.onChange_selectedDSD
+                name: "onAfterChange_selectedDSD",
+                handler: this.onAfterChange_selectedDSD
             }, 
             {
                 name: "onChange_selectedDS",
@@ -1314,9 +1315,9 @@ var View_CubeVizModule_Footer = (function (_super) {
         this.render();
     };
     View_CubeVizModule_Footer.prototype.onChange_selectedDS = function () {
-        this.onChange_selectedDSD();
+        this.onAfterChange_selectedDSD();
     };
-    View_CubeVizModule_Footer.prototype.onChange_selectedDSD = function () {
+    View_CubeVizModule_Footer.prototype.onAfterChange_selectedDSD = function () {
         if(false === _.isUndefined(this.collection.get("buttonVal"))) {
             this.changePermaLinkButton();
         }
