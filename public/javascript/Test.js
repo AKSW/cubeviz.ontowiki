@@ -26,6 +26,49 @@ var cubeviz_startTests = function () {
 };
 cubeViz_tests.push(function () {
     var t = function () {
+        var listEntries = $("#cubeviz-dataStructureDefinition-list").children();
+        var givenDSDs = _.keys(cubeVizApp._.data.dataStructureDefinitions);
+
+        this.assertTrue(listEntries.length == givenDSDs.length, listEntries.length + " == " + givenDSDs.length);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t_dialogIsClosed = function () {
+        var hasDialog = $("#cubeviz-dataStructureDefinition-dialog").data("hasDialog");
+        var isDialogOpen = $("#cubeviz-dataStructureDefinition-dialog").data("isDialogOpen");
+
+        this.assertTrue(hasDialog === true, "DSD: hasDialog: " + hasDialog);
+        this.assertTrue(isDialogOpen !== true, "DSD: isDialogOpen: " + isDialogOpen);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_dataStructureDefinition",
+            handler: $.proxy(t_dialogIsClosed, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var listEntries = $("#cubeviz-dataSet-list").children();
+        var givenDSs = _.keys(cubeVizApp._.data.dataSets);
+
+        this.assertTrue(listEntries.length == givenDSs.length, listEntries.length + " == " + givenDSs.length);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions;
         var expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts;
         var foundItems = $("#cubeviz-visualizationselector-selector").children();

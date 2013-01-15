@@ -127,16 +127,11 @@ class CubeViz_View_Application
      */
     public getDataCopy() 
     {
-        var backup = [
-            this._.data.retrievedObservations, 
-            this._.generatedVisualization, 
-        ]; 
-        this._.data.retrievedObservations = undefined;
+        var backup = [this._.generatedVisualization]; 
         this._.generatedVisualization = undefined;
         
         var result = $.parseJSON(JSON.stringify(this._));
         
-        this._.data.retrievedObservations = backup[0];
         this._.generatedVisualization = backup[1];
         
         return result;
@@ -211,13 +206,7 @@ class CubeViz_View_Application
      */
     public restoreDataCopy(copy:any) : CubeViz_View_Application
     {
-        var backup = [
-            this._.data.retrievedObservations
-        ];
-        
         this._ = $.parseJSON(JSON.stringify(copy));
-        
-        this._.data.retrievedObservations = backup[0];
         
         return this;
     }

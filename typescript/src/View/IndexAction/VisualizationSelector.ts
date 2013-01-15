@@ -32,9 +32,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     {
         super.destroy();
         $("#cubeviz-visualizationselector-selector").empty();
-        this
-            .hideDongle()
-            .hideMenu();
+        this.hideDongle()
+        this.hideMenu();
         return this;
     }
     

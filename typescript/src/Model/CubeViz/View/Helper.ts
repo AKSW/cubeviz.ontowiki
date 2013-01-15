@@ -1,13 +1,14 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
-class View_Helper
+class CubeViz_View_Helper
 {
     /**
-     * @param domElement jQuery container around a DOM element
+     * Attach an dialog to a div container (using jQueryUI.dialog()).
+     * @param domElement jQuery element which represents the dialog
      * @param options Overrides standard values
      * @return void
      */
-    static attachDialog(domElement:any, options?:any) : void 
+    static attachDialogTo(domElement:any, options?:any) : void 
     {
         var defaultOptions:any = {}, 
             options:any = options || {};
@@ -38,34 +39,45 @@ class View_Helper
          * attach dialog to DOM element
          */
         domElement.dialog(defaultOptions);
+        
+        domElement.data("hasDialog", true);
     }
     
     /**
-     *
+     * Close an attached dialog.
+     * @param domElement jQuery element which represents the dialog
+     * @return void
      */
     static closeDialog(domElement:any) : void
     {
         domElement.dialog("close");
+        
+        domElement.data("isDialogOpen", false);
     } 
     
     /**
-     *
+     * Open an attached dialog.
+     * @param domElement jQuery element which represents the dialog
+     * @return void
      */
     static openDialog(domElement:any) : void
     {
         domElement.dialog("open");
         
+        domElement.data("isDialogOpen", true);
+        
         // Change overlay height for the dialog
-        $(".ui-widget-overlay").css(
-            "height", screen.height + (screen.height*0.5)
-        );
+        $(".ui-widget-overlay").css("height", 2 * screen.height);
     } 
     
     /**
-     *
+     * Destroy an attached dialog
+     * @param domElement jQuery element which represents the dialog
      */
     static destroyDialog(domElement:any) : void
     {
         domElement.dialog("destroy");
+        
+        domElement.data("isDialogOpen", false);
     } 
 }

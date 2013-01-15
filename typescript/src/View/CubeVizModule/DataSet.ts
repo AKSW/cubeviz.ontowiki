@@ -32,9 +32,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     {
         super.destroy();
         
-        View_Helper.destroyDialog(
-            $("#cubeviz-dataSet-dialog")
-        );
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-dataSet-dialog"));
         
         return this;
     }
@@ -109,7 +107,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      */
     public onClick_questionmark() 
     {
-        View_Helper.openDialog($("#cubeviz-dataSet-dialog"));
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSet-dialog"));
     }
     
     /**
@@ -153,8 +151,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         /**
          * Question mark dialog
          */
-        View_Helper.attachDialog(
-            $("#cubeviz-dataSet-dialog"), 
+        CubeViz_View_Helper.attachDialogTo(
+            $("#cubeviz-dataSet-dialog"),
             {closeOnEscape: true, showCross: true, width: 500}
         );
         

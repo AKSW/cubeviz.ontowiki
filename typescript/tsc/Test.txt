@@ -1,2 +1,6 @@
 src/Test/TestSuite.ts
+
+src/Test/View/CubeVizModule/DataStructureDefinition.ts
+src/Test/View/CubeVizModule/DataSet.ts
+
 src/Test/View/IndexAction/VisualizationSelector.ts

@@ -1,6 +1,6 @@
 /**
  * Test if number of possible charts (chartConfig) is equal to the number of
- * menu items.
+ * selector items.
  */
 cubeViz_tests.push(function(){
     
@@ -84,7 +84,7 @@ cubeViz_tests.push(function(){
 });
 
 /**
- * Test after show the menu, and click to another item, let it disappear
+ * Test after showing the menu, and click to another item, let menu disappear
  */
 cubeViz_tests.push(function(){
     cubeVizApp.triggerEvent("onStart_application");

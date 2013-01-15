@@ -12,7 +12,7 @@ class DataCube_DataSet
             data: { m: modelUrl, dsdUrl: dsdUrl }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error( "loadAll error: " + xhr ["responseText"] );
+            throw new Error( "loadAll error: " + xhr.responseText );
         })
         .done(function(entries){ 
             DataCube_DataSet.prepareLoadedDataSets (entries, callback); 

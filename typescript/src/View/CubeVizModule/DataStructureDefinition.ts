@@ -28,7 +28,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
     {
         super.destroy();
         
-        View_Helper.destroyDialog(
+        CubeViz_View_Helper.destroyDialog(
             $("#cubeviz-dataStructureDefinition-dialog")
         );
         
@@ -69,8 +69,11 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_questionmark() {
-        View_Helper.openDialog($("#cubeviz-dataStructureDefinition-dialog"));
+    public onClick_questionmark() 
+    {
+        CubeViz_View_Helper.openDialog(
+            $("#cubeviz-dataStructureDefinition-dialog")
+        );
     }
     
     /**
@@ -107,8 +110,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         /**
          * Question mark dialog
          */
-        View_Helper.attachDialog(
-            $("#cubeviz-dataStructureDefinition-dialog"), 
+        CubeViz_View_Helper.attachDialogTo(
+            $("#cubeviz-dataStructureDefinition-dialog"),
             {closeOnEscape: true, showCross: true, width: 500}
         );
         
@@ -119,6 +122,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
             "change #cubeviz-dataStructureDefinition-list" : this.onChange_list,
             "click #cubeviz-dataStructureDefinition-questionMark": this.onClick_questionmark
         });
+        
+        this.triggerGlobalEvent("onAfterRender_dataStructureDefinition");
         
         return this;
     }
