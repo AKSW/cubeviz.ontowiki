@@ -42,29 +42,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
         
-        div
-        .data("componentBox", componentBox)
-        .data("hashedUrl", component.hashedUrl)
+        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
         
-        // setup dialog
-        .dialog({
-            autoOpen: false,
-            closeOnEscape: false,
-            draggable: false,
-            height: "auto",
-            hide: "slow",
-            modal: true,
-            open: function(event,ui){
-                $(".ui-dialog-titlebar-close", $(this).parent()).hide();
-            },
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            resizable: false,
-            show: "slow",
-            width: 700
-        });
+        // attach dialog to div element
+        View_Helper.attachDialog(div);
         
         // attach dialog div to deselect button
         $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
@@ -140,7 +121,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         super.destroy();
         
         // Question mark dialog
-        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
+        View_Helper.destroyDialog($("#cubeviz-component-questionMarkDialog"));
         
         return this;
     }
@@ -245,13 +226,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_cancel(event) : void 
     {
-        // The dialog the clicked button is attached to
-        var dialogDiv = $(event.target).data("dialogDiv");
-            
-        // close dialog
-        $(event.target)
-            .data("dialogDiv")
-            .dialog("close");
+        // close dialog the clicked button is attached to
+        View_Helper.closeDialog($(event.target).data("dialogDiv"));
     }
     
     /**
@@ -268,15 +244,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             function(){
                     
                 // if module + indexAction stuff was loaded
-                if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
-                    
+                if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {                    
                     self.triggerGlobalEvent("onReRender_visualization");
                 }
                 
                 // if only module was loaded, move reloading stuff to footer.ts
-                $(event.target)
-                    .data("dialogDiv")
-                    .dialog("close");
+                View_Helper.closeDialog($(event.target).data("dialogDiv"));
             }
         );        
     }
@@ -296,13 +269,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_setupComponentOpener(event) : void
     {
-        $(event.target).data("dialogDiv").dialog("open");
-    
-        // Change overlay height (jQueryUI dialog)
-        // TODO find a better place for that!
-        $(".ui-widget-overlay").css(
-            "height", screen.height + (screen.height*0.5)
-        );
+        View_Helper.openDialog($(event.target).data("dialogDiv"));
     }
     
     /**
@@ -310,7 +277,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_questionmark() : void
     {
-        $("#cubeviz-component-questionMarkDialog").dialog("open");
+        View_Helper.openDialog($("#cubeviz-component-questionMarkDialog"));
     }
     
     
@@ -493,18 +460,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         /**
          * Question mark dialog
          */
-        $("#cubeviz-component-questionMarkDialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            show: "slow",
-            width: 500
-        });
+        View_Helper.attachDialog(
+            $("#cubeviz-component-questionMarkDialog"), {width:500}
+        );
         
         /**
          * Delegate events to new items of the template

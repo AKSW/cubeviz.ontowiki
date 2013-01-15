@@ -22,6 +22,20 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
     }
     
     /**
+     *
+     */
+    public destroy() : CubeViz_View_Abstract 
+    {
+        super.destroy();
+        
+        View_Helper.destroyDialog(
+            $("#cubeviz-dataStructureDefinition-dialog")
+        );
+        
+        return this;
+    }
+    
+    /**
      * 
      */
     public initialize() : void
@@ -56,7 +70,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
      *
      */
     public onClick_questionmark() {
-        $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+        View_Helper.openDialog($("#cubeviz-dataStructureDefinition-dialog"));
     }
     
     /**
@@ -93,19 +107,10 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         /**
          * Question mark dialog
          */
-        $("#cubeviz-dataStructureDefinition-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            resizable: false,
-            show: "slow",
-            width: 500
-        });
+        View_Helper.attachDialog(
+            $("#cubeviz-dataStructureDefinition-dialog"), 
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
         
         /**
          * Delegate events to new items of the template

@@ -893,6 +893,47 @@ var DataCube_Observation = (function () {
     };
     return DataCube_Observation;
 })();
+var View_Helper = (function () {
+    function View_Helper() { }
+    View_Helper.attachDialog = function attachDialog(domElement, options) {
+        var defaultOptions = {
+        };
+        var options = options || {
+        };
+
+        defaultOptions.autoOpen = options.autoOpen || false;
+        defaultOptions.closeOnEscape = options.closeOnEscape || false;
+        defaultOptions.draggable = options.draggable || false;
+        defaultOptions.height = options.height || "auto";
+        defaultOptions.hide = options.hide || "slow";
+        defaultOptions.modal = options.modal || true;
+        defaultOptions.overlay = options.overlay || {
+            "background-color": "#FFFFFF",
+            opacity: 0.5
+        };
+        defaultOptions.resizable = options.resizable || false;
+        defaultOptions.show = options.show || "slow";
+        defaultOptions.width = options.width || "700";
+        if(true === _.isUndefined(options.showCross) || false === options.showCross) {
+            defaultOptions.open = function (event, ui) {
+                $(".ui-dialog-titlebar-close", $(this).parent()).hide();
+            };
+        }
+        ; ;
+        domElement.dialog(defaultOptions);
+    }
+    View_Helper.closeDialog = function closeDialog(domElement) {
+        domElement.dialog("close");
+    }
+    View_Helper.openDialog = function openDialog(domElement) {
+        domElement.dialog("open");
+        $(".ui-widget-overlay").css("height", screen.height + (screen.height * 0.5));
+    }
+    View_Helper.destroyDialog = function destroyDialog(domElement) {
+        domElement.dialog("destroy");
+    }
+    return View_Helper;
+})();
 var View_CubeVizModule_DataStructureDefintion = (function (_super) {
     __extends(View_CubeVizModule_DataStructureDefintion, _super);
     function View_CubeVizModule_DataStructureDefintion(attachedTo, app) {
@@ -904,6 +945,11 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             }
         ]);
     }
+    View_CubeVizModule_DataStructureDefintion.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        View_Helper.destroyDialog($("#cubeviz-dataStructureDefinition-dialog"));
+        return this;
+    };
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
         this.collection.reset("hashedUrl").addList(this.app._.data.dataStructureDefinitions);
         this.render();
@@ -916,7 +962,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.triggerGlobalEvent("onChange_selectedDSD");
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
-        $("#cubeviz-dataStructureDefinition-dialog").dialog("open");
+        View_Helper.openDialog($("#cubeviz-dataStructureDefinition-dialog"));
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onStart_application = function (event, data) {
         this.initialize();
@@ -930,17 +976,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
             element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
-        $("#cubeviz-dataStructureDefinition-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            resizable: false,
-            show: "slow",
+        View_Helper.attachDialog($("#cubeviz-dataStructureDefinition-dialog"), {
+            closeOnEscape: true,
+            showCross: true,
             width: 500
         });
         this.bindUserInterfaceEvents({
@@ -966,6 +1004,11 @@ var View_CubeVizModule_DataSet = (function (_super) {
             }
         ]);
     }
+    View_CubeVizModule_DataSet.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        View_Helper.destroyDialog($("#cubeviz-dataSet-dialog"));
+        return this;
+    };
     View_CubeVizModule_DataSet.prototype.initialize = function () {
         this.collection.reset("hashedUrl");
         this.collection.addList(this.app._.data.dataSets);
@@ -990,7 +1033,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         });
     };
     View_CubeVizModule_DataSet.prototype.onClick_questionmark = function () {
-        $("#cubeviz-dataSet-dialog").dialog("open");
+        View_Helper.openDialog($("#cubeviz-dataSet-dialog"));
     };
     View_CubeVizModule_DataSet.prototype.onComplete_loadDSD = function (event, data) {
         this.onChange_selectedDSD(event, data);
@@ -1007,17 +1050,9 @@ var View_CubeVizModule_DataSet = (function (_super) {
             element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
-        $("#cubeviz-dataSet-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            resizable: false,
-            show: "slow",
+        View_Helper.attachDialog($("#cubeviz-dataSet-dialog"), {
+            closeOnEscape: true,
+            showCross: true,
             width: 500
         });
         this.bindUserInterfaceEvents({
@@ -1052,24 +1087,8 @@ var View_CubeVizModule_Component = (function (_super) {
             hashedUrl: component.hashedUrl
         }));
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl).dialog({
-            autoOpen: false,
-            closeOnEscape: false,
-            draggable: false,
-            height: "auto",
-            hide: "slow",
-            modal: true,
-            open: function (event, ui) {
-                $(".ui-dialog-titlebar-close", $(this).parent()).hide();
-            },
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            resizable: false,
-            show: "slow",
-            width: 700
-        });
+        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
+        View_Helper.attachDialog(div);
         $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
         $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
@@ -1106,7 +1125,7 @@ var View_CubeVizModule_Component = (function (_super) {
         });
         $("#cubeviz-component-setupDialogContainer").empty();
         _super.prototype.destroy.call(this);
-        $("#cubeviz-component-questionMarkDialog").dialog("destroy");
+        View_Helper.destroyDialog($("#cubeviz-component-questionMarkDialog"));
         return this;
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
@@ -1139,8 +1158,7 @@ var View_CubeVizModule_Component = (function (_super) {
         });
     };
     View_CubeVizModule_Component.prototype.onClick_cancel = function (event) {
-        var dialogDiv = $(event.target).data("dialogDiv");
-        $(event.target).data("dialogDiv").dialog("close");
+        View_Helper.closeDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
@@ -1150,18 +1168,17 @@ var View_CubeVizModule_Component = (function (_super) {
             if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
                 self.triggerGlobalEvent("onReRender_visualization");
             }
-            $(event.target).data("dialogDiv").dialog("close");
+            View_Helper.closeDialog($(event.target).data("dialogDiv"));
         });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
-        $(event.target).data("dialogDiv").dialog("open");
-        $(".ui-widget-overlay").css("height", screen.height + (screen.height * 0.5));
+        View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
-        $("#cubeviz-component-questionMarkDialog").dialog("open");
+        View_Helper.openDialog($("#cubeviz-component-questionMarkDialog"));
     };
     View_CubeVizModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
@@ -1240,16 +1257,7 @@ var View_CubeVizModule_Component = (function (_super) {
             $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.selectedElementCount);
             self.collection.add(dimension);
         });
-        $("#cubeviz-component-questionMarkDialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            show: "slow",
+        View_Helper.attachDialog($("#cubeviz-component-questionMarkDialog"), {
             width: 500
         });
         this.bindUserInterfaceEvents({
@@ -1376,7 +1384,7 @@ var View_IndexAction_Header = (function (_super) {
     }
     View_IndexAction_Header.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
-        $("#cubeviz-index-headerDialogBox").dialog("destroy");
+        View_Helper.destroyDialog($("#cubeviz-index-headerDialogBox"));
         return this;
     };
     View_IndexAction_Header.prototype.initialize = function () {
@@ -1390,17 +1398,9 @@ var View_IndexAction_Header = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Header.prototype.render = function () {
-        $("#cubeviz-index-headerDialogBox").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: "auto",
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            show: "slow",
+        View_Helper.attachDialog($("#cubeviz-index-headerDialogBox"), {
+            closeOnEscape: true,
+            showCross: true,
             width: 400
         });
         this.bindUserInterfaceEvents({

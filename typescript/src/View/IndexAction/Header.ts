@@ -29,7 +29,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         super.destroy();
         
         // Question mark dialog
-        $("#cubeviz-index-headerDialogBox").dialog("destroy");
+        View_Helper.destroyDialog($("#cubeviz-index-headerDialogBox"));
         
         return this;
     }
@@ -65,19 +65,11 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public render() 
     {        
-        $("#cubeviz-index-headerDialogBox").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: "auto",
-            hide: "slow",
-            modal: true,
-            overlay: {
-                "background-color": "#FFFFFF",
-                opacity: 0.5
-            },
-            show: "slow",
-            width: 400
-        });
+        // attach dialog which contains model information
+        View_Helper.attachDialog(
+            $("#cubeviz-index-headerDialogBox"),
+            {closeOnEscape: true, showCross: true, width: 400}
+        );
         
         /**
          * Delegate events to new items of the template
