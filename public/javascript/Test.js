@@ -50,8 +50,6 @@ cubeViz_tests.push(function () {
     };
     var t_dialogIsOpen = function () {
         var isDialogOpen = $("#cubeviz-dataStructureDefinition-dialog").data("isDialogOpen");
-        console.log("isDialogOpen");
-        console.log(isDialogOpen);
         this.assertTrue(isDialogOpen === true, "DSD: isDialogOpen: " + isDialogOpen);
     };
     cubeVizApp.bindGlobalEvents([
@@ -72,6 +70,27 @@ cubeViz_tests.push(function () {
         {
             name: "onStart_application",
             handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t_dialogIsClosed = function () {
+        var hasDialog = $("#cubeviz-dataSet-dialog").data("hasDialog");
+        var isDialogOpen = $("#cubeviz-dataSet-dialog").data("isDialogOpen");
+
+        this.assertTrue(hasDialog === true, "DS: hasDialog: " + hasDialog);
+        this.assertTrue(isDialogOpen !== true, "DS: isDialogOpen: " + isDialogOpen);
+        $("#cubeviz-dataSet-questionMark").click($.proxy(t_dialogIsOpen, this));
+        $("#cubeviz-dataSet-questionMark").click();
+    };
+    var t_dialogIsOpen = function () {
+        var isDialogOpen = $("#cubeviz-dataSet-dialog").data("isDialogOpen");
+        this.assertTrue(isDialogOpen === true, "DS: isDialogOpen: " + isDialogOpen);
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_dataSet",
+            handler: $.proxy(t_dialogIsClosed, this)
         }
     ]).triggerEvent("onStart_application");
 });

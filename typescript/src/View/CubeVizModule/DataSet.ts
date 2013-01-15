@@ -130,7 +130,9 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
      * 
      */
     public render() : CubeViz_View_Abstract
-    {        
+    {
+        this.triggerGlobalEvent("onBeforeRender_dataSet");
+        
         /**
          * List of items
          */        
@@ -163,6 +165,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
             "change #cubeviz-dataSet-list" : this.onChange_list,            
             "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
         });
+        
+        this.triggerGlobalEvent("onAfterRender_dataSet");
         
         return this;
     }

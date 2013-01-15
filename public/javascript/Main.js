@@ -1040,6 +1040,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.initialize();
     };
     View_CubeVizModule_DataSet.prototype.render = function () {
+        this.triggerGlobalEvent("onBeforeRender_dataSet");
         var list = $(this.attachedTo);
         var optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
         var self = this;
@@ -1057,6 +1058,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
             "change #cubeviz-dataSet-list": this.onChange_list,
             "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
         });
+        this.triggerGlobalEvent("onAfterRender_dataSet");
         return this;
     };
     return View_CubeVizModule_DataSet;
