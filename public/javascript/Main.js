@@ -293,41 +293,43 @@ var CubeViz_View_Helper = (function () {
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
-        var listItems = list.children('li');
         var a = "";
         var b = "";
+        var listItems = list.children('li');
+        var resultList = [];
 
         listItems.sort(function (a, b) {
             a = $(a).text().toUpperCase();
             b = $(b).text().toUpperCase();
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
-        _.each(listItems, function (item) {
-            list.append(item);
-        });
+        return listItems;
     }
     CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
         var listItems = list.children('li');
         var notCheckedItems = [];
+        var resultList = [];
 
         list.empty();
         _.each(listItems, function (item) {
             if($($(item).children().first()).is(":checked")) {
-                list.append(item);
+                resultList.push(item);
             } else {
                 notCheckedItems.push(item);
             }
         });
         _.each(notCheckedItems, function (item) {
-            list.append(item);
+            resultList.push(item);
         });
+        return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, retrievedObservations) {
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, retrievedObservations) {
         var dimensionElementUri = "";
         var listItems = list.children('li');
         var listItemValues = [];
         var listItemsWithoutCount = [];
         var observationCount = 0;
+        var resultList = [];
 
         list.empty();
         _.each(listItems, function (liItem) {
@@ -340,19 +342,20 @@ var CubeViz_View_Helper = (function () {
             });
             $(liItem).data("observationCount", observationCount);
             if(0 < observationCount) {
-                list.append(liItem);
+                resultList.push(liItem);
             } else {
                 listItemsWithoutCount.push(liItem);
             }
         });
-        listItems.sort(function (a, b) {
+        resultList.sort(function (a, b) {
             a = $(a).data("observationCount");
             b = $(b).data("observationCount");
             return (a < b) ? 1 : (a > b) ? -1 : 0;
         });
         _.each(listItemsWithoutCount, function (item) {
-            list.append(item);
+            resultList.push(item);
         });
+        return resultList;
     }
     return CubeViz_View_Helper;
 })();
@@ -1247,30 +1250,34 @@ var View_CubeVizModule_Component = (function (_super) {
         var dimensionHashedUrl = dialogDiv.data("hashedUrl");
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
         var list = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
+        var modifiedItemList = [];
 
         $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton").removeClass("cubeviz-component-sortButtonSelected");
         $(event.target).addClass("cubeviz-component-sortButtonSelected");
         switch($(event.target).data("type")) {
             case "alphabet": {
-                CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(list);
                 break;
 
             }
             case "check status": {
-                CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
                 break;
 
             }
             case "observation count": {
-                CubeViz_View_Helper.sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, this.app._.data.retrievedObservations);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(list, dimensionTypeUrl, this.app._.data.retrievedObservations);
                 break;
 
             }
             default: {
-                break;
+                return;
 
             }
         }
+        _.each(modifiedItemList, function (item) {
+            list.append(item);
+        });
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));

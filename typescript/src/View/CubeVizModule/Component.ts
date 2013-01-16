@@ -301,7 +301,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         var dialogDiv = $(event.target).data("dialogDiv"),
             dimensionHashedUrl = dialogDiv.data("hashedUrl"),
             dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
-            list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
+            list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
+            modifiedItemList:any[] = [];
         
         // remove .cubeviz-component-sortButtonSelected from all sortButtons
         $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton")
@@ -311,28 +312,35 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         $(event.target)
             .addClass("cubeviz-component-sortButtonSelected");
         
+        // decide by given type what sort function to execute
         switch ($(event.target).data("type")) {
+            
             case "alphabet":
-                CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(list);
                 break;
                 
             case "check status":
-                CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
                 break;
                 
             case "observation count": 
-                CubeViz_View_Helper.sortLiItemsByObservationCount(
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
                     list,
                     dimensionTypeUrl,
-                    dimensionHashedUrl,
                     this.app._.data.retrievedObservations
                 );
                 break;
                 
-            default: break;
+            default: return; 
         }
         
-        // set clicked button to hover state
+        // empty list ...
+        // list.empty();
+        
+        // ... and fill it with new ordered items
+        _.each(modifiedItemList, function(item){
+            list.append(item); 
+        });
     }
     
     /**

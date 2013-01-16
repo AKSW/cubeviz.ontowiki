@@ -68,41 +68,43 @@ var CubeViz_View_Helper = (function () {
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
-        var listItems = list.children('li');
         var a = "";
         var b = "";
+        var listItems = list.children('li');
+        var resultList = [];
 
         listItems.sort(function (a, b) {
             a = $(a).text().toUpperCase();
             b = $(b).text().toUpperCase();
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
-        _.each(listItems, function (item) {
-            list.append(item);
-        });
+        return listItems;
     }
     CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
         var listItems = list.children('li');
         var notCheckedItems = [];
+        var resultList = [];
 
         list.empty();
         _.each(listItems, function (item) {
             if($($(item).children().first()).is(":checked")) {
-                list.append(item);
+                resultList.push(item);
             } else {
                 notCheckedItems.push(item);
             }
         });
         _.each(notCheckedItems, function (item) {
-            list.append(item);
+            resultList.push(item);
         });
+        return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, retrievedObservations) {
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, retrievedObservations) {
         var dimensionElementUri = "";
         var listItems = list.children('li');
         var listItemValues = [];
         var listItemsWithoutCount = [];
         var observationCount = 0;
+        var resultList = [];
 
         list.empty();
         _.each(listItems, function (liItem) {
@@ -115,19 +117,20 @@ var CubeViz_View_Helper = (function () {
             });
             $(liItem).data("observationCount", observationCount);
             if(0 < observationCount) {
-                list.append(liItem);
+                resultList.push(liItem);
             } else {
                 listItemsWithoutCount.push(liItem);
             }
         });
-        listItems.sort(function (a, b) {
+        resultList.sort(function (a, b) {
             a = $(a).data("observationCount");
             b = $(b).data("observationCount");
             return (a < b) ? 1 : (a > b) ? -1 : 0;
         });
         _.each(listItemsWithoutCount, function (item) {
-            list.append(item);
+            resultList.push(item);
         });
+        return resultList;
     }
     return CubeViz_View_Helper;
 })();
@@ -340,6 +343,24 @@ cubeViz_tests.push(function () {
                 return label == ele.propertyLabel;
             })));
         });
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
+        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
+        var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listEntries = $(listDOMElement).children();
+
+        this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.elements).length, "listEntries.length === _.keys(firstComponent.elements).length");
     };
     cubeVizApp.bindGlobalEvents([
         {

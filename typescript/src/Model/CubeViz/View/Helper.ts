@@ -85,11 +85,11 @@ class CubeViz_View_Helper
      * Sort list items by alphabet.
      * @param list DOM element to sort (directly the items in the given list)
      */
-    static sortLiItemsByAlphabet(list:any) 
+    static sortLiItemsByAlphabet(list:any) : any[]
     {
-        var listItems = list.children('li');
-        
-        var a:string = "", b:string = "";
+        var a:string = "", b:string = "",
+            listItems:any[] = list.children('li'),
+            resultList:any[] = [];
         
         listItems.sort(function(a, b) {
             a = $(a).text().toUpperCase();
@@ -97,19 +97,18 @@ class CubeViz_View_Helper
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         })
       
-        _.each(listItems, function(item){
-            list.append(item); 
-        });
+        return listItems;
     }
     
     /**
      * Sort list items by their check status of their associated checkbox.
      * @param list DOM element to sort (directly the items in the given list)
      */
-    static sortLiItemsByCheckStatus(list:any) 
+    static sortLiItemsByCheckStatus(list:any) : any[]
     {
         var listItems:any[] = list.children('li'),
-            notCheckedItems:any[] = [];            
+            notCheckedItems:any[] = [],
+            resultList:any[] = [];            
         
         // empty given list
         list.empty();
@@ -119,7 +118,7 @@ class CubeViz_View_Helper
         // - if not, store it temporarly in notCheckedItems and add them later
         _.each(listItems, function(item){
             if($($(item).children().first()).is(":checked")){
-                list.append(item);
+                resultList.push(item);
             } else {
                 notCheckedItems.push(item);
             }
@@ -127,8 +126,10 @@ class CubeViz_View_Helper
       
         // add stored not-checked items
         _.each(notCheckedItems, function(item){
-            list.append(item); 
+            resultList.push(item); 
         });
+        
+        return resultList;
     }
     
     /**
@@ -136,13 +137,14 @@ class CubeViz_View_Helper
      * @param list DOM element to sort (directly the items in the given list)
      */
     static sortLiItemsByObservationCount(list:any, dimensionTypeUrl:string, 
-        dimensionHashedUrl:string, retrievedObservations:any[]) : void
+        retrievedObservations:any[]) : any[]
     {
         var dimensionElementUri:string = "",
             listItems:any[] = list.children('li'),
             listItemValues:string[] = [],
             listItemsWithoutCount:any[] = [],
-            observationCount:number = 0;
+            observationCount:number = 0,
+            resultList:any[] = [];
             
         list.empty();
         
@@ -166,7 +168,7 @@ class CubeViz_View_Helper
             
             // if count is > 0, directly add the item back to the list
             if(0 < observationCount){
-                list.append(liItem);
+                resultList.push(liItem);
                 
             // otherwise stored it somewhere else for later
             } else {
@@ -175,7 +177,7 @@ class CubeViz_View_Helper
         });
         
         // sort items by observationCount
-        listItems.sort(function(a, b) {
+        resultList.sort(function(a, b) {
            a = $(a).data("observationCount");
            b = $(b).data("observationCount");
            return (a < b) ? 1 : (a > b) ? -1 : 0;
@@ -183,7 +185,9 @@ class CubeViz_View_Helper
         
         // add somewhere else stored items back the given list
         _.each(listItemsWithoutCount, function(item){
-            list.append(item); 
+            resultList.push(item); 
         });
+        
+        return resultList;
     }
 }
