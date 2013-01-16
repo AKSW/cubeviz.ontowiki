@@ -292,10 +292,9 @@ var CubeViz_View_Helper = (function () {
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
+    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
         var b = "";
-        var listItems = list.children('li');
         var resultList = [];
 
         listItems.sort(function (a, b) {
@@ -303,35 +302,34 @@ var CubeViz_View_Helper = (function () {
             b = $(b).text().toUpperCase();
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
-        return listItems;
+        _.each(listItems, function (item) {
+            resultList.push($(item).clone());
+        });
+        return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
-        var listItems = list.children('li');
+    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(listItems) {
         var notCheckedItems = [];
         var resultList = [];
 
-        list.empty();
         _.each(listItems, function (item) {
             if($($(item).children().first()).is(":checked")) {
-                resultList.push(item);
+                resultList.push($(item).clone());
             } else {
                 notCheckedItems.push(item);
             }
         });
         _.each(notCheckedItems, function (item) {
-            resultList.push(item);
+            resultList.push($(item).clone());
         });
         return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, retrievedObservations) {
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(listItems, dimensionTypeUrl, retrievedObservations) {
         var dimensionElementUri = "";
-        var listItems = list.children('li');
         var listItemValues = [];
         var listItemsWithoutCount = [];
         var observationCount = 0;
         var resultList = [];
 
-        list.empty();
         _.each(listItems, function (liItem) {
             dimensionElementUri = $($(liItem).children().first()).val();
             observationCount = 0;
@@ -342,7 +340,7 @@ var CubeViz_View_Helper = (function () {
             });
             $(liItem).data("observationCount", observationCount);
             if(0 < observationCount) {
-                resultList.push(liItem);
+                resultList.push($(liItem).clone());
             } else {
                 listItemsWithoutCount.push(liItem);
             }
@@ -353,7 +351,7 @@ var CubeViz_View_Helper = (function () {
             return (a < b) ? 1 : (a > b) ? -1 : 0;
         });
         _.each(listItemsWithoutCount, function (item) {
-            resultList.push(item);
+            resultList.push($(item).clone());
         });
         return resultList;
     }
@@ -1250,23 +1248,24 @@ var View_CubeVizModule_Component = (function (_super) {
         var dimensionHashedUrl = dialogDiv.data("hashedUrl");
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
         var list = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
+        var listItems = list.children('li');
         var modifiedItemList = [];
 
         $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton").removeClass("cubeviz-component-sortButtonSelected");
         $(event.target).addClass("cubeviz-component-sortButtonSelected");
         switch($(event.target).data("type")) {
             case "alphabet": {
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(listItems);
                 break;
 
             }
             case "check status": {
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(listItems);
                 break;
 
             }
             case "observation count": {
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(list, dimensionTypeUrl, this.app._.data.retrievedObservations);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(listItems, dimensionTypeUrl, this.app._.data.retrievedObservations);
                 break;
 
             }

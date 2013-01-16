@@ -67,10 +67,9 @@ var CubeViz_View_Helper = (function () {
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
+    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
         var b = "";
-        var listItems = list.children('li');
         var resultList = [];
 
         listItems.sort(function (a, b) {
@@ -78,35 +77,34 @@ var CubeViz_View_Helper = (function () {
             b = $(b).text().toUpperCase();
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
-        return listItems;
+        _.each(listItems, function (item) {
+            resultList.push($(item).clone());
+        });
+        return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
-        var listItems = list.children('li');
+    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(listItems) {
         var notCheckedItems = [];
         var resultList = [];
 
-        list.empty();
         _.each(listItems, function (item) {
             if($($(item).children().first()).is(":checked")) {
-                resultList.push(item);
+                resultList.push($(item).clone());
             } else {
                 notCheckedItems.push(item);
             }
         });
         _.each(notCheckedItems, function (item) {
-            resultList.push(item);
+            resultList.push($(item).clone());
         });
         return resultList;
     }
-    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, retrievedObservations) {
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(listItems, dimensionTypeUrl, retrievedObservations) {
         var dimensionElementUri = "";
-        var listItems = list.children('li');
         var listItemValues = [];
         var listItemsWithoutCount = [];
         var observationCount = 0;
         var resultList = [];
 
-        list.empty();
         _.each(listItems, function (liItem) {
             dimensionElementUri = $($(liItem).children().first()).val();
             observationCount = 0;
@@ -117,7 +115,7 @@ var CubeViz_View_Helper = (function () {
             });
             $(liItem).data("observationCount", observationCount);
             if(0 < observationCount) {
-                resultList.push(liItem);
+                resultList.push($(liItem).clone());
             } else {
                 listItemsWithoutCount.push(liItem);
             }
@@ -128,7 +126,7 @@ var CubeViz_View_Helper = (function () {
             return (a < b) ? 1 : (a > b) ? -1 : 0;
         });
         _.each(listItemsWithoutCount, function (item) {
-            resultList.push(item);
+            resultList.push($(item).clone());
         });
         return resultList;
     }
@@ -198,6 +196,42 @@ cubeViz_tests.push(function () {
     cubeVizApp.bindGlobalEvents([
         {
             name: "onStart_application",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
+        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
+        var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var originalList = $(listDOMElement).children("li").get();
+        var originalListStrings = [];
+        var generatedList = [];
+        var generatedListStrings = [];
+
+        generatedList = CubeViz_View_Helper.sortLiItemsByAlphabet(originalList);
+        _.each(generatedList, function (item) {
+            generatedListStrings.push($($(item).children().last()).html());
+        });
+        originalList.sort(function (a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        _.each(originalList, function (item) {
+            originalListStrings.push($($(item).children().last()).html());
+        });
+        console.log("string lists:");
+        console.log(generatedListStrings);
+        console.log(originalListStrings);
+        this.assertTrue(true === _.isEqual(generatedListStrings, originalListStrings));
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
             handler: $.proxy(t, this)
         }
     ]).triggerEvent("onStart_application");
@@ -343,24 +377,6 @@ cubeViz_tests.push(function () {
                 return label == ele.propertyLabel;
             })));
         });
-    };
-    cubeVizApp.bindGlobalEvents([
-        {
-            name: "onAfterRender_component",
-            handler: $.proxy(t, this)
-        }
-    ]).triggerEvent("onStart_application");
-});
-cubeViz_tests.push(function () {
-    var t = function () {
-        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
-        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
-        var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
-        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
-        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
-        var listEntries = $(listDOMElement).children();
-
-        this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.elements).length, "listEntries.length === _.keys(firstComponent.elements).length");
     };
     cubeVizApp.bindGlobalEvents([
         {

@@ -125,3 +125,58 @@ cubeViz_tests.push(function(){
         name: "onStart_application", handler: $.proxy(t, this)
     }]).triggerEvent("onStart_application");
 });
+
+/**
+ * Test sorting function: sortLiItemsByAlphabet
+ */
+cubeViz_tests.push(function(){
+    
+    // real test function
+    var t = function() 
+    {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
+            firstComponentHashedUrl = givenComponentDimensionKeys[0],
+            firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
+            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+                                      givenComponentDimensionKeys[0],
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            
+            originalList = $(listDOMElement).children("li").get(),
+            originalListStrings:string[] = [],
+            
+            generatedList:any[] = [],
+            generatedListStrings:string[] = [];
+       
+        /**
+         * By helper class
+         * Sort list items by alphabet, and create a list only containing strings.
+         */
+        generatedList = CubeViz_View_Helper.sortLiItemsByAlphabet(originalList);
+        _.each(generatedList, function(item){
+            generatedListStrings.push($($(item).children().last()).html());
+        });
+        
+        /**
+         * By itself
+         * Sort list items by alphabet, and create a list only containing strings.
+         */
+        originalList.sort(function(a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        _.each(originalList, function(item){
+            originalListStrings.push($($(item).children().last()).html());
+        });
+        
+        // test if both string lists are the same
+        this.assertTrue(
+            true === _.isEqual(generatedListStrings, originalListStrings)
+        );
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterRender_component", handler: $.proxy(t, this)
+    }]).triggerEvent("onStart_application");
+});

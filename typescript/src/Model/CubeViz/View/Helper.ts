@@ -85,40 +85,39 @@ class CubeViz_View_Helper
      * Sort list items by alphabet.
      * @param list DOM element to sort (directly the items in the given list)
      */
-    static sortLiItemsByAlphabet(list:any) : any[]
+    static sortLiItemsByAlphabet(listItems:any) : any[]
     {
         var a:string = "", b:string = "",
-            listItems:any[] = list.children('li'),
             resultList:any[] = [];
         
         listItems.sort(function(a, b) {
             a = $(a).text().toUpperCase();
             b = $(b).text().toUpperCase();
             return (a < b) ? -1 : (a > b) ? 1 : 0;
-        })
+        });
+        
+        _.each(listItems, function(item){
+            resultList.push($(item).clone());
+        });
       
-        return listItems;
+        return resultList;
     }
     
     /**
      * Sort list items by their check status of their associated checkbox.
      * @param list DOM element to sort (directly the items in the given list)
      */
-    static sortLiItemsByCheckStatus(list:any) : any[]
+    static sortLiItemsByCheckStatus(listItems:any[]) : any[]
     {
-        var listItems:any[] = list.children('li'),
-            notCheckedItems:any[] = [],
-            resultList:any[] = [];            
-        
-        // empty given list
-        list.empty();
+        var notCheckedItems:any[] = [],
+            resultList:any[] = [];
         
         // go through all list items and check:
         // - if current item's checkbox is checked, add it back to the list
         // - if not, store it temporarly in notCheckedItems and add them later
         _.each(listItems, function(item){
             if($($(item).children().first()).is(":checked")){
-                resultList.push(item);
+                resultList.push($(item).clone());
             } else {
                 notCheckedItems.push(item);
             }
@@ -126,7 +125,7 @@ class CubeViz_View_Helper
       
         // add stored not-checked items
         _.each(notCheckedItems, function(item){
-            resultList.push(item); 
+            resultList.push($(item).clone());
         });
         
         return resultList;
@@ -136,18 +135,15 @@ class CubeViz_View_Helper
      * Sort list items by the number of observations they are part of.
      * @param list DOM element to sort (directly the items in the given list)
      */
-    static sortLiItemsByObservationCount(list:any, dimensionTypeUrl:string, 
+    static sortLiItemsByObservationCount(listItems:any[], dimensionTypeUrl:string, 
         retrievedObservations:any[]) : any[]
     {
         var dimensionElementUri:string = "",
-            listItems:any[] = list.children('li'),
             listItemValues:string[] = [],
             listItemsWithoutCount:any[] = [],
             observationCount:number = 0,
             resultList:any[] = [];
             
-        list.empty();
-        
         // extract checkbox values of given list; it contains items such as 
         // http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent 
         _.each(listItems, function(liItem){
@@ -168,7 +164,7 @@ class CubeViz_View_Helper
             
             // if count is > 0, directly add the item back to the list
             if(0 < observationCount){
-                resultList.push(liItem);
+                resultList.push($(liItem).clone());
                 
             // otherwise stored it somewhere else for later
             } else {
@@ -185,7 +181,7 @@ class CubeViz_View_Helper
         
         // add somewhere else stored items back the given list
         _.each(listItemsWithoutCount, function(item){
-            resultList.push(item); 
+            resultList.push($(item).clone());
         });
         
         return resultList;

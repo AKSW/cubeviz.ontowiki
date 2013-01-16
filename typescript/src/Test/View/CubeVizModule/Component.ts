@@ -162,32 +162,3 @@ cubeViz_tests.push(function(){
         name: "onAfterRender_component", handler: $.proxy(t, this)
     }]).triggerEvent("onStart_application");
 });
-
-/**
- * Test sorting function
- */
-cubeViz_tests.push(function(){
-    
-    // real test function
-    var t = function() 
-    {
-        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
-            firstComponentHashedUrl = givenComponentDimensionKeys[0],
-            firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
-            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
-                                      givenComponentDimensionKeys[0],
-            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
-            listEntries = $(listDOMElement).children();
-       
-        this.assertTrue(
-            0 < listEntries.length 
-            && listEntries.length === _.keys(firstComponent.elements).length,
-            "listEntries.length === _.keys(firstComponent.elements).length"
-        );
-    };
-    
-    // Bind real test function to a global event and trigger application start
-    cubeVizApp.bindGlobalEvents([{ 
-        name: "onAfterRender_component", handler: $.proxy(t, this)
-    }]).triggerEvent("onStart_application");
-});

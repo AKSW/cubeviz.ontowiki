@@ -302,6 +302,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dimensionHashedUrl = dialogDiv.data("hashedUrl"),
             dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
             list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
+            listItems:any[] = list.children('li'),
             modifiedItemList:any[] = [];
         
         // remove .cubeviz-component-sortButtonSelected from all sortButtons
@@ -316,16 +317,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         switch ($(event.target).data("type")) {
             
             case "alphabet":
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(listItems);
                 break;
                 
             case "check status":
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(listItems);
                 break;
                 
             case "observation count": 
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
-                    list,
+                    listItems,
                     dimensionTypeUrl,
                     this.app._.data.retrievedObservations
                 );
