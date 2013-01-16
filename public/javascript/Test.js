@@ -224,9 +224,6 @@ cubeViz_tests.push(function () {
         _.each(originalList, function (item) {
             originalListStrings.push($($(item).children().last()).html());
         });
-        console.log("string lists:");
-        console.log(generatedListStrings);
-        console.log(originalListStrings);
         this.assertTrue(true === _.isEqual(generatedListStrings, originalListStrings));
     };
     cubeVizApp.bindGlobalEvents([

@@ -1274,6 +1274,7 @@ var View_CubeVizModule_Component = (function (_super) {
 
             }
         }
+        list.empty();
         _.each(modifiedItemList, function (item) {
             list.append(item);
         });

@@ -336,7 +336,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         }
         
         // empty list ...
-        // list.empty();
+        list.empty();
         
         // ... and fill it with new ordered items
         _.each(modifiedItemList, function(item){
