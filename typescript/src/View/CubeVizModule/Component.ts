@@ -303,6 +303,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
             list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
         
+        // remove .cubeviz-component-sortButtonSelected from all sortButtons
+        $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton")
+            .removeClass("cubeviz-component-sortButtonSelected");
+        
+        // add selected class to current clicked button
+        $(event.target)
+            .addClass("cubeviz-component-sortButtonSelected");
+        
         switch ($(event.target).data("type")) {
             case "alphabet":
                 CubeViz_View_Helper.sortLiItemsByAlphabet(list);
