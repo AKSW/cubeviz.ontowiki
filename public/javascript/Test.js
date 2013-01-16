@@ -288,6 +288,24 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     var t = function () {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
+        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
+        var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listEntries = $(listDOMElement).children();
+
+        this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.elements).length, "listEntries.length === _.keys(firstComponent.elements).length");
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var numberOfMultDims = cubeVizApp._.data.numberOfMultipleDimensions;
         var expectItems = cubeVizApp._.backend.chartConfig[numberOfMultDims].charts;
         var foundItems = $("#cubeviz-visualizationselector-selector").children();
