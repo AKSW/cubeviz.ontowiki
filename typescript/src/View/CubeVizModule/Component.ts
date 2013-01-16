@@ -62,6 +62,24 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         $($(div.find(".cubeviz-component-setupComponentButton")).children().last())
             .data("dialogDiv", div);
             
+        /**
+         * Sort buttons
+         */
+        // attach dialog div to "alphabet" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(0))
+            .data("dialogDiv", div)
+            .data("type", "alphabet");
+            
+        // attach dialog div to "check status" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(1))
+            .data("dialogDiv", div)
+            .data("type", "check status");
+            
+        // attach dialog div to "observation count" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(2))
+            .data("dialogDiv", div)
+            .data("type", "observation count");
+            
         // configure elements of the dialog
         this.configureSetupComponentElements(component);
     }
@@ -275,6 +293,31 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
+    public onClick_sortButton(event) : void
+    {
+        var list:any = $($(event.target).data("dialogDiv").
+                            find(".cubeviz-component-setupComponentElements").first());
+        
+        switch ($(event.target).data("type")) {
+            case 'alphabet':
+                CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                break;
+                
+            case 'check status': 
+                break;
+                
+            case 'observation count': 
+                break;
+                
+            default: break;
+        }
+        
+        // set clicked button to hover state
+    }
+    
+    /**
+     *
+     */
     public onClick_questionmark() : void
     {
         CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
@@ -482,6 +525,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
+            
+            "click .cubeviz-component-sortButtons": 
+                this.onClick_sortButton,
             
             "click #cubeviz-component-questionMark": 
                 this.onClick_questionmark

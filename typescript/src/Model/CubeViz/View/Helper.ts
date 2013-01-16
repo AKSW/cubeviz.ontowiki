@@ -56,6 +56,17 @@ class CubeViz_View_Helper
     } 
     
     /**
+     * Destroy an attached dialog
+     * @param domElement jQuery element which represents the dialog
+     */
+    static destroyDialog(domElement:any) : void
+    {
+        domElement.dialog("destroy");
+        
+        domElement.data("isDialogOpen", false);
+    } 
+    
+    /**
      * Open an attached dialog.
      * @param domElement jQuery element which represents the dialog
      * @return void
@@ -71,13 +82,23 @@ class CubeViz_View_Helper
     } 
     
     /**
-     * Destroy an attached dialog
-     * @param domElement jQuery element which represents the dialog
+     * Sort list items by alphabet.
+     * @param list DOM element to sort (directly the items in the given list)
      */
-    static destroyDialog(domElement:any) : void
+    static sortLiItemsByAlphabet(list:any) 
     {
-        domElement.dialog("destroy");
+        var listItems = list.children('li');
         
-        domElement.data("isDialogOpen", false);
-    } 
+        var a:string = "", b:string = "";
+        
+        listItems.sort(function(a, b) {
+           a = $(a).text().toUpperCase();
+           b = $(b).text().toUpperCase();
+           return (a < b) ? -1 : (a > b) ? 1 : 0;
+        })
+      
+        _.each(listItems, function(item){
+            list.append(item); 
+        });
+    }
 }

@@ -58,14 +58,28 @@ var CubeViz_View_Helper = (function () {
         domElement.dialog("close");
         domElement.data("isDialogOpen", false);
     }
+    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
+        domElement.dialog("destroy");
+        domElement.data("isDialogOpen", false);
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
-        domElement.dialog("destroy");
-        domElement.data("isDialogOpen", false);
+    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
+        var listItems = list.children('li');
+        var a = "";
+        var b = "";
+
+        listItems.sort(function (a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        _.each(listItems, function (item) {
+            list.append(item);
+        });
     }
     return CubeViz_View_Helper;
 })();

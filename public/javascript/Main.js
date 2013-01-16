@@ -283,14 +283,28 @@ var CubeViz_View_Helper = (function () {
         domElement.dialog("close");
         domElement.data("isDialogOpen", false);
     }
+    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
+        domElement.dialog("destroy");
+        domElement.data("isDialogOpen", false);
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
-        domElement.dialog("destroy");
-        domElement.data("isDialogOpen", false);
+    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(list) {
+        var listItems = list.children('li');
+        var a = "";
+        var b = "";
+
+        listItems.sort(function (a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        _.each(listItems, function (item) {
+            list.append(item);
+        });
     }
     return CubeViz_View_Helper;
 })();
@@ -1090,10 +1104,12 @@ var View_CubeVizModule_Component = (function (_super) {
         div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
         CubeViz_View_Helper.attachDialogTo(div);
         $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
-        console.log(div.find(".cubeviz-component-deselectButton").get(0));
         opener.data("dialogDiv", div);
         $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
         $($(div.find(".cubeviz-component-setupComponentButton")).children().last()).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
@@ -1174,10 +1190,31 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.onClick_deselectButton = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
-        console.log("deselect");
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
+    };
+    View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
+        var list = $($(event.target).data("dialogDiv").find(".cubeviz-component-setupComponentElements").first());
+        switch($(event.target).data("type")) {
+            case 'alphabet': {
+                CubeViz_View_Helper.sortLiItemsByAlphabet(list);
+                break;
+
+            }
+            case 'check status': {
+                break;
+
+            }
+            case 'observation count': {
+                break;
+
+            }
+            default: {
+                break;
+
+            }
+        }
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
@@ -1270,6 +1307,7 @@ var View_CubeVizModule_Component = (function (_super) {
             "click .cubeviz-component-closeAndUpdate": this.onClick_closeAndUpdate,
             "click .cubeviz-component-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
+            "click .cubeviz-component-sortButtons": this.onClick_sortButton,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         this.triggerGlobalEvent("onAfterRender_component");
