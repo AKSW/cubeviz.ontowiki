@@ -92,9 +92,9 @@ class CubeViz_View_Helper
         var a:string = "", b:string = "";
         
         listItems.sort(function(a, b) {
-           a = $(a).text().toUpperCase();
-           b = $(b).text().toUpperCase();
-           return (a < b) ? -1 : (a > b) ? 1 : 0;
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
         })
       
         _.each(listItems, function(item){
@@ -127,6 +127,62 @@ class CubeViz_View_Helper
       
         // add stored not-checked items
         _.each(notCheckedItems, function(item){
+            list.append(item); 
+        });
+    }
+    
+    /**
+     * Sort list items by the number of observations they are part of.
+     * @param list DOM element to sort (directly the items in the given list)
+     */
+    static sortLiItemsByObservationCount(list:any, dimensionTypeUrl:string, 
+        dimensionHashedUrl:string, retrievedObservations:any[]) : void
+    {
+        var dimensionElementUri:string = "",
+            listItems:any[] = list.children('li'),
+            listItemValues:string[] = [],
+            listItemsWithoutCount:any[] = [],
+            observationCount:number = 0;
+            
+        list.empty();
+        
+        // extract checkbox values of given list; it contains items such as 
+        // http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent 
+        _.each(listItems, function(liItem){
+            
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            
+            // count observations which contains an entry for given dimension 
+            // type url
+            _.each(retrievedObservations, function(observation){
+                if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            
+            // save count
+            $(liItem).data("observationCount", observationCount);
+            
+            // if count is > 0, directly add the item back to the list
+            if(0 < observationCount){
+                list.append(liItem);
+                
+            // otherwise stored it somewhere else for later
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        
+        // sort items by observationCount
+        listItems.sort(function(a, b) {
+           a = $(a).data("observationCount");
+           b = $(b).data("observationCount");
+           return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        
+        // add somewhere else stored items back the given list
+        _.each(listItemsWithoutCount, function(item){
             list.append(item); 
         });
     }

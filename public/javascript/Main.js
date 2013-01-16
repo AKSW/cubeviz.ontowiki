@@ -322,6 +322,38 @@ var CubeViz_View_Helper = (function () {
             list.append(item);
         });
     }
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, retrievedObservations) {
+        var dimensionElementUri = "";
+        var listItems = list.children('li');
+        var listItemValues = [];
+        var listItemsWithoutCount = [];
+        var observationCount = 0;
+
+        list.empty();
+        _.each(listItems, function (liItem) {
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            _.each(retrievedObservations, function (observation) {
+                if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            $(liItem).data("observationCount", observationCount);
+            if(0 < observationCount) {
+                list.append(liItem);
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        listItems.sort(function (a, b) {
+            a = $(a).data("observationCount");
+            b = $(b).data("observationCount");
+            return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        _.each(listItemsWithoutCount, function (item) {
+            list.append(item);
+        });
+    }
     return CubeViz_View_Helper;
 })();
 var CubeViz_Visualization_Controller = (function () {
@@ -1117,7 +1149,7 @@ var View_CubeVizModule_Component = (function (_super) {
             hashedUrl: component.hashedUrl
         }));
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
+        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl).data("dimensionTypeUrl", component.typeUrl);
         CubeViz_View_Helper.attachDialogTo(div);
         $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
@@ -1211,7 +1243,11 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
-        var list = $($(event.target).data("dialogDiv").find(".cubeviz-component-setupComponentElements").first());
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var dimensionHashedUrl = dialogDiv.data("hashedUrl");
+        var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
+        var list = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
+
         switch($(event.target).data("type")) {
             case "alphabet": {
                 CubeViz_View_Helper.sortLiItemsByAlphabet(list);
@@ -1224,6 +1260,7 @@ var View_CubeVizModule_Component = (function (_super) {
 
             }
             case "observation count": {
+                CubeViz_View_Helper.sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, this.app._.data.retrievedObservations);
                 break;
 
             }

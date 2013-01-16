@@ -97,6 +97,38 @@ var CubeViz_View_Helper = (function () {
             list.append(item);
         });
     }
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(list, dimensionTypeUrl, dimensionHashedUrl, retrievedObservations) {
+        var dimensionElementUri = "";
+        var listItems = list.children('li');
+        var listItemValues = [];
+        var listItemsWithoutCount = [];
+        var observationCount = 0;
+
+        list.empty();
+        _.each(listItems, function (liItem) {
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            _.each(retrievedObservations, function (observation) {
+                if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            $(liItem).data("observationCount", observationCount);
+            if(0 < observationCount) {
+                list.append(liItem);
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        listItems.sort(function (a, b) {
+            a = $(a).data("observationCount");
+            b = $(b).data("observationCount");
+            return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        _.each(listItemsWithoutCount, function (item) {
+            list.append(item);
+        });
+    }
     return CubeViz_View_Helper;
 })();
 cubeViz_tests.push(function () {

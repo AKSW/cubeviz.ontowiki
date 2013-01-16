@@ -42,7 +42,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
         
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
+        div
+            .data("componentBox", componentBox)
+            .data("hashedUrl", component.hashedUrl)
+            .data("dimensionTypeUrl", component.typeUrl);
         
         // attach dialog to div element
         CubeViz_View_Helper.attachDialogTo(div);
@@ -295,8 +298,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_sortButton(event) : void
     {
-        var list:any = $($(event.target).data("dialogDiv").
-                            find(".cubeviz-component-setupComponentElements").first());
+        var dialogDiv = $(event.target).data("dialogDiv"),
+            dimensionHashedUrl = dialogDiv.data("hashedUrl"),
+            dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
+            list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
         
         switch ($(event.target).data("type")) {
             case "alphabet":
@@ -308,6 +313,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 break;
                 
             case "observation count": 
+                CubeViz_View_Helper.sortLiItemsByObservationCount(
+                    list,
+                    dimensionTypeUrl,
+                    dimensionHashedUrl,
+                    this.app._.data.retrievedObservations
+                );
                 break;
                 
             default: break;
