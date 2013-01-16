@@ -299,14 +299,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                             find(".cubeviz-component-setupComponentElements").first());
         
         switch ($(event.target).data("type")) {
-            case 'alphabet':
+            case "alphabet":
                 CubeViz_View_Helper.sortLiItemsByAlphabet(list);
                 break;
                 
-            case 'check status': 
+            case "check status":
+                CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
                 break;
                 
-            case 'observation count': 
+            case "observation count": 
                 break;
                 
             default: break;

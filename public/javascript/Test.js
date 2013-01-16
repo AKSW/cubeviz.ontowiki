@@ -81,6 +81,22 @@ var CubeViz_View_Helper = (function () {
             list.append(item);
         });
     }
+    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
+        var listItems = list.children('li');
+        var notCheckedItems = [];
+
+        list.empty();
+        _.each(listItems, function (item) {
+            if($($(item).children().first()).is(":checked")) {
+                list.append(item);
+            } else {
+                notCheckedItems.push(item);
+            }
+        });
+        _.each(notCheckedItems, function (item) {
+            list.append(item);
+        });
+    }
     return CubeViz_View_Helper;
 })();
 cubeViz_tests.push(function () {

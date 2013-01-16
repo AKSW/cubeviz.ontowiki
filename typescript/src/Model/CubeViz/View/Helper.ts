@@ -101,4 +101,33 @@ class CubeViz_View_Helper
             list.append(item); 
         });
     }
+    
+    /**
+     * Sort list items by their check status of their associated checkbox.
+     * @param list DOM element to sort (directly the items in the given list)
+     */
+    static sortLiItemsByCheckStatus(list:any) 
+    {
+        var listItems:any[] = list.children('li'),
+            notCheckedItems:any[] = [];            
+        
+        // empty given list
+        list.empty();
+        
+        // go through all list items and check:
+        // - if current item's checkbox is checked, add it back to the list
+        // - if not, store it temporarly in notCheckedItems and add them later
+        _.each(listItems, function(item){
+            if($($(item).children().first()).is(":checked")){
+                list.append(item);
+            } else {
+                notCheckedItems.push(item);
+            }
+        })
+      
+        // add stored not-checked items
+        _.each(notCheckedItems, function(item){
+            list.append(item); 
+        });
+    }
 }

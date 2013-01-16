@@ -306,6 +306,22 @@ var CubeViz_View_Helper = (function () {
             list.append(item);
         });
     }
+    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(list) {
+        var listItems = list.children('li');
+        var notCheckedItems = [];
+
+        list.empty();
+        _.each(listItems, function (item) {
+            if($($(item).children().first()).is(":checked")) {
+                list.append(item);
+            } else {
+                notCheckedItems.push(item);
+            }
+        });
+        _.each(notCheckedItems, function (item) {
+            list.append(item);
+        });
+    }
     return CubeViz_View_Helper;
 })();
 var CubeViz_Visualization_Controller = (function () {
@@ -1197,16 +1213,17 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
         var list = $($(event.target).data("dialogDiv").find(".cubeviz-component-setupComponentElements").first());
         switch($(event.target).data("type")) {
-            case 'alphabet': {
+            case "alphabet": {
                 CubeViz_View_Helper.sortLiItemsByAlphabet(list);
                 break;
 
             }
-            case 'check status': {
+            case "check status": {
+                CubeViz_View_Helper.sortLiItemsByCheckStatus(list);
                 break;
 
             }
-            case 'observation count': {
+            case "observation count": {
                 break;
 
             }
