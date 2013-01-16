@@ -217,40 +217,57 @@
     <div class="cubeviz-component-setupComponentDialog"
          id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>"
          title="<?php echo $this->_translate->_('Select elements of interest'); ?>">
-        <div style="margin-top: 4px; float: right;">
+         
+        <div style="float:right">
             <img class="cubeviz-icon-small"
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
-        <div style="float: left;">
-            <h2><%= label %></h2>
+        <span style="text-align:left;">
+            <small>
+                dsds dasodk spadk opd kspod kopd ka dopakd opdk podksd posk dspok 
+                ddsds dasodk spadk opd kspod kopd ka dopakd opdk podksd posk 
+                dspok d
+            </small>
+        </span>
+        
+        <h2 style="margin-top: 8px;">
+            <%= label %>
+        </h2>      
+        <p>Dimension Meta Information</p>
+        <br/>
+        
+        <div class="cubeviz-component-sortButtons">
+            Sort by: 
+            <span class="cubeviz-clickable cubeviz-component-sortButton"
+                  style="margin-left: 10px;">
+                alphabet
+            </span>
+            <span class="cubeviz-clickable cubeviz-component-sortButton"
+                  style="margin-left: 6px;">
+                check status
+            </span>
+            <span class="cubeviz-clickable cubeviz-component-sortButton"
+                  style="margin-left: 6px;">
+                observation count
+            </span>
         </div>
-        <br/>
-        <br/>
-        <div style="clear: both;">
-            <p>Dimension Meta Information</p>
-            <small>Hookline, whats possible here?</small>
+        <span class="cubeviz-clickable cubeviz-component-deselectButton"
+              style="margin-top:25px; font-size: 12px; text-align: left;">
+            Deselect all items
+        </span>
+        
+        <ul class="cubeviz-component-setupComponentElements"></ul>
+        
+        <div class="cubeviz-component-setupComponentButton" style="margin-top: 5px; float:right;">            
+            <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
+                    type="button"
+                    value="<?php echo $this->_translate->_('Cancel'); ?>"/>
             
-            <ul class="cubeviz-component-setupComponentElements"></ul>
+            &nbsp;&nbsp;&nbsp;
             
-            <div style="float:left;">            
-                <a class="cubeviz-component-setupComponentDeselectButton">
-                    <?php echo $this->_translate->_('Deselect all items'); ?>
-                </a>
-            </div>
-            
-            <br/>
-            
-            <div class="cubeviz-component-setupComponentButton" style="float:right;">            
-                <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
-                        type="button"
-                        value="<?php echo $this->_translate->_('Cancel'); ?>"/>
-                
-                &nbsp;&nbsp;&nbsp;
-                
-                <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
-                        type="button"
-                        value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
-            </div>
+            <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
+                    type="button"
+                    value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
         </div>
     </div>
 </script>

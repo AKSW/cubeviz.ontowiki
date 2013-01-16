@@ -48,7 +48,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         CubeViz_View_Helper.attachDialogTo(div);
         
         // attach dialog div to deselect button
-        $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
+        $(div.find(".cubeviz-component-deselectButton").get(0))
             .data("dialogDiv", div);
         
         // attach dialog div to dialog opener link
@@ -257,7 +257,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_deselectedAllComponentElements(event) : void
+    public onClick_deselectButton(event) : void
     {
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
@@ -477,8 +477,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click .cubeviz-component-closeAndUpdate": 
                 this.onClick_closeAndUpdate,
                 
-            "click .cubeviz-component-setupComponentDeselectButton": 
-                this.onClick_deselectedAllComponentElements,
+            "click .cubeviz-component-deselectButton": 
+                this.onClick_deselectButton,
                 
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
