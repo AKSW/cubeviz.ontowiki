@@ -127,7 +127,8 @@ cubeViz_tests.push(function(){
 });
 
 /**
- * Test sorting function: sortLiItemsByAlphabet
+ * Test sorting function: sortLiItemsByAlphabet by using exisiting list of 
+ * dimension elements in setup component elements dialog.
  */
 cubeViz_tests.push(function(){
     
@@ -173,6 +174,30 @@ cubeViz_tests.push(function(){
         this.assertTrue(
             true === _.isEqual(generatedListStrings, originalListStrings)
         );
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterRender_component", handler: $.proxy(t, this)
+    }]).triggerEvent("onStart_application");
+});
+
+/**
+ * Test sorting function: sortLiItemsByAlphabet by using own small list
+ */
+cubeViz_tests.push(function(){
+    
+    // real test function
+    var t = function() 
+    {
+        var unorderedList = [
+                $("<li>c</li>"), $("<li>a</li>"), $("<li>b</li>")
+            ],
+            orderedList = CubeViz_View_Helper.sortLiItemsByAlphabet(unorderedList);
+        
+        this.assertTrue(orderedList[0].text() === "a", orderedList[0].text() + " must be equal to a");
+        this.assertTrue(orderedList[1].text() === "b", orderedList[1].text() + " must be equal to b");
+        this.assertTrue(orderedList[2].text() === "c", orderedList[2].text() + " must be equal to c");
     };
     
     // Bind real test function to a global event and trigger application start

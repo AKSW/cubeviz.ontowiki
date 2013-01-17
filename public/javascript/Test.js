@@ -235,6 +235,27 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     var t = function () {
+        var unorderedList = [
+            $("<li>c</li>"), 
+            $("<li>a</li>"), 
+            $("<li>b</li>")
+        ];
+        var orderedList = CubeViz_View_Helper.sortLiItemsByAlphabet(unorderedList);
+
+        console.log(orderedList);
+        this.assertTrue(orderedList[0].text() === "a", orderedList[0].text() + " must be equal to a");
+        this.assertTrue(orderedList[1].text() === "b", orderedList[1].text() + " must be equal to b");
+        this.assertTrue(orderedList[2].text() === "c", orderedList[2].text() + " must be equal to c");
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var listEntries = $("#cubeviz-dataStructureDefinition-list").children();
         var givenDSDs = _.keys(cubeVizApp._.data.dataStructureDefinitions);
 
