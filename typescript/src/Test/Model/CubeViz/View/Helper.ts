@@ -280,7 +280,7 @@ cubeViz_tests.push(function(){
        
         /**
          * By helper class
-         * Sort list items by alphabet, and create a list only containing strings.
+         * Sort list items by check status, and create a list only containing strings.
          */
         generatedList = CubeViz_View_Helper.sortLiItemsByCheckStatus(originalList);
         _.each(generatedList, function(item){
@@ -305,6 +305,106 @@ cubeViz_tests.push(function(){
         // test if both string lists are the same
         this.assertTrue(
             true === _.isEqual(generatedListStrings, originalListStrings)
+        );
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterRender_component", handler: $.proxy(t, this)
+    }]).triggerEvent("onStart_application");
+});
+
+/**
+ * Test sorting function: sortLiItemsByObservationCount by using exisiting list of 
+ * dimension elements in setup component elements dialog.
+ */
+cubeViz_tests.push(function(){
+    
+    // real test function
+    var t = function() 
+    {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
+            firstComponentHashedUrl = givenComponentDimensionKeys[0],
+            firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
+            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+                                      givenComponentDimensionKeys[0],
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            
+            notCheckedItems:string[] = [],
+            originalList:any[] = $(listDOMElement).children("li").get(),
+            originalListCopy:any[] = [],
+            originalListStrings:string[] = [],
+            
+            generatedList:any[] = [],
+            generatedListStrings:string[] = [];
+       
+        /**
+         * By helper class
+         * Sort list items by alphabet, and create a list only containing strings.
+         */
+        generatedList = CubeViz_View_Helper.sortLiItemsByObservationCount(
+            originalList, firstComponent.typeUrl, cubeVizApp._.data.retrievedObservations
+        );        
+        _.each(generatedList, function(item){
+            generatedListStrings.push($($(item).children().last()).html());
+        });
+        
+        
+        /**
+         * By itself
+         */
+        var dimensionElementUri:string = "",
+            listItemValues:string[] = [],
+            listItemsWithoutCount:any[] = [],
+            observationCount:number = 0,
+            resultList:any[] = [];
+            
+        // extract checkbox values of given list; it contains items such as 
+        // http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent 
+        _.each(originalList, function(liItem){
+            
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            
+            // count observations which refers to given dimension type url
+            _.each(cubeVizApp._.data.retrievedObservations, function(observation){
+                if(dimensionElementUri === observation[firstComponent.typeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            
+            // save count
+            $(liItem).data("observationCount", observationCount);
+            
+            // if count is > 0, directly add the item back to the list
+            if(0 < observationCount){
+                resultList.push($(liItem).clone());
+                
+            // otherwise stored it somewhere else for later
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        
+        // sort items by observationCount
+        resultList.sort(function(a, b) {
+           a = $(a).data("observationCount");
+           b = $(b).data("observationCount");
+           return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        
+        // add somewhere else stored items back the given list
+        _.each(listItemsWithoutCount, function(item){
+            resultList.push($(item).clone());
+        });
+        
+        _.each(resultList, function(item){
+            originalListStrings.push($($(item).children().last()).html());
+        });
+        
+        this.assertTrue(
+            true === _.isEqual(generatedListStrings, originalListStrings),
+            "generatedListStrings and originalListStrings have to be equal"
         );
     };
     

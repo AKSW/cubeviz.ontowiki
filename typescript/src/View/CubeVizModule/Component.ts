@@ -299,7 +299,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public onClick_sortButton(event) : void
     {
         var dialogDiv = $(event.target).data("dialogDiv"),
-            dimensionHashedUrl = dialogDiv.data("hashedUrl"),
             dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
             list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
             listItems:any[] = list.children('li'),

@@ -151,8 +151,7 @@ class CubeViz_View_Helper
             dimensionElementUri = $($(liItem).children().first()).val();
             observationCount = 0;
             
-            // count observations which contains an entry for given dimension 
-            // type url
+            // count observations which refers to given dimension type url
             _.each(retrievedObservations, function(observation){
                 if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
                     ++observationCount;

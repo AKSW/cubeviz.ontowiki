@@ -1245,7 +1245,6 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
-        var dimensionHashedUrl = dialogDiv.data("hashedUrl");
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
         var list = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
         var listItems = list.children('li');
