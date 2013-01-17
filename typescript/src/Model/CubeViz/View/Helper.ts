@@ -121,7 +121,7 @@ class CubeViz_View_Helper
             } else {
                 notCheckedItems.push(item);
             }
-        })
+        });
       
         // add stored not-checked items
         _.each(notCheckedItems, function(item){

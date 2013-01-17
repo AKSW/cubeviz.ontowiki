@@ -277,6 +277,42 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     var t = function () {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions);
+        var firstComponentHashedUrl = givenComponentDimensionKeys[0];
+        var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+        var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + givenComponentDimensionKeys[0];
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var notCheckedItems = [];
+        var originalList = $(listDOMElement).children("li").get();
+        var originalListStrings = [];
+        var generatedList = [];
+        var generatedListStrings = [];
+
+        generatedList = CubeViz_View_Helper.sortLiItemsByCheckStatus(originalList);
+        _.each(generatedList, function (item) {
+            generatedListStrings.push($($(item).children().last()).html());
+        });
+        _.each(originalList, function (item) {
+            if($($(item).children().first()).is(":checked")) {
+                originalListStrings.push($($(item).children().last()).html());
+            } else {
+                notCheckedItems.push($($(item).children().last()).html());
+            }
+        });
+        _.each(notCheckedItems, function (item) {
+            originalListStrings.push(item);
+        });
+        this.assertTrue(true === _.isEqual(generatedListStrings, originalListStrings));
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
         var listEntries = $("#cubeviz-dataStructureDefinition-list").children();
         var givenDSDs = _.keys(cubeVizApp._.data.dataStructureDefinitions);
 

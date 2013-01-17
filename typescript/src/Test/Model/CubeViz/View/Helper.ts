@@ -254,3 +254,62 @@ cubeViz_tests.push(function(){
         name: "onAfterRender_component", handler: $.proxy(t, this)
     }]).triggerEvent("onStart_application");
 });
+
+/**
+ * Test sorting function: sortLiItemsByCheckStatus by using exisiting list of 
+ * dimension elements in setup component elements dialog.
+ */
+cubeViz_tests.push(function(){
+    
+    // real test function
+    var t = function() 
+    {
+        var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
+            firstComponentHashedUrl = givenComponentDimensionKeys[0],
+            firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
+            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+                                      givenComponentDimensionKeys[0],
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            
+            notCheckedItems:string[] = [],
+            originalList = $(listDOMElement).children("li").get(),
+            originalListStrings:string[] = [],
+            
+            generatedList:any[] = [],
+            generatedListStrings:string[] = [];
+       
+        /**
+         * By helper class
+         * Sort list items by alphabet, and create a list only containing strings.
+         */
+        generatedList = CubeViz_View_Helper.sortLiItemsByCheckStatus(originalList);
+        _.each(generatedList, function(item){
+            generatedListStrings.push($($(item).children().last()).html());
+        });
+        
+        /**
+         * By itself
+         */
+        _.each(originalList, function(item){
+            if($($(item).children().first()).is(":checked")){
+                originalListStrings.push($($(item).children().last()).html());
+            } else {
+                notCheckedItems.push($($(item).children().last()).html());
+            }
+        });
+        
+        _.each(notCheckedItems, function(item){
+            originalListStrings.push(item);
+        });
+        
+        // test if both string lists are the same
+        this.assertTrue(
+            true === _.isEqual(generatedListStrings, originalListStrings)
+        );
+    };
+    
+    // Bind real test function to a global event and trigger application start
+    cubeVizApp.bindGlobalEvents([{ 
+        name: "onAfterRender_component", handler: $.proxy(t, this)
+    }]).triggerEvent("onStart_application");
+});
