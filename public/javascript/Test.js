@@ -242,10 +242,31 @@ cubeViz_tests.push(function () {
         ];
         var orderedList = CubeViz_View_Helper.sortLiItemsByAlphabet(unorderedList);
 
-        console.log(orderedList);
         this.assertTrue(orderedList[0].text() === "a", orderedList[0].text() + " must be equal to a");
         this.assertTrue(orderedList[1].text() === "b", orderedList[1].text() + " must be equal to b");
         this.assertTrue(orderedList[2].text() === "c", orderedList[2].text() + " must be equal to c");
+    };
+    cubeVizApp.bindGlobalEvents([
+        {
+            name: "onAfterRender_component",
+            handler: $.proxy(t, this)
+        }
+    ]).triggerEvent("onStart_application");
+});
+cubeViz_tests.push(function () {
+    var t = function () {
+        var unorderedList = [
+            $("<li><input type=\"checkbox\">1</li>"), 
+            $("<li><input type=\"checkbox\" checked=\"checked\">2</li>"), 
+            $("<li><input type=\"checkbox\">3</li>"), 
+            $("<li><input type=\"checkbox\" checked=\"checked\">4</li>")
+        ];
+        var orderedList = CubeViz_View_Helper.sortLiItemsByCheckStatus(unorderedList);
+
+        this.assertTrue($(orderedList[0].children().first()).is(":checked"), "sortLiItemsByCheckStatus: first item must be checked");
+        this.assertTrue($(orderedList[1].children().first()).is(":checked"), "sortLiItemsByCheckStatus: second item must be checked");
+        this.assertTrue(!$(orderedList[2].children().first()).is(":checked"), "sortLiItemsByCheckStatus: third item must be unchecked");
+        this.assertTrue(!$(orderedList[3].children().first()).is(":checked"), "sortLiItemsByCheckStatus: fourth item must be unchecked");
     };
     cubeVizApp.bindGlobalEvents([
         {
