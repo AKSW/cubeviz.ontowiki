@@ -2,11 +2,21 @@ var cubeVizAppDataCopy;
 var cubeViz_testCounter = 0;
 var cubeViz_testFailCounter = 0;
 var cubeViz_tests = [];
+var cubeViz_outputBy = 20;
+var cubeViz_outputTestsFinished = ".";
+var cubeViz_tmpStr = "";
 
 var cubeviz_setupTest = function () {
     ++cubeViz_testCounter;
     cubeVizApp.restoreDataCopy(cubeVizAppDataCopy);
     cubeVizApp.reset();
+    if(0 === cubeViz_testCounter % cubeViz_outputBy) {
+        for(var i = 0; i < cubeViz_outputBy; ++i) {
+            cubeViz_tmpStr += cubeViz_outputTestsFinished;
+        }
+        console.log(cubeViz_tmpStr);
+        cubeViz_tmpStr = "";
+    }
 };
 var cubeviz_tearDownTest = function () {
 };
@@ -22,7 +32,11 @@ var cubeviz_startTests = function () {
             ++cubeViz_testFailCounter;
         }
     });
-    console.log("\n-----\n" + cubeViz_testCounter + " tests run, " + cubeViz_testFailCounter + " failed");
+    for(var i = 0; i < (cubeViz_testCounter - cubeViz_outputBy); ++i) {
+        cubeViz_tmpStr += cubeViz_outputTestsFinished;
+    }
+    console.log(cubeViz_tmpStr);
+    console.log("\n" + cubeViz_testCounter + " tests run, " + cubeViz_testFailCounter + " failed");
 };
 var CubeViz_Collection = (function () {
     function CubeViz_Collection(idKey) {
