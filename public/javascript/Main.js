@@ -33,6 +33,10 @@ var CubeViz_Collection = (function () {
         this.reset(idKey);
     }
     CubeViz_Collection.prototype.add = function (element, option) {
+        if(true === _.isUndefined(element[this.idKey])) {
+            throw new Error("Key " + this.idKey + " in element not set!");
+            return this;
+        }
         if(undefined === this.get(element[this.idKey])) {
             this._.push(element);
         } else {
@@ -73,7 +77,7 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.remove = function (id) {
         var self = this;
         this._ = _.reject(this._, function (element) {
-            return element[self.idKey] === id;
+            return element[self.idKey] == id;
         });
         return this;
     };

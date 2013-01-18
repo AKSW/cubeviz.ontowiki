@@ -1,5 +1,8 @@
 src/Test/TestSuite.ts
 
+src/Model/CubeViz/Collection.ts
+src/Test/Model/CubeViz/Collection.ts
+
 src/Model/CubeViz/View/Helper.ts
 src/Test/Model/CubeViz/View/Helper.ts
 

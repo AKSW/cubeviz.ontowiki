@@ -24,6 +24,209 @@ var cubeviz_startTests = function () {
     });
     console.log("\n-----\n" + cubeViz_testCounter + " tests run, " + cubeViz_testFailCounter + " failed");
 };
+var CubeViz_Collection = (function () {
+    function CubeViz_Collection(idKey) {
+        this.reset(idKey);
+    }
+    CubeViz_Collection.prototype.add = function (element, option) {
+        if(true === _.isUndefined(element[this.idKey])) {
+            throw new Error("Key " + this.idKey + " in element not set!");
+            return this;
+        }
+        if(undefined === this.get(element[this.idKey])) {
+            this._.push(element);
+        } else {
+            if((undefined !== option && undefined !== option["merge"] && option["merge"] == true)) {
+                this.remove(element[this.idKey]);
+                this._.push(element);
+            }
+        }
+        return this;
+    };
+    CubeViz_Collection.prototype.addList = function (list) {
+        var self = this;
+        if(true == _.isArray(list)) {
+            $(list).each(function (i, element) {
+                self.add(element);
+            });
+        } else {
+            if(true == _.isObject(list)) {
+                this.addList(_.values(list));
+            }
+        }
+        return self;
+    };
+    CubeViz_Collection.prototype.exists = function (id) {
+        return false === _.isUndefined(this.get(id));
+    };
+    CubeViz_Collection.prototype.get = function (id) {
+        var self = this;
+        var t = _.filter(this._, function (element) {
+            if(element[self.idKey] == id) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return 1 == t.length ? t[0] : undefined;
+    };
+    CubeViz_Collection.prototype.remove = function (id) {
+        var self = this;
+        this._ = _.reject(this._, function (element) {
+            return element[self.idKey] == id;
+        });
+        return this;
+    };
+    CubeViz_Collection.prototype.reset = function (idKey) {
+        this.idKey = undefined === idKey ? (undefined === this.idKey ? "id" : this.idKey) : idKey;
+        this._ = [];
+        return this;
+    };
+    CubeViz_Collection.prototype.size = function () {
+        return _.size(this._);
+    };
+    return CubeViz_Collection;
+})();
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue("id" === c.idKey);
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection("cool key");
+    this.assertTrue("cool key" === c.idKey);
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    var testObj = {
+        id: "bar"
+    };
+
+    this.assertTrue(0 == c._.length);
+    c.add(testObj);
+    this.assertTrue(1 == c._.length);
+    this.assertTrue(true === _.isEqual(c.get("bar"), testObj));
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(true === _.isUndefined(c.get("not there")));
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(0 === c.size());
+    try  {
+        c.add({
+            foo: "bar"
+        });
+        this.assertTrue(false, "Collection add must throw an exception because of invalid object");
+    } catch (ex) {
+        this.assertTrue(0 === c.size());
+    }
+    c.add({
+        id: "bar"
+    });
+    this.assertTrue(1 === c.size());
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(0 == c._.length);
+    c.addList([
+        {
+            id: 1,
+            bar: "foo"
+        }, 
+        {
+            id: 2,
+            bar: "bar"
+        }
+    ]);
+    this.assertTrue(2 == c._.length);
+    try  {
+        c.addList({
+            foo: {
+                notAnId: 1,
+                bar: "foo"
+            }
+        });
+        this.assertTrue(false, "Collection addList > add must throw an exception because of " + "invalid object");
+    } catch (ex) {
+        this.assertTrue(2 === c.size());
+    }
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(0 == c._.length);
+    c.addList({
+        foo: {
+            id: 1,
+            bar: "foo"
+        },
+        bar: {
+            id: 2,
+            bar: "bar"
+        },
+        baz: {
+            id: 3,
+            bar: "baz"
+        }
+    });
+    this.assertTrue(3 == c._.length);
+    try  {
+        c.addList({
+            foo: {
+                notAnId: 1,
+                bar: "foo"
+            }
+        });
+        this.assertTrue(false, "Collection addList > add must throw an exception because of " + "invalid object");
+    } catch (ex) {
+        this.assertTrue(3 === c.size());
+    }
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    c.add({
+        id: 1,
+        bar: "foo"
+    });
+    this.assertTrue(1 == c._.length);
+    this.assertTrue(true === c.exists("1"));
+    this.assertTrue(false === c.exists("not exists"));
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(0 == c._.length);
+    c.add({
+        id: 1,
+        bar: "foo"
+    });
+    this.assertTrue(1 == c._.length);
+    c.remove("1");
+    this.assertTrue(0 == c._.length);
+    c.add({
+        id: "bar",
+        bar: "foo"
+    });
+    this.assertTrue(1 == c._.length);
+    c.remove("bar");
+    this.assertTrue(0 == c._.length);
+});
+cubeViz_tests.push(function () {
+    var c = new CubeViz_Collection();
+    this.assertTrue(0 == c._.length);
+    c.add({
+        id: 1,
+        bar: "foo"
+    });
+    this.assertTrue(1 == c._.length);
+    c.reset("foobar");
+    this.assertTrue(0 == c._.length);
+    this.assertTrue("foobar" === c.idKey);
+    c = new CubeViz_Collection("foo");
+    this.assertTrue("foo" === c.idKey);
+    c.reset();
+    this.assertTrue(0 == c._.length);
+    this.assertTrue("foo" === c.idKey);
+});
 var CubeViz_View_Helper = (function () {
     function CubeViz_View_Helper() { }
     CubeViz_View_Helper.attachDialogTo = function attachDialogTo(domElement, options) {
