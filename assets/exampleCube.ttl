@@ -7,11 +7,9 @@
 @prefix cube: <http://purl.org/linked-data/cube#> .
 @prefix ex: <http://example.cubeviz.org/datacube/> .
 
-
 <> a owl:Ontology ;
    rdfs:label "Example DataCube Knowledge Base" ;
    dc:description "This knowledgebase contains one Data Structure Definition with one Data Set. This Data Set has a couple of Components and Observations." .
-
 
 ex:dsd a cube:DataStructureDefinition ;
     rdfs:label "A Data Structure Definition"@en ;
@@ -21,70 +19,60 @@ ex:dsd a cube:DataStructureDefinition ;
                     <http://example.cubeviz.org/datacube/dsd/unit>, 
                     <http://example.cubeviz.org/datacube/dsd/value> .
 
-
 ex:dataset a cube:DataSet ;
     rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
     rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
     cube:structure ex:dsd .
-            
-
 
 <http://example.cubeviz.org/datacube/dsd/geo> a cube:ComponentSpecification ;
-    rdfs:label "Component Specification for Region" ;
+    rdfs:label "Component Specification of Region" ;
     cube:dimension ex:geo .
 
 <http://example.cubeviz.org/datacube/dsd/time> a cube:ComponentSpecification ;
-    rdfs:label "Component Specification for Time" ;
-    cube:dimension ex:Time .
+    rdfs:label "Component Specification of Time" ;
+    cube:dimension ex:date .
 
 <http://example.cubeviz.org/datacube/dsd/unit> a cube:ComponentSpecification ;
-    rdfs:label "Component Specification for Unit" ;
-    cube:attribute <http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure> .
+    rdfs:label "Component Specification of Unit" ;
+    cube:attribute ex:unit .
 
 <http://example.cubeviz.org/datacube/dsd/value> a cube:ComponentSpecification ;
-    rdfs:label "Component Specification for Value" ;
-    cube:measure <http://purl.org/linked-data/sdmx/2009/measure#obsValue> .
-
-
+    rdfs:label "Component Specification of Value" ;
+    cube:measure ex:value .
 
 ex:geo a cube:DimensionProperty ;
     rdfs:label "Region"@en .
         
-ex:time a cube:DimensionProperty ;
-    rdfs:label "Time"@en .
+ex:date a cube:DimensionProperty ;
+    rdfs:label "Date"@en .
 
 ex:unit a cube:AttributeProperty ;
     rdfs:label "Unit" .
 
 ex:value a cube:MeasureProperty ;
     rdfs:label "Value"@en .
-    
 
-
-ex:Country a ex:Region ;
-    rdfs:label "Example country"@en ;
-    owl:sameAs <http://dbpedia.org/resource/Country> .
+ex:Germany a ex:Region ;
+    rdfs:label "Germany"@en ;
        
 ex:Y2001 a ex:Time ;
     rdfs:label "2001"@en .
 
 ex:Y2002 a ex:Time ;
     rdfs:label "2002"@en .
-          
-
 
 ex:obs1 a cube:Observation ;
     cube:dataSet ex:dataset ;
-    ex:Time ex:Y2001 ;
-    <http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure> ex:unit ;
-    ex:geo ex:Country ;
-    <http://purl.org/linked-data/sdmx/2009/measure#obsValue> "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    dc:description "An example observation for 2001." .
+    ex:date ex:Y2001 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:Germany ;
+    ex:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "An example observation for 2001." .
 
 ex:obs2 a cube:Observation ;
     cube:dataSet ex:dataset ;
-    ex:Time ex:Y2002 ;
-    <http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure> ex:unit ;
-    ex:geo ex:Country ;
-    <http://purl.org/linked-data/sdmx/2009/measure#obsValue> "2000"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    dc:description "Another example observation for 2002." .
+    ex:date ex:Y2002 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:Germany ;
+    ex:value "2000"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Another example observation for 2002." .
