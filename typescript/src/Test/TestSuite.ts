@@ -7,7 +7,10 @@ declare var cubeVizApp:any;
 var cubeVizAppDataCopy,
     cubeViz_testCounter = 0,
     cubeViz_testFailCounter = 0,
-    cubeViz_tests:any[] = [];
+    cubeViz_tests:any[] = [],
+    cubeViz_outputBy = 20,
+    cubeViz_outputTestsFinished = ".",
+    cubeViz_tmpStr = "";
 
 /**
  * will be called before a test starts
@@ -20,6 +23,12 @@ var cubeviz_setupTest = function(){
     
     // Reset whole application
     cubeVizApp.reset();
+    
+    if(0 === cubeViz_testCounter % cubeViz_outputBy) {
+        for(var i=0;i<cubeViz_outputBy;++i){cubeViz_tmpStr += cubeViz_outputTestsFinished;}
+        console.log(cubeViz_tmpStr);
+        cubeViz_tmpStr = "";
+    }
 };
 
 /**
@@ -50,12 +59,15 @@ var cubeviz_startTests = function(){
         if(MUNIT.RESULT_BOO === test.result) {
             console.log(
                 "\n\n" + test.testCode + "\n> Message: " + test.message
-            );
-            ++cubeViz_testFailCounter;
+            ); ++cubeViz_testFailCounter;
         }
     });
     
+    for(var i=0;i<(cubeViz_testCounter-cubeViz_outputBy);++i){
+        cubeViz_tmpStr += cubeViz_outputTestsFinished;
+    } console.log(cubeViz_tmpStr);
+    
     // output summary
-    console.log( "\n-----\n" +  cubeViz_testCounter + " tests run, " + 
+    console.log( "\n" +  cubeViz_testCounter + " tests run, " + 
         cubeViz_testFailCounter + " failed");
 };

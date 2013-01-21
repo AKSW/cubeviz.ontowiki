@@ -33,6 +33,10 @@ var CubeViz_Collection = (function () {
         this.reset(idKey);
     }
     CubeViz_Collection.prototype.add = function (element, option) {
+        if(true === _.isUndefined(element[this.idKey])) {
+            throw new Error("Key " + this.idKey + " in element not set!");
+            return this;
+        }
         if(undefined === this.get(element[this.idKey])) {
             this._.push(element);
         } else {
@@ -73,7 +77,7 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.remove = function (id) {
         var self = this;
         this._ = _.reject(this._, function (element) {
-            return element[self.idKey] === id;
+            return element[self.idKey] == id;
         });
         return this;
     };
@@ -283,14 +287,77 @@ var CubeViz_View_Helper = (function () {
         domElement.dialog("close");
         domElement.data("isDialogOpen", false);
     }
+    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
+        domElement.dialog("destroy");
+        domElement.data("isDialogOpen", false);
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.destroyDialog = function destroyDialog(domElement) {
-        domElement.dialog("destroy");
-        domElement.data("isDialogOpen", false);
+    CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
+        var a = "";
+        var b = "";
+        var resultList = [];
+
+        listItems.sort(function (a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        _.each(listItems, function (item) {
+            resultList.push($(item).clone());
+        });
+        return resultList;
+    }
+    CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(listItems) {
+        var notCheckedItems = [];
+        var resultList = [];
+
+        _.each(listItems, function (item) {
+            if($($(item).children().first()).is(":checked")) {
+                resultList.push($(item).clone());
+            } else {
+                notCheckedItems.push(item);
+            }
+        });
+        _.each(notCheckedItems, function (item) {
+            resultList.push($(item).clone());
+        });
+        return resultList;
+    }
+    CubeViz_View_Helper.sortLiItemsByObservationCount = function sortLiItemsByObservationCount(listItems, dimensionTypeUrl, retrievedObservations) {
+        var dimensionElementUri = "";
+        var listItemValues = [];
+        var listItemsWithoutCount = [];
+        var observationCount = 0;
+        var resultList = [];
+
+        _.each(listItems, function (liItem) {
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            _.each(retrievedObservations, function (observation) {
+                if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            $(liItem).data("observationCount", observationCount);
+            if(0 < observationCount) {
+                resultList.push($(liItem).clone());
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        resultList.sort(function (a, b) {
+            a = $(a).data("observationCount");
+            b = $(b).data("observationCount");
+            return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        _.each(listItemsWithoutCount, function (item) {
+            resultList.push($(item).clone());
+        });
+        return resultList;
     }
     return CubeViz_View_Helper;
 })();
@@ -1087,12 +1154,15 @@ var View_CubeVizModule_Component = (function (_super) {
             hashedUrl: component.hashedUrl
         }));
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
+        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl).data("dimensionTypeUrl", component.typeUrl);
         CubeViz_View_Helper.attachDialogTo(div);
-        $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0)).data("dialogDiv", div);
+        $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
         $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
         $($(div.find(".cubeviz-component-setupComponentButton")).children().last()).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
@@ -1171,11 +1241,46 @@ var View_CubeVizModule_Component = (function (_super) {
             CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
         });
     };
-    View_CubeVizModule_Component.prototype.onClick_deselectedAllComponentElements = function (event) {
+    View_CubeVizModule_Component.prototype.onClick_deselectButton = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
+    };
+    View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
+        var list = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first());
+        var listItems = list.children('li');
+        var modifiedItemList = [];
+
+        $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton").removeClass("cubeviz-component-sortButtonSelected");
+        $(event.target).addClass("cubeviz-component-sortButtonSelected");
+        switch($(event.target).data("type")) {
+            case "alphabet": {
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(listItems);
+                break;
+
+            }
+            case "check status": {
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(listItems);
+                break;
+
+            }
+            case "observation count": {
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(listItems, dimensionTypeUrl, this.app._.data.retrievedObservations);
+                break;
+
+            }
+            default: {
+                return;
+
+            }
+        }
+        list.empty();
+        _.each(modifiedItemList, function (item) {
+            list.append(item);
+        });
     };
     View_CubeVizModule_Component.prototype.onClick_questionmark = function () {
         CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
@@ -1266,8 +1371,9 @@ var View_CubeVizModule_Component = (function (_super) {
         this.bindUserInterfaceEvents({
             "click .cubeviz-component-cancel": this.onClick_cancel,
             "click .cubeviz-component-closeAndUpdate": this.onClick_closeAndUpdate,
-            "click .cubeviz-component-setupComponentDeselectButton": this.onClick_deselectedAllComponentElements,
+            "click .cubeviz-component-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
+            "click .cubeviz-component-sortButtons": this.onClick_sortButton,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         this.triggerGlobalEvent("onAfterRender_component");

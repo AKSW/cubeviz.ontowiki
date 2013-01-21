@@ -42,13 +42,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
         
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl);
+        div
+            .data("componentBox", componentBox)
+            .data("hashedUrl", component.hashedUrl)
+            .data("dimensionTypeUrl", component.typeUrl);
         
         // attach dialog to div element
         CubeViz_View_Helper.attachDialogTo(div);
         
         // attach dialog div to deselect button
-        $(div.find(".cubeviz-component-setupComponentDeselectButton").get(0))
+        $(div.find(".cubeviz-component-deselectButton").get(0))
             .data("dialogDiv", div);
         
         // attach dialog div to dialog opener link
@@ -61,6 +64,24 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // attach dialog div to "close and update" button
         $($(div.find(".cubeviz-component-setupComponentButton")).children().last())
             .data("dialogDiv", div);
+            
+        /**
+         * Sort buttons
+         */
+        // attach dialog div to "alphabet" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(0))
+            .data("dialogDiv", div)
+            .data("type", "alphabet");
+            
+        // attach dialog div to "check status" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(1))
+            .data("dialogDiv", div)
+            .data("type", "check status");
+            
+        // attach dialog div to "observation count" button
+        $($(div.find(".cubeviz-component-sortButtons")).children().get(2))
+            .data("dialogDiv", div)
+            .data("type", "observation count");
             
         // configure elements of the dialog
         this.configureSetupComponentElements(component);
@@ -257,7 +278,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_deselectedAllComponentElements(event) : void
+    public onClick_deselectButton(event) : void
     {
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
@@ -270,6 +291,56 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public onClick_setupComponentOpener(event) : void
     {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
+    }
+    
+    /**
+     *
+     */
+    public onClick_sortButton(event) : void
+    {
+        var dialogDiv = $(event.target).data("dialogDiv"),
+            dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
+            list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
+            listItems:any[] = list.children('li'),
+            modifiedItemList:any[] = [];
+        
+        // remove .cubeviz-component-sortButtonSelected from all sortButtons
+        $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton")
+            .removeClass("cubeviz-component-sortButtonSelected");
+        
+        // add selected class to current clicked button
+        $(event.target)
+            .addClass("cubeviz-component-sortButtonSelected");
+        
+        // decide by given type what sort function to execute
+        switch ($(event.target).data("type")) {
+            
+            case "alphabet":
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(listItems);
+                break;
+                
+            case "check status":
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(listItems);
+                break;
+                
+            case "observation count": 
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
+                    listItems,
+                    dimensionTypeUrl,
+                    this.app._.data.retrievedObservations
+                );
+                break;
+                
+            default: return; 
+        }
+        
+        // empty list ...
+        list.empty();
+        
+        // ... and fill it with new ordered items
+        _.each(modifiedItemList, function(item){
+            list.append(item); 
+        });
     }
     
     /**
@@ -477,11 +548,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click .cubeviz-component-closeAndUpdate": 
                 this.onClick_closeAndUpdate,
                 
-            "click .cubeviz-component-setupComponentDeselectButton": 
-                this.onClick_deselectedAllComponentElements,
+            "click .cubeviz-component-deselectButton": 
+                this.onClick_deselectButton,
                 
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
+            
+            "click .cubeviz-component-sortButtons": 
+                this.onClick_sortButton,
             
             "click #cubeviz-component-questionMark": 
                 this.onClick_questionmark

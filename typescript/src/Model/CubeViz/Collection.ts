@@ -31,6 +31,11 @@ class CubeViz_Collection
      */
     public add(element:any, option?:any) : CubeViz_Collection
     {
+        if(true === _.isUndefined(element[this.idKey])) {
+            throw new Error("Key " + this.idKey + " in element not set!");
+            return this;
+        }
+        
         // if it does not exists in the list, add it
         if(undefined === this.get(element[this.idKey])) {
             this._.push(element);
@@ -72,7 +77,7 @@ class CubeViz_Collection
     
     /**
      * Checks if an element with given id exists in this collection.
-     * @param id
+     * @param id ID of the element to search
      * @return bool True if element exists, false otherwise.
      */
     public exists(id:string) : bool 
@@ -107,7 +112,7 @@ class CubeViz_Collection
     {
         var self = this;
         this._ = _.reject(this._, function(element){ 
-            return element[self.idKey] === id; 
+            return element[self.idKey] == id; 
         });
         
         return this;

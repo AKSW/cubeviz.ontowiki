@@ -56,6 +56,17 @@ class CubeViz_View_Helper
     } 
     
     /**
+     * Destroy an attached dialog
+     * @param domElement jQuery element which represents the dialog
+     */
+    static destroyDialog(domElement:any) : void
+    {
+        domElement.dialog("destroy");
+        
+        domElement.data("isDialogOpen", false);
+    } 
+    
+    /**
      * Open an attached dialog.
      * @param domElement jQuery element which represents the dialog
      * @return void
@@ -71,13 +82,107 @@ class CubeViz_View_Helper
     } 
     
     /**
-     * Destroy an attached dialog
-     * @param domElement jQuery element which represents the dialog
+     * Sort list items by alphabet.
+     * @param list DOM element to sort (directly the items in the given list)
      */
-    static destroyDialog(domElement:any) : void
+    static sortLiItemsByAlphabet(listItems:any) : any[]
     {
-        domElement.dialog("destroy");
+        var a:string = "", b:string = "",
+            resultList:any[] = [];
         
-        domElement.data("isDialogOpen", false);
-    } 
+        listItems.sort(function(a, b) {
+            a = $(a).text().toUpperCase();
+            b = $(b).text().toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+        
+        _.each(listItems, function(item){
+            resultList.push($(item).clone());
+        });
+      
+        return resultList;
+    }
+    
+    /**
+     * Sort list items by their check status of their associated checkbox.
+     * @param list DOM element to sort (directly the items in the given list)
+     */
+    static sortLiItemsByCheckStatus(listItems:any[]) : any[]
+    {
+        var notCheckedItems:any[] = [],
+            resultList:any[] = [];
+        
+        // go through all list items and check:
+        // - if current item's checkbox is checked, add it back to the list
+        // - if not, store it temporarly in notCheckedItems and add them later
+        _.each(listItems, function(item){
+            if($($(item).children().first()).is(":checked")){
+                resultList.push($(item).clone());
+            } else {
+                notCheckedItems.push(item);
+            }
+        });
+      
+        // add stored not-checked items
+        _.each(notCheckedItems, function(item){
+            resultList.push($(item).clone());
+        });
+        
+        return resultList;
+    }
+    
+    /**
+     * Sort list items by the number of observations they are part of.
+     * @param list DOM element to sort (directly the items in the given list)
+     */
+    static sortLiItemsByObservationCount(listItems:any[], dimensionTypeUrl:string, 
+        retrievedObservations:any[]) : any[]
+    {
+        var dimensionElementUri:string = "",
+            listItemValues:string[] = [],
+            listItemsWithoutCount:any[] = [],
+            observationCount:number = 0,
+            resultList:any[] = [];
+            
+        // extract checkbox values of given list; it contains items such as 
+        // http://data.lod2.eu/scoreboard/indicators/e_ebuy_ENT_ALL_XFIN_ent 
+        _.each(listItems, function(liItem){
+            
+            dimensionElementUri = $($(liItem).children().first()).val();
+            observationCount = 0;
+            
+            // count observations which refers to given dimension type url
+            _.each(retrievedObservations, function(observation){
+                if(dimensionElementUri === observation[dimensionTypeUrl][0].value) {
+                    ++observationCount;
+                }
+            });
+            
+            // save count
+            $(liItem).data("observationCount", observationCount);
+            
+            // if count is > 0, directly add the item back to the list
+            if(0 < observationCount){
+                resultList.push($(liItem).clone());
+                
+            // otherwise stored it somewhere else for later
+            } else {
+                listItemsWithoutCount.push(liItem);
+            }
+        });
+        
+        // sort items by observationCount
+        resultList.sort(function(a, b) {
+           a = $(a).data("observationCount");
+           b = $(b).data("observationCount");
+           return (a < b) ? 1 : (a > b) ? -1 : 0;
+        });
+        
+        // add somewhere else stored items back the given list
+        _.each(listItemsWithoutCount, function(item){
+            resultList.push($(item).clone());
+        });
+        
+        return resultList;
+    }
 }
