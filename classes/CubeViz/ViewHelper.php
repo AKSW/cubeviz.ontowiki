@@ -34,9 +34,11 @@ class CubeViz_ViewHelper
             'doap:revision', 'doap:shortdesc'
         );
         
-        $modelInformation = array(
-            'uri' => $modelIri
-        );
+        // CubeViz_Array is a simple implementation of ArrayAccess interface
+        // It allows you to set a default which is used if the value you want
+        // to access is not set
+        $modelInformation = new CubeViz_Array('');
+        $modelInformation['uri'] = $modelIri;
         
         // if model resource contains further information about the model
         if(true === isset($modelResource [$modelIri])

@@ -136,13 +136,13 @@
 <div id="cubeviz-index-headerDialogBox">
     
     <!-- Label -->
-    <h2><?php echo $this->CubeViz_ModelInformation ['rdfs:label']; ?></h2>
+    <h2><?php echo $this->cubeVizModelInformation ['rdfs:label']; ?></h2>
     
     <!-- Short description -->
-    <div style="font-size: 14px;"><?php echo $this->CubeViz_ModelInformation ['doap:shortdesc']; ?></div>
+    <div style="font-size: 14px;"><?php echo $this->cubeVizModelInformation ['doap:shortdesc']; ?></div>
         
     <!-- Description -->
-    <small><?php echo $this->CubeViz_ModelInformation ['dc:description']; ?></small>
+    <small><?php echo $this->cubeVizModelInformation ['dc:description']; ?></small>
     
     <br/>
     <br/>
@@ -152,19 +152,19 @@
         <!-- Creator -->
         <li>
             <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal" title="Creator"/>
-            <?php echo $this->CubeViz_ModelInformation ['dc:creator']; ?>
+            <?php echo $this->cubeVizModelInformation ['dc:creator']; ?>
         </li>
     
         <!-- Revision -->
         <li>
             <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal" title="Revision"/>
-            Revision: <?php echo $this->CubeViz_ModelInformation ['doap:revision']; ?>
+            Revision: <?php echo $this->cubeVizModelInformation ['doap:revision']; ?>
         </li>
     
         <!-- Document -->
         <li>
             <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal" title="License"/>
-            <?php echo $this->CubeViz_ModelInformation ['doap:license']; ?>
+            <?php echo $this->cubeVizModelInformation ['doap:license']; ?>
         </li>
     </ul>
 </div>
