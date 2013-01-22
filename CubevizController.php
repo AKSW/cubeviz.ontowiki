@@ -65,7 +65,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $modelStore = $model->getStore();
         $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);
                 
-        $this->view->CubeViz_ModelInformation = $modelInformation;
+        $this->view->cubeVizModelInformation = $modelInformation;
             
         /**
          * Set view and some of its properties.
