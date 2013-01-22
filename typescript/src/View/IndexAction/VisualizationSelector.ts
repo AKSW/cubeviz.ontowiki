@@ -194,7 +194,9 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public onStart_application() 
     {
-        this.initialize();
+        if(0 < _.size(this.app._.data.retrievedObservations)){
+            this.initialize();
+        }
     }
     
     /**
