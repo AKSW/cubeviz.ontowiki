@@ -891,15 +891,13 @@ var DataCube_Observation = (function () {
         if(false === _.isUndefined(this._axes[uri])) {
             return this._axes[uri];
         } else {
-            console.log("\nNo elements found given axisUri: " + uri);
             return {
             };
         }
     };
     DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
         if(0 == _.size(retrievedObservations)) {
-            console.log("\nEntries is empty!");
-            return;
+            return this;
         }
         this._selectedDimensionUris = this.extractSelectedDimensionUris(selectedComponentDimensions);
         var dimensionValues = {

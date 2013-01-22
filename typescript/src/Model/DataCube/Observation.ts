@@ -62,20 +62,26 @@ class DataCube_Observation {
         if(false === _.isUndefined(this._axes[uri])) {
             return this._axes[uri];
         } else {
-            console.log ("\nNo elements found given axisUri: " + uri);
             return {};
         }
     }
 
     /**
-     * @param entries Array of objects which are retrieved observations.
+     * Initializing with given observations, selected component dimensions and
+     * the measure uri.
+     * @param retrievedObservations Object containing objects (numberic index)
+     *                              which are the retrieved observations
+     * @param selectedComponentDimensions Object containing dimensions; key is 
+     *                                    hashed dimension type url
+     * @param measureUri Uri of the selected measure
+     * @return DataCube_Observation Itself
      */
-    public initialize ( retrievedObservations:any[], selectedComponentDimensions:Object[],
+    public initialize ( retrievedObservations:any, selectedComponentDimensions:any,
         measureUri:string ) : DataCube_Observation 
     {
+        // no observations retrieved
         if(0 == _.size(retrievedObservations)) {
-            console.log ("\nEntries is empty!");
-            return;
+            return this;
         }
         
         // save uri's of selected component dimensions
