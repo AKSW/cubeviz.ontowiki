@@ -1677,7 +1677,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
-        this.initialize();
+        if(0 < _.size(this.app._.data.retrievedObservations)) {
+            this.initialize();
+        }
     };
     View_IndexAction_VisualizationSelector.prototype.onStart_application = function () {
         if(0 < _.size(this.app._.data.retrievedObservations)) {
