@@ -120,7 +120,7 @@ class DataCube_Observation {
             // generate temporary list of selected dimension values in the current entry
             _.each(self._selectedDimensionUris, function(selecDimUri){
                                                 
-                if (undefined == selecDimUri) {
+                if (true === _.isUndefined(observation[selecDimUri])) {
                     return;
                 }
                 

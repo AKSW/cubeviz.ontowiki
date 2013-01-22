@@ -627,7 +627,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                         return;
                     }
                     _.each(value[selectedMeasureUri].ref, function (refValue, refKey) {
-                        if(seriesKey == refValue[forSeries].value) {
+                        if(false === _.isUndefined(refValue[forSeries]) && seriesKey == refValue[forSeries].value) {
                             floatValue = parseFloat(value[selectedMeasureUri].value);
                             if(isNaN(floatValue)) {
                                 floatValue = null;
@@ -917,7 +917,7 @@ var DataCube_Observation = (function () {
             };
             self._axes[measureUri][observation[measureUri][0].value] = self._axes[measureUri][observation[measureUri][0].value] || [];
             _.each(self._selectedDimensionUris, function (selecDimUri) {
-                if(undefined == selecDimUri) {
+                if(true === _.isUndefined(observation[selecDimUri])) {
                     return;
                 }
                 selecDimVal = observation[selecDimUri][0].value;
@@ -1680,7 +1680,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.initialize();
     };
     View_IndexAction_VisualizationSelector.prototype.onStart_application = function () {
-        this.initialize();
+        if(0 < _.size(this.app._.data.retrievedObservations)) {
+            this.initialize();
+        }
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
