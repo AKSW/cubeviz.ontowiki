@@ -1537,11 +1537,21 @@ var View_IndexAction_Legend = (function (_super) {
         ]);
     }
     View_IndexAction_Legend.prototype.destroy = function () {
+        $("#cubeviz-legend-definitionsAndScopes").slideUp("slow");
+        $("#cubeviz-legend-dataSet").html("");
+        $("#cubeviz-legend-observations").html("");
         _super.prototype.destroy.call(this);
         return this;
     };
     View_IndexAction_Legend.prototype.initialize = function () {
         this.render();
+    };
+    View_IndexAction_Legend.prototype.onClick_definitionsAndScopesButton = function (event) {
+        event.preventDefault();
+        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow', function () {
+            $.scrollTo('#cubeviz-legend-definitionsAndScopes', 600);
+        });
+        return false;
     };
     View_IndexAction_Legend.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -1551,7 +1561,55 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
+        $("#cubeviz-legend-definitionsAndScopes").hide();
+        var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl;
+        var self = this;
+
+        var dataSetTpl = _.template($("#cubeviz-legend-tpl-dataSet").text());
+        $("#cubeviz-legend-dataSet").html(dataSetTpl({
+            label: this.app._.data.selectedDS.label,
+            url: this.app._.data.selectedDS.url
+        }));
+        var observationLabel = "";
+        var dimensionElementLabelTpl = _.template($("#cubeviz-legend-tpl-dimensionElementLabel").text());
+        var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
+        var dimensionTypeUrls = [];
+        var rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label";
+
+        _.each(self.app._.data.selectedComponents.dimensions, function (dim) {
+            dimensionTypeUrls.push(dim.typeUrl);
+        });
+        _.each(this.app._.data.retrievedObservations, function (obs) {
+            observationLabel = "";
+            if(false === _.isUndefined(obs[rdfsLabelUri]) && "" != obs[rdfsLabelUri][0].label) {
+                observationLabel = obs[rdfsLabelUri][0].value;
+            } else {
+                _.each(dimensionTypeUrls, function (typeUrl) {
+                    if(true === _.isUndefined(obs[typeUrl])) {
+                        return;
+                    }
+                    if("" != observationLabel) {
+                        observationLabel += " - ";
+                    }
+                    observationLabel += dimensionElementLabelTpl({
+                        label: $.trim(obs[typeUrl][0].label),
+                        url: obs[typeUrl][0].value
+                    });
+                });
+                if("" == observationLabel) {
+                    observationLabel = "Observation without dimension data!";
+                }
+            }
+            $("#cubeviz-legend-observations").append(observationTpl({
+                observationLabel: observationLabel,
+                observationValue: obs[selectedMeasureUri][0].value,
+                measurePropertyValue: "",
+                measurePropertyAttribute: "",
+                observationUri: obs.observationUri[0].value
+            }));
+        });
         this.bindUserInterfaceEvents({
+            "click #cubeviz-legend-definitionsAndScopesButton": this.onClick_definitionsAndScopesButton
         });
         return this;
     };
@@ -1618,7 +1676,7 @@ var View_IndexAction_Visualization = (function (_super) {
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
         var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 20);
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 60);
         switch(type) {
             case "CubeViz": {
                 console.log("render cubeviz visz");

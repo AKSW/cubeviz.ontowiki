@@ -345,16 +345,26 @@ class DataCube_Query
             }
         }
         
-        foreach ( $result as $entry ) {
+        foreach ( $result as $observationUri => $entry ) {
+            
             $count = count ( $entry );
             $tmpEntry = $entry;
+            
+            // check whether observation's type has a label, if so get it
             foreach ( $entry as $key => $ele ) {
                 if ( 'uri' == $entry [$key] [0]['type'] ) {
                     $tmpEntry [$key][0]['label'] = str_replace('"', "'", $titleHelper->getTitle($ele [0]['value']));
                 }
                 $entry [$key] [0]['typeUrl'] = $entry [$key] [0]['type'];
                 unset($entry [$key] [0]['type']);
-            }
+            }            
+            
+            // set observation uri
+            $tmpEntry['observationUri'][0] = array(
+                'type'  => 'uri',
+                'value' => $observationUri
+            );
+            
             $tmp [] = $tmpEntry;
         }
         
@@ -596,34 +606,6 @@ class DataCube_Query
                 'nameTable' => $internalNameTable
             );
         }
-    }
-    
-    /**
-     * Returns an array of all dimension properties
-     * @return array
-     */
-    public function getDimensionProperties () {
-        
-        $sparql = 'SELECT DISTINCT ?url ?label WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::DimensionProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdfschema#label> ?rdfsLabel }
-        };';
-        
-        return $this->_model->sparqlQuery($sparql);
-    }   
-    
-    /**
-     * Returns an array of all measure properties
-     * @return array
-     */
-    public function getMeasureProperties () {
-        
-        $sparql = 'SELECT DISTINCT ?url ?label WHERE {
-            ?propertyUri ?p <'. DataCube_UriOf::MeasureProperty.'>.
-            OPTIONAL { ?propertyUri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel }
-        };';
-        
-        return $this->_model->sparqlQuery($sparql);
     }
     
     /**

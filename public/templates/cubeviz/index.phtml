@@ -5,7 +5,8 @@
     cubeVizApp
         .add("View_IndexAction_Header", "")
         .add("View_IndexAction_Visualization", "#cubeviz-index-visualization")
-        .add("View_IndexAction_VisualizationSelector", "#cubeviz-visualizationselector-menuItems");
+        .add("View_IndexAction_VisualizationSelector", "#cubeviz-visualizationselector-menuItems")
+        .add("View_IndexAction_Legend", "");
 </script>
 
 <div style="margin-left: 6px; margin-top: 10px;">
@@ -23,7 +24,21 @@
     <div id="cubeviz-index-visualization"></div>
 
     <!-- Legend part -->
-    <div id="cubeviz-index-legend"></div>
+    <div id="cubeviz-index-legend">
+        <strong><a id="cubeviz-legend-definitionsAndScopesButton">
+            <?php echo $this->_translate->_('Definitions and scores'); ?></a>
+        </strong>
+        <img class="cubeviz-icon-micro"
+             src="<?php echo $this->cubevizImagesPath; ?>arrow-down.png"/>
+        
+        <!-- Data -->
+        <div id="cubeviz-legend-definitionsAndScopes">
+            <br/>
+            <div id="cubeviz-legend-dataSet"></div>
+            <ul id="cubeviz-legend-observations"></ul>
+            <br/>
+        </div>
+    </div>
 
     <!-- Visualization selector -->
     <div id="cubeviz-visualizationselector-selector"></div>
@@ -58,6 +73,37 @@
               src="<?php echo $this->cubevizImagesPath; ?>menuDongle.png"/>
     </div>
 </div>
+
+<!--
+    Legend
+-->
+<script id="cubeviz-legend-tpl-dataSet" type="text/template">
+    <h3>
+        Data Set: <a href="<%= url %>" target="_blank"><%= label %></a>
+    </h3>
+</script>
+
+<script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
+    <a href="<%= url %>" target="_blank"><%= label %></a></script>
+
+<script id="cubeviz-legend-tpl-observation" type="text/template">
+    <li>
+        <span class="cubeviz-legend-dimensionElements">
+            <strong><%= observationLabel %>:</strong>
+        </span>
+        
+        <%= observationValue %>
+        
+        <!--
+        <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
+        -->
+        &nbsp;
+        
+        <a href="<%= observationUri %>" target="_blank">
+            <img class="cubeviz-icon-micro"
+                 src="<?php echo $this->cubevizImagesPath; ?>icon-ext-link.png"></a>
+    </li>
+</script>
 
 <!-- 
     Visualization selection menu 

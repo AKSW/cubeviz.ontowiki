@@ -1,0 +1,13 @@
+#cubeviz-legend-observations 
+{
+    list-style-type: none;
+    list-style-position: inside;
+    margin-left: 0px;
+    padding-left: 4px;
+    margin-top: 10px;
+}
+
+#cubeviz-legend-observations li
+{
+    margin-top: 5px;
+}

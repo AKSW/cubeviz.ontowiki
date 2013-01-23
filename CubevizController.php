@@ -53,6 +53,7 @@ class CubevizController extends OntoWiki_Controller_Component {
         $this->view->headLink()
             ->prependStylesheet($baseCssPath.'/main.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/header.css')
+            ->prependStylesheet($baseCssPath.'/IndexAction/legend.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/visualization.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/visualizationSelector.css');
         

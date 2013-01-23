@@ -288,6 +288,12 @@ interface JQueryStatic {
     type(obj: any): string;
 
     unique(arr: any[]): any[];
+    
+    
+    /****
+     EXTENSIONS
+     ****/
+    scrollTo(selector:string, millisec?:number, options?:any ): void;
 }
 
 /*
