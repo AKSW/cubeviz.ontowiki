@@ -101,6 +101,12 @@ class DataCube_Observation {
         // create an array for each selected dimension uri and save given values
         _.each(retrievedObservations, function(observation){
         
+            // if no value was set for the current observation stop execution
+            // and go to the next one
+            if(true === _.isUndefined(observation[measureUri])) {
+                return;
+            }
+            
             /**
              * e.g. 
              *  {
@@ -112,8 +118,9 @@ class DataCube_Observation {
             dimensionValues = {};
             
             // e.g. ["http:// ... /value"] = "0.9";
-            measureObj = {};  
+            measureObj = {};
             
+            // set measure value of current observation
             self._axes[measureUri][ observation[measureUri][0].value ] = 
                 self._axes[measureUri][ observation[measureUri][0].value ] || [];
               

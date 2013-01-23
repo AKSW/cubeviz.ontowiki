@@ -911,6 +911,9 @@ var DataCube_Observation = (function () {
         this._axes[measureUri] = this._axes[measureUri] || {
         };
         _.each(retrievedObservations, function (observation) {
+            if(true === _.isUndefined(observation[measureUri])) {
+                return;
+            }
             dimensionValues = {
             };
             measureObj = {
@@ -1517,6 +1520,42 @@ var View_IndexAction_Header = (function (_super) {
         return this;
     };
     return View_IndexAction_Header;
+})(CubeViz_View_Abstract);
+var View_IndexAction_Legend = (function (_super) {
+    __extends(View_IndexAction_Legend, _super);
+    function View_IndexAction_Legend(attachedTo, app) {
+        _super.call(this, "View_IndexAction_Legend", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReRender_visualization",
+                handler: this.onReRender_visualization
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_IndexAction_Legend.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_IndexAction_Legend.prototype.initialize = function () {
+        this.render();
+    };
+    View_IndexAction_Legend.prototype.onReRender_visualization = function () {
+        this.destroy();
+        this.initialize();
+    };
+    View_IndexAction_Legend.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_IndexAction_Legend.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_IndexAction_Legend;
 })(CubeViz_View_Abstract);
 var View_IndexAction_Visualization = (function (_super) {
     __extends(View_IndexAction_Visualization, _super);
