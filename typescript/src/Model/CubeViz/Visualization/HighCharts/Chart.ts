@@ -135,10 +135,11 @@ class CubeViz_Visualization_HighCharts_Chart
                         return;
                     }
                     
-                    // if one of the xAxis entries fits with given seriesEntry, so push the related value 
-                    // into the obj [data] array
+                    // if one of the xAxis entries fits with given seriesEntry, 
+                    // so push the related value into the obj [data] array
                     _.each(value[selectedMeasureUri].ref, function(refValue, refKey){
-                        if ( seriesKey == refValue[forSeries].value){
+                        if(false === _.isUndefined(refValue[forSeries])
+                             && seriesKey == refValue[forSeries].value) {
                             floatValue = parseFloat(value[selectedMeasureUri].value);
                             
                             if (isNaN(floatValue)) {

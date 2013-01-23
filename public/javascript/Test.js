@@ -713,20 +713,20 @@ cubeViz_tests.push(function () {
             checkboxName = checkbox.attr("name");
             checkboxValue = checkbox.val();
             checkboxChecked = true == checkbox.is(":checked") ? " checked=\"checked\"" : "";
-            label = $($(listEntry).children().last()).html();
+            label = $($(listEntry).children().last()).text();
             dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
                 return checkboxName == ele.hashedProperty;
-            })));
+            })), "Check hashedProperty: " + checkboxName);
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
                 return checkboxValue == ele.property;
-            })));
+            })), "Check property: " + checkboxValue);
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
                 return checkboxChecked == ele.checked;
-            })));
+            })), "Check if checked: " + checkboxChecked);
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
                 return label == ele.propertyLabel;
-            })));
+            })), "Check label: " + label);
         });
     };
     cubeVizApp.bindGlobalEvents([

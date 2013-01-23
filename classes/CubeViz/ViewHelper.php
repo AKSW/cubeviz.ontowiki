@@ -34,22 +34,38 @@ class CubeViz_ViewHelper
             'doap:revision', 'doap:shortdesc'
         );
         
-        $modelInformation = array(
-            'uri' => $modelIri
-        );
+        // CubeViz_Array is a simple implementation of ArrayAccess interface
+        // It allows you to set a default which is used if the value you want
+        // to access is not set
+        $modelInformation = new CubeViz_Array('');
+        $modelInformation['uri'] = $modelIri;
         
-        // Build array modelInformation which contains exactly the predicates from
-        // $usedPredicates as keys and the content as value.
-        foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
-            $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
-            if(true == in_array($compactPredicateUri, $usedPredicates)) {
-                $modelInformation [$compactPredicateUri] = 
-                    $modelResource [$modelIri][$predicateUri][0]['content'];
-            }
-            if(false === isset($modelInformation [$compactPredicateUri])){
-                $modelInformation [$compactPredicateUri] = '';
+        // if model resource contains further information about the model
+        if(true === isset($modelResource [$modelIri])
+           && is_array($modelResource [$modelIri])) {
+               
+            // Build array modelInformation which contains exactly the predicates from
+            // $usedPredicates as keys and the content as value.
+            foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
+                $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
+                if(true == in_array($compactPredicateUri, $usedPredicates)) {
+                    $modelInformation [$compactPredicateUri] = 
+                        $modelResource [$modelIri][$predicateUri][0]['content'];
+                }
+                if(false === isset($modelInformation [$compactPredicateUri])){
+                    $modelInformation [$compactPredicateUri] = '';
+                }
             }
         }
+        
+        // if no title was set, use title helper
+        if(false === isset($modelInformation['rdfs:label'])
+           || '' == $modelInformation['rdfs:label']) {
+            $th = new OntoWiki_Model_TitleHelper($model);
+            $th->addResource($modelIri);
+            $modelInformation['rdfs:label'] = $th->getTitle($modelIri);
+        }
+        
         return $modelInformation;
     }
     

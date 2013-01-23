@@ -85,7 +85,7 @@ cubeViz_tests.push(function(){
             checkboxValue = checkbox.val();
             checkboxChecked = true == checkbox.is(":checked") 
                               ? " checked=\"checked\"" : "";
-            label = $($(listEntry).children().last()).html();
+            label = $($(listEntry).children().last()).text();
             dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
             
             /**
@@ -96,7 +96,8 @@ cubeViz_tests.push(function(){
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
                     function(ele){ return checkboxName == ele.hashedProperty; }
-                ))
+                )),
+                "Check hashedProperty: " + checkboxName
             );
             
             // check value (property)
@@ -104,7 +105,8 @@ cubeViz_tests.push(function(){
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
                     function(ele){ return checkboxValue == ele.property; }
-                ))
+                )),
+                "Check property: " + checkboxValue
             );
             
             // check if checked
@@ -112,7 +114,8 @@ cubeViz_tests.push(function(){
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
                     function(ele){ return checkboxChecked == ele.checked; }
-                ))
+                )),
+                "Check if checked: " + checkboxChecked
             );
             
             /**
@@ -122,7 +125,8 @@ cubeViz_tests.push(function(){
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
                     function(ele){ return label == ele.propertyLabel; }
-                ))
+                )),
+                "Check label: " + label
             );
         });
     };

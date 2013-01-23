@@ -62,20 +62,26 @@ class DataCube_Observation {
         if(false === _.isUndefined(this._axes[uri])) {
             return this._axes[uri];
         } else {
-            console.log ("\nNo elements found given axisUri: " + uri);
             return {};
         }
     }
 
     /**
-     * @param entries Array of objects which are retrieved observations.
+     * Initializing with given observations, selected component dimensions and
+     * the measure uri.
+     * @param retrievedObservations Object containing objects (numberic index)
+     *                              which are the retrieved observations
+     * @param selectedComponentDimensions Object containing dimensions; key is 
+     *                                    hashed dimension type url
+     * @param measureUri Uri of the selected measure
+     * @return DataCube_Observation Itself
      */
-    public initialize ( retrievedObservations:any[], selectedComponentDimensions:Object[],
+    public initialize ( retrievedObservations:any, selectedComponentDimensions:any,
         measureUri:string ) : DataCube_Observation 
     {
+        // no observations retrieved
         if(0 == _.size(retrievedObservations)) {
-            console.log ("\nEntries is empty!");
-            return;
+            return this;
         }
         
         // save uri's of selected component dimensions
@@ -95,6 +101,12 @@ class DataCube_Observation {
         // create an array for each selected dimension uri and save given values
         _.each(retrievedObservations, function(observation){
         
+            // if no value was set for the current observation stop execution
+            // and go to the next one
+            if(true === _.isUndefined(observation[measureUri])) {
+                return;
+            }
+            
             /**
              * e.g. 
              *  {
@@ -106,15 +118,16 @@ class DataCube_Observation {
             dimensionValues = {};
             
             // e.g. ["http:// ... /value"] = "0.9";
-            measureObj = {};  
+            measureObj = {};
             
+            // set measure value of current observation
             self._axes[measureUri][ observation[measureUri][0].value ] = 
                 self._axes[measureUri][ observation[measureUri][0].value ] || [];
               
             // generate temporary list of selected dimension values in the current entry
             _.each(self._selectedDimensionUris, function(selecDimUri){
                                                 
-                if (undefined == selecDimUri) {
+                if (true === _.isUndefined(observation[selecDimUri])) {
                     return;
                 }
                 
