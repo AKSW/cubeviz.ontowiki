@@ -464,15 +464,9 @@ var CubeViz_Visualization_Controller = (function () {
         return oneElementDimensions;
     }
     CubeViz_Visualization_Controller.getVisualizationType = function getVisualizationType(className) {
-        var cV = new CubeViz_Visualization_CubeViz();
         var hC = new CubeViz_Visualization_HighCharts();
-
         if(true === hC.isResponsibleFor(className)) {
             return hC.getName();
-        } else {
-            if(true === cV.isResponsibleFor(className)) {
-                return cV.getName();
-            }
         }
         throw new Error("Unknown className " + className);
     }
@@ -513,36 +507,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
-var CubeViz_Visualization_CubeViz = (function (_super) {
-    __extends(CubeViz_Visualization_CubeViz, _super);
-    function CubeViz_Visualization_CubeViz() {
-        _super.call(this);
-        this.name = "CubeViz";
-        this.supportedClassNames = [
-            "CubeViz_Visualization_CubeViz_Table"
-        ];
-    }
-    return CubeViz_Visualization_CubeViz;
-})(CubeViz_Visualization);
-var CubeViz_Visualization_CubeViz_Visualization = (function () {
-    function CubeViz_Visualization_CubeViz_Visualization() { }
-    CubeViz_Visualization_CubeViz_Visualization.prototype.init = function (data, chartConfig) {
-        this.chartConfig = chartConfig;
-        this.data = data;
-        this.retrievedObservations = data.retrievedObservations;
-    };
-    CubeViz_Visualization_CubeViz_Visualization.prototype.render = function () {
-    };
-    return CubeViz_Visualization_CubeViz_Visualization;
-})();
-var CubeViz_Visualization_CubeViz_Table = (function (_super) {
-    __extends(CubeViz_Visualization_CubeViz_Table, _super);
-    function CubeViz_Visualization_CubeViz_Table() {
-        _super.apply(this, arguments);
-
-    }
-    return CubeViz_Visualization_CubeViz_Table;
-})(CubeViz_Visualization_CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts = (function (_super) {
     __extends(CubeViz_Visualization_HighCharts, _super);
     function CubeViz_Visualization_HighCharts() {

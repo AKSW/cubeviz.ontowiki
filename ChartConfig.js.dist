@@ -67,13 +67,6 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     }  
                 ]
-            },
-            {
-                "label": "Table",
-                "class": "CubeViz_Visualization_CubeViz_Table",
-                "icon": "table.png",                               
-                "options": [
-                ]
             }
         ]
     },
@@ -294,20 +287,7 @@ var CubeViz_ChartConfig = {
                                 
                 "options": [                   
                 ]
-            },
-            /**
-             * -----------------------------------------------------------------
-             */
-            {
-                "label": "Table",
-                "class": "CubeViz_Visualization_CubeViz_Table",
-                "icon": "table.png",                               
-                "options": [
-                ]
             }
-            /**
-             * -----------------------------------------------------------------
-             */
         ]
     },
     
@@ -533,16 +513,6 @@ var CubeViz_ChartConfig = {
                         "key": "yAxis.type",
                         "type": "array"
                     }
-                ]
-            },
-            /**
-             * -----------------------------------------------------------------
-             */
-            {
-                "label": "Table",
-                "class": "CubeViz_Visualization_CubeViz_Table",
-                "icon": "table.png",                               
-                "options": [
                 ]
             }
         ]

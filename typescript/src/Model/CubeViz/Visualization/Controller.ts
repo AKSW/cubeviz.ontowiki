@@ -199,19 +199,16 @@ class CubeViz_Visualization_Controller
     }
     
     /**
-     * Decide where the given className is related to: CubeViz itself or HighCharts.
+     * Decide where the given className is related to: HighCharts.
      * @param className Class to check
      * @return string Name of the library wrapper: CubeViz or HighCharts
      */
     static getVisualizationType (className:string) : string 
     {
-        var cV = new CubeViz_Visualization_CubeViz(),
-            hC = new CubeViz_Visualization_HighCharts();
+        var hC = new CubeViz_Visualization_HighCharts();
         
         if(true === hC.isResponsibleFor(className)) {
             return hC.getName();
-        } else if(true === cV.isResponsibleFor(className)) {
-            return cV.getName();
         }
         throw new Error("Unknown className " + className);
     }
