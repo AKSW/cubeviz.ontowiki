@@ -57,7 +57,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         event.preventDefault();
         
         // show overview
-        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow');
+        $("#cubeviz-legend-definitionsAndScopes").slideToggle('slow');
         
         return false;
     }
