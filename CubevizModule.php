@@ -67,7 +67,6 @@ class CubevizModule extends OntoWiki_Module
          */
         $this->view->headScript()
             ->prependFile ($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
-            ->prependFile ($baseJavascriptPath. 'libraries/jquery.scrollTo-min.js', 'text/javascript')
             ->prependFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
             ->prependFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
             ->prependFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')

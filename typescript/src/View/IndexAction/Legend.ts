@@ -56,11 +56,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     {
         event.preventDefault();
         
-        // show overview ...
-        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow', function(){
-            // ... and scroll to it after it is shown completly
-            $.scrollTo( '#cubeviz-legend-definitionsAndScopes', 600 );
-        });
+        // show overview
+        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow');
         
         return false;
     }

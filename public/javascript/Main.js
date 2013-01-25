@@ -1548,9 +1548,7 @@ var View_IndexAction_Legend = (function (_super) {
     };
     View_IndexAction_Legend.prototype.onClick_definitionsAndScopesButton = function (event) {
         event.preventDefault();
-        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow', function () {
-            $.scrollTo('#cubeviz-legend-definitionsAndScopes', 600);
-        });
+        $("#cubeviz-legend-definitionsAndScopes").slideDown('slow');
         return false;
     };
     View_IndexAction_Legend.prototype.onReRender_visualization = function () {
