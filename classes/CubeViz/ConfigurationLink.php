@@ -86,9 +86,38 @@ class CubeViz_ConfigurationLink
             $config['selectedComponents']['dimensions'] = array();
             foreach ($dimensions as $dimension) {
                 
-                $dimension['elements'] = array(
-                    $dimension['elements'][0]
-                );
+                /**
+                 * Preselect a couple of elements for current dimension
+                 */
+                $numberOfElements = $dimension['elements'];
+                $numberOfElementsToPreSelect = (int) ceil(count($numberOfElements) * 0.3);
+                
+                if(10 < $numberOfElementsToPreSelect) {
+                    $numberOfElementsToPreSelect = 10;
+                } elseif ( 0 == $numberOfElementsToPreSelect) {
+                    $numberOfElementsToPreSelect = 1;
+                }
+                
+                $preSelectedElements = array();
+                $stillUsedIndexes = array();
+                
+                for($i = 0; $i < $numberOfElementsToPreSelect; ++$i) {
+                    
+                    // search as long as necessary a new random index                    
+                    do {
+                        $randomI = rand(0, $numberOfElementsToPreSelect);
+                        
+                        // only break if new index is not already in use
+                        if(false === in_array($randomI, $stillUsedIndexes)) {
+                            $stillUsedIndexes [] = $randomI;
+                            break;
+                        }
+                    } while (true);
+                    
+                    $preSelectedElements [] = $dimension['elements'][$randomI];
+                }
+                
+                $dimension['elements'] = $preSelectedElements;
                 
                 $config['selectedComponents']['dimensions']
                     [$dimension['hashedUrl']] = $dimension;
