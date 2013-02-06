@@ -26,4 +26,4 @@ Further information about the repository structure or other internals can be als
 ## License
 
 CubeViz is licensed under the terms of GNU General Public License 2 and it uses foreign libraries. 
-For further details have a look in [here](https://github.com/AKSW/cubeviz.ontowiki/blob/develop/LICENSE.md).
+For further details have a look in [here](https://github.com/AKSW/cubeviz.ontowiki/blob/master/LICENSE.md).
