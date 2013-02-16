@@ -21,20 +21,32 @@
 
     <!-- Visualization -->
     <div id="cubeviz-index-visualization"></div>
+    
+    <br/>
+    <br/>
 
     <!-- Legend part -->
     <div id="cubeviz-index-legend">
-        <strong><a id="cubeviz-legend-definitionsAndScopesButton">
-            <?php echo $this->_translate->_('Definitions and scores'); ?></a>
-        </strong>
-        <i class="icon-chevron-down"></i>
+        <a class="btn btn-small" id="cubeviz-legend-definitionsAndScopesButton">
+            <i class="icon-chevron-down"></i>
+            <strong>
+                <?php echo $this->_translate->_('Show Definitions And Scores'); ?>
+            </strong>
+        </a>
         
         <!-- Data -->
         <div id="cubeviz-legend-definitionsAndScopes">
             <br/>
             <div id="cubeviz-legend-dataSet"></div>
-            <ul id="cubeviz-legend-observations"></ul>
-            <br/>
+            <div style="float: left; width: 70%;">
+                <ul id="cubeviz-legend-observations"></ul>
+            </div>
+            <div style="float: right; margin-right: 20px;">                    
+                    <p>
+                        <a class="btn">Sort by Title</a>
+                        <a class="btn">Sort by Value</a>
+                    </p>
+            </div>
         </div>
     </div>
 
@@ -85,19 +97,23 @@
 
 <script id="cubeviz-legend-tpl-observation" type="text/template">
     <li>
-        <span class="cubeviz-legend-dimensionElements">
-            <strong><%= observationLabel %></strong>
+        <span class="cubeviz-legend-observationIcon">
+            <i class="icon-map-marker"></i>
         </span>
-        
-        <span class="cubeviz-legend-observationValue">
-            <%= observationValue %>
+        <span>
+            <span class="cubeviz-legend-dimensionElements"><%= observationLabel %></span>
+            
+            <span class="cubeviz-legend-observationValue">
+                <%= observationValue %>
+            </span>
+            
+            <!--
+            <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
+            -->
+            <br/>
+            <a>Show more information</a> &nbsp;
+            <a href="<%= observationUri %>" target="_blank">Go to source</a>
         </span>
-        
-        <!--
-        <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
-        -->
-        <br/>
-        <a href="<%= observationUri %>" target="_blank">Get more information</a>
     </li>
 </script>
 

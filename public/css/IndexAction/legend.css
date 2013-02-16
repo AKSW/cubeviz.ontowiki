@@ -1,23 +1,39 @@
+.cubeviz-legend-dimensionElements
+{
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.cubeviz-legend-observationIcon
+{
+    float: left; 
+    width: 40px; 
+    min-height: 50px; 
+    text-align: center;
+}
+
 #cubeviz-legend-observations 
 {
     list-style-type: none;
     list-style-position: inside;
     margin-left: 0px;
-    margin-top: 10px;
 }
 
 #cubeviz-legend-observations li
 {
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 7px;
-    padding-right: 7px;
+    padding-left: 0px;
+    padding-right: 0px;
     border: 1px solid #BDBDBD;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    
     margin-top: 2px;
     
-    min-width: 70%;
-    width: 70%;
-    max-width: 70%;
+    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 #cubeviz-legend-observations li:hover
@@ -27,7 +43,7 @@
 
 .cubeviz-legend-observationValue
 {
-    float: right; 
-    vertical-align: middle; 
-    font-size: 18px;
+    margin-right: 7px;
+    float: right;
+    font-size: 17px;
 }
