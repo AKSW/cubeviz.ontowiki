@@ -43,8 +43,8 @@
             </div>
             <div style="float: right; margin-right: 20px;">                    
                     <p>
-                        <a class="btn">Sort by Title</a>
-                        <a class="btn">Sort by Value</a>
+                        <a class="btn btn-small"><strong>Sort by Title</strong></a>
+                        <a class="btn btn-small"><strong>Sort by Value</strong></a>
                     </p>
             </div>
         </div>
@@ -207,19 +207,16 @@
     <ul class="cubeviz-ul-basic">
         <!-- Creator -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>person-pencil.png" class="cubeviz-icon-minimal" title="Creator"/>
             <?php echo $this->cubeVizModelInformation ['dc:creator']; ?>
         </li>
     
         <!-- Revision -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>version2.png" class="cubeviz-icon-minimal" title="Revision"/>
             Revision: <?php echo $this->cubeVizModelInformation ['doap:revision']; ?>
         </li>
     
         <!-- Document -->
         <li>
-            <img src="<?php echo $this->cubevizImagesPath; ?>document.png" class="cubeviz-icon-minimal" title="License"/>
             <?php echo $this->cubeVizModelInformation ['doap:license']; ?>
         </li>
     </ul>

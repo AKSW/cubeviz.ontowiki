@@ -1833,7 +1833,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             var position = selectorItemDiv.position();
             var dongleDiv = $("#cubeviz-visualizationselector-menuDongleDiv");
 
-            dongleDiv.css("top", offset.top - 48).css("left", offset.left - 285).fadeIn("slow");
+            dongleDiv.css("top", offset.top - 52).css("left", offset.left - 284).fadeIn("slow");
         }
     };
     return View_IndexAction_VisualizationSelector;

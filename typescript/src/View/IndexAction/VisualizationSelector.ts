@@ -403,8 +403,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             
             // positioning and show dongle
             dongleDiv
-                .css("top", offset.top - 48)
-                .css("left", offset.left - 285)
+                .css("top", offset.top - 52)
+                .css("left", offset.left - 284)
                 .fadeIn("slow");
         }
     }
