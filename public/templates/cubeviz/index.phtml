@@ -14,10 +14,9 @@
     <h2 id="cubeviz-index-header">
         CubeViz - Visualization of the <?php echo $this->cubeVizModelInformation['rdfs:label']; ?>
         &nbsp;
-        <img class="cubeviz-icon-small"
-              id="cubeviz-index-headerQuestionMarkHeadline" 
-              src="<?php echo $this->cubevizImagesPath; ?>i.png" 
-              title="<?php echo $this->_translate->_('Click for more information'); ?>"/>
+        <i class="icon-lightbulb"
+           id="cubeviz-index-headerQuestionMarkHeadline" 
+           title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
     </h2>
 
     <!-- Visualization -->
@@ -28,8 +27,7 @@
         <strong><a id="cubeviz-legend-definitionsAndScopesButton">
             <?php echo $this->_translate->_('Definitions and scores'); ?></a>
         </strong>
-        <img class="cubeviz-icon-micro"
-             src="<?php echo $this->cubevizImagesPath; ?>arrow-down.png"/>
+        <i class="icon-chevron-down"></i>
         
         <!-- Data -->
         <div id="cubeviz-legend-definitionsAndScopes">
@@ -78,13 +76,12 @@
     Legend
 -->
 <script id="cubeviz-legend-tpl-dataSet" type="text/template">
-    <h3>
-        Data Set: <a href="<%= url %>" target="_blank"><%= label %></a>
-    </h3>
+    <h3>Data Set: <a href="<%= url %>" target="_blank"><%= label %></a></h3>
 </script>
 
 <script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
-    <a href="<%= url %>" target="_blank"><%= label %></a></script>
+    <a href="<%= url %>" target="_blank"><%= label %></a>
+</script>
 
 <script id="cubeviz-legend-tpl-observation" type="text/template">
     <li>

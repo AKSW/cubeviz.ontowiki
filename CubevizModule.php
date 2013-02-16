@@ -84,6 +84,7 @@ class CubevizModule extends OntoWiki_Module
          * Including css files for this action
          */
         $this->view->headLink()
+            ->prependStylesheet($baseCssPath.'FontAwesome/css/font-awesome.min.css')
             ->prependStylesheet($baseCssPath.'main.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/component.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css')

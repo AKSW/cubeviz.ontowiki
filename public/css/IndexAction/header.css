@@ -3,12 +3,12 @@
  */
 #cubeviz-index-headerQuestionMarkHeadline {
     cursor: pointer;
-    opacity:0.2;
-    filter:alpha(opacity=20);
+    opacity:0.6;
+    filter:alpha(opacity=60);
 }
 
 #cubeviz-index-headerQuestionMarkHeadline:hover {
     cursor: pointer;
-    opacity:0.5;
-    filter:alpha(opacity=50);
+    opacity:0.8;
+    filter:alpha(opacity=80);
 }
