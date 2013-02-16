@@ -7,10 +7,6 @@ src/Model/CubeViz/View/Helper.ts
 
 src/Model/CubeViz/Visualization/Controller.ts
 
-src/Model/CubeViz/Visualization/CubeViz.ts
-src/Model/CubeViz/Visualization/CubeViz/Visualization.ts
-src/Model/CubeViz/Visualization/CubeViz/Table.ts
-
 src/Model/CubeViz/Visualization/HighCharts.ts
 src/Model/CubeViz/Visualization/HighCharts/Chart.ts
 src/Model/CubeViz/Visualization/HighCharts/Area.ts
