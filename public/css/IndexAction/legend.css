@@ -3,11 +3,31 @@
     list-style-type: none;
     list-style-position: inside;
     margin-left: 0px;
-    padding-left: 4px;
     margin-top: 10px;
 }
 
 #cubeviz-legend-observations li
 {
-    margin-top: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 7px;
+    padding-right: 7px;
+    border: 1px solid #BDBDBD;
+    margin-top: 2px;
+    
+    min-width: 70%;
+    width: 70%;
+    max-width: 70%;
+}
+
+#cubeviz-legend-observations li:hover
+{
+    background-color: #F1F1F1;
+}
+
+.cubeviz-legend-observationValue
+{
+    float: right; 
+    vertical-align: middle; 
+    font-size: 18px;
 }

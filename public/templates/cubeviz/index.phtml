@@ -89,19 +89,18 @@
 <script id="cubeviz-legend-tpl-observation" type="text/template">
     <li>
         <span class="cubeviz-legend-dimensionElements">
-            <strong><%= observationLabel %>:</strong>
+            <strong><%= observationLabel %></strong>
         </span>
         
-        <%= observationValue %>
+        <span class="cubeviz-legend-observationValue">
+            <%= observationValue %>
+        </span>
         
         <!--
         <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
         -->
-        &nbsp;
-        
-        <a href="<%= observationUri %>" target="_blank">
-            <img class="cubeviz-icon-micro"
-                 src="<?php echo $this->cubevizImagesPath; ?>icon-ext-link.png"></a>
+        <br/>
+        <a href="<%= observationUri %>" target="_blank">Get more information</a>
     </li>
 </script>
 
