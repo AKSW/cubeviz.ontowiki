@@ -56,26 +56,26 @@
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
         
-        <div id="cubeviz-visualizationselector-menuHeader">
+        <h3>
             <?php echo $this->_translate->_('Configure the visualization'); ?>
-        </div>
+        </h3>
         
         <div id="cubeviz-visualizationselector-menuItems"></div>
         <br/>
         <br/>
+        <br/>
         <div style="clear:both; text-align:right;">
-            <input class="cubeviz-minibutton cubeviz-clickable"
-                    id="cubeviz-visualizationselector-closeMenu"
-                    title="<?php echo $this->_translate->_('Close this menu without apply changes'); ?>"
-                    type="button" 
-                    value="<?php echo $this->_translate->_('Close'); ?>">
-            &nbsp;&nbsp;&nbsp;
-            <input class="cubeviz-minibutton cubeviz-clickable"
-                    id="cubeviz-visualizationselector-updateVisz"
-                    style="font-weight: bold;"
-                    title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>"
-                    type="button" 
-                    value="<?php echo $this->_translate->_('Update'); ?>">
+            <a class="btn btn-small"
+               id="cubeviz-visualizationselector-closeMenu"
+               title="<?php echo $this->_translate->_('Close this menu without apply changes'); ?>">
+                <?php echo $this->_translate->_('Close'); ?>
+            </a>
+            
+            <a class="btn btn-small"
+               id="cubeviz-visualizationselector-updateVisz"
+               title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>">
+                <strong><?php echo $this->_translate->_('Update'); ?></strong>
+            </a>
         </div>
     </div>
     <div id="cubeviz-visualizationselector-menuDongleDiv" class="cubeviz-clickable">
@@ -121,15 +121,15 @@
     Visualization selection menu 
 -->
 <script id="cubeviz-visualizationselector-tpl-selectorItem" type="text/template">
-    <div class="cubeviz-visualizationselector-selectorItem cubeviz-clickable">
-        <img class="cubeviz-icon-normal" 
+    <a class="btn cubeviz-visualizationselector-selectorItem">
+        <img class="cubeviz-icon-small" 
              src="<?php echo $this->cubevizImagesPath; ?><%= icon %>"/>
-    </div>
+    </a>
 </script>
 
 <script id="cubeviz-visualizationselector-tpl-menuItem" type="text/template">
     <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
-        <div style="float:left; margin-left:3px; font-size:12px;"><%= label %></div>
+        <div style="float:left; margin-left:3px;"><%= label %></div>
         <div style="float:right">
             <select class="cubeviz-visualizationselector-menuSelectbox cubeviz-visualizationselector-menuItemValue"></select>
         </div>
@@ -148,7 +148,7 @@
                 <br/>
                 
                 <div id="cubeviz-visualization-nothingFoundNotificationLink">
-                    <img src="<?php echo $this->cubevizImagesPath; ?>arrow-down.png" class="cubeviz-icon-micro" id="cubeviz-Index-NothingFoundNotificationLink">
+                    <i class="icon-chevron-down" id="cubeviz-Index-NothingFoundNotificationLink"></i>
                     &nbsp;
                     <a>Why do i sometimes receive an empty chart / no data?</a>
                 </div>
@@ -156,9 +156,7 @@
             <br/>            
             <div id="cubeviz-visualization-nothingFoundFurtherExplanation">
                 <div style="float:left;">
-                    <img class="cubeviz-icon-minimal"
-                         src="<?php echo $this->cubevizImagesPath; ?>questionmark.png" 
-                         style="opacity:0.3;"/>
+                    <i class="icon-lightbulb"></i>
                 </div>
                 <div style="margin-left: 24px; margin-top:-3px;">
                     <span style="font-size:16px; font-weight:bold;">

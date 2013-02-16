@@ -84,19 +84,15 @@
             
             <div id="cubeviz-footer-container">                
                 <span style="float:left;">
-                    <input class="minibutton submit"
-                            id="cubeviz-footer-permaLinkButton"
-                            type="button"
-                            value="<?php echo $this->_translate->_('Permalink'); ?>"/>
+                    <a class="btn btn-small" id="cubeviz-footer-permaLinkButton">
+                        <strong><?php echo $this->_translate->_('Permalink'); ?></strong></a>
                     <span id="cubeviz-footer-permaLinkMenu">
-                        <span id="cubeviz-footer-permaLink">Link</span>
+                        <span id="cubeviz-footer-permaLink" style="display: none;">Link</span>
                     </span>
                 </span>
                 <span style="float:right;">
-                    <input class="minibutton submit"
-                            id="cubeviz-footer-showVisualizationButton"
-                            type="button" 
-                            value="<?php echo $this->_translate->_('Show Visualization'); ?>"/>
+                    <a class="btn btn-small" id="cubeviz-footer-showVisualizationButton">
+                        <strong><?php echo $this->_translate->_('Show Visualization'); ?></strong></a>
                 </span>
             </div>
             
