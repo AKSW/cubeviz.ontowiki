@@ -123,6 +123,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
              */
             result.push ({
                 observationLabel: observationLabel,
+                observationShortLabel: _.str.prune(observationLabel, 70, " ..."),
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
