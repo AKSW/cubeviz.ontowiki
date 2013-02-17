@@ -99,6 +99,21 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.size = function () {
         return _.size(this._);
     };
+    CubeViz_Collection.prototype.sortAscendingBy = function (key) {
+        var a = "";
+        var b = "";
+
+        this._.sort(function (a, b) {
+            try  {
+                a = a[key].toUpperCase();
+                b = b[key].toUpperCase();
+                return (a < b) ? -1 : (a > b) ? 1 : 0;
+            } catch (e) {
+                console.log("for key: " + key);
+                console.log(e);
+            }
+        });
+    };
     return CubeViz_Collection;
 })();
 cubeViz_tests.push(function () {

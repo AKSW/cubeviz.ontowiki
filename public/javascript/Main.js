@@ -89,6 +89,21 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.size = function () {
         return _.size(this._);
     };
+    CubeViz_Collection.prototype.sortAscendingBy = function (key) {
+        var a = "";
+        var b = "";
+
+        this._.sort(function (a, b) {
+            try  {
+                a = a[key].toUpperCase();
+                b = b[key].toUpperCase();
+                return (a < b) ? -1 : (a > b) ? 1 : 0;
+            } catch (e) {
+                console.log("for key: " + key);
+                console.log(e);
+            }
+        });
+    };
     return CubeViz_Collection;
 })();
 var CubeViz_Visualization = (function () {
@@ -1507,41 +1522,32 @@ var View_IndexAction_Legend = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_IndexAction_Legend.prototype.initialize = function () {
-        this.render();
-    };
-    View_IndexAction_Legend.prototype.onClick_definitionsAndScopesButton = function (event) {
-        event.preventDefault();
-        $("#cubeviz-legend-definitionsAndScopes").slideToggle('slow');
-        return false;
-    };
-    View_IndexAction_Legend.prototype.onReRender_visualization = function () {
-        this.destroy();
-        this.initialize();
-    };
-    View_IndexAction_Legend.prototype.onStart_application = function () {
-        this.initialize();
-    };
-    View_IndexAction_Legend.prototype.render = function () {
-        $("#cubeviz-legend-definitionsAndScopes").hide();
-        var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl;
-        var self = this;
-
+    View_IndexAction_Legend.prototype.displayDataSet = function (dsLabel, dsUrl) {
         var dataSetTpl = _.template($("#cubeviz-legend-tpl-dataSet").text());
         $("#cubeviz-legend-dataSet").html(dataSetTpl({
-            label: this.app._.data.selectedDS.label,
-            url: this.app._.data.selectedDS.url
+            label: dsLabel,
+            url: dsUrl
         }));
+    };
+    View_IndexAction_Legend.prototype.displayList = function (list) {
+        $("#cubeviz-legend-observations").html("");
+        var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
+        _.each(list, function (obs) {
+            $("#cubeviz-legend-observations").append(observationTpl(obs));
+        });
+    };
+    View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
         var observationLabel = "";
         var dimensionElementLabelTpl = _.template($("#cubeviz-legend-tpl-dimensionElementLabel").text());
-        var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
         var dimensionTypeUrls = [];
+        var observationLabel = "";
         var rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label";
+        var result = [];
 
-        _.each(self.app._.data.selectedComponents.dimensions, function (dim) {
+        _.each(selectedComponentDimensions, function (dim) {
             dimensionTypeUrls.push(dim.typeUrl);
         });
-        _.each(this.app._.data.retrievedObservations, function (obs) {
+        _.each(observations, function (obs) {
             observationLabel = "";
             if(false === _.isUndefined(obs[rdfsLabelUri]) && "" != obs[rdfsLabelUri][0].label) {
                 observationLabel = obs[rdfsLabelUri][0].value;
@@ -1559,19 +1565,54 @@ var View_IndexAction_Legend = (function (_super) {
                     });
                 });
                 if("" == observationLabel) {
-                    observationLabel = "Observation without dimension data!";
+                    observationLabel = "Observation without dimension data";
                 }
             }
-            $("#cubeviz-legend-observations").append(observationTpl({
+            result.push({
                 observationLabel: observationLabel,
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
                 observationUri: obs.observationUri[0].value
-            }));
+            });
         });
+        return result;
+    };
+    View_IndexAction_Legend.prototype.initialize = function () {
+        this.render();
+    };
+    View_IndexAction_Legend.prototype.onClick_sortByTitle = function () {
+        this.collection.sortAscendingBy("observationLabel");
+        this.displayList(this.collection._);
+    };
+    View_IndexAction_Legend.prototype.onClick_sortByValue = function () {
+        this.collection.sortAscendingBy("observationValue");
+        this.displayList(this.collection._);
+    };
+    View_IndexAction_Legend.prototype.onClick_definitionsAndScopesButton = function (event) {
+        event.preventDefault();
+        $("#cubeviz-legend-definitionsAndScopes").slideToggle('slow');
+        return false;
+    };
+    View_IndexAction_Legend.prototype.onReRender_visualization = function () {
+        this.destroy();
+        this.initialize();
+    };
+    View_IndexAction_Legend.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_IndexAction_Legend.prototype.render = function () {
+        var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl;
+        var self = this;
+
+        this.displayDataSet(this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
+        this.collection.reset("observationLabel").addList(this.generateList(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
+        this.collection.sortAscendingBy("observationLabel");
+        this.displayList(this.collection._);
         this.bindUserInterfaceEvents({
-            "click #cubeviz-legend-definitionsAndScopesButton": this.onClick_definitionsAndScopesButton
+            "click #cubeviz-legend-definitionsAndScopesButton": this.onClick_definitionsAndScopesButton,
+            "click #cubeviz-legend-sortByTitle": this.onClick_sortByTitle,
+            "click #cubeviz-legend-sortByValue": this.onClick_sortByValue
         });
         return this;
     };
