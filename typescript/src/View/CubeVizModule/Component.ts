@@ -58,11 +58,11 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         opener.data("dialogDiv", div);
         
         // attach dialog div to "cancel" button
-        $($(div.find(".cubeviz-component-setupComponentButton")).children().first())
+        $($(div.find(".cubeviz-component-cancel")).get(0))
             .data("dialogDiv", div);
             
         // attach dialog div to "close and update" button
-        $($(div.find(".cubeviz-component-setupComponentButton")).children().last())
+        $($(div.find(".cubeviz-component-closeAndUpdate")).get(0))
             .data("dialogDiv", div);
             
         /**
@@ -323,7 +323,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByCheckStatus(listItems);
                 break;
                 
-            case "observation count": 
+            case "observation count":
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
                     listItems,
                     dimensionTypeUrl,

@@ -226,44 +226,32 @@
             </small>
         </span>
         
-        <h2 style="margin-top: 8px;">
+        <h3 style="margin-top: 8px;">
             <%= label %>
-        </h2>      
+        </h3>      
         <p>Dimension Meta Information</p>
         <br/>
         
-        <div class="cubeviz-component-sortButtons">
+        <div class="cubeviz-component-sortButtons" style="float:right;">
             Sort by: 
-            <span class="cubeviz-clickable cubeviz-component-sortButton cubeviz-component-sortButtonSelected"
-                  style="margin-left: 10px;">
-                alphabet
-            </span>
-            <span class="cubeviz-clickable cubeviz-component-sortButton"
-                  style="margin-left: 6px;">
-                check status
-            </span>
-            <span class="cubeviz-clickable cubeviz-component-sortButton"
-                  style="margin-left: 6px;">
-                observation count
-            </span>
+            <span class="btn btn-small">alphabet</span>
+            &nbsp;
+            <span class="btn btn-small">check status</span>
+            &nbsp;
+            <span class="btn btn-small">observation count</span>
         </div>
-        <span class="cubeviz-clickable cubeviz-component-deselectButton"
-              style="margin-top:25px; font-size: 12px; text-align: left;">
-            Deselect all items
-        </span>
+        
+        <span class="btn btn-small cubeviz-component-deselectButton">
+            Deselect all items</span>
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
-        <div class="cubeviz-component-setupComponentButton" style="margin-top: 5px; float:right;">            
-            <input class="cubeviz-component-cancel cubeviz-button cubeviz-clickable"
-                    type="button"
-                    value="<?php echo $this->_translate->_('Cancel'); ?>"/>
-            
-            &nbsp;&nbsp;&nbsp;
-            
-            <input class="cubeviz-component-closeAndUpdate cubeviz-button cubeviz-clickable"
-                    type="button"
-                    value="<?php echo $this->_translate->_('Close and update visualization'); ?>"/>
+        <div style="margin-top: 5px; float:right;">            
+            <span class="btn cubeviz-component-cancel">
+                <?php echo $this->_translate->_('Cancel'); ?></span>
+            &nbsp;
+            <span class="btn cubeviz-component-closeAndUpdate">
+                <?php echo $this->_translate->_('Close and update visualization'); ?></span>
         </div>
     </div>
 </script>
@@ -271,6 +259,6 @@
 <script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
     <li>
         <input type="checkbox" name="<%= hashedProperty %>" value="<%= property %>"<%= checked %>/>
-        <label><%= propertyLabel %></label>
+        <span><%= propertyLabel %></span>
     </li>
 </script>

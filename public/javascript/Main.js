@@ -1138,10 +1138,12 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.attachDialogTo(div);
         $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
-        $($(div.find(".cubeviz-component-setupComponentButton")).children().first()).data("dialogDiv", div);
-        $($(div.find(".cubeviz-component-setupComponentButton")).children().last()).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", div);
+        $($(div.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", div);
         $($(div.find(".cubeviz-component-sortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
         $($(div.find(".cubeviz-component-sortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
+        console.log();
+        console.log($(div.find(".cubeviz-component-sortButtons")).children().get(2));
         $($(div.find(".cubeviz-component-sortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
         this.configureSetupComponentElements(component);
     };
@@ -1570,6 +1572,7 @@ var View_IndexAction_Legend = (function (_super) {
             }
             result.push({
                 observationLabel: observationLabel,
+                observationShortLabel: _.str.prune(observationLabel, 70, " ..."),
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
