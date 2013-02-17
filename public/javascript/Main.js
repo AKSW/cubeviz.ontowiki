@@ -1142,8 +1142,6 @@ var View_CubeVizModule_Component = (function (_super) {
         $($(div.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", div);
         $($(div.find(".cubeviz-component-sortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
         $($(div.find(".cubeviz-component-sortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
-        console.log();
-        console.log($(div.find(".cubeviz-component-sortButtons")).children().get(2));
         $($(div.find(".cubeviz-component-sortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
         this.configureSetupComponentElements(component);
     };
@@ -1379,6 +1377,10 @@ var View_CubeVizModule_Footer = (function (_super) {
             {
                 name: "onStart_application",
                 handler: this.onStart_application
+            }, 
+            {
+                name: "onBeforeClick_selectorItem",
+                handler: this.onBeforeClick_selectorItem
             }
         ]);
     }
@@ -1404,15 +1406,27 @@ var View_CubeVizModule_Footer = (function (_super) {
         });
     };
     View_CubeVizModule_Footer.prototype.initialize = function () {
+        this.collection.add({
+            id: "cubeviz-footer-permaLink",
+            html: $("#cubeviz-footer-permaLink").html()
+        });
         this.render();
-    };
-    View_CubeVizModule_Footer.prototype.onChange_selectedDS = function () {
-        this.onAfterChange_selectedDSD();
     };
     View_CubeVizModule_Footer.prototype.onAfterChange_selectedDSD = function () {
         if(false === _.isUndefined(this.collection.get("buttonVal"))) {
             this.changePermaLinkButton();
         }
+    };
+    View_CubeVizModule_Footer.prototype.onBeforeClick_selectorItem = function () {
+        if(true == _.isUndefined(this.collection.get("buttonVal"))) {
+        } else {
+            var value = this.collection.get("buttonVal").value;
+            this.collection.remove("buttonVal");
+            this.closeLink(value);
+        }
+    };
+    View_CubeVizModule_Footer.prototype.onChange_selectedDS = function () {
+        this.onAfterChange_selectedDSD();
     };
     View_CubeVizModule_Footer.prototype.onClick_permaLinkButton = function (event) {
         this.changePermaLinkButton();
@@ -1454,7 +1468,7 @@ var View_CubeVizModule_Footer = (function (_super) {
             var position = $("#cubeviz-footer-permaLinkButton").position();
             $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);
             var link = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-            var url = $("<a></a>").attr("href", link).attr("target", "_self").html($("#cubeviz-footer-permaLink").html());
+            var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
             $("#cubeviz-footer-permaLinkMenu").animate({
                 width: "toggle"
             }, 450);
@@ -1684,11 +1698,6 @@ var View_IndexAction_Visualization = (function (_super) {
         var offset = $(this.attachedTo).offset();
         $(this.attachedTo).css("height", $(window).height() - offset.top - 60);
         switch(type) {
-            case "CubeViz": {
-                console.log("render cubeviz visz");
-                break;
-
-            }
             default: {
                 if(false === _.isUndefined(this.app._.generatedVisualization)) {
                     this.app._.generatedVisualization.destroy();
@@ -1747,6 +1756,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onBeforeClick_selectorItem");
         var prevClass = "";
         var selectorItemDiv = null;
+        var self = this;
 
         if(true === _.isUndefined($(event.target).data("class"))) {
             selectorItemDiv = $($(event.target).parent());
@@ -1765,6 +1775,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
             this.showMenuDongle(selectorItemDiv);
             this.triggerGlobalEvent("onChange_visualizationClass");
+            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.ui, "ui", function (updatedUiHash) {
+                self.app._.backend.uiHash = updatedUiHash;
+            });
         }
         this.triggerGlobalEvent("onAfterClick_selectorItem");
     };

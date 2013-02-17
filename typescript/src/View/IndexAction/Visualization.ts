@@ -161,12 +161,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
          */
         switch ( type ) 
         {
-            case "CubeViz":
-                
-                console.log("render cubeviz visz");
-                
-                break;
-                
             default: // HighCharts
                 
                 // if chart was created before, first destroy this instance

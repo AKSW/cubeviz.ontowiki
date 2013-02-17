@@ -24,6 +24,10 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             {
                 name:    "onStart_application",
                 handler: this.onStart_application
+            },
+            {
+                name:    "onBeforeClick_selectorItem",
+                handler: this.onBeforeClick_selectorItem
             }
         ]);
     }
@@ -74,16 +78,14 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
      *
      */
     public initialize() 
-    {        
-        this.render();
-    }
-    
-    /**
-     *
-     */
-    public onChange_selectedDS()
     {
-        this.onAfterChange_selectedDSD();
+        // save link title
+        this.collection.add({ 
+            id: "cubeviz-footer-permaLink", 
+            html: $("#cubeviz-footer-permaLink").html()
+        });
+        
+        this.render();
     }
     
     /**
@@ -95,6 +97,30 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         if(false === _.isUndefined(this.collection.get("buttonVal"))){
             this.changePermaLinkButton();
         }
+    }
+    
+    /**
+     *
+     */
+    public onBeforeClick_selectorItem() 
+    {
+        if(true == _.isUndefined(this.collection.get("buttonVal"))) {}
+        
+        // We see the link, so transform it back to the Permalink button,
+        // we saw before.
+        else {
+            var value:string = this.collection.get("buttonVal").value;
+            this.collection.remove("buttonVal");
+            this.closeLink(value);
+        }
+    }
+    
+    /**
+     *
+     */
+    public onChange_selectedDS()
+    {
+        this.onAfterChange_selectedDSD();
     }
     
     /**
@@ -207,12 +233,12 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                                + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
                                + "&cv_dataHash=" + self.app._.backend.dataHash
                                + "&cv_uiHash=" + self.app._.backend.uiHash;
-                        
+                               
                     // build ahref + link including the permalink
                     var url = $("<a></a>")
                         .attr ("href", link)
                         .attr ("target", "_self")
-                        .html ($("#cubeviz-footer-permaLink").html ());
+                        .html (self.collection.get("cubeviz-footer-permaLink").html);
                         
                     $("#cubeviz-footer-permaLinkMenu")
                         .animate({width:"toggle"},450);

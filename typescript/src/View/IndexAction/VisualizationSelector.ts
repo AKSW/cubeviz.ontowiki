@@ -86,7 +86,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onBeforeClick_selectorItem");
         
         var prevClass:string = "",
-            selectorItemDiv:any = null;
+            selectorItemDiv:any = null,
+            self = this;
         
         /**
          * Extract associated class
@@ -140,6 +141,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
              * Trigger global event
              */
             this.triggerGlobalEvent("onChange_visualizationClass");
+            
+            // update link code
+            CubeViz_ConfigurationLink.save(
+                this.app._.backend.url,
+                this.app._.ui,
+                "ui",
+                function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
+            );
         }
         
         this.triggerGlobalEvent("onAfterClick_selectorItem");
