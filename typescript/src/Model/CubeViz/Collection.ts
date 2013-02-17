@@ -139,8 +139,27 @@ class CubeViz_Collection
      * Size of the collection
      * @param number Size.
      */
-    public size() : number
+    public size () : number
     {
         return _.size(this._);
+    }
+    
+    /**
+     *
+     */
+    public sortAscendingBy (key:string) 
+    {
+        var a:string = "", b:string = "";
+        
+        this._.sort(function(a, b) {
+            try{
+                a = a[key].toUpperCase();
+                b = b[key].toUpperCase();
+                return (a < b) ? -1 : (a > b) ? 1 : 0;
+            } catch(e) {
+                console.log("for key: " + key);
+                console.log(e);
+            }
+        });
     }
 }
