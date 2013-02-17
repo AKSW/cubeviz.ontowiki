@@ -1370,7 +1370,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         if(true == _.isUndefined(this.collection.get("buttonVal"))) {
             this.collection.add({
                 id: "buttonVal",
-                value: $("#cubeviz-footer-permaLinkButton").attr("value").toString()
+                value: $("#cubeviz-footer-permaLinkButton").html().toString().trim()
             });
             this.showLink(">>");
         } else {
@@ -1383,7 +1383,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         $("#cubeviz-footer-permaLinkMenu").fadeOut(450, function () {
             $("#cubeviz-footer-permaLinkButton").animate({
                 width: 75
-            }, 450).attr("value", label);
+            }, 450).html(label);
         });
     };
     View_CubeVizModule_Footer.prototype.initialize = function () {
@@ -1431,8 +1431,8 @@ var View_CubeVizModule_Footer = (function (_super) {
     };
     View_CubeVizModule_Footer.prototype.showLink = function (label) {
         var self = this;
-        $("#cubeviz-footer-permaLinkButton").attr("value", label).animate({
-            width: 31
+        $("#cubeviz-footer-permaLinkButton").html(label).animate({
+            width: 18
         }, 450, "linear", function () {
             var position = $("#cubeviz-footer-permaLinkButton").position();
             $("#cubeviz-footer-permaLinkMenu").css("top", position.top + 2).css("left", position.left + 32);

@@ -11,3 +11,14 @@
     min-width: 100%; 
     max-width: 100%;
 }
+
+#cubeviz-footer-permaLink
+{
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+#cubeviz-footer-permaLinkButton
+{
+    font-weight: bold;
+}

@@ -42,7 +42,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             // remember old perma link button label, because of the language
             this.collection.add({
                 id: "buttonVal", 
-                value: $("#cubeviz-footer-permaLinkButton").attr("value").toString()
+                value: $("#cubeviz-footer-permaLinkButton").html().toString().trim()
             });
             this.showLink(">>");
             
@@ -58,13 +58,14 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     /**
      *
      */
-    public closeLink(label:string) {
+    public closeLink(label:string) 
+    {
         $("#cubeviz-footer-permaLinkMenu").fadeOut ( 
             450,
             function () {
                 $("#cubeviz-footer-permaLinkButton")
                     .animate({width:75}, 450)
-                    .attr("value", label);
+                    .html(label);
             }
         );
     }
@@ -189,9 +190,9 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         var self = this;
         
         $("#cubeviz-footer-permaLinkButton")
-            .attr ( "value", label)
+            .html(label)
             .animate(
-                { width: 31 }, 
+                { width: 18 }, 
                 450, 
                 "linear",
                 function() {                        
@@ -207,6 +208,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                                + "&cv_dataHash=" + self.app._.backend.dataHash
                                + "&cv_uiHash=" + self.app._.backend.uiHash;
                         
+                    // build ahref + link including the permalink
                     var url = $("<a></a>")
                         .attr ("href", link)
                         .attr ("target", "_self")
