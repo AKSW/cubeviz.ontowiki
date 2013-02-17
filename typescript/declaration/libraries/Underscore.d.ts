@@ -187,7 +187,7 @@ interface UnderscoreStatic {
     *****/
     
     // Underscore.string
-    isBlank(str:string) : bool;
+    str: any;
 }
 
 declare var _: UnderscoreStatic;

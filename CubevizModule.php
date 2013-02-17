@@ -66,12 +66,15 @@ class CubevizModule extends OntoWiki_Module
          * Including javascript files for this action
          */
         $this->view->headScript()
-            ->prependFile ($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
-            ->prependFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
-            ->prependFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
-            ->prependFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
-            ->prependFile ($baseJavascriptPath. 'Main.js',                          'text/javascript')
-            ->prependFile ($basePath.           'ChartConfig.js',                   'text/javascript');
+            ->appendFile ($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
+            ->appendFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
+            
+            ->appendFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
+            ->appendFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
+            ->appendScript ('_.mixin(_.str.exports());') // for underscore.string
+            
+            ->appendFile ($baseJavascriptPath. 'Main.js',                          'text/javascript')
+            ->appendFile ($basePath.           'ChartConfig.js',                   'text/javascript');
             
         // If this module is in the development context
         if('development' === $this->_privateConfig->get('context')) {
@@ -91,7 +94,6 @@ class CubevizModule extends OntoWiki_Module
             ->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/dataStructureDefinition.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/footer.css');
-        
         
         /**
          * Model information
