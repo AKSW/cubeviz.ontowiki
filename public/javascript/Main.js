@@ -1297,12 +1297,12 @@ var View_CubeVizModule_Component = (function (_super) {
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
-        DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url, function (newEntities) {
-            self.app._.data.retrievedObservations = newEntities;
-            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                self.app._.backend.dataHash = updatedDataHash;
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
+            DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url, function (newEntities) {
+                self.app._.data.retrievedObservations = newEntities;
                 callback();
             });
+            this.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_CubeVizModule_Component.prototype.onComplete_loadDS = function (event, data) {

@@ -420,22 +420,23 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
             getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
-        // based on updatedLinkCode, load new observations
-        DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url,
-            function(newEntities){
-                
-                // save new observations
-                self.app._.data.retrievedObservations = newEntities;
-        
-                CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url,
-                    self.app._.data,
-                    "data",
-                    function(updatedDataHash){             
-                        self.app._.backend.dataHash = updatedDataHash;            
+        // update link code
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.data, "data",
+            
+            // based on updatedLinkCode, load new observations
+            function(updatedDataHash){            
+                DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url,
+                    function(newEntities){
+                        
+                        // save new observations
+                        self.app._.data.retrievedObservations = newEntities;
+                        
                         callback();
                     }
                 );
+                
+                this.app._.backend.dataHash = updatedDataHash;
             }
         );
     }
