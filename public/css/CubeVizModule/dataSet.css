@@ -7,8 +7,30 @@
 
 #cubeviz-dataSet-list
 {
-    margin-top: 6px;
-    min-width: 242px;
-    max-width: 242px;
-    width: 242px;    
+    font-size: 12px;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    background: #f9f9f9;
+    color: #000;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 0.5em;
+    vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
+    -webkit-appearance: menulist;
+    box-sizing: border-box;
+    -webkit-box-align: center;
+    border-image: initial;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    text-align: start;
+    -webkit-writing-mode: horizontal-tb;  
 }
