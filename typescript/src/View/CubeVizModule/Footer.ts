@@ -151,7 +151,7 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                 DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url,
                     function(newEntities){
                         // save new observations
-                        self.app._.data.retrievedObservations = newEntities;
+                        self.app._.backend.retrievedObservations = newEntities;
                 
                         // update link code
                         CubeViz_ConfigurationLink.save(

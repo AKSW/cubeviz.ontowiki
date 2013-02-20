@@ -1248,7 +1248,7 @@ var View_CubeVizModule_Component = (function (_super) {
 
             }
             case "observation count": {
-                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(listItems, dimensionTypeUrl, this.app._.data.retrievedObservations);
+                modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(listItems, dimensionTypeUrl, this.app._.backend.retrievedObservations);
                 break;
 
             }
@@ -1299,7 +1299,7 @@ var View_CubeVizModule_Component = (function (_super) {
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
             DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url, function (newEntities) {
-                self.app._.data.retrievedObservations = newEntities;
+                self.app._.backend.retrievedObservations = newEntities;
                 callback();
             });
             self.app._.backend.dataHash = updatedDataHash;
@@ -1309,9 +1309,7 @@ var View_CubeVizModule_Component = (function (_super) {
         this.onChange_selectedDS(event, data);
     };
     View_CubeVizModule_Component.prototype.onComplete_loadObservations = function (event, updatedRetrievedObservations) {
-        console.log("updatedRetrievedObservations");
-        console.log(updatedRetrievedObservations);
-        this.app._.data.retrievedObservations = updatedRetrievedObservations;
+        this.app._.backend.retrievedObservations = updatedRetrievedObservations;
     };
     View_CubeVizModule_Component.prototype.onStart_application = function () {
         this.initialize();
@@ -1438,7 +1436,7 @@ var View_CubeVizModule_Footer = (function (_super) {
         } else {
             if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
                 DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url, function (newEntities) {
-                    self.app._.data.retrievedObservations = newEntities;
+                    self.app._.backend.retrievedObservations = newEntities;
                     CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
                         window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
                     });
@@ -1626,7 +1624,7 @@ var View_IndexAction_Legend = (function (_super) {
         var self = this;
 
         this.displayDataSet(this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
-        this.collection.reset("observationLabel").addList(this.generateList(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
+        this.collection.reset("observationLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
         this.collection.sortAscendingBy("observationLabel");
         this.displayList(this.collection._);
         this.bindUserInterfaceEvents({
@@ -1677,7 +1675,7 @@ var View_IndexAction_Visualization = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Visualization.prototype.render = function () {
-        if(1 <= _.size(this.app._.data.retrievedObservations)) {
+        if(1 <= _.size(this.app._.backend.retrievedObservations)) {
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
@@ -1707,7 +1705,7 @@ var View_IndexAction_Visualization = (function (_super) {
                 }
                 var hC = new CubeViz_Visualization_HighCharts();
                 var chart = hC.load(this.app._.ui.visualization.class);
-                chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
+                chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
                 this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
                 break;
 
@@ -1796,12 +1794,12 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();
-        if(0 < _.size(this.app._.data.retrievedObservations)) {
+        if(0 < _.size(this.app._.backend.retrievedObservations)) {
             this.initialize();
         }
     };
     View_IndexAction_VisualizationSelector.prototype.onStart_application = function () {
-        if(0 < _.size(this.app._.data.retrievedObservations)) {
+        if(0 < _.size(this.app._.backend.retrievedObservations)) {
             this.initialize();
         }
     };

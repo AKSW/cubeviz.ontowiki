@@ -115,19 +115,28 @@ class CubeViz_ViewHelper
                 . md5(json_encode($config['ui']));
 
             $config['backend'] = array(
-                'context'           => $context, 
-                'database'          => $backend,
-                'dataHash'          => $newDataHash,
-                'imagesPath'        => $baseImagesPath,
-                'modelUrl'          => $modelIri,
-                'uiHash'            => $newUiHash,
-                'uiParts'           => array(
-                    'module'        => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizModuleLoaded),
-                    'index'         => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
+                'context'               => $context, 
+                'database'              => $backend,
+                'dataHash'              => $newDataHash,
+                'imagesPath'            => $baseImagesPath,
+                'modelUrl'              => $modelIri,
+                'uiHash'                => $newUiHash,
+                'uiParts'               => array(
+                    'module'            => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizModuleLoaded),
+                    'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
-                'url'               => $staticUrlBase . 'cubeviz/',
-                'sparqlEndpoint'    => 'local'
+                'retrievedObservations' => array(),
+                'sparqlEndpoint'        => 'local',
+                'url'                   => $staticUrlBase . 'cubeviz/'
             );
+            
+            // load observations related to given data
+            $query = new DataCube_Query($model);
+            
+            $config['backend']['retrievedObservations'] = $query->getObservations(array(
+                'selectedComponents' => $config['data']['selectedComponents'],
+                'selectedDS' => array('url' => $config['data']['selectedDS']['url'])
+            ));
                 
             CubeViz_ViewHelper::$isCubeVizAppLoaded = true;
             

@@ -327,7 +327,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
                     listItems,
                     dimensionTypeUrl,
-                    this.app._.data.retrievedObservations
+                    this.app._.backend.retrievedObservations
                 );
                 break;
                 
@@ -430,7 +430,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     function(newEntities){
                         
                         // save new observations
-                        self.app._.data.retrievedObservations = newEntities;
+                        self.app._.backend.retrievedObservations = newEntities;
                         
                         callback();
                     }
@@ -455,9 +455,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onComplete_loadObservations(event, updatedRetrievedObservations) 
     {
-        console.log("updatedRetrievedObservations");
-        console.log(updatedRetrievedObservations);
-        this.app._.data.retrievedObservations = updatedRetrievedObservations;
+        this.app._.backend.retrievedObservations = updatedRetrievedObservations;
     }
     
     /**

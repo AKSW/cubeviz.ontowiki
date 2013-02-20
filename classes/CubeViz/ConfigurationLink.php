@@ -165,15 +165,6 @@ class CubeViz_ConfigurationLink
             }
         }
         
-        // if no retrievedObservations were selected
-        if(0 === count($config['retrievedObservations'])){
-            
-            $config['retrievedObservations'] = $query->getObservations(array(
-                'selectedComponents' => $config['selectedComponents'],
-                'selectedDS' => array('url' => $config['selectedDS']['url'])
-            ));
-        }
-        
         return $config;
     }
     
@@ -234,8 +225,7 @@ class CubeViz_ConfigurationLink
                     'selectedComponents'            => array(
                         'dimensions'                => array(),
                         'measures'                  => array()
-                    ),
-                    'retrievedObservations'         => array()
+                    )
                 ), $model);                
                 
                 $this->write($config, 'data');
@@ -253,7 +243,7 @@ class CubeViz_ConfigurationLink
                     ),
                     // will contain information/settings for each visualization class
                     'visualizationSettings'         => array(
-                        // dirty hack, without it, jQuery does not transmit empty array
+                        // TODO: dirty hack, without it, jQuery does not transmit empty array
                         0                           => null
                     )
                 );

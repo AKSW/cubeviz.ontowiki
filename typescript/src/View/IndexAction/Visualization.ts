@@ -87,7 +87,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public render() 
     {
         // If at least one observation was retrieved
-        if ( 1 <= _.size(this.app._.data.retrievedObservations) ) {
+        if ( 1 <= _.size(this.app._.backend.retrievedObservations) ) {
             
             this.renderChart();
         } 
@@ -176,7 +176,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 // init chart instance
                 chart.init(
                     visualizationSetting,
-                    this.app._.data.retrievedObservations,
+                    this.app._.backend.retrievedObservations,
                     this.app._.data.selectedComponents.dimensions,
                     CubeViz_Visualization_Controller.getOneElementDimensions (
                         this.app._.data.selectedComponents.dimensions

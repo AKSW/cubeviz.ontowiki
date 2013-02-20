@@ -219,7 +219,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                      
         // read all observations and generates a list of it
         this.collection.reset("observationLabel").addList(this.generateList(
-            this.app._.data.retrievedObservations,
+            this.app._.backend.retrievedObservations,
             this.app._.data.selectedComponents.dimensions,
             selectedMeasureUri
         ));
