@@ -1492,7 +1492,6 @@ var View_IndexAction_Header = (function (_super) {
         return this;
     };
     View_IndexAction_Header.prototype.initialize = function () {
-        var self = this;
         this.render();
     };
     View_IndexAction_Header.prototype.onClick_questionMark = function () {
@@ -1505,12 +1504,37 @@ var View_IndexAction_Header = (function (_super) {
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-index-headerDialogBox"), {
             closeOnEscape: true,
             showCross: true,
-            width: 400
+            width: 550
         });
+        this.renderHeader();
+        this.renderDialogBox();
         this.bindUserInterfaceEvents({
             "click #cubeviz-index-headerQuestionMarkHeadline": this.onClick_questionMark
         });
         return this;
+    };
+    View_IndexAction_Header.prototype.renderDialogBox = function () {
+        var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text());
+        var modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        $("#cubeviz-index-headerDialogBox").html(headerDialogHead({
+            label: modelLabel
+        }));
+        var entryTpl = _.template($("#cubeviz-index-tpl-headerDialogBoxEntry").text());
+        var htmlModelInformation = "";
+        _.each(this.app._.backend.modelInformation, function (entry) {
+            htmlModelInformation += entryTpl({
+                predicateLabel: entry.predicateLabel,
+                objectContent: entry.content
+            });
+        });
+        $("#cubeviz-index-headerDialogBoxModelInformation").html(htmlModelInformation);
+    };
+    View_IndexAction_Header.prototype.renderHeader = function () {
+        var modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        var headerTpl = _.template($("#cubeviz-index-tpl-header").text());
+        $("#cubeviz-index-header").html(headerTpl({
+            modelLabel: modelLabel
+        }));
     };
     return View_IndexAction_Header;
 })(CubeViz_View_Abstract);

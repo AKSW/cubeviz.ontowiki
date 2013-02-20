@@ -66,8 +66,9 @@ class CubevizController extends OntoWiki_Controller_Component {
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);
-                
-        $this->view->cubeVizModelInformation = $modelInformation;
+        $modelInformation ['rdfs:label'] = true === isset($modelInformation ['rdfs:label'])
+            ? $modelInformation ['rdfs:label']
+            : $modelIri;
             
         /**
          * Set view and some of its properties.
@@ -87,13 +88,13 @@ class CubevizController extends OntoWiki_Controller_Component {
             $model,
             $this->_owApp->getConfig()->store->backend,
             $this->_owApp->erfurt->getCacheDir(),
-            CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri),
             $this->_privateConfig->get('context'),
             $modelIri,
             $this->_config->staticUrlBase,
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),
-            $this->_request->getParam ('cv_uiHash') 
+            $this->_request->getParam ('cv_uiHash'),
+            $modelInformation
         );
         
         if(null !== $config) {

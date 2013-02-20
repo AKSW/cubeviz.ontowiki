@@ -109,13 +109,12 @@ class CubevizModule extends OntoWiki_Module
             $model,
             $this->_owApp->getConfig()->store->backend,
             $this->_owApp->erfurt->getCacheDir(),
-            CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri),
             $this->_privateConfig->get('context'),
             $modelIri,
             $this->_config->staticUrlBase,
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),
-            $this->_request->getParam ('cv_uiHash') 
+            $this->_request->getParam ('cv_uiHash')
         );
         
         if(null !== $config) {

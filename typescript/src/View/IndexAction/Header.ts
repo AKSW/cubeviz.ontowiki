@@ -40,9 +40,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      *
      */
     public initialize() 
-    {        
-        var self = this;
-        
+    {
         this.render();
     }
 
@@ -70,8 +68,14 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(
             $("#cubeviz-index-headerDialogBox"),
-            {closeOnEscape: true, showCross: true, width: 400}
+            {closeOnEscape: true, showCross: true, width: 550}
         );
+        
+        // render header with model label + icon, to open dialog
+        this.renderHeader();
+        
+        // render dialog with information about the model
+        this.renderDialogBox();
         
         /**
          * Delegate events to new items of the template
@@ -81,5 +85,49 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         });
         
         return this;
+    }
+    
+    /**
+     *
+     */
+    public renderDialogBox() 
+    {
+        // 
+        var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text());
+        var modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        
+        $("#cubeviz-index-headerDialogBox").html(headerDialogHead({
+            label: modelLabel
+        }));
+        
+        // build list with model information
+        var entryTpl = _.template($("#cubeviz-index-tpl-headerDialogBoxEntry").text());
+       
+        var htmlModelInformation = "";
+       
+        _.each(this.app._.backend.modelInformation, function(entry){
+            htmlModelInformation += entryTpl({
+                predicateLabel: entry.predicateLabel,
+                objectContent: entry.content
+            });
+        });
+       
+        $("#cubeviz-index-headerDialogBoxModelInformation").html(
+            htmlModelInformation
+        );
+    }
+    
+    /**
+     *
+     */
+    public renderHeader() 
+    {
+        var modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        
+        var headerTpl = _.template($("#cubeviz-index-tpl-header").text());
+        
+        $("#cubeviz-index-header").html(headerTpl({
+            modelLabel: modelLabel
+        }));
     }
 }

@@ -28,42 +28,34 @@ class CubeViz_ViewHelper
     {
         $modelResource = new OntoWiki_Model_Resource($modelStore, $model, $modelIri);
         $modelResource = $modelResource->getValues();
-        
-        $usedPredicates = array(
-            'dc:creator', 'dc:description', 'rdfs:label', 'doap:license',
-            'doap:revision', 'doap:shortdesc'
-        );
-        
-        // CubeViz_Array is a simple implementation of ArrayAccess interface
-        // It allows you to set a default which is used if the value you want
-        // to access is not set
-        $modelInformation = new CubeViz_Array('');
-        $modelInformation['uri'] = $modelIri;
+        $titleHelper = new OntoWiki_Model_TitleHelper($model);
+
+        $modelInformation = array();
         
         // if model resource contains further information about the model
-        if(true === isset($modelResource [$modelIri])
-           && is_array($modelResource [$modelIri])) {
-               
-            // Build array modelInformation which contains exactly the predicates from
-            // $usedPredicates as keys and the content as value.
-            foreach ($modelResource [$modelIri] as $predicateUri => $ele) {
-                $compactPredicateUri = OntoWiki_Utils::compactUri($predicateUri);
-                if(true == in_array($compactPredicateUri, $usedPredicates)) {
-                    $modelInformation [$compactPredicateUri] = 
-                        $modelResource [$modelIri][$predicateUri][0]['content'];
-                }
-                if(false === isset($modelInformation [$compactPredicateUri])){
-                    $modelInformation [$compactPredicateUri] = '';
+        if (true === isset($modelResource [$modelIri])){
+            
+            // just add all used predicates to title helper, to get
+            // the titles later on
+            foreach ($modelResource [$modelIri] as $predicateUri => $object) {
+                $titleHelper->addResource($predicateUri);
+            }
+            
+            // now build model information array
+            foreach ($modelResource [$modelIri] as $predicateUri => $object) {
+
+                // set predicate label
+                $modelInformation[$predicateUri] = array (
+                    'predicateLabel' => $titleHelper->getTitle($predicateUri)
+                );
+                
+                // choose type of content (uri or literal)
+                if (true === isset($object[0]['content'])) {
+                    $modelInformation[$predicateUri]['content'] = $object[0]['content'];
+                } else {
+                    $modelInformation[$predicateUri]['content'] = $object[0]['uri'];
                 }
             }
-        }
-        
-        // if no title was set, use title helper
-        if(false === isset($modelInformation['rdfs:label'])
-           || '' == $modelInformation['rdfs:label']) {
-            $th = new OntoWiki_Model_TitleHelper($model);
-            $th->addResource($modelIri);
-            $modelInformation['rdfs:label'] = $th->getTitle($modelIri);
         }
         
         return $modelInformation;
@@ -73,11 +65,14 @@ class CubeViz_ViewHelper
      * 
      */
     public static function initApp(&$view, &$model, $backend, $cacheDir, 
-        $modelInformation, $context, $modelIri, $staticUrlBase, $baseImagesPath, 
-        $dataHash, $uiHash) 
+        $context, $modelIri, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash) 
     {
         // if cubeVizApp was not loaded yet
-        if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {               
+        if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
+            
+            // get information about the selected model
+            $modelStore = $model->getStore();
+            $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);             
             
             /**
              * Set view and some of its properties.
@@ -119,6 +114,7 @@ class CubeViz_ViewHelper
                 'database'              => $backend,
                 'dataHash'              => $newDataHash,
                 'imagesPath'            => $baseImagesPath,
+                'modelInformation'      => $modelInformation,
                 'modelUrl'              => $modelIri,
                 'uiHash'                => $newUiHash,
                 'uiParts'               => array(

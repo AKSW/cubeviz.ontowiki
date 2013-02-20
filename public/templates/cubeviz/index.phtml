@@ -3,7 +3,7 @@
     cubeVizApp._.backend.uiParts.index.isLoaded = true;
     
     cubeVizApp
-        .add("View_IndexAction_Header", "")
+        .add("View_IndexAction_Header", "#cubeviz-index-headerDialogBox")
         .add("View_IndexAction_Visualization", "#cubeviz-index-visualization")
         .add("View_IndexAction_VisualizationSelector", "#cubeviz-visualizationselector-menuItems")
         .add("View_IndexAction_Legend", "");
@@ -11,13 +11,7 @@
 
 <div style="margin-left: 6px; margin-top: 10px;">
     <!-- Header -->
-    <h2 id="cubeviz-index-header">
-        CubeViz - Visualization of the <?php echo $this->cubeVizModelInformation['rdfs:label']; ?>
-        &nbsp;
-        <i class="icon-lightbulb"
-           id="cubeviz-index-headerQuestionMarkHeadline" 
-           title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
-    </h2>
+    <h2 id="cubeviz-index-header"></h2>
 
     <!-- Visualization -->
     <div id="cubeviz-index-visualization"></div>
@@ -189,37 +183,32 @@
 </div>
 
 <!-- 
+    Header
+-->
+<script id="cubeviz-index-tpl-header" type="text/template">
+    CubeViz - Visualization of the <%= modelLabel %>
+    &nbsp;
+    <i class="icon-lightbulb cubeviz-clickable"
+       id="cubeviz-index-headerQuestionMarkHeadline" 
+       title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+</script>
+
+<!-- 
     Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
 -->
-<div id="cubeviz-index-headerDialogBox">
-    
-    <!-- Label -->
-    <h4><?php echo $this->cubeVizModelInformation ['rdfs:label']; ?></h4>
-    
-    <!-- Short description -->
-    <div style="font-size: 14px;"><?php echo $this->cubeVizModelInformation ['doap:shortdesc']; ?></div>
-        
-    <!-- Description -->
-    <small><?php echo $this->cubeVizModelInformation ['dc:description']; ?></small>
-    
+<div id="cubeviz-index-headerDialogBox"></div>
+
+<script id="cubeviz-index-tpl-headerDialogBoxHead" type="text/template">
+    <h3><%= label %></h3>
     <br/>
-    <br/>
-    <div style="font-size: 14px;">Information:</div>
-    
-    <ul class="cubeviz-ul-basic">
-        <!-- Creator -->
-        <li>
-            <?php echo $this->cubeVizModelInformation ['dc:creator']; ?>
-        </li>
-    
-        <!-- Revision -->
-        <li>
-            Revision: <?php echo $this->cubeVizModelInformation ['doap:revision']; ?>
-        </li>
-    
-        <!-- Document -->
-        <li>
-            <?php echo $this->cubeVizModelInformation ['doap:license']; ?>
-        </li>
-    </ul>
-</div>
+    <ul id="cubeviz-index-headerDialogBoxModelInformation"></ul>
+</script>
+
+<script id="cubeviz-index-tpl-headerDialogBoxEntry" type="text/template">
+    <li><nobr>
+        <div class="cubeviz-index-headerDialogBoxEntryLabel">
+            <%= predicateLabel %></div>
+        <div class="cubeviz-index-headerDialogBoxEntryContent">
+            <%= objectContent %></div>
+    </nobr></li>
+</script>
