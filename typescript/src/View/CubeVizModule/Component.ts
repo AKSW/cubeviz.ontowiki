@@ -436,7 +436,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     }
                 );
                 
-                this.app._.backend.dataHash = updatedDataHash;
+                self.app._.backend.dataHash = updatedDataHash;
             }
         );
     }

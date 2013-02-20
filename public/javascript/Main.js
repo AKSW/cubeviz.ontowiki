@@ -1302,7 +1302,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 self.app._.data.retrievedObservations = newEntities;
                 callback();
             });
-            this.app._.backend.dataHash = updatedDataHash;
+            self.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_CubeVizModule_Component.prototype.onComplete_loadDS = function (event, data) {
