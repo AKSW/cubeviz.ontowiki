@@ -62,6 +62,7 @@ var CubeViz_Collection = (function () {
     };
     CubeViz_Collection.prototype.each = function (func) {
         _.each(this._, func);
+        return this;
     };
     CubeViz_Collection.prototype.exists = function (id) {
         return false === _.isUndefined(this.get(id));
@@ -1601,7 +1602,8 @@ var View_IndexAction_Legend = (function (_super) {
             html = "";
             dimensionElementsCopy.reset("propertyLabel").addList(JSON.parse(JSON.stringify(dimension.elements))).sortAscendingBy("propertyLabel").each(function (dimensionElement) {
                 $(dimensionElementList).append(tplDimensionEntry({
-                    label: dimensionElement.propertyLabel
+                    label: dimensionElement.propertyLabel,
+                    url: dimensionElement.property
                 }));
             });
         });

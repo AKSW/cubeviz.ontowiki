@@ -72,6 +72,7 @@ var CubeViz_Collection = (function () {
     };
     CubeViz_Collection.prototype.each = function (func) {
         _.each(this._, func);
+        return this;
     };
     CubeViz_Collection.prototype.exists = function (id) {
         return false === _.isUndefined(this.get(id));

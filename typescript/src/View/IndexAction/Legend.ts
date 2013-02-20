@@ -113,7 +113,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 .each(function(dimensionElement){
                     // add li entry
                     $(dimensionElementList).append(tplDimensionEntry({
-                        label: dimensionElement.propertyLabel
+                        label: dimensionElement.propertyLabel,
+                        url: dimensionElement.property
                     }));
                 });
         });
