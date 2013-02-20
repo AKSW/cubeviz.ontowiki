@@ -1532,6 +1532,9 @@ var View_IndexAction_Legend = (function (_super) {
         ]);
     }
     View_IndexAction_Legend.prototype.destroy = function () {
+        $("#cubeviz-legend-definitionsAndScopesButton").off();
+        $("#cubeviz-legend-sortByTitle").off();
+        $("#cubeviz-legend-sortByValue").off();
         $("#cubeviz-legend-definitionsAndScopes").slideUp("slow");
         $("#cubeviz-legend-dataSet").html("");
         $("#cubeviz-legend-observations").html("");

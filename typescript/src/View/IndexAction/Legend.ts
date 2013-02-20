@@ -30,6 +30,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public destroy() : CubeViz_View_Abstract
     {
+        // remove event handler
+        $("#cubeviz-legend-definitionsAndScopesButton").off();
+        $("#cubeviz-legend-sortByTitle").off();                
+        $("#cubeviz-legend-sortByValue").off();
+        
         // slide up box
         $("#cubeviz-legend-definitionsAndScopes").slideUp("slow");
         
@@ -194,7 +199,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      *
      */
     public render() : CubeViz_View_Abstract
-    {     
+    {
         var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(
                 this.app._.data.selectedComponents.measures
             ).typeUrl,
