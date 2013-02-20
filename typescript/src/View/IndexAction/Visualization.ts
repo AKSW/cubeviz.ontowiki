@@ -153,7 +153,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         
         var offset:any = $(this.attachedTo).offset();
         $(this.attachedTo).css ( 
-            "height", $(window).height() - offset.top - 60
+            "height", $(window).height() - offset.top - 75
         );  
         
         /**
