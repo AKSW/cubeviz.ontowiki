@@ -60,6 +60,9 @@ var CubeViz_Collection = (function () {
         }
         return self;
     };
+    CubeViz_Collection.prototype.each = function (func) {
+        _.each(this._, func);
+    };
     CubeViz_Collection.prototype.exists = function (id) {
         return false === _.isUndefined(this.get(id));
     };
@@ -103,6 +106,7 @@ var CubeViz_Collection = (function () {
                 console.log(e);
             }
         });
+        return this;
     };
     return CubeViz_Collection;
 })();
@@ -1554,12 +1558,14 @@ var View_IndexAction_Legend = (function (_super) {
         ]);
     }
     View_IndexAction_Legend.prototype.destroy = function () {
-        $("#cubeviz-legend-definitionsAndScopesButton").off();
+        $("#cubeviz-legend-btnShowRetrievedObservations").off();
         $("#cubeviz-legend-sortByTitle").off();
         $("#cubeviz-legend-sortByValue").off();
-        $("#cubeviz-legend-definitionsAndScopes").slideUp("slow");
+        $("#cubeviz-legend-retrievedObservations").slideUp("slow");
+        $("#cubeviz-legend-selectedConfiguration").slideUp("slow");
         $("#cubeviz-legend-dataSet").html("");
         $("#cubeviz-legend-observations").html("");
+        $("#cubeviz-legend-configurationList").html("");
         _super.prototype.destroy.call(this);
         return this;
     };
@@ -1570,11 +1576,34 @@ var View_IndexAction_Legend = (function (_super) {
             url: dsUrl
         }));
     };
-    View_IndexAction_Legend.prototype.displayList = function (list) {
+    View_IndexAction_Legend.prototype.displayRetrievedObservations = function (list) {
         $("#cubeviz-legend-observations").html("");
         var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
         _.each(list, function (obs) {
             $("#cubeviz-legend-observations").append(observationTpl(obs));
+        });
+    };
+    View_IndexAction_Legend.prototype.displaySelectedConfiguration = function (selectedComponentDimensions) {
+        var tplComponentDimension = _.template($("#cubeviz-legend-tpl-componentDimension").text());
+        var tplComponentsList = _.template($("#cubeviz-legend-tpl-componentList").text());
+        var tplDimensionEntry = _.template($("#cubeviz-legend-tpl-componentDimensionEntry").text());
+
+        var dimensionElementList = null;
+        var dimensionElementsCopy = new CubeViz_Collection();
+        var html = "";
+
+        $("#cubeviz-legend-components").html(tplComponentsList());
+        _.each(selectedComponentDimensions, function (dimension) {
+            $("#cubeviz-legend-componentList").append(tplComponentDimension({
+                label: dimension.label
+            }));
+            dimensionElementList = $("#cubeviz-legend-componentList").find(".cubeviz-legend-componentDimensionList").last();
+            html = "";
+            dimensionElementsCopy.reset("propertyLabel").addList(JSON.parse(JSON.stringify(dimension.elements))).sortAscendingBy("propertyLabel").each(function (dimensionElement) {
+                $(dimensionElementList).append(tplDimensionEntry({
+                    label: dimensionElement.propertyLabel
+                }));
+            });
         });
     };
     View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
@@ -1625,15 +1654,20 @@ var View_IndexAction_Legend = (function (_super) {
     };
     View_IndexAction_Legend.prototype.onClick_sortByTitle = function () {
         this.collection.sortAscendingBy("observationLabel");
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
     };
     View_IndexAction_Legend.prototype.onClick_sortByValue = function () {
         this.collection.sortAscendingBy("observationValue");
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
     };
-    View_IndexAction_Legend.prototype.onClick_definitionsAndScopesButton = function (event) {
+    View_IndexAction_Legend.prototype.onClick_btnShowSelectedConfiguration = function (event) {
         event.preventDefault();
-        $("#cubeviz-legend-definitionsAndScopes").slideToggle('slow');
+        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
+        return false;
+    };
+    View_IndexAction_Legend.prototype.onClick_btnShowRetrievedObservations = function (event) {
+        event.preventDefault();
+        $("#cubeviz-legend-retrievedObservations").slideToggle('slow');
         return false;
     };
     View_IndexAction_Legend.prototype.onReRender_visualization = function () {
@@ -1648,11 +1682,13 @@ var View_IndexAction_Legend = (function (_super) {
         var self = this;
 
         this.displayDataSet(this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
+        this.displaySelectedConfiguration(this.app._.data.selectedComponents.dimensions);
         this.collection.reset("observationLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
         this.collection.sortAscendingBy("observationLabel");
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
         this.bindUserInterfaceEvents({
-            "click #cubeviz-legend-definitionsAndScopesButton": this.onClick_definitionsAndScopesButton,
+            "click #cubeviz-legend-btnShowSelectedConfiguration": this.onClick_btnShowSelectedConfiguration,
+            "click #cubeviz-legend-btnShowRetrievedObservations": this.onClick_btnShowRetrievedObservations,
             "click #cubeviz-legend-sortByTitle": this.onClick_sortByTitle,
             "click #cubeviz-legend-sortByValue": this.onClick_sortByValue
         });
@@ -1721,7 +1757,7 @@ var View_IndexAction_Visualization = (function (_super) {
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
         var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 60);
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 75);
         switch(type) {
             default: {
                 if(false === _.isUndefined(this.app._.generatedVisualization)) {

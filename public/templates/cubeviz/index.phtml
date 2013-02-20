@@ -21,27 +21,44 @@
 
     <!-- Legend part -->
     <div id="cubeviz-index-legend">
-        <a class="btn btn-small" id="cubeviz-legend-definitionsAndScopesButton">
-            <i class="icon-chevron-down"></i>
-            <strong>
-                <?php echo $this->_translate->_('Show Definitions And Scores'); ?>
-            </strong>
+        
+        <span style="vertical-align: middle;">
+            <strong>Show Information about</strong> &nbsp;
+        </span>
+        
+        <!-- Information about the components -->
+        <a class="btn btn-small" id="cubeviz-legend-btnShowSelectedConfiguration">
+            <i class="icon-chevron-down"></i> &nbsp;
+            <?php echo $this->_translate->_('Selected Configuration'); ?>
         </a>
         
-        <!-- Data -->
-        <div id="cubeviz-legend-definitionsAndScopes" style="display:none;">
+        &nbsp;
+        
+        <!-- Information about the observations itself -->
+        <a class="btn btn-small" id="cubeviz-legend-btnShowRetrievedObservations">
+            <i class="icon-chevron-down"></i> &nbsp;
+            <?php echo $this->_translate->_('Retrieved Data'); ?>
+        </a>
+        
+        <!-- Selected configuration -->
+        <div id="cubeviz-legend-selectedConfiguration" style="display:none;">
+            <br/>
+            <h2>Selected Axis Elements</h2>
+            <div id="cubeviz-legend-components"></div>
+        </div>
+        
+        <!-- Retrieved observations -->
+        <div id="cubeviz-legend-retrievedObservations" style="display:none;">
             <br/>
             <div id="cubeviz-legend-dataSet"></div>
-            <div style="float: left; width: 70%;">
-                <ul id="cubeviz-legend-observations"></ul>
-            </div>
+            <ul id="cubeviz-legend-observations"></ul>
             <div style="float: right; margin-right: 20px;">
-                    <p>
-                        <a class="btn btn-small" id="cubeviz-legend-sortByTitle">
-                            <strong>Sort by Title</strong></a>
-                        <a class="btn btn-small" id="cubeviz-legend-sortByValue">
-                            <strong>Sort by Value</strong></a>
-                    </p>
+                <p>
+                    <a class="btn btn-small" id="cubeviz-legend-sortByTitle">
+                        <strong>Sort by Title</strong></a>
+                    <a class="btn btn-small" id="cubeviz-legend-sortByValue">
+                        <strong>Sort by Value</strong></a>
+                </p>
             </div>
         </div>
     </div>
@@ -79,58 +96,6 @@
               src="<?php echo $this->cubevizImagesPath; ?>menuDongle.png"/>
     </div>
 </div>
-
-<!--
-    Legend
--->
-<script id="cubeviz-legend-tpl-dataSet" type="text/template">
-    <h3>Data Set: <a href="<%= url %>" target="_blank"><%= label %></a></h3>
-</script>
-
-<script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
-    <a href="<%= url %>" target="_blank"><%= label %></a>
-</script>
-
-<script id="cubeviz-legend-tpl-observation" type="text/template">
-    <li>
-        <span class="cubeviz-legend-observationIcon">
-            <i class="icon-map-marker"></i>
-        </span>
-        <span>
-            <span class="cubeviz-legend-dimensionElements"><%= observationShortLabel %></span>
-            
-            <span class="cubeviz-legend-observationValue">
-                <%= observationValue %>
-            </span>
-            
-            <!--
-            <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
-            -->
-            <br/>
-            <a>Show more information</a> &nbsp;
-            <a href="<%= observationUri %>" target="_blank">Go to source</a>
-        </span>
-    </li>
-</script>
-
-<!-- 
-    Visualization selection menu 
--->
-<script id="cubeviz-visualizationselector-tpl-selectorItem" type="text/template">
-    <a class="btn cubeviz-visualizationselector-selectorItem">
-        <img class="cubeviz-icon-small" 
-             src="<?php echo $this->cubevizImagesPath; ?><%= icon %>"/>
-    </a>
-</script>
-
-<script id="cubeviz-visualizationselector-tpl-menuItem" type="text/template">
-    <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
-        <div style="float:left; margin-left:3px;"><%= label %></div>
-        <div style="float:right">
-            <select class="cubeviz-visualizationselector-menuSelectbox cubeviz-visualizationselector-menuItemValue"></select>
-        </div>
-    </div>
-</script>
 
 <!-- 
     
@@ -194,6 +159,25 @@
 </script>
 
 <!-- 
+    Visualization selection menu 
+-->
+<script id="cubeviz-visualizationselector-tpl-selectorItem" type="text/template">
+    <a class="btn cubeviz-visualizationselector-selectorItem">
+        <img class="cubeviz-icon-small" 
+             src="<?php echo $this->cubevizImagesPath; ?><%= icon %>"/>
+    </a>
+</script>
+
+<script id="cubeviz-visualizationselector-tpl-menuItem" type="text/template">
+    <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
+        <div style="float:left; margin-left:3px;"><%= label %></div>
+        <div style="float:right">
+            <select class="cubeviz-visualizationselector-menuSelectbox cubeviz-visualizationselector-menuItemValue"></select>
+        </div>
+    </div>
+</script>
+
+<!-- 
     Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
 -->
 <div id="cubeviz-index-headerDialogBox"></div>
@@ -211,4 +195,63 @@
         <div class="cubeviz-index-headerDialogBoxEntryContent">
             <%= objectContent %></div>
     </nobr></li>
+</script>
+
+
+<!--
+    Legend
+-->
+<script id="cubeviz-legend-tpl-dataSet" type="text/template">
+    <h3>Data Set: <a href="<%= url %>" target="_blank"><%= label %></a></h3>
+</script>
+
+<script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
+    <a href="<%= url %>" target="_blank"><%= label %></a>
+</script>
+
+<script id="cubeviz-legend-tpl-observation" type="text/template">
+    <li>
+        <span class="cubeviz-legend-observationIcon">
+            <i class="icon-map-marker"></i>
+        </span>
+        <span>
+            <span class="cubeviz-legend-dimensionElements"><%= observationShortLabel %></span>
+            
+            <span class="cubeviz-legend-observationValue">
+                <%= observationValue %>
+            </span>
+            
+            <!--
+            <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
+            -->
+            <br/>
+            <a>Show more information</a> &nbsp;
+            <a href="<%= observationUri %>" target="_blank">Go to source</a>
+        </span>
+    </li>
+</script>
+
+
+<script id="cubeviz-legend-tpl-componentList" type="text/template"> 
+    <ul id="cubeviz-legend-componentList"></ul>
+</script>
+
+<script id="cubeviz-legend-tpl-componentDimension" type="text/template"> 
+    <li class="cubeviz-legend-componentDimensionListEntry">
+        <h3><%= label %></h3>
+        <ul class="cubeviz-legend-componentDimensionList"></ul>
+    </li>
+</script>
+
+<script id="cubeviz-legend-tpl-componentDimensionEntry" type="text/template"> 
+    <li class="cubeviz-legend-componentDimensionEntry">        
+        <span class="cubeviz-legend-observationIcon">
+            <i class="icon-leaf" style="font-size: 11px;"></i>
+        </span>
+        <span>
+            <span style="font-size: 17px;">
+                <%= label %></span>
+            <br/>            
+        </span>
+    </li>
 </script>

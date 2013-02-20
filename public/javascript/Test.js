@@ -70,6 +70,9 @@ var CubeViz_Collection = (function () {
         }
         return self;
     };
+    CubeViz_Collection.prototype.each = function (func) {
+        _.each(this._, func);
+    };
     CubeViz_Collection.prototype.exists = function (id) {
         return false === _.isUndefined(this.get(id));
     };
@@ -113,6 +116,7 @@ var CubeViz_Collection = (function () {
                 console.log(e);
             }
         });
+        return this;
     };
     return CubeViz_Collection;
 })();

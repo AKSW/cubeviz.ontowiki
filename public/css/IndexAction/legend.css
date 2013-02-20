@@ -1,7 +1,56 @@
+#cubeviz-index-legend
+{
+    margin-bottom: 10px;
+}
+
+.cubeviz-legend-componentDimensionList
+{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.cubeviz-legend-componentDimensionListEntry
+{
+    clear: both;
+}
+
+#cubeviz-legend-componentList
+{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.cubeviz-legend-componentDimensionEntry
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 10px;
+    border: 1px solid #BDBDBD;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+        
+    margin-top: 2px;
+    
+    height: auto;
+    min-height: 30px;
+    
+    min-width: 70%;
+    width: 70%;
+    max-width: 70%;
+}
+
 .cubeviz-legend-dimensionElements
 {
     font-size: 17px;
     font-weight: bold;
+}
+
+.cubeviz-legend-dimensionIcon
+{
+    font-size: 11px;
 }
 
 .cubeviz-legend-observationIcon
@@ -17,6 +66,8 @@
     list-style-type: none;
     list-style-position: inside;
     margin-left: 0px;
+    float: left; 
+    width: 70%;
 }
 
 #cubeviz-legend-observations li

@@ -31,16 +31,18 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public destroy() : CubeViz_View_Abstract
     {
         // remove event handler
-        $("#cubeviz-legend-definitionsAndScopesButton").off();
+        $("#cubeviz-legend-btnShowRetrievedObservations").off();
         $("#cubeviz-legend-sortByTitle").off();                
         $("#cubeviz-legend-sortByValue").off();
         
-        // slide up box
-        $("#cubeviz-legend-definitionsAndScopes").slideUp("slow");
+        // slide up boxes
+        $("#cubeviz-legend-retrievedObservations").slideUp("slow");
+        $("#cubeviz-legend-selectedConfiguration").slideUp("slow");
         
-        // empty data container
+        // empty lists
         $("#cubeviz-legend-dataSet").html("");
         $("#cubeviz-legend-observations").html("");
+        $("#cubeviz-legend-configurationList").html("");
         
         super.destroy();
         return this;
@@ -58,7 +60,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public displayList(list:any[]) 
+    public displayRetrievedObservations(list:any[]) : void
     {
         $("#cubeviz-legend-observations").html("");
         
@@ -72,8 +74,56 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
+    public displaySelectedConfiguration(selectedComponentDimensions:Object) : void
+    {
+        var tplComponentDimension:any = _.template($("#cubeviz-legend-tpl-componentDimension").text()),
+            tplComponentsList:any = _.template($("#cubeviz-legend-tpl-componentList").text()),
+            tplDimensionEntry:any = _.template($("#cubeviz-legend-tpl-componentDimensionEntry").text());
+                
+        var dimensionElementList:any = null,
+            dimensionElementsCopy = new CubeViz_Collection (),
+            html:string = "";
+                
+        $("#cubeviz-legend-components").html(tplComponentsList());
+        
+        // go through each dimension
+        _.each(selectedComponentDimensions, function(dimension){
+            $("#cubeviz-legend-componentList").append(tplComponentDimension({
+                label: dimension.label
+            }));
+            
+            dimensionElementList = $("#cubeviz-legend-componentList")
+                .find(".cubeviz-legend-componentDimensionList").last();
+            
+            html = "";
+            
+            // working with copy of dimension elements ...
+            dimensionElementsCopy
+                
+                // clean it from old elements
+                .reset("propertyLabel")
+                
+                // create a copy, avoids changing the source element list
+                .addList(JSON.parse(JSON.stringify(dimension.elements)))
+                
+                // sort label
+                .sortAscendingBy("propertyLabel")
+                            
+                // go through each dimension element
+                .each(function(dimensionElement){
+                    // add li entry
+                    $(dimensionElementList).append(tplDimensionEntry({
+                        label: dimensionElement.propertyLabel
+                    }));
+                });
+        });
+    }
+    
+    /**
+     *
+     */
     public generateList(observations:any[], selectedComponentDimensions:any[], 
-        selectedMeasureUri:string) 
+        selectedMeasureUri:string) : any[]
     {
         var observationLabel = "",
             dimensionElementLabelTpl = _.template(
@@ -153,7 +203,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public onClick_sortByTitle() 
     {
         this.collection.sortAscendingBy ("observationLabel");
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
     }
     
     /**
@@ -162,18 +212,31 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public onClick_sortByValue() 
     {
         this.collection.sortAscendingBy ("observationValue");
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
     }
     
     /**
      *
      */
-    public onClick_definitionsAndScopesButton(event) : bool 
+    public onClick_btnShowSelectedConfiguration(event) : bool 
     {
         event.preventDefault();
         
         // show overview
-        $("#cubeviz-legend-definitionsAndScopes").slideToggle('slow');
+        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
+        
+        return false;
+    }
+    
+    /**
+     *
+     */
+    public onClick_btnShowRetrievedObservations (event) : bool 
+    {
+        event.preventDefault();
+        
+        // show overview
+        $("#cubeviz-legend-retrievedObservations").slideToggle('slow');
         
         return false;
     }
@@ -214,6 +277,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         );
         
         /**
+         * Selected configuration
+         */
+        this.displaySelectedConfiguration( 
+            this.app._.data.selectedComponents.dimensions
+        );
+        
+        /**
          * Observation list 
          */
                      
@@ -228,14 +298,17 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         this.collection.sortAscendingBy ("observationLabel");
         
         // render list in HTML
-        this.displayList(this.collection._);
+        this.displayRetrievedObservations(this.collection._);
         
         /**
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({
-            "click #cubeviz-legend-definitionsAndScopesButton": 
-                this.onClick_definitionsAndScopesButton,
+            "click #cubeviz-legend-btnShowSelectedConfiguration": 
+                this.onClick_btnShowSelectedConfiguration,
+                
+            "click #cubeviz-legend-btnShowRetrievedObservations": 
+                this.onClick_btnShowRetrievedObservations,
                 
             "click #cubeviz-legend-sortByTitle": 
                 this.onClick_sortByTitle,
