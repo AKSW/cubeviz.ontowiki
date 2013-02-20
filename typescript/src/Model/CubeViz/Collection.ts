@@ -76,6 +76,17 @@ class CubeViz_Collection
     }
     
     /**
+     * Executes given func for each item in this._ using Underscorejs's each.
+     * @param func Anonymous function to call for each element.
+     * @return CubeViz_Collection Itself, for chaining.
+     */
+    public each(func) : CubeViz_Collection
+    {
+        _.each(this._, func);
+        return this;
+    }
+    
+    /**
      * Checks if an element with given id exists in this collection.
      * @param id ID of the element to search
      * @return bool True if element exists, false otherwise.
@@ -145,9 +156,11 @@ class CubeViz_Collection
     }
     
     /**
-     *
+     * Sort all entry ascending by a given key.
+     * @param key Name key to sort entries by.
+     * @return CubeViz_Collection Itself, for chaining.
      */
-    public sortAscendingBy (key:string) 
+    public sortAscendingBy (key:string) : CubeViz_Collection
     {
         var a:string = "", b:string = "";
         
@@ -161,5 +174,7 @@ class CubeViz_Collection
                 console.log(e);
             }
         });
+        
+        return this;
     }
 }
