@@ -53,7 +53,7 @@ ex:value a cube:MeasureProperty ;
     rdfs:label "Value"@en .
 
 ex:Germany a ex:Region ;
-    rdfs:label "Germany"@en ;
+    rdfs:label "Germany"@en .
        
 ex:Y2001 a ex:Time ;
     rdfs:label "2001"@en .
