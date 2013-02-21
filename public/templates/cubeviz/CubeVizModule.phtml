@@ -247,9 +247,9 @@
 
 <script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
     <li>
+        <input type="checkbox" name="<%= hashedUri %>" value="<%= uri %>"<%= checked %>/>
         <span style="vertical-align: middle;">
-            <input type="checkbox" name="<%= hashedUri %>" value="<%= uri %>"<%= checked %>/>
+            <span style="font-size: 13px;"><%= label %></span>
         </span>
-        <span style="font-size: 13px;"><%= label %></span>
     </li>
 </script>
