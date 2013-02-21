@@ -60,7 +60,7 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.addList = function (list) {
         var self = this;
         if(true == _.isArray(list)) {
-            $(list).each(function (i, element) {
+            _.each(list, function (element) {
                 self.add(element);
             });
         } else {

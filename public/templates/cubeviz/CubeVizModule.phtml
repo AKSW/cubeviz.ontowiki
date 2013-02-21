@@ -200,8 +200,6 @@
                 / <%= elementCount %>)
             </nobr>
         </div>
-        <small>Explanation text</small>
-        <br/>
         <a class="cubeviz-component-setupComponentOpener">
             <?php echo $this->_translate->_('Select elements of interest'); ?>
         </a>        
@@ -218,18 +216,9 @@
             <img class="cubeviz-icon-small"
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
-        <span style="text-align:left;">
-            <small>
-                dsds dasodk spadk opd kspod kopd ka dopakd opdk podksd posk dspok 
-                ddsds dasodk spadk opd kspod kopd ka dopakd opdk podksd posk 
-                dspok d
-            </small>
-        </span>
         
-        <h3 style="margin-top: 8px;">
-            <%= label %>
-        </h3>      
-        <p>Dimension Meta Information</p>
+        <h2 style="margin-top: 8px;"><%= label %></h2>      
+        
         <br/>
         
         <div class="cubeviz-component-sortButtons" style="float:right;">
@@ -258,7 +247,7 @@
 
 <script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
     <li>
-        <input type="checkbox" name="<%= hashedProperty %>" value="<%= property %>"<%= checked %>/>
-        <span><%= propertyLabel %></span>
+        <input type="checkbox" name="<%= hashedUri %>" value="<%= uri %>"<%= checked %>/>
+        <span><%= label %></span>
     </li>
 </script>

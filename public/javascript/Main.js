@@ -50,7 +50,7 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.addList = function (list) {
         var self = this;
         if(true == _.isArray(list)) {
-            $(list).each(function (i, element) {
+            _.each(list, function (element) {
                 self.add(element);
             });
         } else {
@@ -433,6 +433,8 @@ var CubeViz_Visualization_Controller = (function () {
     }
     CubeViz_Visualization_Controller.getLabelForPropertyUri = function getLabelForPropertyUri(dimensionTypeUrl, propertyUrl, selectedComponentDimensions) {
         var label = propertyUrl;
+        var rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
+
         _.each(selectedComponentDimensions, function (selectedComponentDimension, hashedUrl) {
             if(label !== propertyUrl) {
                 return;
@@ -440,7 +442,7 @@ var CubeViz_Visualization_Controller = (function () {
             if(selectedComponentDimension.typeUrl == dimensionTypeUrl) {
                 _.each(selectedComponentDimension.elements, function (element) {
                     if(element.property == propertyUrl) {
-                        label = element.propertyLabel;
+                        label = element[rdfsLabel];
                     }
                 });
             }
@@ -550,7 +552,6 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
     CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (dsdLabel, dsLabel, oneElementDimensions) {
         var builtTitle = "";
         _.each(oneElementDimensions, function (dimension) {
-            builtTitle += " - " + dimension.elements[0].propertyLabel;
         });
         return dsdLabel + " - " + dsLabel + builtTitle;
     };
@@ -1021,7 +1022,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text());
         var self = this;
 
-        $(this.collection._).each(function (i, element) {
+        this.collection.each(function (element) {
             element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
             list.append(optionTpl(element));
         });
@@ -1152,26 +1153,30 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
-        var componentElements = _.toArray(component.elements);
+        var componentElements = new CubeViz_Collection("__cv_uri");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
         var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.hashedUrl].elements;
         var setElementChecked = null;
+        var wasSomethingSelected = false;
 
-        componentElements.sort(function (a, b) {
-            return a.propertyLabel.toUpperCase().localeCompare(b.propertyLabel.toUpperCase());
-        });
-        _.each(componentElements, function (element) {
+        componentElements.addList(component.elements).sortAscendingBy(componentElements.idKey).each(function (element) {
             setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
-                return dim.property == element.property;
+                return false === _.isUndefined(dim) ? dim.__cv_uri == element.__cv_uri : false;
             });
             if(true === setElementChecked) {
-                element.checked = " checked=\"checked\"";
-            } else {
-                element.checked = "";
+                wasSomethingSelected = true;
             }
-            elementList.append(elementTpl(element));
+            elementList.append(elementTpl({
+                checked: true === setElementChecked ? " checked=\"checked\"" : "",
+                hashedUri: element.__cv_hashedUri,
+                label: element["http://www.w3.org/2000/01/rdf-schema#label"],
+                uri: element.__cv_uri
+            }));
         });
+        if(false === wasSomethingSelected) {
+            $($(elementList.find("li").first()).find("input")).attr("checked", "checked");
+        }
     };
     View_CubeVizModule_Component.prototype.destroy = function () {
         $(this.collection._).each(function (i, c) {

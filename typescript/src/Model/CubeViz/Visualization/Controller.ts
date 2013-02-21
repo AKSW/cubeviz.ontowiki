@@ -98,7 +98,8 @@ class CubeViz_Visualization_Controller
     static getLabelForPropertyUri(dimensionTypeUrl:string, propertyUrl:string, 
         selectedComponentDimensions:any) : string 
     {
-        var label = propertyUrl;
+        var label = propertyUrl,
+            rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
         
         // go through all selected component dimensions 
         _.each(selectedComponentDimensions, function(selectedComponentDimension, hashedUrl){
@@ -113,8 +114,8 @@ class CubeViz_Visualization_Controller
                 
                 // check each dimension element
                 _.each(selectedComponentDimension.elements, function(element){
-                    if ( element.property == propertyUrl ) {
-                        label = element.propertyLabel;
+                    if(element.property == propertyUrl) {
+                        label = element[rdfsLabel];
                     }
                 });
             }

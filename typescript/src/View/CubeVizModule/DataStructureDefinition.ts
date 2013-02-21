@@ -98,14 +98,13 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
             self = this;
         
         // output loaded data
-        $(this.collection._).each(function(i, element){
+        this.collection.each(function(element){
             
             // set selected variable, if element url is equal to selected dsd
             element["selected"] = element["url"] == self.app._.data.selectedDSD.url
                 ? " selected" : "";
 
             list.append(optionTpl(element));
-        
         });
         
         /**

@@ -93,36 +93,49 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public configureSetupComponentElements(component:any) 
     {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
-            componentElements = _.toArray(component.elements),
+            componentElements = new CubeViz_Collection("__cv_uri"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
             selectedDimensions = this.app._.data.selectedComponents
                                                  .dimensions[component.hashedUrl]
                                                  .elements,
-            setElementChecked = null;
-
-        // sort elements by label, ascending
-        componentElements.sort(function(a, b) {
-           return a.propertyLabel.toUpperCase()
-                    .localeCompare(b.propertyLabel.toUpperCase());
-        });
+            setElementChecked = null,
+            wasSomethingSelected = false;
+                        
+        componentElements
+            
+            // add elements of current component
+            .addList(component.elements)
+            
+            // sort
+            .sortAscendingBy(componentElements.idKey)
         
-        // Go through all elements of the given component ..
-        _.each(componentElements, function(element){
-            
-            // check if current element will be checked
-            setElementChecked = undefined !== _.find(selectedDimensions, function(dim){ 
-                return dim.property == element.property; 
+            // Go through all elements of the given component ..
+            .each(function(element){
+                
+                // check if current element will be checked
+                setElementChecked = undefined !== _.find(selectedDimensions, function(dim){ 
+                    return false === _.isUndefined(dim) 
+                        ? dim.__cv_uri == element.__cv_uri
+                        : false;
+                });
+                
+                if(true === setElementChecked) 
+                    wasSomethingSelected = true;
+                
+                // ... add new item to element list
+                elementList.append(elementTpl({
+                    checked: true === setElementChecked ? " checked=\"checked\"" : "",
+                    hashedUri: element.__cv_hashedUri,
+                    label: element["http://www.w3.org/2000/01/rdf-schema#label"],
+                    uri: element.__cv_uri
+                }));
             });
-            
-            if(true === setElementChecked){
-                element.checked = " checked=\"checked\"";
-            } else {
-                element.checked = "";
-            }
-            // ... add new item to element list
-            elementList.append(elementTpl(element));
-        });
+         
+        // if nothing was selected in the list, autoselect first item
+        if(false === wasSomethingSelected) {
+            $($(elementList.find("li").first()).find("input")).attr("checked", "checked");
+        }
     }
     
     /**

@@ -100,6 +100,7 @@ class CubeViz_ConfigurationLink
                 
                 $preSelectedElements = array();
                 $stillUsedIndexes = array();
+                $dimensionElementsNumeric = array_values($dimension['elements']);
                 
                 for($i = 0; $i < $numberOfElementsToPreSelect; ++$i) {
                     
@@ -114,7 +115,18 @@ class CubeViz_ConfigurationLink
                         }
                     } while (true);
                     
-                    $preSelectedElements [] = $dimension['elements'][$randomI];
+                    $j = 0;
+                    foreach ($dimension['elements'] as $elementUri => $element) {
+                        // after compute a random index for a certain element
+                        // lets find this element by count up as long as the 
+                        // current element's index is equal to the computed one.
+                        if($j++ == $randomI) {
+                            $preSelectedElements [$elementUri] = 
+                                $dimension['elements'][$elementUri];
+                            // in this way we keep the elementUri as key
+                            break;
+                        }
+                    }
                 }
                 
                 $dimension['elements'] = $preSelectedElements;
