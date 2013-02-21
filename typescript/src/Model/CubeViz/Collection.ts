@@ -160,17 +160,18 @@ class CubeViz_Collection
      * @param key Name key to sort entries by.
      * @return CubeViz_Collection Itself, for chaining.
      */
-    public sortAscendingBy (key:string) : CubeViz_Collection
+    public sortAscendingBy (key?:string) : CubeViz_Collection
     {
-        var a:string = "", b:string = "";
+        var a:string = "", b:string = "", 
+            useKey = false === _.isUndefined(key) ? key : this.idKey;
         
         this._.sort(function(a, b) {
             try{
-                a = a[key].toUpperCase();
-                b = b[key].toUpperCase();
+                a = a[useKey].toUpperCase();
+                b = b[useKey].toUpperCase();
                 return (a < b) ? -1 : (a > b) ? 1 : 0;
             } catch(e) {
-                console.log("for key: " + key);
+                console.log("for useKey: " + useKey);
                 console.log(e);
             }
         });
