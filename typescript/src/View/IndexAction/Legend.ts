@@ -44,6 +44,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         $("#cubeviz-legend-observations").html("");
         $("#cubeviz-legend-configurationList").html("");
         
+        // Question mark dialog
+        CubeViz_View_Helper.destroyDialog(
+            $("#cubeviz-legend-componentDimensionInfoDialog")
+        );
+        
         super.destroy();
         return this;
     }
@@ -76,12 +81,16 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public displaySelectedConfiguration(selectedComponentDimensions:Object) : void
     {
+        // template objects
         var tplComponentDimension:any = _.template($("#cubeviz-legend-tpl-componentDimension").text()),
             tplComponentsList:any = _.template($("#cubeviz-legend-tpl-componentList").text()),
             tplDimensionEntry:any = _.template($("#cubeviz-legend-tpl-componentDimensionEntry").text());
                 
-        var dimensionElementList:any = null,
-            dimensionElementsCopy = new CubeViz_Collection (),
+        // variables
+        var componentDimensionInfoArea = null,
+            observationIcon = null,
+            dimensionElementList:any = null,
+            dimensionElementsCopy = new CubeViz_Collection ("http://www.w3.org/2000/01/rdf-schema#label"),
             html:string = "";
                 
         $("#cubeviz-legend-components").html(tplComponentsList());
@@ -92,8 +101,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 label: dimension.label
             }));
             
-            dimensionElementList = $("#cubeviz-legend-componentList")
-                .find(".cubeviz-legend-componentDimensionList").last();
+            dimensionElementList = $($("#cubeviz-legend-componentList")
+                .find(".cubeviz-legend-componentDimensionList").last());
             
             html = "";
             
@@ -101,21 +110,42 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             dimensionElementsCopy
                 
                 // clean it from old elements
-                .reset("propertyLabel")
+                .reset()
                 
                 // create a copy, avoids changing the source element list
                 .addList(JSON.parse(JSON.stringify(dimension.elements)))
                 
-                // sort label
-                .sortAscendingBy("propertyLabel")
+                // sort label by idKey
+                .sortAscendingBy()
                             
                 // go through each dimension element
                 .each(function(dimensionElement){
+                    
                     // add li entry
-                    $(dimensionElementList).append(tplDimensionEntry({
-                        label: dimensionElement.propertyLabel,
-                        url: dimensionElement.property
+                    dimensionElementList.append(tplDimensionEntry({
+                        label: dimensionElement[dimensionElementsCopy.idKey],
+                        url: dimensionElement["__cv_uri"]
                     }));
+                    
+                    // save reference of info area
+                    observationIcon = $(dimensionElementList
+                        .find(".cubeviz-legend-observationIcon")
+                        .last());
+                    
+                    // save reference of info area
+                    componentDimensionInfoArea = $(dimensionElementList
+                        .find(".cubeviz-legend-componentDimensionInfoArea")
+                        .last());
+                    
+                    // select latest show more information button and attach data
+                    $(dimensionElementList
+                        .find(".cubeviz-legend-componentDimensionShowInfo")
+                        .last())
+                        .data("componentDimensionElementUri", dimensionElement["__cv_uri"])
+                        .data("componentDimensionInfoArea", componentDimensionInfoArea)
+                        .data("observationIcon", observationIcon)
+                        .data("cubeviz-legend-componentDimensionInfoArea", dimensionElement["__cv_uri"])
+                        .data("dimensionHashedUrl", dimension.hashedUrl);
                 });
         });
     }
@@ -201,24 +231,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_sortByTitle() 
-    {
-        this.collection.sortAscendingBy ("observationLabel");
-        this.displayRetrievedObservations(this.collection._);
-    }
-    
-    /**
-     *
-     */
-    public onClick_sortByValue() 
-    {
-        this.collection.sortAscendingBy ("observationValue");
-        this.displayRetrievedObservations(this.collection._);
-    }
-    
-    /**
-     *
-     */
     public onClick_btnShowSelectedConfiguration(event) : bool 
     {
         event.preventDefault();
@@ -240,6 +252,72 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         $("#cubeviz-legend-retrievedObservations").slideToggle('slow');
         
         return false;
+    }
+    
+    /**
+     *
+     */
+    public onClick_componentDimensionShowInfo(event) : bool 
+    {
+        event.preventDefault();
+        
+        // variables
+        var showMoreInformationBtn = $(event.target),
+            componentDimensionElementUri = showMoreInformationBtn.data("componentDimensionElementUri"),
+            dimensionHashedUrl = showMoreInformationBtn.data("dimensionHashedUrl"),
+            dimension = this.app._.data.selectedComponents.dimensions [dimensionHashedUrl],
+            dimensionElementInformation = dimension.elements[componentDimensionElementUri],
+            observationIcon = showMoreInformationBtn.data("observationIcon");
+            
+        // templates
+        var tplInfoHeader = _.template($("#cubeviz-legend-tpl-componentDimensionInfoHeader").text()),
+            tplInfoList = _.template($("#cubeviz-legend-tpl-componentDimensionInfoList").text()),
+            tplInfoListEntry = _.template($("#cubeviz-legend-tpl-componentDimensionInfoListEntry").text());
+            
+        // create an instance of ul
+        var infoList = $(tplInfoList());
+     
+        // go through all dimension element information
+        _.each(dimensionElementInformation, function(value, key){
+            
+            // use related information if its not from CubeViz
+            if(false === _.str.startsWith (key, "__cv_")) {                
+                // li entry
+                infoList.append(tplInfoListEntry({
+                    key: key,
+                    value: value
+                }));
+            }
+        });
+        
+        // append generated list to info area and fade it in / out
+        $("#cubeviz-legend-componentDimensionInfoDialog")
+            .html("")
+            .append($(tplInfoHeader()))
+            .append(infoList)
+            .fadeToggle("slow");
+            
+        $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
+        
+        return false;
+    }
+    
+    /**
+     *
+     */
+    public onClick_sortByTitle() 
+    {
+        this.collection.sortAscendingBy ("observationLabel");
+        this.displayRetrievedObservations(this.collection._);
+    }
+    
+    /**
+     *
+     */
+    public onClick_sortByValue() 
+    {
+        this.collection.sortAscendingBy ("observationValue");
+        this.displayRetrievedObservations(this.collection._);
     }
     
     /**
@@ -301,6 +379,12 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // render list in HTML
         this.displayRetrievedObservations(this.collection._);
         
+        // attach dialog which contains model information
+        CubeViz_View_Helper.attachDialogTo(
+            $("#cubeviz-legend-componentDimensionInfoDialog"),
+            {closeOnEscape: true, showCross: true, width: 550}
+        );
+        
         /**
          * Delegate events to new items of the template
          */
@@ -310,6 +394,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
             "click #cubeviz-legend-btnShowRetrievedObservations": 
                 this.onClick_btnShowRetrievedObservations,
+                
+            "click .cubeviz-legend-componentDimensionShowInfo": 
+                this.onClick_componentDimensionShowInfo,
                 
             "click #cubeviz-legend-sortByTitle": 
                 this.onClick_sortByTitle,

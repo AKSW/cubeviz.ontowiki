@@ -251,8 +251,37 @@
         <span>
             <span style="font-size: 17px;">
                 <%= label %></span>
-            <br/>
+            <div style="height: 8px;"></div>
+            <a class="cubeviz-legend-componentDimensionShowInfo">
+                Show more information</a>
+            <i class="icon-lightbulb cubeviz-clickable"></i>
+            &nbsp;
+            &nbsp;
             <a href="<%= url %>" target="_blank">Go to source</a>
         </span>
     </li>
 </script>
+
+<!-- 
+    Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
+-->
+<div id="cubeviz-legend-componentDimensionInfoDialog"></div>
+
+<script id="cubeviz-legend-tpl-componentDimensionInfoHeader" type="text/template">
+    <h3>Information about dimension element</h3>
+</script>
+
+<script id="cubeviz-legend-tpl-componentDimensionInfoList" type="text/template">
+    <ul class="cubeviz-legend-componentDimensionInfoList"></ul>
+</script>
+
+<script id="cubeviz-legend-tpl-componentDimensionInfoListEntry" type="text/template"> 
+    <li>
+        <br/>
+        <strong><%= key %></strong>
+        <br/>
+        <%= value %>
+    </li>
+</script>
+
+
