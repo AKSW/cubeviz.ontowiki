@@ -221,25 +221,25 @@
         
         <br/>
         
-        <div class="cubeviz-component-sortButtons" style="float:right;">
+        <div class="cubeviz-component-sortButtons" style="float:right; vertical-align: middle;">
             Sort by: 
-            <span class="btn btn-small">alphabet</span>
+            <span class="cubeviz-btn">alphabet</span>
             &nbsp;
-            <span class="btn btn-small">check status</span>
+            <span class="cubeviz-btn">check status</span>
             &nbsp;
-            <span class="btn btn-small" style="display:none;">observation count</span>
+            <span class="cubeviz-btn" style="display:none;">observation count</span>
         </div>
         
-        <span class="btn btn-small cubeviz-component-deselectButton">
+        <span class="cubeviz-btn cubeviz-component-deselectButton">
             Deselect all items</span>
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
         <div style="margin-top: 5px; float:right;">            
-            <span class="btn cubeviz-component-cancel">
+            <span class="cubeviz-btn cubeviz-component-cancel">
                 <?php echo $this->_translate->_('Cancel'); ?></span>
             &nbsp;
-            <span class="btn cubeviz-component-closeAndUpdate">
+            <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
                 <?php echo $this->_translate->_('Close and update visualization'); ?></span>
         </div>
     </div>
@@ -247,7 +247,9 @@
 
 <script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
     <li>
-        <input type="checkbox" name="<%= hashedUri %>" value="<%= uri %>"<%= checked %>/>
-        <span><%= label %></span>
+        <span style="vertical-align: middle;">
+            <input type="checkbox" name="<%= hashedUri %>" value="<%= uri %>"<%= checked %>/>
+        </span>
+        <span style="font-size: 13px;"><%= label %></span>
     </li>
 </script>

@@ -14,18 +14,22 @@
 {
     border: 1px solid #D0D0D0;
     list-style-type: none;
-    padding: 0px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 0px;
+    padding-bottom: 10px;
     margin-left: 0px;
     margin-top: 10px;
     margin-bottom: 10px;
     min-height: 290px;
     height: 290px;
     max-height: 290px;
-    width: 100%;
+    width: 98%;
     overflow-y:scroll;
 }
 
-.cubeviz-component-setupComponentElements li{
-    margin-top: 2px;
+.cubeviz-component-setupComponentElements li
+{
+    margin-top: 4px;
     margin-left: 4px;
 }
