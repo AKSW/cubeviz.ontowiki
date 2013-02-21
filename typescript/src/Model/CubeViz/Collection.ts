@@ -62,7 +62,7 @@ class CubeViz_Collection
         
         // if list is an array
         if(true == _.isArray(list)){
-            $(list).each(function(i, element){
+            _.each(list, function(element){
                 self.add(element);
             });
             
