@@ -56,10 +56,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public displayDataSet(dsLabel, dsUrl) 
+    public displayDsdAndDs(dsdLabel, dsdUrl, dsLabel, dsUrl) 
     {
-        var dataSetTpl = _.template($("#cubeviz-legend-tpl-dataSet").text());
-        $("#cubeviz-legend-dataSet").html(dataSetTpl({label: dsLabel, url: dsUrl}));
+        var dsdAndDsTpl = _.template($("#cubeviz-legend-tpl-dsdAndDs").text());
+        $("#cubeviz-legend-dsdAndDs").html(dsdAndDsTpl({
+            dsdLabel: dsdLabel, dsdUrl: dsdUrl,
+            dsLabel: dsLabel, dsUrl: dsUrl
+        }));
     }
     
     /**
@@ -348,11 +351,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             self = this;
         
         /**
-         * Data set
+         * Show Data Structure Definition and Data set
          */
-        this.displayDataSet( 
-            this.app._.data.selectedDS.label,
-            this.app._.data.selectedDS.url
+        this.displayDsdAndDs( 
+            // DSD
+            this.app._.data.selectedDSD.label, this.app._.data.selectedDSD.url,
+            // DS
+            this.app._.data.selectedDS.label, this.app._.data.selectedDS.url
         );
         
         /**

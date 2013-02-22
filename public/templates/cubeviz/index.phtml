@@ -43,14 +43,17 @@
         <!-- Selected configuration -->
         <div id="cubeviz-legend-selectedConfiguration" style="display:none;">
             <br/>
-            <h2>Selected Axis Elements</h2>
+            <h2>Information About Selected Configuration</h2>
+            
+            <div id="cubeviz-legend-dsdAndDs"></div>
             <div id="cubeviz-legend-components"></div>
         </div>
         
         <!-- Retrieved observations -->
         <div id="cubeviz-legend-retrievedObservations" style="display:none;">
             <br/>
-            <div id="cubeviz-legend-dataSet"></div>
+            <h2>Information About Retrieved Data</h2>
+            
             <ul id="cubeviz-legend-observations"></ul>
             <div style="float: right; margin-right: 20px;">
                 <p>
@@ -201,8 +204,11 @@
 <!--
     Legend
 -->
-<script id="cubeviz-legend-tpl-dataSet" type="text/template">
-    <h3>Data Set: <a href="<%= url %>" target="_blank"><%= label %></a></h3>
+<script id="cubeviz-legend-tpl-dsdAndDs" type="text/template">
+    <h3>
+        <a href="<%= dsdUrl %>" target="_blank"><%= dsdLabel %></a> -
+        <a href="<%= dsUrl %>" target="_blank"><%= dsLabel %></a>
+    </h3>
 </script>
 
 <script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 

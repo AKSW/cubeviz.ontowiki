@@ -1577,11 +1577,13 @@ var View_IndexAction_Legend = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_IndexAction_Legend.prototype.displayDataSet = function (dsLabel, dsUrl) {
-        var dataSetTpl = _.template($("#cubeviz-legend-tpl-dataSet").text());
-        $("#cubeviz-legend-dataSet").html(dataSetTpl({
-            label: dsLabel,
-            url: dsUrl
+    View_IndexAction_Legend.prototype.displayDsdAndDs = function (dsdLabel, dsdUrl, dsLabel, dsUrl) {
+        var dsdAndDsTpl = _.template($("#cubeviz-legend-tpl-dsdAndDs").text());
+        $("#cubeviz-legend-dsdAndDs").html(dsdAndDsTpl({
+            dsdLabel: dsdLabel,
+            dsdUrl: dsdUrl,
+            dsLabel: dsLabel,
+            dsUrl: dsUrl
         }));
     };
     View_IndexAction_Legend.prototype.displayRetrievedObservations = function (list) {
@@ -1721,7 +1723,7 @@ var View_IndexAction_Legend = (function (_super) {
         var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl;
         var self = this;
 
-        this.displayDataSet(this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
+        this.displayDsdAndDs(this.app._.data.selectedDSD.label, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
         this.displaySelectedConfiguration(this.app._.data.selectedComponents.dimensions);
         this.collection.reset("observationLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
         this.collection.sortAscendingBy("observationLabel");
