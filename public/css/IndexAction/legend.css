@@ -24,6 +24,7 @@
 
 .cubeviz-legend-componentDimensionEntry
 {
+    float: left;
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 0px;
@@ -35,11 +36,19 @@
     margin-top: 2px;
     
     height: auto;
-    min-height: 30px;
+    min-height: 10px;
     
     min-width: 70%;
     width: 70%;
     max-width: 70%;
+}
+
+.cubeviz-legend-componentDimensionIcon
+{
+    float: left; 
+    width: 40px; 
+    min-height: 40px; 
+    text-align: center;
 }
 
 .cubeviz-legend-observationLabel

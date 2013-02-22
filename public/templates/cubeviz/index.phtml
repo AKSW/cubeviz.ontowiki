@@ -101,7 +101,7 @@
 </div>
 
 <!-- 
-    
+    notification if no data were received
 -->
 <div id="cubeviz-visualization-nothingFoundNotificationContainer">
     <div id="cubeviz-visualization-nothingFoundBox">
@@ -150,6 +150,13 @@
     </div>
 </div>
 
+<div id="cubeviz-index-headerDialogBox"></div>
+
+
+<!-- 
+    TEMPLATES (text/template)
+-->
+
 <!-- 
     Header
 -->
@@ -183,8 +190,6 @@
 <!-- 
     Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
 -->
-<div id="cubeviz-index-headerDialogBox"></div>
-
 <script id="cubeviz-index-tpl-headerDialogBoxHead" type="text/template">
     <h3><%= label %></h3>
     <br/>
@@ -264,7 +269,7 @@
 
 <script id="cubeviz-legend-tpl-componentDimensionEntry" type="text/template"> 
     <li class="cubeviz-legend-componentDimensionEntry">        
-        <span class="cubeviz-legend-observationIcon">
+        <span class="cubeviz-legend-componentDimensionIcon">
             <i class="icon-leaf" style="font-size: 11px;"></i>
         </span>
         <span>
