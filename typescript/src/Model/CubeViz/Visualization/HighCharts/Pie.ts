@@ -37,12 +37,8 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         this.chartConfig.series = [];
         this.chartConfig.colors = [];
         
-        /**
-         * Build chart title
-         */
-        this.chartConfig.title.text = this.buildChartTitle (
-            dsdLabel, dsLabel, oneElementDimensions
-        );    
+        // set empty chart title
+        this.chartConfig.title.text = "";
                 
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending

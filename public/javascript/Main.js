@@ -550,12 +550,6 @@ var CubeViz_Visualization_HighCharts = (function (_super) {
 })(CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
-    CubeViz_Visualization_HighCharts_Chart.prototype.buildChartTitle = function (dsdLabel, dsLabel, oneElementDimensions) {
-        var builtTitle = "";
-        _.each(oneElementDimensions, function (dimension) {
-        });
-        return dsdLabel + " - " + dsLabel + builtTitle;
-    };
     CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedComponentMeasures, selectedMeasureUri, dsdLabel, dsLabel) {
         var forXAxis = null;
         var forSeries = null;
@@ -571,7 +565,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         } else {
             this.chartConfig.xAxis.categories = [];
         }
-        this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, oneElementDimensions);
+        this.chartConfig.title.text = "";
         _.each(selectedComponentDimensions, function (selectedDimension) {
             if(null == forXAxis) {
                 forXAxis = selectedDimension.typeUrl;
@@ -695,7 +689,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         this.chartConfig = chartConfig;
         this.chartConfig.series = [];
         this.chartConfig.colors = [];
-        this.chartConfig.title.text = this.buildChartTitle(dsdLabel, dsLabel, oneElementDimensions);
+        this.chartConfig.title.text = "";
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         this.chartConfig.series.push({
@@ -1832,7 +1826,7 @@ var View_IndexAction_Visualization = (function (_super) {
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
         var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 75);
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 80);
         switch(type) {
             default: {
                 if(false === _.isUndefined(this.app._.generatedVisualization)) {

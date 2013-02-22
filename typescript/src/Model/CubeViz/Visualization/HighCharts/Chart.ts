@@ -6,24 +6,6 @@ class CubeViz_Visualization_HighCharts_Chart
     public chartConfig:any;
     
     /**
-     * Returns the chart title for the given data.
-     * @param dsdLabel Label of the selected data structure definition
-     * @param dsLabel Label of the selected data set
-     * @param oneElementDimensions List of all one element dimensions
-     * @return string Title for the given data
-     */
-    public buildChartTitle ( dsdLabel:string, dsLabel:string, oneElementDimensions:any[]) : string 
-    {        
-        var builtTitle = "";
-        
-        _.each(oneElementDimensions, function(dimension){
-            builtTitle += " - " + dimension.elements[0].propertyLabel;
-        });
-        
-        return dsdLabel + " - " + dsLabel + builtTitle;
-    }
-    
-    /**
      * Initialize a chart instance.
      * @param chartConfig Related chart configuration
      * @param retrievedObservations Array of retrieved observations 
@@ -60,12 +42,8 @@ class CubeViz_Visualization_HighCharts_Chart
             this.chartConfig.xAxis.categories = [];
         }
         
-        /**
-         * Build chart title
-         */
-        this.chartConfig.title.text = this.buildChartTitle (
-            dsdLabel, dsLabel, oneElementDimensions
-        );        
+        // set empty chart title
+        this.chartConfig.title.text = "";
 
         // assign selected dimensions to xAxis and series (yAxis)
         _.each(selectedComponentDimensions, function(selectedDimension){
