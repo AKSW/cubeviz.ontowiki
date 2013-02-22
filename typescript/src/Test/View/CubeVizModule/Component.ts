@@ -74,19 +74,36 @@ cubeViz_tests.push(function(){
         // for the loop
         var checkbox:any, checkboxName:string, checkboxValue:any, 
             checkboxChecked:string, dimensionToCheck:any, label:any, self = this;
+            
+        /**
+         * check if number of checked boxes is equal to number of dimension.elements
+         */
+        // number of checkboxes that are check in the certain dialog
+        var numberOfCheckedItems = $($(setupComponentDialogId)
+            .find(".cubeviz-component-setupComponentElements")
+            .first()).find(":checked").length,
+        
+        // number of elements in the certain selected component dimension
+            numberOfSelectedComponentDimensionElements = _.keys(
+                cubeVizApp._.data.selectedComponents.dimensions[firstComponentHashedUrl]
+                            .elements).length;
+            
+        self.assertTrue(
+            numberOfCheckedItems == numberOfSelectedComponentDimensionElements,
+            "Check number of checked checkboxes"
+        );
         
         // go through all entries and check exactly each property to match
         _.each(listEntries, function(listEntry){
+            
             /**
              * Save variables
              */
             checkbox = $($(listEntry).children().first());
             checkboxName = checkbox.attr("name");
             checkboxValue = checkbox.val();
-            checkboxChecked = true == checkbox.is(":checked") 
-                              ? " checked=\"checked\"" : "";
-            label = $($(listEntry).children().last()).text();
             dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+            label = $($($(listEntry).children().last()).children().first()).text();
             
             /**
              * Check checkbox
@@ -95,27 +112,18 @@ cubeViz_tests.push(function(){
             self.assertTrue(
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
-                    function(ele){ return checkboxName == ele.hashedProperty; }
+                    function(ele){ return checkboxName == ele["__cv_hashedUri"]; }
                 )),
-                "Check hashedProperty: " + checkboxName
+                "Check hashedUrl(__cv_hashedUri): " + checkboxName
             );
             
             // check value (property)
             self.assertTrue(
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
-                    function(ele){ return checkboxValue == ele.property; }
+                    function(ele){ return checkboxValue == ele["__cv_uri"]; }
                 )),
-                "Check property: " + checkboxValue
-            );
-            
-            // check if checked
-            self.assertTrue(
-                true === _.isObject( _.find(
-                    dimensionToCheck.elements,
-                    function(ele){ return checkboxChecked == ele.checked; }
-                )),
-                "Check if checked: " + checkboxChecked
+                "Check uri(__cv_uri): " + checkboxValue
             );
             
             /**
@@ -124,7 +132,7 @@ cubeViz_tests.push(function(){
             self.assertTrue(
                 true === _.isObject( _.find(
                     dimensionToCheck.elements,
-                    function(ele){ return label == ele.propertyLabel; }
+                    function(ele){ return label == ele["http://www.w3.org/2000/01/rdf-schema#label"]; }
                 )),
                 "Check label: " + label
             );

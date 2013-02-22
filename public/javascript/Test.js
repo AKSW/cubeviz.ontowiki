@@ -44,7 +44,6 @@ var CubeViz_Collection = (function () {
     }
     CubeViz_Collection.prototype.add = function (element, option) {
         if(true === _.isUndefined(element[this.idKey])) {
-            console.log(element);
             throw new Error("Key " + this.idKey + " in element not set!");
             return this;
         }
@@ -730,24 +729,24 @@ cubeViz_tests.push(function () {
         var label;
         var self = this;
 
+        var numberOfCheckedItems = $($(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first()).find(":checked").length;
+        var numberOfSelectedComponentDimensionElements = _.keys(cubeVizApp._.data.selectedComponents.dimensions[firstComponentHashedUrl].elements).length;
+
+        self.assertTrue(numberOfCheckedItems == numberOfSelectedComponentDimensionElements, "Check number of checked checkboxes");
         _.each(listEntries, function (listEntry) {
             checkbox = $($(listEntry).children().first());
             checkboxName = checkbox.attr("name");
             checkboxValue = checkbox.val();
-            checkboxChecked = true == checkbox.is(":checked") ? " checked=\"checked\"" : "";
-            label = $($(listEntry).children().last()).text();
             dimensionToCheck = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
+            label = $($($(listEntry).children().last()).children().first()).text();
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
-                return checkboxName == ele.hashedProperty;
-            })), "Check hashedProperty: " + checkboxName);
+                return checkboxName == ele["__cv_hashedUri"];
+            })), "Check hashedUrl(__cv_hashedUri): " + checkboxName);
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
-                return checkboxValue == ele.property;
-            })), "Check property: " + checkboxValue);
+                return checkboxValue == ele["__cv_uri"];
+            })), "Check uri(__cv_uri): " + checkboxValue);
             self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
-                return checkboxChecked == ele.checked;
-            })), "Check if checked: " + checkboxChecked);
-            self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
-                return label == ele.propertyLabel;
+                return label == ele["http://www.w3.org/2000/01/rdf-schema#label"];
             })), "Check label: " + label);
         });
     };

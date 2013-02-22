@@ -32,7 +32,6 @@ class CubeViz_Collection
     public add(element:any, option?:any) : CubeViz_Collection
     {
         if(true === _.isUndefined(element[this.idKey])) {
-            console.log(element);
             throw new Error("Key " + this.idKey + " in element not set!");
             return this;
         }
