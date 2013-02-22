@@ -34,6 +34,7 @@ var CubeViz_Collection = (function () {
     }
     CubeViz_Collection.prototype.add = function (element, option) {
         if(true === _.isUndefined(element[this.idKey])) {
+            console.log(element);
             throw new Error("Key " + this.idKey + " in element not set!");
             return this;
         }

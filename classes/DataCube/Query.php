@@ -153,7 +153,10 @@ class DataCube_Query
             // only on the start, when nothing was set
             if('' == $currentComponentUri) {
                 $currentComponentUri = $componentElement ['componentUri'];
-                $groupedComponentElements[$currentComponentUri] = array();
+                $groupedComponentElements[$currentComponentUri] = array(
+                    '__cv_uri' => $currentComponentUri,
+                    '__cv_hashedUri' => md5($currentComponentUri)
+                );
                 
             // if last used componentUri differs from current one
             } elseif ($currentComponentUri != $componentElement ['componentUri']) {
