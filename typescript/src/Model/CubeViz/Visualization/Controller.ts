@@ -102,19 +102,14 @@ class CubeViz_Visualization_Controller
             rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
         
         // go through all selected component dimensions 
-        _.each(selectedComponentDimensions, function(selectedComponentDimension, hashedUrl){
-
-            // stop further execution if label was found
-            if (label !== propertyUrl){
-                return;
-            }
+        _.each(selectedComponentDimensions, function(componentDimension, dimensionHashedUrl){
 
             // stop if the given dimension was found (by type)
-            if ( selectedComponentDimension.typeUrl == dimensionTypeUrl ) {
+            if (componentDimension.typeUrl == dimensionTypeUrl) {
                 
                 // check each dimension element
-                _.each(selectedComponentDimension.elements, function(element){
-                    if(element.property == propertyUrl) {
+                _.each(componentDimension.elements, function(element, dimensionElementUrl){
+                    if(dimensionElementUrl == propertyUrl) {
                         label = element[rdfsLabel];
                     }
                 });

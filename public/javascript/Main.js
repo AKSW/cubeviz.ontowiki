@@ -436,13 +436,10 @@ var CubeViz_Visualization_Controller = (function () {
         var label = propertyUrl;
         var rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
 
-        _.each(selectedComponentDimensions, function (selectedComponentDimension, hashedUrl) {
-            if(label !== propertyUrl) {
-                return;
-            }
-            if(selectedComponentDimension.typeUrl == dimensionTypeUrl) {
-                _.each(selectedComponentDimension.elements, function (element) {
-                    if(element.property == propertyUrl) {
+        _.each(selectedComponentDimensions, function (componentDimension, dimensionHashedUrl) {
+            if(componentDimension.typeUrl == dimensionTypeUrl) {
+                _.each(componentDimension.elements, function (element, dimensionElementUrl) {
+                    if(dimensionElementUrl == propertyUrl) {
                         label = element[rdfsLabel];
                     }
                 });
