@@ -1587,10 +1587,22 @@ var View_IndexAction_Legend = (function (_super) {
         }));
     };
     View_IndexAction_Legend.prototype.displayRetrievedObservations = function (list) {
-        $("#cubeviz-legend-observations").html("");
+        var observationInfoEntry = _.template($("#cubeviz-legend-tpl-observationInfoListEntry").text());
         var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
+
+        var infoList = null;
+        $("#cubeviz-legend-observations").html("");
         _.each(list, function (obs) {
             $("#cubeviz-legend-observations").append(observationTpl(obs));
+            infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
+            _.each(obs.dimensionElements, function (dimensionElement) {
+                infoList.append(observationInfoEntry({
+                    dimensionLabel: dimensionElement.dimensionLabel,
+                    fullLabel: dimensionElement.label,
+                    shortLabel: _.str.prune(dimensionElement.label, 65, "..."),
+                    url: dimensionElement.value
+                }));
+            });
         });
     };
     View_IndexAction_Legend.prototype.displaySelectedConfiguration = function (selectedComponentDimensions) {
@@ -1625,42 +1637,57 @@ var View_IndexAction_Legend = (function (_super) {
     View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
         var observationLabel = "";
         var dimensionElementLabelTpl = _.template($("#cubeviz-legend-tpl-dimensionElementLabel").text());
-        var dimensionTypeUrls = [];
+        var dimensionElements = [];
+        var dimensionInformation = [];
+        var label = "";
         var observationLabel = "";
         var rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label";
         var result = [];
 
-        _.each(selectedComponentDimensions, function (dim) {
-            dimensionTypeUrls.push(dim.typeUrl);
+        _.each(selectedComponentDimensions, function (dim, hashedUrl) {
+            dimensionInformation.push({
+                hashedUrl: hashedUrl,
+                typeUrl: dim.typeUrl
+            });
         });
         _.each(observations, function (obs) {
             observationLabel = "";
             if(false === _.isUndefined(obs[rdfsLabelUri]) && "" != obs[rdfsLabelUri][0].label) {
                 observationLabel = obs[rdfsLabelUri][0].value;
             } else {
-                _.each(dimensionTypeUrls, function (typeUrl) {
-                    if(true === _.isUndefined(obs[typeUrl])) {
+                _.each(dimensionInformation, function (dimension) {
+                    if(true === _.isUndefined(obs[dimension.typeUrl])) {
                         return;
                     }
                     if("" != observationLabel) {
                         observationLabel += " - ";
                     }
                     observationLabel += dimensionElementLabelTpl({
-                        label: $.trim(obs[typeUrl][0].label),
-                        url: obs[typeUrl][0].value
+                        label: $.trim(obs[dimension.typeUrl][0].label),
+                        url: obs[dimension.typeUrl][0].value
                     });
                 });
                 if("" == observationLabel) {
                     observationLabel = "Observation without dimension data";
                 }
             }
+            dimensionElements = [];
+            _.each(dimensionInformation, function (dimension) {
+                label = false === _.isUndefined(obs[dimension.typeUrl][0].label) && false === _.str.isBlank(obs[dimension.typeUrl][0].label) ? obs[dimension.typeUrl][0].label : obs[dimension.typeUrl][0].value;
+                dimensionElements.push({
+                    dimensionLabel: selectedComponentDimensions[dimension.hashedUrl].label,
+                    label: obs[dimension.typeUrl][0].label,
+                    value: obs[dimension.typeUrl][0].value
+                });
+            });
             result.push({
                 observationLabel: observationLabel,
                 observationShortLabel: _.str.prune(observationLabel, 70, " ..."),
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
-                observationUri: obs.observationUri[0].value
+                observationUri: obs.observationUri[0].value,
+                dimensionElements: dimensionElements
             });
         });
         return result;

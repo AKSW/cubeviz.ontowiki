@@ -23,7 +23,7 @@
     <div id="cubeviz-index-legend">
         
         <span style="vertical-align: middle;">
-            <strong>Show Information about</strong> &nbsp;
+            <strong>Show Information About</strong> &nbsp;
         </span>
         
         <!-- Information about the components -->
@@ -227,13 +227,26 @@
                 <%= observationValue %>
             </span>
             
-            <!--
-            <%= measurePropertyValue %> - <%= measurePropertyAttribute %>
-            -->
-            <br/>
-            <a>Show more information</a> &nbsp;
+            <!--<%= measurePropertyValue %> - <%= measurePropertyAttribute %>-->
+            
+            <div style="height: 5px;"></div>
+            
             <a href="<%= observationUri %>" target="_blank">Go to source</a>
+            
+            <div style="height: 10px;"></div>
+            
+            <!-- Related dimension elements -->
+            <ul class="cubeviz-legend-observationInfoList"></ul>
         </span>
+    </li>
+</script>
+
+
+<script id="cubeviz-legend-tpl-observationInfoListEntry" type="text/template"> 
+    <li class="cubeviz-legend-observationInfoListEntry">
+        <strong><%= dimensionLabel %>:</strong>
+        <a href="<%= url %>" target="_blank" title="<%= fullLabel %>">
+            <%= shortLabel %></a>
     </li>
 </script>
 

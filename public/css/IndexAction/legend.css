@@ -56,8 +56,22 @@
 {
     float: left; 
     width: 40px; 
-    min-height: 50px; 
+    min-height: 100px; 
     text-align: center;
+}
+
+.cubeviz-legend-observationInfoList 
+{
+    list-style-type: none;
+}
+
+.cubeviz-legend-observationInfoListEntry
+{
+    border: 0px !important;
+    margin: 0px;
+    padding: 0px;
+    line-height: 3px;
+    font-size: 14px;
 }
 
 #cubeviz-legend-observations 

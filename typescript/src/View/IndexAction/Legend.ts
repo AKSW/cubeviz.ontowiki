@@ -70,15 +70,32 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public displayRetrievedObservations(list:any[]) : void
     {
+        // templates
+        var observationInfoEntry:any = _.template($("#cubeviz-legend-tpl-observationInfoListEntry").text()),
+            observationTpl:any = _.template($("#cubeviz-legend-tpl-observation").text());
+                
+        // variables
+        var infoList:any = null;
+     
         $("#cubeviz-legend-observations").html("");
         
-        var observationTpl:any = _.template($("#cubeviz-legend-tpl-observation").text());
-                
+        // go through all observations        
         _.each(list, function(obs){
             $("#cubeviz-legend-observations").append(observationTpl(obs));
+            
+            infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
+            
+            _.each(obs.dimensionElements, function(dimensionElement){
+                infoList.append(observationInfoEntry({
+                    dimensionLabel: dimensionElement.dimensionLabel,
+                    fullLabel: dimensionElement.label,
+                    shortLabel: _.str.prune(dimensionElement.label, 65, "..."),
+                    url: dimensionElement.value
+                }));
+            });
         });
     }
-    
+        
     /**
      *
      */
@@ -163,21 +180,23 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             dimensionElementLabelTpl = _.template(
                 $("#cubeviz-legend-tpl-dimensionElementLabel").text()
             ),
-            dimensionTypeUrls:string[] = [],
+            dimensionElements:any = [],
+            dimensionInformation:any[] = [],
+            label = "",
             observationLabel:string = "",
             rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label",
             result:any[] = [];
             
          // collect all type urls of selected component dimensions
-        _.each(selectedComponentDimensions, function(dim){
-            dimensionTypeUrls.push(dim.typeUrl);
-        });        
+        _.each(selectedComponentDimensions, function(dim, hashedUrl){
+            dimensionInformation.push({ hashedUrl: hashedUrl, typeUrl: dim.typeUrl });
+        });
         
         // go through all retrieved observations
         _.each(observations, function(obs){
-            
+
             /**
-             * Set label of the observation entry
+             * set label of the observation entry
              */       
             observationLabel = "";
             
@@ -185,9 +204,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                && "" != obs[rdfsLabelUri][0].label) {                
                 observationLabel = obs[rdfsLabelUri][0].value;
             } else {            
-                _.each (dimensionTypeUrls, function(typeUrl){
+                _.each (dimensionInformation, function(dimension){
                     
-                    if(true === _.isUndefined(obs[typeUrl])){
+                    if(true === _.isUndefined(obs[dimension.typeUrl])){
                         return;
                     }
                     
@@ -196,8 +215,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     }
                     
                     observationLabel += dimensionElementLabelTpl({
-                        label: $.trim(obs[typeUrl][0].label),
-                        url: obs[typeUrl][0].value
+                        label: $.trim(obs[dimension.typeUrl][0].label),
+                        url: obs[dimension.typeUrl][0].value
                     });
                 });
                 
@@ -206,6 +225,26 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     observationLabel = "Observation without dimension data";
                 }
             }
+            
+            dimensionElements = [];
+            
+            /**
+             * set related dimension elements
+             */
+            _.each(dimensionInformation, function(dimension){
+                
+                // use label if not is not blank, otherwise value                
+                label = false === _.isUndefined(obs[dimension.typeUrl][0].label)
+                        && false === _.str.isBlank(obs[dimension.typeUrl][0].label)
+                        ? obs[dimension.typeUrl][0].label
+                        : obs[dimension.typeUrl][0].value;
+                
+                dimensionElements.push({
+                    dimensionLabel: selectedComponentDimensions[dimension.hashedUrl].label,
+                    label: obs[dimension.typeUrl][0].label,
+                    value: obs[dimension.typeUrl][0].value
+                });
+            });
             
             /**
              * add observation entry to list
@@ -216,7 +255,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
-                observationUri: obs.observationUri[0].value
+                observationUri: obs.observationUri[0].value,
+                dimensionElements: dimensionElements
             });
         });
         
