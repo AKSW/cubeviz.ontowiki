@@ -117,55 +117,126 @@ class CubevizController extends OntoWiki_Controller_Component
         $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
             ? '' : $this->_request->getParam ('cv_dataHash');
         
-        // init Query and model
-        $query = new DataCube_Query ( $this->_owApp->selectedModel );
+        // check model parameter
+        $m = $this->_request->getParam ('m');
+        $m = true === isset($m) ? $m : '';
         
-        // load configuration which is associated with given linkCode
-        $c = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
-    
-        // ... get and return observations
-        $this->_response->setBody(
-            json_encode($query->getObservations($c), JSON_FORCE_OBJECT)
-        );
-    }
-    
-    /**
-     * 
-     */
-    public function getdatastructuredefinitionsAction() {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
+        // use selected model if it is set and model parameter was empty
+        if('' == $m && true === isset($this->_owApp->selectedModel)) {
+            $m = $this->_owApp->selectedModel->getModelIri();
+        }
         
-        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-        
-        $query = new DataCube_Query($model);
-                
-        $this->_response->setBody(json_encode($query->getDataStructureDefinitions()));
-    }
-    
-    /**
-     * 
-     */
-    public function getdatasetsAction() {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-        
-        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-        $dsdUrl = $this->_request->getParam('dsdUrl'); // Data Structure Definition
-                        
-        $query = new DataCube_Query($model);
+        if (true === $this->_erfurt->getStore()->isModelAvailable($m) 
+            && 44 == strlen($dataHash)) {
+            
+            $m = new Erfurt_Rdf_Model ($m);
+            $query = new DataCube_Query ($m);
 
+            // load configuration which is associated with given linkCode
+            $c = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
+            
+            $content = json_encode($query->getObservations($c), JSON_FORCE_OBJECT);
+            $responseCode = 200;
+        } else {
+            $responseCode = 404;
+            $content = json_encode(
+                "Model $m not available or cv_dataHash $dataHash is invalid"
+            );
+        }
+        
         $this->_response
             ->setHeader('Cache-Control', 'no-cache, must-revalidate')
             ->setHeader('Content-Type', 'application/json')
             ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
-            ->setBody(json_encode($query->getDataSets($dsdUrl)));
+            ->setHttpResponseCode($responseCode)
+            ->setBody($content);
     }
     
     /**
      * 
      */
-    public function getcomponentsAction() {
+    public function getdatastructuredefinitionsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // check model parameter
+        $m = $this->_request->getParam ('m');
+        $m = true === isset($m) ? $m : '';
+        
+        // use selected model if it is set and model parameter was empty
+        if('' == $m && true === isset($this->_owApp->selectedModel)) {
+            $m = $this->_owApp->selectedModel->getModelIri();
+        }
+
+        // execute function if model is available
+        if(true === $this->_erfurt->getStore()->isModelAvailable($m)) {
+            $model = new Erfurt_Rdf_Model ($m);
+            
+            $query = new DataCube_Query($model);
+
+            $responseCode = 200;
+            $content = $query->getDataStructureDefinitions();
+        } else {
+            $responseCode = 404;
+            $content = "Model $m not available or you are not authorized";
+        }
+        
+        $this->_response
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
+            ->setHttpResponseCode($responseCode)
+            ->setBody(json_encode($content));
+    }
+    
+    /**
+     * 
+     */
+    public function getdatasetsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // check model parameter
+        $m = $this->_request->getParam ('m');
+        $m = true === isset($m) ? $m : '';
+        
+        // use selected model if it is set and model parameter was empty
+        if('' == $m && true === isset($this->_owApp->selectedModel)) {
+            $m = $this->_owApp->selectedModel->getModelIri();
+        }
+        
+        $dsdUrl = $this->_request->getParam('dsdUrl');
+
+        // execute function if model is available
+        if(true === $this->_erfurt->getStore()->isModelAvailable($m)
+           && true === Erfurt_Uri::check($dsdUrl)) {
+            $model = new Erfurt_Rdf_Model ($m);
+                            
+            $query = new DataCube_Query($model);
+            
+            $responseCode = 200;
+            $content = $query->getDataSets($dsdUrl);
+            
+        } else {
+            $responseCode = 404;
+            $content = "Model $m not available or dsdUrl $dsdUrl is invalid";
+        }
+        
+        $this->_response
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
+            ->setHttpResponseCode($responseCode)
+            ->setBody(json_encode($content));
+    }
+    
+    /**
+     * 
+     */
+    public function getcomponentsAction() 
+    {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
@@ -203,7 +274,8 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      * 
      */
-    public function savecontenttofileAction() {
+    public function savecontenttofileAction() 
+    {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
 
@@ -220,7 +292,8 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      *
      */
-    protected function _getConfiguration () {
+    protected function _getConfiguration () 
+    {
         $cacheDir = $this->_owApp->erfurt->getCacheDir();
         if (null === $this->_configuration) {
             $this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
