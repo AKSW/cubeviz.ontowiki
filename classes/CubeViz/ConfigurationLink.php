@@ -287,6 +287,12 @@ class CubeViz_ConfigurationLink
             return;
         }
         
+        $content = trim(json_encode($content));
+        $content = str_replace(array("\r\n", "\\r", "\\n"), ' ', $content);
+        $content = preg_replace('/\s\s+/', ' ', $content);
+        $content = preg_replace('/\s+/', ' ', $content);
+        $content = preg_replace('/\r\n|\r|\n/', ' ', $content);
+        
         // attach hash based on the given string
         $filename .= $this->generateHash ($content);
         
@@ -303,7 +309,7 @@ class CubeViz_ConfigurationLink
             }
 
             // write all parameters line by line
-            fwrite($fh, json_encode($content)."\n");
+            fwrite($fh, $content."\n");
             chmod ($filePath, 0755);
             fclose($fh);
         } 
