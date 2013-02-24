@@ -3,11 +3,12 @@
 /**
  * 
  */
-class CubevizController extends OntoWiki_Controller_Component {
-
+class CubevizController extends OntoWiki_Controller_Component 
+{
     protected $_configuration = null;
     
-    public function init () {
+    public function init () 
+    {
         parent::init();
         $loader = Zend_Loader_Autoloader::getInstance();
         $loader->registerNamespace('CubeViz_');
@@ -22,13 +23,13 @@ class CubevizController extends OntoWiki_Controller_Component {
     /**
      * 
      */
-    public function indexAction () {
-    
+    public function indexAction () 
+    {
         // In case no model was selected, it redirect to the root url of OntoWiki
-        if ( null == $this->_owApp->selectedModel ) {
-            $this->_helper->redirector->gotoUrl('');
+        if ( false === isset($this->_owApp->selectedModel)) {
+            $this->_helper->redirector->gotoUrl('/');
+            return;
         }
-        
     
         /**
          * Set paths
