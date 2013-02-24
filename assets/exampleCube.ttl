@@ -11,6 +11,9 @@
    rdfs:label "Example DataCube Knowledge Base" ;
    dc:description "This knowledgebase contains one Data Structure Definition with one Data Set. This Data Set has a couple of Components and Observations." .
 
+# 
+# Data Structure Definition
+#
 ex:dsd a cube:DataStructureDefinition ;
     rdfs:label "A Data Structure Definition"@en ;
     rdfs:comment "Defines the structure of a DataSet or slice." ;
@@ -19,11 +22,17 @@ ex:dsd a cube:DataStructureDefinition ;
                     <http://example.cubeviz.org/datacube/dsd/unit>, 
                     <http://example.cubeviz.org/datacube/dsd/value> .
 
+#
+# Data Set
+#
 ex:dataset a cube:DataSet ;
     rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
     rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
     cube:structure ex:dsd .
 
+#
+# Component Specifications
+#
 <http://example.cubeviz.org/datacube/dsd/geo> a cube:ComponentSpecification ;
     rdfs:label "Component Specification of Region" ;
     cube:dimension ex:geo .
@@ -40,6 +49,9 @@ ex:dataset a cube:DataSet ;
     rdfs:label "Component Specification of Value" ;
     cube:measure ex:value .
 
+#
+# Dimensions, Unit and Measure
+#
 ex:geo a cube:DimensionProperty ;
     rdfs:label "Region"@en .
         
@@ -51,23 +63,17 @@ ex:unit a cube:AttributeProperty ;
 
 ex:value a cube:MeasureProperty ;
     rdfs:label "Value"@en .
-
-ex:Germany a ex:Region ;
-    rdfs:label "Germany"@en .
-       
-ex:Y2001 a ex:Time ;
-    rdfs:label "2001"@en .
-
-ex:Y2002 a ex:Time ;
-    rdfs:label "2002"@en .
-
+    
+#
+# Observation
+#
 ex:obs1 a cube:Observation ;
     cube:dataSet ex:dataset ;
     ex:date ex:Y2001 ;
     ex:unit "whatever it is about" ;
     ex:geo ex:Germany ;
     ex:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "An example observation for 2001." .
+    rdfs:label "Germany in 2001" .
 
 ex:obs2 a cube:Observation ;
     cube:dataSet ex:dataset ;
@@ -75,4 +81,35 @@ ex:obs2 a cube:Observation ;
     ex:unit "whatever it is about" ;
     ex:geo ex:Germany ;
     ex:value "2000"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Another example observation for 2002." .
+    rdfs:label "Germany in 2002" .
+
+ex:obs3 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:date ex:Y2001 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:England ;
+    ex:value "1400"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "England in 2001" .
+
+ex:obs4 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:date ex:Y2002 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:England ;
+    ex:value "1999"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "England in 2002" .
+
+#
+# Additional Stuff
+#
+ex:Germany a ex:Region ;
+    rdfs:label "Germany"@en .
+    
+ex:England a ex:Region ;
+    rdfs:label "England"@en .
+       
+ex:Y2001 a ex:Time ;
+    rdfs:label "2001"@en .
+
+ex:Y2002 a ex:Time ;
+    rdfs:label "2002"@en .
