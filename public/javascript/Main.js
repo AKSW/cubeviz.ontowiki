@@ -792,14 +792,46 @@ var DataCube_Component = (function () {
         callback(tmpEntries);
     }
     DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
-        componentDimensions = $.parseJSON(JSON.stringify(componentDimensions));
+        var alreadyUsedIndexes = [];
+        var i = 0;
+        var infinityBackup = 0;
+        var maxNumberOfElements = 0;
+        var numberOfElements = 0;
+        var randomElementIndex = 0;
         var result = {
         };
+        var selectedElements = {
+        };
+
+        componentDimensions = $.parseJSON(JSON.stringify(componentDimensions));
         _.each(componentDimensions, function (componentDimension, dimensionHashedUrl) {
+            alreadyUsedIndexes = [];
+            infinityBackup = 0;
+            numberOfElements = _.keys(componentDimension.elements).length;
+            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.elements).length * 0.3);
+            maxNumberOfElements = 10 < maxNumberOfElements ? 10 : maxNumberOfElements;
+            do {
+                randomElementIndex = Math.floor((Math.random() * numberOfElements) + 1);
+                if(-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
+                    if((alreadyUsedIndexes.length + 1) <= maxNumberOfElements) {
+                        alreadyUsedIndexes.push(randomElementIndex);
+                    }
+                    if(maxNumberOfElements == alreadyUsedIndexes.length) {
+                        break;
+                    }
+                }
+                infinityBackup++;
+            }while((2 * maxNumberOfElements) > infinityBackup)
+            selectedElements = {
+            };
+            i = 0;
+            _.each(componentDimension.elements, function (element, elementUri) {
+                if(-1 < $.inArray(i++, alreadyUsedIndexes)) {
+                    selectedElements[elementUri] = element;
+                }
+            });
+            componentDimension.elements = selectedElements;
             result[dimensionHashedUrl] = componentDimension;
-            result[dimensionHashedUrl].elements = [
-                componentDimension.elements[0]
-            ];
         });
         return result;
     }
@@ -1072,6 +1104,8 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var selectedElement = this["collection"].get(selectedElementId);
 
         this.app._.data.selectedDS = selectedElement;
+        this.app._.backend.retrievedObservations = {
+        };
         this.triggerGlobalEvent("onChange_selectedDS");
     };
     View_CubeVizModule_DataSet.prototype.onAfterChange_selectedDSD = function (event, data) {
@@ -1100,8 +1134,8 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text());
         var self = this;
 
-        $(this.collection._).each(function (i, element) {
-            element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
+        this.collection.each(function (element) {
+            element.selected = element.url == self.app._.data.selectedDS.url ? " selected" : "";
             list.append(optionTpl(element));
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataSet-dialog"), {
@@ -1220,7 +1254,12 @@ var View_CubeVizModule_Component = (function (_super) {
         var self = this;
         this.destroy();
         this.loadComponentDimensions(function () {
-            self.loadComponentMeasures($.proxy(self, "render"));
+            self.loadComponentMeasures(function () {
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                    self.app._.backend.dataHash = updatedDataHash;
+                    self.render();
+                });
+            });
         });
     };
     View_CubeVizModule_Component.prototype.onClick_cancel = function (event) {

@@ -199,7 +199,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 self.app._.data.components.dimensions = entries;
                 
                 // set default values for selected component dimensions list
-                // for each componentDimension first entry will be selected
+                // for each componentDimension a couple of random selected
+                // elements will be selected
                 // e.g. Year (2003), Country (Germany)
                 self.app._.data.selectedComponents.dimensions =
                     DataCube_Component.getDefaultSelectedDimensions ( entries );
@@ -253,9 +254,25 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         this.destroy();
         
+        // load dimensional data
         this.loadComponentDimensions(function(){
-            // Load measures
-            self.loadComponentMeasures($.proxy(self, "render"));
+            
+            // load measures
+            self.loadComponentMeasures(function(){
+             
+                // update link code        
+                CubeViz_ConfigurationLink.save(
+                    self.app._.backend.url, self.app._.data, "data",
+                
+                    // based on updatedLinkCode, load new observations
+                    function(updatedDataHash){
+                        
+                        self.app._.backend.dataHash = updatedDataHash;
+                        
+                        self.render();
+                    }
+                );
+            });
         });
     }
     

@@ -59,6 +59,9 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
 
         // set new selected data set
         this.app._.data.selectedDS = selectedElement;
+        
+        // nulling retrievedObservations
+        this.app._.backend.retrievedObservations = {};
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDS");
@@ -141,10 +144,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
             self = this;
         
         // output loaded data
-        $(this.collection._).each(function(i, element){
+        this.collection.each(function(element){
             
-            // set selected variable, if element url is equal to selected dsd
-            element["selected"] = element["url"] == self.app._.data.selectedDSD.url
+            // set selected variable, if element url is equal to selected dataset
+            element.selected = element.url == self.app._.data.selectedDS.url
                 ? " selected" : "";
                 
             list.append(optionTpl(element));
