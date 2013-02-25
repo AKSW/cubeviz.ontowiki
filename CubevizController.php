@@ -10,6 +10,7 @@ class CubevizController extends OntoWiki_Controller_Component
     public function init () 
     {
         parent::init();
+        
         $loader = Zend_Loader_Autoloader::getInstance();
         $loader->registerNamespace('CubeViz_');
         $loader->registerNamespace('DataCube_');
@@ -133,7 +134,7 @@ class CubevizController extends OntoWiki_Controller_Component
             $query = new DataCube_Query ($m);
 
             // load configuration which is associated with given linkCode
-            $c = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
+            list($c, $hash) = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
             
             $content = json_encode($query->getObservations($c), JSON_FORCE_OBJECT);
             $responseCode = 200;
@@ -278,14 +279,14 @@ class CubevizController extends OntoWiki_Controller_Component
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-
+        
         // write given content to file
         $hash = $this->_getConfiguration()->write(
-            $this->_request->getParam('content'),
+            $this->_request->getParam('stringifiedContent'),
             $this->_request->getParam('type')
         );
-
-        // send back result
+        
+        // send back generated hash
         $this->_response->setBody(json_encode($hash));
     }
 

@@ -14,7 +14,7 @@ var CubeViz_ConfigurationLink = (function () {
             "url": url + "savecontenttofile/",
             "data": {
                 type: type,
-                content: content
+                stringifiedContent: JSON.stringify(content)
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             $.ajaxSetup(oldAjaxSetup);
@@ -109,6 +109,16 @@ var CubeViz_Collection = (function () {
             }
         });
         return this;
+    };
+    CubeViz_Collection.prototype.toObject = function () {
+        var i = 0;
+        var obj = {
+        };
+
+        _.each(this._, function (entry) {
+            obj[i++] = entry;
+        });
+        return obj;
     };
     return CubeViz_Collection;
 })();
@@ -1145,6 +1155,8 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
+        var elementInstance = {
+        };
         var componentElements = new CubeViz_Collection("__cv_uri");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
@@ -1159,12 +1171,14 @@ var View_CubeVizModule_Component = (function (_super) {
             if(true === setElementChecked) {
                 wasSomethingSelected = true;
             }
-            elementList.append(elementTpl({
+            elementInstance = $(elementTpl({
                 checked: true === setElementChecked ? " checked=\"checked\"" : "",
                 hashedUri: element.__cv_hashedUri,
                 label: element["http://www.w3.org/2000/01/rdf-schema#label"],
                 uri: element.__cv_uri
             }));
+            elementInstance.data("data", element);
+            elementList.append(elementInstance);
         });
         if(false === wasSomethingSelected) {
             $($(elementList.find("li").first()).find("input")).attr("checked", "checked");
@@ -1273,7 +1287,7 @@ var View_CubeVizModule_Component = (function (_super) {
         var hashedUrl = dialogDiv.data("hashedUrl");
         var input = null;
         var inputLabel = null;
-        var selectedElements = [];
+        var selectedElements = new CubeViz_Collection("__cv_uri");
         var self = this;
 
         if(undefined === hashedUrl) {
@@ -1283,20 +1297,15 @@ var View_CubeVizModule_Component = (function (_super) {
             input = $($(element).children().get(0));
             inputLabel = $($(element).children().get(1));
             if("checked" === input.attr("checked")) {
-                selectedElements.push({
-                    hashedProperty: input.attr("name"),
-                    property: input.val(),
-                    propertyLabel: inputLabel.html()
-                });
+                selectedElements.add($(element).data("data"));
             }
         });
         if(0 == _.size(selectedElements)) {
-            selectedElements = [];
-            selectedElements.push(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[hashedUrl].elements[0])));
+            selectedElements.add(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[hashedUrl].elements[0])));
             $($(dialogDiv.find(".cubeviz-component-setupComponentElements").children().get(0)).children().get(0)).attr("checked", true);
         }
-        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
-        $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.length);
+        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements.toObject();
+        $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
@@ -1437,11 +1446,8 @@ var View_CubeVizModule_Footer = (function (_super) {
             this.triggerGlobalEvent("onReRender_visualization");
         } else {
             if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
-                DataCube_Observation.loadAll(this.app._.backend.dataHash, this.app._.backend.url, function (newEntities) {
-                    self.app._.backend.retrievedObservations = newEntities;
-                    CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                        window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-                    });
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
                 });
             } else {
                 CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {

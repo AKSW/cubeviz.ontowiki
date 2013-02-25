@@ -93,14 +93,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public configureSetupComponentElements(component:any) 
     {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
-            componentElements = new CubeViz_Collection("__cv_uri"),
+            elementInstance:any = {},
+            componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
-            elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
-            selectedDimensions = this.app._.data.selectedComponents
+            elementTpl:any = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
+            selectedDimensions:any = this.app._.data.selectedComponents
                                                  .dimensions[component.hashedUrl]
                                                  .elements,
             setElementChecked = null,
-            wasSomethingSelected = false;
+            wasSomethingSelected:bool = false;
                         
         componentElements
             
@@ -122,14 +123,18 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
                 if(true === setElementChecked) 
                     wasSomethingSelected = true;
-                
-                // ... add new item to element list
-                elementList.append(elementTpl({
+                    
+                elementInstance = $(elementTpl({
                     checked: true === setElementChecked ? " checked=\"checked\"" : "",
                     hashedUri: element.__cv_hashedUri,
                     label: element["http://www.w3.org/2000/01/rdf-schema#label"],
                     uri: element.__cv_uri
                 }));
+                
+                elementInstance.data("data", element);
+                
+                // ... add new item to element list
+                elementList.append(elementInstance);
             });
          
         // if nothing was selected in the list, autoselect first item
@@ -376,7 +381,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             hashedUrl = dialogDiv.data("hashedUrl"),
             input = null,
             inputLabel = null,
-            selectedElements = [],
+            selectedElements = new CubeViz_Collection("__cv_uri"),
             self = this;
         
         // if some items next to the close button was clicked, this event could
@@ -396,19 +401,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             // add only elements if they were checked
             if("checked" === input.attr("checked")) {
-                selectedElements.push({
-                    hashedProperty: input.attr("name"),
-                    property: input.val(),
-                    propertyLabel: inputLabel.html()
-                });
+                selectedElements.add($(element).data("data"));
             }
         });
         
         // if nothing was selected, set the first item per default
         if(0 == _.size(selectedElements)) {
-            selectedElements = [];
+            
             // add item as new instance to avoid simply copy the reference
-            selectedElements.push(JSON.parse(JSON.stringify(
+            selectedElements.add(JSON.parse(JSON.stringify(
                 this.app._.data.components.dimensions[hashedUrl].elements[0]
             )));
             
@@ -417,14 +418,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 .children().get(0))
                 .children().get(0))
                 .attr("checked", true);
-        }        
+        }
         
         // save updated element list
-        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements;
+        this.app._.data.selectedComponents.dimensions[hashedUrl]
+            .elements = selectedElements.toObject();
                 
         // Update selected elements counter
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
-            selectedElements.length
+            selectedElements.size()
         );
         
         // update number of X dimensions
@@ -433,12 +435,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
             getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
-        // update link code
+        // update link code        
         CubeViz_ConfigurationLink.save(
             this.app._.backend.url, this.app._.data, "data",
             
             // based on updatedLinkCode, load new observations
-            function(updatedDataHash){            
+            function(updatedDataHash){
+                        
                 DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url,
                     function(newEntities){
                         

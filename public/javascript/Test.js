@@ -120,6 +120,16 @@ var CubeViz_Collection = (function () {
         });
         return this;
     };
+    CubeViz_Collection.prototype.toObject = function () {
+        var i = 0;
+        var obj = {
+        };
+
+        _.each(this._, function (entry) {
+            obj[i++] = entry;
+        });
+        return obj;
+    };
     return CubeViz_Collection;
 })();
 cubeViz_tests.push(function () {
@@ -731,7 +741,7 @@ cubeViz_tests.push(function () {
             var numberOfCheckedItems = $($(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first()).find(":checked").length;
             var numberOfSelectedComponentDimensionElements = _.keys(cubeVizApp._.data.selectedComponents.dimensions[dimensionHashedUrl].elements).length;
 
-            self.assertTrue(numberOfCheckedItems == numberOfSelectedComponentDimensionElements, "Check number of checked checkboxes (" + numberOfCheckedItems + " == " + numberOfSelectedComponentDimensionElements + ")");
+            self.assertTrue(numberOfCheckedItems == numberOfSelectedComponentDimensionElements, "Check number of checked checkboxes (" + numberOfCheckedItems + " <> " + numberOfSelectedComponentDimensionElements + ")");
             _.each(listEntries, function (listEntry) {
                 checkbox = $($(listEntry).children().first());
                 checkboxName = checkbox.attr("name");

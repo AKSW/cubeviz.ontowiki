@@ -100,23 +100,21 @@ class CubeViz_ViewHelper
              */
             $c = new CubeViz_ConfigurationLink($cacheDir);
             $config = array();
+            $generatedDataHash = '';
+            $generatedUiHash = '';
             
-            $config['data'] = $c->read ($dataHash, $model);
-            $newDataHash = CubeViz_ConfigurationLink::$filePrefForDataHash
-                . md5(json_encode($config['data']));
+            list($config['data'], $generatedDataHash) = $c->read ($dataHash, $model);
             
-            $config['ui'] = $c->read ($uiHash, $model);
-            $newUiHash = CubeViz_ConfigurationLink::$filePrefForUiHash
-                . md5(json_encode($config['ui']));
+            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, $model);
 
             $config['backend'] = array(
                 'context'               => $context, 
                 'database'              => $backend,
-                'dataHash'              => $newDataHash,
+                'dataHash'              => $generatedDataHash,
                 'imagesPath'            => $baseImagesPath,
                 'modelInformation'      => $modelInformation,
                 'modelUrl'              => $modelIri,
-                'uiHash'                => $newUiHash,
+                'uiHash'                => $generatedUiHash,
                 'uiParts'               => array(
                     'module'            => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizModuleLoaded),
                     'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)

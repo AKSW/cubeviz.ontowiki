@@ -23,7 +23,7 @@ class CubeViz_ConfigurationLink
         // Execute Ajax 
         $.ajax({
             "url": url + "savecontenttofile/",
-            "data": { type: type, content: content }
+            "data": { type: type, stringifiedContent: JSON.stringify(content) }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             

@@ -189,14 +189,13 @@ class CubeViz_ConfigurationLink
          * load and return file content, if file exists
          */
         if(true === file_exists($this->_hashDirectory . $hash)){
-            
             $c = file($this->_hashDirectory . $hash);
             
             // if configuration file contains information
             if (true == isset ($c [0])) {
                 
                 // contains stuff e.g. selectedDSD, ...
-                return json_decode($c[0], true);
+                return array(json_decode($c[0], true), $hash);
             }
         }
         
@@ -240,7 +239,7 @@ class CubeViz_ConfigurationLink
                     )
                 ), $model);                
                 
-                $this->write($config, 'data');
+                $type = 'data';
                 
                 break;
             
@@ -260,15 +259,18 @@ class CubeViz_ConfigurationLink
                     )
                 );
                 
-                $this->write($config, 'ui');
+                $type = 'ui';
                   
                 break;
                 
             // something went wrong, hash type unknown
-            default: return null;
+            default: return array (null, null);
         }
         
-        return $config;
+        return array(
+            $config,
+            $this->write($config, $type) // = generated hash
+        );
     }
     
     /**
@@ -287,7 +289,7 @@ class CubeViz_ConfigurationLink
             return;
         }
         
-        $content = trim(json_encode($content));
+        $content = trim($content);
         $content = str_replace(array("\r\n", "\\r", "\\n"), ' ', $content);
         $content = preg_replace('/\s\s+/', ' ', $content);
         $content = preg_replace('/\s+/', ' ', $content);
@@ -300,7 +302,6 @@ class CubeViz_ConfigurationLink
         $filePath = $this->_hashDirectory . $filename;
 
         if(false == file_exists($filePath)) {
-            
             // can't open the file: throw exception
             if(false === ($fh = fopen($filePath, 'w'))) {
                 $m = 'No write permissions for '. $filePath;
@@ -309,7 +310,7 @@ class CubeViz_ConfigurationLink
             }
 
             // write all parameters line by line
-            fwrite($fh, $content."\n");
+            fwrite($fh, $content);
             chmod ($filePath, 0755);
             fclose($fh);
         } 

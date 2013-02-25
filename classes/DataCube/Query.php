@@ -276,8 +276,8 @@ class DataCube_Query
     /**
      * 
      */
-    public function getObservations ($linkConfiguration) {
-        
+    public function getObservations ($linkConfiguration) 
+    {
         // Case: link configuration was found and loaded
         if ( 0 < count ( $linkConfiguration ) ) {
             // Extract and save neccessary parameters from link configuration
@@ -332,7 +332,10 @@ class DataCube_Query
             $where .= ' ?s <'. $ele ['typeUrl'] .'> ?d'. $i++ .' .'. "\n";
         }
         
-        // Set FILTER (e.g. FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002") )
+        // Set FILTER
+        // e.g.: FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002")
+        // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
+        //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
         $i = 0;
         foreach ( $selCompDims as $dim ) {
             
@@ -344,15 +347,14 @@ class DataCube_Query
             
                 foreach ($dimElements as $elementUri => $element) {
                     
-                    // If property is an URL
-                    if (true ==  Erfurt_Uri::check($elementUri)) {
-                        $filter [] = ' ?d'. $i .' = <'. $elementUri .'> ';
-                        
-                    // If property is NOT an URL
-                    } else {
-                        echo"<pre>"; var_dump($dimElements); echo "</pre>"; exit;
-                        $filter [] = ' ?d'. $i .' = "'. $element ['property'] .'" ';
+                    // If __cv_uri is set and an URL
+                    if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
+                        $value = '<'. $element ['__cv_uri'] .'>';
+                    } elseif (true === isset($element ['http://www.w3.org/2000/01/rdf-schema#label'])) {
+                        $value = '"'. $element ['http://www.w3.org/2000/01/rdf-schema#label'] .'"';
                     }
+                    
+                    $filter [] = ' ?d'. $i .' = '. $value .' ';
                 }
                 
                 $i++;
@@ -363,6 +365,8 @@ class DataCube_Query
         $where .= '}';    
         
         $queryObject->setWherePart($where);
+        
+        // echo (string) $queryObject;
         
         // send query, return result as JSON
         $result = json_decode ( $this->_store->sparqlQuery (
