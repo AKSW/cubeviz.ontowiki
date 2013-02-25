@@ -431,6 +431,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             {closeOnEscape: true, showCross: true, width: 550}
         );
         
+        // remove event handler
+        $("#cubeviz-legend-btnShowRetrievedObservations").off();
+        $("#cubeviz-legend-btnShowSelectedConfiguration").off();
+        $("#cubeviz-legend-componentDimensionShowInfo").off();
+        $("#cubeviz-legend-sortByTitle").off();                
+        $("#cubeviz-legend-sortByValue").off();
+        
         /**
          * Delegate events to new items of the template
          */

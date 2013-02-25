@@ -1820,6 +1820,11 @@ var View_IndexAction_Legend = (function (_super) {
             showCross: true,
             width: 550
         });
+        $("#cubeviz-legend-btnShowRetrievedObservations").off();
+        $("#cubeviz-legend-btnShowSelectedConfiguration").off();
+        $("#cubeviz-legend-componentDimensionShowInfo").off();
+        $("#cubeviz-legend-sortByTitle").off();
+        $("#cubeviz-legend-sortByValue").off();
         this.bindUserInterfaceEvents({
             "click #cubeviz-legend-btnShowSelectedConfiguration": this.onClick_btnShowSelectedConfiguration,
             "click #cubeviz-legend-btnShowRetrievedObservations": this.onClick_btnShowRetrievedObservations,
