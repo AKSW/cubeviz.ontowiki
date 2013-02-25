@@ -217,7 +217,7 @@
 </script>
 
 <script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
-    <a href="<%= url %>" target="_blank"><%= label %></a>
+    <a href="<%= url %>" target="_blank" title="<%= fullLabel %>"><%= shortLabel %></a>
 </script>
 
 <script id="cubeviz-legend-tpl-observation" type="text/template">
@@ -273,8 +273,8 @@
             <i class="icon-leaf" style="font-size: 11px;"></i>
         </span>
         <span>
-            <span style="font-size: 17px;">
-                <%= label %></span>
+            <span style="font-size: 17px;" title="<%= fullLabel %>">
+                <%= shortLabel %></span>
             <div style="height: 8px;"></div>
             <a class="cubeviz-legend-componentDimensionShowInfo">
                 Show more information</a>

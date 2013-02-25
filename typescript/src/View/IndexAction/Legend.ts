@@ -143,7 +143,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     
                     // add li entry
                     dimensionElementList.append(tplDimensionEntry({
-                        label: dimensionElement[dimensionElementsCopy.idKey],
+                        fullLabel: dimensionElement[dimensionElementsCopy.idKey],
+                        shortLabel: _.str.prune(dimensionElement[dimensionElementsCopy.idKey], 75, " ..."),
                         url: dimensionElement["__cv_uri"]
                     }));
                     

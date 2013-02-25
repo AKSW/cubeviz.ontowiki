@@ -1622,7 +1622,8 @@ var View_IndexAction_Legend = (function (_super) {
             html = "";
             dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.elements))).sortAscendingBy().each(function (dimensionElement) {
                 dimensionElementList.append(tplDimensionEntry({
-                    label: dimensionElement[dimensionElementsCopy.idKey],
+                    fullLabel: dimensionElement[dimensionElementsCopy.idKey],
+                    shortLabel: _.str.prune(dimensionElement[dimensionElementsCopy.idKey], 75, " ..."),
                     url: dimensionElement["__cv_uri"]
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
