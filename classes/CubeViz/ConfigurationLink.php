@@ -269,7 +269,7 @@ class CubeViz_ConfigurationLink
         
         return array(
             $config,
-            $this->write($config, $type) // = generated hash
+            $this->write(json_encode($config, JSON_FORCE_OBJECT), $type) // = generated hash
         );
     }
     
