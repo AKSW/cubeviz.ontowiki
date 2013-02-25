@@ -65,7 +65,7 @@
 {
     float: left; 
     width: 40px; 
-    min-height: 100px; 
+    min-height: 120px; 
     text-align: center;
 }
 
@@ -116,7 +116,8 @@
 
 .cubeviz-legend-observationValue
 {
-    margin-right: 14px;
+    margin-right: 10px;
     float: right;
-    font-size: 17px;
+    font-size: 15px;
+    font-weight: bold;
 }
