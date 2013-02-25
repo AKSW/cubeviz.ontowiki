@@ -335,8 +335,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_sortButton(event) : void
     {
-        var dialogDiv = $(event.target).data("dialogDiv"),
-            dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
+        var dialogDiv = $(event.target).data("dialogDiv");
+        
+        // do nothingif dialog div was not given
+        if(true === _.isUndefined(dialogDiv)){
+            return;
+        }
+        
+        var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
             list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
             listItems:any[] = list.children('li'),
             modifiedItemList:any[] = [];
@@ -376,7 +382,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         // ... and fill it with new ordered items
         _.each(modifiedItemList, function(item){
-            list.append(item); 
+            list.append(item);
         });
     }
     
@@ -408,7 +414,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         if(undefined === hashedUrl) {
             return;
         }
-            
+        
         /**
          * Go through all checkboxes and save their data if checked
          */

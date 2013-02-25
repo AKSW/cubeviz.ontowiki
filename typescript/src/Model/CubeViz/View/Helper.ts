@@ -88,6 +88,7 @@ class CubeViz_View_Helper
     static sortLiItemsByAlphabet(listItems:any) : any[]
     {
         var a:string = "", b:string = "",
+            data:any = {},
             resultList:any[] = [];
         
         listItems.sort(function(a, b) {
@@ -97,7 +98,13 @@ class CubeViz_View_Helper
         });
         
         _.each(listItems, function(item){
-            resultList.push($(item).clone());
+            
+            // rescue attached data
+            data = $(item).data("data");
+            item = $(item).clone();
+            $(item).data("data", data);
+            
+            resultList.push(item);
         });
       
         return resultList;
@@ -109,15 +116,23 @@ class CubeViz_View_Helper
      */
     static sortLiItemsByCheckStatus(listItems:any[]) : any[]
     {
-        var notCheckedItems:any[] = [],
+        var data:any = {},
+            notCheckedItems:any[] = [],
             resultList:any[] = [];
-        
+            
         // go through all list items and check:
         // - if current item's checkbox is checked, add it back to the list
         // - if not, store it temporarly in notCheckedItems and add them later
         _.each(listItems, function(item){
+            
             if($($(item).children().first()).is(":checked")){
-                resultList.push($(item).clone());
+            
+                // rescue attached data
+                data = $(item).data("data");
+                item = $(item).clone();
+                $(item).data("data", data);
+            
+                resultList.push(item);
             } else {
                 notCheckedItems.push(item);
             }
@@ -125,7 +140,13 @@ class CubeViz_View_Helper
       
         // add stored not-checked items
         _.each(notCheckedItems, function(item){
-            resultList.push($(item).clone());
+            
+            // rescue attached data
+            data = $(item).data("data");
+            item = $(item).clone();
+            $(item).data("data", data);
+            
+            resultList.push(item);
         });
         
         return resultList;

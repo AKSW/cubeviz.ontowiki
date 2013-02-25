@@ -318,6 +318,8 @@ var CubeViz_View_Helper = (function () {
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
         var b = "";
+        var data = {
+        };
         var resultList = [];
 
         listItems.sort(function (a, b) {
@@ -326,23 +328,34 @@ var CubeViz_View_Helper = (function () {
             return (a < b) ? -1 : (a > b) ? 1 : 0;
         });
         _.each(listItems, function (item) {
-            resultList.push($(item).clone());
+            data = $(item).data("data");
+            item = $(item).clone();
+            $(item).data("data", data);
+            resultList.push(item);
         });
         return resultList;
     }
     CubeViz_View_Helper.sortLiItemsByCheckStatus = function sortLiItemsByCheckStatus(listItems) {
+        var data = {
+        };
         var notCheckedItems = [];
         var resultList = [];
 
         _.each(listItems, function (item) {
             if($($(item).children().first()).is(":checked")) {
-                resultList.push($(item).clone());
+                data = $(item).data("data");
+                item = $(item).clone();
+                $(item).data("data", data);
+                resultList.push(item);
             } else {
                 notCheckedItems.push(item);
             }
         });
         _.each(notCheckedItems, function (item) {
-            resultList.push($(item).clone());
+            data = $(item).data("data");
+            item = $(item).clone();
+            $(item).data("data", data);
+            resultList.push(item);
         });
         return resultList;
     }
