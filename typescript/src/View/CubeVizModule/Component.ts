@@ -287,6 +287,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     self.triggerGlobalEvent("onReRender_visualization");
                 }
                 
+                self.triggerGlobalEvent("onUpdate_componentDimensions");
+                
                 // if only module was loaded, move reloading stuff to footer.ts
                 CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
             }

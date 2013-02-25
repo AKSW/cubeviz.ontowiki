@@ -18,6 +18,10 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                 handler: this.onAfterChange_selectedDSD
             },
             {
+                name:    "onBeforeClick_selectorItem",
+                handler: this.onBeforeClick_selectorItem
+            },
+            {
                 name:    "onChange_selectedDS",
                 handler: this.onChange_selectedDS
             },
@@ -26,8 +30,8 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
                 handler: this.onStart_application
             },
             {
-                name:    "onBeforeClick_selectorItem",
-                handler: this.onBeforeClick_selectorItem
+                name:    "onUpdate_componentDimensions",
+                handler: this.onUpdate_componentDimensions
             }
         ]);
     }
@@ -43,17 +47,19 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
         // If no buttonVal is set, we see the Permalink button,
         // so transform it to see the link
         if(true == _.isUndefined(this.collection.get("buttonVal"))) {
+            
             // remember old perma link button label, because of the language
             this.collection.add({
                 id: "buttonVal", 
                 value: $("#cubeviz-footer-permaLinkButton").html().toString().trim()
             });
-            this.showLink(">>");
+            this.showLink("<");
             
         // We see the link, so transform it back to the Permalink button,
         // we saw before.
         } else {
             value = this.collection.get("buttonVal").value;
+            
             this.collection.remove("buttonVal");
             this.closeLink(value);
         }
@@ -64,14 +70,14 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
      */
     public closeLink(label:string) 
     {
-        $("#cubeviz-footer-permaLinkMenu").fadeOut ( 
-            450,
-            function () {
-                $("#cubeviz-footer-permaLinkButton")
-                    .animate({width:75}, 450)
-                    .html(label);
-            }
-        );
+        $("#cubeviz-footer-permaLinkButton")
+            .fadeOut("slow");
+            
+        $("#cubeviz-footer-permaLinkMenu").fadeOut("slow", function(){                
+            $("#cubeviz-footer-permaLinkButton")
+                .html(label)
+                .show();
+        });
     }
     
     /**
@@ -192,6 +198,22 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     /**
      *
      */
+    public onUpdate_componentDimensions() 
+    {
+        if(true == _.isUndefined(this.collection.get("buttonVal"))) {}
+        
+        // We see the link, so transform it back to the Permalink button,
+        // we saw before.
+        else {
+            var value:string = this.collection.get("buttonVal").value;
+            this.collection.remove("buttonVal");
+            this.closeLink(value);
+        }
+    }
+    
+    /**
+     *
+     */
     public render() 
     {
         // Delegate events to new items of the template
@@ -210,38 +232,34 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
     {
         var self = this;
         
-        $("#cubeviz-footer-permaLinkButton")
-            .html(label)
-            .animate(
-                { width: 18 }, 
-                450, 
-                "linear",
-                function() {                        
-                    var position = $("#cubeviz-footer-permaLinkButton").position();
+        // fade out "Permalink" button
+        $("#cubeviz-footer-permaLinkButton").fadeOut("slow", function(){
             
-                    $("#cubeviz-footer-permaLinkMenu")
-                        .css ("top", position.top + 2)
-                        .css ("left", position.left + 32);
-                        
-                    // build link to show later on
-                    var link = self.app._.backend.url
-                               + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                               + "&cv_dataHash=" + self.app._.backend.dataHash
-                               + "&cv_uiHash=" + self.app._.backend.uiHash;
-                               
-                    // build ahref + link including the permalink
-                    var url = $("<a></a>")
-                        .attr ("href", link)
-                        .attr ("target", "_self")
-                        .html (self.collection.get("cubeviz-footer-permaLink").html);
-                        
-                    $("#cubeviz-footer-permaLinkMenu")
-                        .animate({width:"toggle"},450);
-                    
-                    $("#cubeviz-footer-permaLink")
-                        .show()
-                        .html(url);
-                }
-        ); 
+            /**
+             * adapt button itself and show "back" text
+             */
+            $("#cubeviz-footer-permaLinkButton")
+                .html(label)
+                .fadeIn("slow");
+                
+            /**
+             * build ahref + link including the permalink
+             */
+            var link = self.app._.backend.url
+                       + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                       + "&cv_dataHash=" + self.app._.backend.dataHash
+                       + "&cv_uiHash=" + self.app._.backend.uiHash;
+
+            var url = $("<a></a>")
+                .attr ("href", link)
+                .attr ("target", "_self")
+                .html (self.collection.get("cubeviz-footer-permaLink").html);
+            
+            $("#cubeviz-footer-permaLink")
+                .html(url)
+                .fadeIn("slow");
+            
+            $("#cubeviz-footer-permaLinkMenu").fadeIn("slow");
+        });
     }
 }
