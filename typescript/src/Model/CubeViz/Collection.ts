@@ -178,4 +178,19 @@ class CubeViz_Collection
         
         return this;
     }
+    
+    /**
+     * Returns an object with numeric index containing all elements.
+     * @return Object
+     */
+    public toObject() 
+    {
+        var i = 0, obj = {};
+        
+        _.each(this._, function(entry){
+            obj[i++] = entry;
+        });
+        
+        return obj;
+    }
 }
