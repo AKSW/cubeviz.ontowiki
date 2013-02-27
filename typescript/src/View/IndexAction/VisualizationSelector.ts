@@ -19,6 +19,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 handler: this.onReRender_visualization
             },
             {
+                name:    "onClick_setupComponentOpener",
+                handler: this.onClick_setupComponentOpener
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -68,6 +72,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     public initialize() : void
     {
         this.render();
+    }
+    
+    /**
+     *
+     */
+    public onClick_setupComponentOpener() 
+    {
+        this.hideMenu();
     }
     
     /**

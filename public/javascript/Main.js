@@ -1298,6 +1298,7 @@ var View_CubeVizModule_Component = (function (_super) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
+        this.triggerGlobalEvent("onClick_setupComponentOpener");
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
@@ -1939,6 +1940,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
                 handler: this.onReRender_visualization
             }, 
             {
+                name: "onClick_setupComponentOpener",
+                handler: this.onClick_setupComponentOpener
+            }, 
+            {
                 name: "onStart_application",
                 handler: this.onStart_application
             }
@@ -1964,6 +1969,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.initialize = function () {
         this.render();
+    };
+    View_IndexAction_VisualizationSelector.prototype.onClick_setupComponentOpener = function () {
+        this.hideMenu();
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_closeMenu = function () {
         this.hideMenu();

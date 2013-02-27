@@ -341,6 +341,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_setupComponentOpener(event) : void
     {
+        this.triggerGlobalEvent("onClick_setupComponentOpener");
+        
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     }
     
