@@ -68,7 +68,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(
             $("#cubeviz-index-headerDialogBox"),
-            {closeOnEscape: true, showCross: true, width: 550}
+            {closeOnEscape: true, height: "500", showCross: true, width: "50%"}
         );
         
         // render header with model label + icon, to open dialog

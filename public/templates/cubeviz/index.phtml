@@ -188,21 +188,23 @@
 </script>
 
 <!-- 
-    Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
+    Dialog box for questionmark in headline (cubeviz-Index-questionMarkHeadline) 
 -->
 <script id="cubeviz-index-tpl-headerDialogBoxHead" type="text/template">
+    <div style="margin-top: 4px; float: right; clear:both;">
+        <img class="cubeviz-icon-small"
+              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+    </div>
     <h3><%= label %></h3>
-    <br/>
     <ul id="cubeviz-index-headerDialogBoxModelInformation"></ul>
 </script>
 
 <script id="cubeviz-index-tpl-headerDialogBoxEntry" type="text/template">
-    <li><nobr>
-        <div class="cubeviz-index-headerDialogBoxEntryLabel">
-            <%= predicateLabel %></div>
+    <li class="cubeviz-index-headerDialogBoxEntry">
+        <strong><%= predicateLabel %></strong>
         <div class="cubeviz-index-headerDialogBoxEntryContent">
             <%= objectContent %></div>
-    </nobr></li>
+    </li>
 </script>
 
 

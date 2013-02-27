@@ -1,3 +1,15 @@
+#cubeviz-index-headerDialogBoxModelInformation 
+{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.cubeviz-index-headerDialogBoxEntry
+{
+    margin-top: 20px;
+}
+
 /**
  * Questionmark next to Model label
  */
@@ -11,31 +23,4 @@
 {
     opacity: 1.0;
     filter:alpha(opacity=100);
-}
-
-/**
- * Dialog about model information
- */
-#cubeviz-index-headerDialogBoxModelInformation 
-{
-    list-style-type: none;
-    padding: 0px;
-    margin-left: 0px;
-}
-
-.cubeviz-index-headerDialogBoxEntryLabel
-{
-    float: left;
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.cubeviz-index-headerDialogBoxEntryContent
-{
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
 }

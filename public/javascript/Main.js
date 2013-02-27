@@ -1578,8 +1578,9 @@ var View_IndexAction_Header = (function (_super) {
     View_IndexAction_Header.prototype.render = function () {
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-index-headerDialogBox"), {
             closeOnEscape: true,
+            height: "500",
             showCross: true,
-            width: 550
+            width: "50%"
         });
         this.renderHeader();
         this.renderDialogBox();
