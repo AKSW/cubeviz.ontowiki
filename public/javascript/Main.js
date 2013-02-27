@@ -1191,6 +1191,7 @@ var View_CubeVizModule_Component = (function (_super) {
         var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
         div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl).data("dimensionTypeUrl", component.typeUrl);
         CubeViz_View_Helper.attachDialogTo(div);
+        $(div.find(".cubeviz-component-selectAllButton").get(0)).data("dialogDiv", div);
         $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
         opener.data("dialogDiv", div);
         $($(div.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", div);
@@ -1292,6 +1293,9 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.onClick_deselectButton = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+    };
+    View_CubeVizModule_Component.prototype.onClick_selectAllButton = function (event) {
+        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
@@ -1417,6 +1421,7 @@ var View_CubeVizModule_Component = (function (_super) {
             "click .cubeviz-component-cancel": this.onClick_cancel,
             "click .cubeviz-component-closeAndUpdate": this.onClick_closeAndUpdate,
             "click .cubeviz-component-deselectButton": this.onClick_deselectButton,
+            "click .cubeviz-component-selectAllButton": this.onClick_selectAllButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click .cubeviz-component-sortButtons": this.onClick_sortButton,
             "click #cubeviz-component-questionMark": this.onClick_questionmark

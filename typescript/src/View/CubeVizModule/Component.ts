@@ -51,6 +51,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         CubeViz_View_Helper.attachDialogTo(div);
         
         // attach dialog div to deselect button
+        $(div.find(".cubeviz-component-selectAllButton").get(0))
+            .data("dialogDiv", div);
+        
+        // attach dialog div to deselect button
         $(div.find(".cubeviz-component-deselectButton").get(0))
             .data("dialogDiv", div);
         
@@ -325,6 +329,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
+    public onClick_selectAllButton(event) : void
+    {
+        $(event.target).data("dialogDiv")
+            .find("[type=\"checkbox\"]")
+            .attr("checked", true);
+    }
+    
+    /**
+     *
+     */
     public onClick_setupComponentOpener(event) : void
     {
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
@@ -355,7 +369,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         $(event.target)
             .addClass("cubeviz-component-sortButtonSelected");
         
-        // decide by given type what sort function to execute
+        // decide by given type, what sort function to execute
         switch ($(event.target).data("type")) {
             
             case "alphabet":
@@ -590,6 +604,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
             "click .cubeviz-component-deselectButton": 
                 this.onClick_deselectButton,
+                
+            "click .cubeviz-component-selectAllButton": 
+                this.onClick_selectAllButton,
                 
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
