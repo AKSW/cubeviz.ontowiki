@@ -461,8 +461,8 @@ var CubeViz_Visualization_Controller = (function () {
 
         _.each(selectedComponentDimensions, function (componentDimension, dimensionHashedUrl) {
             if(componentDimension.typeUrl == dimensionTypeUrl) {
-                _.each(componentDimension.elements, function (element, dimensionElementUrl) {
-                    if(dimensionElementUrl == propertyUrl) {
+                _.each(componentDimension.elements, function (element) {
+                    if(element["__cv_uri"] == propertyUrl) {
                         label = element[rdfsLabel];
                     }
                 });
@@ -957,11 +957,11 @@ var DataCube_Observation = (function () {
                 }
                 selecDimVal = observation[selecDimUri][0].value;
                 dimensionValues[selecDimUri] = selecDimVal;
-                if(undefined == self._axes[selecDimUri]) {
+                if(true === _.isUndefined(self._axes[selecDimUri])) {
                     self._axes[selecDimUri] = {
                     };
                 }
-                if(undefined == self._axes[selecDimUri][selecDimVal]) {
+                if(true === _.isUndefined(self._axes[selecDimUri][selecDimVal])) {
                     self._axes[selecDimUri][selecDimVal] = [];
                 }
                 measureObj[measureUri] = observation[measureUri][0].value;

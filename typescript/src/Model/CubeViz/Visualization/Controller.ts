@@ -108,14 +108,16 @@ class CubeViz_Visualization_Controller
             if (componentDimension.typeUrl == dimensionTypeUrl) {
                 
                 // check each dimension element
-                _.each(componentDimension.elements, function(element, dimensionElementUrl){
-                    if(dimensionElementUrl == propertyUrl) {
+                _.each(componentDimension.elements, function(element){
+                    
+                    // if current element uri matches with given one
+                    if(element["__cv_uri"] == propertyUrl) {
                         label = element[rdfsLabel];
                     }
                 });
             }
         });
-        
+
         // if nothing was found, simply return the given propertyUrl
         return label;
     }

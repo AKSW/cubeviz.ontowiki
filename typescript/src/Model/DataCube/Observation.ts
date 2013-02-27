@@ -136,12 +136,12 @@ class DataCube_Observation {
                 dimensionValues [ selecDimUri ] = selecDimVal;
                     
                 // e.g. ["_axes"]["http:// ... /country"] = {};
-                if ( undefined == self._axes[selecDimUri] ) {
+                if (true === _.isUndefined(self._axes[selecDimUri])) {
                     self._axes[selecDimUri] = {};
                 }
                     
                 // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
-                if ( undefined == self._axes[selecDimUri][selecDimVal] ) {
+                if (true === _.isUndefined(self._axes[selecDimUri][selecDimVal])) {
                     self._axes[selecDimUri][selecDimVal] = [];
                 }
                 
