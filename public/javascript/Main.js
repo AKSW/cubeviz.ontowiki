@@ -627,7 +627,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                         return;
                     }
                     _.each(value[selectedMeasureUri].ref, function (refValue, refKey) {
-                        if(false === _.isUndefined(refValue[forSeries]) && seriesKey == refValue[forSeries].value) {
+                        if(false === _.isUndefined(refValue[forSeries]) && seriesKey == refValue[forSeries].value && found == false) {
                             floatValue = parseFloat(value[selectedMeasureUri].value);
                             if(isNaN(floatValue)) {
                                 floatValue = null;

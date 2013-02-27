@@ -116,8 +116,11 @@ class CubeViz_Visualization_HighCharts_Chart
                     // if one of the xAxis entries fits with given seriesEntry, 
                     // so push the related value into the obj [data] array
                     _.each(value[selectedMeasureUri].ref, function(refValue, refKey){
+                        
                         if(false === _.isUndefined(refValue[forSeries])
-                             && seriesKey == refValue[forSeries].value) {
+                           && seriesKey == refValue[forSeries].value
+                           && found == false) { // stop if value was already used
+                           
                             floatValue = parseFloat(value[selectedMeasureUri].value);
                             
                             if (isNaN(floatValue)) {
