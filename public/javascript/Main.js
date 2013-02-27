@@ -1865,6 +1865,11 @@ var View_IndexAction_Visualization = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
+    View_IndexAction_Visualization.prototype.handleException = function (thrownException) {
+        if(true === _.str.include(thrownException, "Highcharts error #10")) {
+            $("#cubeviz-index-visualization").html($("#cubeviz-visualization-tpl-notificationHightchartsException10").html());
+        }
+    };
     View_IndexAction_Visualization.prototype.initialize = function () {
         this.render();
     };
@@ -1904,18 +1909,22 @@ var View_IndexAction_Visualization = (function (_super) {
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
         var offset = $(this.attachedTo).offset();
         $(this.attachedTo).css("height", $(window).height() - offset.top - 80);
-        switch(type) {
-            default: {
-                if(false === _.isUndefined(this.app._.generatedVisualization)) {
-                    this.app._.generatedVisualization.destroy();
+        if(false === _.isUndefined(this.app._.generatedVisualization)) {
+            try  {
+                this.app._.generatedVisualization.destroy();
+            } catch (ex) {
+                if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
+                    console.log(ex);
                 }
-                var hC = new CubeViz_Visualization_HighCharts();
-                var chart = hC.load(this.app._.ui.visualization.class);
-                chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
-                this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
-                break;
-
             }
+        }
+        var hC = new CubeViz_Visualization_HighCharts();
+        var chart = hC.load(this.app._.ui.visualization.class);
+        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), this.app._.data.selectedComponents.measures, CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl, this.app._.data.selectedDSD.label, this.app._.data.selectedDS.label);
+        try  {
+            this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
+        } catch (ex) {
+            this.handleException(ex);
         }
     };
     return View_IndexAction_Visualization;
