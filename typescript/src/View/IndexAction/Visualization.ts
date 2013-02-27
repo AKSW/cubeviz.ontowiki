@@ -60,6 +60,11 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 $("#cubeviz-visualization-tpl-notificationHightchartsException10").html()
             );
         }
+        
+        // Output error
+        if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) { 
+            console.log(thrownException);
+        }
     }
     
     /**
