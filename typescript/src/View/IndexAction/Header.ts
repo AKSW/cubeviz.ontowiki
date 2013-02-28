@@ -93,8 +93,18 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
     public renderDialogBox() 
     {
         // 
-        var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text());
-        var modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text()),
+            modelLabel = "";
+        
+        // if model label is set and not blank, use it!
+        if(false === _.isUndefined(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])
+           && false === _.str.isBlank(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])){
+            modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        
+        // if not, use modelUri instead
+        } else {
+            modelLabel = this.app._.backend.modelUrl;
+        }
         
         $("#cubeviz-index-headerDialogBox").html(headerDialogHead({
             label: modelLabel
@@ -122,7 +132,17 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public renderHeader() 
     {
-        var modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        var modelLabel
+        
+        // if model label is set and not blank, use it!
+        if(false === _.isUndefined(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])
+           && false === _.str.isBlank(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])){
+            modelLabel = this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        
+        // if not, use modelUri instead
+        } else {
+            modelLabel = this.app._.backend.modelUrl;
+        }
         
         var headerTpl = _.template($("#cubeviz-index-tpl-header").text());
         

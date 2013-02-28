@@ -1592,7 +1592,13 @@ var View_IndexAction_Header = (function (_super) {
     };
     View_IndexAction_Header.prototype.renderDialogBox = function () {
         var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text());
-        var modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        var modelLabel = "";
+
+        if(false === _.isUndefined(this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"])) {
+            modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        } else {
+            modelLabel = this.app._.backend.modelUrl;
+        }
         $("#cubeviz-index-headerDialogBox").html(headerDialogHead({
             label: modelLabel
         }));
@@ -1607,7 +1613,12 @@ var View_IndexAction_Header = (function (_super) {
         $("#cubeviz-index-headerDialogBoxModelInformation").html(htmlModelInformation);
     };
     View_IndexAction_Header.prototype.renderHeader = function () {
-        var modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        var modelLabel;
+        if(false === _.isUndefined(this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"])) {
+            modelLabel = this.app._.backend.modelInformation["http://www.w3.org/2000/01/rdf-schema#label"].content;
+        } else {
+            modelLabel = this.app._.backend.modelUrl;
+        }
         var headerTpl = _.template($("#cubeviz-index-tpl-header").text());
         $("#cubeviz-index-header").html(headerTpl({
             modelLabel: modelLabel
