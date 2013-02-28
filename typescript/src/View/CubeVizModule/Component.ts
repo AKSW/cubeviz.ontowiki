@@ -128,10 +128,19 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 if(true === setElementChecked) 
                     wasSomethingSelected = true;
                     
+                var label = "";
+                    
+                if(false === _.isUndefined(element["http://www.w3.org/2000/01/rdf-schema#label"]) 
+                   && false === _.str.isBlank(element["http://www.w3.org/2000/01/rdf-schema#label"])) {
+                    label = element["http://www.w3.org/2000/01/rdf-schema#label"];
+                } else {
+                    label = element["__cv_uri"];
+                }
+                    
                 elementInstance = $(elementTpl({
                     checked: true === setElementChecked ? " checked=\"checked\"" : "",
                     hashedUri: element.__cv_hashedUri,
-                    label: element["http://www.w3.org/2000/01/rdf-schema#label"],
+                    label: label,
                     uri: element.__cv_uri
                 }));
                 

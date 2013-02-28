@@ -75,7 +75,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             observationTpl:any = _.template($("#cubeviz-legend-tpl-observation").text());
                 
         // variables
-        var infoList:any = null;
+        var infoList:any = null,
+            label = "";
      
         $("#cubeviz-legend-observations").html("");
         
@@ -86,10 +87,21 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
             
             _.each(obs.dimensionElements, function(dimensionElement){
+                
+                // if model label is set and not blank, use it!
+                if(false === _.isUndefined(dimensionElement.label)
+                   && false === _.str.isBlank(dimensionElement.label)){
+                    label = dimensionElement.label;
+                
+                // if not, use modelUri instead
+                } else {
+                    label = dimensionElement["__cv_uri"];
+                }
+                                
                 infoList.append(observationInfoEntry({
                     dimensionLabel: dimensionElement.dimensionLabel,
-                    fullLabel: dimensionElement.label,
-                    shortLabel: _.str.prune(dimensionElement.label, 65, "..."),
+                    fullLabel: label,
+                    shortLabel: _.str.prune(label, 65, "..."),
                     url: dimensionElement.value
                 }));
             });
@@ -110,8 +122,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         var componentDimensionInfoArea = null,
             observationIcon = null,
             dimensionElementList:any = null,
-            dimensionElementsCopy = new CubeViz_Collection ("http://www.w3.org/2000/01/rdf-schema#label"),
-            html:string = "";
+            dimensionElementsCopy = new CubeViz_Collection ("__cv_uri"),
+            html:string = "",
+            label:string = "";
                 
         $("#cubeviz-legend-components").html(tplComponentsList());
         
@@ -141,10 +154,20 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 // go through each dimension element
                 .each(function(dimensionElement){
                     
+                    // if model label is set and not blank, use it!
+                    if(false === _.isUndefined(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"])
+                       && false === _.str.isBlank(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"])){
+                        label = dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"];
+                    
+                    // if not, use modelUri instead
+                    } else {
+                        label = dimensionElement["__cv_uri"];
+                    }
+                    
                     // add li entry
                     dimensionElementList.append(tplDimensionEntry({
-                        fullLabel: dimensionElement[dimensionElementsCopy.idKey],
-                        shortLabel: _.str.prune(dimensionElement[dimensionElementsCopy.idKey], 75, " ..."),
+                        fullLabel: label,
+                        shortLabel: _.str.prune(label, 75, " ..."),
                         url: dimensionElement["__cv_uri"]
                     }));
                     
@@ -195,37 +218,22 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         
         // go through all retrieved observations
         _.each(observations, function(obs){
-
+            
             /**
              * set label of the observation entry
              */       
             observationLabel = "";
             
             if (false === _.isUndefined(obs[rdfsLabelUri])
-               && "" != obs[rdfsLabelUri][0].label) {                
+               && false === _.str.isBlank(obs[rdfsLabelUri][0].label)) {
                 observationLabel = obs[rdfsLabelUri][0].value;
-            } else {            
-                _.each (dimensionInformation, function(dimension){
-                    
-                    if(true === _.isUndefined(obs[dimension.typeUrl])){
-                        return;
-                    }
-                    
-                    if("" != observationLabel) {
-                        observationLabel += " - ";
-                    }
-                    
-                    observationLabel += dimensionElementLabelTpl({
-                        label: $.trim(obs[dimension.typeUrl][0].label),
-                        url: obs[dimension.typeUrl][0].value
-                    });
+            } else {      
+                observationLabel = dimensionElementLabelTpl({
+                    fullLabel: obs.observationUri[0].value,
+                    shortLabel: _.str.prune(obs.observationUri[0].value, 65, " ..."),
+                    url: obs.observationUri[0].value
                 });
-                
-                // if nothing was set
-                if ("" == observationLabel){
-                    observationLabel = "Observation without dimension data";
-                }
-            }
+            } 
             
             dimensionElements = [];
             
@@ -252,7 +260,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
              */
             result.push ({
                 observationLabel: observationLabel,
-                observationShortLabel: _.str.prune(observationLabel, 70, " ..."),
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",

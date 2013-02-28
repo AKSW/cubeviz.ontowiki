@@ -111,8 +111,12 @@ class CubeViz_Visualization_Controller
                 _.each(componentDimension.elements, function(element){
                     
                     // if current element uri matches with given one
-                    if(element["__cv_uri"] == propertyUrl) {
+                    if(element["__cv_uri"] == propertyUrl
+                       && false === _.isUndefined(element[rdfsLabel]) 
+                       && false === _.str.isBlank(element[rdfsLabel])) {
                         label = element[rdfsLabel];
+                    } else {
+                        label = element["__cv_uri"];
                     }
                 });
             }

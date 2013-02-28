@@ -462,8 +462,10 @@ var CubeViz_Visualization_Controller = (function () {
         _.each(selectedComponentDimensions, function (componentDimension, dimensionHashedUrl) {
             if(componentDimension.typeUrl == dimensionTypeUrl) {
                 _.each(componentDimension.elements, function (element) {
-                    if(element["__cv_uri"] == propertyUrl) {
+                    if(element["__cv_uri"] == propertyUrl && false === _.isUndefined(element[rdfsLabel]) && false === _.str.isBlank(element[rdfsLabel])) {
                         label = element[rdfsLabel];
+                    } else {
+                        label = element["__cv_uri"];
                     }
                 });
             }
@@ -1219,10 +1221,16 @@ var View_CubeVizModule_Component = (function (_super) {
             if(true === setElementChecked) {
                 wasSomethingSelected = true;
             }
+            var label = "";
+            if(false === _.isUndefined(element["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(element["http://www.w3.org/2000/01/rdf-schema#label"])) {
+                label = element["http://www.w3.org/2000/01/rdf-schema#label"];
+            } else {
+                label = element["__cv_uri"];
+            }
             elementInstance = $(elementTpl({
                 checked: true === setElementChecked ? " checked=\"checked\"" : "",
                 hashedUri: element.__cv_hashedUri,
-                label: element["http://www.w3.org/2000/01/rdf-schema#label"],
+                label: label,
                 uri: element.__cv_uri
             }));
             elementInstance.data("data", element);
@@ -1668,15 +1676,22 @@ var View_IndexAction_Legend = (function (_super) {
         var observationTpl = _.template($("#cubeviz-legend-tpl-observation").text());
 
         var infoList = null;
+        var label = "";
+
         $("#cubeviz-legend-observations").html("");
         _.each(list, function (obs) {
             $("#cubeviz-legend-observations").append(observationTpl(obs));
             infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
             _.each(obs.dimensionElements, function (dimensionElement) {
+                if(false === _.isUndefined(dimensionElement.label) && false === _.str.isBlank(dimensionElement.label)) {
+                    label = dimensionElement.label;
+                } else {
+                    label = dimensionElement["__cv_uri"];
+                }
                 infoList.append(observationInfoEntry({
                     dimensionLabel: dimensionElement.dimensionLabel,
-                    fullLabel: dimensionElement.label,
-                    shortLabel: _.str.prune(dimensionElement.label, 65, "..."),
+                    fullLabel: label,
+                    shortLabel: _.str.prune(label, 65, "..."),
                     url: dimensionElement.value
                 }));
             });
@@ -1690,8 +1705,9 @@ var View_IndexAction_Legend = (function (_super) {
         var componentDimensionInfoArea = null;
         var observationIcon = null;
         var dimensionElementList = null;
-        var dimensionElementsCopy = new CubeViz_Collection("http://www.w3.org/2000/01/rdf-schema#label");
+        var dimensionElementsCopy = new CubeViz_Collection("__cv_uri");
         var html = "";
+        var label = "";
 
         $("#cubeviz-legend-components").html(tplComponentsList());
         _.each(selectedComponentDimensions, function (dimension) {
@@ -1701,9 +1717,14 @@ var View_IndexAction_Legend = (function (_super) {
             dimensionElementList = $($("#cubeviz-legend-componentList").find(".cubeviz-legend-componentDimensionList").last());
             html = "";
             dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.elements))).sortAscendingBy().each(function (dimensionElement) {
+                if(false === _.isUndefined(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"])) {
+                    label = dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"];
+                } else {
+                    label = dimensionElement["__cv_uri"];
+                }
                 dimensionElementList.append(tplDimensionEntry({
-                    fullLabel: dimensionElement[dimensionElementsCopy.idKey],
-                    shortLabel: _.str.prune(dimensionElement[dimensionElementsCopy.idKey], 75, " ..."),
+                    fullLabel: label,
+                    shortLabel: _.str.prune(label, 75, " ..."),
                     url: dimensionElement["__cv_uri"]
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
@@ -1730,24 +1751,14 @@ var View_IndexAction_Legend = (function (_super) {
         });
         _.each(observations, function (obs) {
             observationLabel = "";
-            if(false === _.isUndefined(obs[rdfsLabelUri]) && "" != obs[rdfsLabelUri][0].label) {
+            if(false === _.isUndefined(obs[rdfsLabelUri]) && false === _.str.isBlank(obs[rdfsLabelUri][0].label)) {
                 observationLabel = obs[rdfsLabelUri][0].value;
             } else {
-                _.each(dimensionInformation, function (dimension) {
-                    if(true === _.isUndefined(obs[dimension.typeUrl])) {
-                        return;
-                    }
-                    if("" != observationLabel) {
-                        observationLabel += " - ";
-                    }
-                    observationLabel += dimensionElementLabelTpl({
-                        label: $.trim(obs[dimension.typeUrl][0].label),
-                        url: obs[dimension.typeUrl][0].value
-                    });
+                observationLabel = dimensionElementLabelTpl({
+                    fullLabel: obs.observationUri[0].value,
+                    shortLabel: _.str.prune(obs.observationUri[0].value, 65, " ..."),
+                    url: obs.observationUri[0].value
                 });
-                if("" == observationLabel) {
-                    observationLabel = "Observation without dimension data";
-                }
             }
             dimensionElements = [];
             _.each(dimensionInformation, function (dimension) {
@@ -1760,7 +1771,6 @@ var View_IndexAction_Legend = (function (_super) {
             });
             result.push({
                 observationLabel: observationLabel,
-                observationShortLabel: _.str.prune(observationLabel, 70, " ..."),
                 observationValue: obs[selectedMeasureUri][0].value,
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
