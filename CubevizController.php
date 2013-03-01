@@ -22,6 +22,48 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     *
+     */
+    public function createexamplecubeAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        if('development' === $this->_privateConfig->get('context')) {
+            try {
+                $exampleCubeNs = "http://example.cubeviz.org/datacube/";
+                
+                $m = Erfurt_App::getInstance()->getStore()->getNewModel($exampleCubeNs);
+                
+                // set file related stuff
+                $ttl = file_get_contents ( __DIR__ .'/assets/exampleCube.ttl' );
+                
+                // import given file content
+                Erfurt_App::getInstance ()->getStore()->importRdf (
+                    $exampleCubeNs, $ttl, 'ttl', Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING
+                );
+                
+                $code = 200;
+                $m = json_encode(array(
+                    'code' => $code,
+                    'message' => 'Model was successfully created'
+                ));
+            } catch (Exception $e) {
+                $code = 400;
+                $m = json_encode(array(
+                    'code' => $code,
+                    'message' => $e->getMessage()
+                ));
+            }
+            
+            // response
+            $this->_response
+                ->setHttpResponseCode($code)
+                ->setBody($m);
+        }
+    }
+    
+    /**
      * 
      */
     public function indexAction () 
@@ -270,6 +312,51 @@ class CubevizController extends OntoWiki_Controller_Component
             // send error message back
             $this->_response->setBody($e->getMessage());
         }        
+    }
+    
+    /**
+     *
+     */
+    public function removeexamplecubeAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        if('development' === $this->_privateConfig->get('context')) {
+            
+            $exampleCubeNs = "http://example.cubeviz.org/datacube/";
+            
+            // if model exists, remove it
+            if(true == Erfurt_App::getInstance ()->getStore()->isModelAvailable($exampleCubeNs)){
+                try {
+                    Erfurt_App::getInstance ()->getStore()->deleteModel ($exampleCubeNs);
+                    $code = 200;
+                    $m = json_encode(array(
+                        'code' => $code,
+                        'message' => 'Model removed successfully'
+                    ));
+                } catch (Exception $e) {
+                    $code = 400;
+                    $m = json_encode(array(
+                        'code' => $code,
+                        'message' => $e->getMessage()
+                    ));
+                }
+                
+            // model does not exists
+            } else {
+                $code = 400;
+                $m = json_encode(array(
+                    'code' => $code,
+                    'message' => 'Model does not exists'
+                ));
+            }
+            
+            // response
+            $this->_response
+                ->setHttpResponseCode($code)
+                ->setBody($m);
+        }
     }
     
     /**
