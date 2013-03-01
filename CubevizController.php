@@ -33,7 +33,9 @@ class CubevizController extends OntoWiki_Controller_Component
             try {
                 $exampleCubeNs = "http://example.cubeviz.org/datacube/";
                 
-                $m = Erfurt_App::getInstance()->getStore()->getNewModel($exampleCubeNs);
+                $m = Erfurt_App::getInstance()->getStore()->getNewModel(
+                    $exampleCubeNs, '', Erfurt_Store::MODEL_TYPE_OWL, false
+                );
                 
                 // set file related stuff
                 $ttl = file_get_contents ( __DIR__ .'/assets/exampleCube.ttl' );
@@ -44,22 +46,19 @@ class CubevizController extends OntoWiki_Controller_Component
                 );
                 
                 $code = 200;
-                $m = json_encode(array(
+                $content = array(
                     'code' => $code,
                     'message' => 'Model was successfully created'
-                ));
+                );
             } catch (Exception $e) {
                 $code = 400;
-                $m = json_encode(array(
+                $content = array(
                     'code' => $code,
                     'message' => $e->getMessage()
-                ));
+                );
             }
             
-            // response
-            $this->_response
-                ->setHttpResponseCode($code)
-                ->setBody($m);
+            $this->_sendJSONResponse($content, $code);
         }
     }
     
@@ -156,43 +155,51 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();   
              
-        // data hash
-        $dataHash = NULL == $this->_request->getParam ('cv_dataHash') 
-            ? '' : $this->_request->getParam ('cv_dataHash');
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
         
-        // check model parameter
-        $m = $this->_request->getParam ('m');
-        $m = true === isset($m) ? $m : '';
-        
-        // use selected model if it is set and model parameter was empty
-        if('' == $m && true === isset($this->_owApp->selectedModel)) {
-            $m = $this->_owApp->selectedModel->getModelIri();
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
+                $code
+            );
+            return;
         }
         
-        if (true === $this->_erfurt->getStore()->isModelAvailable($m) 
-            && 44 == strlen($dataHash)) {
+        // check if model there
+        if('' == $dataHash || 44 > strlen($dataHash)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
+                $code
+            );
+            return;
+        }
             
-            $m = new Erfurt_Rdf_Model ($m);
-            $query = new DataCube_Query ($m);
+        try {
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model);
 
             // load configuration which is associated with given linkCode
-            list($c, $hash) = $this->_getConfiguration ()->read ($dataHash, $this->_owApp->selectedModel);
+            list($c, $hash) = $this->_getConfiguration ()->read ($dataHash, $model);
             
-            $content = json_encode($query->getObservations($c), JSON_FORCE_OBJECT);
-            $responseCode = 200;
-        } else {
-            $responseCode = 404;
-            $content = json_encode(
-                "Model $m not available or cv_dataHash $dataHash is invalid"
+            $code = 200;
+            
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getObservations($c),
+                'message' => ''
             );
+            
+        } catch (Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
         }
         
-        $this->_response
-            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->setHeader('Content-Type', 'application/json')
-            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
-            ->setHttpResponseCode($responseCode)
-            ->setBody($content);
+        $this->_sendJSONResponse($content, $code);
     }
     
     /**
@@ -204,33 +211,34 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->layout->disableLayout();
         
         // check model parameter
-        $m = $this->_request->getParam ('m');
-        $m = true === isset($m) ? $m : '';
-        
-        // use selected model if it is set and model parameter was empty
-        if('' == $m && true === isset($this->_owApp->selectedModel)) {
-            $m = $this->_owApp->selectedModel->getModelIri();
-        }
+        $modelIri = $this->_request->getParam ('modelIri', '');
 
-        // execute function if model is available
-        if(true === $this->_erfurt->getStore()->isModelAvailable($m)) {
-            $model = new Erfurt_Rdf_Model ($m);
-            
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'message' => 'Model not available'),
+                $code
+            );
+            return;
+        }
+        
+        try {
+            $model = new Erfurt_Rdf_Model($modelIri);            
             $query = new DataCube_Query($model);
 
-            $responseCode = 200;
-            $content = $query->getDataStructureDefinitions();
-        } else {
-            $responseCode = 404;
-            $content = "Model $m not available or you are not authorized";
+            $code = 200;
+            $content = array(
+                'code' => $code,
+                'content' => $query->getDataStructureDefinitions(),
+                'message' => ''
+            );
+        } catch(Exception $e) {
+            $code = 404;
+            $content = $e->getMessage();
         }
         
-        $this->_response
-            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->setHeader('Content-Type', 'application/json')
-            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
-            ->setHttpResponseCode($responseCode)
-            ->setBody(json_encode($content));
+        $this->_sendJSONResponse($content, $code);
     }
     
     /**
@@ -241,38 +249,42 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
-        // check model parameter
-        $m = $this->_request->getParam ('m');
-        $m = true === isset($m) ? $m : '';
-        
-        // use selected model if it is set and model parameter was empty
-        if('' == $m && true === isset($this->_owApp->selectedModel)) {
-            $m = $this->_owApp->selectedModel->getModelIri();
-        }
-        
+        // parameter
+        $m = $this->_request->getParam ('modelIri', '');        
         $dsdUrl = $this->_request->getParam('dsdUrl');
 
-        // execute function if model is available
-        if(true === $this->_erfurt->getStore()->isModelAvailable($m)
-           && true === Erfurt_Uri::check($dsdUrl)) {
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($m)) {
+            $this->_sendJSONResponse(
+                array('code' => 404, 'message' => 'Model not available'),
+                404
+            );
+            return;
+        }
+    
+        // check if dsdUrl is valid
+        if(false === Erfurt_Uri::check($dsdUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'message' => 'dsdUrl is not valid'),
+                $code
+            );
+            return;
+        }
+
+        // load data sets
+        try {
             $model = new Erfurt_Rdf_Model ($m);
-                            
             $query = new DataCube_Query($model);
+            $code = 200;
+            $content = array('code' => $code, 'result' => $query->getDataSets($dsdUrl));
             
-            $responseCode = 200;
-            $content = $query->getDataSets($dsdUrl);
-            
-        } else {
-            $responseCode = 404;
-            $content = "Model $m not available or dsdUrl $dsdUrl is invalid";
+        } catch(Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'message' => $e->getMessage());
         }
         
-        $this->_response
-            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
-            ->setHeader('Content-Type', 'application/json')
-            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
-            ->setHttpResponseCode($responseCode)
-            ->setBody(json_encode($content));
+        $this->_sendJSONResponse($content, $code);
     }
     
     /**
@@ -329,33 +341,33 @@ class CubevizController extends OntoWiki_Controller_Component
             // if model exists, remove it
             if(true == Erfurt_App::getInstance ()->getStore()->isModelAvailable($exampleCubeNs)){
                 try {
-                    Erfurt_App::getInstance ()->getStore()->deleteModel ($exampleCubeNs);
+                    Erfurt_App::getInstance ()->getStore()->deleteModel (
+                        $exampleCubeNs, false
+                    );
+                    
                     $code = 200;
-                    $m = json_encode(array(
+                    $content = array(
                         'code' => $code,
                         'message' => 'Model removed successfully'
-                    ));
+                    );
                 } catch (Exception $e) {
                     $code = 400;
-                    $m = json_encode(array(
+                    $content = array(
                         'code' => $code,
                         'message' => $e->getMessage()
-                    ));
+                    );
                 }
                 
             // model does not exists
             } else {
                 $code = 400;
-                $m = json_encode(array(
+                $content = array(
                     'code' => $code,
                     'message' => 'Model does not exists'
-                ));
+                );
             }
             
-            // response
-            $this->_response
-                ->setHttpResponseCode($code)
-                ->setBody($m);
+            $this->_sendJSONResponse($content, $code);
         }
     }
     
@@ -374,7 +386,7 @@ class CubevizController extends OntoWiki_Controller_Component
         );
         
         // send back generated hash
-        $this->_response->setBody(json_encode($hash));
+        $this->_sendJSONResponse($hash);
     }
 
     /**
@@ -387,5 +399,18 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
         } 
         return $this->_configuration;
+    }
+    
+    /**
+     * 
+     */
+    protected function _sendJSONResponse($content, $code = 200)
+    {
+        $this->_response
+            ->setHeader('Cache-Control', 'no-cache, must-revalidate')
+            ->setHeader('Content-Type', 'application/json')
+            ->setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT')
+            ->setHttpResponseCode($code)
+            ->setBody(json_encode($content));
     }
 }
