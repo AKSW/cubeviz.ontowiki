@@ -42,7 +42,7 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
     {        
         // save given elements, doublings were ignored!
         this.collection
-            .reset("hashedUrl")
+            .reset("__cv_uri")
             .addList(this.app._.data.dataStructureDefinitions);
         
         // render given elements

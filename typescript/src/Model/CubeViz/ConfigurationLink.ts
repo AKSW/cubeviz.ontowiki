@@ -39,7 +39,7 @@ class CubeViz_ConfigurationLink
             $.ajaxSetup(oldAjaxSetup); 
             $.support.cors = oldSupportOrs;
             
-            callback(JSON.parse(generatedHash));
+            callback(generatedHash);
         });
     }
 }

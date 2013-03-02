@@ -43,7 +43,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     public initialize() : void 
     {
         // save given elements
-        this.collection.reset("hashedUrl");
+        this.collection.reset("__cv_uri");
         this.collection.addList(this.app._.data.dataSets);
         
         this.render();
@@ -93,7 +93,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
                 self.app._.data.selectedDS = entries[0];
 
                 // save given elements
-                self.collection.reset("hashedUrl");
+                self.collection.reset("__cv_uri");
                 self.collection.addList(entries);
                 
                 // trigger event

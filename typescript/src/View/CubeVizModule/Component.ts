@@ -36,16 +36,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             self = this;
 
         // set dialog reference and template
-        $("#cubeviz-component-setupDialogContainer").append(
-            dialogTpl({label: component.label, hashedUrl:component.hashedUrl})
-        );
+        $("#cubeviz-component-setupDialogContainer").append(dialogTpl({
+            __cv_niceLabel: component.__cv_niceLabel, 
+            __cv_hashedUri: component.__cv_hashedUri
+        }));
         
-        var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
+        var div = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
         
         div
             .data("componentBox", componentBox)
-            .data("hashedUrl", component.hashedUrl)
-            .data("dimensionTypeUrl", component.typeUrl);
+            .data("component", component);
         
         // attach dialog to div element
         CubeViz_View_Helper.attachDialogTo(div);
@@ -96,21 +96,21 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public configureSetupComponentElements(component:any) 
     {
-        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl),
+        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri),
             elementInstance:any = {},
             componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl:any = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
             selectedDimensions:any = this.app._.data.selectedComponents
-                                                 .dimensions[component.hashedUrl]
-                                                 .elements,
+                                                 .dimensions[component.__cv_uri]
+                                                 .__cv_elements,
             setElementChecked = null,
             wasSomethingSelected:bool = false;
-                        
+            
         componentElements
             
             // add elements of current component
-            .addList(component.elements)
+            .addList(component.__cv_elements)
             
             // sort
             .sortAscendingBy(componentElements.idKey)
@@ -162,10 +162,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public destroy() : CubeViz_View_Abstract
     {
         // 
-        $(this.collection._).each(function(i, c){
+        _.each(this.collection._, function(component){
             // set dialog to initial state
-            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).dialog("destroy");
-            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
+            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri)
+                .dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri)
+                .remove();
         });
         
         $("#cubeviz-component-setupDialogContainer").empty();
@@ -184,7 +186,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public initialize() 
     {
         // save given elements
-        this.collection.reset("hashedUrl");
+        this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
      
         this.render();
@@ -220,7 +222,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
                 // save given elements, doublings were ignored!
                 self.collection
-                    .reset("hashedUrl")
+                    .reset("__cv_hashedUri")
                     .addList(entries);
                 
                 callback();               
@@ -428,22 +430,22 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // extract and set necessary elements and data
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
             componentBox = dialogDiv.data("componentBox"),
-            hashedUrl = dialogDiv.data("hashedUrl"),
+            component = dialogDiv.data("component"),
             input = null,
             inputLabel = null,
             selectedElements = new CubeViz_Collection("__cv_uri"),
             self = this;
         
         // if some items next to the close button was clicked, this event could
-        // be executed, so prevent invalid hashedUrl's
-        if(undefined === hashedUrl) {
+        // be executed, so prevent invalid component data
+        if(undefined === component) {
             return;
         }
         
         /**
          * Go through all checkboxes and save their data if checked
          */
-        $(elementList).each(function(i, element){
+        _.each(elementList, function(element){
             
             // extract required elements
             input       = $($(element).children().get(0));
@@ -460,7 +462,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             
             // add item as new instance to avoid simply copy the reference
             selectedElements.add(JSON.parse(JSON.stringify(
-                this.app._.data.components.dimensions[hashedUrl].elements[0]
+                this.app._.data.components.dimensions[component.__cv_uri].__cv_elements[0]
             )));
             
             // recheck the first checkbox of the elements list
@@ -471,8 +473,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         }
         
         // save updated element list
-        this.app._.data.selectedComponents.dimensions[hashedUrl]
-            .elements = selectedElements.toObject();
+        this.app._.data.selectedComponents.dimensions[component.__cv_uri]
+            .__cv_elements = selectedElements.toObject();
                 
         // Update selected elements counter
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
@@ -492,7 +494,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             // based on updatedLinkCode, load new observations
             function(updatedDataHash){
                         
-                DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url,
+                DataCube_Observation.loadAll(
+                    self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
                     function(newEntities){
                         
                         // save new observations
@@ -556,23 +559,22 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         // output loaded data
         _.each(backendCollection, function(dimension){
-            
-            if ( undefined !== selectedComponentDimensions ) {
-                selectedDimension = selectedComponentDimensions[dimension.hashedUrl];
-                dimension.selectedElementCount = _.keys(selectedDimension.elements).length;
+            if (false === _.isUndefined(selectedComponentDimensions)) {
+                selectedDimension = selectedComponentDimensions[dimension.__cv_uri];
+                dimension.selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
             } else {
                 dimension.selectedElementCount = 1;
             }
             
             // set general element count
-            dimension.elementCount = _.size(dimension.elements);
+            dimension.elementCount = _.size(dimension.__cv_elements);
             
             // build html out of template
             componentBox = $(optionTpl(dimension));
             
             // get opener link
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
-                .data("hashedUrl", dimension.hashedUrl);
+                .data("dimension", dimension);
             
             // add option to list
             list.append(componentBox);

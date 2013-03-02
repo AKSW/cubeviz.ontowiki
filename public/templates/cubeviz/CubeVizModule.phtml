@@ -178,23 +178,19 @@
 -->
 <!-- Data Structure Definition -->
 <script id="cubeviz-dataStructureDefinition-tpl-listOption" type="text/template">
-    <option value="<%= hashedUrl %>"<%= selected %>>
-        <%= label %>
-    </option>    
+    <option value="<%= __cv_hashedUri %>"<%= selected %>><%= __cv_niceLabel %></option>
 </script>
 
 <!-- Data Set -->
 <script id="cubeviz-dataSet-tpl-listOption" type="text/template">
-    <option value="<%= hashedUrl %>"<%= selected %>>
-        <%= label %>
-    </option>    
+    <option value="<%= __cv_hashedUri %>"<%= selected %>><%= __cv_niceLabel %></option>
 </script>
 
 <!-- Component-Dimension -->
 <script id="cubeviz-component-tpl-listBoxItem" type="text/template">
-    <div class="cubeviz-component-box" id="cubeviz-component-box-<%= hashedUrl %>">    
+    <div class="cubeviz-component-box" id="cubeviz-component-box-<%= __cv_hashedUri %>">    
         <div class="cubeviz-component-title">
-            <%= label %>&nbsp;
+            <%= __cv_niceLabel %>&nbsp;
             <nobr>
                 (<span class="cubeviz-component-selectedCount"><%= selectedElementCount %></span> 
                 / <%= elementCount %>)
@@ -209,7 +205,7 @@
 <!-- Dialogs -->
 <script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
     <div class="cubeviz-component-setupComponentDialog"
-         id="cubeviz-component-setupComponentDialog-<%= hashedUrl %>"
+         id="cubeviz-component-setupComponentDialog-<%= __cv_hashedUri %>"
          title="<?php echo $this->_translate->_('Select elements of interest'); ?>">
          
         <div style="float:right">
@@ -217,7 +213,7 @@
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
         
-        <h2 style="margin-top: 8px;"><%= label %></h2>      
+        <h2 style="margin-top: 8px;"><%= __cv_niceLabel %></h2>      
         
         <br/>
         

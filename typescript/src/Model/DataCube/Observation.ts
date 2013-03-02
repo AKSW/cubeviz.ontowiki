@@ -163,33 +163,21 @@ class DataCube_Observation {
     /**
      * 
      */
-    static loadAll (dataHash:string, url:string, callback) 
+    static loadAll (modelIri:string, dataHash:string, url:string, callback) 
     {        
         $.ajax({
             url: url + "getobservations/",
-            data: {cv_dataHash: dataHash}
+            data: {
+                cv_dataHash: dataHash,
+                modelIri: modelIri
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             throw new Error ("Observation loadAll error: " + xhr.responseText);
         })
-        .done( function (entries) { 
-            DataCube_Observation.prepareLoadedResultObservations(entries, callback);
+        .done( function (entries) {
+            callback(entries.content);
         });
-    }
-    
-    /**
-     * 
-     */
-    static prepareLoadedResultObservations (entries, callback)
-    {
-        // TODO: fix it, because sometimes you got JSON from server, 
-        // sometimes not, than you have to parse it
-        var parse = $.parseJSON ( entries );
-        if ( null == parse ) {
-            callback ( entries );
-        } else {
-            callback ( parse );
-        }
     }
 
     /**

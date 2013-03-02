@@ -9,15 +9,15 @@ class DataCube_Component {
      * Loads all component dimensions, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllDimensions (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
+    static loadAllDimensions (url, modelIri, dsdUrl:string, dsUrl:string, callback) {
         
         $.ajax({
             url: url + "getcomponents",
             data: {
-                m: modelUrl, 
+                modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                cT: "dimension" // possible: dimension, measure
+                componentType: "dimension" // possible: dimension, measure
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
@@ -55,15 +55,15 @@ class DataCube_Component {
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (url, modelUrl, dsdUrl:string, dsUrl:string, callback) {
+    static loadAllMeasures (url, modelIri, dsdUrl:string, dsUrl:string, callback) {
         
         $.ajax({
             url: url + "getcomponents",
             data: {
-                m: modelUrl, 
+                modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                cT: "measure" // possible: dimension, measure
+                componentType: "measure" // possible: dimension, measure
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

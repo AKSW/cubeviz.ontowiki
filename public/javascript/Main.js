@@ -23,7 +23,7 @@ var CubeViz_ConfigurationLink = (function () {
         }).done(function (generatedHash) {
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
-            callback(JSON.parse(generatedHash));
+            callback(generatedHash);
         });
     }
     return CubeViz_ConfigurationLink;
@@ -752,14 +752,14 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
 })(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_Component = (function () {
     function DataCube_Component() { }
-    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, modelUrl, dsdUrl, dsUrl, callback) {
+    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
             data: {
-                m: modelUrl,
+                modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                cT: "dimension"
+                componentType: "dimension"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("loadAllDimensions: " + xhr.responseText);
@@ -779,14 +779,14 @@ var DataCube_Component = (function () {
         });
         callback(tmpEntries);
     }
-    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, modelUrl, dsdUrl, dsUrl, callback) {
+    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
             data: {
-                m: modelUrl,
+                modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                cT: "measure"
+                componentType: "measure"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("loadAllMeasures: " + xhr.responseText);
@@ -973,25 +973,18 @@ var DataCube_Observation = (function () {
         });
         return this;
     };
-    DataCube_Observation.loadAll = function loadAll(dataHash, url, callback) {
+    DataCube_Observation.loadAll = function loadAll(modelIri, dataHash, url, callback) {
         $.ajax({
             url: url + "getobservations/",
             data: {
-                cv_dataHash: dataHash
+                cv_dataHash: dataHash,
+                modelIri: modelIri
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Observation loadAll error: " + xhr.responseText);
         }).done(function (entries) {
-            DataCube_Observation.prepareLoadedResultObservations(entries, callback);
+            callback(entries.content);
         });
-    }
-    DataCube_Observation.prepareLoadedResultObservations = function prepareLoadedResultObservations(entries, callback) {
-        var parse = $.parseJSON(entries);
-        if(null == parse) {
-            callback(entries);
-        } else {
-            callback(parse);
-        }
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         var axesEntries = this._axes[axisUri];
@@ -1049,7 +1042,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         return this;
     };
     View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
-        this.collection.reset("hashedUrl").addList(this.app._.data.dataStructureDefinitions);
+        this.collection.reset("__cv_uri").addList(this.app._.data.dataStructureDefinitions);
         this.render();
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
@@ -1110,7 +1103,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         return this;
     };
     View_CubeVizModule_DataSet.prototype.initialize = function () {
-        this.collection.reset("hashedUrl");
+        this.collection.reset("__cv_uri");
         this.collection.addList(this.app._.data.dataSets);
         this.render();
     };
@@ -1128,7 +1121,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var self = this;
         DataCube_DataSet.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, function (entries) {
             self.app._.data.selectedDS = entries[0];
-            self.collection.reset("hashedUrl");
+            self.collection.reset("__cv_uri");
             self.collection.addList(entries);
             self.triggerGlobalEvent("onChange_selectedDS");
             self.render();
@@ -1187,11 +1180,11 @@ var View_CubeVizModule_Component = (function (_super) {
         var self = this;
 
         $("#cubeviz-component-setupDialogContainer").append(dialogTpl({
-            label: component.label,
-            hashedUrl: component.hashedUrl
+            __cv_niceLabel: component.__cv_niceLabel,
+            __cv_hashedUri: component.__cv_hashedUri
         }));
-        var div = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
-        div.data("componentBox", componentBox).data("hashedUrl", component.hashedUrl).data("dimensionTypeUrl", component.typeUrl);
+        var div = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
+        div.data("componentBox", componentBox).data("component", component);
         CubeViz_View_Helper.attachDialogTo(div);
         $(div.find(".cubeviz-component-selectAllButton").get(0)).data("dialogDiv", div);
         $(div.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", div);
@@ -1204,17 +1197,17 @@ var View_CubeVizModule_Component = (function (_super) {
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
-        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.hashedUrl);
+        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
         var elementInstance = {
         };
         var componentElements = new CubeViz_Collection("__cv_uri");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
-        var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.hashedUrl].elements;
+        var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements;
         var setElementChecked = null;
         var wasSomethingSelected = false;
 
-        componentElements.addList(component.elements).sortAscendingBy(componentElements.idKey).each(function (element) {
+        componentElements.addList(component.__cv_elements).sortAscendingBy(componentElements.idKey).each(function (element) {
             setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
                 return false === _.isUndefined(dim) ? dim.__cv_uri == element.__cv_uri : false;
             });
@@ -1241,9 +1234,9 @@ var View_CubeVizModule_Component = (function (_super) {
         }
     };
     View_CubeVizModule_Component.prototype.destroy = function () {
-        $(this.collection._).each(function (i, c) {
-            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).dialog("destroy");
-            $("#cubeviz-component-setupComponentDialog-" + c["hashedUrl"]).remove();
+        _.each(this.collection._, function (component) {
+            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri).dialog("destroy");
+            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri).remove();
         });
         $("#cubeviz-component-setupDialogContainer").empty();
         _super.prototype.destroy.call(this);
@@ -1251,7 +1244,7 @@ var View_CubeVizModule_Component = (function (_super) {
         return this;
     };
     View_CubeVizModule_Component.prototype.initialize = function () {
-        this.collection.reset("hashedUrl");
+        this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
         this.render();
     };
@@ -1260,7 +1253,7 @@ var View_CubeVizModule_Component = (function (_super) {
         DataCube_Component.loadAllDimensions(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.url, function (entries) {
             self.app._.data.components.dimensions = entries;
             self.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
-            self.collection.reset("hashedUrl").addList(entries);
+            self.collection.reset("__cv_hashedUri").addList(entries);
             callback();
         });
     };
@@ -1353,16 +1346,16 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
         var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children();
         var componentBox = dialogDiv.data("componentBox");
-        var hashedUrl = dialogDiv.data("hashedUrl");
+        var component = dialogDiv.data("component");
         var input = null;
         var inputLabel = null;
         var selectedElements = new CubeViz_Collection("__cv_uri");
         var self = this;
 
-        if(undefined === hashedUrl) {
+        if(undefined === component) {
             return;
         }
-        $(elementList).each(function (i, element) {
+        _.each(elementList, function (element) {
             input = $($(element).children().get(0));
             inputLabel = $($(element).children().get(1));
             if("checked" === input.attr("checked")) {
@@ -1370,15 +1363,15 @@ var View_CubeVizModule_Component = (function (_super) {
             }
         });
         if(0 == _.size(selectedElements)) {
-            selectedElements.add(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[hashedUrl].elements[0])));
+            selectedElements.add(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[component.__cv_uri].__cv_elements[0])));
             $($(dialogDiv.find(".cubeviz-component-setupComponentElements").children().get(0)).children().get(0)).attr("checked", true);
         }
-        this.app._.data.selectedComponents.dimensions[hashedUrl].elements = selectedElements.toObject();
+        this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements = selectedElements.toObject();
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 callback();
             });
@@ -1407,15 +1400,15 @@ var View_CubeVizModule_Component = (function (_super) {
 
         this.collection.reset();
         _.each(backendCollection, function (dimension) {
-            if(undefined !== selectedComponentDimensions) {
-                selectedDimension = selectedComponentDimensions[dimension.hashedUrl];
-                dimension.selectedElementCount = _.keys(selectedDimension.elements).length;
+            if(false === _.isUndefined(selectedComponentDimensions)) {
+                selectedDimension = selectedComponentDimensions[dimension.__cv_uri];
+                dimension.selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
             } else {
                 dimension.selectedElementCount = 1;
             }
-            dimension.elementCount = _.size(dimension.elements);
+            dimension.elementCount = _.size(dimension.__cv_elements);
             componentBox = $(optionTpl(dimension));
-            $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("hashedUrl", dimension.hashedUrl);
+            $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);
             self.configureSetupComponentDialog(dimension, componentBox, $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)));
             $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.selectedElementCount);
