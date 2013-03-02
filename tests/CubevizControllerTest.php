@@ -130,6 +130,49 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
     /**
      * @test
      */
+    public function getdatasetsAction_parameterMAndDsdUrlSet_incompleteLabel() 
+    {        
+        // parameter
+        $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
+        $dsdUrl = 'http://example.cubeviz.org/datacube/dsd2';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getdatasets',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals( 200, $response['code']); 
+        $this->assertEquals(
+            $contentObj ['content'], 
+            array(
+                array(
+                    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' => 'http://purl.org/linked-data/cube#DataSet',
+                    'http://purl.org/linked-data/cube#structure' => 'http://example.cubeviz.org/datacube/dsd2',
+                    '__cv_uri' => 'http://example.cubeviz.org/datacube/dataset3',
+                    '__cv_hashedUri' => '948537c3569848a89fced018d8b681cc',
+                    '__cv_niceLabel' => 'dataset3'
+                ),
+                array (
+                    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' => 'http://purl.org/linked-data/cube#DataSet',
+                    'http://www.w3.org/2000/01/rdf-schema#label' => 'Just another DataSet',
+                    'http://www.w3.org/2000/01/rdf-schema#comment' => 'Represents a collection of observations and conforming to some common dimensional structure.',
+                    'http://purl.org/linked-data/cube#structure' => 'http://example.cubeviz.org/datacube/dsd2',
+                    '__cv_uri' => 'http://example.cubeviz.org/datacube/dataset2',
+                    '__cv_hashedUri' => '661751d3a3a63a1d289bcde7f6f090ab',
+                    '__cv_niceLabel' => 'Just another DataSet'
+                )
+            )
+        );
+    }
+    
+    /**
+     * @test
+     */
     public function getdatastructuredefinitionsAction_parameterMIsEmpty() 
     {     
         $response = $this->_sendRequest(
