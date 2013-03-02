@@ -182,9 +182,13 @@ class CubevizController extends OntoWiki_Controller_Component
         try {
             $model = new Erfurt_Rdf_Model ($modelIri);
             $query = new DataCube_Query ($model);
+            
+            $configuration = new CubeViz_ConfigurationLink(
+                $this->_owApp->erfurt->getCacheDir()
+            );
 
             // load configuration which is associated with given linkCode
-            list($c, $hash) = $this->_getConfiguration ()->read ($dataHash, $model);
+            list($c, $hash) = $configuration->read ($dataHash, $model);
             
             $code = 200;
             
@@ -379,26 +383,18 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
+        $configuration = new CubeViz_ConfigurationLink(
+            $this->_owApp->erfurt->getCacheDir()
+        );
+        
         // write given content to file
-        $hash = $this->_getConfiguration()->write(
-            $this->_request->getParam('stringifiedContent'),
-            $this->_request->getParam('type')
+        $hash = $configuration->write(
+            $this->_request->getParam('stringifiedContent', ''),
+            $this->_request->getParam('type', '')
         );
         
         // send back generated hash
         $this->_sendJSONResponse($hash);
-    }
-
-    /**
-     *
-     */
-    protected function _getConfiguration () 
-    {
-        $cacheDir = $this->_owApp->erfurt->getCacheDir();
-        if (null === $this->_configuration) {
-            $this->_configuration = new CubeViz_ConfigurationLink($cacheDir);
-        } 
-        return $this->_configuration;
     }
     
     /**
