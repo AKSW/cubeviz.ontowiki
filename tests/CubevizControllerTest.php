@@ -116,9 +116,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
         $this->assertEquals(
             $contentObj ['content'], 
             array(array(
-                'url' => 'http://example.cubeviz.org/datacube/dataset',
-                'hashedUrl' => '26d71f183a23bf96058200d78e080f77',
-                'label' => 'A DataSet'
+                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' => 'http://purl.org/linked-data/cube#DataSet',
+                'http://www.w3.org/2000/01/rdf-schema#label' => 'A DataSet',
+                'http://www.w3.org/2000/01/rdf-schema#comment' => 'Represents a collection of observations and conforming to some common dimensional structure.',
+                'http://purl.org/linked-data/cube#structure' => 'http://example.cubeviz.org/datacube/dsd',
+                '__cv_uri' => 'http://example.cubeviz.org/datacube/dataset',
+                '__cv_hashedUri' => '26d71f183a23bf96058200d78e080f77',
+                '__cv_niceLabel' => 'A DataSet'
             ))
         );
     }

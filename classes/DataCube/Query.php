@@ -325,44 +325,28 @@ class DataCube_Query
     }  
     
     /**
-     * Function for getting datasets for this data structure
+     * Get all data sets for the given data structure definition
      * @param $dsUri Data Set Uri
-     * @return array
+     * @return array Array containing data sets
      */
     public function getDataSets($dsdUri) 
     {
-        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-        
-        //get all data sets in the cube for the given DataStructureDefinition
-        $sparql = 'SELECT ?ds WHERE {
+        $result = $this->_model->sparqlQuery('SELECT ?ds ?p ?o WHERE {
             ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
             ?ds <'.DataCube_UriOf::Structure.'> <'.$dsdUri.'>.
-        };';
+            ?ds ?p ?o.
+        }');
 
-        $queryResultDS = $this->_model->sparqlQuery($sparql);
-
-        $result = array();
-
-        foreach($queryResultDS as $ds) {
-            if(false == empty($ds['ds'])) {
-                $titleHelper->addResource($ds['ds']);
-            }
-        }
-
-        foreach($queryResultDS as $ds) {
-            if(false == empty($ds['ds'])) {
-                $result[] = array (
-                    'url'       => $ds['ds'],
-                    'hashedUrl' => md5($ds['ds']),
-                    'label'     => str_replace('"', "'", $titleHelper->getTitle($ds['ds']))
-                );
-            }
-        }
+        // generate an associated array where ds is mainkey and using p and o for the rest
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'ds', 'p', 'o');
         
-        usort ( 
-            $result, 
-            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
-        ); 
+        // enrich generated array with CubeViz sugar
+        $result = $this->enrichResult($result);
+        
+        // sort by label
+        usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+        }); 
         
         return $result;
     }
