@@ -182,9 +182,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                 'code' => 200,
                 'content' => array(
                     array(
-                        'url' => 'http://example.cubeviz.org/datacube/dsd',
-                        'hashedUrl' => 'ccc69b81ccb6634fa314789da32c3532',
-                        'label' => 'A Data Structure Definition'
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" => "http://purl.org/linked-data/cube#DataStructureDefinition",
+                        "http://www.w3.org/2000/01/rdf-schema#label" => "A Data Structure Definition",
+                        "http://www.w3.org/2000/01/rdf-schema#comment" => "Defines the structure of a DataSet or slice.",
+                        "http://purl.org/linked-data/cube#component" => "http://example.cubeviz.org/datacube/dsd/value",
+                        "__cv_uri" => "http://example.cubeviz.org/datacube/dsd",
+                        "__cv_hashedUri" => "ccc69b81ccb6634fa314789da32c3532",
+                        "__cv_niceLabel" => "A Data Structure Definition"
                     )
                 ),
                 'message' => ''

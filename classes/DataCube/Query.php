@@ -54,6 +54,105 @@ class DataCube_Query
     }
     
     /**
+     * Add additional fields to each entry of the given array. These fields are
+     * heavily used in the UI. Each field starts with __cv_ and could be ignored
+     * usally.
+     * @param $assocSPOArray Usally the result of generateAssocSPOArrayFromSparqlResult
+     * @return Array An enriched version of given $assocSPOArray
+     */
+    public function enrichResult($assocSPOArray) 
+    {
+        $return = array();
+        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+        
+        /**
+         * go through all entries to add them to title helper
+         */
+        foreach($assocSPOArray as $mainKey => $entry) {
+            $titleHelper->addResource($mainKey);
+        }
+        
+        /**
+         * enrich data with CubeViz specific stuff
+         */
+        foreach($assocSPOArray as $mainKey => $entry) {
+            
+            // URI of the element
+            $entry ['__cv_uri'] = $mainKey;
+            
+            // hashed URI of the element
+            $entry ['__cv_hashedUri'] = md5($mainKey);
+            
+            // Nice label using TitleHelper
+            $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
+            
+            $return [] = $entry;
+        }
+        
+        return $return;
+    }
+    
+    /**
+     * Transforms a given SPARQL result of Erfurt into an associative array.
+     * @param $result SPARQL result
+     * @param $mainKey Name of the subject whichs groups all the entries
+     * @param $pKey Name of the predicate
+     * @param $oKey Name of the object
+     * @result Array
+     */
+    public function generateAssocSPOArrayFromSparqlResult($result, $mainKey, $pKey, $oKey) 
+    {
+        $return = array();
+        
+        $latestMainKey = '';
+        
+        /**
+         * 
+         */
+        foreach ($result as $entry) {
+            
+            // same main key as before
+            if($latestMainKey == $entry[$mainKey]) {
+                
+            // main key differs
+            } elseif ($latestMainKey == $entry[$mainKey]) {
+            
+                $latestMainKey = $entry[$mainKey];
+                $return [$latestMainKey] = array();
+            
+            // at the start ($latestDsd is empty)
+            } else {
+                $latestMainKey = $entry[$mainKey];
+                $return [$latestMainKey] = array();
+            }
+            
+            if (true === isset($entry[$pKey])) {
+                
+                /**
+                 * [2]=>
+                 *     array(3) {
+                 *       ["dsd"]=>
+                 *       string(39) "http://data.lod2.eu/scoreboard/dsd/year"
+                 *       ["p"]=>
+                 *       string(42) "http://purl.org/linked-data/cube#component"
+                 *       ["o"]=>
+                 *       string(41) "http://data.lod2.eu/scoreboard/cs/country"
+                 *     }
+                 */                
+                // = http://purl.org/linked-data/cube#component
+                $predicateValue = $entry[$pKey]; 
+                
+                // = http://data.lod2.eu/scoreboard/cs/country
+                $objectValue = true === isset($entry[$oKey]) ? $entry[$oKey] : '';
+                
+                $return [$latestMainKey][$predicateValue] = $objectValue;
+            }
+        }
+        
+        return $return;
+    }
+    
+    /**
      * Returns an array of components (Component) with md5 of URI, type and URI.
      * @param $dsdUri Data Structure Definition URI
      * @param $dsUri Data Set URI
@@ -190,42 +289,37 @@ class DataCube_Query
     }
     
     /**
-     * Returns array of Data Structure Definitions 
+     * Get all information about each data structure definition.
      * @return array
      */ 
     public function getDataStructureDefinitions ()
     {
-        $result = array();
-        
-        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-        
-        //get all indicators in the cube by the DataStructureDefinitions
-        $sparql = 'SELECT ?dsd WHERE {
+        // get all data structure definitions from the store for this particular model
+        $result = $this->_model->sparqlQuery('SELECT ?dsd ?p ?o WHERE {
+            ?dsd ?p ?o.
             ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
-        }';
+        }');
         
-        $queryResultDSD = $this->_model->sparqlQuery($sparql);
-    
-        foreach($queryResultDSD as $dsd) {
-            if( false == empty ($dsd['dsd']) ) {
-                $titleHelper->addResource($dsd['dsd']);
-            }
-        }
-
-        foreach($queryResultDSD as $dsd) {
-            if( false == empty ($dsd['dsd']) ) {
-                $result [] = array ( 
-                    'url'       => $dsd['dsd'],
-                    'hashedUrl' => md5($dsd['dsd']),
-                    'label'     => str_replace('"', "'", $titleHelper->getTitle($dsd['dsd']))
-                );
-            }
-        }
+        // generate an associated array where dsd is mainkey and using p and o for the rest
+        // Example:
+        // [1]=>
+        //      array(5) {
+        //        ["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]=>
+        //        string(56) "http://purl.org/linked-data/cube#DataStructureDefinition"
+        //        ["http://www.w3.org/2000/01/rdf-schema#label"]=>
+        //        string(13) "per Indicator"
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'dsd', 'p', 'o');
         
-        usort ( 
-            $result, 
-            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
-        ); 
+        // enrich generated array with CubeViz sugar
+        // Example:
+        //      ["__cv_uri"]       => string(44) "http://data.lod2.eu/scoreboard/dsd/indicator"
+        //      ["__cv_niceLabel"] => string(13) "per Indicator"
+        $result = $this->enrichResult($result);
+        
+        // sort by label
+        usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+        }); 
         
         return $result;
     }  

@@ -55,7 +55,7 @@ class CubeViz_ConfigurationLink
                         
         // if no data structure definitions were selected
         if(0 === count($config['dataSets'])) {
-            $config['dataSets'] = $query->getDataSets($config['selectedDSD']['url']);
+            $config['dataSets'] = $query->getDataSets($config['selectedDSD']['__cv_uri']);
         } 
         
         // if no data sets were selected
@@ -70,7 +70,7 @@ class CubeViz_ConfigurationLink
              * Dimensions
              */
             $dimensions = $query->getComponents(
-                $config['selectedDSD']['url'],
+                $config['selectedDSD']['__cv_uri'],
                 $config['selectedDS']['url'],
                 DataCube_UriOf::Dimension
             );
@@ -139,7 +139,7 @@ class CubeViz_ConfigurationLink
              * Measures
              */
             $measures = $query->getComponents(
-                $config['selectedDSD']['url'],
+                $config['selectedDSD']['__cv_uri'],
                 $config['selectedDS']['url'],
                 DataCube_UriOf::Measure
             );
