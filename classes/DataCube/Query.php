@@ -329,7 +329,7 @@ class DataCube_Query
         // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
         $i = 0;
         foreach ( $selectedComponentDimensions as $dimension ) {
-            $where .= ' ?s <'. $dimension ['__cv_uri'] .'> ?d'. $i++ .' .'. "\n";
+            $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
         }
         
         // Set FILTER
@@ -337,15 +337,15 @@ class DataCube_Query
         // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
         //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
         $i = 0;
-        foreach ( $selectedComponentDimensions as $dim ) {
+        foreach ( $selectedComponentDimensions as $dimension ) {
             
-            $dimElements = $dim ['__cv_elements'];
+            $dimensionElements = $dimension ['__cv_elements'];
             
-            if ( 0 < count ( $dimElements ) ) {
+            if (0 < count ($dimensionElements)) {
             
                 $filter = array ();
             
-                foreach ($dimElements as $elementUri => $element) {
+                foreach ($dimensionElements as $elementUri => $element) {
                     
                     // If __cv_uri is set and an URL
                     if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {

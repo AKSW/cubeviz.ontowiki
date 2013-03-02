@@ -127,10 +127,10 @@ class CubeViz_ViewHelper
             // load observations related to given data
             $query = new DataCube_Query($model);
             
-            $config['backend']['retrievedObservations'] = $query->getObservations(array(
-                'selectedComponents' => $config['data']['selectedComponents'],
-                'selectedDS' => array('url' => $config['data']['selectedDS']['url'])
-            ));
+            $config['backend']['retrievedObservations'] = $query->getObservations(
+                $config['data']['selectedDS']['__cv_uri'],
+                $config['data']['selectedComponents']['dimensions']
+            );
                 
             CubeViz_ViewHelper::$isCubeVizAppLoaded = true;
             

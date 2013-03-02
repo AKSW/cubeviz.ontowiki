@@ -129,10 +129,10 @@ class CubeViz_ConfigurationLink
                     }
                 }
                 
-                $dimension['elements'] = $preSelectedElements;
+                $dimension['__cv_elements'] = $preSelectedElements;
                 
                 $config['selectedComponents']['dimensions']
-                    [$dimension['hashedUrl']] = $dimension;
+                    [$dimension['__cv_uri']] = $dimension;
             }
             
             /**
@@ -140,22 +140,21 @@ class CubeViz_ConfigurationLink
              */
             $measures = $query->getComponents(
                 $config['selectedDSD']['__cv_uri'],
-                $config['selectedDS']['url'],
+                $config['selectedDS']['__cv_uri'],
                 DataCube_UriOf::Measure
             );
             
             // set measures
             $config['components']['measures'] = array();
             foreach ($measures as $measure) {
-                $config['components']['measures']
-                    [$measure['hashedUrl']] = $measure;
+                $config['components']['measures'][$measure['__cv_uri']] = $measure;
             }
             
             // set selectedComponents
             $config['selectedComponents']['measures'] = array();
             foreach ($measures as $measure) {
                 $config['selectedComponents']['measures']
-                    [$measure['hashedUrl']] = $measure;
+                    [$measure['__cv_uri']] = $measure;
             }
         }
         
@@ -163,7 +162,7 @@ class CubeViz_ConfigurationLink
         $config['numberOfMultipleDimensions'] = 0;
             
         foreach ($config['selectedComponents']['dimensions'] as $dim) {
-            if(1 < count($dim ['elements'])) {
+            if(1 < count($dim ['__cv_elements'])) {
                 ++$config['numberOfMultipleDimensions'];
             }
         }
@@ -172,7 +171,7 @@ class CubeViz_ConfigurationLink
         $config['numberOfOneElementDimensions'] = 0;
         
         foreach ($config['selectedComponents']['dimensions'] as $dim) {
-            if(1 == count($dim ['elements'])) {
+            if(1 == count($dim ['__cv_elements'])) {
                 ++$config['numberOfOneElementDimensions'];
             }
         }

@@ -797,10 +797,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                     // dimension 1
                     '1422b39f63e05706b4a1cfc57639c52a' => array(
                         // type
-                        'http:\/\/www.w3.org\/1999\/02\/22-rdf-syntax-ns#type' => 
-                            'http://purl.org/linked-data/cube#DimensionProperty',
+                        'http:\/\/www.w3.org\/1999\/02\/22-rdf-syntax-ns#type' 
+                            => 'http://purl.org/linked-data/cube#DimensionProperty',
                         // label
                         'http://www.w3.org/2000/01/rdf-schema#label' => 'Region',
+                        // dimension
+                        'http://purl.org/linked-data/cube#dimension' 
+                            => 'http://example.cubeviz.org/datacube/properties/geo',
                         // __cv
                         '__cv_uri' => 'http://example.cubeviz.org/datacube/properties/geo',
                         '__cv_hashedUri' => '1422b39f63e05706b4a1cfc57639c52a',
@@ -825,6 +828,9 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                             'http://purl.org/linked-data/cube#DimensionProperty',
                         // label
                         'http://www.w3.org/2000/01/rdf-schema#label' => 'Date',
+                        // dimension
+                        'http://purl.org/linked-data/cube#dimension' 
+                            => 'http://example.cubeviz.org/datacube/properties/date',
                         // __cv
                         '__cv_uri' => 'http://example.cubeviz.org/datacube/properties/date',
                         '__cv_hashedUri' => '9913723788d7d46c5980720c3d83f06e',
