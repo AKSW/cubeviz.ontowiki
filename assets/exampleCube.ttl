@@ -12,10 +12,17 @@
    dc:description "This knowledgebase contains one Data Structure Definition with one Data Set. This Data Set has a couple of Components and Observations." .
 
 # 
-# Data Structure Definition
+# Data Structure Definitions
 #
 ex:dsd a cube:DataStructureDefinition ;
     rdfs:label "A Data Structure Definition"@en ;
+    rdfs:comment "Defines the structure of a DataSet or slice." ;
+    cube:component  <http://example.cubeviz.org/datacube/dsd/geo>, 
+                    <http://example.cubeviz.org/datacube/dsd/time>,
+                    <http://example.cubeviz.org/datacube/dsd/unit>, 
+                    <http://example.cubeviz.org/datacube/dsd/value> .
+                    
+ex:dsd2 a cube:DataStructureDefinition ;
     rdfs:comment "Defines the structure of a DataSet or slice." ;
     cube:component  <http://example.cubeviz.org/datacube/dsd/geo>, 
                     <http://example.cubeviz.org/datacube/dsd/time>,
@@ -29,6 +36,14 @@ ex:dataset a cube:DataSet ;
     rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
     rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
     cube:structure ex:dsd .
+    
+ex:dataset2 a cube:DataSet ;
+    rdfs:label "Just another DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
+    cube:structure ex:dsd2 .
+    
+ex:dataset3 a cube:DataSet ;
+    cube:structure ex:dsd2 .
 
 #
 # Component Specifications
@@ -65,7 +80,11 @@ ex:value a cube:MeasureProperty ;
     rdfs:label "Value"@en .
     
 #
-# Observation
+# Observation #################################################################
+#
+
+#
+# Data Set 1
 #
 ex:obs1 a cube:Observation ;
     cube:dataSet ex:dataset ;
@@ -100,7 +119,42 @@ ex:obs4 a cube:Observation ;
     rdfs:label "England in 2002" .
 
 #
-# Additional Stuff
+# Data Set 2
+#
+ex:obs5 a cube:Observation ;
+    cube:dataSet ex:dataset2 ;
+    ex:date ex:Y2003 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:England ;
+    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+ex:obs6 a cube:Observation ;
+    cube:dataSet ex:dataset2 ;
+    ex:date ex:Y2003 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:Germany ;
+    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+#
+# Data Set 3
+#
+
+ex:obs7 a cube:Observation ;
+    cube:dataSet ex:dataset3 ;
+    ex:date ex:Y2004 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:Germany ;
+    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+ex:obs8 a cube:Observation ;
+    cube:dataSet ex:dataset3 ;
+    ex:date ex:Y2004 ;
+    ex:unit "whatever it is about" ;
+    ex:geo ex:Germany ;
+    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+#
+# Additional Stuff #############################################################
 #
 ex:Germany a ex:Region ;
     rdfs:label "Germany"@en .
@@ -113,3 +167,8 @@ ex:Y2001 a ex:Time ;
 
 ex:Y2002 a ex:Time ;
     rdfs:label "2002"@en .
+
+ex:Y2003 a ex:Time ;
+    rdfs:label "2003"@en .
+
+ex:Y2004 a ex:Time .

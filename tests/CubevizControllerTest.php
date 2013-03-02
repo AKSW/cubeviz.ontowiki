@@ -197,14 +197,26 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
             array(
                 'code' => 200,
                 'content' => array(
-                    array(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" => "http://purl.org/linked-data/cube#DataStructureDefinition",
-                        "http://www.w3.org/2000/01/rdf-schema#label" => "A Data Structure Definition",
-                        "http://www.w3.org/2000/01/rdf-schema#comment" => "Defines the structure of a DataSet or slice.",
-                        "http://purl.org/linked-data/cube#component" => "http://example.cubeviz.org/datacube/dsd/value",
-                        "__cv_uri" => "http://example.cubeviz.org/datacube/dsd",
-                        "__cv_hashedUri" => "ccc69b81ccb6634fa314789da32c3532",
-                        "__cv_niceLabel" => "A Data Structure Definition"
+                
+                    // Data structure definition 1
+                    array (
+                        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' => 'http://purl.org/linked-data/cube#DataStructureDefinition',
+                        'http://www.w3.org/2000/01/rdf-schema#label' => 'A Data Structure Definition',
+                        'http://www.w3.org/2000/01/rdf-schema#comment' => 'Defines the structure of a DataSet or slice.',
+                        'http://purl.org/linked-data/cube#component' => 'http://example.cubeviz.org/datacube/dsd/value',
+                        '__cv_uri' => 'http://example.cubeviz.org/datacube/dsd',
+                        '__cv_hashedUri' => 'ccc69b81ccb6634fa314789da32c3532',
+                        '__cv_niceLabel' => 'A Data Structure Definition'
+                    ),
+                    
+                    // Data structure definition 2
+                    array (
+                        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' => 'http://purl.org/linked-data/cube#DataStructureDefinition',
+                        'http://www.w3.org/2000/01/rdf-schema#comment' => 'Defines the structure of a DataSet or slice.',
+                        'http://purl.org/linked-data/cube#component' => 'http://example.cubeviz.org/datacube/dsd/value',
+                        '__cv_uri' => 'http://example.cubeviz.org/datacube/dsd2',
+                        '__cv_hashedUri' => 'bdf75ba82957df40b05acf2470d652f2',
+                        '__cv_niceLabel' => 'dsd2'
                     )
                 ),
                 'message' => ''
