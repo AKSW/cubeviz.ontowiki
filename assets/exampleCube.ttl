@@ -141,17 +141,18 @@ ex:obs6 a cube:Observation ;
 
 ex:obs7 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
-    ex:date ex:Y2004 ;
+    ex:date ex:Y2003 ;
     ex:unit "whatever it is about" ;
     ex:geo ex:Germany ;
-    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Germany in 2003" .
 
 ex:obs8 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
     ex:date ex:Y2004 ;
     ex:unit "whatever it is about" ;
     ex:geo ex:Germany ;
-    ex:value "1998"^^<http://www.w3.org/2001/XMLSchema#float>.
+    ex:value "2500"^^<http://www.w3.org/2001/XMLSchema#float>.
 
 #
 # Additional Stuff #############################################################
