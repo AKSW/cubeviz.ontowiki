@@ -26,12 +26,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
     /**
      * @test
      */
-    public function getcomponentsAction_DsdUrlAndDsUrlSet_cTDimension() 
+    public function getcomponentsAction_allParameterOk_cTDimension() 
     {
         // parameter
         $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
         $dsdUrl = 'http://example.cubeviz.org/datacube/dsd';
         $dsUrl = 'http://example.cubeviz.org/datacube/dataset';
+        $componentType = 'dimension';
         
         $response = $this->_sendRequest(
             'cubeviz/getcomponents',
@@ -39,7 +40,7 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                 'modelIri' => $exampleCubeNs,
                 'dsdUrl' => $dsdUrl,
                 'dsUrl' => $dsUrl,
-                'componentType' => 'dimension'
+                'componentType' => $componentType
             )
         );
         
@@ -139,12 +140,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
     /**
      * @test
      */
-    public function getcomponentsAction_DsdUrlAndDsUrlSet_cTMeasure() 
+    public function getcomponentsAction_allParameterOk_cTMeasure() 
     {
         // parameter
         $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
         $dsdUrl = 'http://example.cubeviz.org/datacube/dsd';
         $dsUrl = 'http://example.cubeviz.org/datacube/dataset';
+        $componentType = 'measure';
         
         $response = $this->_sendRequest(
             'cubeviz/getcomponents',
@@ -152,7 +154,7 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                 'modelIri' => $exampleCubeNs,
                 'dsdUrl' => $dsdUrl,
                 'dsUrl' => $dsUrl,
-                'componentType' => 'measure'
+                'componentType' => $componentType
             )
         );
         
@@ -179,6 +181,138 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                     )
                 ),
                 'message' => ''
+            ),
+            $contentObj
+        );
+    }
+    
+    /**
+     * @test
+     */
+    public function getcomponentsAction_allParameterOk_ExceptComponentType() 
+    {
+        // parameter
+        $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
+        $dsdUrl = 'http://example.cubeviz.org/datacube/dsd';
+        $dsUrl = 'http://example.cubeviz.org/datacube/dataset';
+        $componentType = '';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getcomponents',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl,
+                'dsUrl' => $dsUrl,
+                'componentType' => $componentType
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals(
+            array(
+                'code' => 400,
+                'content' => '',
+                'message' => 'componentType was wheter component nor measure'
+            ),
+            $contentObj
+        );
+    }
+    
+    /**
+     * @test
+     */
+    public function getcomponentsAction_allParameterOk_ExceptDsdUrl() 
+    {
+        // parameter
+        $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
+        $dsdUrl = '';
+        $dsUrl = 'http://example.cubeviz.org/datacube/dataset';
+        $componentType = 'dimension';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getcomponents',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl,
+                'dsUrl' => $dsUrl,
+                'componentType' => $componentType
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals(
+            array(
+                'code' => 400,
+                'content' => '',
+                'message' => 'dsdUrl is not valid'
+            ),
+            $contentObj
+        );
+    }
+    
+    /**
+     * @test
+     */
+    public function getcomponentsAction_allParameterOk_ExceptDsUrl() 
+    {
+        // parameter
+        $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
+        $dsdUrl = 'http://example.cubeviz.org/datacube/dsd';
+        $dsUrl = '';
+        $componentType = 'dimension';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getcomponents',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl,
+                'dsUrl' => $dsUrl,
+                'componentType' => $componentType
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals(
+            array(
+                'code' => 400,
+                'content' => '',
+                'message' => 'dsUrl is not valid'
+            ),
+            $contentObj
+        );
+    }
+    
+    /**
+     * @test
+     */
+    public function getcomponentsAction_allParameterOk_ExceptModelIri() 
+    {
+        // parameter
+        $exampleCubeNs = '';
+        $dsdUrl = 'http://example.cubeviz.org/datacube/dsd';
+        $dsUrl = 'http://example.cubeviz.org/datacube/dataset';
+        $componentType = 'dimension';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getcomponents',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl,
+                'dsUrl' => $dsUrl,
+                'componentType' => $componentType
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals(
+            array(
+                'code' => 404,
+                'content' => '',
+                'message' => 'Model not available'
             ),
             $contentObj
         );

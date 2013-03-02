@@ -89,6 +89,34 @@ class CubevizController extends OntoWiki_Controller_Component
             );
             return;
         }
+        
+        // check if dsdUrl is valid
+        if(false === Erfurt_Uri::check($dsdUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsdUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        // check if dsUrl is valid
+        if(false === Erfurt_Uri::check($dsUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
                 
         if($componentType == 'measure') {
             $componentType = DataCube_UriOf::Measure;
@@ -101,7 +129,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 array(
                     'code' => $code, 
                     'content' => '', 
-                    'message' => 'compontent type was wheter component nor measure'
+                    'message' => 'componentType was wheter component nor measure'
                 ),
                 $code
             );
