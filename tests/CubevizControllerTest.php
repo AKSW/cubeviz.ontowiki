@@ -36,7 +36,11 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
         $result = json_decode($this->response->getBody(), true);
         
         $this->assertEquals(
-            array( 'code' => 404, 'message' => 'Model not available'),
+            array( 
+                'code' => 404, 
+                'content' => '',
+                'message' => 'Model not available'
+            ),
             $result
         );
     }    
@@ -56,7 +60,11 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
         $result = json_decode($this->response->getBody(), true);
         
         $this->assertEquals(
-            array( 'code' => 404, 'message' => 'Model not available'),
+            array( 
+                'code' => 404, 
+                'content' => '',
+                'message' => 'Model not available'
+            ),
             $result
         );
     }
@@ -76,7 +84,11 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
         $result = json_decode($this->response->getBody(), true);
         
         $this->assertEquals(
-             array( 'code' => 404, 'message' => 'Model not available'),
+             array( 
+                'code' => 404, 
+                'content' => '',
+                'message' => 'Model not available'
+            ),
             $result
         );
     }
@@ -102,7 +114,7 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
         
         $this->assertEquals( 200, $response['code']); 
         $this->assertEquals(
-            $contentObj ['result'], 
+            $contentObj ['content'], 
             array(array(
                 'url' => 'http://example.cubeviz.org/datacube/dataset',
                 'hashedUrl' => '26d71f183a23bf96058200d78e080f77',

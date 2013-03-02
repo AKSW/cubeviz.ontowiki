@@ -329,8 +329,8 @@ class DataCube_Query
      * @param $dsUri Data Set Uri
      * @return array
      */
-    public function getDataSets($dsdUri) {    
-        
+    public function getDataSets($dsdUri) 
+    {
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
         
         //get all data sets in the cube for the given DataStructureDefinition

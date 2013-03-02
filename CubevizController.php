@@ -221,7 +221,11 @@ class CubevizController extends OntoWiki_Controller_Component
         if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
             $code = 404;
             $this->_sendJSONResponse(
-                array('code' => $code, 'message' => 'Model not available'),
+                array(
+                    'code' => $code, 
+                    'content' => '',
+                    'message' => 'Model not available'
+                ),
                 $code
             );
             return;
@@ -255,13 +259,18 @@ class CubevizController extends OntoWiki_Controller_Component
         
         // parameter
         $m = $this->_request->getParam ('modelIri', '');        
-        $dsdUrl = $this->_request->getParam('dsdUrl');
+        $dsdUrl = $this->_request->getParam('dsdUrl', '');
 
         // check if model there
         if(false === $this->_erfurt->getStore()->isModelAvailable($m)) {
+            $code = 404;
             $this->_sendJSONResponse(
-                array('code' => 404, 'message' => 'Model not available'),
-                404
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'Model not available'
+                ),
+                $code
             );
             return;
         }
@@ -270,7 +279,11 @@ class CubevizController extends OntoWiki_Controller_Component
         if(false === Erfurt_Uri::check($dsdUrl)) {
             $code = 400;
             $this->_sendJSONResponse(
-                array('code' => $code, 'message' => 'dsdUrl is not valid'),
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsdUrl is not valid'
+                ),
                 $code
             );
             return;
@@ -281,11 +294,19 @@ class CubevizController extends OntoWiki_Controller_Component
             $model = new Erfurt_Rdf_Model ($m);
             $query = new DataCube_Query($model);
             $code = 200;
-            $content = array('code' => $code, 'result' => $query->getDataSets($dsdUrl));
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getDataSets($dsdUrl),
+                'message' => ''
+            );
             
         } catch(Exception $e) {
             $code = 400;
-            $content = array('code' => $code, 'message' => $e->getMessage());
+            $content = array(
+                'code' => $code, 
+                'content' => '', 
+                'message' => $e->getMessage()
+            );
         }
         
         $this->_sendJSONResponse($content, $code);
