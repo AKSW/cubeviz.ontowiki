@@ -65,6 +65,242 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      * 
      */
+    public function getcomponentsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dsdUrl = $this->_request->getParam('dsdUrl', '');
+        $dsUrl = $this->_request->getParam('dsUrl', '');
+        $componentType = $this->_request->getParam('componentType', ''); 
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'Model not available'
+                ),
+                $code
+            );
+            return;
+        }
+                
+        if($componentType == 'measure') {
+            $componentType = DataCube_UriOf::Measure;
+        } else if($componentType == 'dimension') {
+            $componentType = DataCube_UriOf::Dimension;
+        } else {
+            // stop execution, because it is not a $componentType that i understand
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'compontent type was wheter component nor measure'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        try {
+            $model = new Erfurt_Rdf_Model($modelIri);
+            $query = new DataCube_Query($model);
+            
+            $code = 200;
+            $content = array(
+                'code' => $code,
+                'content' => $query->getComponents($dsdUrl, $dsUrl, $componentType),
+                'message' => ''
+            );
+        } catch(CubeViz_Exception $e) {
+            $code = 400;
+            $content = array(
+                'code' => $code, 
+                'content' => '', 
+                'message' => 'compontent type was wheter component nor measure'
+            );
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     * 
+     */
+    public function getdatasetsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // parameter
+        $m = $this->_request->getParam ('modelIri', '');        
+        $dsdUrl = $this->_request->getParam('dsdUrl', '');
+
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($m)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'Model not available'
+                ),
+                $code
+            );
+            return;
+        }
+    
+        // check if dsdUrl is valid
+        if(false === Erfurt_Uri::check($dsdUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsdUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+
+        // load data sets
+        try {
+            $model = new Erfurt_Rdf_Model ($m);
+            $query = new DataCube_Query($model);
+            $code = 200;
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getDataSets($dsdUrl),
+                'message' => ''
+            );
+            
+        } catch(Exception $e) {
+            $code = 400;
+            $content = array(
+                'code' => $code, 
+                'content' => '', 
+                'message' => $e->getMessage()
+            );
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     * 
+     */
+    public function getdatastructuredefinitionsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // check model parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '',
+                    'message' => 'Model not available'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        try {
+            $model = new Erfurt_Rdf_Model($modelIri);            
+            $query = new DataCube_Query($model);
+
+            $code = 200;
+            $content = array(
+                'code' => $code,
+                'content' => $query->getDataStructureDefinitions(),
+                'message' => ''
+            );
+        } catch(Exception $e) {
+            $code = 404;
+            $content = $e->getMessage();
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     *
+     */
+    public function getobservationsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
+                $code
+            );
+            return;
+        }
+        
+        // check if model there
+        if('' == $dataHash || 44 > strlen($dataHash)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
+                $code
+            );
+            return;
+        }
+            
+        try {
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model);
+            
+            $configuration = new CubeViz_ConfigurationLink(
+                $this->_owApp->erfurt->getCacheDir()
+            );
+
+            // load configuration which is associated with given linkCode
+            list($c, $hash) = $configuration->read ($dataHash, $model);
+            
+            $code = 200;
+
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getObservations(
+                    $c ['selectedDS']['__cv_uri'],
+                    $c ['selectedComponents']['dimensions']
+                ),
+                'message' => ''
+            );
+            
+        } catch (Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     * 
+     */
     public function indexAction () 
     {
         // In case no model was selected, it redirect to the root url of OntoWiki
@@ -146,210 +382,6 @@ class CubevizController extends OntoWiki_Controller_Component
                  ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
         }
     }
-
-    /**
-     *
-     */
-    public function getobservationsAction() 
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();   
-             
-        // parameter
-        $modelIri = $this->_request->getParam ('modelIri', '');
-        $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
-        
-        // check if model there
-        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
-                $code
-            );
-            return;
-        }
-        
-        // check if model there
-        if('' == $dataHash || 44 > strlen($dataHash)) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
-                $code
-            );
-            return;
-        }
-            
-        try {
-            $model = new Erfurt_Rdf_Model ($modelIri);
-            $query = new DataCube_Query ($model);
-            
-            $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->erfurt->getCacheDir()
-            );
-
-            // load configuration which is associated with given linkCode
-            list($c, $hash) = $configuration->read ($dataHash, $model);
-            
-            $code = 200;
-            
-            $content = array(
-                'code' => $code, 
-                'content' => $query->getObservations($c),
-                'message' => ''
-            );
-            
-        } catch (Exception $e) {
-            $code = 400;
-            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
-        }
-        
-        $this->_sendJSONResponse($content, $code);
-    }
-    
-    /**
-     * 
-     */
-    public function getdatastructuredefinitionsAction() 
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-        
-        // check model parameter
-        $modelIri = $this->_request->getParam ('modelIri', '');
-
-        // check if model there
-        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '',
-                    'message' => 'Model not available'
-                ),
-                $code
-            );
-            return;
-        }
-        
-        try {
-            $model = new Erfurt_Rdf_Model($modelIri);            
-            $query = new DataCube_Query($model);
-
-            $code = 200;
-            $content = array(
-                'code' => $code,
-                'content' => $query->getDataStructureDefinitions(),
-                'message' => ''
-            );
-        } catch(Exception $e) {
-            $code = 404;
-            $content = $e->getMessage();
-        }
-        
-        $this->_sendJSONResponse($content, $code);
-    }
-    
-    /**
-     * 
-     */
-    public function getdatasetsAction() 
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-        
-        // parameter
-        $m = $this->_request->getParam ('modelIri', '');        
-        $dsdUrl = $this->_request->getParam('dsdUrl', '');
-
-        // check if model there
-        if(false === $this->_erfurt->getStore()->isModelAvailable($m)) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '', 
-                    'message' => 'Model not available'
-                ),
-                $code
-            );
-            return;
-        }
-    
-        // check if dsdUrl is valid
-        if(false === Erfurt_Uri::check($dsdUrl)) {
-            $code = 400;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '', 
-                    'message' => 'dsdUrl is not valid'
-                ),
-                $code
-            );
-            return;
-        }
-
-        // load data sets
-        try {
-            $model = new Erfurt_Rdf_Model ($m);
-            $query = new DataCube_Query($model);
-            $code = 200;
-            $content = array(
-                'code' => $code, 
-                'content' => $query->getDataSets($dsdUrl),
-                'message' => ''
-            );
-            
-        } catch(Exception $e) {
-            $code = 400;
-            $content = array(
-                'code' => $code, 
-                'content' => '', 
-                'message' => $e->getMessage()
-            );
-        }
-        
-        $this->_sendJSONResponse($content, $code);
-    }
-    
-    /**
-     * 
-     */
-    public function getcomponentsAction() 
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-        
-        $model = new Erfurt_Rdf_Model ($this->_request->getParam ('m'));
-        
-        // Data Structure Definition
-        $dsdUrl = $this->_request->getParam('dsdUrl');
-        
-        // Data Set
-        $dsUrl = $this->_request->getParam('dsUrl');
-        
-        // can be DataCube_UriOf::Dimension or DataCube_UriOf::Measure
-        $componentType = $this->_request->getParam('cT'); 
-                
-        if($componentType == 'measure') {
-            $componentType = DataCube_UriOf::Measure;
-        } else if($componentType == 'dimension') {
-            $componentType = DataCube_UriOf::Dimension;
-        } else {
-            // stop execution, because it is not a $componentType that i understand
-            $this->_response->setBody('Unknown cT parameter! Given was: '. $componentType);
-            return;
-        }
-        
-        $query = new DataCube_Query($model);
-                
-        try {
-            $this->_response->setBody(json_encode($query->getComponents($dsdUrl, $dsUrl, $componentType)));
-        } catch(CubeViz_Exception $e) {
-            // send error message back
-            $this->_response->setBody($e->getMessage());
-        }        
-    }
     
     /**
      *
@@ -373,12 +405,14 @@ class CubevizController extends OntoWiki_Controller_Component
                     $code = 200;
                     $content = array(
                         'code' => $code,
+                        'content' => '',
                         'message' => 'Model removed successfully'
                     );
                 } catch (Exception $e) {
                     $code = 400;
                     $content = array(
                         'code' => $code,
+                        'content' => '',
                         'message' => $e->getMessage()
                     );
                 }
@@ -388,6 +422,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 $code = 400;
                 $content = array(
                     'code' => $code,
+                    'content' => '',
                     'message' => 'Model does not exists'
                 );
             }

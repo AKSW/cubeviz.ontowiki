@@ -168,54 +168,42 @@ class DataCube_Query
                 'You have to use '. DataCube_UriOf::Dimension .' or '. DataCube_UriOf::Measure
             );
         }
-                
-        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-                
-        //search for the components specified by the parameters
-        $sparql = 'SELECT ?comp ?comptype ?order WHERE {
-            <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
-            ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
-            ?comp <'.$componentType.'> ?comptype.
             
-            OPTIONAL {?comp <'.DataCube_UriOf::Order.'> ?order.}
-        }
-        ORDER BY ASC(?order);';
-
-        $queryresultComp = $this->_model->sparqlQuery($sparql);
-                
-        $result = array();
+        $result = $this->_model->sparqlQuery (
+            'SELECT ?comp ?p ?o WHERE {
+                <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
+                ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                ?comp <'.$componentType.'> ?comptype.
+                ?comp ?p ?o.
+            }'
+        );
         
-        // iterate through all found results
-        foreach($queryresultComp as $comp) {
-            if(false == empty($comp['comp'])) {
-                $titleHelper->addResource($comp['comp']);
-            }
-        }
+        // generate associative array
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
         
-        // iterate through all found results again and add title
-        foreach($queryresultComp as $comp) {
-            if(false == empty($comp['comp'])) {
-                //add the component properties to the result set
-                $element = array ( 
-                    'label'     => str_replace('"', "'", $titleHelper->getTitle($comp['comp'])),
-                    'order'     => isset($comp['order']) ? $comp['order'] : -1,
-                    'url'       => $comp['comp'],
-                    'hashedUrl' => md5($comp['comp']),
-                    'typeUrl'   => $comp['comptype']
-                );
-                
-                if ( DataCube_UriOf::Dimension == $componentType ) {
-                    $element ['elements'] = $this->getComponentElements($dsUri, $comp['comptype']);
-                }
-                
-                $result [] = $element;
-            }
-        }
+        // enrich array with CubeViz sugar
+        $result = $this->enrichResult($result);
         
+        // sort by label
         usort ( 
             $result, 
-            function ($a, $b) { return strcasecmp ($a['label'], $b['label']); } 
-        ); 
+            function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
+        );
+        
+        /**
+         * add component elements
+         */
+        $tmp = $result;
+        $result = array();
+        
+        foreach ($tmp as $dimension) {
+            
+            $dimension ['__cv_elements'] = $this->getComponentElements(
+                $dsUri, $dimension[$componentType]
+            );
+            
+            $result [$dimension['__cv_uri']] = $dimension;
+        }
         
         return $result;
     }
@@ -224,59 +212,22 @@ class DataCube_Query
      * Returns an array of Resources which has a certain relation ($componentProperty) to a dataset.
      * @param $dataSetUri DataSet Uri
      * @param $componentProperty Uri of a certain dimension property
-     * @param $limit Limit number of result entries
-     * @param $offset Start position in result 
      * @return array
      */
-    public function getComponentElements($dataSetUri, $componentProperty, $limit = 0, $offset = 0) 
+    public function getComponentElements($dataSetUri, $componentProperty) 
     {
-        $sparql = 'SELECT ?componentUri ?p ?o WHERE {
+        $result = $this->_model->sparqlQuery('SELECT ?componentUri ?p ?o WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
             ?observation <'.$componentProperty.'> ?componentUri.
             ?componentUri ?p ?o.
-        }';
+        }');
         
-        // TODO: are they really neccessary?
-        $sparql .= 0 < $limit ? ' LIMIT '. $limit : '';
-        $sparql .= 0 < $limit && 0 <= $offset ? ' OFFSET '. $offset .';' : '';
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
         
-        $componentElements = $this->_model->sparqlQuery($sparql);
+        $result = $this->enrichResult($result);
         
-        $groupedComponentElements = array();
-        $currentComponentUri = '';
-        
-        // group elements by componentUri
-        foreach ($componentElements as $componentElement) {
-            
-            // only on the start, when nothing was set
-            if('' == $currentComponentUri) {
-                $currentComponentUri = $componentElement ['componentUri'];
-                $groupedComponentElements[$currentComponentUri] = array(
-                    '__cv_uri' => $currentComponentUri,
-                    '__cv_hashedUri' => md5($currentComponentUri)
-                );
-                
-            // if last used componentUri differs from current one
-            } elseif ($currentComponentUri != $componentElement ['componentUri']) {
-                $currentComponentUri = $componentElement ['componentUri'];
-                $groupedComponentElements[$currentComponentUri] = array(
-                    // adding this is necessary to have a unique identifier for
-                    // these element and be able to use at for UI elements
-                    '__cv_uri' => $currentComponentUri,
-                    '__cv_hashedUri' => md5($currentComponentUri)
-                );
-            
-            // last componentUri and current one are equal
-            } else {
-            }
-            
-            // set predicate and object (overriding is allowed)
-            $groupedComponentElements[$currentComponentUri][$componentElement['p']] =
-                $componentElement ['o'];
-        }
-        
-        return $groupedComponentElements;
+        return $result;
     }
     
     /**
@@ -352,48 +303,19 @@ class DataCube_Query
     }
        
     /**
-     * 
+     * Get all observations which fits to given DSD, DS and selected compontents.
+     * @param $dataSetUrl URL of a data set
+     * @param $selectedComponentDimensions 
      */
-    public function getObservations ($linkConfiguration) 
+    public function getObservations ($dataSetUrl, $selectedComponentDimensions) 
     {
-        // Case: link configuration was found and loaded
-        if ( 0 < count ( $linkConfiguration ) ) {
-            // Extract and save neccessary parameters from link configuration
-            $selectedComponents = $linkConfiguration['selectedComponents'];
-            $dataSetUrl = $linkConfiguration['selectedDS']['url'];        
-            $selCompDims = $linkConfiguration['selectedComponents']['dimensions'];
-        } 
-        
-        // Case: no link configuration was given
-        else {
-            
-            // set default values for DSD
-            $dataStructureDefinitionUrl = $this->getDataStructureDefinitions();
-            $dataStructureDefinitionUrl = $dataStructureDefinitionUrl [0]['url'];
-            
-            // ... and DS
-            $dataSetUrl = $this->getDataSets($dataStructureDefinitionUrl);
-            $dataSetUrl = $dataSetUrl [0]['url'];
-            
-            $tmp = $this->getComponents (
-                $dataStructureDefinitionUrl, $dataSetUrl, DataCube_UriOf::Dimension
-            );
-            
-            $selCompDims = array ();
-            
-            foreach ( $tmp as $dimension ) {
-                $dimension ['elements'] = array($dimension ['elements'][0]);
-                $selCompDims [] = $dimension;
-            }
-        }
-    
         /**
          * Fill SimpleQuery object with live!
          */
         $queryObject = new Erfurt_Sparql_SimpleQuery();
         
         // CONSTRUCT
-        $queryObject->setProloguePart('CONSTRUCT {?s ?p ?o}');
+        $queryObject->setProloguePart('SELECT ?s ?p ?o');
     
         // FROM
         $queryObject->setFrom(array ($this->_model->getModelIri()));
@@ -404,10 +326,10 @@ class DataCube_Query
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
             ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
         
-        $i = 0;
         // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
-        foreach ( $selCompDims as $ele ) {
-            $where .= ' ?s <'. $ele ['typeUrl'] .'> ?d'. $i++ .' .'. "\n";
+        $i = 0;
+        foreach ( $selectedComponentDimensions as $dimension ) {
+            $where .= ' ?s <'. $dimension ['__cv_uri'] .'> ?d'. $i++ .' .'. "\n";
         }
         
         // Set FILTER
@@ -415,9 +337,9 @@ class DataCube_Query
         // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
         //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
         $i = 0;
-        foreach ( $selCompDims as $dim ) {
+        foreach ( $selectedComponentDimensions as $dim ) {
             
-            $dimElements = $dim ['elements'];
+            $dimElements = $dim ['__cv_elements'];
             
             if ( 0 < count ( $dimElements ) ) {
             
@@ -428,8 +350,8 @@ class DataCube_Query
                     // If __cv_uri is set and an URL
                     if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
                         $value = '<'. $element ['__cv_uri'] .'>';
-                    } elseif (true === isset($element ['http://www.w3.org/2000/01/rdf-schema#label'])) {
-                        $value = '"'. $element ['http://www.w3.org/2000/01/rdf-schema#label'] .'"';
+                    } else {
+                        $value = '"'. $element ['__cv_niceLabel'] .'"';
                     }
                     
                     $filter [] = ' ?d'. $i .' = '. $value .' ';
@@ -444,49 +366,15 @@ class DataCube_Query
         
         $queryObject->setWherePart($where);
         
-        // echo (string) $queryObject;
+        // execute generated query
+        $result = $this->_store->sparqlQuery ((string) $queryObject);
         
-        // send query, return result as JSON
-        $result = json_decode ( $this->_store->sparqlQuery (
-            $queryObject, 
-            array('result_format' => 'json')
-        ), true );
+        // generate associative array out of given observation result
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
         
-        $tmp = array ();
-        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model); 
+        // enrich data with CubeViz sugar
+        $result = $this->enrichResult($result);
         
-        foreach ( $result as $entry ) {
-            $count = count ( $entry );
-            foreach ( $entry as $key => $ele ) { 
-                if ( 'uri' == $entry [$key] [0]['type'] ) {
-                    $titleHelper->addResource ( $ele [0]['value'] );
-                }
-            }
-        }
-        
-        foreach ( $result as $observationUri => $entry ) {
-            
-            $count = count ( $entry );
-            $tmpEntry = $entry;
-            
-            // check whether observation's type has a label, if so get it
-            foreach ( $entry as $key => $ele ) {
-                if ( 'uri' == $entry [$key] [0]['type'] ) {
-                    $tmpEntry [$key][0]['label'] = str_replace('"', "'", $titleHelper->getTitle($ele [0]['value']));
-                }
-                $entry [$key] [0]['typeUrl'] = $entry [$key] [0]['type'];
-                unset($entry [$key] [0]['type']);
-            }            
-            
-            // set observation uri
-            $tmpEntry['observationUri'][0] = array(
-                'type'  => 'uri',
-                'value' => $observationUri
-            );
-            
-            $tmp [] = $tmpEntry;
-        }
-        
-        return $tmp;
+        return $result;
     }
 }

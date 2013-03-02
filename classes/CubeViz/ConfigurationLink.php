@@ -71,7 +71,7 @@ class CubeViz_ConfigurationLink
              */
             $dimensions = $query->getComponents(
                 $config['selectedDSD']['__cv_uri'],
-                $config['selectedDS']['url'],
+                $config['selectedDS']['__cv_uri'],
                 DataCube_UriOf::Dimension
             );
             
@@ -79,7 +79,7 @@ class CubeViz_ConfigurationLink
             $config['components']['dimensions'] = array();
             foreach ($dimensions as $dimension) {
                 $config['components']['dimensions']
-                    [$dimension['hashedUrl']] = $dimension;
+                    [$dimension['__cv_hashedUri']] = $dimension;
             }
             
             // set selectedComponents
@@ -89,7 +89,7 @@ class CubeViz_ConfigurationLink
                 /**
                  * Preselect a couple of elements for current dimension
                  */
-                $numberOfElements = $dimension['elements'];
+                $numberOfElements = $dimension['__cv_elements'];
                 $numberOfElementsToPreSelect = (int) ceil(count($numberOfElements) * 0.3);
                 
                 if(10 < $numberOfElementsToPreSelect) {
@@ -100,7 +100,7 @@ class CubeViz_ConfigurationLink
                 
                 $preSelectedElements = array();
                 $stillUsedIndexes = array();
-                $dimensionElementsNumeric = array_values($dimension['elements']);
+                $dimensionElementsNumeric = array_values($dimension['__cv_elements']);
                 
                 for($i = 0; $i < $numberOfElementsToPreSelect; ++$i) {
                     
@@ -116,13 +116,13 @@ class CubeViz_ConfigurationLink
                     } while (true);
                     
                     $j = 0;
-                    foreach ($dimension['elements'] as $elementUri => $element) {
+                    foreach ($dimension['__cv_elements'] as $elementUri => $element) {
                         // after compute a random index for a certain element
                         // lets find this element by count up as long as the 
                         // current element's index is equal to the computed one.
                         if($j++ == $randomI) {
                             $preSelectedElements [$elementUri] = 
-                                $dimension['elements'][$elementUri];
+                                $dimension['__cv_elements'][$elementUri];
                             // in this way we keep the elementUri as key
                             break;
                         }
