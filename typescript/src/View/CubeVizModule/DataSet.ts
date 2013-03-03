@@ -83,7 +83,7 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         
             this.app._.backend.url,
             this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.url,
+            this.app._.data.selectedDSD.__cv_uri,
             
             // after all elements were loaded, add them to collection
             // and render the view

@@ -140,6 +140,105 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
     /**
      * @test
      */
+    public function getcomponentsAction_allParameterOk_cTDimension2() 
+    {
+        // parameter
+        $exampleCubeNs = 'http://example.cubeviz.org/datacube/';
+        $dsdUrl = 'http://example.cubeviz.org/datacube/dsd2';
+        $dsUrl = 'http://example.cubeviz.org/datacube/dataset3';
+        $componentType = 'dimension';
+        
+        $response = $this->_sendRequest(
+            'cubeviz/getcomponents',
+            array(
+                'modelIri' => $exampleCubeNs,
+                'dsdUrl' => $dsdUrl,
+                'dsUrl' => $dsUrl,
+                'componentType' => $componentType
+            )
+        );
+        
+        $contentObj = json_decode($response ['content'], true);
+        
+        $this->assertEquals(
+            array(
+                'code' => 200,
+                'content' => array(
+                    'http://example.cubeviz.org/datacube/cs/geo' => array (
+                        // type
+                        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+                            => 'http://purl.org/linked-data/cube#ComponentSpecification',
+                        // label
+                        'http://www.w3.org/2000/01/rdf-schema#label' 
+                            => 'Component Specification of Region',
+                        // dimension
+                        'http://purl.org/linked-data/cube#dimension'
+                            => 'http://example.cubeviz.org/datacube/properties/geo',
+                        // __cv
+                        '__cv_uri' => 'http://example.cubeviz.org/datacube/cs/geo',
+                        '__cv_hashedUri' => '2d95f37cca08dba6a9320a7450780724',
+                        '__cv_niceLabel' => 'Component Specification of Region',
+                        '__cv_elements' => array (
+                            array (
+                                // type
+                                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+                                    => 'http://example.cubeviz.org/datacube/properties/geo',
+                                'http://www.w3.org/2000/01/rdf-schema#label' 
+                                    => 'Germany',
+                                '__cv_uri' 
+                                    => 'http://example.cubeviz.org/datacube/Germany',
+                                '__cv_hashedUri' => '9f3f2a208d1095ee3f9fbea57d3dfbc9',
+                                '__cv_niceLabel' => 'Germany'
+                            )
+                        )
+                    ),
+                    'http://example.cubeviz.org/datacube/cs/time' => array(
+                        // type
+                        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+                            => 'http://purl.org/linked-data/cube#ComponentSpecification',
+                        // label
+                        'http://www.w3.org/2000/01/rdf-schema#label' 
+                            => 'Component Specification of Time',
+                        // dimension
+                        'http://purl.org/linked-data/cube#dimension' 
+                            => 'http://example.cubeviz.org/datacube/properties/date',
+                        // __cv
+                        '__cv_uri' => 'http://example.cubeviz.org/datacube/cs/time',
+                        '__cv_hashedUri' => '110155d1d0f0317b8691aad901022ab4',
+                        '__cv_niceLabel' => 'Component Specification of Time',
+                        '__cv_elements' => array(
+                            array(
+                                // type
+                                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+                                    => 'http://example.cubeviz.org/datacube/date',
+                                // label
+                                'http://www.w3.org/2000/01/rdf-schema#label' => '2003',
+                                // __cv
+                                '__cv_uri' => 'http://example.cubeviz.org/datacube/Y2003',
+                                '__cv_hashedUri' => 'b0d4881c0053358c1db4c2fa474c7122',
+                                '__cv_niceLabel' => '2003'
+                            ),
+                            array(
+                                // type
+                                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
+                                    => 'http://example.cubeviz.org/datacube/date',
+                                // __cv
+                                '__cv_uri' => 'http://example.cubeviz.org/datacube/Y2004',
+                                '__cv_hashedUri' => '878fa2cf65ef1962c06e4c01a546913a',
+                                '__cv_niceLabel' => 'Y2004'
+                            )
+                        )
+                    )
+                ),
+                'message' => ''
+            ),
+            $contentObj
+        );
+    }
+    
+    /**
+     * @test
+     */
     public function getcomponentsAction_allParameterOk_cTMeasure() 
     {
         // parameter

@@ -203,14 +203,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
             this.app._.backend.url,
             this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.url,
-            this.app._.data.selectedDS.url,
+            this.app._.data.selectedDSD.__cv_uri,
+            this.app._.data.selectedDS.__cv_uri,
             
             // after all elements were loaded, add them to collection
             // and render the view
             function(entries) {
                 
                 // save pulled component dimensions
+                // self.app._.data.components.dimensions = JSON.parse(JSON.stringify(entries));
                 self.app._.data.components.dimensions = entries;
                 
                 // set default values for selected component dimensions list
@@ -245,8 +246,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
             this.app._.backend.url,
             this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.url,
-            this.app._.data.selectedDS.url,
+            this.app._.data.selectedDSD.__cv_uri,
+            this.app._.data.selectedDS.__cv_uri,
             
             function(entries) {
                 
@@ -270,11 +271,11 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.destroy();
         
         // load dimensional data
-        this.loadComponentDimensions(function(){
-            
+        this.loadComponentDimensions(function(newComponentDimensions){
+
             // load measures
-            self.loadComponentMeasures(function(){
-             
+            self.loadComponentMeasures(function(newComponentMeasures){
+                
                 // update link code        
                 CubeViz_ConfigurationLink.save(
                     self.app._.backend.url, self.app._.data, "data",

@@ -9,8 +9,8 @@ class DataCube_Component {
      * Loads all component dimensions, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllDimensions (url, modelIri, dsdUrl:string, dsUrl:string, callback) {
-        
+    static loadAllDimensions (url:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
         $.ajax({
             url: url + "getcomponents",
             data: {
@@ -23,34 +23,15 @@ class DataCube_Component {
         .error( function (xhr, ajaxOptions, thrownError) {
             throw new Error ("loadAllDimensions: " + xhr.responseText);
         })
-        .done( function (entries) { 
-            DataCube_Component.prepareLoadedAllDimensions (entries, callback); 
+        .success( function (entries) {
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+               callback(entries.content);
+            }
         });
     }
-    
-    /**
-     * Set default values, sort objects by label etc.
-     */
-    static prepareLoadedAllDimensions (entries:any, callback) {
-        
-        entries = JSON.parse (entries);
-        
-        // sort objects by label, ascending
-        entries.sort(function(a, b) {
-           return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
-        })
-        
-        var tmpEntries = {};
-        
-        _.each(entries, function(component){
-            // establish a new structure where the key is the label of the dimension
-            tmpEntries[component.hashedUrl] = component;
-        });
-        
-        // call callback function with prepared entries
-        callback ( tmpEntries );
-    }
-    
+
     /**
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
@@ -70,32 +51,12 @@ class DataCube_Component {
             throw new Error ("loadAllMeasures: " + xhr.responseText);
         })
         .done( function (entries) { 
-            DataCube_Component.prepareLoadedAllMeasures (entries, callback); 
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+                callback(entries);
+            }
         });
-    }
-    
-    /**
-     * Set default values, sort objects by label etc.
-     */
-    static prepareLoadedAllMeasures (entries:any, callback) {
-        
-        entries = JSON.parse (entries);        
-                                
-        // sort objects by label, ascending
-        entries.sort(function(a, b) {
-           return a.label.toUpperCase().localeCompare(b.label.toUpperCase());
-        })
-        
-        var tmpEntries = {};
-        
-        // 
-        _.each(entries, function(measure){         
-            // establish a new structure where the key is the label of the dimension
-            tmpEntries[measure.hashedUrl] = measure;
-        });
-        
-        // call callback function with prepared entries
-        callback ( tmpEntries );
     }
     
     /**
@@ -103,9 +64,13 @@ class DataCube_Component {
      * @param componentDimensions Object contain all component dimensions.
      * @return any Object containing for each dimension a random set of elements.
      */
-    static getDefaultSelectedDimensions ( componentDimensions ) : any 
+    static getDefaultSelectedDimensions (componentDimensions:any) : any 
     {        
         var alreadyUsedIndexes:number[] = [],
+            // because we change the __cv_elements field for each dimension later on,
+            // we have to create a real clone to avoid changing the un-selected
+            // components field in app._.data!
+            componentDimensions = JSON.parse(JSON.stringify(componentDimensions)),
             i:number = 0,
             infinityBackup:number = 0,
             maxNumberOfElements:number = 0,
@@ -113,9 +78,6 @@ class DataCube_Component {
             randomElementIndex:number = 0,
             result:any = {},
             selectedElements:any = {};
-        
-        // create a copy
-        componentDimensions = $.parseJSON(JSON.stringify (componentDimensions));
     
         // go through all component dimensions
         _.each(componentDimensions, function(componentDimension, dimensionHashedUrl){            
@@ -123,11 +85,13 @@ class DataCube_Component {
             alreadyUsedIndexes = [];
             infinityBackup = 0;
             
-            numberOfElements = _.keys(componentDimension.elements).length;
+            numberOfElements = _.keys(componentDimension.__cv_elements).length;
             
             // get one third of the component element number (but maximum of 10)
-            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.elements).length * 0.3);
-            maxNumberOfElements = 10 < maxNumberOfElements ? 10 : maxNumberOfElements;
+            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
+            maxNumberOfElements = 10 < maxNumberOfElements 
+                ? 10 : 1 > maxNumberOfElements
+                       ? 1 : maxNumberOfElements;
             
             /**
              * Find a couple of random indexes
@@ -135,7 +99,7 @@ class DataCube_Component {
             do {
                 // compute index for the next random element which is
                 // between i and max number of elements
-                randomElementIndex = Math.floor((Math.random()*numberOfElements)+1);
+                randomElementIndex = Math.floor((Math.random()*numberOfElements));
                 
                 // if computed index is not use ...
                 if (-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
@@ -160,14 +124,16 @@ class DataCube_Component {
             selectedElements = {};
             i = 0;
             
-            _.each(componentDimension.elements, function(element, elementUri){
-                if(-1 < $.inArray(i++, alreadyUsedIndexes)) {
-                    selectedElements[elementUri] = element;
+            _.each(componentDimension.__cv_elements, function(element, elementUri){
+                if(-1 < $.inArray(i, alreadyUsedIndexes)) {
+                    selectedElements[i] = element;
                 }
+                
+                i++;
             });
             
             // save adapted component dimension + elements
-            componentDimension.elements = selectedElements;
+            componentDimension.__cv_elements = selectedElements;
             result[dimensionHashedUrl] = componentDimension;
         });
         
