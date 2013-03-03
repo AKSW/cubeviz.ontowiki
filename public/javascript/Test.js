@@ -752,7 +752,7 @@ cubeViz_tests.push(function () {
             var label;
 
             var numberOfCheckedItems = $($(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first()).find(":checked").length;
-            var numberOfSelectedComponentDimensionElements = _.keys(cubeVizApp._.data.selectedComponents.dimensions[dimensionHashedUrl].elements).length;
+            var numberOfSelectedComponentDimensionElements = _.keys(cubeVizApp._.data.selectedComponents.dimensions[dimensionHashedUrl].__cv_elements).length;
 
             self.assertTrue(numberOfCheckedItems == numberOfSelectedComponentDimensionElements, "Check number of checked checkboxes (" + numberOfCheckedItems + " <> " + numberOfSelectedComponentDimensionElements + ")");
             _.each(listEntries, function (listEntry) {
@@ -761,13 +761,13 @@ cubeViz_tests.push(function () {
                 checkboxValue = checkbox.val();
                 dimensionToCheck = cubeVizApp._.data.components.dimensions[dimensionHashedUrl];
                 label = $($($(listEntry).children().last()).children().first()).text();
-                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.__cvelements, function (ele) {
                     return checkboxName == ele["__cv_hashedUri"];
                 })), "Check hashedUrl(__cv_hashedUri): " + checkboxName);
-                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.__cv_elements, function (ele) {
                     return checkboxValue == ele["__cv_uri"];
                 })), "Check uri(__cv_uri): " + checkboxValue);
-                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.elements, function (ele) {
+                self.assertTrue(true === _.isObject(_.find(dimensionToCheck.__cv_elements, function (ele) {
                     return label == ele["http://www.w3.org/2000/01/rdf-schema#label"];
                 })), "Check label: " + label);
             });
@@ -789,7 +789,7 @@ cubeViz_tests.push(function () {
         var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
         var listEntries = $(listDOMElement).children();
 
-        this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.elements).length, "listEntries.length === _.keys(firstComponent.elements).length");
+        this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.__cv_elements).length, "listEntries.length === _.keys(firstComponent.__cv_elements).length");
     };
     cubeVizApp.bindGlobalEvents([
         {

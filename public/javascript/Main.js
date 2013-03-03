@@ -461,7 +461,7 @@ var CubeViz_Visualization_Controller = (function () {
 
         _.each(selectedComponentDimensions, function (componentDimension, dimensionHashedUrl) {
             if(componentDimension.typeUrl == dimensionTypeUrl) {
-                _.each(componentDimension.elements, function (element) {
+                _.each(componentDimension.__cv_elements, function (element) {
                     if(element["__cv_uri"] == propertyUrl && false === _.isUndefined(element[rdfsLabel]) && false === _.str.isBlank(element[rdfsLabel])) {
                         label = element[rdfsLabel];
                     } else {
@@ -480,7 +480,7 @@ var CubeViz_Visualization_Controller = (function () {
     CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(selectedComponentDimensions) {
         var multipleDimensions = [];
         _.each(selectedComponentDimensions, function (selectedDimension) {
-            if(2 <= _.size(selectedDimension.elements)) {
+            if(2 <= _.size(selectedDimension.__cv_elements)) {
                 multipleDimensions.push(selectedDimension);
             }
         });
@@ -502,7 +502,7 @@ var CubeViz_Visualization_Controller = (function () {
     CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(selectedComponentDimensions) {
         var oneElementDimensions = [];
         _.each(selectedComponentDimensions, function (selectedDimension) {
-            if(1 == _.size(selectedDimension.elements)) {
+            if(1 == _.size(selectedDimension.__cv_elements)) {
                 oneElementDimensions.push(selectedDimension);
             }
         });
@@ -822,8 +822,8 @@ var DataCube_Component = (function () {
         _.each(componentDimensions, function (componentDimension, dimensionHashedUrl) {
             alreadyUsedIndexes = [];
             infinityBackup = 0;
-            numberOfElements = _.keys(componentDimension.elements).length;
-            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.elements).length * 0.3);
+            numberOfElements = _.keys(componentDimension.__cv_elements).length;
+            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
             maxNumberOfElements = 10 < maxNumberOfElements ? 10 : maxNumberOfElements;
             do {
                 randomElementIndex = Math.floor((Math.random() * numberOfElements) + 1);
@@ -840,12 +840,12 @@ var DataCube_Component = (function () {
             selectedElements = {
             };
             i = 0;
-            _.each(componentDimension.elements, function (element, elementUri) {
+            _.each(componentDimension.__cv_elements, function (element, elementUri) {
                 if(-1 < $.inArray(i++, alreadyUsedIndexes)) {
                     selectedElements[elementUri] = element;
                 }
             });
-            componentDimension.elements = selectedElements;
+            componentDimension.__cv_elements = selectedElements;
             result[dimensionHashedUrl] = componentDimension;
         });
         return result;
@@ -1676,16 +1676,11 @@ var View_IndexAction_Legend = (function (_super) {
             $("#cubeviz-legend-observations").append(observationTpl(obs));
             infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
             _.each(obs.dimensionElements, function (dimensionElement) {
-                if(false === _.isUndefined(dimensionElement.label) && false === _.str.isBlank(dimensionElement.label)) {
-                    label = dimensionElement.label;
-                } else {
-                    label = dimensionElement["__cv_uri"];
-                }
                 infoList.append(observationInfoEntry({
                     dimensionLabel: dimensionElement.dimensionLabel,
-                    fullLabel: label,
-                    shortLabel: _.str.prune(label, 65, "..."),
-                    url: dimensionElement.value
+                    fullLabel: dimensionElement.__cv_niceLabel,
+                    shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
+                    __cv_uri: dimensionElement.__cv_uri
                 }));
             });
         });
@@ -1709,65 +1704,55 @@ var View_IndexAction_Legend = (function (_super) {
             }));
             dimensionElementList = $($("#cubeviz-legend-componentList").find(".cubeviz-legend-componentDimensionList").last());
             html = "";
-            dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.elements))).sortAscendingBy().each(function (dimensionElement) {
-                if(false === _.isUndefined(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"])) {
-                    label = dimensionElement["http://www.w3.org/2000/01/rdf-schema#label"];
-                } else {
-                    label = dimensionElement["__cv_uri"];
-                }
+            dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.__cv_elements))).sortAscendingBy().each(function (dimensionElement) {
+                console.log("");
+                console.log("");
+                console.log(dimensionElement);
+                console.log(tplDimensionEntry({
+                    fullLabel: dimensionElement.__niceLabel,
+                    shortLabel: _.str.prune(dimensionElement.__niceLabel, 75, " ..."),
+                    __cv_uri: dimensionElement.__cv_uri
+                }));
                 dimensionElementList.append(tplDimensionEntry({
-                    fullLabel: label,
-                    shortLabel: _.str.prune(label, 75, " ..."),
-                    url: dimensionElement["__cv_uri"]
+                    fullLabel: dimensionElement.__niceLabel,
+                    shortLabel: _.str.prune(dimensionElement.__niceLabel, 75, " ..."),
+                    __cv_uri: dimensionElement.__cv_uri
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
                 componentDimensionInfoArea = $(dimensionElementList.find(".cubeviz-legend-componentDimensionInfoArea").last());
-                $(dimensionElementList.find(".cubeviz-legend-componentDimensionShowInfo").last()).data("componentDimensionElementUri", dimensionElement["__cv_uri"]).data("componentDimensionInfoArea", componentDimensionInfoArea).data("observationIcon", observationIcon).data("cubeviz-legend-componentDimensionInfoArea", dimensionElement["__cv_uri"]).data("dimensionHashedUrl", dimension.hashedUrl);
+                $(dimensionElementList.find(".cubeviz-legend-componentDimensionShowInfo").last()).data("componentDimensionElementUri", dimensionElement.__cv_uri).data("componentDimensionInfoArea", componentDimensionInfoArea).data("observationIcon", observationIcon).data("cubeviz-legend-componentDimensionInfoArea", dimensionElement.__cv_uri).data("dimension", dimension);
             });
         });
     };
     View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
+        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension";
         var observationLabel = "";
         var dimensionElementLabelTpl = _.template($("#cubeviz-legend-tpl-dimensionElementLabel").text());
         var dimensionElements = [];
-        var dimensionInformation = [];
         var label = "";
         var observationLabel = "";
         var rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label";
         var result = [];
 
-        _.each(selectedComponentDimensions, function (dim, hashedUrl) {
-            dimensionInformation.push({
-                hashedUrl: hashedUrl,
-                typeUrl: dim.typeUrl
-            });
-        });
-        _.each(observations, function (obs) {
-            observationLabel = "";
-            if(false === _.isUndefined(obs[rdfsLabelUri]) && false === _.str.isBlank(obs[rdfsLabelUri][0].label)) {
-                observationLabel = obs[rdfsLabelUri][0].value;
-            } else {
-                observationLabel = dimensionElementLabelTpl({
-                    fullLabel: obs.observationUri[0].value,
-                    shortLabel: _.str.prune(obs.observationUri[0].value, 65, " ..."),
-                    url: obs.observationUri[0].value
-                });
-            }
+        _.each(observations, function (observation) {
             dimensionElements = [];
-            _.each(dimensionInformation, function (dimension) {
-                label = false === _.isUndefined(obs[dimension.typeUrl][0].label) && false === _.str.isBlank(obs[dimension.typeUrl][0].label) ? obs[dimension.typeUrl][0].label : obs[dimension.typeUrl][0].value;
-                dimensionElements.push({
-                    dimensionLabel: selectedComponentDimensions[dimension.hashedUrl].label,
-                    label: obs[dimension.typeUrl][0].label,
-                    value: obs[dimension.typeUrl][0].value
+            _.each(selectedComponentDimensions, function (dimension) {
+                _.each(dimension.__cv_elements, function (dimensionElement) {
+                    if(dimensionElement.__cv_uri == observation[dimension[cubeDimensionUri]]) {
+                        dimensionElements.push({
+                            dimensionLabel: dimension.__cv_niceLabel,
+                            __cv_niceLabel: dimensionElement.__cv_niceLabel,
+                            __cv_uri: dimensionElement.__cv_uri
+                        });
+                    }
                 });
             });
             result.push({
-                observationLabel: observationLabel,
-                observationValue: obs[selectedMeasureUri][0].value,
+                observationLabel: observation.__cv_niceLabel,
+                observationValue: observation[selectedMeasureUri],
                 measurePropertyValue: "",
                 measurePropertyAttribute: "",
-                observationUri: obs.observationUri[0].value,
+                observationUri: observation.__cv_uri,
                 dimensionElements: dimensionElements
             });
         });
@@ -1792,7 +1777,7 @@ var View_IndexAction_Legend = (function (_super) {
         var componentDimensionElementUri = showMoreInformationBtn.data("componentDimensionElementUri");
         var dimensionHashedUrl = showMoreInformationBtn.data("dimensionHashedUrl");
         var dimension = this.app._.data.selectedComponents.dimensions[dimensionHashedUrl];
-        var dimensionElementInformation = dimension.elements[componentDimensionElementUri];
+        var dimensionElementInformation = dimension.__cv_elements[componentDimensionElementUri];
         var observationIcon = showMoreInformationBtn.data("observationIcon");
 
         var tplInfoHeader = _.template($("#cubeviz-legend-tpl-componentDimensionInfoHeader").text());

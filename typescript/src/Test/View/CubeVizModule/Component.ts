@@ -91,7 +91,7 @@ cubeViz_tests.push(function(){
             // number of elements in the certain selected component dimension
                 numberOfSelectedComponentDimensionElements = _.keys(
                     cubeVizApp._.data.selectedComponents.dimensions[dimensionHashedUrl]
-                                .elements).length;
+                                .__cv_elements).length;
                 
             self.assertTrue(
                 numberOfCheckedItems == numberOfSelectedComponentDimensionElements,
@@ -118,7 +118,7 @@ cubeViz_tests.push(function(){
                 // check name (hashedProperty)
                 self.assertTrue(
                     true === _.isObject( _.find(
-                        dimensionToCheck.elements,
+                        dimensionToCheck.__cvelements,
                         function(ele){ return checkboxName == ele["__cv_hashedUri"]; }
                     )),
                     "Check hashedUrl(__cv_hashedUri): " + checkboxName
@@ -127,7 +127,7 @@ cubeViz_tests.push(function(){
                 // check value (property)
                 self.assertTrue(
                     true === _.isObject( _.find(
-                        dimensionToCheck.elements,
+                        dimensionToCheck.__cv_elements,
                         function(ele){ return checkboxValue == ele["__cv_uri"]; }
                     )),
                     "Check uri(__cv_uri): " + checkboxValue
@@ -138,7 +138,7 @@ cubeViz_tests.push(function(){
                  */
                 self.assertTrue(
                     true === _.isObject( _.find(
-                        dimensionToCheck.elements,
+                        dimensionToCheck.__cv_elements,
                         function(ele){ return label == ele["http://www.w3.org/2000/01/rdf-schema#label"]; }
                     )),
                     "Check label: " + label
@@ -172,8 +172,8 @@ cubeViz_tests.push(function(){
        
         this.assertTrue(
             0 < listEntries.length 
-            && listEntries.length === _.keys(firstComponent.elements).length,
-            "listEntries.length === _.keys(firstComponent.elements).length"
+            && listEntries.length === _.keys(firstComponent.__cv_elements).length,
+            "listEntries.length === _.keys(firstComponent.__cv_elements).length"
         );
     };
     
