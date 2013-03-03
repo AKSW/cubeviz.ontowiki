@@ -165,11 +165,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     $(dimensionElementList
                         .find(".cubeviz-legend-componentDimensionShowInfo")
                         .last())
-                        .data("componentDimensionElementUri", dimensionElement.__cv_uri)
                         .data("componentDimensionInfoArea", componentDimensionInfoArea)
-                        .data("observationIcon", observationIcon)
-                        .data("cubeviz-legend-componentDimensionInfoArea", dimensionElement.__cv_uri)
-                        .data("dimension", dimension);
+                        .data("dimension", dimension)
+                        .data("dimensionElement", dimensionElement)
+                        .data("observationIcon", observationIcon);
                 });
         });
     }
@@ -272,10 +271,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         
         // variables
         var showMoreInformationBtn = $(event.target),
-            componentDimensionElementUri = showMoreInformationBtn.data("componentDimensionElementUri"),
-            dimensionHashedUrl = showMoreInformationBtn.data("dimensionHashedUrl"),
-            dimension = this.app._.data.selectedComponents.dimensions [dimensionHashedUrl],
-            dimensionElementInformation = dimension.__cv_elements[componentDimensionElementUri],
+            dimension = showMoreInformationBtn.data("dimension"),
+            dimensionElement = showMoreInformationBtn.data("dimensionElement"),
             observationIcon = showMoreInformationBtn.data("observationIcon");
             
         // templates
@@ -287,7 +284,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         var infoList = $(tplInfoList());
      
         // go through all dimension element information
-        _.each(dimensionElementInformation, function(value, key){
+        _.each(dimensionElement, function(value, key){
             
             // use related information if its not from CubeViz
             if(false === _.str.startsWith (key, "__cv_")) {                
@@ -393,7 +390,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(
             $("#cubeviz-legend-componentDimensionInfoDialog"),
-            {closeOnEscape: true, showCross: true, width: 550}
+            {closeOnEscape: true, showCross: true, height: 500, width: 550}
         );
         
         // remove event handler

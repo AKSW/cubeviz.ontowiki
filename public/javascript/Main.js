@@ -1580,7 +1580,7 @@ var View_IndexAction_Legend = (function (_super) {
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
                 componentDimensionInfoArea = $(dimensionElementList.find(".cubeviz-legend-componentDimensionInfoArea").last());
-                $(dimensionElementList.find(".cubeviz-legend-componentDimensionShowInfo").last()).data("componentDimensionElementUri", dimensionElement.__cv_uri).data("componentDimensionInfoArea", componentDimensionInfoArea).data("observationIcon", observationIcon).data("cubeviz-legend-componentDimensionInfoArea", dimensionElement.__cv_uri).data("dimension", dimension);
+                $(dimensionElementList.find(".cubeviz-legend-componentDimensionShowInfo").last()).data("componentDimensionInfoArea", componentDimensionInfoArea).data("dimension", dimension).data("dimensionElement", dimensionElement).data("observationIcon", observationIcon);
             });
         });
     };
@@ -1632,10 +1632,8 @@ var View_IndexAction_Legend = (function (_super) {
     View_IndexAction_Legend.prototype.onClick_componentDimensionShowInfo = function (event) {
         event.preventDefault();
         var showMoreInformationBtn = $(event.target);
-        var componentDimensionElementUri = showMoreInformationBtn.data("componentDimensionElementUri");
-        var dimensionHashedUrl = showMoreInformationBtn.data("dimensionHashedUrl");
-        var dimension = this.app._.data.selectedComponents.dimensions[dimensionHashedUrl];
-        var dimensionElementInformation = dimension.__cv_elements[componentDimensionElementUri];
+        var dimension = showMoreInformationBtn.data("dimension");
+        var dimensionElement = showMoreInformationBtn.data("dimensionElement");
         var observationIcon = showMoreInformationBtn.data("observationIcon");
 
         var tplInfoHeader = _.template($("#cubeviz-legend-tpl-componentDimensionInfoHeader").text());
@@ -1643,7 +1641,7 @@ var View_IndexAction_Legend = (function (_super) {
         var tplInfoListEntry = _.template($("#cubeviz-legend-tpl-componentDimensionInfoListEntry").text());
 
         var infoList = $(tplInfoList());
-        _.each(dimensionElementInformation, function (value, key) {
+        _.each(dimensionElement, function (value, key) {
             if(false === _.str.startsWith(key, "__cv_")) {
                 infoList.append(tplInfoListEntry({
                     key: key,
@@ -1682,6 +1680,7 @@ var View_IndexAction_Legend = (function (_super) {
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-legend-componentDimensionInfoDialog"), {
             closeOnEscape: true,
             showCross: true,
+            height: 500,
             width: 550
         });
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
