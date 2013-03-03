@@ -1700,22 +1700,14 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-components").html(tplComponentsList());
         _.each(selectedComponentDimensions, function (dimension) {
             $("#cubeviz-legend-componentList").append(tplComponentDimension({
-                label: dimension.label
+                __cv_niceLabel: dimension.__cv_niceLabel
             }));
             dimensionElementList = $($("#cubeviz-legend-componentList").find(".cubeviz-legend-componentDimensionList").last());
             html = "";
             dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.__cv_elements))).sortAscendingBy().each(function (dimensionElement) {
-                console.log("");
-                console.log("");
-                console.log(dimensionElement);
-                console.log(tplDimensionEntry({
-                    fullLabel: dimensionElement.__niceLabel,
-                    shortLabel: _.str.prune(dimensionElement.__niceLabel, 75, " ..."),
-                    __cv_uri: dimensionElement.__cv_uri
-                }));
                 dimensionElementList.append(tplDimensionEntry({
-                    fullLabel: dimensionElement.__niceLabel,
-                    shortLabel: _.str.prune(dimensionElement.__niceLabel, 75, " ..."),
+                    fullLabel: dimensionElement.__cv_niceLabel,
+                    shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
                     __cv_uri: dimensionElement.__cv_uri
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
@@ -1816,7 +1808,7 @@ var View_IndexAction_Legend = (function (_super) {
         var selectedMeasureUri = CubeViz_Visualization_Controller.getSelectedMeasure(this.app._.data.selectedComponents.measures).typeUrl;
         var self = this;
 
-        this.displayDsdAndDs(this.app._.data.selectedDSD.label, this.app._.data.selectedDSD.url, this.app._.data.selectedDS.label, this.app._.data.selectedDS.url);
+        this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
         this.displaySelectedConfiguration(this.app._.data.selectedComponents.dimensions);
         this.collection.reset("observationLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
         this.collection.sortAscendingBy("observationLabel");

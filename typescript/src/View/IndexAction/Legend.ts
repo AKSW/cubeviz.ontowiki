@@ -121,7 +121,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // go through each dimension
         _.each(selectedComponentDimensions, function(dimension){
             $("#cubeviz-legend-componentList").append(tplComponentDimension({
-                label: dimension.label
+                __cv_niceLabel: dimension.__cv_niceLabel
             }));
             
             dimensionElementList = $($("#cubeviz-legend-componentList")
@@ -146,8 +146,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     
                     // add li entry
                     dimensionElementList.append(tplDimensionEntry({
-                        fullLabel: dimensionElement.__niceLabel,
-                        shortLabel: _.str.prune(dimensionElement.__niceLabel, 75, " ..."),
+                        fullLabel: dimensionElement.__cv_niceLabel,
+                        shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
                         __cv_uri: dimensionElement.__cv_uri
                     }));
                     
@@ -363,9 +363,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          */
         this.displayDsdAndDs( 
             // DSD
-            this.app._.data.selectedDSD.label, this.app._.data.selectedDSD.url,
+            this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri,
             // DS
-            this.app._.data.selectedDS.label, this.app._.data.selectedDS.url
+            this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri
         );
         
         /**
