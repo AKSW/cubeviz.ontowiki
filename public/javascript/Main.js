@@ -722,7 +722,7 @@ var DataCube_Component = (function () {
             throw new Error("loadAllMeasures: " + xhr.responseText);
         }).done(function (entries) {
             if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
-                callback(entries);
+                callback(entries.content);
             }
         });
     }

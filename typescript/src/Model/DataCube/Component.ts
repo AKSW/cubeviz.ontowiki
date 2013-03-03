@@ -54,7 +54,7 @@ class DataCube_Component {
             // check if everything is set
             if(false === _.isUndefined(entries) 
                && false === _.isUndefined(entries.content)) {
-                callback(entries);
+                callback(entries.content);
             }
         });
     }
