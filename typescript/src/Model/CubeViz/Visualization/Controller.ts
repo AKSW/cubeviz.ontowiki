@@ -19,8 +19,8 @@ class CubeViz_Visualization_Controller
             color = "" + CryptoJS.MD5 (variable);
             color = "#" + color.substr((color["length"]-6), 6);
             
-        // uri is object (but not a circular one!)
-        } else {
+        // if variable is not undefined
+        } else if (false === _.isUndefined(variable)) {
             color = JSON.stringify(variable);
             color = "#" + color.substr((color["length"]-6), 6);
         }
