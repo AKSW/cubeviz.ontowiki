@@ -6,11 +6,6 @@ class DataCube_Observation {
      * 
      */
     private _axes:Object = {};
-    
-    /**
-     * 
-     */
-    private _selectedDimensionUris:string[] = [];
         
     /**
      * Add new entry point to axes object
@@ -37,20 +32,6 @@ class DataCube_Observation {
         
         this._axes[uri][value].push ( dimensionValues );
     }    
-        
-    /**
-     * 
-     */
-    private extractSelectedDimensionUris ( elements:Object[] ) : string[] 
-    {
-        var resultList:string[] = [];        
-        
-        _.each(elements, function(element){
-            resultList.push(element.typeUrl);
-        });
-        
-        return resultList;
-    }
 
     /**
      * Get axes elements by uri
@@ -69,92 +50,69 @@ class DataCube_Observation {
     /**
      * Initializing with given observations, selected component dimensions and
      * the measure uri.
-     * @param retrievedObservations Object containing objects (numberic index)
-     *                              which are the retrieved observations
-     * @param selectedComponentDimensions Object containing dimensions; key is 
-     *                                    hashed dimension type url
+     * @param retrievedObservations Object containing retrieved observations
+     * @param selectedComponentDimensions Select component dimension objects
      * @param measureUri Uri of the selected measure
      * @return DataCube_Observation Itself
      */
     public initialize ( retrievedObservations:any, selectedComponentDimensions:any,
         measureUri:string ) : DataCube_Observation 
     {
-        // no observations retrieved
-        if(0 == _.size(retrievedObservations)) {
-            return this;
-        }
-        
-        // save uri's of selected component dimensions
-        this._selectedDimensionUris = this.extractSelectedDimensionUris(
-            selectedComponentDimensions
-        );
-        
-        var dimensionValues = {}, 
-            measureObj = {}, 
-            selecDimUri = "", 
-            selecDimVal = "",
+        var dimensionElementInfoObject:any = {},
+            dimensionPropertyUri:string = "",
+            observationDimensionProperty:any = {},
             self = this;
         
-        // if the measureUri element or sub one is not set, set default values
-        this._axes[measureUri] = this._axes[measureUri] || {};
+        this._axes = {};
         
-        // create an array for each selected dimension uri and save given values
         _.each(retrievedObservations, function(observation){
-        
-            // if no value was set for the current observation stop execution
-            // and go to the next one
-            if(true === _.isUndefined(observation[measureUri])) {
-                return;
-            }
             
-            /**
-             * e.g. 
-             *  {
-             *      "http:// ... /country": "Germany",
-             *      "http:// ... /country": "England",
-             *      ...
-             *  }
-             */
-            dimensionValues = {};
-            
-            // e.g. ["http:// ... /value"] = "0.9";
-            measureObj = {};
-            
-            // set measure value of current observation
-            self._axes[measureUri][ observation[measureUri][0].value ] = 
-                self._axes[measureUri][ observation[measureUri][0].value ] || [];
-              
-            // generate temporary list of selected dimension values in the current entry
-            _.each(self._selectedDimensionUris, function(selecDimUri){
-                                                
-                if (true === _.isUndefined(observation[selecDimUri])) {
-                    return;
-                }
+            _.each(selectedComponentDimensions, function(dimension){
                 
-                selecDimVal = observation[selecDimUri][0].value;
+                // e.g. http://data.lod2.eu/scoreboard/properties/indicator
+                dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 
-                dimensionValues [ selecDimUri ] = selecDimVal;
+                // e.g. http://lod2.eu/score/ind/bb_dsl_TOTAL_FBB__lines
+                observationDimensionProperty = observation[dimensionPropertyUri];
+                
+                // set still undefined areas
+                if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
+                    self._axes[dimensionPropertyUri] = {};
+                } 
+                if(true === _.isUndefined(self._axes[dimensionPropertyUri]
+                                                    [observationDimensionProperty])) {
+                    // get information-object for particular dimension element
+                    dimensionElementInfoObject = {};
+                    _.each(dimension.__cv_elements, function(dimensionElement){
+                        // check if URI's are equal
+                        if(dimensionElement.__cv_uri == observationDimensionProperty) {
+                            dimensionElementInfoObject = dimensionElement;
+                        }
+                    });
+                                                        
+                    self._axes[dimensionPropertyUri][observationDimensionProperty] = {
+                        observations: {},
+                        self: dimensionElementInfoObject
+                    };
+                } 
+                
+                // set axis entry
+                self._axes     
                     
-                // e.g. ["_axes"]["http:// ... /country"] = {};
-                if (true === _.isUndefined(self._axes[selecDimUri])) {
-                    self._axes[selecDimUri] = {};
-                }
-                    
-                // e.g. ["_axes"]["http:// ... /country"]["Germany"] = [];
-                if (true === _.isUndefined(self._axes[selecDimUri][selecDimVal])) {
-                    self._axes[selecDimUri][selecDimVal] = [];
-                }
+                    // key: particular dimension
+                    // e.g. http://data.lod2.eu/scoreboard/properties/year        
+                    [dimensionPropertyUri]
                 
-                measureObj [measureUri] = observation[measureUri][0].value;
-                                
-                // set references for current dimension                
-                self.addAxisEntryPointsTo (selecDimUri, selecDimVal, measureObj);
+                    // key: particular dimension element
+                    // e.g. http://data.lod2.eu/scoreboard/year/2006
+                    [observationDimensionProperty]
+                    
+                    .observations
+                    
+                    // key: observation uri 
+                    // e.g. http://data.lod2.eu/scoreboard/items/bb_fcov/TOTAL_POP/_pop/Austria/2006/country
+                    [observation.__cv_uri] = observation;
             });
-            
-            // fill pointsTo array for measure value
-            self.addAxisEntryPointsTo ( 
-                measureUri, observation[measureUri][0].value, dimensionValues
-            );            
         });
         
         return this;
@@ -181,11 +139,13 @@ class DataCube_Observation {
     }
 
     /**
+     * Sort axis elements
+     * @param axisUri Key string of the axis to sort
      * @param mode Possible values: ascending (default), descending
      */
     public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation 
     {
-        var axesEntries = this._axes[axisUri],
+        /*var axesEntries = this._axes[axisUri],
             mode = true === _.isUndefined(mode) ? "ascending" : mode,
             sortedKeys = [], 
             sortedObj = {},
@@ -199,15 +159,15 @@ class DataCube_Observation {
         switch ( mode ) {
             case "descending": 
                 sortedKeys.sort(function(a,b) {
-                    a = a.toString().toLowerCase();
-                    b = b.toString().toLowerCase(); 
+                    a = a.self.__cv_niceLabel.toString().toLowerCase();
+                    b = b.self.__cv_niceLabel.toString().toLowerCase(); 
                     return ((a > b) ? -1 : ((a < b) ? 1 : 0));
                 });
                 break;
             default: // = ascending
                 sortedKeys.sort(function(a,b) {
-                    a = a.toString().toLowerCase();
-                    b = b.toString().toLowerCase(); 
+                    a = a.self.__cv_niceLabel.toString().toLowerCase();
+                    b = b.self.__cv_niceLabel.toString().toLowerCase(); 
                     return ((a < b) ? -1 : ((a > b) ? 1 : 0));
                 });
                 break;
@@ -219,7 +179,7 @@ class DataCube_Observation {
         });
         
         this._axes[axisUri] = sortedObj;
-        
+        */
         return this;
     }
 }

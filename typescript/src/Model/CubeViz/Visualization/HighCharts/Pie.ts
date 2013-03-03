@@ -10,16 +10,12 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
      * @param selectedComponentDimensions
      * @param oneElementDimensions
      * @param multipleDimensions
-     * @param selectedComponentMeasures
      * @param selectedMeasureUri Uri of selected measure
-     * @param dsdLabel Label of selected data structure definition
-     * @param dsLabel Label of selected data set
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
-        selectedComponentDimensions:any, oneElementDimensions, multipleDimensions, 
-        selectedComponentMeasures:any, selectedMeasureUri:string, dsdLabel:string,
-        dsLabel:string ) : void 
+        selectedComponentDimensions:any, oneElementDimensions, multipleDimensions:any, 
+        selectedMeasureUri:string) : CubeViz_Visualization_HighCharts_Chart 
     {                
         // stop execution, if it contains more than one entry
         if(1 < _.size(multipleDimensions)){
@@ -27,8 +23,8 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             return;
         }
         
-        var forXAxis = multipleDimensions[0].typeUrl,
-            label = "",
+        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]],
+            label:string = "",
             observation = new DataCube_Observation (),
             self = this;
         
@@ -54,11 +50,11 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         });
         
         /**
-         * Fill data series
+         * now we take care about the series
          */
-        // for ( var value in xAxisElements ) {
         _.each(xAxisElements, function(xAxisElement, propertyUrl){
             
+            /*
             var floatValue:any = parseFloat(xAxisElement[0][selectedMeasureUri].value);
             
             if (isNaN(floatValue)) {
@@ -74,6 +70,11 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             self.chartConfig.colors.push(
                 CubeViz_Visualization_Controller.getColor(propertyUrl)
             );
+            * */
+            console.log("");
+            console.log("TODO: implement PIE!");
         });
+        
+        return this;
     }
 }

@@ -12,16 +12,13 @@ class CubeViz_Visualization_HighCharts_Chart
      * @param selectedComponentDimensions
      * @param oneElementDimensions
      * @param multipleDimensions
-     * @param selectedComponentMeasures
      * @param selectedMeasureUri Uri of selected measure
-     * @param dsdLabel Label of selected data structure definition
-     * @param dsLabel Label of selected data set
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
-        selectedComponentDimensions:any, oneElementDimensions, multipleDimensions, 
-        selectedComponentMeasures:any, selectedMeasureUri:string, dsdLabel:string,
-        dsLabel:string ) : void 
+        selectedComponentDimensions:any, multipleDimensions:any,
+        oneElementDimensions, selectedMeasureUri:string) 
+        : CubeViz_Visualization_HighCharts_Chart 
     { 
         var forXAxis = null,
             forSeries = null,
@@ -48,9 +45,9 @@ class CubeViz_Visualization_HighCharts_Chart
         // assign selected dimensions to xAxis and series (yAxis)
         _.each(selectedComponentDimensions, function(selectedDimension){
             if ( null == forXAxis ) {
-                forXAxis = selectedDimension.typeUrl;
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
-                forSeries = selectedDimension.typeUrl;
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
         
@@ -65,86 +62,52 @@ class CubeViz_Visualization_HighCharts_Chart
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
+        
         var xAxisElements:any = observation
-            .sortAxis(forXAxis, "ascending")
+            // .sortAxis(forXAxis, "ascending")
             .getAxesElements(forXAxis);
             
         // put labels for properties to the axis
-        _.each(xAxisElements, function(element, propertyUrl){
-            self.chartConfig.xAxis.categories.push(
-                CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    forXAxis, propertyUrl, selectedComponentDimensions
-                )
-            );
+        _.each(xAxisElements, function(xAxisElement){
+            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
         });
         
-        // now we will care about the series
-        var floatValue = 0,
-            found:bool = false,
-            i:number = 0,
-            length:number = _.keys(xAxisElements).length,
-            obj:any = {},
+        /**
+         * now we take care about the series
+         */
+        var obj:any = {},
             seriesElements:any = observation.getAxesElements(forSeries);
             
         self.chartConfig.series = [];
 
-        _.each(seriesElements, function(seriesElement, seriesKey){
+        _.each(seriesElements, function(seriesElement){
             
             // this represents one item of the series array (of highcharts)
             obj = { 
-                color: CubeViz_Visualization_Controller.getColor(seriesKey),
+                color: CubeViz_Visualization_Controller.getColor(
+                    seriesElement.self.__cv_uri
+                ),
                 data: [],
-                name: CubeViz_Visualization_Controller.getLabelForPropertyUri ( 
-                    forSeries, seriesKey, selectedComponentDimensions
-                )
+                name: seriesElement.self.__cv_niceLabel
             };
             
-            // iterate over all x axis elements
-            _.each(xAxisElements, function(xAxisValue, xAxisKey){
-                
-                found = false;
-                
-                // check for each entry of the x axis, if one of its entries contains a ref 
-                // to the the given seriesEntry
-                _.each(xAxisValue, function(value, key){
-                    
-                    // stop further execution because we found our related value
-                    if(true == found){
-                        return;
-                    }
-                    
-                    // if one of the xAxis entries fits with given seriesEntry, 
-                    // so push the related value into the obj [data] array
-                    _.each(value[selectedMeasureUri].ref, function(refValue, refKey){
-                        
-                        if(false === _.isUndefined(refValue[forSeries])
-                           && seriesKey == refValue[forSeries].value
-                           && found == false) { // stop if value was already used
-                           
-                            floatValue = parseFloat(value[selectedMeasureUri].value);
-                            
-                            if (isNaN(floatValue)) {
-                                floatValue = null;
-                            } 
-                               
-                            obj.data.push ( floatValue );
-                            found = true;
-                            
-                            // .. break this loop ...
-                            return;
-                        }
-                    });
-                });
-                
-                // Push null, if it was not possible to found the related value, to prevent highcharts sort 
-                // valid values at the beginning because it violates the order of entries
-                if ( false == found ) {
-                    obj.data.push ( null );
+            // go through all observations associated with this seriesElement
+            // and add their values (measure) if set
+            _.each(seriesElement.observations, function(seriesObservation){
+            
+                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
+                    obj.data.push (parseFloat(
+                        seriesObservation[selectedMeasureUri]
+                    ));
+                } else {
+                    obj.data.push (null);
                 }
             });
             
             self.chartConfig.series.push (obj);
         });
+        
+        return this;
     }
     
     /**

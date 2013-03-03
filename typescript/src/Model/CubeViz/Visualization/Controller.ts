@@ -4,44 +4,7 @@
  * Provides functions to decide which visualization to load
  */
 class CubeViz_Visualization_Controller 
-{    
-    /**
-     * Copied and adapted from: http://stackoverflow.com/a/13619725
-     * @param obj Variable to check
-     * @return bool True if variable is a circular object, false otherwise
-     */
-    public isCircularObject(obj:any, parents?:any, tree?:any) : bool
-    {
-        parents = parents || [];
-        tree = tree || [];
-
-        if (!obj || false === _.isObject(obj))
-            return false;
-
-        var keys = _.keys(obj);
-
-        parents.push(obj); // add self to current path
-
-        // go through all keys and check each property value of the given object
-        _.each(keys, function(key){
-            if (obj[key] && true === _.isObject(obj)) {
-                tree.push(key);
-                
-                if (parents.indexOf(obj) >= 0)
-                    return true;
-                    
-                // check child nodes
-                if (arguments.callee(obj[key], parents, tree))
-                    return tree.join(".");
-                
-                tree.pop();
-            }
-        });
-
-        parents.pop();
-        return false;
-    }
-    
+{        
     /**
      * Compute a hex color code for a given variable (usally a string) using hash algorithm.
      * @param variable Variable (usally a string) to generate a color based on
@@ -57,11 +20,9 @@ class CubeViz_Visualization_Controller
             color = "#" + color.substr((color["length"]-6), 6);
             
         // uri is object (but not a circular one!)
-        } else if (false === this.isCircularObject && true === _.isObject(variable)) {
+        } else {
             color = JSON.stringify(variable);
             color = "#" + color.substr((color["length"]-6), 6);
-        } else {
-            
         }
         
         return color;
@@ -87,55 +48,6 @@ class CubeViz_Visualization_Controller
         
         return result;
     }    
-    
-    /**
-     * Returns the label of certain element of a selected dimension.
-     * @param dimensionTypeUrl Url of a certain dimension
-     * @param propertyUrl Property uri of a certain dimension element
-     * @param selectedComponentDimensions Object which contains selected dimensions
-     * @return string Label or given propertyUrl, if nothing was found.
-     */
-    static getLabelForPropertyUri(dimensionTypeUrl:string, propertyUrl:string, 
-        selectedComponentDimensions:any) : string 
-    {
-        var label = propertyUrl,
-            rdfsLabel = "http://www.w3.org/2000/01/rdf-schema#label";
-        
-        // go through all selected component dimensions 
-        _.each(selectedComponentDimensions, function(componentDimension, dimensionHashedUrl){
-
-            // stop if the given dimension was found (by type)
-            if (componentDimension.typeUrl == dimensionTypeUrl) {
-                
-                // check each dimension element
-                _.each(componentDimension.elements, function(element){
-                    
-                    // if current element uri matches with given one
-                    if(element["__cv_uri"] == propertyUrl
-                       && false === _.isUndefined(element[rdfsLabel]) 
-                       && false === _.str.isBlank(element[rdfsLabel])) {
-                        label = element[rdfsLabel];
-                    } else {
-                        label = element["__cv_uri"];
-                    }
-                });
-            }
-        });
-
-        // if nothing was found, simply return the given propertyUrl
-        return label;
-    }
-    
-    /**
-     * Extract the uri of the measure value
-     */
-    static getSelectedMeasure(selectedComponentMeasures:any) : any
-    {
-        // return the first value
-        for ( var hashedTypeUrl in selectedComponentMeasures ) { 
-            return selectedComponentMeasures[hashedTypeUrl]; 
-        }
-    }
     
     /**
      * Get a list of all multiple (at least 2 elements) selected dimensions.

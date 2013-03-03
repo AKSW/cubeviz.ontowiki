@@ -150,7 +150,10 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.class,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
-            ),                
+            ),
+            selectedMeasure:any = this.app._.data.selectedComponents.measures[Object.keys(
+                this.app._.data.selectedComponents.measures
+            )[0]],
             type:string = null, 
             visualizationSetting:any = null;            
         
@@ -212,15 +215,10 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            CubeViz_Visualization_Controller.getMultipleDimensions ( 
+            CubeViz_Visualization_Controller.getMultipleDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            this.app._.data.selectedComponents.measures,
-            CubeViz_Visualization_Controller.getSelectedMeasure(
-                this.app._.data.selectedComponents.measures
-            ).typeUrl,
-            this.app._.data.selectedDSD.label,
-            this.app._.data.selectedDS.label
+            selectedMeasure["http://purl.org/linked-data/cube#measure"]
         );
                 
         try {
