@@ -100,8 +100,6 @@ var CubeViz_Collection = (function () {
         var d = "";
         var useKey = false === _.isUndefined(key) ? key : this.idKey;
 
-        console.log("sortAscendingBy");
-        console.log();
         this._.sort(function (a, b) {
             try  {
                 try  {
@@ -110,19 +108,14 @@ var CubeViz_Collection = (function () {
                     if(true === _.isNaN(c) || true === _.isNaN(d)) {
                         throw new Error();
                     }
-                    console.log(" Float: " + c + " <> = " + d);
                 } catch (ex) {
                     c = a[useKey].toUpperCase();
                     d = b[useKey].toUpperCase();
-                    console.log(" String: " + c + " <> = " + d);
                 }
                 return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch (e) {
                 console.log("for useKey: " + useKey);
-                console.log("a:");
-                console.log(a[useKey]);
-                console.log("b:");
-                console.log(b[useKey]);
+                console.log("a: " + a[useKey] + " and b: " + b[useKey]);
                 console.log(e);
             }
         });
@@ -1075,7 +1068,7 @@ var View_CubeVizModule_Component = (function (_super) {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
         var elementInstance = {
         };
-        var componentElements = new CubeViz_Collection("__cv_uri");
+        var componentElements = new CubeViz_Collection("__cv_niceLabel");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var elementTpl = _.template($("#cubeviz-component-tpl-setupComponentElement").text());
         var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements;

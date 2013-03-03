@@ -98,7 +98,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri),
             elementInstance:any = {},
-            componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+            componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_niceLabel"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             elementTpl:any = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
             selectedDimensions:any = this.app._.data.selectedComponents
