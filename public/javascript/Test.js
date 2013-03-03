@@ -106,15 +106,33 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.sortAscendingBy = function (key) {
         var a = "";
         var b = "";
+        var c = "";
+        var d = "";
         var useKey = false === _.isUndefined(key) ? key : this.idKey;
 
+        console.log("sortAscendingBy");
+        console.log();
         this._.sort(function (a, b) {
             try  {
-                a = a[useKey].toUpperCase();
-                b = b[useKey].toUpperCase();
-                return (a < b) ? -1 : (a > b) ? 1 : 0;
+                try  {
+                    c = parseFloat(a[useKey]);
+                    d = parseFloat(b[useKey]);
+                    if(true === _.isNaN(c) || true === _.isNaN(d)) {
+                        throw new Error();
+                    }
+                    console.log(" Float: " + c + " <> = " + d);
+                } catch (ex) {
+                    c = a[useKey].toUpperCase();
+                    d = b[useKey].toUpperCase();
+                    console.log(" String: " + c + " <> = " + d);
+                }
+                return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch (e) {
                 console.log("for useKey: " + useKey);
+                console.log("a:");
+                console.log(a[useKey]);
+                console.log("b:");
+                console.log(b[useKey]);
                 console.log(e);
             }
         });

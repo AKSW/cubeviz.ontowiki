@@ -96,15 +96,33 @@ var CubeViz_Collection = (function () {
     CubeViz_Collection.prototype.sortAscendingBy = function (key) {
         var a = "";
         var b = "";
+        var c = "";
+        var d = "";
         var useKey = false === _.isUndefined(key) ? key : this.idKey;
 
+        console.log("sortAscendingBy");
+        console.log();
         this._.sort(function (a, b) {
             try  {
-                a = a[useKey].toUpperCase();
-                b = b[useKey].toUpperCase();
-                return (a < b) ? -1 : (a > b) ? 1 : 0;
+                try  {
+                    c = parseFloat(a[useKey]);
+                    d = parseFloat(b[useKey]);
+                    if(true === _.isNaN(c) || true === _.isNaN(d)) {
+                        throw new Error();
+                    }
+                    console.log(" Float: " + c + " <> = " + d);
+                } catch (ex) {
+                    c = a[useKey].toUpperCase();
+                    d = b[useKey].toUpperCase();
+                    console.log(" String: " + c + " <> = " + d);
+                }
+                return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch (e) {
                 console.log("for useKey: " + useKey);
+                console.log("a:");
+                console.log(a[useKey]);
+                console.log("b:");
+                console.log(b[useKey]);
                 console.log(e);
             }
         });
@@ -1532,7 +1550,7 @@ var View_IndexAction_Legend = (function (_super) {
         _.each(list, function (obs) {
             $("#cubeviz-legend-observations").append(observationTpl(obs));
             infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
-            _.each(obs.dimensionElements, function (dimensionElement) {
+            _.each(obs.__cv_elements, function (dimensionElement) {
                 infoList.append(observationInfoEntry({
                     dimensionLabel: dimensionElement.dimensionLabel,
                     fullLabel: dimensionElement.__cv_niceLabel,
@@ -1597,12 +1615,10 @@ var View_IndexAction_Legend = (function (_super) {
                 });
             });
             result.push({
-                observationLabel: observation.__cv_niceLabel,
-                observationValue: observation[selectedMeasureUri],
-                measurePropertyValue: "",
-                measurePropertyAttribute: "",
-                observationUri: observation.__cv_uri,
-                dimensionElements: dimensionElements
+                __cv_niceLabel: observation.__cv_niceLabel,
+                __cv_value: observation[selectedMeasureUri],
+                __cv_uri: observation.__cv_uri,
+                __cv_elements: dimensionElements
             });
         });
         return result;
@@ -1647,11 +1663,11 @@ var View_IndexAction_Legend = (function (_super) {
         return false;
     };
     View_IndexAction_Legend.prototype.onClick_sortByTitle = function () {
-        this.collection.sortAscendingBy("observationLabel");
+        this.collection.sortAscendingBy("__cv_niceLabel");
         this.displayRetrievedObservations(this.collection._);
     };
     View_IndexAction_Legend.prototype.onClick_sortByValue = function () {
-        this.collection.sortAscendingBy("observationValue");
+        this.collection.sortAscendingBy("__cv_value");
         this.displayRetrievedObservations(this.collection._);
     };
     View_IndexAction_Legend.prototype.onReRender_visualization = function () {
@@ -1662,13 +1678,13 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
-        var selectedMeasureUri = this.app._.data.selectedComponents.measures[Object.keys(this.app._.data.selectedComponents.measures)[0]]["http://purl.org/linked-data/cube#measures"];
+        var selectedMeasureUri = this.app._.data.selectedComponents.measures[Object.keys(this.app._.data.selectedComponents.measures)[0]]["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
         this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
         this.displaySelectedConfiguration(this.app._.data.selectedComponents.dimensions);
-        this.collection.reset("observationLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
-        this.collection.sortAscendingBy("observationLabel");
+        this.collection.reset("__cv_niceLabel").addList(this.generateList(this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
+        this.collection.sortAscendingBy("__cv_niceLabel");
         this.displayRetrievedObservations(this.collection._);
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-legend-componentDimensionInfoDialog"), {
             closeOnEscape: true,

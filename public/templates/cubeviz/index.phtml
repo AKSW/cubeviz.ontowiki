@@ -234,7 +234,7 @@
 </script>
 
 <script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
-    <a href="<%= url %>" target="_blank" title="<%= fullLabel %>"><%= shortLabel %></a>
+    <a href="<%= __cv_uri %>" target="_blank" title="<%= fullLabel %>"><%= shortLabel %></a>
 </script>
 
 <script id="cubeviz-legend-tpl-observation" type="text/template">
@@ -243,17 +243,13 @@
             <i class="icon-map-marker"></i>
         </span>
         <span>
-            <span class="cubeviz-legend-observationLabel"><%= observationLabel %></span>
+            <span class="cubeviz-legend-observationLabel"><%= __cv_niceLabel %></span>
             
-            <span class="cubeviz-legend-observationValue">
-                <%= observationValue %>
-            </span>
-            
-            <!--<%= measurePropertyValue %> - <%= measurePropertyAttribute %>-->
+            <span class="cubeviz-legend-observationValue"><%= __cv_value %></span>
             
             <div style="height: 5px;"></div>
             
-            <a href="<%= observationUri %>" target="_blank">Go to source</a>
+            <a href="<%= __cv_uri %>" target="_blank">Go to source</a>
             
             <div style="height: 10px;"></div>
             

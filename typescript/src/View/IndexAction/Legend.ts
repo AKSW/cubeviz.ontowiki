@@ -86,7 +86,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             
             infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
             
-            _.each(obs.dimensionElements, function(dimensionElement){
+            _.each(obs.__cv_elements, function(dimensionElement){
                 
                 infoList.append(observationInfoEntry({
                     dimensionLabel: dimensionElement.dimensionLabel,
@@ -219,12 +219,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
              * add observation entry to list
              */
             result.push ({
-                observationLabel: observation.__cv_niceLabel,
-                observationValue: observation[selectedMeasureUri],
-                measurePropertyValue: "",
-                measurePropertyAttribute: "",
-                observationUri: observation.__cv_uri,
-                dimensionElements: dimensionElements
+                __cv_niceLabel: observation.__cv_niceLabel,
+                __cv_value: observation[selectedMeasureUri],
+                __cv_uri: observation.__cv_uri,
+                __cv_elements: dimensionElements
             });
         });
         
@@ -318,7 +316,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public onClick_sortByTitle() 
     {
-        this.collection.sortAscendingBy ("observationLabel");
+        this.collection.sortAscendingBy ("__cv_niceLabel");
         this.displayRetrievedObservations(this.collection._);
     }
     
@@ -327,7 +325,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public onClick_sortByValue() 
     {
-        this.collection.sortAscendingBy ("observationValue");
+        this.collection.sortAscendingBy ("__cv_value");
         this.displayRetrievedObservations(this.collection._);
     }
     
@@ -355,7 +353,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     {
         var selectedMeasureUri = this.app._.data.selectedComponents.measures[
                 Object.keys(this.app._.data.selectedComponents.measures)[0]
-            ]["http://purl.org/linked-data/cube#measures"],
+            ]["http://purl.org/linked-data/cube#measure"],
             self = this;
         
         /**
@@ -380,14 +378,14 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          */
                      
         // read all observations and generates a list of it
-        this.collection.reset("observationLabel").addList(this.generateList(
+        this.collection.reset("__cv_niceLabel").addList(this.generateList(
             this.app._.backend.retrievedObservations,
             this.app._.data.selectedComponents.dimensions,
             selectedMeasureUri
         ));
         
         // sort generated list by title (observationLabel)
-        this.collection.sortAscendingBy ("observationLabel");
+        this.collection.sortAscendingBy ("__cv_niceLabel");
         
         // render list in HTML
         this.displayRetrievedObservations(this.collection._);

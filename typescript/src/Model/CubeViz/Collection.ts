@@ -162,16 +162,33 @@ class CubeViz_Collection
      */
     public sortAscendingBy (key?:string) : CubeViz_Collection
     {
-        var a:string = "", b:string = "", 
+        var a:any = "", b:any = "", c:any = "", d:any = "", 
             useKey = false === _.isUndefined(key) ? key : this.idKey;
         
         this._.sort(function(a, b) {
+            
             try{
-                a = a[useKey].toUpperCase();
-                b = b[useKey].toUpperCase();
-                return (a < b) ? -1 : (a > b) ? 1 : 0;
+                // check if a is a float
+                try {
+                    c = parseFloat(a[useKey]);
+                    d = parseFloat(b[useKey]);
+                    
+                    // if c or d is not NaN, handle them as strings!
+                    if(true === _.isNaN(c) || true === _.isNaN(d)) { throw new Error(); }
+                    
+                } catch (ex) {
+                    /**
+                     * i come here when a "TypeError" appears which mean that
+                     * i can not case a or b to a float
+                     */
+                    c = a[useKey].toUpperCase();
+                    d = b[useKey].toUpperCase();
+                }
+                
+                return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch(e) {
                 console.log("for useKey: " + useKey);
+                console.log("a: " + a[useKey] + " and b: " + b[useKey]);
                 console.log(e);
             }
         });
