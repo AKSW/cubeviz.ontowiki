@@ -1083,17 +1083,11 @@ var View_CubeVizModule_Component = (function (_super) {
             if(true === setElementChecked) {
                 wasSomethingSelected = true;
             }
-            var label = "";
-            if(false === _.isUndefined(element["http://www.w3.org/2000/01/rdf-schema#label"]) && false === _.str.isBlank(element["http://www.w3.org/2000/01/rdf-schema#label"])) {
-                label = element["http://www.w3.org/2000/01/rdf-schema#label"];
-            } else {
-                label = element["__cv_uri"];
-            }
             elementInstance = $(elementTpl({
                 checked: true === setElementChecked ? " checked=\"checked\"" : "",
                 hashedUri: element.__cv_hashedUri,
-                label: label,
-                uri: element.__cv_uri
+                __cv_niceLabel: element.__cv_niceLabel,
+                __cv_uri: element.__cv_uri
             }));
             elementInstance.data("data", element);
             elementList.append(elementInstance);
