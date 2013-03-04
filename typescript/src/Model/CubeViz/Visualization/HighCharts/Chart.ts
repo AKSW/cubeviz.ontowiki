@@ -16,8 +16,8 @@ class CubeViz_Visualization_HighCharts_Chart
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
-        selectedComponentDimensions:any, multipleDimensions:any,
-        oneElementDimensions, selectedMeasureUri:string) 
+        selectedComponentDimensions:any, multipleDimensions:any[],
+        oneElementDimensions:any[], selectedMeasureUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     { 
         var forXAxis = null,

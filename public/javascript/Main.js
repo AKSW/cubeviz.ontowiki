@@ -666,10 +666,12 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
         }
-        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]];
+        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]]["http://purl.org/linked-data/cube#dimension"];
         var label = "";
         var observation = new DataCube_Observation();
         var self = this;
+        var usedXAxisElements = [];
+        var value = 0;
 
         this.chartConfig = chartConfig;
         this.chartConfig.series = [];
@@ -682,9 +684,24 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             name: this.chartConfig.title.text,
             data: []
         });
-        _.each(xAxisElements, function (xAxisElement, propertyUrl) {
-            console.log("");
-            console.log("TODO: implement PIE!");
+        _.each(xAxisElements, function (xAxisElement) {
+            _.each(xAxisElement.observations, function (observation) {
+                try  {
+                    value = parseFloat(observation[selectedMeasureUri]);
+                } catch (ex) {
+                    return;
+                }
+                if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
+                    self.chartConfig.series[0].data.push([
+                        xAxisElement.self.__cv_niceLabel, 
+                        value
+                    ]);
+                    self.chartConfig.colors.push(CubeViz_Visualization_Controller.getColor(xAxisElement.self.__cv_uri));
+                    usedXAxisElements.push(xAxisElement.self.__cv_niceLabel);
+                } else {
+                    return;
+                }
+            });
         });
         return this;
     };
@@ -889,6 +906,9 @@ var DataCube_Observation = (function () {
                 self._axes[dimensionPropertyUri][observationDimensionProperty].observations[observation.__cv_uri] = observation;
             });
         });
+        console.log("");
+        console.log("Observation > initialize");
+        console.log(this._axes);
         return this;
     };
     DataCube_Observation.loadAll = function loadAll(modelIri, dataHash, url, callback) {

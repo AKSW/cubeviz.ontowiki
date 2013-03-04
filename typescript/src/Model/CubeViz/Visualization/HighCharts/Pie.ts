@@ -14,7 +14,7 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
-        selectedComponentDimensions:any, oneElementDimensions, multipleDimensions:any, 
+        selectedComponentDimensions:any, oneElementDimensions:any[], multipleDimensions:any[], 
         selectedMeasureUri:string) : CubeViz_Visualization_HighCharts_Chart 
     {                
         // stop execution, if it contains more than one entry
@@ -23,19 +23,22 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             return;
         }
         
-        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]],
+        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]]
+                ["http://purl.org/linked-data/cube#dimension"],
             label:string = "",
             observation = new DataCube_Observation (),
-            self = this;
+            self = this,
+            usedXAxisElements:string[] = [],
+            value:number = 0;
         
-        // save given chart config
+        // save given (default) chart config
         this.chartConfig = chartConfig;
         this.chartConfig.series = [];
         this.chartConfig.colors = [];
         
         // set empty chart title
         this.chartConfig.title.text = "";
-                
+            
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
@@ -52,27 +55,37 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         /**
          * now we take care about the series
          */
-        _.each(xAxisElements, function(xAxisElement, propertyUrl){
+        _.each(xAxisElements, function(xAxisElement){
             
-            /*
-            var floatValue:any = parseFloat(xAxisElement[0][selectedMeasureUri].value);
+            // go through all observations
+            _.each(xAxisElement.observations, function(observation){
             
-            if (isNaN(floatValue)) {
-                floatValue = null;
-            } 
-            
-            label = CubeViz_Visualization_Controller.getLabelForPropertyUri (
-                forXAxis, propertyUrl, selectedComponentDimensions
-            );
-            self.chartConfig.series[0].data.push([label, floatValue]) ;
-            
-            // set color based on the URI
-            self.chartConfig.colors.push(
-                CubeViz_Visualization_Controller.getColor(propertyUrl)
-            );
-            * */
-            console.log("");
-            console.log("TODO: implement PIE!");
+                try {
+                    value = parseFloat(observation[selectedMeasureUri]);
+                } catch (ex) {
+                    // if it comes at this point, parsing to float was not possible
+                    // which means, its not a number and not usable for HighCharts
+                    return;
+                }
+                
+                // if x axis element label is not in use yet
+                if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
+                    self.chartConfig.series[0].data.push([
+                        xAxisElement.self.__cv_niceLabel, value
+                    ]);
+               
+                    // set color based on the URI
+                    self.chartConfig.colors.push(
+                        CubeViz_Visualization_Controller.getColor(xAxisElement.self.__cv_uri)
+                    );
+                    
+                    // remember used label
+                    usedXAxisElements.push(xAxisElement.self.__cv_niceLabel);
+                    
+                } else {
+                    return;
+                }
+            });
         });
         
         return this;
