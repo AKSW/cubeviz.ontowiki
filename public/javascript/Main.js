@@ -572,9 +572,16 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         _.each(xAxisElements, function (xAxisElement) {
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
         });
+        var selectedDimensionPropertyUris = [];
+        _.each(selectedComponentDimensions, function (dimension) {
+            selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
+        });
         var obj = {
         };
         var seriesElements = observation.getAxesElements(forSeries);
+        var uriCombination = "";
+        var usedDimensionElementCombinations = {
+        };
 
         self.chartConfig.series = [];
         _.each(seriesElements, function (seriesElement) {
@@ -584,6 +591,15 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 name: seriesElement.self.__cv_niceLabel
             };
             _.each(seriesElement.observations, function (seriesObservation) {
+                uriCombination = "";
+                _.each(selectedDimensionPropertyUris, function (dimensionUri) {
+                    uriCombination += seriesObservation[dimensionUri];
+                });
+                if(true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
+                    usedDimensionElementCombinations[uriCombination] = true;
+                } else {
+                    return;
+                }
                 if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
                     obj.data.push(parseFloat(seriesObservation[selectedMeasureUri]));
                 } else {

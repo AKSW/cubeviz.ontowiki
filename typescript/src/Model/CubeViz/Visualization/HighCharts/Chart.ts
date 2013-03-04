@@ -73,10 +73,21 @@ class CubeViz_Visualization_HighCharts_Chart
         });
         
         /**
+         * collect URI's of selected dimensions
+         */
+        var selectedDimensionPropertyUris:string[] = [];
+        
+        _.each(selectedComponentDimensions, function(dimension){
+           selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
+        });
+        
+        /**
          * now we take care about the series
          */
         var obj:any = {},
-            seriesElements:any = observation.getAxesElements(forSeries);
+            seriesElements:any = observation.getAxesElements(forSeries),
+            uriCombination:string = "",
+            usedDimensionElementCombinations:any = {};
             
         self.chartConfig.series = [];
 
@@ -94,6 +105,23 @@ class CubeViz_Visualization_HighCharts_Chart
             // go through all observations associated with this seriesElement
             // and add their values (measure) if set
             _.each(seriesElement.observations, function(seriesObservation){
+                
+                /**
+                 * check if the combination of dimension elements in this series 
+                 * element was already used.
+                 */
+                uriCombination = "";
+                
+                _.each(selectedDimensionPropertyUris, function(dimensionUri){
+                    uriCombination += seriesObservation[dimensionUri];
+                });
+                
+                if (true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
+                    usedDimensionElementCombinations[uriCombination] = true;
+                } else {
+                    // if this combination is already in use, stop execution immediatly
+                    return;
+                }                
             
                 if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
                     obj.data.push (parseFloat(
