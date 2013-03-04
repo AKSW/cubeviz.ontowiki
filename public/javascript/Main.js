@@ -445,7 +445,7 @@ var CubeViz_Visualization_Controller = (function () {
     CubeViz_Visualization_Controller.getMultipleDimensions = function getMultipleDimensions(selectedComponentDimensions) {
         var multipleDimensions = [];
         _.each(selectedComponentDimensions, function (selectedDimension) {
-            if(2 <= _.size(selectedDimension.elements)) {
+            if(2 <= _.keys(selectedDimension.__cv_elements).length) {
                 multipleDimensions.push(selectedDimension);
             }
         });
@@ -467,7 +467,7 @@ var CubeViz_Visualization_Controller = (function () {
     CubeViz_Visualization_Controller.getOneElementDimensions = function getOneElementDimensions(selectedComponentDimensions) {
         var oneElementDimensions = [];
         _.each(selectedComponentDimensions, function (selectedDimension) {
-            if(1 == _.size(selectedDimension.elements)) {
+            if(1 == _.keys(selectedDimension.__cv_elements).length) {
                 oneElementDimensions.push(selectedDimension);
             }
         });

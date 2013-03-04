@@ -62,7 +62,7 @@ class CubeViz_Visualization_Controller
         _.each(selectedComponentDimensions, function(selectedDimension){
                         
             // Only put entry to multipleDimensions if it have at least 2 elements    
-            if(2 <= _.size(selectedDimension.elements)) {
+            if(2 <= _.keys(selectedDimension.__cv_elements).length) {
                 multipleDimensions.push (selectedDimension); 
             }
         });
@@ -99,15 +99,14 @@ class CubeViz_Visualization_Controller
     {
         // assign selected dimensions to xAxis and series (yAxis)
         var oneElementDimensions:Object[] = [];
-            
+        
         // for ( var hashedUrl in selectedComponentDimensions ) {
         _.each(selectedComponentDimensions, function(selectedDimension){
-                        
             // Only put entry to multipleDimensions if it have at least 2 elements
-            if ( 1 == _.size(selectedDimension.elements)) {
+            if (1 == _.keys(selectedDimension.__cv_elements).length) {
                 oneElementDimensions.push(selectedDimension); 
             }
-        })
+        });
         
         return oneElementDimensions;
     }
