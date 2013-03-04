@@ -933,7 +933,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var self = this;
 
         this.collection.each(function (element) {
-            element["selected"] = element["url"] == self.app._.data.selectedDSD.url ? " selected" : "";
+            element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri ? " selected" : "";
             list.append(optionTpl(element));
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataStructureDefinition-dialog"), {
@@ -989,6 +989,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var self = this;
         DataCube_DataSet.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, function (entries) {
             self.app._.data.selectedDS = entries[0];
+            self.app._.data.dataSets = entries;
             self.collection.reset("__cv_uri");
             self.collection.addList(entries);
             self.triggerGlobalEvent("onChange_selectedDS");
@@ -1011,7 +1012,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var self = this;
 
         this.collection.each(function (element) {
-            element.selected = element.url == self.app._.data.selectedDS.url ? " selected" : "";
+            element.selected = element.__cv_uri == self.app._.data.selectedDS.__cv_uri ? " selected" : "";
             list.append(optionTpl(element));
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataSet-dialog"), {

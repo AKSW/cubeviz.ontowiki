@@ -91,6 +91,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     
                 // set default data set
                 self.app._.data.selectedDS = entries[0];
+                
+                self.app._.data.dataSets = entries;
 
                 // save given elements
                 self.collection.reset("__cv_uri");
@@ -146,8 +148,8 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         // output loaded data
         this.collection.each(function(element){
             
-            // set selected variable, if element url is equal to selected dataset
-            element.selected = element.url == self.app._.data.selectedDS.url
+            // set selected variable, if element's __cv_uri is equal to selected dataset's one
+            element.selected = element.__cv_uri == self.app._.data.selectedDS.__cv_uri
                 ? " selected" : "";
                 
             list.append(optionTpl(element));

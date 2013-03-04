@@ -96,12 +96,12 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         var list = $("#cubeviz-dataStructureDefinition-list"),
             optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text()),
             self = this;
-        
+
         // output loaded data
         this.collection.each(function(element){
             
-            // set selected variable, if element url is equal to selected dsd
-            element["selected"] = element["url"] == self.app._.data.selectedDSD.url
+            // set selected variable, if element's __cv_uri is equal to selected dsd's one
+            element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri
                 ? " selected" : "";
 
             list.append(optionTpl(element));
