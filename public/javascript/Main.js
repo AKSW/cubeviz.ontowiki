@@ -1778,8 +1778,7 @@ var View_IndexAction_Visualization = (function (_super) {
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
-            var offset = $(this.attachedTo).offset();
-            $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
+            this.setVisualizationHeight();
         }
         this.bindUserInterfaceEvents({
             "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
@@ -1798,8 +1797,6 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
-        var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
         if(false === _.isUndefined(this.app._.generatedVisualization)) {
             try  {
                 this.app._.generatedVisualization.destroy();
@@ -1813,10 +1810,25 @@ var View_IndexAction_Visualization = (function (_super) {
         var chart = hC.load(this.app._.ui.visualization.class);
         chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         try  {
+            this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
             this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
         } catch (ex) {
             this.handleException(ex);
         }
+    };
+    View_IndexAction_Visualization.prototype.setVisualizationHeight = function (numberOfYAxisElements) {
+        if (typeof numberOfYAxisElements === "undefined") { numberOfYAxisElements = 0; }
+        var offset = $(this.attachedTo).offset();
+        var minHeight = $(window).height() - offset.top - 95;
+        var tmp = 0;
+
+        if(0 < numberOfYAxisElements) {
+            tmp = numberOfYAxisElements * 40;
+            if(tmp > minHeight) {
+                minHeight = tmp;
+            }
+        }
+        $(this.attachedTo).css("height", minHeight);
     };
     return View_IndexAction_Visualization;
 })(CubeViz_View_Abstract);

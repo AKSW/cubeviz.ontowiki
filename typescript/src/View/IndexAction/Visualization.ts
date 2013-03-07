@@ -127,11 +127,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 .append (
                     $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
                 );
-                
-            var offset:any = $(this.attachedTo).offset();
-                $(this.attachedTo).css ( 
-                    "height", $(window).height() - offset.top - 95
-                ); 
+            
+            this.setVisualizationHeight();
         }
         
         /**
@@ -186,11 +183,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             this.app._.ui.visualization.class
         );
         
-        var offset:any = $(this.attachedTo).offset();
-        $(this.attachedTo).css ( 
-            "height", $(window).height() - offset.top - 95
-        ); 
-        
         /**
          * Render chart with the given data
          */
@@ -227,6 +219,11 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         );
                 
         try {
+            // set visualization height
+            this.setVisualizationHeight(_.size(
+                chart.getRenderResult().xAxis.categories
+            ));
+            
             // show chart
             this.app._.generatedVisualization = new Highcharts.Chart(
                 chart.getRenderResult()
@@ -234,5 +231,24 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         } catch (ex) { 
             this.handleException(ex);
         }
+    }
+    
+    /**
+     *
+     */
+    public setVisualizationHeight (numberOfYAxisElements:number = 0) 
+    {
+        var offset:any = $(this.attachedTo).offset(),
+            minHeight:number = $(window).height() - offset.top - 95,
+            tmp:number = 0;
+            
+        if(0 < numberOfYAxisElements) {
+            tmp = numberOfYAxisElements * 40;
+            if(tmp > minHeight) {
+                minHeight = tmp;
+            }
+        }
+
+        $(this.attachedTo).css ("height", minHeight);
     }
 }
