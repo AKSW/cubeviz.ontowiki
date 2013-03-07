@@ -1778,9 +1778,9 @@ var View_IndexAction_Visualization = (function (_super) {
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
+            var offset = $(this.attachedTo).offset();
+            $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
         }
-        var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
         this.bindUserInterfaceEvents({
             "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
         });
@@ -1798,6 +1798,8 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
+        var offset = $(this.attachedTo).offset();
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
         if(false === _.isUndefined(this.app._.generatedVisualization)) {
             try  {
                 this.app._.generatedVisualization.destroy();
