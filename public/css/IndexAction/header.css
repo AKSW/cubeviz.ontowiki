@@ -24,3 +24,7 @@
     opacity: 1.0;
     filter:alpha(opacity=100);
 }
+
+.cubeviz-index-headerDialogBoxEntryContent {
+    margin-top: -5px;
+}

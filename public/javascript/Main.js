@@ -906,9 +906,6 @@ var DataCube_Observation = (function () {
                 self._axes[dimensionPropertyUri][observationDimensionProperty].observations[observation.__cv_uri] = observation;
             });
         });
-        console.log("");
-        console.log("Observation > initialize");
-        console.log(this._axes);
         return this;
     };
     DataCube_Observation.loadAll = function loadAll(modelIri, dataHash, url, callback) {
@@ -1782,6 +1779,8 @@ var View_IndexAction_Visualization = (function (_super) {
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
         }
+        var offset = $(this.attachedTo).offset();
+        $(this.attachedTo).css("height", $(window).height() - offset.top - 95);
         this.bindUserInterfaceEvents({
             "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
         });
@@ -1799,8 +1798,6 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
-        var offset = $(this.attachedTo).offset();
-        $(this.attachedTo).css("height", $(window).height() - offset.top - 80);
         if(false === _.isUndefined(this.app._.generatedVisualization)) {
             try  {
                 this.app._.generatedVisualization.destroy();

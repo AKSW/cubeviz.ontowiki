@@ -31,14 +31,13 @@
             
             <!-- Data structure definition section -->
             <div id="cubviz-dataStructureDefinition-container">
-                <div style="width: 100%; font-size: 12px; font-weight:bold; margin-bottom:2px;">
-                    <div style="float: left;">
+                <div style="width: 100%; margin-bottom:2px;">
+                    <div class="cubeviz-label" style="float: left;">
                         <?php echo $this->_translate->_('Select group of interest'); ?>
                     </div>
                     <div style="float: right;">
                         <i class="icon-question-sign cubeviz-clickable"
                            id="cubeviz-dataStructureDefinition-questionMark"
-                           style="font-size: 14px; opacity:0.6; filter:alpha(opacity=60);"
                            title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
                     </div>
                     <select name="cubeviz-dataStructureDefinition-list" 
@@ -48,14 +47,13 @@
             
             <!-- Data set section -->
             <div id="cubviz-dataSet-container">
-                <div style="width: 100%; font-size: 12px; font-weight:bold; margin-bottom:2px;">
-                    <div style="float: left">
+                <div style="width: 100%; margin-bottom:2px;">
+                    <div class="cubeviz-label" style="float: left;">
                         <?php echo $this->_translate->_('Select part of group'); ?>
                     </div>
                     <div style="float: right;">
                         <i class="icon-question-sign cubeviz-clickable"
                            id="cubeviz-dataSet-questionMark"
-                           style="font-size: 14px; opacity:0.6; filter:alpha(opacity=60);"
                            title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
                     </div>                    
                 </div>
@@ -67,14 +65,13 @@
             
             <!-- Component section -->
             <div id="cubviz-component-container">
-                <div style="width: 100%; font-size: 12px; font-weight: bold;">
-                    <div style="float: left;">
+                <div style="width: 100%;">
+                    <div class="cubeviz-label" style="float: left;">
                         <?php echo $this->_translate->_('Select axis elements'); ?>
                     </div>
                     <div style="float: right;">
                         <i class="icon-question-sign cubeviz-clickable"
                            id="cubeviz-component-questionMark"
-                           style="font-size: 14px; opacity:0.6; filter:alpha(opacity=60);"
                            title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
                     </div>
                 </div>
@@ -92,7 +89,7 @@
                 </span>
                 <span style="float:right;">
                     <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
-                        <strong><?php echo $this->_translate->_('Show Visualization'); ?></strong></a>
+                        <?php echo $this->_translate->_('Show Visualization'); ?></a>
                 </span>
             </div>
             
@@ -189,13 +186,13 @@
 <!-- Component-Dimension -->
 <script id="cubeviz-component-tpl-listBoxItem" type="text/template">
     <div class="cubeviz-component-box" id="cubeviz-component-box-<%= __cv_uri %>">    
-        <div class="cubeviz-component-title">
+        <h3>
             <%= __cv_niceLabel %>&nbsp;
             <nobr>
                 (<span class="cubeviz-component-selectedCount"><%= selectedElementCount %></span> 
                 / <%= elementCount %>)
             </nobr>
-        </div>
+        </h3>
         <a class="cubeviz-component-setupComponentOpener">
             <?php echo $this->_translate->_('Select elements of interest'); ?>
         </a>        
@@ -213,9 +210,7 @@
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
         
-        <h2 style="margin-top: 8px;"><%= __cv_niceLabel %></h2>      
-        
-        <br/>
+        <h3 style="margin-top: 0px;"><%= __cv_niceLabel %></h3>      
         
         <div class="cubeviz-component-sortButtons" style="float:right; vertical-align: middle;">
             Sort by: 
@@ -248,7 +243,7 @@
     <li>
         <input type="checkbox" name="<%= __cv_uri %>" value="<%= __cv_uri %>"<%= checked %>/>
         <span style="vertical-align: middle;">
-            <span style="font-size: 13px;"><%= __cv_niceLabel %></span>
+            <span><%= __cv_niceLabel %></span>
         </span>
     </li>
 </script>

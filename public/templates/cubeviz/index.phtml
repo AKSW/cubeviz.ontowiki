@@ -27,7 +27,7 @@
         </span>
         
         <!-- Information about the components -->
-        <a class="btn btn-small" id="cubeviz-legend-btnShowSelectedConfiguration">
+        <a class="cubeviz-btn" id="cubeviz-legend-btnShowSelectedConfiguration">
             <i class="icon-chevron-down"></i> &nbsp;
             <?php echo $this->_translate->_('Selected Configuration'); ?>
         </a>
@@ -35,7 +35,7 @@
         &nbsp;
         
         <!-- Information about the observations itself -->
-        <a class="btn btn-small" id="cubeviz-legend-btnShowRetrievedObservations">
+        <a class="cubeviz-btn" id="cubeviz-legend-btnShowRetrievedObservations">
             <i class="icon-chevron-down"></i> &nbsp;
             <?php echo $this->_translate->_('Retrieved Data'); ?>
         </a>
@@ -57,10 +57,10 @@
             <ul id="cubeviz-legend-observations"></ul>
             <div style="float: right; margin-right: 10px;">
                 <p>
-                    <a class="btn btn-small" id="cubeviz-legend-sortByTitle">
-                        <strong>Sort by Title</strong></a>
-                    <a class="btn btn-small" id="cubeviz-legend-sortByValue">
-                        <strong>Sort by Value</strong></a>
+                    <a class="cubeviz-btn" id="cubeviz-legend-sortByTitle">
+                        Sort by Title</a>
+                    <a class="cubeviz-btn" id="cubeviz-legend-sortByValue">
+                        Sort by Value</a>
                 </p>
             </div>
         </div>
@@ -72,22 +72,20 @@
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
         
-        <strong>
-            <?php echo $this->_translate->_('Configure the visualization'); ?>
-        </strong>
-        <div style="height: 20px;"></div>
+        <h4><?php echo $this->_translate->_('Configure the visualization'); ?></h4>
+        
         <div id="cubeviz-visualizationselector-menuItems"></div>
         <br/>
         <br/>
         <br/>
         <div style="clear:both; text-align:right;">
-            <a class="btn btn-small"
+            <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-closeMenu"
                title="<?php echo $this->_translate->_('Close this menu without apply changes'); ?>">
                 <?php echo $this->_translate->_('Close'); ?>
             </a>
             
-            <a class="btn btn-small"
+            <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-updateVisz"
                title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>">
                 <strong><?php echo $this->_translate->_('Update'); ?></strong>
@@ -103,29 +101,17 @@
 <!-- 
     notification if no data were received
 -->
-<div id="cubeviz-visualization-nothingFoundNotificationContainer">
-    <div id="cubeviz-visualization-nothingFoundBox">
-        <div align="center">        
-            <div id="cubeviz-visualization-nothingFoundNotification">
+<div id="cubeviz-visualization-nothingFoundNotificationContainer" style="display: none;">
+    <div>
+        <div align="center" style="margin-top: 100px;">        
+            <h4>
                 No data fits to your selection, please adapt your selection in the left sidebar manually.
-                <br/>
-                <br/>
-                
-                <div id="cubeviz-visualization-nothingFoundNotificationLink">
-                    <i class="icon-chevron-down" id="cubeviz-Index-NothingFoundNotificationLink"></i>
-                    &nbsp;
-                    <a>Why do i sometimes receive an empty chart / no data?</a>
-                </div>
-            </div>            
+            </h4>
             <br/>            
-            <div id="cubeviz-visualization-nothingFoundFurtherExplanation">
-                <div style="float:left;">
-                    <i class="icon-lightbulb"></i>
-                </div>
-                <div style="margin-left: 24px; margin-top:-3px;">
-                    <span style="font-size:16px; font-weight:bold;">
-                        Explanation
-                    </span>
+            <div style="width: 50%; text-align: left;">
+                <div style="float:left;"><i class="icon-lightbulb"></i></div>
+                <div style="margin-left: 24px;">
+                    <strong>Explanation</strong>
                     <p>
                         This behavior can have various reasons. On the one hand it
                         is possible that there is no data available according to 
@@ -161,7 +147,7 @@
     Header
 -->
 <script id="cubeviz-index-tpl-header" type="text/template">
-    CubeViz - Visualization of the <%= modelLabel %>
+    Visualization of the <%= modelLabel %>
     &nbsp;
     <i class="icon-lightbulb cubeviz-clickable"
        id="cubeviz-index-headerQuestionMarkHeadline" 
@@ -188,12 +174,12 @@
 </script>
 
 <!-- 
-    Dialog box for questionmark in headline (cubeviz-Index-questionMarkHeadline) 
+    Dialog box for questionmark in headline (cubeviz-index-headerDialogBox) 
 -->
 <script id="cubeviz-index-tpl-headerDialogBoxHead" type="text/template">
-    <div style="margin-top: 4px; float: right; clear:both;">
+    <div style="margin-top: 4px; float: right; clear: both;">
         <img class="cubeviz-icon-small"
-              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+             src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <h3><%= label %></h3>
     <ul id="cubeviz-index-headerDialogBoxModelInformation"></ul>
@@ -201,7 +187,7 @@
 
 <script id="cubeviz-index-tpl-headerDialogBoxEntry" type="text/template">
     <li class="cubeviz-index-headerDialogBoxEntry">
-        <strong><%= predicateLabel %></strong>
+        <h4><%= predicateLabel %></h4>
         <div class="cubeviz-index-headerDialogBoxEntryContent">
             <%= objectContent %></div>
     </li>
@@ -211,14 +197,13 @@
     Notification if highcharts.com #10 exception appears
 -->
 <script id="cubeviz-visualization-tpl-notificationHightchartsException10" type="text/template">
-    <div id="cubeviz-visualization-notificationHightchartsException10">
-        <div style="height: 150px;">&nbsp;</div>
-        <div align="center">        
-            <div id="cubeviz-visualization-nothingFoundNotification">
+    <div align="center">
+        <div id="cubeviz-visualization-notificationHightchartsException10">
+            <h4>
                  That chart can not be produced because the selected data contains 
                  zero or subzero values. Please change the configuration in the 
                  left sidebar or use another Scale value but not Logarithmic.
-            </div>
+            </h4>
         </div>
     </div>
 </script>

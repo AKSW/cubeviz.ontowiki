@@ -1,36 +1,6 @@
-/**
- * Notification about empty chart
- */
-#cubeviz-visualization-nothingFoundNotificationContainer
+#cubeviz-visualization-notificationHightchartsException10
 {
-    display: none;
-}
-
-#cubeviz-visualization-nothingFoundBox
-{
-    height: 100%;
-    width: 100%;
-    margin-top: 8%;
-}
- 
-#cubeviz-visualization-nothingFoundFurtherExplanation
-{
+    margin-top: 100px; 
+    text-align: left;
     width: 50%;
-    text-align: left;
-    display: none;
-}
-
-#cubeviz-visualization-nothingFoundNotification
-{
-    width: 50%;
-    text-align: left;
-    font-weight: bold;
-}
-
-#cubeviz-visualization-nothingFoundNotificationLink
-{
-    text-align: left;
-    cursor: pointer;
-    font-style: italic;
-    font-weight: normal;
 }

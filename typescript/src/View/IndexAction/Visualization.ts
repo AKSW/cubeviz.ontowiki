@@ -127,7 +127,12 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 .append (
                     $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
                 );
-        }        
+        }
+        
+        var offset:any = $(this.attachedTo).offset();
+            $(this.attachedTo).css ( 
+                "height", $(window).height() - offset.top - 95
+            ); 
         
         /**
          * Delegate events to new items of the template
@@ -179,12 +184,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // determine if using HighCharts or CubeViz
         type = CubeViz_Visualization_Controller.getVisualizationType(
             this.app._.ui.visualization.class
-        );
-        
-        var offset:any = $(this.attachedTo).offset();
-        $(this.attachedTo).css ( 
-            "height", $(window).height() - offset.top - 80
-        );  
+        ); 
         
         /**
          * Render chart with the given data
