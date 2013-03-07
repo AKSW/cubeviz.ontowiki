@@ -49,10 +49,10 @@ class DataCube_Query
                         ?measurespecification a qb:ComponentSpecification .
                         ?measurespecification qb:measure ?measure .
                     }';
-            
+
         return 1 == count ( $this->_model->sparqlQuery($sparql) ) ? true : false;
     }
-    
+
     /**
      * Add additional fields to each entry of the given array. These fields are
      * heavily used in the UI. Each field starts with __cv_ and could be ignored
@@ -60,38 +60,36 @@ class DataCube_Query
      * @param $assocSPOArray Usally the result of generateAssocSPOArrayFromSparqlResult
      * @return Array An enriched version of given $assocSPOArray
      */
-    public function enrichResult($assocSPOArray) 
+    public function enrichResult($assocSPOArray)
     {
         $return = array();
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
-        
+
         /**
          * go through all entries to add them to title helper
          */
         foreach($assocSPOArray as $mainKey => $entry) {
             $titleHelper->addResource($mainKey);
         }
-        
+
         /**
          * enrich data with CubeViz specific stuff
          */
         foreach($assocSPOArray as $mainKey => $entry) {
-            
+
             // URI of the element
             $entry ['__cv_uri'] = $mainKey;
-            
+
             // hashed URI of the element
             $entry ['__cv_hashedUri'] = md5($mainKey);
-            
+
             // Nice label using TitleHelper
             $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
-            
             $return [] = $entry;
         }
-        
         return $return;
     }
-    
+
     /**
      * Transforms a given SPARQL result of Erfurt into an associative array.
      * @param $result SPARQL result
@@ -103,31 +101,27 @@ class DataCube_Query
     public function generateAssocSPOArrayFromSparqlResult($result, $mainKey, $pKey, $oKey) 
     {
         $return = array();
-        
         $latestMainKey = '';
-        
+
         /**
-         * 
+         *
          */
         foreach ($result as $entry) {
-            
             // same main key as before
             if($latestMainKey == $entry[$mainKey]) {
-                
+
             // main key differs
             } elseif ($latestMainKey == $entry[$mainKey]) {
-            
                 $latestMainKey = $entry[$mainKey];
                 $return [$latestMainKey] = array();
-            
+
             // at the start ($latestDsd is empty)
             } else {
                 $latestMainKey = $entry[$mainKey];
                 $return [$latestMainKey] = array();
             }
-            
+
             if (true === isset($entry[$pKey])) {
-                
                 /**
                  * [2]=>
                  *     array(3) {
@@ -140,18 +134,18 @@ class DataCube_Query
                  *     }
                  */                
                 // = http://purl.org/linked-data/cube#component
+
                 $predicateValue = $entry[$pKey]; 
-                
+
                 // = http://data.lod2.eu/scoreboard/cs/country
                 $objectValue = true === isset($entry[$oKey]) ? $entry[$oKey] : '';
-                
+
                 $return [$latestMainKey][$predicateValue] = $objectValue;
             }
         }
-        
+
         return $return;
     }
-    
     /**
      * Returns an array of components (Component) with md5 of URI, type and URI.
      * @param $dsdUri Data Structure Definition URI
@@ -374,7 +368,6 @@ class DataCube_Query
         
         // enrich data with CubeViz sugar
         $result = $this->enrichResult($result);
-        
         return $result;
     }
 }
