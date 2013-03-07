@@ -92,9 +92,9 @@ class CubeViz_ConfigurationLink
                 $numberOfElements = $dimension['__cv_elements'];
                 $numberOfElementsToPreSelect = (int) ceil(count($numberOfElements) * 0.3);
                 
-                if(10 < $numberOfElementsToPreSelect) {
+                if (10 < $numberOfElementsToPreSelect) {
                     $numberOfElementsToPreSelect = 10;
-                } elseif ( 0 == $numberOfElementsToPreSelect) {
+                } elseif (0 == $numberOfElementsToPreSelect) {
                     $numberOfElementsToPreSelect = 1;
                 }
                 
@@ -102,31 +102,46 @@ class CubeViz_ConfigurationLink
                 $stillUsedIndexes = array();
                 $dimensionElementsNumeric = array_values($dimension['__cv_elements']);
                 
-                for($i = 0; $i < $numberOfElementsToPreSelect; ++$i) {
+                // if this dimension has only one element
+                if (1 == $numberOfElementsToPreSelect) {
                     
-                    // search as long as necessary a new random index                    
-                    do {
-                        $randomI = rand(0, $numberOfElementsToPreSelect);
-                        
-                        // only break if new index is not already in use
-                        if(false === in_array($randomI, $stillUsedIndexes)) {
-                            $stillUsedIndexes [] = $randomI;
-                            break;
-                        }
-                    } while (true);
-                    
-                    $j = 0;
                     foreach ($dimension['__cv_elements'] as $elementUri => $element) {
-                        // after compute a random index for a certain element
-                        // lets find this element by count up as long as the 
-                        // current element's index is equal to the computed one.
-                        if($j++ == $randomI) {
-                            $preSelectedElements [$elementUri] = 
-                                $dimension['__cv_elements'][$elementUri];
-                            // in this way we keep the elementUri as key
-                            break;
+                        $preSelectedElements [$elementUri] = 
+                            $dimension['__cv_elements'][$elementUri];
+                    }
+                    
+                // ... more than one element
+                } elseif (1 < $numberOfElementsToPreSelect) {
+                    for($i = 0; $i < $numberOfElementsToPreSelect; ++$i) {
+                        
+                        // search as long as necessary a new random index                    
+                        do {
+                            $randomI = rand(0, $numberOfElementsToPreSelect);
+                            
+                            // only break if new index is not already in use
+                            if(false === in_array($randomI, $stillUsedIndexes)) {
+                                $stillUsedIndexes [] = $randomI;
+                                break;
+                            }
+                        } while (true);
+                        
+                        $j = 0;
+                        foreach ($dimension['__cv_elements'] as $elementUri => $element) {
+                            // after compute a random index for a certain element
+                            // lets find this element by count up as long as the 
+                            // current element's index is equal to the computed one.
+                            if($j++ == $randomI) {
+                                $preSelectedElements [$elementUri] = 
+                                    $dimension['__cv_elements'][$elementUri];
+                                // in this way we keep the elementUri as key
+                                break;
+                            }
                         }
                     }
+                    
+                // ... has no elements
+                } else {
+                    $preSelectedElements = array();
                 }
                 
                 $dimension['__cv_elements'] = $preSelectedElements;
