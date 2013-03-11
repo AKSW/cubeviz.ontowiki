@@ -1704,7 +1704,7 @@ var View_IndexAction_Legend = (function (_super) {
                 }));
             }
         });
-        $("#cubeviz-legend-componentDimensionInfoDialog").html("").append($(tplInfoHeader())).append(infoList).fadeToggle("slow");
+        $("#cubeviz-legend-componentDimensionInfoDialog").html("").append($(tplInfoHeader())).append(infoList).fadeIn("slow");
         $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
         return false;
     };
@@ -1740,7 +1740,7 @@ var View_IndexAction_Legend = (function (_super) {
         });
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
         $("#cubeviz-legend-btnShowSelectedConfiguration").off();
-        $("#cubeviz-legend-componentDimensionShowInfo").off();
+        $(".cubeviz-legend-componentDimensionShowInfo").off();
         $("#cubeviz-legend-sortByTitle").off();
         $("#cubeviz-legend-sortByValue").off();
         this.bindUserInterfaceEvents({

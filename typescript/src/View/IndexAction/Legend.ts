@@ -301,7 +301,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             .html("")
             .append($(tplInfoHeader()))
             .append(infoList)
-            .fadeToggle("slow");
+            .fadeIn("slow");
             
         $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
         
@@ -396,7 +396,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // remove event handler
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
         $("#cubeviz-legend-btnShowSelectedConfiguration").off();
-        $("#cubeviz-legend-componentDimensionShowInfo").off();
+        $(".cubeviz-legend-componentDimensionShowInfo").off();
         $("#cubeviz-legend-sortByTitle").off();                
         $("#cubeviz-legend-sortByValue").off();
         
