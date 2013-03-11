@@ -418,14 +418,12 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         if(false === _.isUndefined(fromChartConfig.options)
            && 0 < _.size(fromChartConfig.options)) {
             
-            var offset:any = selectorItemDiv.offset(),
-                position:any = selectorItemDiv.position(),
-                dongleDiv:any = $("#cubeviz-visualizationselector-menuDongleDiv");
+            var position:any = selectorItemDiv.position();
             
             // positioning and show dongle
-            dongleDiv
-                .css("top", offset.top - 52)
-                .css("left", offset.left - 284)
+            $("#cubeviz-visualizationselector-menuDongleDiv")
+                .css("top", position.top + 25)
+                .css("left", position.left + 7)
                 .fadeIn("slow");
         }
     }

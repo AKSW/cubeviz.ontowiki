@@ -2039,11 +2039,8 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
 
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options)) {
-            var offset = selectorItemDiv.offset();
             var position = selectorItemDiv.position();
-            var dongleDiv = $("#cubeviz-visualizationselector-menuDongleDiv");
-
-            dongleDiv.css("top", offset.top - 52).css("left", offset.left - 284).fadeIn("slow");
+            $("#cubeviz-visualizationselector-menuDongleDiv").css("top", position.top + 25).css("left", position.left + 7).fadeIn("slow");
         }
     };
     return View_IndexAction_VisualizationSelector;
