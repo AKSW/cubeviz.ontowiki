@@ -234,7 +234,11 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     }
     
     /**
-     *
+     * Set height of the visualization area depending on given number of y-axis
+     * elements. Will return a min height or number of y-axis elements multiplied
+     * with fixed pixel size.     * 
+     * @param numberOfYAxisElements Number of elements on the y axis
+     * @return number New height of visualization container.
      */
     public setVisualizationHeight (numberOfYAxisElements:number = 0) 
     {
