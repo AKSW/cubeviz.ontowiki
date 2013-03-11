@@ -13,77 +13,74 @@
     Left sidebar 
 -->
 
-<div id="sidebar-left">
-    
-    <div id="cubeviz-module-spinner">
-        <i class="icon-spinner icon-spin" style="vertical-align: middle;"></i>
-        I am working ...
+<div id="cubeviz-module-spinner">
+    <i class="icon-spinner icon-spin" style="vertical-align: middle;"></i>
+    I am working ...
+</div>
+
+<div id="cubeviz-module-dataSelection">
+    <!-- Data structure definition section -->
+    <div id="cubviz-dataStructureDefinition-container">
+        <div style="width: 100%; margin-bottom:2px;">
+            <div class="cubeviz-label" style="float: left;">
+                <?php echo $this->_translate->_('Select group of interest'); ?>
+            </div>
+            <div style="float: right;">
+                <i class="icon-question-sign cubeviz-clickable"
+                   id="cubeviz-dataStructureDefinition-questionMark"
+                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+            </div>
+            <select name="cubeviz-dataStructureDefinition-list" 
+                     id="cubeviz-dataStructureDefinition-list"></select>
+        </div>
     </div>
     
-    <div id="cubeviz-module-dataSelection">
-        <!-- Data structure definition section -->
-        <div id="cubviz-dataStructureDefinition-container">
-            <div style="width: 100%; margin-bottom:2px;">
-                <div class="cubeviz-label" style="float: left;">
-                    <?php echo $this->_translate->_('Select group of interest'); ?>
-                </div>
-                <div style="float: right;">
-                    <i class="icon-question-sign cubeviz-clickable"
-                       id="cubeviz-dataStructureDefinition-questionMark"
-                       title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
-                </div>
-                <select name="cubeviz-dataStructureDefinition-list" 
-                         id="cubeviz-dataStructureDefinition-list"></select>
+    <!-- Data set section -->
+    <div id="cubviz-dataSet-container">
+        <div style="width: 100%; margin-bottom:2px;">
+            <div class="cubeviz-label" style="float: left;">
+                <?php echo $this->_translate->_('Select part of group'); ?>
+            </div>
+            <div style="float: right;">
+                <i class="icon-question-sign cubeviz-clickable"
+                   id="cubeviz-dataSet-questionMark"
+                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+            </div>                    
+        </div>
+        <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
+    </div>
+    
+    <!-- Visual seperator -->
+    <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
+    
+    <!-- Component section -->
+    <div id="cubviz-component-container">
+        <div style="width: 100%;">
+            <div class="cubeviz-label" style="float: left;">
+                <?php echo $this->_translate->_('Select axis elements'); ?>
+            </div>
+            <div style="float: right;">
+                <i class="icon-question-sign cubeviz-clickable"
+                   id="cubeviz-component-questionMark"
+                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
             </div>
         </div>
-        
-        <!-- Data set section -->
-        <div id="cubviz-dataSet-container">
-            <div style="width: 100%; margin-bottom:2px;">
-                <div class="cubeviz-label" style="float: left;">
-                    <?php echo $this->_translate->_('Select part of group'); ?>
-                </div>
-                <div style="float: right;">
-                    <i class="icon-question-sign cubeviz-clickable"
-                       id="cubeviz-dataSet-questionMark"
-                       title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
-                </div>                    
-            </div>
-            <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
-        </div>
-        
-        <!-- Visual seperator -->
-        <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
-        
-        <!-- Component section -->
-        <div id="cubviz-component-container">
-            <div style="width: 100%;">
-                <div class="cubeviz-label" style="float: left;">
-                    <?php echo $this->_translate->_('Select axis elements'); ?>
-                </div>
-                <div style="float: right;">
-                    <i class="icon-question-sign cubeviz-clickable"
-                       id="cubeviz-component-questionMark"
-                       title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
-                </div>
-            </div>
-            <div style="clear: both;"></div>
-            <div id="cubviz-component-listBox"></div>
-        </div>
-        
-        <div id="cubeviz-footer-container">                
-            <span style="float:left;">
-                <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
-                    <?php echo $this->_translate->_('Permalink'); ?></a>
-                <span id="cubeviz-footer-permaLinkMenu">
-                    <span id="cubeviz-footer-permaLink" style="display: none;">Link</span>
-                </span>
+        <div style="clear: both;"></div>
+        <div id="cubviz-component-listBox"></div>
+    </div>
+    
+    <div id="cubeviz-footer-container">                
+        <span style="float:left;">
+            <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
+                <?php echo $this->_translate->_('Permalink'); ?></a>
+            <span id="cubeviz-footer-permaLinkMenu">
+                <span id="cubeviz-footer-permaLink" style="display: none;">Link</span>
             </span>
-            <span style="float:right;">
-                <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
-                    <?php echo $this->_translate->_('Show Visualization'); ?></a>
-            </span>
-        </div>
+        </span>
+        <span style="float:right;">
+            <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
+                <?php echo $this->_translate->_('Show Visualization'); ?></a>
+        </span>
     </div>
 </div>
 
