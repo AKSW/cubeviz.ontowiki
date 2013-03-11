@@ -1,25 +1,14 @@
 #staticLinksModuleContainer {    
     width: 200px;
-    height: auto;
-    z-index: 1;
+    height: auto;    
     font-size: 12px;
-    padding-bottom: 3px;
 }
 
 #staticLinksModuleContainer a {
     color: #7B7B7B;
-    font-weight: bold;
 }
 
-.staticlinks-withImages {
-    list-style: none;
-}
-
-.staticlinks-withImages li {
-    margin-top: 4px;
-}
-
-.staticlinks-plain {
+.staticLinkListItem {
+    line-height:1.5em;
 
 }
-

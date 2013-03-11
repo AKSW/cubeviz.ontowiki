@@ -27,7 +27,7 @@
   rdfs:label "Static Links" ;
 
   owconfig:caching "false"^^xsd:boolean ;
-  owconfig:priority "1" ;
+  owconfig:priority "40" ;
   owconfig:context "main.sidewindows" .
 
 :staticlinks doap:release :v1-0 .
@@ -41,17 +41,11 @@
 :staticlinks 
     owconfig:config [
         a owconfig:Config;
-        owconfig:id "LinkConfiguration";
-        :ul "with-images"
-    ] ;
-    owconfig:config [
-        a owconfig:Config;
-        owconfig:id "Link_GettingStarted";
-        :href "gettingstarted";
-        :label "Getting started";
-        :title "Getting started";
-        :target "_self";
-        :image "server_add.png"
+        owconfig:id "Link_Index";
+        :href "index";
+        :label "CubeViz Home";
+        :title "CubeViz Home";
+        :target "_self"
     ] ;
     owconfig:config [
         a owconfig:Config;
@@ -59,8 +53,7 @@
         :href "howto";
         :label "HowTo";
         :title "How to use CubeViz";
-        :target "_self";
-        :image "information.png"
+        :target "_self"
     ] ;
     owconfig:config [
         a owconfig:Config;
@@ -68,8 +61,7 @@
         :href "examples";
         :label "Examples";
         :title "Examples";
-        :target "_self";
-        :image "chart_bar.png"
+        :target "_self"
     ] ;
     owconfig:config [
         a owconfig:Config;
@@ -77,17 +69,7 @@
         :href "faq";
         :label "FAQ";
         :title "Frequently Asked Questions";
-        :target "_self";
-        :image "text_padding_top.png"
-    ] ;
-    owconfig:config [
-        a owconfig:Config;
-        owconfig:id "Link_Index";
-        :href "index";
-        :label "CubeViz Home";
-        :title "CubeViz Home";
-        :target "_self";
-        :image "house.png"
+        :target "_self"
     ] ;
     owconfig:config [
         a owconfig:Config;
@@ -95,7 +77,6 @@
         :href "http://aksw.org/Projects/CubeViz.html";
         :label "Project Homepage";
         :title "CubeViz Project Homepage";
-        :target "_blank";
-        :image "anchor.png"
+        :target "_blank"
     ]
 .

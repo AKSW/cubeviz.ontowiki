@@ -3,18 +3,16 @@
 </style>
 
 <div id="staticLinksModuleContainer">
-    <ul class="<?php echo $this->ulClass; ?>">
-        <?php foreach ($this->links as $link) { ?> 
-        
-            <li>
-                <?php if (true == isset($link['image'])){ ?>
-                    <img src="<?php echo $this->basePath .'static/images/'. $link['image']; ?>"/>
-                    &nbsp; 
-                <?php } ?>
-                <a href="<?php echo $link ['href']; ?>" target="<?php echo $link ['target']; ?>" title="<?php echo $link ['title']; ?>">
-                    <?php echo $link ['label']; ?></a>
-            </li>
-        
-        <?php } ?> 
-    </ul>
+    <div style="padding-left: 13px; padding-top: 4px; padding-bottom: 13px;">
+        <ul>
+            <?php foreach ($this->links as $link) { ?> 
+            
+                <li class="staticLinkListItem">
+                    <a href="<?php echo $link ['href']; ?>" target="<?php echo $link ['target']; ?>" title="<?php echo $link ['title']; ?>">
+                        <?php echo $link ['label']; ?></a>
+                </li>
+            
+            <?php } ?> 
+        </ul>
+    </div>
 </div>

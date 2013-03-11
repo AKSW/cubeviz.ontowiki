@@ -20,7 +20,7 @@
   owconfig:config [
       a owconfig:Config;
       owconfig:id "titles";
-      :example "CubeViz"
+      :example "European Commission - Open Data Portal"
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

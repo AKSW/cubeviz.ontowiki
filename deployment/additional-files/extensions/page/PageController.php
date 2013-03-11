@@ -23,18 +23,6 @@ class PageController extends OntoWiki_Controller_Component
         $owN->disableNavigation();
         
         $_REQUEST ['urlBase'] = $this->_config->staticUrlBase;
-        $_REQUEST ['urlImages'] = $this->_config->staticUrlBase .'extensions/page/page/images/';
-        
-        // set example knowledge base uri (based on the one in static/data/exampleCube.ttl!)
-        $ns = 'http://example.cubeviz.org/datacube/';
-        $_REQUEST ['exampleCubeExists'] = $this->_erfurt->getStore()->isModelAvailable ($ns);
-        
-        $_REQUEST ['allow'] = $this->_erfurt->getAc()->getAllowedActions ();
-        $_REQUEST ['allow'] = ( true == isset ($_REQUEST ['allow'][0]) && 
-                   'http://ns.ontowiki.net/SysOnt/RegisterNewUser' != $_REQUEST ['allow'][0] ) || 
-                 0 == count($_REQUEST ['allow'])
-            ? true
-            : false;
 
         $this->render(str_replace  ( 'Action', '', $action));
     }

@@ -21,7 +21,7 @@ class StaticlinksModule extends OntoWiki_Module
 
     public function getTitle() {
         $title = $this->_privateConfig->toArray(); 
-        return 'Main navigation';
+        return ''; // true == isset ( $title ['module']['title'] ) ? $title ['module']['title'] : 'Links';
     }
     
     public function shouldShow(){
@@ -33,14 +33,11 @@ class StaticlinksModule extends OntoWiki_Module
      */
     public function getContents() {
 
-		$this->view->basePath = $this->_config->staticUrlBase . 'extensions/staticlinks/';
+		$this->view->basePath = $this->_config->staticUrlBase . "extensions/staticlinks/";
         
         $this->view->links = array ();
-        $config = $this->_privateConfig->toArray();
-
-        $this->view->ulClass = 'with-images' == $config ['LinkConfiguration']['ul'] ? 'staticlinks-withImages' : 'staticlinks-plain';
         
-        foreach ( $config as $key => $entry ) {
+        foreach ( $this->_privateConfig->toArray() as $key => $entry ) {
             if ( false !== strpos ( $key, 'Link_' ) ) {
                 if ( false === strpos ( $entry ['href'], 'http://' ) ) {
                     $entry ['href'] = $this->_config->staticUrlBase .'page/'. $entry ['href'];
@@ -53,7 +50,7 @@ class StaticlinksModule extends OntoWiki_Module
     }
 
     public function layoutType(){
-        return 'inline';
+        return "inline";
     }
     
 }
