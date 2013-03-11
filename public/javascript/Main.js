@@ -2047,7 +2047,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
-    console.log("cubeVizApp._:");
-    console.log(cubeVizApp._);
+    if("development" == cubeVizApp._.backend.context) {
+        console.log("cubeVizApp._:");
+        console.log(cubeVizApp._);
+    }
     cubeVizApp.triggerEvent("onStart_application");
 });

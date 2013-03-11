@@ -3,7 +3,12 @@
 var cubeVizApp = new CubeViz_View_Application;
 
 $(document).ready(function(){
-    console.log("cubeVizApp._:");
-    console.log(cubeVizApp._);
+    // show intern data only if context is development
+    if("development" == cubeVizApp._.backend.context) {
+        console.log("cubeVizApp._:");
+        console.log(cubeVizApp._);
+    }
+    
+    // trigger event that application has to start
     cubeVizApp.triggerEvent("onStart_application");
 });
