@@ -1151,6 +1151,9 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         return this;
     };
+    View_CubeVizModule_Component.prototype.hideCloseAndUpdateSpinner = function (dialogDiv) {
+        $(dialogDiv.find(".cubeviz-component-closeUpdateSpinner").first()).hide();
+    };
     View_CubeVizModule_Component.prototype.hideSpinner = function () {
         $("#cubeviz-module-spinner").slideUp("slow", function () {
             $("#cubeviz-module-dataSelection").slideDown("slow");
@@ -1195,17 +1198,17 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
-        this.showSpinner();
         var dialogDiv = $(event.target).data("dialogDiv");
         var self = this;
 
+        this.showCloseAndUpdateSpinner(dialogDiv);
         this.readAndSaveSetupComponentDialogChanges(dialogDiv, function () {
             if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
                 self.triggerGlobalEvent("onReRender_visualization");
             }
             self.triggerGlobalEvent("onUpdate_componentDimensions");
-            CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
-            self.hideSpinner();
+            self.hideCloseAndUpdateSpinner(dialogDiv);
+            CubeViz_View_Helper.closeDialog(dialogDiv);
         });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectButton = function (event) {
@@ -1348,10 +1351,8 @@ var View_CubeVizModule_Component = (function (_super) {
         this.hideSpinner();
         return this;
     };
-    View_CubeVizModule_Component.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
+    View_CubeVizModule_Component.prototype.showCloseAndUpdateSpinner = function (dialogDiv) {
+        $(dialogDiv.find(".cubeviz-component-closeUpdateSpinner").first()).show();
     };
     return View_CubeVizModule_Component;
 })(CubeViz_View_Abstract);
