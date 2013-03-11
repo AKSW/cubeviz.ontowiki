@@ -947,6 +947,7 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.render();
     };
     View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
+        this.showSpinner();
         this.triggerGlobalEvent("onBeforeChange_selectedDSD");
         var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
         var selectedElement = this.collection.get(selectedElementId);
@@ -981,6 +982,11 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         this.triggerGlobalEvent("onAfterRender_dataStructureDefinition");
         return this;
     };
+    View_CubeVizModule_DataStructureDefintion.prototype.showSpinner = function () {
+        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
+    };
     return View_CubeVizModule_DataStructureDefintion;
 })(CubeViz_View_Abstract);
 var View_CubeVizModule_DataSet = (function (_super) {
@@ -1009,6 +1015,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.render();
     };
     View_CubeVizModule_DataSet.prototype.onChange_list = function () {
+        this.showSpinner();
         var selectedElementId = $("#cubeviz-dataSet-list").val();
         var selectedElement = this["collection"].get(selectedElementId);
 
@@ -1059,6 +1066,11 @@ var View_CubeVizModule_DataSet = (function (_super) {
         });
         this.triggerGlobalEvent("onAfterRender_dataSet");
         return this;
+    };
+    View_CubeVizModule_DataSet.prototype.showSpinner = function () {
+        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
     };
     return View_CubeVizModule_DataSet;
 })(CubeViz_View_Abstract);
@@ -1139,6 +1151,11 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         return this;
     };
+    View_CubeVizModule_Component.prototype.hideSpinner = function () {
+        $("#cubeviz-module-spinner").slideUp("slow", function () {
+            $("#cubeviz-module-dataSelection").slideDown("slow");
+        });
+    };
     View_CubeVizModule_Component.prototype.initialize = function () {
         this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
@@ -1169,6 +1186,7 @@ var View_CubeVizModule_Component = (function (_super) {
                 CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
                     self.app._.backend.dataHash = updatedDataHash;
                     self.render();
+                    self.hideSpinner();
                 });
             });
         });
@@ -1177,6 +1195,7 @@ var View_CubeVizModule_Component = (function (_super) {
         CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
+        this.showSpinner();
         var dialogDiv = $(event.target).data("dialogDiv");
         var self = this;
 
@@ -1186,6 +1205,7 @@ var View_CubeVizModule_Component = (function (_super) {
             }
             self.triggerGlobalEvent("onUpdate_componentDimensions");
             CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
+            self.hideSpinner();
         });
     };
     View_CubeVizModule_Component.prototype.onClick_deselectButton = function (event) {
@@ -1325,7 +1345,13 @@ var View_CubeVizModule_Component = (function (_super) {
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         this.triggerGlobalEvent("onAfterRender_component");
+        this.hideSpinner();
         return this;
+    };
+    View_CubeVizModule_Component.prototype.showSpinner = function () {
+        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
     };
     return View_CubeVizModule_Component;
 })(CubeViz_View_Abstract);

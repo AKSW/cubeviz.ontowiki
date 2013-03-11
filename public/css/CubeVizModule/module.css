@@ -1,0 +1,11 @@
+#cubeviz-module-dataSelection
+{
+    margin-top: 20px;
+}
+
+#cubeviz-module-spinner
+{
+    display: none;
+    width: 100%;
+    text-align: center;
+}

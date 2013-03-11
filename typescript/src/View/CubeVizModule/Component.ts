@@ -172,6 +172,16 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     }
     
     /**
+     * Hide spinner.
+     */
+    public hideSpinner() : void
+    {
+        $("#cubeviz-module-spinner").slideUp("slow", function() {
+            $("#cubeviz-module-dataSelection").slideDown("slow");
+        });
+    }
+    
+    /**
      *
      */
     public initialize() 
@@ -256,7 +266,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      *
      */
     public onChange_selectedDS(event, data) 
-    {
+    {        
         var self = this;
         
         this.destroy();
@@ -277,6 +287,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                         self.app._.backend.dataHash = updatedDataHash;
                         
                         self.render();
+                        
+                        self.hideSpinner();
                     }
                 );
             });
@@ -299,6 +311,10 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public onClick_closeAndUpdate(event) : void
     {
+        // Start handling of new configuration, but before start, show a spinner 
+        // to let the user know that CubeViz did something.
+        this.showSpinner();
+        
         var dialogDiv = $(event.target).data("dialogDiv"),
             self = this;
 
@@ -315,6 +331,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
                 // if only module was loaded, move reloading stuff to footer.ts
                 CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
+                
+                self.hideSpinner();
             }
         );        
     }
@@ -625,6 +643,19 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         this.triggerGlobalEvent("onAfterRender_component");
         
+        this.hideSpinner();
+        
         return this;
+    }
+    
+    /**
+     * Show a spinner to let the user know that something is working.
+     * @return void
+     */
+    public showSpinner() : void
+    {        
+        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
     }
 }

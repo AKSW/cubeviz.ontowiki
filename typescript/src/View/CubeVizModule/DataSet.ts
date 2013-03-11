@@ -52,8 +52,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     /**
      * 
      */
-    public onChange_list() : void 
+    public onChange_list() : void
     {
+        this.showSpinner();
+        
         var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
             selectedElement = this["collection"].get(selectedElementId);
 
@@ -174,5 +176,16 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onAfterRender_dataSet");
         
         return this;
+    }
+    
+    /**
+     * Show a spinner to let the user know that something is working.
+     * @return void
+     */
+    public showSpinner() : void
+    {        
+        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
     }
 }

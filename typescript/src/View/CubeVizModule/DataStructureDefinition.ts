@@ -54,6 +54,8 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
      */
     public onChange_list(event) : void 
     {
+        this.showSpinner();
+        
         this.triggerGlobalEvent("onBeforeChange_selectedDSD");
         
         var selectedElementId:string = $("#cubeviz-dataStructureDefinition-list").val(),
@@ -126,5 +128,16 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onAfterRender_dataStructureDefinition");
         
         return this;
+    }
+    
+    /**
+     * Show a spinner to let the user know that something is working.
+     * @return void
+     */
+    public showSpinner() : void
+    {        
+        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
     }
 }
