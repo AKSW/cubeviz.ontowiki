@@ -26,6 +26,7 @@ rsync -av --exclude='.git' \
           --exclude='application/logo' \
           --exclude='application/tests' \
           --exclude='application/scripts' \
+          --exclude='debian' \
           --exclude='extensions/auth' \
           --exclude='extensions/bookmarklet' \
           --exclude='extensions/ckan' \
@@ -94,9 +95,7 @@ rsync -av --exclude='.git' \
           --exclude='libraries/Zend/Service' \
           --exclude='libraries/Zend/Test' \
           --exclude='libraries/Zend/Date.php' \
-          --exclude='logs/erfurt.log' \
-          --exclude='logs/ontowiki.log' \
-          --exclude='logs/queries.log' \
+          --exclude='logs/*' \
           $ontowikiRoot/* .
           
 echo ""

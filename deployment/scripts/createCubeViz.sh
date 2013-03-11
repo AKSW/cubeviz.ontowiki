@@ -21,14 +21,12 @@ rsync -av --exclude='.git' \
 		  --exclude='assets' \
 		  --exclude='data' \
 		  --exclude='deployment' \
-		  --exclude='additional-files' \
+		  --exclude='tests' \
+		  --exclude='doap.n3-dist' \
 		  --exclude='ChartConfig.js' \
-		  --exclude='data' \
-		  --exclude='generated-packages' \
 		  --exclude='Makefile' \
-		  --exclude='scripts' \
-		  --exclude='typescript' \
 		  --exclude='README.md' \
+		  --exclude='typescript' \
           $cubevizRoot/* $cubevizRoot/deployment/generated-packages/$packageName
 
 echo ""
