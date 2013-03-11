@@ -71,15 +71,8 @@
  */
 #cubeviz-visualizationselector-menuDongleDiv
 {
-    display: none;
     position: absolute;
     z-index: 100;
-}
-
-#cubeviz-visualizationselector-menuDongleImg
-{    
-    width: 40px;
-    height: 5px;
 }
 
 

@@ -1958,10 +1958,11 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions;
-        var viszItem;
         var charts = this.app._.backend.chartConfig[numberOfMultDims].charts;
+        var firstViszItem;
         var selectorItemTpl = _.template($("#cubeviz-visualizationselector-tpl-selectorItem").text());
         var self = this;
+        var viszItem;
 
         _.each(charts, function (chartObject) {
             viszItem = $(selectorItemTpl(chartObject));
@@ -1973,7 +1974,11 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             $("#cubeviz-visualizationselector-selector").append(viszItem);
+            if(true === _.isUndefined(firstViszItem)) {
+                firstViszItem = viszItem;
+            }
         });
+        this.showMenuDongle(firstViszItem);
         this.bindUserInterfaceEvents({
         });
         this.triggerGlobalEvent("onAfterRender_visualizationSelector");
@@ -1987,7 +1992,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var menuItem;
         var menuItemTpl = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text());
         var menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html();
-        var offset = selectorItemDiv.offset();
+        var position = selectorItemDiv.position();
         var selectBox;
         var shortCutViszSettings = this.app._.ui.visualizationSettings[this.app._.ui.visualization.class];
         var valueOption;
@@ -2030,7 +2035,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             $("#cubeviz-visualizationselector-closeMenu").on("click", $.proxy(this.onClick_closeMenu, this));
             $("#cubeviz-visualizationselector-updateVisz").off("click");
             $("#cubeviz-visualizationselector-updateVisz").on("click", $.proxy(this.onClick_updateVisz, this));
-            $("#cubeviz-visualizationselector-menu").css("top", offset.top - 37).css("left", offset.left - 495).fadeIn("slow");
+            $("#cubeviz-visualizationselector-menu").css("top", position.top + 37).css("left", position.left - 192).fadeIn("slow");
         }
         this.triggerGlobalEvent("onAfterShow_visualizationSelectorMenu");
     };

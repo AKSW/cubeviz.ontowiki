@@ -231,12 +231,13 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onBeforeRender_visualizationSelector");
         
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions,
-            viszItem,
             charts = this.app._.backend.chartConfig[numberOfMultDims].charts,
+            firstViszItem:any,
             selectorItemTpl = _.template(
                 $("#cubeviz-visualizationselector-tpl-selectorItem").text()
             ),
-            self = this;
+            self = this,
+            viszItem:any;
         
         // load icons
         _.each(charts, function(chartObject){
@@ -264,7 +265,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // append chart item to selector
             $("#cubeviz-visualizationselector-selector")
                 .append(viszItem);
+                
+            if(true === _.isUndefined(firstViszItem)) {
+                firstViszItem = viszItem;
+            }
         });
+        
+        // show menu dongle under the first item
+        this.showMenuDongle(firstViszItem);
         
         /**
          * Delegate events to new items of the template
@@ -297,7 +305,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 $("#cubeviz-visualizationselector-tpl-menuItem").text()
             ),
             menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html(),
-            offset:any = selectorItemDiv.offset(),
+            position:any = selectorItemDiv.position(),
             selectBox:any,
             shortCutViszSettings:any = this.app._.ui.visualizationSettings
                 [this.app._.ui.visualization.class],
@@ -392,10 +400,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 this.onClick_updateVisz
             , this));
             
-            // show menu
+            // positioning and show menu
             $("#cubeviz-visualizationselector-menu")
-                .css ("top", offset.top - 37)
-                .css ("left", offset.left - 495)
+                .css ("top", position.top + 37)
+                .css ("left", position.left - 192 )
                 .fadeIn ("slow");
         }
         
