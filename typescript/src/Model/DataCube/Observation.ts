@@ -84,6 +84,8 @@ class DataCube_Observation {
                     return;
                 }
                 
+                observation[measureUri] = value;
+                
             // its not a number, ignore it!
             } catch (ex) { return; }
             

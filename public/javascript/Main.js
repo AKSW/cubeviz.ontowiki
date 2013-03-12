@@ -967,6 +967,7 @@ var DataCube_Observation = (function () {
                 if(true === _.isNaN(value)) {
                     return;
                 }
+                observation[measureUri] = value;
             } catch (ex) {
                 return;
             }
