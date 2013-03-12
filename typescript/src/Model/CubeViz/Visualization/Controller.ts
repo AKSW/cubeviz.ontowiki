@@ -1,7 +1,7 @@
 /// <reference path="..\..\..\..\declaration\libraries\CryptoJs.d.ts" />
 
 /**
- * Provides functions to decide which visualization to load
+ * Provides helper functions
  */
 class CubeViz_Visualization_Controller 
 {        
@@ -124,6 +124,28 @@ class CubeViz_Visualization_Controller
             return hC.getName();
         }
         throw new Error("Unknown className " + className);
+    }
+    
+    /**
+     * Replaces all links with a-tags. Copied from http://stackoverflow.com/a/7123542
+     * @param inputText
+     * @return string Text with replaced links.
+     */
+    static linkify(inputText) {
+        
+            // Email addresses
+        var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim,
+        
+            // www. sans http:// or https://
+            pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim,
+
+            // http://, https://, ftp://
+            urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+        return inputText
+            .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+            .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
+            .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');        
     }
     
     /**

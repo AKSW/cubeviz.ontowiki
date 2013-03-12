@@ -291,7 +291,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 // li entry
                 infoList.append(tplInfoListEntry({
                     key: key,
-                    value: value
+                    value: CubeViz_Visualization_Controller.linkify(value)
                 }));
             }
         });

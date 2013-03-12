@@ -480,6 +480,13 @@ var CubeViz_Visualization_Controller = (function () {
         }
         throw new Error("Unknown className " + className);
     }
+    CubeViz_Visualization_Controller.linkify = function linkify(inputText) {
+        var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim;
+        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+        return inputText.replace(urlPattern, '<a href="$&" target="_blank">$&</a>').replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>').replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+    }
     CubeViz_Visualization_Controller.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
             if(className == charts[i].class) {
@@ -1609,7 +1616,7 @@ var View_IndexAction_Header = (function (_super) {
         _.each(this.app._.backend.modelInformation, function (entry) {
             htmlModelInformation += entryTpl({
                 predicateLabel: entry.predicateLabel,
-                objectContent: entry.content
+                objectContent: CubeViz_Visualization_Controller.linkify(entry.content)
             });
         });
         $("#cubeviz-index-headerDialogBoxModelInformation").html(htmlModelInformation);
@@ -1778,7 +1785,7 @@ var View_IndexAction_Legend = (function (_super) {
             if(false === _.str.startsWith(key, "__cv_")) {
                 infoList.append(tplInfoListEntry({
                     key: key,
-                    value: value
+                    value: CubeViz_Visualization_Controller.linkify(value)
                 }));
             }
         });

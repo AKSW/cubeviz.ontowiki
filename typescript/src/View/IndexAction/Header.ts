@@ -118,7 +118,9 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         _.each(this.app._.backend.modelInformation, function(entry){
             htmlModelInformation += entryTpl({
                 predicateLabel: entry.predicateLabel,
-                objectContent: entry.content
+                objectContent: CubeViz_Visualization_Controller.linkify(
+                    entry.content
+                )
             });
         });
        
