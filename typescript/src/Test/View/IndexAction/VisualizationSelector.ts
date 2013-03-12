@@ -28,7 +28,7 @@ cubeViz_tests.push(function(){
     
     cubeVizApp.triggerEvent("onStart_application");
     
-    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.class;
+    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.className;
     
     var items = $("#cubeviz-visualizationselector-selector").children(),
         secondItem = $(items[1]),

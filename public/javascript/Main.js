@@ -435,7 +435,7 @@ var CubeViz_Visualization_Controller = (function () {
         var result = undefined;
         _.each(charts, function (chart) {
             if(true === _.isUndefined(result)) {
-                if(className == chart.class) {
+                if(className == chart.className) {
                     result = chart;
                 }
             }
@@ -489,7 +489,7 @@ var CubeViz_Visualization_Controller = (function () {
     }
     CubeViz_Visualization_Controller.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
-            if(className == charts[i].class) {
+            if(className == charts[i].className) {
                 charts[i] = newValue;
             }
         }
@@ -640,6 +640,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
 
                     _.each(xAxisElements, function (xAxisElement) {
                         firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                        console.log("");
+                        console.log("firstObservation");
+                        console.log(firstObservation);
                         self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
                         seriesDataList.push(firstObservation[selectedMeasureUri]);
                     });
@@ -967,6 +970,7 @@ var DataCube_Observation = (function () {
                 if(true === _.isNaN(value)) {
                     return;
                 }
+                observation[measureUri] = value;
             } catch (ex) {
                 return;
             }
@@ -1475,8 +1479,8 @@ var View_CubeVizModule_Footer = (function (_super) {
         var value = "";
         if(true == _.isUndefined(this.collection.get("buttonVal"))) {
             this.collection.add({
-                id: "buttonVal",
-                value: $("#cubeviz-footer-permaLinkButton").html().toString().trim()
+                "id": "buttonVal",
+                "value": $("#cubeviz-footer-permaLinkButton").html().toString().trim()
             });
             this.showLink("<");
         } else {
@@ -1902,17 +1906,17 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var selectedMeasure = this.app._.data.selectedComponents.measures[Object.keys(this.app._.data.selectedComponents.measures)[0]];
         var type = null;
         var visualizationSetting = null;
 
         if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.class = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].class;
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+            this.app._.ui.visualization.className = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].className;
+            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         }
-        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
-        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.class);
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
+        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
         if(false === _.isUndefined(this.app._.generatedVisualization)) {
             try  {
                 this.app._.generatedVisualization.destroy();
@@ -1923,7 +1927,7 @@ var View_IndexAction_Visualization = (function (_super) {
             }
         }
         var hC = new CubeViz_Visualization_HighCharts();
-        var chart = hC.load(this.app._.ui.visualization.class);
+        var chart = hC.load(this.app._.ui.visualization.className);
         chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
@@ -2006,14 +2010,14 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
 
         if(true === _.isUndefined($(event.target).data("class"))) {
             selectorItemDiv = $($(event.target).parent());
-            this.app._.ui.visualization.class = selectorItemDiv.data("class");
+            this.app._.ui.visualization.className = selectorItemDiv.data("class");
         } else {
             selectorItemDiv = $(event.target);
-            this.app._.ui.visualization.class = selectorItemDiv.data("class");
+            this.app._.ui.visualization.className = selectorItemDiv.data("class");
         }
         prevClass = $($(".cubeviz-visualizationselector-selectedSelectorItem").get(0)).data("class");
         this.hideDongle();
-        if(prevClass == this.app._.ui.visualization.class) {
+        if(prevClass == this.app._.ui.visualization.className) {
             this.showMenu(selectorItemDiv);
         } else {
             this.hideMenu();
@@ -2028,10 +2032,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var self = this;
 
-        this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.class], fromChartConfig.defaultConfig);
+        this.app._.ui.visualizationSettings[this.app._.ui.visualization.className] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.ui, "ui", function (updatedUiHash) {
             self.app._.backend.uiHash = updatedUiHash;
         });
@@ -2063,10 +2067,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.hideDongle();
         _.each(charts, function (chartObject) {
             viszItem = $(selectorItemTpl(chartObject));
-            viszItem.data("class", chartObject.class);
+            viszItem.data("class", chartObject.className);
             viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
-            if(self.app._.ui.visualization.class == chartObject.class) {
+            if(self.app._.ui.visualization.className == chartObject.className) {
                 viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
             }
             $("#cubeviz-visualizationselector-selector").append(viszItem);
@@ -2081,13 +2085,13 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         this.triggerGlobalEvent("onBeforeShow_visualizationSelectorMenu");
         var alreadySetSelected = false;
         var defaultValue = "";
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var menuItem;
         var menuItemTpl = _.template($("#cubeviz-visualizationselector-tpl-menuItem").text());
         var menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html();
         var position = selectorItemDiv.position();
         var selectBox;
-        var shortCutViszSettings = this.app._.ui.visualizationSettings[this.app._.ui.visualization.class];
+        var shortCutViszSettings = this.app._.ui.visualizationSettings[this.app._.ui.visualization.className];
         var valueOption;
 
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options) && ("" == menuItemsHtml || null == menuItemsHtml)) {
@@ -2134,7 +2138,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     View_IndexAction_VisualizationSelector.prototype.showMenuDongle = function (selectorItemDiv) {
         var charts = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts;
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.class, charts);
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, charts);
 
         if(false === _.isUndefined(fromChartConfig.options) && 0 < _.size(fromChartConfig.options)) {
             var position = selectorItemDiv.position();

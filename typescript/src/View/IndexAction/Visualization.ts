@@ -152,23 +152,23 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // Dynamiclly set visualization container height
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class,
+                this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
             selectedMeasure:any = this.app._.data.selectedComponents.measures[Object.keys(
                 this.app._.data.selectedComponents.measures
             )[0]],
             type:string = null, 
-            visualizationSetting:any = null;            
+            visualizationSetting:any = null;
         
         // set default className
         if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.class = this.app._.backend.chartConfig[
+            this.app._.ui.visualization.className = this.app._.backend.chartConfig[
                 this.app._.data.numberOfMultipleDimensions
-            ].charts[0].class;
+            ].charts[0].className;
             
             fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class,
+                this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             );
         }
@@ -176,13 +176,13 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // extract visualization settings
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings(
             [],
-            this.app._.ui.visualizationSettings[this.app._.ui.visualization.class],
+            this.app._.ui.visualizationSettings[this.app._.ui.visualization.className],
             fromChartConfig.defaultConfig
         );
         
         // determine if using HighCharts or CubeViz
         type = CubeViz_Visualization_Controller.getVisualizationType(
-            this.app._.ui.visualization.class
+            this.app._.ui.visualization.className
         );
         
         /**
@@ -204,7 +204,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         var hC = new CubeViz_Visualization_HighCharts();
         
         // load specific chart instance
-        var chart = hC.load(this.app._.ui.visualization.class);
+        var chart = hC.load(this.app._.ui.visualization.className);
         
         // init chart instance
         chart.init(
@@ -220,7 +220,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             selectedMeasure["http://purl.org/linked-data/cube#measure"]
         );
                 
-        try {
+        try {            
             // set visualization height
             this.setVisualizationHeight(_.size(
                 chart.getRenderResult().xAxis.categories

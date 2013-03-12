@@ -50,8 +50,8 @@ class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
             
             // remember old perma link button label, because of the language
             this.collection.add({
-                id: "buttonVal", 
-                value: $("#cubeviz-footer-permaLinkButton").html().toString().trim()
+                "id": "buttonVal", 
+                "value": $("#cubeviz-footer-permaLinkButton").html().toString().trim()
             });
             this.showLink("<");
             

@@ -826,7 +826,7 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     cubeVizApp.triggerEvent("onStart_application");
-    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.class;
+    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.className;
     var items = $("#cubeviz-visualizationselector-selector").children();
     var secondItem = $(items[1]);
     var secondItemsClass = $(secondItem).data("class");

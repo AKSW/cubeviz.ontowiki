@@ -264,7 +264,7 @@ class CubeViz_ConfigurationLink
             
                 $config = array(
                     'visualization'                 => array(
-                        'class'                     => ''
+                        'className'                 => ''
                     ),
                     // will contain information/settings for each visualization class
                     'visualizationSettings'         => array(

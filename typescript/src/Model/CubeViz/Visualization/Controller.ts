@@ -40,7 +40,7 @@ class CubeViz_Visualization_Controller
         
         _.each(charts, function(chart){
             if(true === _.isUndefined(result)){
-                if(className == chart.class) {
+                if(className == chart.className) {
                     result = chart;
                 }
             }
@@ -154,7 +154,7 @@ class CubeViz_Visualization_Controller
     static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) 
     {
         for ( var i in charts ) {
-            if(className == charts [i].class) {
+            if(className == charts [i].className) {
                 charts [i] = newValue;
             }
         }
