@@ -30,13 +30,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public configureSetupComponentDialog(component:any, componentBox, opener) 
     {
-        var dialogTpl = _.template(
-                $("#cubeviz-component-tpl-setupComponentDialog").text()
+        var dialogTpl = jsontemplate.Template(
+                $("#cubeviz-component-tpl-setupComponentDialog").html()
             ),
             self = this;
 
         // set dialog reference and template
-        $("#cubeviz-component-setupDialogContainer").append(dialogTpl({
+        $("#cubeviz-component-setupDialogContainer").append(dialogTpl.expand({
             __cv_niceLabel: component.__cv_niceLabel, 
             __cv_hashedUri: component.__cv_hashedUri
         }));
@@ -100,7 +100,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             elementInstance:any = {},
             componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_niceLabel"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
-            elementTpl:any = _.template($("#cubeviz-component-tpl-setupComponentElement").text()),
+            elementTpl:any = jsontemplate.Template($("#cubeviz-component-tpl-setupComponentElement").html()),
             selectedDimensions:any = this.app._.data.selectedComponents
                                                  .dimensions[component.__cv_uri]
                                                  .__cv_elements,
@@ -128,7 +128,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 if(true === setElementChecked) 
                     wasSomethingSelected = true;
                     
-                elementInstance = $(elementTpl({
+                elementInstance = $(elementTpl.expand({
                     checked: true === setElementChecked ? " checked=\"checked\"" : "",
                     hashedUri: element.__cv_hashedUri,
                     __cv_niceLabel: element.__cv_niceLabel,
@@ -568,7 +568,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         var backendCollection = this.collection._,
             list = $("#cubviz-component-listBox"),
             componentBox:any = null,
-            optionTpl = _.template($("#cubeviz-component-tpl-listBoxItem").text()),
+            optionTpl = jsontemplate.Template($("#cubeviz-component-tpl-listBoxItem").html()),
             selectedComponentDimensions = this.app._.data.selectedComponents.dimensions,
             selectedDimension = null,
             self = this,
@@ -590,7 +590,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dimension.elementCount = _.size(dimension.__cv_elements);
             
             // build html out of template
-            componentBox = $(optionTpl(dimension));
+            componentBox = $(optionTpl.expand(dimension));
             
             // get opener link
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))

@@ -69,6 +69,7 @@ class CubevizModule extends OntoWiki_Module
             ->appendFile ($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
             ->appendFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
             
+            ->appendFile ($baseJavascriptPath. 'libraries/json-template.min.js',   'text/javascript')
             ->appendFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
             ->appendFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
             ->appendScript ('_.mixin(_.str.exports());') // for underscore.string
