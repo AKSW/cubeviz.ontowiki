@@ -23,9 +23,6 @@
 
     <!-- Visualization -->
     <div id="cubeviz-index-visualization"></div>
-    
-    <br/>
-    <br/>
 
     <!-- Legend part -->
     <div id="cubeviz-index-legend">
@@ -106,36 +103,34 @@
 <!-- 
     notification if no data were received
 -->
-<div id="cubeviz-visualization-nothingFoundNotificationContainer" style="display: none;">
-    <div>
-        <div align="center" style="margin-top: 100px;">        
-            <h4>
-                No data fits to your selection, please adapt your selection in the left sidebar manually.
-            </h4>
-            <br/>            
-            <div style="width: 50%; text-align: left;">
-                <div style="float:left;"><i class="icon-lightbulb"></i></div>
-                <div style="margin-left: 24px;">
-                    <strong>Explanation</strong>
-                    <p>
-                        This behavior can have various reasons. On the one hand it
-                        is possible that there is no data available according to 
-                        the selection. In order to reduce the load of the server 
-                        we decided not to check the availability of data for every 
-                        selection. 
-                        <br/>
-                        <br/>
-                        On the other hand it is possible that a chart can not be 
-                        produced if the user selects inapplicable combinations of 
-                        options such as a logarithm scale in combination 
-                        with percentage stacking. Trapping such cases is not yet 
-                        fully implemented but will be done soon.
-                        <br/>
-                        <br/>
-                        To solve such problems we suggest to change the selection 
-                        and/or the selected chart options.
-                    </p>
-                </div>
+<div id="cubeviz-visualization-nothingFoundNotificationContainer" style="display: none;">      
+    <div id="cubeviz-visualization-nothingFoundNotification" align="center">
+        <h4>
+            No data fits to your selection, please adapt your selection in the left sidebar manually.
+        </h4>
+        <br/>            
+        <div style="width: 50%; text-align: left;">
+            <div style="float:left;"><i class="icon-lightbulb"></i></div>
+            <div style="margin-left: 24px;">
+                <strong>Explanation</strong>
+                <p>
+                    This behavior can have various reasons. On the one hand it
+                    is possible that there is no data available according to 
+                    the selection. In order to reduce the load of the server 
+                    we decided not to check the availability of data for every 
+                    selection. 
+                    <br/>
+                    <br/>
+                    On the other hand it is possible that a chart can not be 
+                    produced if the user selects inapplicable combinations of 
+                    options such as a logarithm scale in combination 
+                    with percentage stacking. Trapping such cases is not yet 
+                    fully implemented but will be done soon.
+                    <br/>
+                    <br/>
+                    To solve such problems we suggest to change the selection 
+                    and/or the selected chart options.
+                </p>
             </div>
         </div>
     </div>

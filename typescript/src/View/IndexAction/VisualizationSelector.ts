@@ -15,12 +15,16 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onReRender_visualization",
-                handler: this.onReRender_visualization
-            },
-            {
                 name:    "onClick_setupComponentOpener",
                 handler: this.onClick_setupComponentOpener
+            },
+            {
+                name:    "onReceived_noData",
+                handler: this.onReceived_noData
+            },
+            {
+                name:    "onReRender_visualization",
+                handler: this.onReRender_visualization
             },
             {
                 name:    "onStart_application",
@@ -77,7 +81,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_setupComponentOpener() 
+    public onClick_setupComponentOpener() : void
     {
         this.hideMenu();
     }
@@ -85,7 +89,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_closeMenu() 
+    public onClick_closeMenu() : void
     {
         this.hideMenu();
     }
@@ -93,7 +97,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_selectorItem(event) 
+    public onClick_selectorItem(event) : void
     {
         this.triggerGlobalEvent("onBeforeClick_selectorItem");
         
@@ -169,7 +173,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_updateVisz() 
+    public onClick_updateVisz() : void
     {        
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
@@ -204,7 +208,15 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onReRender_visualization() 
+    public onReceived_noData() : void
+    {
+        this.hideDongle();
+    }
+    
+    /**
+     *
+     */
+    public onReRender_visualization() : void 
     {
         this.destroy();
         
@@ -216,7 +228,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     /**
      *
      */
-    public onStart_application() 
+    public onStart_application() : void
     {
         if(0 < _.size(this.app._.backend.retrievedObservations)){
             this.initialize();

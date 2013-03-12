@@ -1883,6 +1883,7 @@ var View_IndexAction_Visualization = (function (_super) {
             this.renderChart();
         } else {
             $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
+            this.triggerGlobalEvent("onReceived_noData");
             this.setVisualizationHeight();
         }
         this.bindUserInterfaceEvents({
@@ -1943,12 +1944,16 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         _super.call(this, "View_IndexAction_VisualizationSelector", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onReRender_visualization",
-                handler: this.onReRender_visualization
-            }, 
-            {
                 name: "onClick_setupComponentOpener",
                 handler: this.onClick_setupComponentOpener
+            }, 
+            {
+                name: "onReceived_noData",
+                handler: this.onReceived_noData
+            }, 
+            {
+                name: "onReRender_visualization",
+                handler: this.onReRender_visualization
             }, 
             {
                 name: "onStart_application",
@@ -2021,6 +2026,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             self.app._.backend.uiHash = updatedUiHash;
         });
         this.triggerGlobalEvent("onReRender_visualization");
+    };
+    View_IndexAction_VisualizationSelector.prototype.onReceived_noData = function () {
+        this.hideDongle();
     };
     View_IndexAction_VisualizationSelector.prototype.onReRender_visualization = function () {
         this.destroy();

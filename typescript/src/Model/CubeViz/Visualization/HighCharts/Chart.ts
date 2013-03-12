@@ -200,7 +200,6 @@ class CubeViz_Visualization_HighCharts_Chart
                 });
                 
                 // set series element
-                // TODO Use element label of one element dimensions, if available
                 this.chartConfig.series = [{
                     name: ".",
                     data: seriesDataList
@@ -228,7 +227,6 @@ class CubeViz_Visualization_HighCharts_Chart
                     value:number = 0;
                     
                 // set xAxis categories
-                // TODO Use element label of one element dimensions, if available
                 this.chartConfig.xAxis.categories = ["."];
                     
                 // set series elements
