@@ -61,11 +61,29 @@ class DataCube_Observation {
         var dimensionElementInfoObject:any = {},
             dimensionPropertyUri:string = "",
             observationDimensionProperty:any = {},
-            self = this;
+            self = this,
+            value = 0;
         
         this._axes = {};
         
         _.each(retrievedObservations, function(observation){
+            
+            // If observation value is a number, try to parse it. If that is not
+            // possible use the raw value
+            try {
+                value = parseFloat(observation[measureUri]);
+                
+                // If value contains whitespaces and it was able to parse
+                // it was float, remove whitespaces and parse it again
+                if(true === _.str.include(observation[measureUri], " ")) {
+                    value = parseFloat(
+                        observation[measureUri].replace(/ /gi, "")
+                    );
+                }                
+                observation[measureUri] = value;
+                
+            // use raw observation value
+            } catch (ex) { }
             
             _.each(selectedComponentDimensions, function(dimension){
                 
