@@ -68,8 +68,7 @@ class DataCube_Observation {
         
         _.each(retrievedObservations, function(observation){
             
-            // If observation value is a number, try to parse it. If that is not
-            // possible use the raw value
+            // Parse observation value, if it is not a number, ignore it.
             try {
                 value = parseFloat(observation[measureUri]);
                 
@@ -79,11 +78,14 @@ class DataCube_Observation {
                     value = parseFloat(
                         observation[measureUri].replace(/ /gi, "")
                     );
-                }                
-                observation[measureUri] = value;
+                }
                 
-            // use raw observation value
-            } catch (ex) { }
+                if (true === _.isNaN(value)) {
+                    return;
+                }
+                
+            // its not a number, ignore it!
+            } catch (ex) { return; }
             
             _.each(selectedComponentDimensions, function(dimension){
                 

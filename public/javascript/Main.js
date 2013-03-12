@@ -964,8 +964,11 @@ var DataCube_Observation = (function () {
                 if(true === _.str.include(observation[measureUri], " ")) {
                     value = parseFloat(observation[measureUri].replace(/ /gi, ""));
                 }
-                observation[measureUri] = value;
+                if(true === _.isNaN(value)) {
+                    return;
+                }
             } catch (ex) {
+                return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
                 dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
