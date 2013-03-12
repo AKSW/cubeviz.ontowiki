@@ -652,7 +652,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                         "."
                     ];
                     _.each(seriesElements, function (seriesElement) {
-                        firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                        firstObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
                         self.chartConfig.series.push({
                             name: seriesElement.self.__cv_niceLabel,
                             data: [

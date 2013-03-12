@@ -233,8 +233,8 @@ class CubeViz_Visualization_HighCharts_Chart
                     
                 // set series elements
                 _.each(seriesElements, function(seriesElement){
-                    
-                    firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+
+                    firstObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
                     
                     // add entry on the y axis
                     self.chartConfig.series.push({
