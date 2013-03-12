@@ -7,15 +7,19 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
      * Initialize a chart instance.
      * @param chartConfig Related chart configuration
      * @param retrievedObservations Array of retrieved observations 
-     * @param selectedComponentDimensions
-     * @param oneElementDimensions
-     * @param multipleDimensions
+     * @param selectedComponentDimensions Array of dimension objects with
+     *                                    selected component dimensions.
+     * @param oneElementDimensions Array of dimension objects where only one
+     *                             dimension element was selected.
+     * @param multipleDimensions Array of dimension objects where at least two
+     *                           dimension elements were selected.
      * @param selectedMeasureUri Uri of selected measure
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
-        selectedComponentDimensions:any, oneElementDimensions:any[], multipleDimensions:any[], 
-        selectedMeasureUri:string) : CubeViz_Visualization_HighCharts_Chart 
+        selectedComponentDimensions:any, multipleDimensions:any[],
+        oneElementDimensions:any[], selectedMeasureUri:string) 
+        : CubeViz_Visualization_HighCharts_Chart 
     {                
         // stop execution, if it contains more than one entry
         if(1 < _.size(multipleDimensions)){
@@ -33,17 +37,33 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         
         // save given (default) chart config
         this.chartConfig = chartConfig;
-        this.chartConfig.series = [];
         this.chartConfig.colors = [];
-        
-        // set empty chart title
+        this.chartConfig.series = [];
         this.chartConfig.title.text = "";
+        
+        // x axis: set default, if unset
+        if (true === _.isUndefined(this.chartConfig.xAxis)) {
+            this.chartConfig.xAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
+        
+        // y axis: set default, if unset
+        if (true === _.isUndefined(this.chartConfig.yAxis)) {
+            this.chartConfig.yAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
             
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
         var xAxisElements:any = observation
-            .sortAxis(forXAxis, "ascending")
+            // .sortAxis(forXAxis, "ascending")
             .getAxesElements(forXAxis);
             
         this.chartConfig.series.push ({ 

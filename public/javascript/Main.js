@@ -553,6 +553,20 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             this.chartConfig.xAxis.categories = [];
         }
         this.chartConfig.title.text = "";
+        if(true === _.isUndefined(this.chartConfig.xAxis)) {
+            this.chartConfig.xAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
+        if(true === _.isUndefined(this.chartConfig.yAxis)) {
+            this.chartConfig.yAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
         _.each(selectedComponentDimensions, function (selectedDimension) {
             if(null == forXAxis) {
                 forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
@@ -568,46 +582,87 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             forSeries = tmp;
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        var xAxisElements = observation.getAxesElements(forXAxis);
-        _.each(xAxisElements, function (xAxisElement) {
-            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-        });
-        var selectedDimensionPropertyUris = [];
-        _.each(selectedComponentDimensions, function (dimension) {
-            selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
-        });
-        var obj = {
-        };
-        var seriesElements = observation.getAxesElements(forSeries);
-        var uriCombination = "";
-        var usedDimensionElementCombinations = {
-        };
-
-        self.chartConfig.series = [];
-        _.each(seriesElements, function (seriesElement) {
-            obj = {
-                color: CubeViz_Visualization_Controller.getColor(seriesElement.self.__cv_uri),
-                data: [],
-                name: seriesElement.self.__cv_niceLabel
-            };
-            _.each(seriesElement.observations, function (seriesObservation) {
-                uriCombination = "";
-                _.each(selectedDimensionPropertyUris, function (dimensionUri) {
-                    uriCombination += seriesObservation[dimensionUri];
-                });
-                if(true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
-                    usedDimensionElementCombinations[uriCombination] = true;
-                } else {
-                    return;
-                }
-                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
-                    obj.data.push(parseFloat(seriesObservation[selectedMeasureUri]));
-                } else {
-                    obj.data.push(null);
-                }
+        if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
+            var xAxisElements = observation.getAxesElements(forXAxis);
+            _.each(xAxisElements, function (xAxisElement) {
+                self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
             });
-            self.chartConfig.series.push(obj);
-        });
+            var selectedDimensionPropertyUris = [];
+            _.each(selectedComponentDimensions, function (dimension) {
+                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
+            });
+            var obj = {
+            };
+            var seriesElements = observation.getAxesElements(forSeries);
+            var uriCombination = "";
+            var usedDimensionElementCombinations = {
+            };
+
+            self.chartConfig.series = [];
+            _.each(seriesElements, function (seriesElement) {
+                obj = {
+                    color: CubeViz_Visualization_Controller.getColor(seriesElement.self.__cv_uri),
+                    data: [],
+                    name: seriesElement.self.__cv_niceLabel
+                };
+                _.each(seriesElement.observations, function (seriesObservation) {
+                    uriCombination = "";
+                    _.each(selectedDimensionPropertyUris, function (dimensionUri) {
+                        uriCombination += seriesObservation[dimensionUri];
+                    });
+                    if(true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
+                        usedDimensionElementCombinations[uriCombination] = true;
+                    } else {
+                        return;
+                    }
+                    if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
+                        obj.data.push(parseFloat(seriesObservation[selectedMeasureUri]));
+                    } else {
+                        obj.data.push(null);
+                    }
+                });
+                self.chartConfig.series.push(obj);
+            });
+        } else {
+            if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
+                if(false === _.str.isBlank(forXAxis)) {
+                    var firstObservation = null;
+                    var seriesDataList = [];
+                    var xAxisElements = observation.getAxesElements(forXAxis);
+                    var value = 0;
+
+                    _.each(xAxisElements, function (xAxisElement) {
+                        firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                        self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+                        seriesDataList.push(firstObservation[selectedMeasureUri]);
+                    });
+                    this.chartConfig.series = [
+                        {
+                            name: ".",
+                            data: seriesDataList
+                        }
+                    ];
+                } else {
+                    var firstObservation = null;
+                    var seriesDataList = [];
+                    var seriesElements = observation.getAxesElements(forSeries);
+                    var value = 0;
+
+                    this.chartConfig.xAxis.categories = [
+                        "."
+                    ];
+                    _.each(seriesElements, function (seriesElement) {
+                        firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                        self.chartConfig.series.push({
+                            name: seriesElement.self.__cv_niceLabel,
+                            data: [
+                                firstObservation[selectedMeasureUri]
+                            ]
+                        });
+                    });
+                }
+            }
+        }
         return this;
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {
@@ -661,7 +716,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         _super.apply(this, arguments);
 
     }
-    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, oneElementDimensions, multipleDimensions, selectedMeasureUri) {
+    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri) {
         if(1 < _.size(multipleDimensions)) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
@@ -674,11 +729,25 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         var value = 0;
 
         this.chartConfig = chartConfig;
-        this.chartConfig.series = [];
         this.chartConfig.colors = [];
+        this.chartConfig.series = [];
         this.chartConfig.title.text = "";
+        if(true === _.isUndefined(this.chartConfig.xAxis)) {
+            this.chartConfig.xAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
+        if(true === _.isUndefined(this.chartConfig.yAxis)) {
+            this.chartConfig.yAxis = {
+                title: {
+                    text: ""
+                }
+            };
+        }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
+        var xAxisElements = observation.getAxesElements(forXAxis);
         this.chartConfig.series.push({
             type: "pie",
             name: this.chartConfig.title.text,
@@ -878,10 +947,19 @@ var DataCube_Observation = (function () {
         var observationDimensionProperty = {
         };
         var self = this;
+        var value = 0;
 
         this._axes = {
         };
         _.each(retrievedObservations, function (observation) {
+            try  {
+                value = parseFloat(observation[measureUri]);
+                if(true === _.str.include(observation[measureUri], " ")) {
+                    value = parseFloat(observation[measureUri].replace(/ /gi, ""));
+                }
+                observation[measureUri] = value;
+            } catch (ex) {
+            }
             _.each(selectedComponentDimensions, function (dimension) {
                 dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 observationDimensionProperty = observation[dimensionPropertyUri];
@@ -1835,7 +1913,7 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         var hC = new CubeViz_Visualization_HighCharts();
         var chart = hC.load(this.app._.ui.visualization.class);
-        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
             this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());

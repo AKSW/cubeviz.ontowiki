@@ -209,10 +209,10 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             visualizationSetting,
             this.app._.backend.retrievedObservations,
             this.app._.data.selectedComponents.dimensions,
-            CubeViz_Visualization_Controller.getOneElementDimensions (
+            CubeViz_Visualization_Controller.getMultipleDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            CubeViz_Visualization_Controller.getMultipleDimensions (
+            CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
             selectedMeasure["http://purl.org/linked-data/cube#measure"]
