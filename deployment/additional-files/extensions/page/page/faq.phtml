@@ -10,11 +10,11 @@ $(document).ready(function(){
                 min-height: 100%; height:auto !important; height:100%;">
     <h1 style="font-size: 24px;">Frequently Asked Questions (FAQ)</h1>
     <p>
-        On this page we will try to answer the remaining questions, we were not yet able to answer on the <a href="<?php echo $_REQUEST ['urlBase']; ?>page/howto">HowTo</a> and <a href="<?php echo $_REQUEST ['urlBase']; ?>page/examples">Examples</a> page. 
-        Please let us know in case we forgot something to explain. Our contact information can be found on the <a href="http://aksw.org/Projects/CubeViz">CubeViz Project Page</a>.
+        On this page we will try to answer the remaining questions, which we were not yet able to answer on the <a href="<?php echo $_REQUEST ['urlBase']; ?>page/howto">HowTo</a> and <a href="<?php echo $_REQUEST ['urlBase']; ?>page/examples">Examples</a> page. 
+        Please let us know in case we forgot to explain something. Our contact information can be found on the <a href="http://aksw.org/Projects/CubeViz">CubeViz Project Page</a>.
     </p>
 
-    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q1: Why do i sometimes receive an empty chart?</h2>    
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q1: Why do I sometimes receive an empty chart?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
         This behavior can have various reasons. 
         On the one hand it is possible that there is no data available according to the selection. 
@@ -26,11 +26,11 @@ $(document).ready(function(){
         To solve such problems we suggest to change the selection and/or the selected chart options.
     </p>
 
-    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q2: Why do values of observations sometimes have so much digits after the decimal point. 
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q2: Why do values of observations sometimes have so many digits after the decimal point. 
     Doesn’t it fit to use only four or five digits?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
         We use the data as it is represented in the DataCube. 
-        We do not want to manipulate anything on the data site. 
+        We do not want to manipulate anything on the data side. 
         In some domains much digits after the decimal point could be very interesting. 
         CubeViz is a generic tool and we do not know anything about the domain represented in the Cube. 
         We only know the vocabulary which is used to represent statistics.
@@ -38,10 +38,10 @@ $(document).ready(function(){
 
     <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q3: Sometimes I am able to create a pie-chart and sometimes I am not. Why am I not able to always generate the same chart?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
-        CubeViz contain an algorithm to analyze the selection of data in order to offer suitable charts. 
-        Some of the charts are an unsuitable or impossible choice for the respective data selection. 
+        CubeViz contains an algorithm to analyze the selection of data in order to offer suitable charts. 
+        Some of the charts are an unsuitable or an inappropriate choice for the respective data selection. 
         The pie-chart, for instance, is only available if the user selects multiple elements only from one dimension. 
-        The amount of elements from all other dimensions must exactly one.
+        The amount of elements from all other dimensions must be exactly one.
     </p>
 
     <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q4: Why is it not possible to select slices in order to filter the DataCube more detailed?</h2>    
@@ -58,7 +58,7 @@ $(document).ready(function(){
         But we are working on getting this feature being an integral part of CubeViz in the near future.
     </p>
 
-    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q6: Sometimes the User Interface do not update. What should i do?</h2>    
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q6: Sometimes the User Interface is not updated. What should I do?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
         Sometimes the browser session is lost. 
         Maybe you didn’t make an action for a long time. 
@@ -66,15 +66,15 @@ $(document).ready(function(){
         If you do not want to loose your data selection, please use the <em>Permalink</em> for the reload.
     </p>
 
-    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q7: Sometimes i have to wait a long time until the Chart is updating. What is the reason for that?</h2>    
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q7: Sometimes I have to wait a long time until the Chart is updating. What is the reason for that?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
         This behavior can have multiple reasons. 
         On specific timespans you are not the only user who is visiting our web sites. 
         That can lead to a high load on the server and users have to share processing times. <br>
-        An other reason could be that you made an inadequate selection. 
-        If you select to much data items the server respond with a huge set of information which have to be transfered and processed by your browser. 
+        Another reason could be that you made an inadequate selection. 
+        If you select to much data items the server respond with a huge set of information which has to be transfered and processed by your browser. 
         In such a case we suggest to deselect some of the items. 
-        Note that a chart will be not be well-arranged if to much information is included.
+        Note that a chart will be not be well-arranged if too much information is included.
     </p>
 
     <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q8: There is a tabular visualization in the list. What is it about?</h2>    
@@ -86,7 +86,7 @@ $(document).ready(function(){
 
     <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q9: Why do the colors of data items represented in charts sometimes leave room for improvement?</h2>    
     <p style="color: #4A4A4A; width: 96%;">
-        CubeViz provide an algorithm to generate colors in a deterministic way on the basis of identifiers of the underlying data items. 
+        CubeViz provides an algorithm to generate colors in a deterministic way on the basis of identifiers of the underlying data items. 
         This enables users to re-identify data items over different selections and charts. 
         In case that we do not know anything about the domain of the data we are not able to create fix mappings between colors and the elements to be visualized. 
         The result out of that algorithm is not always perfect, but without any color collapses.
