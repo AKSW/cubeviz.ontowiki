@@ -4,6 +4,11 @@
     margin-bottom: 35px;
 }
 
+#cubeviz-visualization-nothingFoundNotification
+{
+    padding-top: 100px;
+}
+
 #cubeviz-visualization-notificationHightchartsException10
 {
     margin-top: 100px; 

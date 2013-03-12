@@ -127,6 +127,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 .append (
                     $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
                 );
+                
+            this.triggerGlobalEvent("onReceived_noData");
             
             this.setVisualizationHeight();
         }
