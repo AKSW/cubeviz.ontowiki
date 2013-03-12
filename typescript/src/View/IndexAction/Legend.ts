@@ -299,7 +299,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // append generated list to info area and fade it in / out
         $("#cubeviz-legend-componentDimensionInfoDialog")
             .html("")
-            .append($(tplInfoHeader()))
+            .append($(tplInfoHeader(dimensionElement)))
             .append(infoList)
             .fadeIn("slow");
             
@@ -390,7 +390,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(
             $("#cubeviz-legend-componentDimensionInfoDialog"),
-            {closeOnEscape: true, showCross: true, height: 500, width: 550}
+            {closeOnEscape: true, showCross: true, height: 500, width: "50%"}
         );
         
         // remove event handler

@@ -1789,7 +1789,7 @@ var View_IndexAction_Legend = (function (_super) {
                 }));
             }
         });
-        $("#cubeviz-legend-componentDimensionInfoDialog").html("").append($(tplInfoHeader())).append(infoList).fadeIn("slow");
+        $("#cubeviz-legend-componentDimensionInfoDialog").html("").append($(tplInfoHeader(dimensionElement))).append(infoList).fadeIn("slow");
         $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
         return false;
     };
@@ -1821,7 +1821,7 @@ var View_IndexAction_Legend = (function (_super) {
             closeOnEscape: true,
             showCross: true,
             height: 500,
-            width: 550
+            width: "50%"
         });
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
         $("#cubeviz-legend-btnShowSelectedConfiguration").off();

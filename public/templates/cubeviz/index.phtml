@@ -290,7 +290,11 @@
 <div id="cubeviz-legend-componentDimensionInfoDialog"></div>
 
 <script id="cubeviz-legend-tpl-componentDimensionInfoHeader" type="text/template">
-    <h4>Information about dimension element</h4>
+    <div style="float: right;">
+        <img class="cubeviz-icon-unsized"
+             src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+    </div>
+    <h5>Metadata about the dimension element "<%= __cv_niceLabel %>"</h5>
 </script>
 
 <script id="cubeviz-legend-tpl-componentDimensionInfoList" type="text/template">
