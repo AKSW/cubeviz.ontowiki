@@ -1892,7 +1892,7 @@ var View_IndexAction_Visualization = (function (_super) {
         if(1 <= _.size(this.app._.backend.retrievedObservations)) {
             this.renderChart();
         } else {
-            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-nothingFoundNotificationContainer").html());
+            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-tpl-nothingFoundNotification").text());
             this.triggerGlobalEvent("onReceived_noData");
             this.setVisualizationHeight();
         }

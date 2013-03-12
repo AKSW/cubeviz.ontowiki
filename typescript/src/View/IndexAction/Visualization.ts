@@ -125,7 +125,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             $("#cubeviz-index-visualization")
                 .html ("")
                 .append (
-                    $("#cubeviz-visualization-nothingFoundNotificationContainer").html()
+                    $("#cubeviz-visualization-tpl-nothingFoundNotification").text()
                 );
                 
             this.triggerGlobalEvent("onReceived_noData");
