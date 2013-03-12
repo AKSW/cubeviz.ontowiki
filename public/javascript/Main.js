@@ -2057,21 +2057,18 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var self = this;
         var viszItem;
 
+        this.hideDongle();
         _.each(charts, function (chartObject) {
             viszItem = $(selectorItemTpl(chartObject));
             viszItem.data("class", chartObject.class);
-            if(self.app._.ui.visualization.class == chartObject.class) {
-                viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
-                self.showMenuDongle(viszItem);
-            }
             viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
-            $("#cubeviz-visualizationselector-selector").append(viszItem);
-            if(true === _.isUndefined(firstViszItem)) {
-                firstViszItem = viszItem;
+            if(self.app._.ui.visualization.class == chartObject.class) {
+                viszItem.addClass("cubeviz-visualizationselector-selectedSelectorItem").removeClass("cubeviz-visualizationselector-selectorItem");
             }
+            $("#cubeviz-visualizationselector-selector").append(viszItem);
         });
-        this.showMenuDongle(firstViszItem);
+        this.showMenuDongle($($("#cubeviz-visualizationselector-selector").find(".cubeviz-visualizationselector-selectedSelectorItem").first()));
         this.bindUserInterfaceEvents({
         });
         this.triggerGlobalEvent("onAfterRender_visualizationSelector");

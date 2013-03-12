@@ -146,10 +146,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             selectorItemDiv
                 .removeClass("cubeviz-visualizationselector-selectorItem")
                 .addClass("cubeviz-visualizationselector-selectedSelectorItem");
-                
-            /**
-             * Dongle
-             */
+            
             // show dongle under selected item
             this.showMenuDongle(selectorItemDiv);
         
@@ -250,6 +247,8 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             ),
             self = this,
             viszItem:any;
+            
+        this.hideDongle();
         
         // load icons
         _.each(charts, function(chartObject){
@@ -260,31 +259,29 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // attach data to chart item
             viszItem
                 .data("class", chartObject.class);
-                
-            // If current chart object is the selected visualization ...
-            if(self.app._.ui.visualization.class == chartObject.class) {
-                viszItem
-                    .addClass("cubeviz-visualizationselector-selectedSelectorItem")
-                    .removeClass("cubeviz-visualizationselector-selectorItem");
-                
-                self.showMenuDongle(viszItem);
-            }
             
             // set click event
             viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             
+            // If current chart object is the selected visualization ...
+            if(self.app._.ui.visualization.class == chartObject.class) {
+                viszItem
+                    .addClass("cubeviz-visualizationselector-selectedSelectorItem")
+                    .removeClass("cubeviz-visualizationselector-selectorItem");
+            }
+            
             // append chart item to selector
             $("#cubeviz-visualizationselector-selector")
                 .append(viszItem);
-                
-            if(true === _.isUndefined(firstViszItem)) {
-                firstViszItem = viszItem;
-            }
         });
         
-        // show menu dongle under the first item
-        this.showMenuDongle(firstViszItem);
+        // show menu dongle under the selected item
+        this.showMenuDongle(
+            $($("#cubeviz-visualizationselector-selector")
+                .find(".cubeviz-visualizationselector-selectedSelectorItem")
+                .first())
+        );
         
         /**
          * Delegate events to new items of the template
