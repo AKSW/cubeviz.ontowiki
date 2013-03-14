@@ -96,7 +96,6 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
          * List of items
          */        
         var list = $("#cubeviz-dataStructureDefinition-list"),
-            optionTpl = _.template($("#cubeviz-dataStructureDefinition-tpl-listOption").text()),
             self = this;
 
         // output loaded data
@@ -106,7 +105,10 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
             element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri
                 ? " selected" : "";
 
-            list.append(optionTpl(element));
+            list.append(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-dataStructureDefinition-tpl-listOption").html(),
+                element
+            ));
         });
         
         /**

@@ -68,7 +68,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(
             $("#cubeviz-index-headerDialogBox"),
-            {closeOnEscape: true, height: "500", showCross: true, width: "50%"}
+            {closeOnEscape: true, height: 450, showCross: true, width: "50%"}
         );
         
         // render header with model label + icon, to open dialog
@@ -93,8 +93,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
     public renderDialogBox() 
     {
         // 
-        var headerDialogHead = _.template($("#cubeviz-index-tpl-headerDialogBoxHead").text()),
-            modelLabel = "";
+        var modelLabel = "";
         
         // if model label is set and not blank, use it!
         if(false === _.isUndefined(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])
@@ -106,27 +105,27 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
             modelLabel = this.app._.backend.modelUrl;
         }
         
-        $("#cubeviz-index-headerDialogBox").html(headerDialogHead({
-            label: modelLabel
-        }));
+        // display model label
+        $("#cubeviz-index-headerDialogBox").html(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-index-tpl-headerDialogBoxHead").html(),
+            { label: modelLabel }
+        ));
         
-        // build list with model information
-        var entryTpl = _.template($("#cubeviz-index-tpl-headerDialogBoxEntry").text());
-       
-        var htmlModelInformation = "";
-       
+        /**
+         * build list with model information
+         */
+        var headerDialogBox:any = $($("#cubeviz-index-headerDialogBox").children().last());    
         _.each(this.app._.backend.modelInformation, function(entry){
-            htmlModelInformation += entryTpl({
-                predicateLabel: entry.predicateLabel,
-                objectContent: CubeViz_Visualization_Controller.linkify(
-                    entry.content
-                )
-            });
+            headerDialogBox.append(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-headerDialogBoxEntry").html(),
+                {
+                    predicateLabel: entry.predicateLabel,
+                    objectContent: CubeViz_Visualization_Controller.linkify(
+                        entry.content
+                    )
+                }
+            ));
         });
-       
-        $("#cubeviz-index-headerDialogBoxModelInformation").html(
-            htmlModelInformation
-        );
     }
     
     /**
@@ -146,10 +145,9 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
             modelLabel = this.app._.backend.modelUrl;
         }
         
-        var headerTpl = _.template($("#cubeviz-index-tpl-header").text());
-        
-        $("#cubeviz-index-header").html(headerTpl({
-            modelLabel: modelLabel
-        }));
+        $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-index-tpl-header").html(),
+            { modelLabel: modelLabel }
+        ));
     }
 }

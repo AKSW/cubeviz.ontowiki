@@ -144,7 +144,6 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          * List of items
          */        
         var list = $(this.attachedTo),
-            optionTpl = _.template($("#cubeviz-dataSet-tpl-listOption").text()),
             self = this;
         
         // output loaded data
@@ -154,7 +153,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
             element.selected = element.__cv_uri == self.app._.data.selectedDS.__cv_uri
                 ? " selected" : "";
                 
-            list.append(optionTpl(element));
+            list.append(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-dataSet-tpl-listOption").html(),
+                element
+            ));
         });
         
         /**

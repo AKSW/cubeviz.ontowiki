@@ -17,7 +17,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "bar",
-                "class": "CubeViz_Visualization_HighCharts_Bar",
+                "className": "CubeViz_Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -44,7 +44,7 @@ var CubeViz_ChartConfig = {
             },
             {
                 "label": "column",
-                "class": "CubeViz_Visualization_HighCharts_Column",
+                "className": "CubeViz_Visualization_HighCharts_Column",
                 "icon": "column.png",
                 "defaultConfig": {
                     "chart": { 
@@ -81,7 +81,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "bar",
-                "class": "CubeViz_Visualization_HighCharts_Bar",
+                "className": "CubeViz_Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -127,7 +127,7 @@ var CubeViz_ChartConfig = {
             },
             {
                 "label": "column",
-                "class": "CubeViz_Visualization_HighCharts_Column",
+                "className": "CubeViz_Visualization_HighCharts_Column",
                 "icon": "column.png",
                 "defaultConfig": {
                     "chart": { 
@@ -186,7 +186,7 @@ var CubeViz_ChartConfig = {
              */
            {
                 "label": "line",
-                "class": "CubeViz_Visualization_HighCharts_Line",
+                "className": "CubeViz_Visualization_HighCharts_Line",
                 "icon": "line.png",
                 
                 "defaultConfig": {
@@ -257,7 +257,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "pie",
-                "class": "CubeViz_Visualization_HighCharts_Pie",
+                "className": "CubeViz_Visualization_HighCharts_Pie",
                 "icon": "pie.png",
                 
                 "defaultConfig": {
@@ -301,7 +301,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "bar",
-                "class": "CubeViz_Visualization_HighCharts_Bar",
+                "className": "CubeViz_Visualization_HighCharts_Bar",
                 "icon": "bar.png",
                 
                 "defaultConfig": {
@@ -376,7 +376,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "polar",
-                "class": "CubeViz_Visualization_HighCharts_Polar",
+                "className": "CubeViz_Visualization_HighCharts_Polar",
                 "icon": "polar.png",
                 
                 "defaultConfig": {
@@ -440,7 +440,7 @@ var CubeViz_ChartConfig = {
              */
             {
                 "label": "line",
-                "class": "CubeViz_Visualization_HighCharts_Line",
+                "className": "CubeViz_Visualization_HighCharts_Line",
                 "icon": "line.png",
                 
                 "defaultConfig": {

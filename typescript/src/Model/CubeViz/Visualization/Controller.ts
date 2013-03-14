@@ -40,7 +40,7 @@ class CubeViz_Visualization_Controller
         
         _.each(charts, function(chart){
             if(true === _.isUndefined(result)){
-                if(className == chart.class) {
+                if(className == chart.className) {
                     result = chart;
                 }
             }
@@ -154,7 +154,7 @@ class CubeViz_Visualization_Controller
     static setChartConfigClassEntry ( className:string, charts:Object[], newValue:any ) 
     {
         for ( var i in charts ) {
-            if(className == charts [i].class) {
+            if(className == charts [i].className) {
                 charts [i] = newValue;
             }
         }
@@ -188,10 +188,15 @@ class CubeViz_Visualization_Controller
         
         // go through all 
         _.each(menuItemValues, function(menuItemValue){
-            
+                        
             // extract key and values from menu item value
             optionKey = $(menuItemValue).data("key");
             optionVal = $(menuItemValue).val();
+            
+            // stop execution if select-box has no valid key
+            if(true === _.isUndefined(optionKey)) {
+                return;
+            }
             
             // split key and set value
             call = "updatedSetting";

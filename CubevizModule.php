@@ -95,6 +95,12 @@ class CubevizModule extends OntoWiki_Module
             ->prependStylesheet($baseCssPath.'CubeVizModule/footer.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/module.css');
         
+        // IE specific CSS for fontawesome
+        if (strpos($_SERVER['HTTP_USER_AGENT'], '(compatible; MSIE ')!==FALSE) {
+            $this->view->headLink()
+                 ->appendStylesheet($baseCssPath.'foreign/FontAwesome/css/font-awesome-ie7.min.css');
+        }
+        
         /**
          * Model information
          */

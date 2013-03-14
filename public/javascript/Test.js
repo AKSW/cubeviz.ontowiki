@@ -124,9 +124,6 @@ var CubeViz_Collection = (function () {
                 }
                 return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch (e) {
-                console.log("for useKey: " + useKey);
-                console.log("a: " + a[useKey] + " and b: " + b[useKey]);
-                console.log(e);
             }
         });
         return this;
@@ -325,6 +322,16 @@ var CubeViz_View_Helper = (function () {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
+    }
+    CubeViz_View_Helper.tplReplace = function tplReplace(templateStr, contentObj) {
+        if(true === _.isUndefined(contentObj)) {
+            return templateStr;
+        }
+        var contentObjKeys = _.keys(contentObj);
+        _.each(contentObjKeys, function (key) {
+            templateStr = templateStr.replace("[[" + key + "]]", contentObj[key]);
+        });
+        return templateStr;
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
@@ -826,7 +833,7 @@ cubeViz_tests.push(function () {
 });
 cubeViz_tests.push(function () {
     cubeVizApp.triggerEvent("onStart_application");
-    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.class;
+    var viszClassBeforeItemClick = cubeVizApp._.ui.visualization.className;
     var items = $("#cubeviz-visualizationselector-selector").children();
     var secondItem = $(items[1]);
     var secondItemsClass = $(secondItem).data("class");

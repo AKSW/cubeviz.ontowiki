@@ -34,16 +34,14 @@
         <!-- Information about the components -->
         <a class="cubeviz-btn" id="cubeviz-legend-btnShowSelectedConfiguration">
             <i class="icon-chevron-down"></i> &nbsp;
-            <?php echo $this->_translate->_('Selected Configuration'); ?>
-        </a>
+            Selected Configuration</a>
         
         &nbsp;
         
         <!-- Information about the observations itself -->
         <a class="cubeviz-btn" id="cubeviz-legend-btnShowRetrievedObservations">
             <i class="icon-chevron-down"></i> &nbsp;
-            <?php echo $this->_translate->_('Retrieved Data'); ?>
-        </a>
+            Retrieved Data</a>
         
         <!-- Selected configuration -->
         <div id="cubeviz-legend-selectedConfiguration" style="display: none;">
@@ -74,7 +72,7 @@
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
         
-        <h4><?php echo $this->_translate->_('Configure the visualization'); ?></h4>
+        <h4>Configure the visualization</h4>
         
         <div id="cubeviz-visualizationselector-menuItems"></div>
         <br/>
@@ -83,20 +81,20 @@
         <div style="clear:both; text-align:right;">
             <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-closeMenu"
-               title="<?php echo $this->_translate->_('Close this menu without apply changes'); ?>">
-                <?php echo $this->_translate->_('Close'); ?>
+               title="Close this menu without apply changes">
+                Close
             </a>
             
             <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-updateVisz"
-               title="<?php echo $this->_translate->_('Update visualization based on new settings'); ?>">
-                <strong><?php echo $this->_translate->_('Update'); ?></strong>
+               title="Update visualization based on new settings">
+                <strong>Update</strong>
             </a>
         </div>
     </div>
     <div class="cubeviz-clickable" id="cubeviz-visualizationselector-menuDongleDiv">
         <img src="<?php echo $this->cubevizImagesPath; ?>menuDongle.png"
-             style="width: 40px; height: 5px;"/>
+             style="width: 25px; height: 5px;"/>
     </div>
 </div>
 
@@ -110,57 +108,56 @@
 <!-- 
     Header
 -->
-<script id="cubeviz-index-tpl-header" type="text/template">
-    Visualization of the <%= modelLabel %>
+<div id="cubeviz-index-tpl-header" style="display: none;">
+    Visualization of the [[modelLabel]]
     &nbsp;
     <i class="icon-lightbulb cubeviz-clickable"
        id="cubeviz-index-headerQuestionMarkHeadline" 
-       title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
-</script>
+       title="Click for more information"></i>
+</div>
 
 <!-- 
     Visualization selection menu 
 -->
-<script id="cubeviz-visualizationselector-tpl-selectorItem" type="text/template">
+<div id="cubeviz-visualizationselector-tpl-selectorItem" style="display: none;">
     <a class="btn cubeviz-visualizationselector-selectorItem">
-        <img class="cubeviz-icon-small" 
-             src="<?php echo $this->cubevizImagesPath; ?><%= icon %>"/>
+        <img class="cubeviz-icon-small" src=""/>
     </a>
-</script>
+</div>
 
-<script id="cubeviz-visualizationselector-tpl-menuItem" type="text/template">
+<div id="cubeviz-visualizationselector-tpl-menuItem" style="display: none;">
     <div class="cubeviz-visualizationselector-menuItem" style="clear:both;">
-        <div style="float:left; margin-left:3px;"><%= label %></div>
+        <div style="float:left; margin-left:3px;">[[label]]</div>
         <div style="float:right">
             <select class="cubeviz-visualizationselector-menuSelectbox cubeviz-visualizationselector-menuItemValue"></select>
         </div>
     </div>
-</script>
+</div>
 
 <!-- 
     Dialog box for questionmark in headline (cubeviz-index-headerDialogBox) 
 -->
-<script id="cubeviz-index-tpl-headerDialogBoxHead" type="text/template">
+<div id="cubeviz-index-tpl-headerDialogBoxHead" style="display: none;">
     <div style="margin-top: 4px; float: right; clear: both;">
         <img class="cubeviz-icon-unsized"
              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
-    <h4>Metadata about the dataset "<%= label %>"</h4>
+    <h4>Metadata about the dataset "[[label]]"</h4>
     <ul id="cubeviz-index-headerDialogBoxModelInformation"></ul>
-</script>
+</div>
 
-<script id="cubeviz-index-tpl-headerDialogBoxEntry" type="text/template">
+<div id="cubeviz-index-tpl-headerDialogBoxEntry" style="display: none;">
     <li class="cubeviz-index-headerDialogBoxEntry">
-        <strong><%= predicateLabel %></strong>
+        <strong>[[predicateLabel]]</strong>
         <div class="cubeviz-index-headerDialogBoxEntryContent">
-            <%= objectContent %></div>
+            [[objectContent]]</div>
     </li>
-</script>
+</div>
 
 <!-- 
     notification if no data were received
 -->
-<script id="cubeviz-visualization-tpl-nothingFoundNotification" type="text/template">      
+<div id="cubeviz-visualization-tpl-nothingFoundNotification" style="display: none;">      
     <div id="cubeviz-visualization-nothingFoundNotification" align="center">
         <h4>
             No data fits to your selection, please adapt your selection in the left sidebar manually.
@@ -191,12 +188,12 @@
             </div>
         </div>
     </div>
-</script>
+</div>
 
 <!-- 
     notification if highcharts.com #10 exception appears
 -->
-<script id="cubeviz-visualization-tpl-notificationHightchartsException10" type="text/template">
+<div id="cubeviz-visualization-tpl-notificationHightchartsException10" style="display: none;">
     <div align="center">
         <div id="cubeviz-visualization-notificationHightchartsException10">
             <h4>
@@ -206,35 +203,31 @@
             </h4>
         </div>
     </div>
-</script>
+</div>
 
 <!--
     Legend
 -->
-<script id="cubeviz-legend-tpl-dsdAndDs" type="text/template">
+<div id="cubeviz-legend-tpl-dsdAndDs" style="display: none;">
     <h3>
-        <a href="<%= dsdUrl %>" target="_blank"><%= dsdLabel %></a> -
-        <a href="<%= dsUrl %>" target="_blank"><%= dsLabel %></a>
+        <a href="[[dsdUrl]]" target="_blank">[[dsdLabel]]</a> -
+        <a href="[[dsUrl]]" target="_blank">[[dsLabel]]</a>
     </h3>
-</script>
+</div>
 
-<script id="cubeviz-legend-tpl-dimensionElementLabel" type="text/template"> 
-    <a href="<%= __cv_uri %>" target="_blank" title="<%= fullLabel %>"><%= shortLabel %></a>
-</script>
-
-<script id="cubeviz-legend-tpl-observation" type="text/template">
+<div id="cubeviz-legend-tpl-observation" style="display: none;">
     <li>
         <span class="cubeviz-legend-observationIcon">
             <i class="icon-map-marker"></i>
         </span>
         <span>
-            <span class="cubeviz-legend-observationLabel"><%= __cv_niceLabel %></span>
+            <span class="cubeviz-legend-observationLabel">[[__cv_niceLabel]]</span>
             
-            <span class="cubeviz-legend-observationValue"><%= __cv_value %></span>
+            <span class="cubeviz-legend-observationValue">[[__cv_value]]</span>
             
             <div style="height: 5px;"></div>
             
-            <a href="<%= __cv_uri %>" target="_blank">Go to source</a>
+            <a href="[[__cv_uri]]" target="_blank">Go to source</a>
             
             <div style="height: 10px;"></div>
             
@@ -242,72 +235,72 @@
             <ul class="cubeviz-legend-observationInfoList"></ul>
         </span>
     </li>
-</script>
+</div>
 
 
-<script id="cubeviz-legend-tpl-observationInfoListEntry" type="text/template"> 
+<div id="cubeviz-legend-tpl-observationInfoListEntry" style="display: none;"> 
     <li class="cubeviz-legend-observationInfoListEntry">
-        <strong><%= dimensionLabel %>:</strong>
-        <a href="<%= __cv_uri %>" target="_blank" title="<%= fullLabel %>">
-            <%= shortLabel %></a>
+        <strong>[[dimensionLabel]]:</strong>
+        <a href="[[__cv_uri]]" target="_blank" title="[[fullLabel]]">
+            [[shortLabel]]</a>
     </li>
-</script>
+</div>
 
 
-<script id="cubeviz-legend-tpl-componentList" type="text/template"> 
+<div id="cubeviz-legend-tpl-componentList" style="display: none;"> 
     <ul id="cubeviz-legend-componentList"></ul>
-</script>
+</div>
 
-<script id="cubeviz-legend-tpl-componentDimension" type="text/template"> 
+<div id="cubeviz-legend-tpl-componentDimension" style="display: none;"> 
     <li class="cubeviz-legend-componentDimensionListEntry">
-        <h3><%= __cv_niceLabel %></h3>
+        <h3>[[__cv_niceLabel]]</h3>
         <ul class="cubeviz-legend-componentDimensionList"></ul>
     </li>
-</script>
+</div>
 
-<script id="cubeviz-legend-tpl-componentDimensionEntry" type="text/template"> 
+<div id="cubeviz-legend-tpl-componentDimensionEntry" style="display: none;"> 
     <li class="cubeviz-legend-componentDimensionEntry">        
         <span class="cubeviz-legend-componentDimensionIcon">
             <i class="icon-leaf" style="font-size: 11px;"></i>
         </span>
         <span>
-            <span style="font-size: 17px;" title="<%= fullLabel %>">
-                <%= shortLabel %></span>
+            <span style="font-size: 17px;" title="[[fullLabel]]">
+                [[shortLabel]]</span>
             <div style="height: 8px;"></div>
             <a class="cubeviz-legend-componentDimensionShowInfo">
                 Show more information</a>
             <i class="icon-lightbulb cubeviz-clickable"></i>
             &nbsp;
             &nbsp;
-            <a href="<%= __cv_uri %>" target="_blank">Go to source</a>
+            <a href="[[__cv_uri]]" target="_blank">Go to source</a>
         </span>
     </li>
-</script>
+</div>
 
 <!-- 
     Dialog box for questionmark in headline(cubeviz-Index-questionMarkHeadline) 
 -->
 <div id="cubeviz-legend-componentDimensionInfoDialog"></div>
 
-<script id="cubeviz-legend-tpl-componentDimensionInfoHeader" type="text/template">
+<div id="cubeviz-legend-tpl-componentDimensionInfoHeader" style="display: none;">
     <div style="float: right;">
         <img class="cubeviz-icon-unsized"
              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
-    <h5>Metadata about the dimension element "<%= __cv_niceLabel %>"</h5>
-</script>
+    <h5>Metadata about the dimension element "[[__cv_niceLabel]]"</h5>
+</div>
 
-<script id="cubeviz-legend-tpl-componentDimensionInfoList" type="text/template">
+<div id="cubeviz-legend-tpl-componentDimensionInfoList" style="display: none;">
     <ul class="cubeviz-legend-componentDimensionInfoList"></ul>
-</script>
+</div>
 
-<script id="cubeviz-legend-tpl-componentDimensionInfoListEntry" type="text/template"> 
+<div id="cubeviz-legend-tpl-componentDimensionInfoListEntry" style="display: none;"> 
     <li>
         <br/>
-        <strong><%= key %></strong>
+        <strong>[[key]]</strong>
         <br/>
-        <%= value %>
+        [[value]]
     </li>
-</script>
+</div>
 
 

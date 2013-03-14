@@ -4,9 +4,9 @@
     
     cubeVizApp
         .add("View_CubeVizModule_DataStructureDefintion", "#cubeviz-dataStructureDefinition-list")
-        .add("View_CubeVizModule_Footer", "#cubeviz-footer-container")    
         .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
-        .add("View_CubeVizModule_Component", "#cubviz-component-listBox");
+        .add("View_CubeVizModule_Component", "#cubviz-component-listBox")
+        .add("View_CubeVizModule_Footer", "#cubeviz-footer-container");
 </script>
 
 <!-- 
@@ -23,13 +23,14 @@
     <div id="cubviz-dataStructureDefinition-container">
         <div style="width: 100%; margin-bottom:2px;">
             <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->_translate->_('Select group of interest'); ?>
+                Select group of interest
             </div>
             <div style="float:right; padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-dataStructureDefinition-questionMark"
-                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+                   title="Click for more information"></i>
             </div>
+            <br/>
             <select name="cubeviz-dataStructureDefinition-list" 
                      id="cubeviz-dataStructureDefinition-list"></select>
         </div>
@@ -39,12 +40,12 @@
     <div id="cubviz-dataSet-container">
         <div style="width: 100%; margin-bottom:2px;">
             <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->_translate->_('Select part of group'); ?>
+                Select part of group
             </div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-dataSet-questionMark"
-                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+                   title="Click for more information"></i>
             </div>                    
         </div>
         <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
@@ -57,12 +58,12 @@
     <div id="cubviz-component-container">
         <div style="width: 100%;">
             <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->_translate->_('Select axis elements'); ?>
+                Select axis elements
             </div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-component-questionMark"
-                   title="<?php echo $this->_translate->_('Click for more information'); ?>"></i>
+                   title="Click for more information"></i>
             </div>
         </div>
         <div style="clear: both;"></div>
@@ -72,14 +73,14 @@
     <div id="cubeviz-footer-container">                
         <span style="float:left;">
             <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
-                <?php echo $this->_translate->_('Permalink'); ?></a>
+                Permalink</a>
             <span id="cubeviz-footer-permaLinkMenu">
                 <span id="cubeviz-footer-permaLink" style="display: none;">Link</span>
             </span>
         </span>
         <span style="float:right;">
             <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
-                <?php echo $this->_translate->_('Show Visualization'); ?></a>
+                Show Visualization</a>
         </span>
     </div>
 </div>
@@ -91,7 +92,7 @@
 -->
 <div id="cubeviz-dataStructureDefinition-dialog" 
       style="display: none;"
-      title="<?php echo $this->_translate->_('Information'); ?>">
+      title="Information">
     <div style="margin-top: 4px; float: right;">
         <img class="cubeviz-icon-unsized"
               src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
@@ -111,7 +112,7 @@
 
 <div id="cubeviz-dataSet-dialog" 
       style="display: none;"
-      title="<?php echo $this->_translate->_('Information'); ?>">
+      title="Information">
     <div style="margin-top: 4px; float: right;">
         <img class="cubeviz-icon-unsized"
               src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
@@ -128,12 +129,10 @@
     </div>
 </div>
 
-<div id="cubeviz-component-dialog" 
-     style="display: none;"
-     title="<?php echo $this->_translate->_('Information'); ?>">
+<div id="cubeviz-component-dialog" style="display: none;" title="Information">
     <div style="margin-top: 4px; float: right;">
         <img class="cubeviz-icon-unsized"
-              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
+             src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <div style="float: left;">
         <h4>Select axis elements</h4>
@@ -161,43 +160,47 @@
     #########
 -->
 <!-- Data Structure Definition -->
-<script id="cubeviz-dataStructureDefinition-tpl-listOption" type="text/template">
-    <option value="<%= __cv_uri %>"<%= selected %>><%= __cv_niceLabel %></option>
-</script>
+<div id="cubeviz-dataStructureDefinition-tpl-listOption" style="display: none;">
+    <option value="[[__cv_uri]]"[[selected]]>
+        [[__cv_niceLabel]]
+    </option>
+</div>
 
 <!-- Data Set -->
-<script id="cubeviz-dataSet-tpl-listOption" type="text/template">
-    <option value="<%= __cv_uri %>"<%= selected %>><%= __cv_niceLabel %></option>
-</script>
+<div id="cubeviz-dataSet-tpl-listOption" style="display: none;">
+    <option value="[[__cv_uri]]"[[selected]]>
+        [[__cv_niceLabel]]
+    </option>
+</div>
 
 <!-- Component-Dimension -->
-<script id="cubeviz-component-tpl-listBoxItem" type="text/template">
-    <div class="cubeviz-component-box" id="cubeviz-component-box-<%= __cv_uri %>">    
+<div id="cubeviz-component-tpl-listBoxItem" style="display: none;">
+    <div class="cubeviz-component-box" id="cubeviz-component-box-[[__cv_uri]]">    
         <h3>
-            <%= __cv_niceLabel %>&nbsp;
+            [[__cv_niceLabel]]&nbsp;
             <nobr>
-                (<span class="cubeviz-component-selectedCount"><%= selectedElementCount %></span> 
-                / <%= elementCount %>)
+                (<span class="cubeviz-component-selectedCount">[[selectedElementCount]]</span> 
+                / [[elementCount]])
             </nobr>
         </h3>
         <a class="cubeviz-component-setupComponentOpener">
-            <?php echo $this->_translate->_('Select elements of interest'); ?>
+            Select elements of interest
         </a>        
     </div>
-</script>
+</div>
 
 <!-- Dialogs -->
-<script id="cubeviz-component-tpl-setupComponentDialog" type="text/template">
+<div id="cubeviz-component-tpl-setupComponentDialog" style="display: none;">
     <div class="cubeviz-component-setupComponentDialog"
-         id="cubeviz-component-setupComponentDialog-<%= __cv_hashedUri %>"
-         title="<?php echo $this->_translate->_('Select elements of interest'); ?>">
+         id="cubeviz-component-setupComponentDialog-[[__cv_hashedUri]]"
+         title="Select elements of interest">
          
         <div style="float:right">
             <img class="cubeviz-icon-unsized"
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
         </div>
         
-        <h3 style="margin-top: 0px;"><%= __cv_niceLabel %></h3>      
+        <h3 style="margin-top: 0px;">[[__cv_niceLabel]]</h3>      
         
         <div class="cubeviz-component-sortButtons" style="float:right; vertical-align: middle;">
             Sort by: 
@@ -217,8 +220,7 @@
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
         <div style="margin-top: 5px; float:right;">            
-            <span class="cubeviz-btn cubeviz-component-cancel">
-                <?php echo $this->_translate->_('Cancel'); ?></span>
+            <span class="cubeviz-btn cubeviz-component-cancel">Cancel</span>
             &nbsp;
             <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
                 <i class="icon-spinner icon-spin cubeviz-component-closeUpdateSpinner" 
@@ -227,13 +229,13 @@
                 Close and update visualization</span>
         </div>
     </div>
-</script>
+</div>
 
-<script id="cubeviz-component-tpl-setupComponentElement" type="text/template">
+<div id="cubeviz-component-tpl-setupComponentElement" style="display: none;">
     <li>
-        <input type="checkbox" name="<%= __cv_uri %>" value="<%= __cv_uri %>"<%= checked %>/>
+        <input type="checkbox" name="[[__cv_uri]]" value="[[__cv_uri]]"[[checked]]/>
         <span style="vertical-align: middle;">
-            <span><%= __cv_niceLabel %></span>
+            <span>[[__cv_niceLabel]]</span>
         </span>
     </li>
-</script>
+</div>

@@ -112,10 +112,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // and than extract associated visualization class
         if(true === _.isUndefined($(event.target).data("class"))) {
             selectorItemDiv = $($(event.target).parent());
-            this.app._.ui.visualization.class = selectorItemDiv.data("class");
+            this.app._.ui.visualization.className = selectorItemDiv.data("class");
         } else {
             selectorItemDiv = $(event.target);
-            this.app._.ui.visualization.class = selectorItemDiv.data("class");
+            this.app._.ui.visualization.className = selectorItemDiv.data("class");
         }
         
         /**
@@ -125,7 +125,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
         this.hideDongle();
         
-        if(prevClass == this.app._.ui.visualization.class) {
+        if(prevClass == this.app._.ui.visualization.className) {
             
             this.showMenu(selectorItemDiv);
             
@@ -174,7 +174,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     {        
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class,
+                this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
             self = this;
@@ -184,10 +184,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // hint: the function will generate a new object (using JSON transformation)
         //       to avoid changing the orginally ChartConfig.js entry given from 
         //       the server
-        this.app._.ui.visualizationSettings[this.app._.ui.visualization.class] = 
+        this.app._.ui.visualizationSettings[this.app._.ui.visualization.className] = 
             CubeViz_Visualization_Controller.updateVisualizationSettings(
                 $(".cubeviz-visualizationselector-menuItemValue"),
-                this.app._.ui.visualizationSettings[this.app._.ui.visualization.class],
+                this.app._.ui.visualizationSettings[this.app._.ui.visualization.className],
                 fromChartConfig.defaultConfig
         );
         
@@ -242,9 +242,6 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions,
             charts = this.app._.backend.chartConfig[numberOfMultDims].charts,
             firstViszItem:any,
-            selectorItemTpl = _.template(
-                $("#cubeviz-visualizationselector-tpl-selectorItem").text()
-            ),
             self = this,
             viszItem:any;
             
@@ -254,18 +251,24 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         _.each(charts, function(chartObject){
             
             // create new chart item (DOM element)
-            viszItem = $(selectorItemTpl(chartObject));
+            viszItem = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-visualizationselector-tpl-selectorItem").html()
+            ));
             
+            // add image to new selector button
+            $(viszItem.find(".cubeviz-icon-small").first())
+                .attr ("src", self.app._.backend.imagesPath + chartObject.icon);
+                
             // attach data to chart item
             viszItem
-                .data("class", chartObject.class);
+                .data("class", chartObject.className);
             
             // set click event
             viszItem.off("click");
             viszItem.on("click", $.proxy(self.onClick_selectorItem, self));
             
             // If current chart object is the selected visualization ...
-            if(self.app._.ui.visualization.class == chartObject.class) {
+            if(self.app._.ui.visualization.className == chartObject.className) {
                 viszItem
                     .addClass("cubeviz-visualizationselector-selectedSelectorItem")
                     .removeClass("cubeviz-visualizationselector-selectorItem");
@@ -305,19 +308,16 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
             // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class,
+                this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
             
             menuItem:any,
-            menuItemTpl:any = _.template(
-                $("#cubeviz-visualizationselector-tpl-menuItem").text()
-            ),
             menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html(),
             position:any = selectorItemDiv.position(),
             selectBox:any,
             shortCutViszSettings:any = this.app._.ui.visualizationSettings
-                [this.app._.ui.visualization.class],
+                [this.app._.ui.visualization.className],
             valueOption:any;
         
         if(false === _.isUndefined(fromChartConfig.options)
@@ -330,7 +330,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 alreadySetSelected = false;
                 
                 // template > DOM element
-                menuItem = $(menuItemTpl(option));
+                menuItem = $(CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-visualizationselector-tpl-menuItem").html(),
+                    option
+                ));
                 
                 // get selectbox
                 selectBox = $(menuItem.find(".cubeviz-visualizationselector-menuSelectbox").get(0));
@@ -428,7 +431,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         
             // get chart config
             fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.class, charts
+                this.app._.ui.visualization.className, charts
             );
             
         // show dongle if menu options are available
@@ -440,7 +443,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // positioning and show dongle
             $("#cubeviz-visualizationselector-menuDongleDiv")
                 .css("top", position.top + 25)
-                .css("left", position.left + 7)
+                .css("left", position.left + 14)
                 .fadeIn("slow");
         }
     }
