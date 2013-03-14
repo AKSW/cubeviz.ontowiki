@@ -155,7 +155,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
-            selectedMeasure:any = this.app._.data.selectedComponents.measures[Object.keys(
+            selectedMeasure:any = this.app._.data.selectedComponents.measures[_.keys(
                 this.app._.data.selectedComponents.measures
             )[0]],
             type:string = null, 

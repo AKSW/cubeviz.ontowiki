@@ -738,7 +738,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
         }
-        var forXAxis = multipleDimensions[Object.keys(multipleDimensions)[0]]["http://purl.org/linked-data/cube#dimension"];
+        var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]["http://purl.org/linked-data/cube#dimension"];
         var label = "";
         var observation = new DataCube_Observation();
         var self = this;
@@ -1799,7 +1799,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
-        var selectedMeasureUri = this.app._.data.selectedComponents.measures[Object.keys(this.app._.data.selectedComponents.measures)[0]]["http://purl.org/linked-data/cube#measure"];
+        var selectedMeasureUri = this.app._.data.selectedComponents.measures[_.keys(this.app._.data.selectedComponents.measures)[0]]["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
         this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
@@ -1890,7 +1890,7 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     View_IndexAction_Visualization.prototype.renderChart = function () {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        var selectedMeasure = this.app._.data.selectedComponents.measures[Object.keys(this.app._.data.selectedComponents.measures)[0]];
+        var selectedMeasure = this.app._.data.selectedComponents.measures[_.keys(this.app._.data.selectedComponents.measures)[0]];
         var type = null;
         var visualizationSetting = null;
 
