@@ -1,5 +1,4 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
-/// <reference path="..\..\..\declaration\libraries\jsontemplate.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
 class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract 
@@ -97,7 +96,6 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
          * List of items
          */        
         var list = $("#cubeviz-dataStructureDefinition-list"),
-            optionTpl = jsontemplate.Template($("#cubeviz-dataStructureDefinition-tpl-listOption").html()),
             self = this;
 
         // output loaded data
@@ -107,7 +105,10 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
             element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri
                 ? " selected" : "";
 
-            list.append(optionTpl.expand(element));
+            list.append(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-dataStructureDefinition-tpl-listOption").html(),
+                element
+            ));
         });
         
         /**

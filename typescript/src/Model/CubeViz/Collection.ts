@@ -187,9 +187,7 @@ class CubeViz_Collection
                 
                 return (c < d) ? -1 : (c > d) ? 1 : 0;
             } catch(e) {
-                console.log("for useKey: " + useKey);
-                console.log("a: " + a[useKey] + " and b: " + b[useKey]);
-                console.log(e);
+                
             }
         });
         

@@ -79,7 +79,36 @@ class CubeViz_View_Helper
         
         // Change overlay height for the dialog
         $(".ui-widget-overlay").css("height", 2 * screen.height);
-    } 
+    }
+    
+    /**
+     * Ultra simple template engine. Replaces all occurrencs of the keys of the
+     * given object located in the templateStr with the associated object content.
+     * @param templateStr String represents the template
+     * @param contentObj Object with alphanumeric keys and content used to 
+     *                   fill the placeholders
+     * @return string Adapted given template string
+     */
+    static tplReplace(templateStr:string, contentObj?:any) : string
+    {    
+        if(true === _.isUndefined(contentObj)) {
+            return templateStr;
+        }
+        
+        // get keys of given object because keys are representing placeholders
+        // in the given template string and will be replaced later on
+        var contentObjKeys = _.keys(contentObj);
+        
+        // replace placeholders according the keys of contentObj
+        _.each(contentObjKeys, function(key){
+            templateStr = templateStr.replace (
+                "[[" + key + "]]", 
+                contentObj[key]
+            );
+        });
+        
+        return templateStr;
+    }
     
     /**
      * Sort list items by alphabet.

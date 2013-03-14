@@ -188,10 +188,6 @@ class CubeViz_Visualization_HighCharts_Chart
                     
                     firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
                     
-                    console.log("");
-                    console.log("firstObservation");
-                    console.log(firstObservation);
-                    
                     // add entry on the y axis
                     self.chartConfig.xAxis.categories.push(
                         xAxisElement.self.__cv_niceLabel

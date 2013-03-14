@@ -242,9 +242,6 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         var numberOfMultDims = this.app._.data.numberOfMultipleDimensions,
             charts = this.app._.backend.chartConfig[numberOfMultDims].charts,
             firstViszItem:any,
-            selectorItemTpl = _.template(
-                $("#cubeviz-visualizationselector-tpl-selectorItem").text()
-            ),
             self = this,
             viszItem:any;
             
@@ -254,8 +251,14 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         _.each(charts, function(chartObject){
             
             // create new chart item (DOM element)
-            viszItem = $(selectorItemTpl(chartObject));
+            viszItem = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-visualizationselector-tpl-selectorItem").html()
+            ));
             
+            // add image to new selector button
+            $(viszItem.find(".cubeviz-icon-small").first())
+                .attr ("src", self.app._.backend.imagesPath + chartObject.icon);
+                
             // attach data to chart item
             viszItem
                 .data("class", chartObject.className);
@@ -310,9 +313,6 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             ),
             
             menuItem:any,
-            menuItemTpl:any = _.template(
-                $("#cubeviz-visualizationselector-tpl-menuItem").text()
-            ),
             menuItemsHtml = $("#cubeviz-visualizationselector-menuItems").html(),
             position:any = selectorItemDiv.position(),
             selectBox:any,
@@ -330,7 +330,10 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 alreadySetSelected = false;
                 
                 // template > DOM element
-                menuItem = $(menuItemTpl(option));
+                menuItem = $(CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-visualizationselector-tpl-menuItem").html(),
+                    option
+                ));
                 
                 // get selectbox
                 selectBox = $(menuItem.find(".cubeviz-visualizationselector-menuSelectbox").get(0));
@@ -440,7 +443,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // positioning and show dongle
             $("#cubeviz-visualizationselector-menuDongleDiv")
                 .css("top", position.top + 25)
-                .css("left", position.left + 7)
+                .css("left", position.left + 14)
                 .fadeIn("slow");
         }
     }
