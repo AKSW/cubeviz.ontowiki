@@ -148,10 +148,10 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         
         // output loaded data
         this.collection.each(function(element){
-            list.append(CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-dataSet-tpl-listOption").html(),
-                element
-            ));
+            list.append(
+                "<option value=\"" + element.__cv_uri + "\">" + 
+                    element.__cv_niceLabel + "</option>"
+            );
         });
         
         // mark selected element

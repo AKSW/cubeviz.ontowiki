@@ -97,13 +97,15 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
          */        
         var list = $("#cubeviz-dataStructureDefinition-list"),
             self = this;
+            
+        list.empty();
 
         // output loaded data
         this.collection.each(function(element){
-            list.append(CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-dataStructureDefinition-tpl-listOption").html(),
-                element
-            ));
+            list.append(
+                "<option value=\"" + element.__cv_uri + "\">" + 
+                    element.__cv_niceLabel + "</option>"
+            );
         });
         
         // mark selected element

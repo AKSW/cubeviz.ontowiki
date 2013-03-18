@@ -323,16 +323,6 @@ var CubeViz_View_Helper = (function () {
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.tplReplace = function tplReplace(templateStr, contentObj) {
-        if(true === _.isUndefined(contentObj)) {
-            return templateStr;
-        }
-        var contentObjKeys = _.keys(contentObj);
-        _.each(contentObjKeys, function (key) {
-            templateStr = templateStr.replace("[[" + key + "]]", contentObj[key]);
-        });
-        return templateStr;
-    }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
         var b = "";
@@ -408,6 +398,16 @@ var CubeViz_View_Helper = (function () {
             resultList.push($(item).clone());
         });
         return resultList;
+    }
+    CubeViz_View_Helper.tplReplace = function tplReplace(templateStr, contentObj) {
+        if(true === _.isUndefined(contentObj)) {
+            return templateStr;
+        }
+        var contentObjKeys = _.keys(contentObj);
+        _.each(contentObjKeys, function (key) {
+            templateStr = templateStr.replace("[[" + key + "]]", _.str.trim(contentObj[key]));
+        });
+        return _.str.trim(templateStr);
     }
     return CubeViz_View_Helper;
 })();

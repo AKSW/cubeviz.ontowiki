@@ -335,16 +335,6 @@ var CubeViz_View_Helper = (function () {
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
     }
-    CubeViz_View_Helper.tplReplace = function tplReplace(templateStr, contentObj) {
-        if(true === _.isUndefined(contentObj)) {
-            return templateStr;
-        }
-        var contentObjKeys = _.keys(contentObj);
-        _.each(contentObjKeys, function (key) {
-            templateStr = templateStr.replace("[[" + key + "]]", contentObj[key]);
-        });
-        return templateStr;
-    }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
         var b = "";
@@ -420,6 +410,16 @@ var CubeViz_View_Helper = (function () {
             resultList.push($(item).clone());
         });
         return resultList;
+    }
+    CubeViz_View_Helper.tplReplace = function tplReplace(templateStr, contentObj) {
+        if(true === _.isUndefined(contentObj)) {
+            return templateStr;
+        }
+        var contentObjKeys = _.keys(contentObj);
+        _.each(contentObjKeys, function (key) {
+            templateStr = templateStr.replace("[[" + key + "]]", _.str.trim(contentObj[key]));
+        });
+        return _.str.trim(templateStr);
     }
     return CubeViz_View_Helper;
 })();
@@ -1064,8 +1064,9 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var list = $("#cubeviz-dataStructureDefinition-list");
         var self = this;
 
+        list.empty();
         this.collection.each(function (element) {
-            list.append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataStructureDefinition-tpl-listOption").html(), element));
+            list.append("<option value=\"" + element.__cv_uri + "\">" + element.__cv_niceLabel + "</option>");
         });
         _.each(list.children(), function (listEntry) {
             if($(listEntry).val() == self.app._.data.selectedDSD.__cv_uri) {
@@ -1153,7 +1154,7 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var self = this;
 
         this.collection.each(function (element) {
-            list.append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSet-tpl-listOption").html(), element));
+            list.append("<option value=\"" + element.__cv_uri + "\">" + element.__cv_niceLabel + "</option>");
         });
         _.each(list.children(), function (listEntry) {
             if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
