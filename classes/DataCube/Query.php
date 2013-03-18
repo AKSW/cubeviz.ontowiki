@@ -29,7 +29,7 @@ class DataCube_Query
      */
     public function containsDataCubeInformation () {
         $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
-                    ASK FROM http://data.lod2.eu/scoreboard/ 
+                    ASK
                     {
                         ?observation a qb:Observation .
                         ?observation qb:dataSet ?dataset .
@@ -69,7 +69,9 @@ class DataCube_Query
          * go through all entries to add them to title helper
          */
         foreach($assocSPOArray as $mainKey => $entry) {
-            $titleHelper->addResource($mainKey);
+            if (Erfurt_Uri::check($mainKey)) {
+                $titleHelper->addResource($mainKey);
+            }
         }
 
         /**
@@ -143,7 +145,6 @@ class DataCube_Query
                 $return [$latestMainKey][$predicateValue] = $objectValue;
             }
         }
-
         return $return;
     }
     /**
@@ -170,14 +171,15 @@ class DataCube_Query
                 ?comp <'.$componentType.'> ?comptype.
                 ?comp ?p ?o.
             }'
+
         );
-        
+  
         // generate associative array
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
         
         // enrich array with CubeViz sugar
         $result = $this->enrichResult($result);
-        
+
         // sort by label
         usort ( 
             $result, 
@@ -198,7 +200,6 @@ class DataCube_Query
             
             $result [$dimension['__cv_uri']] = $dimension;
         }
-        
         return $result;
     }
     
@@ -214,13 +215,14 @@ class DataCube_Query
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
             ?observation <'.$componentProperty.'> ?componentUri.
-            ?componentUri ?p ?o.
+            OPTIONAL {
+                ?componentUri ?p ?o.
+            }
         }');
         
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
-        
+
         $result = $this->enrichResult($result);
-        
         return $result;
     }
     
