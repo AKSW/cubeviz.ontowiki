@@ -100,15 +100,18 @@ class View_CubeVizModule_DataStructureDefintion extends CubeViz_View_Abstract
 
         // output loaded data
         this.collection.each(function(element){
-            
-            // set selected variable, if element's __cv_uri is equal to selected dsd's one
-            element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri
-                ? " selected" : "";
-
             list.append(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-dataStructureDefinition-tpl-listOption").html(),
                 element
             ));
+        });
+        
+        // mark selected element
+        _.each(list.children(), function(listEntry){
+            // set selected variable, if element's __cv_uri is equal to selected dsd's one
+            if($(listEntry).val() == self.app._.data.selectedDSD.__cv_uri) {
+                $(listEntry).attr("selected", true);
+            }
         });
         
         /**

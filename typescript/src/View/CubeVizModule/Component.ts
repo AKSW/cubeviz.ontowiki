@@ -130,12 +130,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 elementInstance = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-component-tpl-setupComponentElement").html(),
                     {
-                        checked: true === setElementChecked ? " checked=\"checked\"" : "",
-                        hashedUri: element.__cv_hashedUri,
                         __cv_niceLabel: element.__cv_niceLabel,
                         __cv_uri: element.__cv_uri
                     }
                 ));
+                
+                if(true == setElementChecked) {
+                    elementInstance.children().first().attr("checked", true);
+                }
                 
                 elementInstance.data("data", element);
                 

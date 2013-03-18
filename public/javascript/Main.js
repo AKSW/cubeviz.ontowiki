@@ -1065,8 +1065,12 @@ var View_CubeVizModule_DataStructureDefintion = (function (_super) {
         var self = this;
 
         this.collection.each(function (element) {
-            element["selected"] = element.__cv_uri == self.app._.data.selectedDSD.__cv_uri ? " selected" : "";
             list.append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataStructureDefinition-tpl-listOption").html(), element));
+        });
+        _.each(list.children(), function (listEntry) {
+            if($(listEntry).val() == self.app._.data.selectedDSD.__cv_uri) {
+                $(listEntry).attr("selected", true);
+            }
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataStructureDefinition-dialog"), {
             closeOnEscape: true,
@@ -1149,8 +1153,12 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var self = this;
 
         this.collection.each(function (element) {
-            element.selected = element.__cv_uri == self.app._.data.selectedDS.__cv_uri ? " selected" : "";
             list.append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSet-tpl-listOption").html(), element));
+        });
+        _.each(list.children(), function (listEntry) {
+            if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
+                $(listEntry).attr("selected", true);
+            }
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataSet-dialog"), {
             closeOnEscape: true,
@@ -1223,11 +1231,12 @@ var View_CubeVizModule_Component = (function (_super) {
                 wasSomethingSelected = true;
             }
             elementInstance = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-setupComponentElement").html(), {
-                checked: true === setElementChecked ? " checked=\"checked\"" : "",
-                hashedUri: element.__cv_hashedUri,
                 __cv_niceLabel: element.__cv_niceLabel,
                 __cv_uri: element.__cv_uri
             }));
+            if(true == setElementChecked) {
+                elementInstance.children().first().attr("checked", true);
+            }
             elementInstance.data("data", element);
             elementList.append(elementInstance);
         });
