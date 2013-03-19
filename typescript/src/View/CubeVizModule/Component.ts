@@ -131,7 +131,8 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     $("#cubeviz-component-tpl-setupComponentElement").html(),
                     {
                         __cv_niceLabel: element.__cv_niceLabel,
-                        __cv_uri: element.__cv_uri
+                        __cv_uri: element.__cv_uri,
+                        __cv_uri2: element.__cv_uri
                     }
                 ));
                 
