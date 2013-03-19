@@ -1218,7 +1218,7 @@ var View_CubeVizModule_Component = (function (_super) {
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
         var elementInstance = {
         };
-        var componentElements = new CubeViz_Collection("__cv_niceLabel");
+        var componentElements = new CubeViz_Collection("__cv_uri");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements;
         var setElementChecked = null;
@@ -1385,10 +1385,6 @@ var View_CubeVizModule_Component = (function (_super) {
                 selectedElements.add($(element).data("data"));
             }
         });
-        if(0 == _.size(selectedElements)) {
-            selectedElements.add(JSON.parse(JSON.stringify(this.app._.data.components.dimensions[component.__cv_uri].__cv_elements[0])));
-            $($(dialogDiv.find(".cubeviz-component-setupComponentElements").children().get(0)).children().get(0)).attr("checked", true);
-        }
         this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements = selectedElements.toObject();
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
