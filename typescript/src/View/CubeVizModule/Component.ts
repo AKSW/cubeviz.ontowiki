@@ -112,7 +112,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             .addList(component.__cv_elements)
             
             // sort
-            .sortAscendingBy(componentElements.idKey)
+            .sortAscendingBy("__cv_niceLabel")
         
             // Go through all elements of the given component ..
             .each(function(element){

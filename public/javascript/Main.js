@@ -1224,7 +1224,7 @@ var View_CubeVizModule_Component = (function (_super) {
         var setElementChecked = null;
         var wasSomethingSelected = false;
 
-        componentElements.addList(component.__cv_elements).sortAscendingBy(componentElements.idKey).each(function (element) {
+        componentElements.addList(component.__cv_elements).sortAscendingBy("__cv_niceLabel").each(function (element) {
             setElementChecked = undefined !== _.find(selectedDimensions, function (dim) {
                 return false === _.isUndefined(dim) ? dim.__cv_uri == element.__cv_uri : false;
             });
