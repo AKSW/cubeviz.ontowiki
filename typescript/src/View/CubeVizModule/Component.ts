@@ -481,21 +481,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             }
         });
         
-        // if nothing was selected, set the first item per default
-        if(0 == _.size(selectedElements)) {
-            
-            // add item as new instance to avoid simply copy the reference
-            selectedElements.add(JSON.parse(JSON.stringify(
-                this.app._.data.components.dimensions[component.__cv_uri].__cv_elements[0]
-            )));
-            
-            // recheck the first checkbox of the elements list
-            $($(dialogDiv.find(".cubeviz-component-setupComponentElements")
-                .children().get(0))
-                .children().get(0))
-                .attr("checked", true);
-        }
-        
         // save updated element list
         this.app._.data.selectedComponents.dimensions[component.__cv_uri]
             .__cv_elements = selectedElements.toObject();
