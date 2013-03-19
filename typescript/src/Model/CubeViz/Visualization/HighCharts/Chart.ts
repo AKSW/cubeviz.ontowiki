@@ -65,6 +65,12 @@ class CubeViz_Visualization_HighCharts_Chart
 
         // assign selected dimensions to xAxis and series (yAxis)
         _.each(selectedComponentDimensions, function(selectedDimension){
+            
+            // ignore dimensions which have no elements
+            if (0 == _.keys(selectedDimension.__cv_elements).length) {
+                return;
+            }
+
             if ( null == forXAxis ) {
                 forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
@@ -91,7 +97,6 @@ class CubeViz_Visualization_HighCharts_Chart
          */
         if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
             var xAxisElements:any = observation
-                // .sortAxis(forXAxis, "ascending")
                 .getAxesElements(forXAxis);
                 
             // put labels for properties to the axis
@@ -105,7 +110,7 @@ class CubeViz_Visualization_HighCharts_Chart
             var selectedDimensionPropertyUris:string[] = [];
             
             _.each(selectedComponentDimensions, function(dimension){
-               selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
+                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
             });
             
             /**

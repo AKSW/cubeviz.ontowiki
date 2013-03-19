@@ -585,6 +585,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             };
         }
         _.each(selectedComponentDimensions, function (selectedDimension) {
+            if(0 == _.keys(selectedDimension.__cv_elements).length) {
+                return;
+            }
             if(null == forXAxis) {
                 forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
@@ -990,6 +993,8 @@ var DataCube_Observation = (function () {
                 }
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri][observationDimensionProperty])) {
                     dimensionElementInfoObject = {
+                        __cv_uri: observationDimensionProperty,
+                        __cv_niceLabel: observationDimensionProperty
                     };
                     _.each(dimension.__cv_elements, function (dimensionElement) {
                         if(dimensionElement.__cv_uri == observationDimensionProperty) {

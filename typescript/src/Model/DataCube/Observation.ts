@@ -104,7 +104,11 @@ class DataCube_Observation {
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri]
                                                     [observationDimensionProperty])) {
                     // get information-object for particular dimension element
-                    dimensionElementInfoObject = {};
+                    dimensionElementInfoObject = {
+                        __cv_uri: observationDimensionProperty,
+                        __cv_niceLabel: observationDimensionProperty
+                    };
+
                     _.each(dimension.__cv_elements, function(dimensionElement){
                         // check if URI's are equal
                         if(dimensionElement.__cv_uri == observationDimensionProperty) {
