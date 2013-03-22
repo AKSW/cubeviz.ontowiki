@@ -1,0 +1,18 @@
+<style type="text/css">
+    @import url("<?php echo $this->basePath; ?>static/css/base.css");
+</style>
+
+<div id="staticLinksModuleContainer">
+    <div style="padding-left: 13px; padding-top: 4px; padding-bottom: 13px;">
+        <ul>
+            <?php foreach ($this->links as $link) { ?> 
+            
+                <li class="staticLinkListItem">
+                    <a href="<?php echo $link ['href']; ?>" target="<?php echo $link ['target']; ?>" title="<?php echo $link ['title']; ?>">
+                        <?php echo $link ['label']; ?></a>
+                </li>
+            
+            <?php } ?> 
+        </ul>
+    </div>
+</div>

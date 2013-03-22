@@ -1,0 +1,123 @@
+#cubeviz-index-legend
+{
+    margin-bottom: 10px;
+}
+
+.cubeviz-legend-componentDimensionList
+{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.cubeviz-legend-componentDimensionListEntry
+{
+    clear: both;
+}
+
+#cubeviz-legend-componentList
+{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.cubeviz-legend-componentDimensionEntry
+{
+    float: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 10px;
+    border: 1px solid #BDBDBD;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+        
+    margin-top: 2px;
+    
+    height: auto;
+    min-height: 10px;
+    
+    min-width: 70%;
+    width: 70%;
+    max-width: 70%;
+}
+
+.cubeviz-legend-componentDimensionIcon
+{
+    float: left; 
+    width: 40px; 
+    min-height: 40px; 
+    text-align: center;
+}
+
+.cubeviz-legend-observationLabel
+{
+    font-size: 16px;
+}
+
+.cubeviz-legend-dimensionIcon
+{
+    font-size: 11px;
+}
+
+.cubeviz-legend-observationIcon
+{
+    float: left; 
+    width: 40px; 
+    min-height: 100px; 
+    text-align: center;
+}
+
+.cubeviz-legend-observationInfoList 
+{
+    list-style-type: none;
+}
+
+.cubeviz-legend-observationInfoListEntry
+{
+    border: 0px !important;
+    margin: 0px;
+    padding: 0px;
+    line-height: 3px;
+    font-size: 14px;
+}
+
+#cubeviz-legend-observations 
+{
+    list-style-type: none;
+    list-style-position: inside;
+    margin-left: 0px;
+    float: left; 
+    width: 70%;
+}
+
+#cubeviz-legend-observations li
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+    border: 1px solid #BDBDBD;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    
+    margin-top: 2px;
+    
+    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
+}
+
+#cubeviz-legend-observations li:hover
+{
+    background-color: #F1F1F1;
+}
+
+.cubeviz-legend-observationValue
+{
+    margin-right: 10px;
+    float: right;
+    font-size: 15px;
+    font-weight: bold;
+}

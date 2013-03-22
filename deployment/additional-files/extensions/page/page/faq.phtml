@@ -1,0 +1,95 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/colorbox.css"/>
+<script type="text/javascript" src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("a.gallery").colorbox({transition:"none", width:"75%", height:"75%"});
+});
+</script>
+<div style="    margin-top: 0px; 
+                margin-left: 0px; 
+                min-height: 100%; height:auto !important; height:100%;">
+    <h1 style="font-size: 24px;">Frequently Asked Questions (FAQ)</h1>
+    <p>
+        On this page we will try to answer the remaining questions, which we were not yet able to answer on the <a href="<?php echo $_REQUEST ['urlBase']; ?>page/howto">HowTo</a> and <a href="<?php echo $_REQUEST ['urlBase']; ?>page/examples">Examples</a> page. 
+        Please let us know in case we forgot to explain something. Our contact information can be found on the <a href="http://aksw.org/Projects/CubeViz">CubeViz Project Page</a>.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q1: Why do I sometimes receive an empty chart?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        This behavior can have various reasons. 
+        On the one hand it is possible that there is no data available according to the selection. 
+        In order to reduce the load of the server we decided not to check the availability of data for every selection.
+        On the other hand it is possible that a chart can not be produced if the user selects inapplicable combinations of options such as 
+        a logarithm scale in combination with percentage stacking. 
+        Trapping such cases is not yet fully implemented but will be done soon.
+        <br><br>
+        To solve such problems we suggest to change the selection and/or the selected chart options.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q2: Why do values of observations sometimes have so many digits after the decimal point. 
+    Doesn’t it fit to use only four or five digits?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        We use the data as it is represented in the DataCube. 
+        We do not want to manipulate anything on the data side. 
+        In some domains much digits after the decimal point could be very interesting. 
+        CubeViz is a generic tool and we do not know anything about the domain represented in the Cube. 
+        We only know the vocabulary which is used to represent statistics.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q3: Sometimes I am able to create a pie-chart and sometimes I am not. Why am I not able to always generate the same chart?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        CubeViz contains an algorithm to analyze the selection of data in order to offer suitable charts. 
+        Some of the charts are an unsuitable or an inappropriate choice for the respective data selection. 
+        The pie-chart, for instance, is only available if the user selects multiple elements only from one dimension. 
+        The amount of elements from all other dimensions must be exactly one.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q4: Why is it not possible to select slices in order to filter the DataCube more detailed?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        DataCube is still under development, which means that we do not support that feature at the moment, but it will come soon.
+        DataCubes that contain slices should be able to browse with CubeViz. 
+        It is only not possible to filter in such a fine-grained way.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q5: Why isn’t it possible to compare different datasets?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        The current version of CubeViz do not support that feature.
+        The user is only able to make a single selection of Datasets. 
+        But we are working on getting this feature being an integral part of CubeViz in the near future.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q6: Sometimes the User Interface is not updated. What should I do?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        Sometimes the browser session is lost. 
+        Maybe you didn’t make an action for a long time. 
+        To get CubeViz running again, please reload CubeViz in the browser (In most browsers you only have to press F5 or Ctrl+R). 
+        If you do not want to loose your data selection, please use the <em>Permalink</em> for the reload.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q7: Sometimes I have to wait a long time until the Chart is updating. What is the reason for that?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        This behavior can have multiple reasons. 
+        On specific timespans you are not the only user who is visiting our web sites. 
+        That can lead to a high load on the server and users have to share processing times. <br>
+        Another reason could be that you made an inadequate selection. 
+        If you select to much data items the server respond with a huge set of information which has to be transfered and processed by your browser. 
+        In such a case we suggest to deselect some of the items. 
+        Note that a chart will be not be well-arranged if too much information is included.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q8: There is a tabular visualization in the list. What is it about?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        In addition to the chart visualizations it should be possible to obtain the raw data. 
+        On the basis of this visualization type you are able to follow the links to the respective original data source. 
+        Note that these links are outgoing links.
+    </p>
+
+    <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Q9: Why do the colors of data items represented in charts sometimes leave room for improvement?</h2>    
+    <p style="color: #4A4A4A; width: 96%;">
+        CubeViz provides an algorithm to generate colors in a deterministic way on the basis of identifiers of the underlying data items. 
+        This enables users to re-identify data items over different selections and charts. 
+        In case that we do not know anything about the domain of the data we are not able to create fix mappings between colors and the elements to be visualized. 
+        The result out of that algorithm is not always perfect, but without any color collapses.
+    </p>
+</div>
+

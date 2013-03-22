@@ -1,0 +1,191 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/colorbox.css"/>
+<script type="text/javascript" src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("a.gallery").colorbox({transition:"none", width:"75%", height:"75%"});
+});
+</script>
+
+<div style="    margin-top: 0px; 
+                margin-left: 0px; 
+                min-height: 100%; height:auto !important; height:100%;">
+    <h1 style="font-size: 24px;">How to use CubeViz</h1>
+    
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">
+        CubeViz is a facetted browser for statistical data utilizing the <a href="http://www.w3.org/TR/vocab-data-cube/">RDF Data Cube vocabulary</a> which is the 
+        current state-of-the-art regarding the representation of statistical data in RDF. 
+        This vocabulary, which is compatible with SDMX and increasingly being adopted. 
+        Based on the Data Cube vocabulary, CubeViz generates a facetted browsing widget that provides possibilities to interactivly filter observations 
+        which are to be visualized as charts. 
+    </p>
+    <p style="margin-top: 1em; color: #4A4A4A; width: 96%;">
+        The following sections briefly sketches how to use CubeViz:
+        <ul style="margin-top: 0.5em; margin-left: 3em; margin-bottom:1em; color: #4A4A4A; width: 96%;">
+            <li> <a href="#sec1">Selection of structural elements</a></li>
+            <li> <a href="#sec2">Selection of charts</a> </li>
+            <li> <a href="#sec3">Selection of chart options</a> </li>
+        </ul>
+
+    </p>
+   
+    <div style="margin: 1em; padding:1em; border:1px dotted lightgrey; color: #4A4A4A; vertical-align:top">
+        <h2 id="sec1" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Selection of structural elements</h2>
+        <div style="float:right; margin:1em; text-align:center">
+            <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/data_selection_dialog.png" class="gallery" rel="gallery-0" title="Figure 2. CubeViz Data Selection Dialog">
+               <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/data_selection_dialog.png" style="height: 240px">
+                <br> Figure 2. CubeViz Data Selection Dialog
+            </a>            
+
+        </div>
+        <div style="float:right; margin:1em; text-align:center">
+            <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/data_selection_module.png" class="gallery" rel="gallery-0" title="Figure 1. CubeViz Facetted Selection Box">
+                <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/data_selection_module.png" style="height: 240px">
+                <br> Figure 1. CubeViz Facetted Selection Box
+            </a>
+            
+        </div>
+        <p>
+            As a starting point in order to browse statistical data using CubeViz, users should focus on the <em>Data Selection Box</em> located on the upper left part of the
+            window. This box is shown in Fig.1 as well.
+            Following the structure given by the DataCube vocabulary, users are able to select specific structural elements of the DataCube.
+        </p>
+        <p>
+            After selection of the desired <em>Data Structure</em> and <em>Data Set</em>, CubeViz is requesting the set of dimensions with respect to the selection.
+            Behind the dimension labels, the count of selected dimension elements is listed (first number) together with amount of all available dimension elements.
+            An option button located on the right hand of each listed dimension opens a dialogue when clicking.
+        <p>
+            This dialogue (see Fig.2) offers possibilites to manually select dimension elements that the user are interested in.
+            After selecting the desired dimension elements, users should click the <em>Update and Close</em> button on the upper right corner of the dialogue.
+            Behind the dimension labels the count of selected dimension elements should be updated.
+        </p>
+        <p>
+            As a result of clicking on the button <em>Show/Update visualization</em> the content area of the screen should be updated according to user's selection.
+            The fact which specific chart(s) one receives depends on user's selection and is described in the <a href="#sec2">next section</a>. 
+        </p>
+        <p>
+            In order to decrease the amount of server requests, CubeViz processes the output mostly on the client side (in the browser) and often re-uses already received data parts. 
+            As a result of this behavior, the address bar of the browser is not being updated if users make selections. 
+            However, users are provided with a link of their selection, if they click the <em>Permalink</em> button (bottom left corner of the <em>Data Selection Box</em>).
+            Subsequently they can either directly use the generated link or copy it to the clipboard using the context menu of the browser.
+        </p>
+        <div style="clear:both"></div>
+    </div>
+
+    <div style="margin: 1em; padding:1em; border:1px dotted lightgrey; color: #4A4A4A; vertical-align:top">
+        <h2 id="sec2" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Selection of charts</h2>
+        <p>
+            According to the user selection of structural elements (see <a href="#sec1">section above</a>) and the resulting set of observations, 
+            CubeViz offers suitable chart types.
+            The first suitable chart is selected automatically and is displayed directly after clicking the button <em>Show/Update Visualization</em>.
+            Further suitable charts can be selected on the top right corner of the application.
+        </p>
+        <p>
+            Not all chart types are suitable for all individual user selections. 
+            
+            A pie chart,for instance, can be used to compare different observation on the basis of elements of one dimension (see Fig.3). 
+            Furthermore spline, column and a bar chart are used to compare observations on the basis of elements of more than one dimension (See Fig.4 , 5 and 6). 
+            On the <a href="<?php echo $_REQUEST ['urlBase']; ?>page/examples">page of examples</a>, a set of samples are listed, explaining the successive processes CubeViz executes for the respective selection.
+            The last option in the chart switcher is a table, which is lists all resources, that are on the one hand selected by 
+            users (<em>DataStructures</em>, <em>Datasets</em>, <em>Dimensions</em> and <em>Dimension elements</em>) and on the other hand the <em>observations</em> which are linked to them.
+            All of these resources are linked to their source location, which are usually outgoing links.
+        </p>
+        <div style="float:top">
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-pie.png" class="gallery" rel="gallery-1" title="Figure 3. CubeViz Pie Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-pie.png" style="height: 200px"><br>            
+                    Figure 3. CubeViz Pie Chart
+                </a>
+            </div>
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-spline.png" class="gallery" rel="gallery-1" title="Figure 4. CubeViz Spline Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-spline.png" style="height: 200px"><br>            
+                    Figure 4. CubeViz Spline Chart
+                </a>
+            </div>
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-column.png" class="gallery" rel="gallery-1" title="Figure 5. CubeViz Column Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-column.png" style="height: 200px"><br>            
+                    Figure 5. CubeViz Column Chart
+                </a>
+            </div>
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-bar.png" class="gallery" rel="gallery-1" title="Figure 6. CubeViz Bar Chart">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-bar.png" style="height: 200px"><br>            
+                    Figure 6. CubeViz Bar Chart
+                </a>
+            </div>
+
+            <div style="clear:both"></div>
+        </div>
+    </div>
+
+    <div style="margin: 1em; padding:1em; border:1px dotted lightgrey; color: #4A4A4A; vertical-align:top">
+        <h2 id="sec3" style="margin-top: 1em; font-size: 14px; color: #6386A4;">Selection of chart options</h2>
+        <p>
+            Most of the charts offer options that help users to optimize the output according their needs. 
+            These options can be set up in the <em>Chart Options Box</em> as illustrated in the depictions below.
+            To open the chart option box, users only have to click on the chart icon again. 
+            After opening this box, users can select exactly one element per identifier and proceed with the selections while clicking on the button <em>Update chart</em>.
+            To close this box without accepting changes, the specific button on the top-right corner of the box can be clicked. 
+        </p>
+        <p>
+            In the following we sketch available options: 
+            <ol style="margin-left:4em">
+                <li>
+                    <em style="font-weight:bold">Type</em>: 
+                    Some of the charts offer the selection of a respective subtype. 
+                    The <em>line chart</em> output, for instance, can be refined by setting up the subtype <em>spline</em> or <em>scatter-plot</em>.
+                    The <em>polar chart</em> output is created with the default subtype <em>column</em> and can be refined 
+                    with the options <em>column</em>, <em>spline</em>, <em>line</em>, <em>area</em>, <em>areaspline</em> and <em>scatter</em>. 
+                </li>
+                <li>
+                    <em style="font-weight:bold">Switching axes</em>:
+                    If users create a selection of dimension elements along two dimensions it is sometimes necessary to switch the relation between dimensions and its regarding axis.
+                    Comparing Fig.7 and Fig.8, which display exactly the same observations, the difference is visible and the benefit of this option conceivable.
+                </li>
+                <li>
+                    <em style="font-weight:bold">Data Labels</em>:
+                    This option can be set up if the user wants to see the underlying measurement values as part of the chart output. 
+                    The measurements are shown by default as part of the tooltip, which is opens while hovering over observations.
+                </li>
+                <li>
+                    <em style="font-weight:bold">Stacking</em>:
+                    If users select many dimension elements, the lucidity can be lost. This option can help to get the lucidity back as can be seen in Fig. 5 or 9.
+                </li>
+                <li>
+                    <em style="font-weight:bold">Scale</em>:
+                    The scale of a chart is set up as linear by default. 
+                    If dimension elements are to be compared (or its regarding observations) have a hughe divergence of its measurements, it is possible that small values can not be displayed.
+                    To display them the scale can be set up to <em>logarithm</em>.
+                </li>
+                <li>
+                    <em style="font-weight:bold">Inverted</em>:
+					This option is different to the option of <em>Switching Axes</em>. 
+					While setting up the option <em>inverted</em> the dimensions elements on the X-Axis are switched with them from the <em>value axis</em>.
+                </li>
+            </ol>
+        </p>
+        <div style="float:top">
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-column.png" class="gallery" rel="gallery-2" title="Figure 7. CubeViz Polar Chart with columns">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-column.png" style="height: 200px"><br>            
+                    Figure 7. CubeViz Polar Chart with columns
+                </a>
+            </div>
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-axisSwitch.png" class="gallery" rel="gallery-2" title="Figure 8. CubeViz Polar Chart with columns and switched axes">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-axisSwitch.png" style="height: 200px"><br>            
+                    Figure 8. CubeViz Polar Chart with columns and switched axes
+                </a>
+            </div>
+            <div style="float:left;margin:1em; text-align:center">
+                <a href="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-stacking-logarithm.png" class="gallery" rel="gallery-2" title="Figure 9. CubeViz Polar Chart with stacked columns and logarithm scale">
+                    <img src="<?php echo $_REQUEST ['urlBase']; ?>extensions/page/page/images/cubeviz-windrose-stacking-logarithm.png" style="height: 200px"><br>            
+                    Figure 9. CubeViz Polar Chart with stacked columns<br> and logarithm scale
+                </a>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+

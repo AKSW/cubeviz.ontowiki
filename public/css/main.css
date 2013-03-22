@@ -1,0 +1,77 @@
+/**
+ * GENERAL
+ */
+.cubeviz-clickable {
+    cursor: pointer;
+}
+
+.cubeviz-label {
+    color: #2F2F2F;
+}
+
+/**
+ * ICONS
+ */
+.cubeviz-icon-small 
+{
+    width: 20px;
+    border: 0px;
+    vertical-align: middle;
+}
+.cubeviz-icon-unsized 
+{
+    border: 0px;
+    vertical-align: middle;
+}
+
+/**
+ * UNORDERED LISTS
+ */
+.cubeviz-ul-basic {
+    margin-left: 2px; 
+    list-style-type: none;
+}
+
+.cubeviz-ul-basic li {
+    margin-top: 5px;
+}
+
+/**
+ * FORMULAS
+ */
+.cubeviz-btn
+{
+    display: inline-block;
+    padding: 2px 10px;
+    margin-bottom: 0;
+    line-height: 20px;
+    color: #161616;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top,#fff,#e6e6e6);
+    background-image: -o-linear-gradient(top,#fff,#e6e6e6);
+    background-image: linear-gradient(to bottom,#fff,#e6e6e6);
+    background-repeat: repeat-x;
+    border: 1px solid #ccc;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    border-bottom-color: #b3b3b3;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffe6e6e6',GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+}
+
+.cubeviz-btn:hover
+{
+    text-decoration: none;
+    color: #161616;
+}

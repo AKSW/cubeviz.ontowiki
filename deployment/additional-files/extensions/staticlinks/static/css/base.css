@@ -1,0 +1,14 @@
+#staticLinksModuleContainer {    
+    width: 200px;
+    height: auto;    
+    font-size: 12px;
+}
+
+#staticLinksModuleContainer a {
+    color: #7B7B7B;
+}
+
+.staticLinkListItem {
+    line-height:1.5em;
+
+}

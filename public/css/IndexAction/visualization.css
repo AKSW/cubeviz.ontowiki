@@ -1,0 +1,17 @@
+#cubeviz-index-visualization
+{
+    clear: both;
+    margin-bottom: 35px;
+}
+
+#cubeviz-visualization-nothingFoundNotification
+{
+    padding-top: 100px;
+}
+
+#cubeviz-visualization-notificationHightchartsException10
+{
+    padding-top: 100px; 
+    text-align: left;
+    width: 50%;
+}
