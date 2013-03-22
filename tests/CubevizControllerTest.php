@@ -275,8 +275,7 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
                         // __cv
                         '__cv_uri' => 'http://example.cubeviz.org/datacube/cs/value',
                         '__cv_hashedUri' => 'b73aeaf8c36224ddbfe4baa3680cedb9',
-                        '__cv_niceLabel' => 'Component Specification of Value',
-                        '__cv_elements' => array ()
+                        '__cv_niceLabel' => 'Component Specification of Value'
                     )
                 ),
                 'message' => ''

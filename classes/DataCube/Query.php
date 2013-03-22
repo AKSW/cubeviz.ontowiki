@@ -187,16 +187,19 @@ class DataCube_Query
         );
         
         /**
-         * add component elements
+         * add component elements, if component type is NOT measure
          */
         $tmp = $result;
         $result = array();
         
         foreach ($tmp as $dimension) {
             
-            $dimension ['__cv_elements'] = $this->getComponentElements(
-                $dsUri, $dimension[$componentType]
-            );
+            // if not measure
+            if ($componentType != DataCube_UriOf::Measure) {
+                $dimension ['__cv_elements'] = $this->getComponentElements(
+                    $dsUri, $dimension[$componentType]
+                );
+            }
             
             $result [$dimension['__cv_uri']] = $dimension;
         }
