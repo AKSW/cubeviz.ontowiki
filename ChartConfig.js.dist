@@ -371,6 +371,62 @@ var CubeViz_ChartConfig = {
                 ]
             },
             
+            {
+                "label": "column",
+                "className": "CubeViz_Visualization_HighCharts_Column",
+                "icon": "column.png",
+                "defaultConfig": {
+                    "chart": { 
+                        "renderTo": "cubeviz-index-visualization",
+                        "type": "column"
+                    },
+                    "title": {
+                        "align": "left",
+                        "color": "#000000"
+                    }
+                },
+                
+                "options": [
+                    {
+                        "label": "Type",
+                        "values": [
+                            { "label": "Column", "value": "column", "isDefault": true },
+                            { "label": "Bar", "value": "bar" }
+                        ],
+                        "key": "chart.type",
+                        "type": "array"
+                    },
+                    {
+                        /* System default for _cubeVizVisz.doSwitchingAxes is false! */
+                        "label": "Switching axes",
+                        "values": [
+                            { "label": "No", "value": false, "isDefault": true },
+                            { "label": "Yes", "value": true }
+                        ],
+                        "key": "_cubeVizVisz.doSwitchingAxes",
+                        "type": "array"
+                    },
+                    {
+                        "label": "DataLabels",
+                        "values": [
+                            { "label": "None", "value": "", "isDefault": true },
+                            { "label": "Yes", "value": "true" }
+                        ],
+                        "key": "plotOptions.series.dataLabels.enabled",
+                        "type": "array"
+                    },
+                    {
+                        "label": "Scale",
+                        "values": [
+                            { "label": "Linear", "value": "linear", "isDefault": true },
+                            { "label": "Logarithmic", "value": "logarithmic" }
+                        ],
+                        "key": "yAxis.type",
+                        "type": "array"
+                    }
+                ]
+            },
+            
             /**
              * -----------------------------------------------------------------
              */
