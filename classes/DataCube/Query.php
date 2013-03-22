@@ -275,16 +275,23 @@ class DataCube_Query
     }  
     
     /**
-     * Get all data sets for the given data structure definition
-     * @param $dsUri Data Set Uri
+     * Get all data sets or all for the given data structure definition uri.
+     * @param $dsdUri (optional) Data structure definition uri
      * @return array Array containing data sets
      */
-    public function getDataSets($dsdUri) 
+    public function getDataSets($dsdUri = '') 
     {
+        // data structure definitions are optional
+        if ('' != $dsdUri) {
+            $dsdPart = '?ds <'.DataCube_UriOf::Structure.'> <'.$dsdUri.'>.';
+        } else {
+            $dsdPart = '';
+        }
+        
         $result = $this->_model->sparqlQuery('SELECT ?ds ?p ?o WHERE {
-            ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>.
-            ?ds <'.DataCube_UriOf::Structure.'> <'.$dsdUri.'>.
-            ?ds ?p ?o.
+            ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>. '. 
+            $dsdPart 
+            .'?ds ?p ?o.
         }');
 
         // generate an associated array where ds is mainkey and using p and o for the rest
