@@ -1865,6 +1865,7 @@ var View_IndexAction_Visualization = (function (_super) {
         return this;
     };
     View_IndexAction_Visualization.prototype.handleException = function (thrownException) {
+        this.setVisualizationHeight();
         if(true === _.str.include(thrownException, "Highcharts error #10")) {
             $("#cubeviz-index-visualization").html($("#cubeviz-visualization-tpl-notificationHightchartsException10").html());
         }
