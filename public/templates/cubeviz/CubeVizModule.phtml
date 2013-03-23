@@ -14,7 +14,7 @@
 
 <div id="cubeviz-module-spinner">
     <i class="icon-spinner icon-spin" style="vertical-align: middle;"></i>
-    I am working ...
+    <?php echo $this->translate->_('Module_LoadingMessage'); ?>
 </div>
 
 <div id="cubeviz-module-dataSelection">
@@ -23,12 +23,11 @@
     <div id="cubviz-dataSet-container">
         <div style="width: 100%; margin-bottom:2px;">
             <div class="cubeviz-label" style="float: left;">
-                Select part of group
-            </div>
+                <?php echo $this->translate->_('Module_SelectDS'); ?></div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-dataSet-questionMark"
-                   title="Click for more information"></i>
+                   title="<?php echo $this->translate->_('Module_ClickMoreInformation'); ?>"></i>
             </div>                    
         </div>
         <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
@@ -41,12 +40,11 @@
     <div id="cubviz-component-container">
         <div style="width: 100%;">
             <div class="cubeviz-label" style="float: left;">
-                Select axis elements
-            </div>
+                <?php echo $this->translate->_('Module_SelectComponents'); ?></div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-component-questionMark"
-                   title="Click for more information"></i>
+                   title="<?php echo $this->translate->_('Module_ClickMoreInformation'); ?>"></i>
             </div>
         </div>
         <div style="clear: both;"></div>
@@ -56,14 +54,15 @@
     <div id="cubeviz-footer-container">                
         <span style="float:left;">
             <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
-                Permalink</a>
+                <?php echo $this->translate->_('Module_Permalink'); ?></a>
             <span id="cubeviz-footer-permaLinkMenu">
-                <span id="cubeviz-footer-permaLink" style="display: none;">Link</span>
+                <span id="cubeviz-footer-permaLink" style="display: none;">
+                    <?php echo $this->translate->_('Module_Link'); ?></span>
             </span>
         </span>
         <span style="float:right;">
             <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
-                Show Visualization</a>
+                <?php echo $this->translate->_('Module_ShowVisualization'); ?></a>
         </span>
     </div>
 </div>
@@ -73,26 +72,6 @@
     DIALOGS
     #########
 -->
-<div id="cubeviz-dataStructureDefinition-dialog" 
-      style="display: none;"
-      title="Information">
-    <div style="margin-top: 4px; float: right;">
-        <img class="cubeviz-icon-unsized"
-              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
-    </div>
-    <div style="float: left;">
-        <h4>Select group of interest</h4>
-    </div>
-    <br/>
-    <br/>
-    <div style="clear: both;">
-        A group of interest contains data about a particular field of interest, for
-        instance about countries. Following the structure given by the 
-        <a href="http://www.w3.org/TR/vocab-data-cube/" target="_blank">DataCube vocabulary</a>, 
-        users are able to select specific structural elements of the DataCube.
-    </div>
-</div>
-
 <div id="cubeviz-dataSet-dialog" 
       style="display: none;"
       title="Information">
@@ -101,15 +80,12 @@
               src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <div style="float: left;">
-        <h4>Select part of group</h4>
+        <h4><?php echo $this->translate->_('Module_SelectDS'); ?></h4>
     </div>
     <br/>
     <br/>
     <div style="clear: both;">
-        Each structural element of a DataCube contains data sets. A data set is the
-        major entity: it groups statistical data about a specific topic, called
-        observations. 
-    </div>
+        <?php echo $this->translate->_('Module_SelectDSHelpText'); ?></div>
 </div>
 
 <div id="cubeviz-component-dialog" style="display: none;" title="Information">
@@ -118,19 +94,12 @@
              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <div style="float: left;">
-        <h4>Select axis elements</h4>
+        <h4><?php echo $this->translate->_('Module_SelectComponents'); ?></h4>
     </div>
     <br/>
     <br/>
     <div style="clear: both;">
-        Each data set contains statistical data. These data is a collection of so-called 
-        observations. Under an observation you can picture a point in a room. This point
-        has coordinates which locates him at a specific position in this room. In general 
-        these coordinates are 3 dimensional: height, width and deep. In the DataCube context
-        these coordinates are dimensions and it is possible to have more than these 3.
-        But these dimension are not positions in a room, you may think, but could be 
-        everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
-    </div>
+        <?php echo $this->translate->_('Module_SelectComponentsHelpText'); ?></div>
 </div>
 
 <div id="cubeviz-component-setupDialogContainer" style="display: none;">

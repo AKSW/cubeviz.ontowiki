@@ -344,7 +344,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $baseJavascriptPath = $basePath .'public/javascript/';
         $baseCssPath = $basePath .'public/css/';
         $this->view->cubevizImagesPath = $baseImagesPath = $basePath .'public/images/';
-    
+        $this->view->translate = $this->_owApp->translate;
     
         /**
          * Including javascript files for this action

@@ -129,6 +129,8 @@ class CubevizModule extends OntoWiki_Module
                  ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
         }
         
+        $this->view->translate = $this->_owApp->translate;
+        
         /**
          * fill template with content and give generated HTML back
          */
