@@ -3,7 +3,6 @@
     cubeVizApp._.backend.uiParts.module.isLoaded = true;
     
     cubeVizApp
-        .add("View_CubeVizModule_DataStructureDefintion", "#cubeviz-dataStructureDefinition-list")
         .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
         .add("View_CubeVizModule_Component", "#cubviz-component-listBox")
         .add("View_CubeVizModule_Footer", "#cubeviz-footer-container");
@@ -19,23 +18,7 @@
 </div>
 
 <div id="cubeviz-module-dataSelection">
-    <!-- Data structure definition section -->
-    <div id="cubviz-dataStructureDefinition-container">
-        <div style="width: 100%; margin-bottom:2px;">
-            <div class="cubeviz-label" style="float: left;">
-                Select group of interest
-            </div>
-            <div style="float:right; padding-right:0.3em">
-                <i class="icon-question-sign cubeviz-clickable"
-                   id="cubeviz-dataStructureDefinition-questionMark"
-                   title="Click for more information"></i>
-            </div>
-            <br/>
-            <select name="cubeviz-dataStructureDefinition-list" 
-                     id="cubeviz-dataStructureDefinition-list"></select>
-        </div>
-    </div>
-    
+        
     <!-- Data set section -->
     <div id="cubviz-dataSet-container">
         <div style="width: 100%; margin-bottom:2px;">

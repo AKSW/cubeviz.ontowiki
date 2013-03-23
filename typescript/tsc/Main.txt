@@ -23,7 +23,6 @@ src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/Observation.ts
 
-src/View/CubeVizModule/DataStructureDefinition.ts
 src/View/CubeVizModule/DataSet.ts
 src/View/CubeVizModule/Component.ts
 src/View/CubeVizModule/Footer.ts

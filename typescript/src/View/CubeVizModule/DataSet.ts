@@ -57,13 +57,21 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         this.showSpinner();
         
         var selectedElementId:string = $("#cubeviz-dataSet-list").val(),
-            selectedElement = this["collection"].get(selectedElementId);
+            selectedElement = this["collection"].get(selectedElementId),
+            self = this;
 
         // set new selected data set
         this.app._.data.selectedDS = selectedElement;
         
         // nulling retrievedObservations
         this.app._.backend.retrievedObservations = {};
+        
+        // update selectedDSD
+        _.each(this.app._.data.dataStructureDefinitions, function(dsd){
+            if (dsd.__cv_uri == selectedElement["http://purl.org/linked-data/cube#structure"]) {
+                self.app._.data.selectedDSD = dsd;
+            }
+        });
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDS");

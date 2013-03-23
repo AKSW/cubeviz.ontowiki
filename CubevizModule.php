@@ -91,7 +91,6 @@ class CubevizModule extends OntoWiki_Module
             ->prependStylesheet($baseCssPath.'main.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/component.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css')
-            ->prependStylesheet($baseCssPath.'CubeVizModule/dataStructureDefinition.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/footer.css')
             ->prependStylesheet($baseCssPath.'CubeVizModule/module.css');
         

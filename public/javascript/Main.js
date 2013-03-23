@@ -1030,73 +1030,6 @@ var DataCube_Observation = (function () {
     };
     return DataCube_Observation;
 })();
-var View_CubeVizModule_DataStructureDefintion = (function (_super) {
-    __extends(View_CubeVizModule_DataStructureDefintion, _super);
-    function View_CubeVizModule_DataStructureDefintion(attachedTo, app) {
-        _super.call(this, "View_CubeVizModule_DataStructureDefintion", attachedTo, app);
-        this.bindGlobalEvents([
-            {
-                name: "onStart_application",
-                handler: this.onStart_application
-            }
-        ]);
-    }
-    View_CubeVizModule_DataStructureDefintion.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-        CubeViz_View_Helper.destroyDialog($("#cubeviz-dataStructureDefinition-dialog"));
-        return this;
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.initialize = function () {
-        this.collection.reset("__cv_uri").addList(this.app._.data.dataStructureDefinitions);
-        this.render();
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.onChange_list = function (event) {
-        this.showSpinner();
-        this.triggerGlobalEvent("onBeforeChange_selectedDSD");
-        var selectedElementId = $("#cubeviz-dataStructureDefinition-list").val();
-        var selectedElement = this.collection.get(selectedElementId);
-
-        this.app._.data.selectedDSD = selectedElement;
-        this.triggerGlobalEvent("onAfterChange_selectedDSD");
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.onClick_questionmark = function () {
-        CubeViz_View_Helper.openDialog($("#cubeviz-dataStructureDefinition-dialog"));
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.onStart_application = function (event, data) {
-        this.initialize();
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.render = function () {
-        var list = $("#cubeviz-dataStructureDefinition-list");
-        var self = this;
-
-        list.empty();
-        this.collection.each(function (element) {
-            list.append("<option value=\"" + element.__cv_uri + "\">" + element.__cv_niceLabel + "</option>");
-        });
-        _.each(list.children(), function (listEntry) {
-            if($(listEntry).val() == self.app._.data.selectedDSD.__cv_uri) {
-                $(listEntry).attr("selected", true);
-            }
-        });
-        CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataStructureDefinition-dialog"), {
-            closeOnEscape: true,
-            showCross: true,
-            width: 500
-        });
-        this.bindUserInterfaceEvents({
-            "change #cubeviz-dataStructureDefinition-list": this.onChange_list,
-            "click #cubeviz-dataStructureDefinition-questionMark": this.onClick_questionmark
-        });
-        this.triggerGlobalEvent("onAfterRender_dataStructureDefinition");
-        return this;
-    };
-    View_CubeVizModule_DataStructureDefintion.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
-    };
-    return View_CubeVizModule_DataStructureDefintion;
-})(CubeViz_View_Abstract);
 var View_CubeVizModule_DataSet = (function (_super) {
     __extends(View_CubeVizModule_DataSet, _super);
     function View_CubeVizModule_DataSet(attachedTo, app) {
@@ -1126,10 +1059,16 @@ var View_CubeVizModule_DataSet = (function (_super) {
         this.showSpinner();
         var selectedElementId = $("#cubeviz-dataSet-list").val();
         var selectedElement = this["collection"].get(selectedElementId);
+        var self = this;
 
         this.app._.data.selectedDS = selectedElement;
         this.app._.backend.retrievedObservations = {
         };
+        _.each(this.app._.data.dataStructureDefinitions, function (dsd) {
+            if(dsd.__cv_uri == selectedElement["http://purl.org/linked-data/cube#structure"]) {
+                self.app._.data.selectedDSD = dsd;
+            }
+        });
         this.triggerGlobalEvent("onChange_selectedDS");
     };
     View_CubeVizModule_DataSet.prototype.onAfterChange_selectedDSD = function (event, data) {
