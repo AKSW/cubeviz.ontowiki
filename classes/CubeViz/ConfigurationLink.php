@@ -44,24 +44,37 @@ class CubeViz_ConfigurationLink
         $query = new DataCube_Query($model);
         
         // if no data structure definitions were selected
-        if(0 === count($config['dataStructureDefinitions'])) {
-            $config['dataStructureDefinitions'] = $query->getDataStructureDefinitions();
-        } 
-        
-        // if no data structure definition was selected
-        if(0 === count($config['selectedDSD'])) {
-            $config['selectedDSD'] = $config['dataStructureDefinitions'][0];
-        }
-                        
-        // if no data structure definitions were selected
         if(0 === count($config['dataSets'])) {
-            $config['dataSets'] = $query->getDataSets($config['selectedDSD']['__cv_uri']);
+            $config['dataSets'] = $query->getDataSets();
         } 
         
         // if no data sets were selected
         if(0 === count($config['selectedDS'])) {
             $config['selectedDS'] = $config['dataSets'][0];
         }
+        
+        // if no data structure definitions were selected
+        if(0 === count($config['dataStructureDefinitions'])) {
+            $config['dataStructureDefinitions'] = $query->getDataStructureDefinitions();
+        }
+        
+        // if no data structure definition was selected, use the DSD from the
+        // selected DS
+        if(0 === count($config['selectedDSD'])) {
+            foreach ($config['dataStructureDefinitions'] as $ds) {
+                if ($ds['__cv_uri'] == $config['selectedDS'][DataCube_UriOf::Structure]) {
+                    $config['selectedDSD'] = $ds;
+                }
+            }
+            
+            // if no related data structure definition was found, throw an exception
+            if (0 == count($config['selectedDSD'])) {
+                throw new CubeViz_Exception(
+                    'Selected DataSet '. $config['selectedDS'] .' has no '.
+                    'related Data Structure Definition!' 
+                );
+            }
+        } 
         
         // if no components were selected
         if(0 === count($config['components'])) {
