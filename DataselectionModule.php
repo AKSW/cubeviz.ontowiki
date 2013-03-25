@@ -11,7 +11,7 @@
  * @copyright  Copyright (c) 2009, {@link http://aksw.org AKSW}
  * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
-class CubevizModule extends OntoWiki_Module
+class DataselectionModule extends OntoWiki_Module
 {
     protected $session = null;
 
@@ -89,10 +89,10 @@ class CubevizModule extends OntoWiki_Module
         $this->view->headLink()
             ->prependStylesheet($baseCssPath.'foreign/FontAwesome/css/font-awesome.min.css')
             ->prependStylesheet($baseCssPath.'main.css')
-            ->prependStylesheet($baseCssPath.'CubeVizModule/component.css')
-            ->prependStylesheet($baseCssPath.'CubeVizModule/dataSet.css')
-            ->prependStylesheet($baseCssPath.'CubeVizModule/footer.css')
-            ->prependStylesheet($baseCssPath.'CubeVizModule/module.css');
+            ->prependStylesheet($baseCssPath.'DataselectionModule/component.css')
+            ->prependStylesheet($baseCssPath.'DataselectionModule/dataSet.css')
+            ->prependStylesheet($baseCssPath.'DataselectionModule/footer.css')
+            ->prependStylesheet($baseCssPath.'DataselectionModule/module.css');
         
         // IE specific CSS for fontawesome
         if (strpos($_SERVER['HTTP_USER_AGENT'], '(compatible; MSIE ')!==FALSE) {
@@ -107,7 +107,7 @@ class CubevizModule extends OntoWiki_Module
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         
-        CubeViz_ViewHelper::$isCubeVizModuleLoaded = true;
+        CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded = true;
         
         // init cubeVizApp
         $config = CubeViz_ViewHelper::initApp(
@@ -134,7 +134,7 @@ class CubevizModule extends OntoWiki_Module
         /**
          * fill template with content and give generated HTML back
          */
-        return $this->render('public/templates/cubeviz/CubeVizModule');
+        return $this->render('public/templates/cubeviz/DataselectionModule');
     }
 
     public function layoutType() { return 'inline'; }

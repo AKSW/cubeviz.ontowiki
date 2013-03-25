@@ -13,7 +13,7 @@
 class CubeViz_ViewHelper
 {
     public static $isCubeVizAppLoaded = false;
-    public static $isCubeVizModuleLoaded = false;
+    public static $isCubeVizDataselectionModuleLoaded = false;
     public static $isCubeVizIndexLoaded = false;
     
     /**
@@ -92,8 +92,8 @@ class CubeViz_ViewHelper
                 $uiHash = CubeViz_ConfigurationLink::$filePrefForUiHash;
             }
                 
-            $view->isCubeVizModuleLoaded = false === isset($view->isCubeVizModuleLoaded)
-                ? false : $view->isCubeVizModuleLoaded;
+            $view->isCubeVizDataselectionModuleLoaded = false === isset($view->isCubeVizDataselectionModuleLoaded)
+                ? false : $view->isCubeVizDataselectionModuleLoaded;
             
             /**
              * Read information from files according to given hashes
@@ -116,7 +116,7 @@ class CubeViz_ViewHelper
                 'modelUrl'              => $modelIri,
                 'uiHash'                => $generatedUiHash,
                 'uiParts'               => array(
-                    'module'            => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizModuleLoaded),
+                    'dataselectionModule' => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),
                     'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
                 'retrievedObservations' => array(),
