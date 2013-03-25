@@ -1,9 +1,18 @@
+Module_Alphabet;Alphabet
+Module_Cancel;Cancel
+Module_CheckStatus;Check Status
 Module_ClickMoreInformation;Click for more information
+Module_CloseAndUpdateVisz;Close and update visualization
+Module_DeselectAllItems;Deselect all items
 Module_Link;Link
 Module_LoadingMessage;I am working ...
+Module_ObservationCount;Observation Count
 Module_Permalink;Permalink
+Module_SelectAllItems;Select all items
+Module_SelectComponentElements;Select elements of interest
 Module_SelectComponents;Select axis elements
 Module_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
 Module_SelectDS;Select part of group
 Module_SelectDSHelpText;Each structural element of a DataCube contains data sets. A data set is the major entity: it groups statistical data about a specific topic, called observations. 
 Module_ShowVisualization;Show Visualization
+Module_SortBy;Sort By

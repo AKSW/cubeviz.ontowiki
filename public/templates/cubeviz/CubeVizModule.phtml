@@ -122,7 +122,7 @@
             </nobr>
         </h3>
         <a class="cubeviz-component-setupComponentOpener">
-            Select elements of interest
+            <?php echo $this->translate->_('Module_SelectComponentElements'); ?>
         </a>        
     </div>
 </div>
@@ -141,30 +141,34 @@
         <h3 style="margin-top: 0px;">[[__cv_niceLabel]]</h3>      
         
         <div class="cubeviz-component-sortButtons" style="float:right; vertical-align: middle;">
-            Sort by: 
-            <span class="cubeviz-btn">alphabet</span>
+            <?php echo $this->translate->_('Module_SortBy'); ?>: 
+            
+            <span class="cubeviz-btn">
+                <?php echo $this->translate->_('Module_Alphabet'); ?></span>
             &nbsp;
-            <span class="cubeviz-btn">check status</span>
+            <span class="cubeviz-btn">
+                <?php echo $this->translate->_('Module_CheckStatus'); ?></span>
             &nbsp;
-            <span class="cubeviz-btn" style="display:none;">observation count</span>
+            <span class="cubeviz-btn" style="display:none;">
+                <?php echo $this->translate->_('Module_ObservationCount'); ?></span>
         </div>
         
         <span class="cubeviz-btn cubeviz-component-selectAllButton">
-            Select all items</span>
+            <?php echo $this->translate->_('Module_SelectAllItems'); ?></span>
         
         <span class="cubeviz-btn cubeviz-component-deselectButton">
-            Deselect all items</span>
+            <?php echo $this->translate->_('Module_DeselectAllItems'); ?></span>
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
         <div style="margin-top: 5px; float:right;">            
-            <span class="cubeviz-btn cubeviz-component-cancel">Cancel</span>
+            <span class="cubeviz-btn cubeviz-component-cancel"><?php echo $this->translate->_('Module_Cancel'); ?></span>
             &nbsp;
             <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
                 <i class="icon-spinner icon-spin cubeviz-component-closeUpdateSpinner" 
                    style="display: none;"></i>
                 &nbsp;
-                Close and update visualization</span>
+                <?php echo $this->translate->_('Module_CloseAndUpdateVisz'); ?></span>
         </div>
     </div>
 </div>
