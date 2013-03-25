@@ -14,7 +14,7 @@
 
 <div id="cubeviz-module-spinner">
     <i class="icon-spinner icon-spin" style="vertical-align: middle;"></i>
-    <?php echo $this->translate->_('Module_LoadingMessage'); ?>
+    <?php echo $this->translate->_('DataSelectionModule_LoadingMessage'); ?>
 </div>
 
 <div id="cubeviz-module-dataSelection">
@@ -23,11 +23,11 @@
     <div id="cubviz-dataSet-container">
         <div style="width: 100%; margin-bottom:2px;">
             <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->translate->_('Module_SelectDS'); ?></div>
+                <?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?></div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-dataSet-questionMark"
-                   title="<?php echo $this->translate->_('Module_ClickMoreInformation'); ?>"></i>
+                   title="<?php echo $this->translate->_('DataSelectionModule_ClickMoreInformation'); ?>"></i>
             </div>                    
         </div>
         <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
@@ -40,11 +40,11 @@
     <div id="cubviz-component-container">
         <div style="width: 100%;">
             <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->translate->_('Module_SelectComponents'); ?></div>
+                <?php echo $this->translate->_('DataSelectionModule_SelectComponents'); ?></div>
             <div style="float:right;padding-right:0.3em">
                 <i class="icon-question-sign cubeviz-clickable"
                    id="cubeviz-component-questionMark"
-                   title="<?php echo $this->translate->_('Module_ClickMoreInformation'); ?>"></i>
+                   title="<?php echo $this->translate->_('DataSelectionModule_ClickMoreInformation'); ?>"></i>
             </div>
         </div>
         <div style="clear: both;"></div>
@@ -54,15 +54,15 @@
     <div id="cubeviz-footer-container">                
         <span style="float:left;">
             <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
-                <?php echo $this->translate->_('Module_Permalink'); ?></a>
+                <?php echo $this->translate->_('DataSelectionModule_Permalink'); ?></a>
             <span id="cubeviz-footer-permaLinkMenu">
                 <span id="cubeviz-footer-permaLink" style="display: none;">
-                    <?php echo $this->translate->_('Module_Link'); ?></span>
+                    <?php echo $this->translate->_('DataSelectionModule_Link'); ?></span>
             </span>
         </span>
         <span style="float:right;">
             <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
-                <?php echo $this->translate->_('Module_ShowVisualization'); ?></a>
+                <?php echo $this->translate->_('DataSelectionModule_ShowVisualization'); ?></a>
         </span>
     </div>
 </div>
@@ -80,12 +80,12 @@
               src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <div style="float: left;">
-        <h4><?php echo $this->translate->_('Module_SelectDS'); ?></h4>
+        <h4><?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?></h4>
     </div>
     <br/>
     <br/>
     <div style="clear: both;">
-        <?php echo $this->translate->_('Module_SelectDSHelpText'); ?></div>
+        <?php echo $this->translate->_('DataSelectionModule_SelectDSHelpText'); ?></div>
 </div>
 
 <div id="cubeviz-component-dialog" style="display: none;" title="Information">
@@ -94,12 +94,12 @@
              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
     <div style="float: left;">
-        <h4><?php echo $this->translate->_('Module_SelectComponents'); ?></h4>
+        <h4><?php echo $this->translate->_('DataSelectionModule_SelectComponents'); ?></h4>
     </div>
     <br/>
     <br/>
     <div style="clear: both;">
-        <?php echo $this->translate->_('Module_SelectComponentsHelpText'); ?></div>
+        <?php echo $this->translate->_('DataSelectionModule_SelectComponentsHelpText'); ?></div>
 </div>
 
 <div id="cubeviz-component-setupDialogContainer" style="display: none;">
@@ -122,7 +122,7 @@
             </nobr>
         </h3>
         <a class="cubeviz-component-setupComponentOpener">
-            <?php echo $this->translate->_('Module_SelectComponentElements'); ?>
+            <?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>
         </a>        
     </div>
 </div>
@@ -141,34 +141,34 @@
         <h3 style="margin-top: 0px;">[[__cv_niceLabel]]</h3>      
         
         <div class="cubeviz-component-sortButtons" style="float:right; vertical-align: middle;">
-            <?php echo $this->translate->_('Module_SortBy'); ?>: 
+            <?php echo $this->translate->_('DataSelectionModule_SortBy'); ?>: 
             
             <span class="cubeviz-btn">
-                <?php echo $this->translate->_('Module_Alphabet'); ?></span>
+                <?php echo $this->translate->_('DataSelectionModule_Alphabet'); ?></span>
             &nbsp;
             <span class="cubeviz-btn">
-                <?php echo $this->translate->_('Module_CheckStatus'); ?></span>
+                <?php echo $this->translate->_('DataSelectionModule_CheckStatus'); ?></span>
             &nbsp;
             <span class="cubeviz-btn" style="display:none;">
-                <?php echo $this->translate->_('Module_ObservationCount'); ?></span>
+                <?php echo $this->translate->_('DataSelectionModule_ObservationCount'); ?></span>
         </div>
         
         <span class="cubeviz-btn cubeviz-component-selectAllButton">
-            <?php echo $this->translate->_('Module_SelectAllItems'); ?></span>
+            <?php echo $this->translate->_('DataSelectionModule_SelectAllItems'); ?></span>
         
         <span class="cubeviz-btn cubeviz-component-deselectButton">
-            <?php echo $this->translate->_('Module_DeselectAllItems'); ?></span>
+            <?php echo $this->translate->_('DataSelectionModule_DeselectAllItems'); ?></span>
         
         <ul class="cubeviz-component-setupComponentElements"></ul>
         
         <div style="margin-top: 5px; float:right;">            
-            <span class="cubeviz-btn cubeviz-component-cancel"><?php echo $this->translate->_('Module_Cancel'); ?></span>
+            <span class="cubeviz-btn cubeviz-component-cancel"><?php echo $this->translate->_('DataSelectionModule_Cancel'); ?></span>
             &nbsp;
             <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
                 <i class="icon-spinner icon-spin cubeviz-component-closeUpdateSpinner" 
                    style="display: none;"></i>
                 &nbsp;
-                <?php echo $this->translate->_('Module_CloseAndUpdateVisz'); ?></span>
+                <?php echo $this->translate->_('DataSelectionModule_CloseAndUpdateVisz'); ?></span>
         </div>
     </div>
 </div>

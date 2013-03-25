@@ -1,18 +1,41 @@
-Module_Alphabet;Alphabet
-Module_Cancel;Cancel
-Module_CheckStatus;Check Status
-Module_ClickMoreInformation;Click for more information
-Module_CloseAndUpdateVisz;Close and update visualization
-Module_DeselectAllItems;Deselect all items
-Module_Link;Link
-Module_LoadingMessage;I am working ...
-Module_ObservationCount;Observation Count
-Module_Permalink;Permalink
-Module_SelectAllItems;Select all items
-Module_SelectComponentElements;Select elements of interest
-Module_SelectComponents;Select axis elements
-Module_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
-Module_SelectDS;Select part of group
-Module_SelectDSHelpText;Each structural element of a DataCube contains data sets. A data set is the major entity: it groups statistical data about a specific topic, called observations. 
-Module_ShowVisualization;Show Visualization
-Module_SortBy;Sort By
+DataSelectionModule_Alphabet;Alphabet
+DataSelectionModule_Cancel;Cancel
+DataSelectionModule_CheckStatus;Check Status
+DataSelectionModule_ClickMoreInformation;Click for more information
+DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
+DataSelectionModule_DeselectAllItems;Deselect all items
+DataSelectionModule_Link;Link
+DataSelectionModule_LoadingMessage;I am working ...
+DataSelectionModule_ObservationCount;Observation Count
+DataSelectionModule_Permalink;Permalink
+DataSelectionModule_SelectAllItems;Select all items
+DataSelectionModule_SelectComponentElements;Select elements of interest
+DataSelectionModule_SelectComponents;Select axis elements
+DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
+DataSelectionModule_SelectDS;Select part of group
+DataSelectionModule_SelectDSHelpText;Each structural element of a DataCube contains data sets. A data set is the major entity: it groups statistical data about a specific topic, called observations. 
+DataSelectionModule_ShowVisualization;Show Visualization
+DataSelectionModule_SortBy;Sort By
+
+IndexAction_ConfigureVisualization;Configure Visualization
+IndexAction_ClickMoreInformation;Click For More Information
+IndexAction_Close;Close
+IndexAction_CloseMenuWithoutApplyingChanges;Close This Menu Without Applying Changes
+IndexAction_Explanation;Explanation
+IndexAction_GoToSource;Go To Source
+IndexAction_InformationAboutConfiguration;Information About Selected Configuration
+IndexAction_InformationAboutRetrievedData;Information About Retrieved Data
+IndexAction_MetaDataAboutDimensionElement;Metadata about the dimension element
+IndexAction_NotificationHighChartsException10;That chart can not be produced because the selected data contains zero or subzero values. Please change the configuration in the left sidebar or use another Scale value but not Logarithmic.
+IndexAction_NotificationNoDataFitsSelection;No data fits to your selection, please adapt your selection in the left sidebar manually.
+IndexAction_NotificationNoDataFitsSelectionExplanation;This behavior can have various reasons. On the one hand it is possible that there is no data available according to the selection. In order to reduce the load of the server we decided not to check the availability of data for every selection. <br/><br/> On the other hand it is possible that a chart can not be produced if the user selects inapplicable combinations of options such as a logarithm scale in combination with percentage stacking. Trapping such cases is not yet fully implemented but will be done soon. <br/><br/>To solve such problems we suggest to change the selection and/or the selected chart options.
+IndexAction_RetrievedData;Retrieved Data
+IndexAction_SelectedConfiguration;Selected Configuration
+IndexAction_ShowInformationAbout;Show Information About
+IndexAction_ShowMoreInformation;Show More Information
+IndexAction_SortByTitle;Sort By Title
+IndexAction_SortByValue;Sort By Value
+IndexAction_Update;Update
+IndexAction_UpdateVisualizationBasedSettings;Update Visualization Based On New Settings
+IndexAction_VisualizationOf;Visualization Of
+

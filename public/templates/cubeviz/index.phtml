@@ -28,25 +28,25 @@
     <div id="cubeviz-index-legend">
         
         <span style="vertical-align: middle;">
-            <strong>Show Information About</strong> &nbsp;
+            <strong><?php echo $this->translate->_('IndexAction_ShowInformationAbout'); ?></strong> &nbsp;
         </span>
         
         <!-- Information about the components -->
         <a class="cubeviz-btn" id="cubeviz-legend-btnShowSelectedConfiguration">
             <i class="icon-chevron-down"></i> &nbsp;
-            Selected Configuration</a>
+            <?php echo $this->translate->_('IndexAction_SelectedConfiguration'); ?></a>
         
         &nbsp;
         
         <!-- Information about the observations itself -->
         <a class="cubeviz-btn" id="cubeviz-legend-btnShowRetrievedObservations">
             <i class="icon-chevron-down"></i> &nbsp;
-            Retrieved Data</a>
+            <?php echo $this->translate->_('IndexAction_RetrievedData'); ?></a>
         
         <!-- Selected configuration -->
         <div id="cubeviz-legend-selectedConfiguration" style="display: none;">
             <br/>
-            <h2>Information About Selected Configuration</h2>
+            <h2><?php echo $this->translate->_('IndexAction_InformationAboutConfiguration'); ?></h2>
             
             <div id="cubeviz-legend-dsdAndDs"></div>
             <div id="cubeviz-legend-components"></div>
@@ -55,15 +55,15 @@
         <!-- Retrieved observations -->
         <div id="cubeviz-legend-retrievedObservations" style="display: none; clear: both;">
             <br/>
-            <h2>Information About Retrieved Data</h2>
+            <h2><?php echo $this->translate->_('IndexAction_InformationAboutRetrievedData'); ?></h2>
             
             <ul id="cubeviz-legend-observations"></ul>
             <div style="float: right; margin-right: 10px;">
                 <p>
                     <a class="cubeviz-btn" id="cubeviz-legend-sortByTitle">
-                        Sort by Title</a>
+                        <?php echo $this->translate->_('IndexAction_SortByTitle'); ?></a>
                     <a class="cubeviz-btn" id="cubeviz-legend-sortByValue">
-                        Sort by Value</a>
+                        <?php echo $this->translate->_('IndexAction_SortByValue'); ?></a>
                 </p>
             </div>
         </div>
@@ -72,7 +72,7 @@
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
         
-        <h4>Configure the visualization</h4>
+        <h4><?php echo $this->translate->_('IndexAction_ConfigureVisualization'); ?></h4>
         
         <div id="cubeviz-visualizationselector-menuItems"></div>
         <br/>
@@ -81,14 +81,14 @@
         <div style="clear:both; text-align:right;">
             <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-closeMenu"
-               title="Close this menu without apply changes">
-                Close
+               title="<?php echo $this->translate->_('IndexAction_CloseMenuWithoutApplyingChanges'); ?>">
+                <?php echo $this->translate->_('IndexAction_Close'); ?>
             </a>
             
             <a class="cubeviz-btn"
                id="cubeviz-visualizationselector-updateVisz"
-               title="Update visualization based on new settings">
-                <strong>Update</strong>
+               title="<?php echo $this->translate->_('IndexAction_UpdateVisualizationBasedSettings'); ?>">
+                <strong><?php echo $this->translate->_('IndexAction_Update'); ?></strong>
             </a>
         </div>
     </div>
@@ -109,11 +109,11 @@
     Header
 -->
 <div id="cubeviz-index-tpl-header" style="display: none;">
-    Visualization of the [[modelLabel]]
+    <?php echo $this->translate->_('IndexAction_VisualizationOf'); ?> [[modelLabel]]
     &nbsp;
     <i class="icon-lightbulb cubeviz-clickable"
        id="cubeviz-index-headerQuestionMarkHeadline" 
-       title="Click for more information"></i>
+       title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"></i>
 </div>
 
 <!-- 
@@ -160,30 +160,14 @@
 <div id="cubeviz-visualization-tpl-nothingFoundNotification" style="display: none;">      
     <div id="cubeviz-visualization-nothingFoundNotification" align="center">
         <h4>
-            No data fits to your selection, please adapt your selection in the left sidebar manually.
-        </h4>
+            <?php echo $this->translate->_('IndexAction_NotificationNoDataFitsSelection'); ?></h4>
         <br/>            
         <div style="width: 50%; text-align: left;">
             <div style="float:left;"><i class="icon-lightbulb"></i></div>
             <div style="margin-left: 24px;">
-                <strong>Explanation</strong>
+                <strong><?php echo $this->translate->_('IndexAction_Explanation'); ?></strong>
                 <p>
-                    This behavior can have various reasons. On the one hand it
-                    is possible that there is no data available according to 
-                    the selection. In order to reduce the load of the server 
-                    we decided not to check the availability of data for every 
-                    selection. 
-                    <br/>
-                    <br/>
-                    On the other hand it is possible that a chart can not be 
-                    produced if the user selects inapplicable combinations of 
-                    options such as a logarithm scale in combination 
-                    with percentage stacking. Trapping such cases is not yet 
-                    fully implemented but will be done soon.
-                    <br/>
-                    <br/>
-                    To solve such problems we suggest to change the selection 
-                    and/or the selected chart options.
+                    <?php echo $this->translate->_('IndexAction_NotificationNoDataFitsSelectionExplanation'); ?>
                 </p>
             </div>
         </div>
@@ -196,11 +180,7 @@
 <div id="cubeviz-visualization-tpl-notificationHightchartsException10" style="display: none;">
     <div align="center">
         <div id="cubeviz-visualization-notificationHightchartsException10">
-            <h4>
-                 That chart can not be produced because the selected data contains 
-                 zero or subzero values. Please change the configuration in the 
-                 left sidebar or use another Scale value but not Logarithmic.
-            </h4>
+            <h4><?php echo $this->translate->_('IndexAction_NotificationHighChartsException10'); ?></h4>
         </div>
     </div>
 </div>
@@ -227,7 +207,8 @@
             
             <div style="height: 5px;"></div>
             
-            <a href="[[__cv_uri]]" target="_blank">Go to source</a>
+            <a href="[[__cv_uri]]" target="_blank">
+                <?php echo $this->translate->_('IndexAction_GoToSource'); ?></a>
             
             <div style="height: 10px;"></div>
             
@@ -268,11 +249,12 @@
                 [[shortLabel]]</h4>
             <div style="height: 8px;"></div>
             <a class="cubeviz-legend-componentDimensionShowInfo">
-                Show more information</a>
+                <?php echo $this->translate->_('IndexAction_ShowMoreInformation'); ?></a>
             <i class="icon-lightbulb cubeviz-clickable"></i>
             &nbsp;
             &nbsp;
-            <a href="[[__cv_uri]]" target="_blank">Go to source</a>
+            <a href="[[__cv_uri]]" target="_blank">
+                <?php echo $this->translate->_('IndexAction_GoToSource'); ?></a>
         </span>
     </li>
 </div>
@@ -287,7 +269,7 @@
         <img class="cubeviz-icon-unsized"
              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
     </div>
-    <h5>Metadata about the dimension element "[[__cv_niceLabel]]"</h5>
+    <h5><?php echo $this->translate->_('IndexAction_MetaDataAboutDimensionElement'); ?> "[[__cv_niceLabel]]"</h5>
 </div>
 
 <div id="cubeviz-legend-tpl-componentDimensionInfoList" style="display: none;">
