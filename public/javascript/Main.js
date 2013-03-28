@@ -1175,12 +1175,14 @@ var View_CubeVizModule_Component = (function (_super) {
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
+        var checkbox = null;
         var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
         var elementInstance = {
         };
         var componentElements = new CubeViz_Collection("__cv_uri");
         var elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]);
         var selectedDimensions = this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements;
+        var self = this;
         var setElementChecked = null;
         var wasSomethingSelected = false;
 
@@ -1196,10 +1198,12 @@ var View_CubeVizModule_Component = (function (_super) {
                 __cv_uri: element.__cv_uri,
                 __cv_uri2: element.__cv_uri
             }));
+            checkbox = elementInstance.children().first();
             if(true == setElementChecked) {
-                elementInstance.children().first().attr("checked", true);
+                checkbox.attr("checked", true);
             }
-            elementInstance.data("data", element);
+            checkbox.click(self.onClick_dimensionElementCheckbox);
+            elementInstance.data("data", element).data("dialogDiv", dialogDiv);
             elementList.append(elementInstance);
         });
     };
@@ -1259,6 +1263,33 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.onClick_cancel = function (event) {
         CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
     };
+    View_CubeVizModule_Component.prototype.onClick_dimensionElementCheckbox = function (event) {
+        var clickedCheckbox = $(event.target);
+        var parentContainer = $($(event.target).parent());
+        var dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]");
+        var anythingChecked = false;
+        var numberOfSelectedElements = $(parentContainer.data("dialogDiv")).data("component").__cv_selectedElementCount;
+
+        if(1 < numberOfSelectedElements) {
+            return;
+        }
+        _.each(dialogCheckboxList, function (checkbox) {
+            if($(checkbox).attr("checked")) {
+                anythingChecked = true;
+            }
+        });
+        if(false == anythingChecked) {
+            _.each(dialogCheckboxList, function (checkbox) {
+                $(checkbox).attr("disabled", false);
+            });
+        } else {
+            _.each(dialogCheckboxList, function (checkbox) {
+                if(!$(checkbox).attr("checked")) {
+                    $(checkbox).attr("disabled", true);
+                }
+            });
+        }
+    };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
         var self = this;
@@ -1282,7 +1313,7 @@ var View_CubeVizModule_Component = (function (_super) {
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
         var numberOfSelectedElements = $($(event.target).data("dialogDiv")).data("component").__cv_selectedElementCount;
-        if(2 > numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions) {
+        if(1 == numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions) {
             var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
             _.each(checkboxes, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {

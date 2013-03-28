@@ -96,13 +96,15 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
      */
     public configureSetupComponentElements(component:any) 
     {
-        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri),
+        var checkbox:any = null,
+            dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri),
             elementInstance:any = {},
             componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
             selectedDimensions:any = this.app._.data.selectedComponents
                                                  .dimensions[component.__cv_uri]
                                                  .__cv_elements,
+            self = this,
             setElementChecked = null,
             wasSomethingSelected:bool = false;
             
@@ -127,6 +129,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 if(true === setElementChecked) 
                     wasSomethingSelected = true;
                     
+                // fill template with life
                 elementInstance = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-component-tpl-setupComponentElement").html(),
                     {
@@ -136,11 +139,19 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     }
                 ));
                 
+                checkbox = elementInstance.children().first();
+                
                 if(true == setElementChecked) {
-                    elementInstance.children().first().attr("checked", true);
+                    checkbox.attr("checked", true);
                 }
                 
-                elementInstance.data("data", element);
+                // set click event
+                checkbox.click(self.onClick_dimensionElementCheckbox);
+                
+                // save element instance
+                elementInstance
+                    .data("data", element)
+                    .data("dialogDiv", dialogDiv);
                 
                 // ... add new item to element list
                 elementList.append(elementInstance);
@@ -316,6 +327,48 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     }
     
     /**
+     *
+     */
+    public onClick_dimensionElementCheckbox(event) : void 
+    {
+        var clickedCheckbox = $(event.target),
+            parentContainer = $($(event.target).parent()),
+            dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]"),
+            anythingChecked = false,
+            numberOfSelectedElements = $(parentContainer.data("dialogDiv"))
+                .data("component")
+                .__cv_selectedElementCount;
+            
+        if (1 < numberOfSelectedElements) {
+            return;
+        }
+            
+        // deactivate all unchecked checkboxes
+        _.each(dialogCheckboxList, function(checkbox){
+            if($(checkbox).attr("checked")) {
+                anythingChecked = true;
+            }
+        });
+        
+        // enable all checkboxes, if no checkbox is checked
+        if (false == anythingChecked) {
+            _.each(dialogCheckboxList, function(checkbox){
+                $(checkbox).attr("disabled", false);
+            });
+        }
+        
+        // disable all checkboxes, if there are already two multiple dimensions
+        // and this dialog is not one of these
+        else {
+            _.each(dialogCheckboxList, function(checkbox){
+                if(!$(checkbox).attr("checked")) {
+                    $(checkbox).attr("disabled", true);
+                }
+            });
+        }
+    }
+    
+    /**
      * Apply changes, update data and close dialog
      * @param event Event targets to clicked button
      */
@@ -382,7 +435,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // if there are already two ultiple dimensions and if the dialog is not
         // associated to one of the multiple dimensions, deactivate all unchecked 
         // checkboxes in the dialog
-        if ( 2 > numberOfSelectedElements 
+        if ( 1 == numberOfSelectedElements 
              && 2 == this.app._.data.numberOfMultipleDimensions) {
             var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
             
