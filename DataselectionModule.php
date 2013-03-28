@@ -52,7 +52,12 @@ class DataselectionModule extends OntoWiki_Module
      * Returns the content
      */
     public function getContents() 
-    {        
+    {
+        $q = new DataCube_Query ( $this->_owApp->selectedModel );
+        if (false === $q->containsDataCubeInformation()) {
+            return false;
+        }
+        
         /**
          * Set paths
          */

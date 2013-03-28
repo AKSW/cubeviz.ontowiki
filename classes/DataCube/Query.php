@@ -28,29 +28,31 @@ class DataCube_Query
      * Check if there is at least one observation in the knowledgebase
      */
     public function containsDataCubeInformation () {
-        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
-                    ASK
-                    {
-                        ?observation a qb:Observation .
-                        ?observation qb:dataSet ?dataset .
-                        ?observation ?dimension ?dimelement .
-                        ?observation ?measure ?value .
+        $result = $this->_model->sparqlQuery(
+            'PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK
+                {
+                    ?observation a qb:Observation .
+                    ?observation qb:dataSet ?dataset .
+                    ?observation ?dimension ?dimelement .
+                    ?observation ?measure ?value .
 
-                        ?dataset a qb:DataSet .
-                        ?dataset qb:structure ?datastructuredefintion .
+                    ?dataset a qb:DataSet .
+                    ?dataset qb:structure ?datastructuredefintion .
 
-                        ?datastructuredefintion a qb:DataStructureDefinition .
-                        ?datastructuredefintion qb:component ?dimensionspecification .
-                        ?datastructuredefintion qb:component ?measurespecification .
+                    ?datastructuredefintion a qb:DataStructureDefinition .
+                    ?datastructuredefintion qb:component ?dimensionspecification .
+                    ?datastructuredefintion qb:component ?measurespecification .
 
-                        ?dimensionspecification a qb:ComponentSpecification .
-                        ?dimensionpecification qb:dimension ?dimension .
+                    ?dimensionspecification a qb:ComponentSpecification .
+                    ?dimensionpecification qb:dimension ?dimension .
 
-                        ?measurespecification a qb:ComponentSpecification .
-                        ?measurespecification qb:measure ?measure .
-                    }';
+                    ?measurespecification a qb:ComponentSpecification .
+                    ?measurespecification qb:measure ?measure .
+                }'
+        );
 
-        return 1 == count ( $this->_model->sparqlQuery($sparql) ) ? true : false;
+        return 1 == count ($result) && false !== $result ? true : false;
     }
 
     /**
