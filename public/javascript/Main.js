@@ -588,7 +588,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             };
         }
         _.each(selectedComponentDimensions, function (selectedDimension) {
-            if(0 == _.keys(selectedDimension.__cv_elements).length) {
+            if(2 > _.keys(selectedDimension.__cv_elements).length) {
                 return;
             }
             if(null == forXAxis) {
@@ -597,6 +597,13 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
+        if(null == forSeries) {
+            _.each(selectedComponentDimensions, function (selectedDimension) {
+                if(1 == _.keys(selectedDimension.__cv_elements).length && null == forSeries) {
+                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+                }
+            });
+        }
         this.chartConfig._cubeVizVisz = this.chartConfig._cubeVizVisz || {
         };
         if("true" == this.chartConfig._cubeVizVisz.doSwitchingAxes) {

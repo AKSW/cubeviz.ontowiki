@@ -87,6 +87,9 @@ class CubeViz_ConfigurationLink
                 $config['selectedDS']['__cv_uri'],
                 DataCube_UriOf::Dimension
             );
+            $numberOfDimensions = count($dimensions);
+            $numberOfUsedMultipleDimensions = 0;
+            $useMultipleDimensionAnyway = false;
             
             // set components
             $config['components']['dimensions'] = array();
@@ -111,16 +114,32 @@ class CubeViz_ConfigurationLink
                     $numberOfElementsToPreSelect = 1;
                 }
                 
+                // if more than one dimensions available use only 2 multiple at 
+                // the same time and only one element of the other ones
+                if (2 > $numberOfUsedMultipleDimensions 
+                    && 2 < $numberOfDimensions 
+                    && 1 < $numberOfElementsToPreSelect) {
+                    ++$numberOfUsedMultipleDimensions;
+                    
+                    // fallback option, if there are a couple of one elmement 
+                    // dimensions between two multiple ones.
+                    if (2 == $numberOfUsedMultipleDimensions) {
+                        $useMultipleDimensionAnyway = true;
+                    }
+                }
+                
                 $preSelectedElements = array();
                 $stillUsedIndexes = array();
-                $dimensionElementsNumeric = array_values($dimension['__cv_elements']);
                 
-                // if this dimension has only one element
-                if (1 == $numberOfElementsToPreSelect) {
+                // if this dimension has only one element or we have already 
+                // reach the maximum number of multiple dimensions
+                if (1 == $numberOfElementsToPreSelect 
+                    || (2 == $numberOfUsedMultipleDimensions && false == $useMultipleDimensionAnyway)) {
                     
                     foreach ($dimension['__cv_elements'] as $elementUri => $element) {
                         $preSelectedElements [$elementUri] = 
                             $dimension['__cv_elements'][$elementUri];
+                        break;
                     }
                     
                 // ... more than one element
@@ -161,6 +180,10 @@ class CubeViz_ConfigurationLink
                 
                 $config['selectedComponents']['dimensions']
                     [$dimension['__cv_uri']] = $dimension;
+                    
+                if (true == $useMultipleDimensionAnyway) {
+                    $useMultipleDimensionAnyway = false;
+                }
             }
             
             /**

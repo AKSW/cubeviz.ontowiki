@@ -67,7 +67,7 @@ class CubeViz_Visualization_HighCharts_Chart
         _.each(selectedComponentDimensions, function(selectedDimension){
             
             // ignore dimensions which have no elements
-            if (0 == _.keys(selectedDimension.__cv_elements).length) {
+            if ( 2 > _.keys(selectedDimension.__cv_elements).length) {
                 return;
             }
 
@@ -77,6 +77,17 @@ class CubeViz_Visualization_HighCharts_Chart
                 forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
+        
+        // in the loop before, only multiple element dimensions were used
+        // in the case that forSeries is still null, use the first one element
+        // dimension instead
+        if (null == forSeries) {
+            _.each(selectedComponentDimensions, function(selectedDimension) {
+                if (1 == _.keys(selectedDimension.__cv_elements).length
+                    && null == forSeries)
+                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+            });
+        }
         
         // If set, switch axes
         this.chartConfig._cubeVizVisz = this.chartConfig._cubeVizVisz || {};
