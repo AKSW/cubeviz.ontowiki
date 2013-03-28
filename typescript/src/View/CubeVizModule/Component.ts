@@ -348,13 +348,19 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             if($(checkbox).attr("checked")) {
                 anythingChecked = true;
             }
-        });
+        });        
         
         // enable all checkboxes, if no checkbox is checked
         if (false == anythingChecked) {
             _.each(dialogCheckboxList, function(checkbox){
                 $(checkbox).attr("disabled", false);
             });
+            
+            // activate both select buttons
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+                .attr("disabled", false).removeClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+                .attr("disabled", false).removeClass("ui-state-disabled");
         }
         
         // disable all checkboxes, if there are already two multiple dimensions
@@ -365,6 +371,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     $(checkbox).attr("disabled", true);
                 }
             });
+            
+            // deactivate both select buttons
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+                .attr("disabled", true).addClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+                .attr("disabled", true).addClass("ui-state-disabled");
         }
     }
     
@@ -445,6 +457,12 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     $(checkbox).attr("disabled", true);
                 }
             });
+            
+            // deactivate both select buttons
+            $($(event.target).data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+                .attr("disabled", true).addClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+                .attr("disabled", true).addClass("ui-state-disabled");
         }
         
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));

@@ -1282,12 +1282,16 @@ var View_CubeVizModule_Component = (function (_super) {
             _.each(dialogCheckboxList, function (checkbox) {
                 $(checkbox).attr("disabled", false);
             });
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
         } else {
             _.each(dialogCheckboxList, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {
                     $(checkbox).attr("disabled", true);
                 }
             });
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
         }
     };
     View_CubeVizModule_Component.prototype.onClick_closeAndUpdate = function (event) {
@@ -1320,6 +1324,8 @@ var View_CubeVizModule_Component = (function (_super) {
                     $(checkbox).attr("disabled", true);
                 }
             });
+            $($(event.target).data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
         }
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
