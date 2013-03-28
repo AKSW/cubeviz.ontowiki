@@ -115,6 +115,15 @@ class CubeViz_Collection
     }
     
     /**
+     * Get first element.
+     * @return any|undefined Found object or undefined.
+     */
+    public getFirst() : any
+    {
+        return _.first(this._);
+    }
+    
+    /**
      * Remove element by id.
      * @param id ID f the element.
      * @return CubeViz_Collection Itself, for chaining.
