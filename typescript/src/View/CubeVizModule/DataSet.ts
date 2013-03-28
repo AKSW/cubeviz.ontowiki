@@ -153,22 +153,39 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
          */        
         var list = $(this.attachedTo),
             self = this;
-        
-        // output loaded data
-        this.collection.each(function(element){
-            list.append(
-                "<option value=\"" + element.__cv_uri + "\">" + 
-                    element.__cv_niceLabel + "</option>"
+            
+        if (1 == this.collection.size()) {
+            
+            // get div container where dataset selectbox is located in
+            var parent = $($("#cubeviz-dataSet-list").parent());
+            
+            // hide selectbox
+            $("#cubeviz-dataSet-list").hide();
+            
+            // show dataset label
+            parent.append(
+                "<div id=\"cubeviz-dataSet-label\">" + 
+                    this.collection.getFirst().__cv_niceLabel +
+                "</div>"
             );
-        });
-        
-        // mark selected element
-        _.each(list.children(), function(listEntry){
-            // set selected variable, if element's __cv_uri is equal to selected dsd's one
-            if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
-                $(listEntry).attr("selected", true);
-            }
-        });
+            
+        } else {        
+            // output loaded data
+            this.collection.each(function(element){
+                list.append(
+                    "<option value=\"" + element.__cv_uri + "\">" + 
+                        element.__cv_niceLabel + "</option>"
+                );
+            });
+            
+            // mark selected element
+            _.each(list.children(), function(listEntry){
+                // set selected variable, if element's __cv_uri is equal to selected dsd's one
+                if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
+                    $(listEntry).attr("selected", true);
+                }
+            });
+        }
         
         /**
          * Question mark dialog

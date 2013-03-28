@@ -78,6 +78,9 @@ var CubeViz_Collection = (function () {
         });
         return 1 == t.length ? t[0] : undefined;
     };
+    CubeViz_Collection.prototype.getFirst = function () {
+        return _.first(this._);
+    };
     CubeViz_Collection.prototype.remove = function (id) {
         var self = this;
         this._ = _.reject(this._, function (element) {
@@ -1097,14 +1100,20 @@ var View_CubeVizModule_DataSet = (function (_super) {
         var list = $(this.attachedTo);
         var self = this;
 
-        this.collection.each(function (element) {
-            list.append("<option value=\"" + element.__cv_uri + "\">" + element.__cv_niceLabel + "</option>");
-        });
-        _.each(list.children(), function (listEntry) {
-            if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
-                $(listEntry).attr("selected", true);
-            }
-        });
+        if(1 == this.collection.size()) {
+            var parent = $($("#cubeviz-dataSet-list").parent());
+            $("#cubeviz-dataSet-list").hide();
+            parent.append("<div id=\"cubeviz-dataSet-label\">" + this.collection.getFirst().__cv_niceLabel + "</div>");
+        } else {
+            this.collection.each(function (element) {
+                list.append("<option value=\"" + element.__cv_uri + "\">" + element.__cv_niceLabel + "</option>");
+            });
+            _.each(list.children(), function (listEntry) {
+                if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
+                    $(listEntry).attr("selected", true);
+                }
+            });
+        }
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-dataSet-dialog"), {
             closeOnEscape: true,
             showCross: true,

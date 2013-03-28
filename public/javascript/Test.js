@@ -88,6 +88,9 @@ var CubeViz_Collection = (function () {
         });
         return 1 == t.length ? t[0] : undefined;
     };
+    CubeViz_Collection.prototype.getFirst = function () {
+        return _.first(this._);
+    };
     CubeViz_Collection.prototype.remove = function (id) {
         var self = this;
         this._ = _.reject(this._, function (element) {

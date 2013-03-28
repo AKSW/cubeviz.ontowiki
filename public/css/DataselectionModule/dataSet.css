@@ -29,3 +29,9 @@
     text-align: start;
     -webkit-writing-mode: horizontal-tb;  
 }
+
+#cubeviz-dataSet-label
+{
+    clear: both;
+    font-weight: bold; 
+}
