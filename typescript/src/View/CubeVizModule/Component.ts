@@ -145,11 +145,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 // ... add new item to element list
                 elementList.append(elementInstance);
             });
-         
-        // if nothing was selected in the list, autoselect first item
-        if(false === wasSomethingSelected) {
-            $($(elementList.find("li").first()).find("input")).attr("checked", "checked");
-        }
     }
     
     /**

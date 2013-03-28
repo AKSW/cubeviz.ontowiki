@@ -337,7 +337,10 @@ class DataCube_Query
         // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
         $i = 0;
         foreach ( $selectedComponentDimensions as $dimension ) {
-            $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+            
+            if (0 < count ($dimension ['__cv_elements'])) {
+                $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+            }
         }
         
         // Set FILTER

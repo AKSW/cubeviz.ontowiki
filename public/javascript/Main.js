@@ -1202,9 +1202,6 @@ var View_CubeVizModule_Component = (function (_super) {
             elementInstance.data("data", element);
             elementList.append(elementInstance);
         });
-        if(false === wasSomethingSelected) {
-            $($(elementList.find("li").first()).find("input")).attr("checked", "checked");
-        }
     };
     View_CubeVizModule_Component.prototype.destroy = function () {
         _.each(this.collection._, function (component) {
