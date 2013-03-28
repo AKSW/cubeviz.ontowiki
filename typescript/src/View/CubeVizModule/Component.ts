@@ -374,6 +374,26 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
         
+        // get number of selected elements in the associated dialog div
+        var numberOfSelectedElements = $($(event.target).data("dialogDiv"))
+            .data("component")
+            .__cv_selectedElementCount;
+        
+        // if there are already two ultiple dimensions and if the dialog is not
+        // associated to one of the multiple dimensions, deactivate all unchecked 
+        // checkboxes in the dialog
+        if ( 2 > numberOfSelectedElements 
+             && 2 == this.app._.data.numberOfMultipleDimensions) {
+            var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+            
+            // deactivate all unchecked checkboxes
+            _.each(checkboxes, function(checkbox){
+                if(!$(checkbox).attr("checked")) {
+                    $(checkbox).attr("disabled", true);
+                }
+            });
+        }
+        
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     }
     
@@ -565,13 +585,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         _.each(backendCollection, function(dimension){
             if (false === _.isUndefined(selectedComponentDimensions)) {
                 selectedDimension = selectedComponentDimensions[dimension.__cv_uri];
-                dimension.selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
+                dimension.__cv_selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
             } else {
-                dimension.selectedElementCount = 1;
+                dimension.__cv_selectedElementCount = 1;
             }
             
             // set general element count
-            dimension.elementCount = _.size(dimension.__cv_elements);
+            dimension.__cv_elementCount = _.size(dimension.__cv_elements);
             
             // build html out of template
             componentBox = $(CubeViz_View_Helper.tplReplace(
@@ -598,7 +618,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
              * Update selected elements counter
              */
             $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
-                dimension.selectedElementCount
+                dimension.__cv_selectedElementCount
             );
             
             self.collection.add(dimension);

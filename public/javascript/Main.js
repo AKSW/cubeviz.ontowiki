@@ -1281,6 +1281,15 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
+        var numberOfSelectedElements = $($(event.target).data("dialogDiv")).data("component").__cv_selectedElementCount;
+        if(2 > numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions) {
+            var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+            _.each(checkboxes, function (checkbox) {
+                if(!$(checkbox).attr("checked")) {
+                    $(checkbox).attr("disabled", true);
+                }
+            });
+        }
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
     View_CubeVizModule_Component.prototype.onClick_sortButton = function (event) {
@@ -1378,16 +1387,16 @@ var View_CubeVizModule_Component = (function (_super) {
         _.each(backendCollection, function (dimension) {
             if(false === _.isUndefined(selectedComponentDimensions)) {
                 selectedDimension = selectedComponentDimensions[dimension.__cv_uri];
-                dimension.selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
+                dimension.__cv_selectedElementCount = _.keys(selectedDimension.__cv_elements).length;
             } else {
-                dimension.selectedElementCount = 1;
+                dimension.__cv_selectedElementCount = 1;
             }
-            dimension.elementCount = _.size(dimension.__cv_elements);
+            dimension.__cv_elementCount = _.size(dimension.__cv_elements);
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);
             self.configureSetupComponentDialog(dimension, componentBox, $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)));
-            $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.selectedElementCount);
+            $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.__cv_selectedElementCount);
             self.collection.add(dimension);
         });
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-component-dialog"), {
