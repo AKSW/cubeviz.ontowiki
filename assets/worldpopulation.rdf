@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Exported with the Erfurt API - http://aksw.org/Projects/Erfurt -->
+
+<!DOCTYPE rdf:RDF [
+  <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <!ENTITY ns0 "http://purl.org/linked-data/cube#">
+  <!ENTITY ns1 "http://cubeviz.org/continent/populations//36f8681c5d3ab75eab81ebe5616f1774/">
+  <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
+]>
+
+<rdf:RDF xml:base="http://cubeviz.org/continent/populations/"
+  xmlns:rdf="&rdf;"
+  xmlns:ns0="&ns0;"
+  xmlns:ns1="&ns1;">
+
+
+<!-- Ontology specific informations -->
+  <ns2:Ontology rdf:about="http://cubeviz.org/continent/populations/"
+    xmlns:ns2="http://www.w3.org/2002/07/owl#" />
+
+<!-- Instances and untyped data -->
+  <ns0:DimensionProperty rdf:about="&ns1;Population"
+    ns2:label="Population"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns0:ComponentSpecification rdf:about="&ns1;Population_CS"
+    ns2:label="Population_CS"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#">
+    <ns0:dimension rdf:resource="&ns1;Population" />
+  </ns0:ComponentSpecification>
+
+  <ns0:Observation rdf:about="&ns1;c1-r2"
+    ns1:value="6 436 826">
+    <ns1:Population rdf:resource="&ns1;r1-c1" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c2-r2"
+    ns1:value=" 737 536">
+    <ns1:Population rdf:resource="&ns1;r1-c2" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c3-r2"
+    ns1:value=" 874 380">
+    <ns1:Population rdf:resource="&ns1;r1-c3" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c4-r2"
+    ns1:value=" 519 688">
+    <ns1:Population rdf:resource="&ns1;r1-c4" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c5-r2"
+    ns1:value=" 883 311">
+    <ns1:Population rdf:resource="&ns1;r1-c5" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c6-r2"
+    ns1:value="1 671 904">
+    <ns1:Population rdf:resource="&ns1;r1-c6" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:Observation rdf:about="&ns1;c7-r2"
+    ns1:value="1 738 457">
+    <ns1:Population rdf:resource="&ns1;r1-c7" />
+    <ns0:dataSet rdf:resource="&ns1;population" />
+  </ns0:Observation>
+
+  <ns0:DataSet rdf:about="&ns1;population"
+    ns2:label="population"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#">
+    <ns0:component rdf:resource="&ns1;Population_CS" />
+    <ns0:component rdf:resource="&ns1;value_CS" />
+    <ns0:structure rdf:resource="&ns1;population" />
+    <rdf:type rdf:resource="&ns0;DataStructureDefinition" />
+  </ns0:DataSet>
+
+  <ns1:Population rdf:about="&ns1;r1-c1"
+    ns2:label="WORLD (b)"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c2"
+    ns2:label="AFRICA"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c3"
+    ns2:label="THE AMERICAS"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c4"
+    ns2:label="EASTERN MEDITERRANEAN"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c5"
+    ns2:label="EUROPE"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c6"
+    ns2:label="SOUTH-EAST ASIA"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns1:Population rdf:about="&ns1;r1-c7"
+    ns2:label="WESTERN PACIFIC"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns0:MeasureProperty rdf:about="&ns1;value"
+    ns2:label="value"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#" />
+
+  <ns0:ComponentSpecification rdf:about="&ns1;value_CS"
+    ns2:label="value_CS"
+    xmlns:ns2="http://www.w3.org/2000/01/rdf-schema#">
+    <ns0:measure rdf:resource="&ns1;value" />
+  </ns0:ComponentSpecification>
+
+</rdf:RDF>
