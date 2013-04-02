@@ -5,7 +5,23 @@
 
 #cubeviz-module-spinner
 {
-    display: none;
-    width: 100%;
+    display:    none;
+    width:      100%;
     text-align: center;
 }
+
+.cubeviz-module-visualSeparator
+{
+    clear:          both; 
+    margin-bottom:  16px;
+    padding-top:    7px; 
+}
+
+.cubeviz-module-visualSeparator hr
+{
+    background: #DADADA;
+    border:     0px; 
+    height:     1px; 
+}
+
+

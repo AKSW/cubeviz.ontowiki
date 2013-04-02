@@ -18,44 +18,54 @@
 </div>
 
 <div id="cubeviz-module-dataSelection">
-        
-    <!-- Data set section -->
-    <div id="cubviz-dataSet-container">
-        <div style="width: 100%; margin-bottom:2px;">
-            <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?></div>
-            <div style="float:right;padding-right:0.3em">
-                <i class="icon-question-sign cubeviz-clickable"
-                   id="cubeviz-dataSet-questionMark"
-                   title="<?php echo $this->translate->_('DataSelectionModule_ClickMoreInformation'); ?>"></i>
-            </div>                    
-        </div>
-        <div>
-            <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
-        </div>
+    
+    <!-- Data set and slice section -->
+    <div style="float: left; height: 50px; text-align: center;">
+        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/subgraph_dots2.png" 
+             style="width: 15px; margin-top: 15px; margin-left: 10px;"
+             title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
+    </div>
+    <div style="float: left; margin-left: 20px;">
+        <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
+        <br/>
+        <select style="min-width: 180px;"><option>Slice1</option></select>
     </div>
     
     <!-- Visual seperator -->
-    <div style="height: 1px; border:0; width:100%; margin-top: 6px; margin-bottom: 6px;"></div>
+    <div class="cubeviz-module-visualSeparator"><hr/></div>
+    
+    
+    <!-- Data set and slice section -->
+    <div style="float: left; height: 55px; text-align: center;">
+        <img src="<?php echo $this->cubevizImagesPath; ?>attributeAndMeasure.png" 
+             style="width: 15px; margin-top: 15px; margin-left: 10px;"
+             title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
+    </div>
+    <div style="float: left; margin-left: 20px;">
+        <select style="width: 170px; min-width: 180px;"><option>Attribute1</option></select>
+        <br/>
+        <select style="width: 170px; min-width: 180px;"><option>Measure1</option></select>
+    </div>
+    
+    <!-- Visual seperator -->
+    <div class="cubeviz-module-visualSeparator"><hr/></div>
+    
     
     <!-- Component section -->
     <div id="cubviz-component-container">
-        <div style="width: 100%;">
-            <div class="cubeviz-label" style="float: left;">
-                <?php echo $this->translate->_('DataSelectionModule_SelectComponents'); ?></div>
-            <div style="float:right;padding-right:0.3em">
-                <i class="icon-question-sign cubeviz-clickable"
-                   id="cubeviz-component-questionMark"
-                   title="<?php echo $this->translate->_('DataSelectionModule_ClickMoreInformation'); ?>"></i>
-            </div>
-        </div>
-        <div style="clear: both;"></div>
         <div id="cubviz-component-listBox"></div>
     </div>
     
+    <!-- Visual seperator -->
+    <div class="cubeviz-module-visualSeparator"><hr/></div>
+    
+    
     <div id="cubeviz-footer-container">                
         <span>
-            <a class="cubeviz-btn" id="cubeviz-footer-permaLinkButton">
+            <a class="cubeviz-btn" 
+               id="cubeviz-footer-permaLinkButton"
+               style="font-size: 12.5px;">
+                <i class="icon-pushpin" style="font-size: 11px;"></i>
                 <?php echo $this->translate->_('DataSelectionModule_Permalink'); ?></a>
             <span id="cubeviz-footer-permaLinkMenu">
                 <span id="cubeviz-footer-permaLink" style="display: none;">
@@ -63,7 +73,10 @@
             </span>
         </span>
         <span style="float:right;">
-            <a class="cubeviz-btn" id="cubeviz-footer-showVisualizationButton">
+            <a class="cubeviz-btn" 
+               id="cubeviz-footer-showVisualizationButton"
+               style="font-size: 12.5px;">
+                <i class="icon-refresh" style="font-size: 11px;"></i>
                 <?php echo $this->translate->_('DataSelectionModule_ShowVisualization'); ?></a>
         </span>
     </div>
@@ -115,17 +128,35 @@
 -->
 <!-- Component-Dimension -->
 <div id="cubeviz-component-tpl-listBoxItem" style="display: none;">
-    <div class="cubeviz-component-box" id="cubeviz-component-box-[[__cv_uri]]">    
-        <h3>
-            [[__cv_niceLabel]]&nbsp;
-            <nobr>
-                (<span class="cubeviz-component-selectedCount">[[__cv_selectedElementCount]]</span> 
-                / [[__cv_elementCount]])
-            </nobr>
-        </h3>
-        <a class="cubeviz-component-setupComponentOpener">
-            <?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>
-        </a>        
+    <div class="cubeviz-component-box" id="cubeviz-component-box-[[__cv_uri]]">            
+        <div style="float: left; height: 50px; width: 20px; text-align: center;">
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/center.png" 
+                 style="width: 15px; margin-left: 10px; padding-top: 4px;"
+                 title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
+            
+            <br/>
+                        
+        </div>
+        <div style="float: left; width: 180px; height: 50px; padding-left: 20px;">
+            
+            <span style="font-size: 14.5px;">[[__cv_niceLabel]]</span>
+            <span style="color: #AFAFAF; font-size: 11px;">
+                <span class="cubeviz-component-selectedCount">[[__cv_selectedElementCount]]</span>
+                <?php echo $this->translate->_('DataSelectionModule_Of'); ?> 
+                [[__cv_elementCount]]
+                <?php echo $this->translate->_('DataSelectionModule_Selected'); ?> 
+            </span>
+            
+            <br/>
+            <span style="color: #AFAFAF; font-size: 11px;">
+                This is 
+            </span>
+            
+        </div>
+        <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
+            <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+        </div>
     </div>
 </div>
 
