@@ -23,9 +23,9 @@ src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/Observation.ts
 
-src/View/CubeVizModule/DataSet.ts
-src/View/CubeVizModule/Component.ts
-src/View/CubeVizModule/Footer.ts
+src/View/DataselectionModule/DataSet.ts
+src/View/DataselectionModule/Component.ts
+src/View/DataselectionModule/Footer.ts
 
 src/View/IndexAction/Header.ts
 src/View/IndexAction/Legend.ts
