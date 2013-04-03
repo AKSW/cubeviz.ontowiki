@@ -1,23 +1,23 @@
-#cubeviz-module-dataSelection
+#cubeviz-dataSelectionModule-dataSelection
 {
     margin-top: 5px;
 }
 
-#cubeviz-module-spinner
+#cubeviz-dataSelectionModule-spinner
 {
     display:    none;
     width:      100%;
     text-align: center;
 }
 
-.cubeviz-module-visualSeparator
+.cubeviz-dataSelectionModule-visualSeparator
 {
     clear:          both; 
     margin-bottom:  16px;
     padding-top:    7px; 
 }
 
-.cubeviz-module-visualSeparator hr
+.cubeviz-dataSelectionModule-visualSeparator hr
 {
     background: #DADADA;
     border:     0px; 
