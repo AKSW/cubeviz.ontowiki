@@ -138,7 +138,7 @@ cubeViz_tests.push(function(){
         var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
             firstComponentHashedUrl = givenComponentDimensionKeys[0],
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
-            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+            setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + 
                                       givenComponentDimensionKeys[0],
             listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
             
@@ -267,7 +267,7 @@ cubeViz_tests.push(function(){
         var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
             firstComponentHashedUrl = givenComponentDimensionKeys[0],
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
-            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+            setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + 
                                       givenComponentDimensionKeys[0],
             listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
             
@@ -326,7 +326,7 @@ cubeViz_tests.push(function(){
         var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
             firstComponentHashedUrl = givenComponentDimensionKeys[0],
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
-            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+            setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                       givenComponentDimensionKeys[0],
             listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
             

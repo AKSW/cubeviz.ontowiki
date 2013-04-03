@@ -1157,11 +1157,11 @@ var View_CubeVizModule_Component = (function (_super) {
     }
     View_CubeVizModule_Component.prototype.configureSetupComponentDialog = function (component, componentBox, opener) {
         var self = this;
-        $("#cubeviz-component-setupDialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-setupComponentDialog").html(), {
+        $("#cubeviz-component-setupDialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
             __cv_niceLabel: component.__cv_niceLabel,
             __cv_hashedUri: component.__cv_hashedUri
         }));
-        var div = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
+        var div = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
         div.data("componentBox", componentBox).data("component", component);
         CubeViz_View_Helper.attachDialogTo(div);
         $(div.find(".cubeviz-component-selectAllButton").get(0)).data("dialogDiv", div);
@@ -1169,14 +1169,14 @@ var View_CubeVizModule_Component = (function (_super) {
         opener.data("dialogDiv", div);
         $($(div.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", div);
         $($(div.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", div);
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", div).data("type", "alphabet");
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).data("dialogDiv", div).data("type", "check status");
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).data("dialogDiv", div).data("type", "observation count");
         this.configureSetupComponentElements(component);
     };
     View_CubeVizModule_Component.prototype.configureSetupComponentElements = function (component) {
         var checkbox = null;
-        var dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
+        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
         var elementInstance = {
         };
         var componentElements = new CubeViz_Collection("__cv_uri");
@@ -1209,8 +1209,8 @@ var View_CubeVizModule_Component = (function (_super) {
     };
     View_CubeVizModule_Component.prototype.destroy = function () {
         _.each(this.collection._, function (component) {
-            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri).dialog("destroy");
-            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri).remove();
+            $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri).dialog("destroy");
+            $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri).remove();
         });
         $("#cubeviz-component-setupDialogContainer").empty();
         _super.prototype.destroy.call(this);
@@ -1339,8 +1339,8 @@ var View_CubeVizModule_Component = (function (_super) {
         var listItems = list.children('li');
         var modifiedItemList = [];
 
-        $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton").removeClass("cubeviz-component-sortButtonSelected");
-        $(event.target).addClass("cubeviz-component-sortButtonSelected");
+        $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton").removeClass("cubeviz-dataSelectionModule-dialogSortButtonSelected");
+        $(event.target).addClass("cubeviz-dataSelectionModule-dialogSortButtonSelected");
         switch($(event.target).data("type")) {
             case "alphabet": {
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByAlphabet(listItems);
@@ -1447,7 +1447,7 @@ var View_CubeVizModule_Component = (function (_super) {
             "click .cubeviz-component-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-component-selectAllButton": this.onClick_selectAllButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
-            "click .cubeviz-component-sortButtons": this.onClick_sortButton,
+            "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton,
             "click #cubeviz-component-questionMark": this.onClick_questionmark
         });
         this.triggerGlobalEvent("onAfterRender_component");

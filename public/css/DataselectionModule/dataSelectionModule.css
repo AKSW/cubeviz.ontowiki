@@ -3,6 +3,11 @@
     margin-top: 5px;
 }
 
+.cubeviz-dataSelectionModule-dialogSortButtonSelected
+{
+
+}
+
 #cubeviz-dataSelectionModule-spinner
 {
     display:    none;

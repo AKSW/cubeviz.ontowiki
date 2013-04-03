@@ -6,8 +6,8 @@ src/Test/Model/CubeViz/Collection.ts
 src/Model/CubeViz/View/Helper.ts
 src/Test/Model/CubeViz/View/Helper.ts
 
-src/Test/View/CubeVizModule/DataStructureDefinition.ts
-src/Test/View/CubeVizModule/DataSet.ts
-src/Test/View/CubeVizModule/Component.ts
+src/Test/View/DataselectionModule/DataStructureDefinition.ts
+src/Test/View/DataselectionModule/DataSet.ts
+src/Test/View/DataselectionModule/Component.ts
 
 src/Test/View/IndexAction/VisualizationSelector.ts

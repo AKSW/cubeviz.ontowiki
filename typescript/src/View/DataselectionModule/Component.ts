@@ -34,14 +34,14 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
 
         // set dialog reference and template
         $("#cubeviz-component-setupDialogContainer").append(CubeViz_View_Helper.tplReplace(
-            $("#cubeviz-component-tpl-setupComponentDialog").html(),
+            $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
                 __cv_niceLabel: component.__cv_niceLabel, 
                 __cv_hashedUri: component.__cv_hashedUri
             }
         ));
         
-        var div = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri);
+        var div = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
         
         div
             .data("componentBox", componentBox)
@@ -73,17 +73,17 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
          * Sort buttons
          */
         // attach dialog div to "alphabet" button
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(0))
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
             .data("dialogDiv", div)
             .data("type", "alphabet");
             
         // attach dialog div to "check status" button
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(1))
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
             .data("dialogDiv", div)
             .data("type", "check status");
             
         // attach dialog div to "observation count" button
-        $($(div.find(".cubeviz-component-sortButtons")).children().get(2))
+        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
             .data("dialogDiv", div)
             .data("type", "observation count");
             
@@ -97,7 +97,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public configureSetupComponentElements(component:any) 
     {
         var checkbox:any = null,
-            dialogDiv = $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri),
+            dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri),
             elementInstance:any = {},
             componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
@@ -166,9 +166,9 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         // 
         _.each(this.collection._, function(component){
             // set dialog to initial state
-            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri)
+            $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri)
                 .dialog("destroy");
-            $("#cubeviz-component-setupComponentDialog-" + component.__cv_hashedUri)
+            $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri)
                 .remove();
         });
         
@@ -485,13 +485,13 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             listItems:any[] = list.children('li'),
             modifiedItemList:any[] = [];
         
-        // remove .cubeviz-component-sortButtonSelected from all sortButtons
+        // remove cubeviz-dataSelectionModule-dialogSortButtons from all sortButtons
         $(event.target).data("dialogDiv").find(".cubeviz-component-sortButton")
-            .removeClass("cubeviz-component-sortButtonSelected");
+            .removeClass("cubeviz-dataSelectionModule-dialogSortButtonSelected");
         
         // add selected class to current clicked button
         $(event.target)
-            .addClass("cubeviz-component-sortButtonSelected");
+            .addClass("cubeviz-dataSelectionModule-dialogSortButtonSelected");
         
         // decide by given type, what sort function to execute
         switch ($(event.target).data("type")) {
@@ -722,7 +722,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
             
-            "click .cubeviz-component-sortButtons": 
+            "click .cubeviz-dataSelectionModule-dialogSortButtons": 
                 this.onClick_sortButton,
             
             "click #cubeviz-component-questionMark": 

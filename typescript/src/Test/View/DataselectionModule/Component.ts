@@ -69,7 +69,7 @@ cubeViz_tests.push(function(){
         // go through all component dimensions and check their associated dialog
         _.each(_.keys(cubeVizApp._.data.components.dimensions), function(dimensionHashedUrl){
             
-            var setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+            var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                           dimensionHashedUrl,
                 listDOMElement = $(setupComponentDialogId)
                                  .find(".cubeviz-component-setupComponentElements")
@@ -165,7 +165,7 @@ cubeViz_tests.push(function(){
         var givenComponentDimensionKeys = _.keys(cubeVizApp._.data.components.dimensions),
             firstComponentHashedUrl = givenComponentDimensionKeys[0],
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
-            setupComponentDialogId = "#cubeviz-component-setupComponentDialog-" + 
+            setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                       givenComponentDimensionKeys[0],
             listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
             listEntries = $(listDOMElement).children();
