@@ -321,10 +321,16 @@ var CubeViz_View_Helper = (function () {
         domElement.dialog("destroy");
         domElement.data("isDialogOpen", false);
     }
+    CubeViz_View_Helper.hideCloseAndUpdateSpinner = function hideCloseAndUpdateSpinner(dialogDiv) {
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
         $(".ui-widget-overlay").css("height", 2 * screen.height);
+    }
+    CubeViz_View_Helper.showCloseAndUpdateSpinner = function showCloseAndUpdateSpinner(dialogDiv) {
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
@@ -488,7 +494,7 @@ cubeViz_tests.push(function () {
         var firstComponentHashedUrl = givenComponentDimensionKeys[0];
         var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
         var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + givenComponentDimensionKeys[0];
-        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first();
         var originalList = $(listDOMElement).children("li").get();
         var originalListStrings = [];
         var generatedList = [];
@@ -563,7 +569,7 @@ cubeViz_tests.push(function () {
         var firstComponentHashedUrl = givenComponentDimensionKeys[0];
         var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
         var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + givenComponentDimensionKeys[0];
-        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first();
         var notCheckedItems = [];
         var originalList = $(listDOMElement).children("li").get();
         var originalListStrings = [];
@@ -599,7 +605,7 @@ cubeViz_tests.push(function () {
         var firstComponentHashedUrl = givenComponentDimensionKeys[0];
         var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
         var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + givenComponentDimensionKeys[0];
-        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first();
         var notCheckedItems = [];
         var originalList = $(listDOMElement).children("li").get();
         var originalListCopy = [];
@@ -762,7 +768,7 @@ cubeViz_tests.push(function () {
         var self = this;
         _.each(_.keys(cubeVizApp._.data.components.dimensions), function (dimensionHashedUrl) {
             var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + dimensionHashedUrl;
-            var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+            var listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first();
             var listEntries = $(listDOMElement).children();
 
             var checkbox;
@@ -772,7 +778,7 @@ cubeViz_tests.push(function () {
             var dimensionToCheck;
             var label;
 
-            var numberOfCheckedItems = $($(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first()).find(":checked").length;
+            var numberOfCheckedItems = $($(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first()).find(":checked").length;
             var numberOfSelectedComponentDimensionElements = _.keys(cubeVizApp._.data.selectedComponents.dimensions[dimensionHashedUrl].__cv_elements).length;
 
             self.assertTrue(numberOfCheckedItems == numberOfSelectedComponentDimensionElements, "Check number of checked checkboxes (" + numberOfCheckedItems + " <> " + numberOfSelectedComponentDimensionElements + ")");
@@ -807,7 +813,7 @@ cubeViz_tests.push(function () {
         var firstComponentHashedUrl = givenComponentDimensionKeys[0];
         var firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl];
         var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + givenComponentDimensionKeys[0];
-        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first();
+        var listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first();
         var listEntries = $(listDOMElement).children();
 
         this.assertTrue(0 < listEntries.length && listEntries.length === _.keys(firstComponent.__cv_elements).length, "listEntries.length === _.keys(firstComponent.__cv_elements).length");

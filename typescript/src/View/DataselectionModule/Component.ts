@@ -1,7 +1,7 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-class View_CubeVizModule_Component extends CubeViz_View_Abstract 
+class View_DataselectionModule_Component extends CubeViz_View_Abstract 
 {
     /**
      * 
@@ -33,7 +33,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         var self = this;
 
         // set dialog reference and template
-        $("#cubeviz-component-setupDialogContainer").append(CubeViz_View_Helper.tplReplace(
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
                 __cv_niceLabel: component.__cv_niceLabel, 
@@ -41,50 +41,51 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             }
         ));
         
-        var div = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
+        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
         
-        div
+        dialogDiv
             .data("componentBox", componentBox)
             .data("component", component);
         
-        // attach dialog to div element
-        CubeViz_View_Helper.attachDialogTo(div);
+        // attach dialog to dialogDiv element
+        CubeViz_View_Helper.attachDialogTo(dialogDiv);
         
-        // attach dialog div to deselect button
-        $(div.find(".cubeviz-component-selectAllButton").get(0))
-            .data("dialogDiv", div);
+        // attach dialog dialogDiv to deselect button
+        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0))
+            .data("dialogDiv", dialogDiv);
         
-        // attach dialog div to deselect button
-        $(div.find(".cubeviz-component-deselectButton").get(0))
-            .data("dialogDiv", div);
+        // attach dialog dialogDiv to deselect button
+        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0))
+            .data("dialogDiv", dialogDiv);
         
-        // attach dialog div to dialog opener link
-        opener.data("dialogDiv", div);
+        // attach dialog dialogDiv to dialog opener link
+        opener.data("dialogDiv", dialogDiv);
         
-        // attach dialog div to "cancel" button
-        $($(div.find(".cubeviz-component-cancel")).get(0))
-            .data("dialogDiv", div);
+        // attach dialog dialogDiv to "cancel" button
+        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0))
+            .data("dialogDiv", dialogDiv);
             
-        // attach dialog div to "close and update" button
-        $($(div.find(".cubeviz-component-closeAndUpdate")).get(0))
-            .data("dialogDiv", div);
+        // attach dialog dialogDiv to "close and update" button
+        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0))
+            .data("dialogDiv", dialogDiv)
+            .on("click", $.proxy(this.onClick_closeAndUpdate, this));
             
         /**
          * Sort buttons
          */
-        // attach dialog div to "alphabet" button
-        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
-            .data("dialogDiv", div)
+        // attach dialog dialogDiv to "alphabet" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
+            .data("dialogDiv", dialogDiv)
             .data("type", "alphabet");
             
-        // attach dialog div to "check status" button
-        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
-            .data("dialogDiv", div)
+        // attach dialog dialogDiv to "check status" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
+            .data("dialogDiv", dialogDiv)
             .data("type", "check status");
             
-        // attach dialog div to "observation count" button
-        $($(div.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
-            .data("dialogDiv", div)
+        // attach dialog dialogDiv to "observation count" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
+            .data("dialogDiv", dialogDiv)
             .data("type", "observation count");
             
         // configure elements of the dialog
@@ -100,7 +101,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri),
             elementInstance:any = {},
             componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
-            elementList = $(dialogDiv.find(".cubeviz-component-setupComponentElements")[0]),
+            elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]),
             selectedDimensions:any = this.app._.data.selectedComponents
                                                  .dimensions[component.__cv_uri]
                                                  .__cv_elements,
@@ -131,7 +132,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                     
                 // fill template with life
                 elementInstance = $(CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-component-tpl-setupComponentElement").html(),
+                    $("#cubeviz-dataSelectionModule-tpl-dialogCheckboxElement").html(),
                     {
                         __cv_niceLabel: element.__cv_niceLabel,
                         __cv_uri: element.__cv_uri,
@@ -172,7 +173,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 .remove();
         });
         
-        $("#cubeviz-component-setupDialogContainer").empty();
+        $("#cubeviz-dataSelectionModule-dialogContainer").empty();
         
         super.destroy();
         
@@ -180,16 +181,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         
         return this;
-    }
-    
-    /**
-     * Show a spinner to let the user know that something is working.
-     * @return void
-     */
-    public hideCloseAndUpdateSpinner(dialogDiv) : void
-    {        
-        $(dialogDiv.find(".cubeviz-component-closeUpdateSpinner").first())
-            .hide();
     }
     
     /**
@@ -391,7 +382,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         
         // Start handling of new configuration, but before start, show a spinner 
         // to let the user know that CubeViz did something.    
-        this.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
 
         // save changes in dialog div
         this.readAndSaveSetupComponentDialogChanges(dialogDiv,
@@ -404,7 +395,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
                 
                 self.triggerGlobalEvent("onUpdate_componentDimensions");
                 
-                self.hideCloseAndUpdateSpinner(dialogDiv);
+                CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
                 
                 // if only module was loaded, move reloading stuff to footer.ts
                 CubeViz_View_Helper.closeDialog(dialogDiv);
@@ -481,7 +472,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         }
         
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
-            list:any = $(dialogDiv.find(".cubeviz-component-setupComponentElements").first()),
+            list:any = $(dialogDiv.find(".cubeviz-dataSelectionModule-elements").first()),
             listItems:any[] = list.children('li'),
             modifiedItemList:any[] = [];
         
@@ -539,7 +530,7 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
     public readAndSaveSetupComponentDialogChanges(dialogDiv, callback) : void
     {        
         // extract and set necessary elements and data
-        var elementList = dialogDiv.find(".cubeviz-component-setupComponentElements").children(),
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-elements").children(),
             componentBox = dialogDiv.data("componentBox"),
             component = dialogDiv.data("component"),
             input = null,
@@ -710,9 +701,6 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
             "click .cubeviz-component-cancel": 
                 this.onClick_cancel,
                 
-            "click .cubeviz-component-closeAndUpdate": 
-                this.onClick_closeAndUpdate,
-                
             "click .cubeviz-component-deselectButton": 
                 this.onClick_deselectButton,
                 
@@ -734,15 +722,5 @@ class View_CubeVizModule_Component extends CubeViz_View_Abstract
         this.hideSpinner();
         
         return this;
-    }
-    
-    /**
-     * Show a spinner to let the user know that something is working.
-     * @return void
-     */
-    public showCloseAndUpdateSpinner(dialogDiv) : void
-    {        
-        $(dialogDiv.find(".cubeviz-component-closeUpdateSpinner").first())
-            .show();
     }
 }

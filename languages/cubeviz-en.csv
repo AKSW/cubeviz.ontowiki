@@ -3,6 +3,7 @@ DataSelectionModule_Cancel;Cancel
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
 DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
+DataSelectionModule_DataSetDialogLabel;Data Set
 DataSelectionModule_DeselectAllItems;Deselect all items
 DataSelectionModule_Link;Link
 DataSelectionModule_LoadingMessage;I am working ...

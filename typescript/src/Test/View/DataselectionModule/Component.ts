@@ -72,7 +72,7 @@ cubeViz_tests.push(function(){
             var setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                           dimensionHashedUrl,
                 listDOMElement = $(setupComponentDialogId)
-                                 .find(".cubeviz-component-setupComponentElements")
+                                 .find(".cubeviz-dataSelectionModule-elements")
                                  .first(),
                 listEntries = $(listDOMElement).children();
                 
@@ -85,7 +85,7 @@ cubeViz_tests.push(function(){
              */
             // number of checkboxes that are check in the certain dialog
             var numberOfCheckedItems = $($(setupComponentDialogId)
-                .find(".cubeviz-component-setupComponentElements")
+                .find(".cubeviz-dataSelectionModule-elements")
                 .first()).find(":checked").length,
             
             // number of elements in the certain selected component dimension
@@ -155,7 +155,7 @@ cubeViz_tests.push(function(){
 
 /**
  * Test if number of select component elements is equal to the items in the
- * cubeviz-component-setupComponentElements list
+ * cubeviz-dataSelectionModule-elements list
  */
 cubeViz_tests.push(function(){
     
@@ -167,7 +167,7 @@ cubeViz_tests.push(function(){
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
             setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                       givenComponentDimensionKeys[0],
-            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first(),
             listEntries = $(listDOMElement).children();
        
         this.assertTrue(

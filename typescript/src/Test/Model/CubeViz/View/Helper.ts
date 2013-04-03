@@ -140,7 +140,7 @@ cubeViz_tests.push(function(){
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
             setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + 
                                       givenComponentDimensionKeys[0],
-            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first(),
             
             originalList = $(listDOMElement).children("li").get(),
             originalListStrings:string[] = [],
@@ -269,7 +269,7 @@ cubeViz_tests.push(function(){
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
             setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog--" + 
                                       givenComponentDimensionKeys[0],
-            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first(),
             
             notCheckedItems:string[] = [],
             originalList = $(listDOMElement).children("li").get(),
@@ -328,7 +328,7 @@ cubeViz_tests.push(function(){
             firstComponent = cubeVizApp._.data.components.dimensions[firstComponentHashedUrl],
             setupComponentDialogId = "#cubeviz-dataSelectionModule-dialog-" + 
                                       givenComponentDimensionKeys[0],
-            listDOMElement = $(setupComponentDialogId).find(".cubeviz-component-setupComponentElements").first(),
+            listDOMElement = $(setupComponentDialogId).find(".cubeviz-dataSelectionModule-elements").first(),
             
             notCheckedItems:string[] = [],
             originalList:any[] = $(listDOMElement).children("li").get(),

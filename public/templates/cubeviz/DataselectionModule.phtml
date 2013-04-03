@@ -3,9 +3,9 @@
     cubeVizApp._.backend.uiParts.dataselectionModule.isLoaded = true;
     
     cubeVizApp
-        .add("View_CubeVizModule_DataSet", "#cubeviz-dataSet-list")
-        .add("View_CubeVizModule_Component", "#cubviz-component-listBox")
-        .add("View_CubeVizModule_Footer", "#cubeviz-footer-container");
+        .add("View_DataselectionModule_DataSet", "#cubeviz-dataSet-list")
+        .add("View_DataselectionModule_Component", "#cubviz-component-listBox")
+        .add("View_DataselectionModule_Footer", "#cubeviz-footer-container");
 </script>
 
 <!-- 
@@ -20,7 +20,7 @@
 <div id="cubeviz-dataSelectionModule-dataSelection">
     
     <!-- Data set and slice section -->
-    <div style="float: left; height: 50px; width: 20px; text-align: center;">
+    <div style="float: left; height: 50px; width: 20px; text-align: center; margin-top: 3px;">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
              style="width: 17px; margin-left: 10px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
@@ -35,21 +35,22 @@
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
     <div style="float: left;  width: 180px; margin-left: 20px;">
-        <div id="cubeviz-dataSet-l1ist">DataSet1</div>
-        <span style="color: #AFAFAF; font-size: 11px;">
+        <div id="cubeviz-dataSet-label">DataSet1</div>
+        <div id="cubeviz-dataSet-description"
+             style="color: #696969; font-size: 11px;">
             This is a small description text for this thing here.
-        </span>        
+        </div>        
         
         <br/>
-        <br/>
         
-        <div>Slice 1</div>
-        <span style="color: #AFAFAF; font-size: 11px;">
+        <div style="margin-top: 10px;">Slice 1</div>
+        <span style="color: #696969; font-size: 11px;">
             This is a small description text for this thing here.
         </span>
     </div>
     <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
-        <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
+        <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-dataSet-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
            
         <br/>
@@ -82,7 +83,7 @@
     </div>
     <div style="float: left; width: 180px; margin-left: 20px;">
         <div>Attribute1</div>
-        <span style="color: #AFAFAF; font-size: 11px;">
+        <span style="color: #696969; font-size: 11px;">
             This is a small description text for this thing here.
         </span>
         
@@ -90,7 +91,7 @@
         <br/>
         
         <div>Measure1</div>
-        <span style="color: #AFAFAF; font-size: 11px;">
+        <span style="color: #696969; font-size: 11px;">
             This is a small description text for this thing here.
         </span>
     </div>
@@ -147,22 +148,6 @@
     DIALOGS
     #########
 -->
-<div id="cubeviz-dataSet-dialog" 
-      style="display: none;"
-      title="Information">
-    <div style="margin-top: 4px; float: right;">
-        <img class="cubeviz-icon-unsized"
-              src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
-    </div>
-    <div style="float: left;">
-        <h4><?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?></h4>
-    </div>
-    <br/>
-    <br/>
-    <div style="clear: both;">
-        <?php echo $this->translate->_('DataSelectionModule_SelectDSHelpText'); ?></div>
-</div>
-
 <div id="cubeviz-component-dialog" style="display: none;" title="Information">
     <div style="margin-top: 4px; float: right;">
         <img class="cubeviz-icon-unsized"
@@ -177,7 +162,7 @@
         <?php echo $this->translate->_('DataSelectionModule_SelectComponentsHelpText'); ?></div>
 </div>
 
-<div id="cubeviz-component-setupDialogContainer" style="display: none;">
+<div id="cubeviz-dataSelectionModule-dialogContainer" style="display: none;">
     <!-- Will contain the dialogs for setup the dimensions -->
 </div>
 
@@ -200,7 +185,7 @@
         <div style="float: left; width: 180px; height: 50px; padding-left: 20px;">
             
             <span style="font-size: 14.5px;">[[__cv_niceLabel]]</span>
-            <span style="color: #AFAFAF; font-size: 11px;">
+            <span style="color: #696969; font-size: 11px;">
                 <span class="cubeviz-component-selectedCount">[[__cv_selectedElementCount]]</span>
                 <?php echo $this->translate->_('DataSelectionModule_Of'); ?> 
                 [[__cv_elementCount]]
@@ -208,7 +193,7 @@
             </span>
             
             <br/>
-            <span style="color: #AFAFAF; font-size: 11px;">
+            <span style="color: #696969; font-size: 11px;">
                 This is a small description text.
             </span>
             
@@ -222,10 +207,13 @@
 
 <!-- Dialogs -->
 <div id="cubeviz-dataSelectionModule-tpl-dialog" style="display: none;">
-    <div class="cubeviz-component-setupComponentDialog"
+    <div class="cubeviz-dataSelectionModule-dialog"
          id="cubeviz-dataSelectionModule-dialog-[[__cv_hashedUri]]"
          title="Select elements of interest">
          
+        <!-- 
+            Header
+        -->
         <div style="float:right">
             <img class="cubeviz-icon-unsized"
                   src="<?php echo $this->cubevizImagesPath; ?>cubevizLogo.png"/>
@@ -236,6 +224,9 @@
         <br/>
         <div style="clear: both;"></div>    
         
+        <!-- 
+            Sort buttons
+        -->
         <div class="cubeviz-dataSelectionModule-dialogSortButtons" style="float:right; vertical-align: middle;">
             <?php echo $this->translate->_('DataSelectionModule_SortBy'); ?>: 
             
@@ -248,20 +239,31 @@
             <span class="cubeviz-btn" style="display:none;">
                 <?php echo $this->translate->_('DataSelectionModule_ObservationCount'); ?></span>
         </div>
-        
+    
+        <!-- 
+            Select all / deselect all buttons
+        -->
         <span class="cubeviz-btn cubeviz-component-selectAllButton">
             <?php echo $this->translate->_('DataSelectionModule_SelectAllItems'); ?></span>
         
         <span class="cubeviz-btn cubeviz-component-deselectButton">
             <?php echo $this->translate->_('DataSelectionModule_DeselectAllItems'); ?></span>
         
-        <ul class="cubeviz-component-setupComponentElements"></ul>
+        <div style="clear: both; margin-top: 4px;"></div>
         
+        <!-- 
+            Element list
+        -->
+        <ul class="cubeviz-dataSelectionModule-dialogElements"></ul>
+        
+        <!-- 
+            Cancel and closeAndUpdate buttons
+        -->
         <div style="margin-top: 5px; float:right;">            
             <span class="cubeviz-btn cubeviz-component-cancel"><?php echo $this->translate->_('DataSelectionModule_Cancel'); ?></span>
             &nbsp;
             <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
-                <i class="icon-spinner icon-spin cubeviz-component-closeUpdateSpinner" 
+                <i class="icon-spinner icon-spin cubeviz-dataSelectionModule-closeUpdateSpinner" 
                    style="display: none;"></i>
                 &nbsp;
                 <?php echo $this->translate->_('DataSelectionModule_CloseAndUpdateVisz'); ?></span>
@@ -269,11 +271,28 @@
     </div>
 </div>
 
-<div id="cubeviz-component-tpl-setupComponentElement" style="display: none;">
+<div id="cubeviz-dataSelectionModule-tpl-dialogCheckboxElement" style="display: none;">
     <li>
         <input type="checkbox" name="[[__cv_uri]]"/>
         <span style="vertical-align: middle;" title="[[__cv_uri2]]">
             <span>[[__cv_niceLabel]]</span>
         </span>
     </li>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tpl-dialogRadioElement" style="display: none;">
+    <li>
+        <input id="[[radioId]]" name="[[radioName]]" type="radio" value="[[radioValue]]"/>
+        <span style="vertical-align: middle;" title="[[__cv_uri]]">
+            <span>[[__cv_niceLabel]]</span>
+        </span>
+    </li>
+</div>
+
+<!-- 
+    TRANSLATIONS
+-->
+
+<div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_DataSetDialogLabel'); ?>
 </div>

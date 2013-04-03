@@ -1,7 +1,7 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-class View_CubeVizModule_DataSet extends CubeViz_View_Abstract 
+class View_DataselectionModule_DataSet extends CubeViz_View_Abstract 
 {        
     /**
      * 
@@ -14,10 +14,6 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
         // if one of these events get triggered, the associated handler will
         // be executed to handle it
         this.bindGlobalEvents([
-            {
-                name:    "onAfterChange_selectedDSD",
-                handler: this.onAfterChange_selectedDSD
-            },
             {
                 name:    "onStart_application",
                 handler: this.onStart_application
@@ -80,57 +76,43 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     /**
      *
      */
-    public onAfterChange_selectedDSD(event, data) 
-    {        
-        this.destroy();
-        
-        var self = this;
-        
-        /**
-         * Load all data sets based on new selectedDSD
-         */
-        DataCube_DataSet.loadAll(
-        
-            this.app._.backend.url,
-            this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.__cv_uri,
+    public onClick_closeAndUpdate(event) : void 
+    {
+        var dialogDiv:any = $(event.target).data("dialogDiv"),
+            dataSets:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+            dataSetUri = $("input[name=cubeviz-dataSelectionModule-dataSetRadio]:checked").val(),
+            selectedDataSet:any = null;
             
-            // after all elements were loaded, add them to collection
-            // and render the view
-            function(entries) {
-    
-                // set default data set
-                self.app._.data.selectedDS = entries[0];
-                
-                self.app._.data.dataSets = entries;
-
-                // save given elements
-                self.collection.reset("__cv_uri");
-                self.collection.addList(entries);
-                
-                // trigger event
-                self.triggerGlobalEvent("onChange_selectedDS");
-                
-                // render given elements
-                self.render();
-            }
-        );
+        // Start handling of new configuration, but before start, show a spinner 
+        // to let the user know that CubeViz did something.    
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        
+        // get dataset with given uri
+        selectedDataSet = dataSets
+            .addList(this.app._.data.dataSets)
+            .get(dataSetUri);
+            
+        // update selected dataset
+        this.app._.data.selectedDS = selectedDataSet;
+        
+        // close dialog
+        CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
+        
+        // if only module was loaded, move reloading stuff to footer.ts
+        CubeViz_View_Helper.closeDialog(dialogDiv);
+        
+        // output new dataset label
+        $("#cubeviz-dataSet-label").html(_.str.prune(
+            selectedDataSet.__cv_niceLabel, 28, " ..."
+        ));
     }
     
     /**
      *
      */
-    public onClick_questionmark() 
+    public onClick_dialogOpener(event) : void 
     {
-        CubeViz_View_Helper.openDialog($("#cubeviz-dataSet-dialog"));
-    }
-    
-    /**
-     *
-     */
-    public onComplete_loadDSD(event, data) 
-    {
-        this.onAfterChange_selectedDSD(event, data);
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
     }
     
     /**
@@ -148,59 +130,109 @@ class View_CubeVizModule_DataSet extends CubeViz_View_Abstract
     {
         this.triggerGlobalEvent("onBeforeRender_dataSet");
         
-        /**
-         * List of items
-         */        
-        var list = $(this.attachedTo),
-            self = this;
-            
-        if (1 == this.collection.size()) {
-            
-            // get div container where dataset selectbox is located in
-            var parent = $($("#cubeviz-dataSet-list").parent());
-            
-            // hide selectbox
-            $("#cubeviz-dataSet-list").hide();
-            
-            // show dataset label
-            parent.append(
-                "<div id=\"cubeviz-dataSet-label\">" + 
-                    this.collection.getFirst().__cv_niceLabel +
-                "</div>"
-            );
-            
-        } else {        
-            // output loaded data
-            this.collection.each(function(element){
-                list.append(
-                    "<option value=\"" + element.__cv_uri + "\">" + 
-                        element.__cv_niceLabel + "</option>"
-                );
-            });
-            
-            // mark selected element
-            _.each(list.children(), function(listEntry){
-                // set selected variable, if element's __cv_uri is equal to selected dsd's one
-                if($(listEntry).val() == self.app._.data.selectedDS.__cv_uri) {
-                    $(listEntry).attr("selected", true);
-                }
-            });
-        }
+        // set label directly
+        $("#cubeviz-dataSet-label").html(
+            _.str.prune (
+                this.app._.data.selectedDS.__cv_niceLabel,
+                28,
+                " ..."
+            )
+        ).attr ("title", this.app._.data.selectedDS.__cv_niceLabel);
         
         /**
-         * Question mark dialog
+         * Dialog
          */
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
+            {
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(), 
+                __cv_hashedUri: "dataSet"
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
+        
+        // setup jqeruy dialog
         CubeViz_View_Helper.attachDialogTo(
-            $("#cubeviz-dataSet-dialog"),
-            {closeOnEscape: true, showCross: true, width: 500}
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 650}
         );
+        
+        // hide a couple of buttons
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0)).hide();
+        
+        // attach dialog div to dialog opener link
+        $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
+        
+        // attach dialog div to "cancel" button
+        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0))
+            .data("dialogDiv", dialogDiv);
+            
+        // attach dialog div to "close and update" button
+        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0))
+            .data("dialogDiv", dialogDiv)
+            .on("click", $.proxy(this.onClick_closeAndUpdate, this));
+            
+        /**
+         * Sort buttons
+         */
+        // attach dialog div to "alphabet" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
+            .data("dialogDiv", dialogDiv)
+            .data("type", "alphabet");
+            
+        // attach dialog div to "check status" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
+            .hide();
+            
+        // attach dialog div to "observation count" button
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
+            .hide();
+        
+        
+        /**
+         * Fill in elements
+         */
+        var componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+            elementContainer = null,
+            elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+        
+        componentElements
+            
+            // add elements of current component
+            .addList(this.app._.data.dataSets)
+            
+            // sort
+            .sortAscendingBy("__cv_niceLabel")
+            
+            // Go through all elements of the given list ..
+            .each(function(element){
+                
+                elementContainer = $(CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(),
+                    {
+                        __cv_niceLabel: element.__cv_niceLabel,
+                        __cv_uri: element.__cv_uri,
+                        radioId: "cubeviz-dataSelectionModule-dataSetRadio",
+                        radioName: "cubeviz-dataSelectionModule-dataSetRadio",
+                        radioValue: element.__cv_uri
+                    }
+                ));
+                
+                // ... and add list entries with radio button and label
+                elementList.append(elementContainer);
+                
+            });
+            
         
         /**
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({
-            "change #cubeviz-dataSet-list" : this.onChange_list,            
-            "click #cubeviz-dataSet-questionMark": this.onClick_questionmark
+            "click #cubeviz-dataSet-dialogOpener": this.onClick_dialogOpener
         });
         
         this.triggerGlobalEvent("onAfterRender_dataSet");

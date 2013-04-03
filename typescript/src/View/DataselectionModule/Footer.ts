@@ -3,7 +3,7 @@
 
 declare var cubeVizIndex:CubeViz_View_Application;
 
-class View_CubeVizModule_Footer extends CubeViz_View_Abstract {
+class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
         
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {

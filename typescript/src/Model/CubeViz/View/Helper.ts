@@ -64,7 +64,17 @@ class CubeViz_View_Helper
         domElement.dialog("destroy");
         
         domElement.data("isDialogOpen", false);
-    } 
+    }
+    
+    /**
+     * Hide spinner
+     * @return void
+     */
+    static hideCloseAndUpdateSpinner(dialogDiv) : void
+    {        
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first())
+            .hide();
+    }
     
     /**
      * Open an attached dialog.
@@ -79,6 +89,16 @@ class CubeViz_View_Helper
         
         // Change overlay height for the dialog
         $(".ui-widget-overlay").css("height", 2 * screen.height);
+    }
+    
+    /**
+     * Show a spinner to let the user know that something is working.
+     * @return void
+     */
+    static showCloseAndUpdateSpinner(dialogDiv) : void
+    {        
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first())
+            .show();
     }
     
     /**
