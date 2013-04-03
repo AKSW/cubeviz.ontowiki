@@ -21,14 +21,21 @@
     
     <!-- Data set and slice section -->
     <div style="float: left; height: 50px; text-align: center;">
-        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/subgraph_dots2.png" 
-             style="width: 15px; margin-top: 15px; margin-left: 10px;"
+        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
+             style="width: 17px; margin-left: 10px;"
+             title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
+             
+        <br/>
+        <br/>
+             
+        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
+             style="width: 16px; margin-left: 8px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
     <div style="float: left; margin-left: 20px;">
-        <select name="cubeviz-dataSet-list" id="cubeviz-dataSet-list"></select>
+        <div id="cubeviz-dataSet-l1ist">DataSet1</div>
         <br/>
-        <select style="min-width: 180px;"><option>Slice1</option></select>
+        Slice 1
     </div>
     
     <!-- Visual seperator -->
@@ -37,14 +44,26 @@
     
     <!-- Data set and slice section -->
     <div style="float: left; height: 55px; text-align: center;">
-        <img src="<?php echo $this->cubevizImagesPath; ?>attributeAndMeasure.png" 
-             style="width: 15px; margin-top: 15px; margin-left: 10px;"
+        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
+             style="width: 17px; margin-left: 10px;"
+             title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
+             
+        <br/>
+        <br/>
+             
+        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png" 
+             style="width: 16px; margin-left: 8px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
     <div style="float: left; margin-left: 20px;">
-        <select style="width: 170px; min-width: 180px;"><option>Attribute1</option></select>
+        Attribute1
         <br/>
-        <select style="width: 170px; min-width: 180px;"><option>Measure1</option></select>
+        <span style="color: #AFAFAF; font-size: 11px;">
+            This is 
+        </span>
+        
+        <br/>
+        Measure1
     </div>
     
     <!-- Visual seperator -->
@@ -130,7 +149,7 @@
 <div id="cubeviz-component-tpl-listBoxItem" style="display: none;">
     <div class="cubeviz-component-box" id="cubeviz-component-box-[[__cv_uri]]">            
         <div style="float: left; height: 50px; width: 20px; text-align: center;">
-            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/center.png" 
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement.png" 
                  style="width: 15px; margin-left: 10px; padding-top: 4px;"
                  title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
             
