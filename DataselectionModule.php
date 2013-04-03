@@ -97,7 +97,7 @@ class DataselectionModule extends OntoWiki_Module
             ->prependStylesheet($baseCssPath.'DataselectionModule/component.css')
             ->prependStylesheet($baseCssPath.'DataselectionModule/dataSet.css')
             ->prependStylesheet($baseCssPath.'DataselectionModule/footer.css')
-            ->prependStylesheet($baseCssPath.'DataselectionModule/module.css');
+            ->prependStylesheet($baseCssPath.'DataselectionModule/dataSelectionModule.css');
         
         // IE specific CSS for fontawesome
         if (strpos($_SERVER['HTTP_USER_AGENT'], '(compatible; MSIE ')!==FALSE) {
