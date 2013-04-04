@@ -190,8 +190,8 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         
         // hide a couple of buttons
         $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
         
         // attach dialog div to dialog opener link
         $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);

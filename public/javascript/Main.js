@@ -1109,11 +1109,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
         var self = this;
 
-        console.log("");
-        console.log("elementList: ");
-        console.log(elementList);
         _.each(elementList, function (element) {
-            console.log(self.app._.data.selectedDS.__cv_uri + " === " + $($(element).children().first()).val());
             if(self.app._.data.selectedDS.__cv_uri == $($(element).children().first()).val()) {
                 $($(element).children().first()).attr("checked", true);
             }
@@ -1137,8 +1133,8 @@ var View_DataselectionModule_DataSet = (function (_super) {
             width: 650
         });
         $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
         $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
         $($(dialogDiv.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", dialogDiv);
         $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
@@ -1196,8 +1192,8 @@ var View_DataselectionModule_Component = (function (_super) {
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
         dialogDiv.data("componentBox", componentBox).data("component", component);
         CubeViz_View_Helper.attachDialogTo(dialogDiv);
-        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0)).data("dialogDiv", dialogDiv);
-        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0)).data("dialogDiv", dialogDiv);
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).data("dialogDiv", dialogDiv);
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).data("dialogDiv", dialogDiv);
         opener.data("dialogDiv", dialogDiv);
         $($(dialogDiv.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", dialogDiv);
         $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
@@ -1311,16 +1307,16 @@ var View_DataselectionModule_Component = (function (_super) {
             _.each(dialogCheckboxList, function (checkbox) {
                 $(checkbox).attr("disabled", false);
             });
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
         } else {
             _.each(dialogCheckboxList, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {
                     $(checkbox).attr("disabled", true);
                 }
             });
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
         }
     };
     View_DataselectionModule_Component.prototype.onClick_closeAndUpdate = function (event) {
@@ -1353,8 +1349,8 @@ var View_DataselectionModule_Component = (function (_super) {
                     $(checkbox).attr("disabled", true);
                 }
             });
-            $($(event.target).data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
-            $($(event.target).data("dialogDiv").find(".cubeviz-component-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
         }
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
@@ -1364,7 +1360,7 @@ var View_DataselectionModule_Component = (function (_super) {
             return;
         }
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl");
-        var list = $(dialogDiv.find(".cubeviz-dataSelectionModule-elements").first());
+        var list = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").first());
         var listItems = list.children('li');
         var modifiedItemList = [];
 
@@ -1396,11 +1392,8 @@ var View_DataselectionModule_Component = (function (_super) {
             list.append(item);
         });
     };
-    View_DataselectionModule_Component.prototype.onClick_questionmark = function () {
-        CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
-    };
     View_DataselectionModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
-        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-elements").children();
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children();
         var componentBox = dialogDiv.data("componentBox");
         var component = dialogDiv.data("component");
         var input = null;
@@ -1465,18 +1458,12 @@ var View_DataselectionModule_Component = (function (_super) {
             $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(dimension.__cv_selectedElementCount);
             self.collection.add(dimension);
         });
-        CubeViz_View_Helper.attachDialogTo($("#cubeviz-component-dialog"), {
-            closeOnEscape: true,
-            showCross: true,
-            width: 500
-        });
         this.bindUserInterfaceEvents({
             "click .cubeviz-component-cancel": this.onClick_cancel,
-            "click .cubeviz-component-deselectButton": this.onClick_deselectButton,
-            "click .cubeviz-component-selectAllButton": this.onClick_selectAllButton,
+            "click .cubeviz-dataSelectionModule-deselectButton": this.onClick_deselectButton,
+            "click .cubeviz-dataSelectionModule-selectAllButton": this.onClick_selectAllButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
-            "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton,
-            "click #cubeviz-component-questionMark": this.onClick_questionmark
+            "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton
         });
         this.triggerGlobalEvent("onAfterRender_component");
         this.hideSpinner();

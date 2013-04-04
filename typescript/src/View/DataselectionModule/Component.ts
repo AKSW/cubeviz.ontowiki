@@ -51,11 +51,11 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         CubeViz_View_Helper.attachDialogTo(dialogDiv);
         
         // attach dialog dialogDiv to deselect button
-        $(dialogDiv.find(".cubeviz-component-selectAllButton").get(0))
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
             .data("dialogDiv", dialogDiv);
         
         // attach dialog dialogDiv to deselect button
-        $(dialogDiv.find(".cubeviz-component-deselectButton").get(0))
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0))
             .data("dialogDiv", dialogDiv);
         
         // attach dialog dialogDiv to dialog opener link
@@ -348,9 +348,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             });
             
             // activate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
                 .attr("disabled", false).removeClass("ui-state-disabled");
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .attr("disabled", false).removeClass("ui-state-disabled");
         }
         
@@ -364,9 +364,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             });
             
             // deactivate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
                 .attr("disabled", true).addClass("ui-state-disabled");
-            $(parentContainer.data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .attr("disabled", true).addClass("ui-state-disabled");
         }
     }
@@ -450,9 +450,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             });
             
             // deactivate both select buttons
-            $($(event.target).data("dialogDiv").find(".cubeviz-component-selectAllButton").get(0))
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
                 .attr("disabled", true).addClass("ui-state-disabled");
-            $($(event.target).data("dialogDiv").find(".cubeviz-component-deselectButton").get(0))
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .attr("disabled", true).addClass("ui-state-disabled");
         }
         
@@ -472,7 +472,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         }
         
         var dimensionTypeUrl = dialogDiv.data("dimensionTypeUrl"),
-            list:any = $(dialogDiv.find(".cubeviz-dataSelectionModule-elements").first()),
+            list:any = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").first()),
             listItems:any[] = list.children('li'),
             modifiedItemList:any[] = [];
         
@@ -483,7 +483,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         // add selected class to current clicked button
         $(event.target)
             .addClass("cubeviz-dataSelectionModule-dialogSortButtonSelected");
-        
+    
         // decide by given type, what sort function to execute
         switch ($(event.target).data("type")) {
             
@@ -518,19 +518,10 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_questionmark() : void
-    {
-        CubeViz_View_Helper.openDialog($("#cubeviz-component-dialog"));
-    }
-    
-    
-    /**
-     *
-     */
     public readAndSaveSetupComponentDialogChanges(dialogDiv, callback) : void
     {        
         // extract and set necessary elements and data
-        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-elements").children(),
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children(),
             componentBox = dialogDiv.data("componentBox"),
             component = dialogDiv.data("component"),
             input = null,
@@ -687,34 +678,23 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         });
         
         /**
-         * Question mark dialog
-         */
-        CubeViz_View_Helper.attachDialogTo(
-            $("#cubeviz-component-dialog"),
-            {closeOnEscape: true, showCross: true, width: 500}
-        );
-        
-        /**
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({         
             "click .cubeviz-component-cancel": 
                 this.onClick_cancel,
                 
-            "click .cubeviz-component-deselectButton": 
+            "click .cubeviz-dataSelectionModule-deselectButton": 
                 this.onClick_deselectButton,
                 
-            "click .cubeviz-component-selectAllButton": 
+            "click .cubeviz-dataSelectionModule-selectAllButton": 
                 this.onClick_selectAllButton,
                 
             "click .cubeviz-component-setupComponentOpener": 
                 this.onClick_setupComponentOpener,
             
             "click .cubeviz-dataSelectionModule-dialogSortButtons": 
-                this.onClick_sortButton,
-            
-            "click #cubeviz-component-questionMark": 
-                this.onClick_questionmark
+                this.onClick_sortButton
         });
         
         this.triggerGlobalEvent("onAfterRender_component");
