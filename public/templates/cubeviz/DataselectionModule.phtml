@@ -4,6 +4,7 @@
     
     cubeVizApp
         .add("View_DataselectionModule_DataSet", "#cubeviz-dataSet-list")
+        .add("View_DataselectionModule_Measure", "#cubeviz-footer-container")
         .add("View_DataselectionModule_Component", "#cubviz-component-listBox")
         .add("View_DataselectionModule_Footer", "#cubeviz-footer-container");
 </script>
@@ -281,4 +282,8 @@
 
 <div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_DataSetDialogLabel'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_MeasureDialogLabel'); ?>
 </div>

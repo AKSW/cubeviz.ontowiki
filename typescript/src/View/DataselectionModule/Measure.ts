@@ -1,14 +1,14 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
-class View_DataselectionModule_DataSet extends CubeViz_View_Abstract 
+class View_DataselectionModule_Measure extends CubeViz_View_Abstract 
 {        
     /**
      * 
      */
     constructor(attachedTo:string, app:CubeViz_View_Application) 
     {
-        super("View_CubeVizModule_DataSet", attachedTo, app);
+        super("View_CubeVizModule_Measure", attachedTo, app);
         
         // publish event handlers to application:
         // if one of these events get triggered, the associated handler will
@@ -28,7 +28,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
     {
         super.destroy();
         
-        CubeViz_View_Helper.destroyDialog($("#cubeviz-dataSet-dialog"));
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-measure-dialog"));
         
         return this;
     }
@@ -40,7 +40,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
     {
         // save given elements
         this.collection.reset("__cv_uri");
-        this.collection.addList(this.app._.data.dataSets);
+        this.collection.addList(this.app._.data.components.measures);
         
         this.render();
     }
@@ -51,9 +51,9 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
     public onClick_closeAndUpdate(event) : void 
     {
         var dialogDiv:any = $(event.target).data("dialogDiv"),
-            dataSets:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
-            dataSetUri = $("input[name=cubeviz-dataSelectionModule-dataSetRadio]:checked").val(),
-            selectedDataSet:any = null,
+            measures:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+            measureUri = $("input[name=cubeviz-dataSelectionModule-measureRadio]:checked").val(),
+            selectedMeasure:any = null,
             self = this;
             
         // Start handling of new configuration, but before start, show a spinner 
@@ -61,12 +61,12 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         
         // get dataset with given uri
-        selectedDataSet = dataSets
-            .addList(this.app._.data.dataSets)
+        selectedMeasure = measures
+            .addList(this.app._.data.components.measures)
             .get(dataSetUri);
             
         // update selected dataset
-        this.app._.data.selectedDS = selectedDataSet;
+        this.app._.data.selectedMeasure = selectedMeasure;
         
         // close dialog
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
@@ -75,22 +75,12 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         CubeViz_View_Helper.closeDialog(dialogDiv);
         
         // output new dataset label
-        $("#cubeviz-dataSet-label").html(_.str.prune(
-            selectedDataSet.__cv_niceLabel, 24, ".."
+        $("#cubeviz-measure-label").html(_.str.prune(
+            selectedMeasure.__cv_niceLabel, 24, ".."
         ));
-        
-        // nulling retrievedObservations
-        this.app._.backend.retrievedObservations = {};
-        
-        // update selectedDSD
-        _.each(this.app._.data.dataStructureDefinitions, function(dsd){
-            if (dsd.__cv_uri == selectedDataSet["http://purl.org/linked-data/cube#structure"]) {
-                self.app._.data.selectedDSD = dsd;
-            }
-        });
 
         // trigger event
-        this.triggerGlobalEvent("onChange_selectedDS");
+        this.triggerGlobalEvent("onChange_selectedMeasure");
     }
     
     /**
@@ -101,7 +91,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         // select that entry which fits to selectedDS, because if you select an
         // element in the dialog but cancel it, the HTML remembers your selection
         // and after re-open it, you will see your last selection
-        var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet")
+        var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure")
                         .find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children(),
             self = this;
                         
@@ -113,7 +103,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         });
         
         // open dialog
-        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-measure"));
     }
     
     /**
@@ -129,10 +119,10 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
-        this.triggerGlobalEvent("onBeforeRender_dataSet");
+        this.triggerGlobalEvent("onBeforeRender_measure");
         
         // set label directly
-        $("#cubeviz-dataSet-label").html(
+        $("#cubeviz-measure-label").html(
             _.str.prune (
                 this.app._.data.selectedDS.__cv_niceLabel,
                 24,
@@ -147,12 +137,12 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(), 
-                __cv_hashedUri: "dataSet"
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(), 
+                __cv_hashedUri: "measure"
             }
         ));
         
-        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
+        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
         
         // setup jqeruy dialog
         CubeViz_View_Helper.attachDialogTo(
