@@ -1094,7 +1094,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         this.app._.data.selectedDS = selectedDataSet;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        $("#cubeviz-dataSet-label").html(_.str.prune(selectedDataSet.__cv_niceLabel, 28, " ..."));
+        $("#cubeviz-dataSet-label").html(_.str.prune(selectedDataSet.__cv_niceLabel, 24, ".."));
     };
     View_DataselectionModule_DataSet.prototype.onClick_dialogOpener = function (event) {
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
@@ -1104,7 +1104,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
     };
     View_DataselectionModule_DataSet.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_dataSet");
-        $("#cubeviz-dataSet-label").html(_.str.prune(this.app._.data.selectedDS.__cv_niceLabel, 28, " ...")).attr("title", this.app._.data.selectedDS.__cv_niceLabel);
+        $("#cubeviz-dataSet-label").html(_.str.prune(this.app._.data.selectedDS.__cv_niceLabel, 24, "..")).attr("title", this.app._.data.selectedDS.__cv_niceLabel);
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
             __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(),
             __cv_hashedUri: "dataSet"

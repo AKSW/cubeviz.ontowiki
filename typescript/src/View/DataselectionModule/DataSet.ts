@@ -103,7 +103,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         
         // output new dataset label
         $("#cubeviz-dataSet-label").html(_.str.prune(
-            selectedDataSet.__cv_niceLabel, 28, " ..."
+            selectedDataSet.__cv_niceLabel, 24, ".."
         ));
     }
     
@@ -134,8 +134,8 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         $("#cubeviz-dataSet-label").html(
             _.str.prune (
                 this.app._.data.selectedDS.__cv_niceLabel,
-                28,
-                " ..."
+                24,
+                ".."
             )
         ).attr ("title", this.app._.data.selectedDS.__cv_niceLabel);
         

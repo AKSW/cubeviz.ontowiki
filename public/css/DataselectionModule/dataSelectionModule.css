@@ -3,6 +3,12 @@
     margin-top: 5px;
 }
 
+.cubeviz-dataSelectionModule-smallDescription
+{
+    color:      #696969; 
+    font-size:  11px;
+}
+
 .cubeviz-dataSelectionModule-dialogSortButtonSelected
 {
 }
