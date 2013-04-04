@@ -1088,6 +1088,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         var dataSets = new CubeViz_Collection("__cv_uri");
         var dataSetUri = $("input[name=cubeviz-dataSelectionModule-dataSetRadio]:checked").val();
         var selectedDataSet = null;
+        var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         selectedDataSet = dataSets.addList(this.app._.data.dataSets).get(dataSetUri);
@@ -1095,8 +1096,28 @@ var View_DataselectionModule_DataSet = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-dataSet-label").html(_.str.prune(selectedDataSet.__cv_niceLabel, 24, ".."));
+        this.app._.backend.retrievedObservations = {
+        };
+        _.each(this.app._.data.dataStructureDefinitions, function (dsd) {
+            if(dsd.__cv_uri == selectedDataSet["http://purl.org/linked-data/cube#structure"]) {
+                self.app._.data.selectedDSD = dsd;
+            }
+        });
+        this.triggerGlobalEvent("onChange_selectedDS");
     };
     View_DataselectionModule_DataSet.prototype.onClick_dialogOpener = function (event) {
+        var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
+        var self = this;
+
+        console.log("");
+        console.log("elementList: ");
+        console.log(elementList);
+        _.each(elementList, function (element) {
+            console.log(self.app._.data.selectedDS.__cv_uri + " === " + $($(element).children().first()).val());
+            if(self.app._.data.selectedDS.__cv_uri == $($(element).children().first()).val()) {
+                $($(element).children().first()).attr("checked", true);
+            }
+        });
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
     };
     View_DataselectionModule_DataSet.prototype.onStart_application = function () {
@@ -1132,7 +1153,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
             elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
                 __cv_niceLabel: element.__cv_niceLabel,
                 __cv_uri: element.__cv_uri,
-                radioId: "cubeviz-dataSelectionModule-dataSetRadio",
+                radioCSSClass: "cubeviz-dataSelectionModule-dataSetRadio",
                 radioName: "cubeviz-dataSelectionModule-dataSetRadio",
                 radioValue: element.__cv_uri
             }));

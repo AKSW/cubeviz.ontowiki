@@ -81,7 +81,8 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         var dialogDiv:any = $(event.target).data("dialogDiv"),
             dataSets:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             dataSetUri = $("input[name=cubeviz-dataSelectionModule-dataSetRadio]:checked").val(),
-            selectedDataSet:any = null;
+            selectedDataSet:any = null,
+            self = this;
             
         // Start handling of new configuration, but before start, show a spinner 
         // to let the user know that CubeViz did something.    
@@ -105,6 +106,19 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         $("#cubeviz-dataSet-label").html(_.str.prune(
             selectedDataSet.__cv_niceLabel, 24, ".."
         ));
+        
+        // nulling retrievedObservations
+        this.app._.backend.retrievedObservations = {};
+        
+        // update selectedDSD
+        _.each(this.app._.data.dataStructureDefinitions, function(dsd){
+            if (dsd.__cv_uri == selectedDataSet["http://purl.org/linked-data/cube#structure"]) {
+                self.app._.data.selectedDSD = dsd;
+            }
+        });
+
+        // trigger event
+        this.triggerGlobalEvent("onChange_selectedDS");
     }
     
     /**
@@ -112,6 +126,21 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
      */
     public onClick_dialogOpener(event) : void 
     {
+        // select that entry which fits to selectedDS, because if you select an
+        // element in the dialog but cancel it, the HTML remembers your selection
+        // and after re-open it, you will see your last selection
+        var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet")
+                        .find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children(),
+            self = this;
+                        
+        _.each(elementList, function(element){
+
+            if(self.app._.data.selectedDS.__cv_uri == $($(element).children().first()).val()) {
+                $($(element).children().first()).attr ("checked", true);
+            }
+        });
+        
+        // open dialog
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
     }
     
@@ -216,7 +245,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
                     {
                         __cv_niceLabel: element.__cv_niceLabel,
                         __cv_uri: element.__cv_uri,
-                        radioId: "cubeviz-dataSelectionModule-dataSetRadio",
+                        radioCSSClass: "cubeviz-dataSelectionModule-dataSetRadio",
                         radioName: "cubeviz-dataSelectionModule-dataSetRadio",
                         radioValue: element.__cv_uri
                     }
