@@ -268,6 +268,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 self.app._.data.components.measures = entries;
                 self.app._.data.selectedComponents.measures = entries;
                 
+                console.log("");
+                throw new Error ("loadComponentMeasures not implemented");
+                
                 // execute given callback method
                 callback();
             }

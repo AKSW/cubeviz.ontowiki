@@ -185,31 +185,37 @@ class CubeViz_ConfigurationLink
                     $useMultipleDimensionAnyway = false;
                 }
             }
-            
-            /**
-             * Measures
-             */
+        }
+        
+        
+        /**
+         * Measures
+         */
+        if (false === isset($config['selectedMeasure']) 
+            || 1 > strlen ($config['selectedMeasure'])) {
             $measures = $query->getComponents(
                 $config['selectedDSD']['__cv_uri'],
                 $config['selectedDS']['__cv_uri'],
                 DataCube_UriOf::Measure
             );
             
+            $config['selectedMeasure'] = null;
+            
             // set measures
             $config['components']['measures'] = array();
             foreach ($measures as $measure) {
                 $config['components']['measures'][$measure['__cv_uri']] = $measure;
-            }
-            
-            // set selectedComponents
-            $config['selectedComponents']['measures'] = array();
-            foreach ($measures as $measure) {
-                $config['selectedComponents']['measures']
-                    [$measure['__cv_uri']] = $measure;
+                
+                if(null == $config['selectedMeasure']) {
+                    $config['selectedMeasure'] = $measure;
+                }
             }
         }
         
-        // number of multiple dimensions
+        
+        /**
+         * number of multiple dimensions
+         */
         $config['numberOfMultipleDimensions'] = 0;
             
         foreach ($config['selectedComponents']['dimensions'] as $dim) {
@@ -284,8 +290,7 @@ class CubeViz_ConfigurationLink
                     'selectedDSD'                   => array(),
                     'selectedDS'                    => array(),
                     'selectedComponents'            => array(
-                        'dimensions'                => array(),
-                        'measures'                  => array()
+                        'dimensions'                => array()
                     )
                 ), $model);                
                 
