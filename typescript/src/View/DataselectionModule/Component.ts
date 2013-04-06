@@ -62,11 +62,11 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         opener.data("dialogDiv", dialogDiv);
         
         // attach dialog dialogDiv to "cancel" button
-        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
             .data("dialogDiv", dialogDiv);
             
         // attach dialog dialogDiv to "close and update" button
-        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0))
             .data("dialogDiv", dialogDiv)
             .on("click", $.proxy(this.onClick_closeAndUpdate, this));
             
@@ -266,10 +266,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 
                 // set components (measures)
                 self.app._.data.components.measures = entries;
-                self.app._.data.selectedComponents.measures = entries;
                 
-                console.log("");
-                throw new Error ("loadComponentMeasures not implemented");
+                if (0 === _.keys(entries).length) {
+                    throw new Error ("Error: There are no measures in the selected data set!");
+                } else { // 0 < _.keys(entries)
+                    self.app._.data.selectedMeasure = _.keys(entries)[0];
+                }
                 
                 // execute given callback method
                 callback();
@@ -684,7 +686,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({         
-            "click .cubeviz-component-cancel": 
+            "click .cubeviz-dataSelectionModule-cancelBtn": 
                 this.onClick_cancel,
                 
             "click .cubeviz-dataSelectionModule-deselectButton": 

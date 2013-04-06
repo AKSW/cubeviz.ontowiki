@@ -169,11 +169,11 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
         
         // attach dialog div to "cancel" button
-        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
             .data("dialogDiv", dialogDiv);
             
         // attach dialog div to "close and update" button
-        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0))
             .data("dialogDiv", dialogDiv)
             .on("click", $.proxy(this.onClick_closeAndUpdate, this));
             
