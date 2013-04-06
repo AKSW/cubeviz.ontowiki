@@ -148,7 +148,28 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
         // if module + indexAction stuff was loaded
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             
-            this.triggerGlobalEvent("onReRender_visualization");
+            // update link code        
+            CubeViz_ConfigurationLink.save(
+                this.app._.backend.url, this.app._.data, "data",
+                
+                // based on updatedLinkCode, load new observations
+                function(updatedDataHash){
+                            
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                        function(newEntities){
+                            
+                            // save new observations
+                            self.app._.backend.retrievedObservations = newEntities;
+                            
+                            // trigger re-rendering of visualization
+                            self.triggerGlobalEvent("onReRender_visualization");
+                        }
+                    );
+                    
+                    self.app._.backend.dataHash = updatedDataHash;
+                }
+            );
             
         // if you are only in the module
         } else {

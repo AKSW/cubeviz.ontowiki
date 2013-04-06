@@ -224,7 +224,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             function(entries) {
                 
                 // save pulled component dimensions
-                // self.app._.data.components.dimensions = JSON.parse(JSON.stringify(entries));
                 self.app._.data.components.dimensions = entries;
                 
                 // set default values for selected component dimensions list
@@ -245,41 +244,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     }
     
     /**
-     * Load new measures.
-     * @param callback Function to call the load is complete
-     */
-    public loadComponentMeasures(callback) : void 
-    {
-        var self = this;
-        
-        /**
-         * Load measures
-         */
-        DataCube_Component.loadAllMeasures(
-        
-            this.app._.backend.url,
-            this.app._.backend.modelUrl,
-            this.app._.data.selectedDSD.__cv_uri,
-            this.app._.data.selectedDS.__cv_uri,
-            
-            function(entries) {
-                
-                // set components (measures)
-                self.app._.data.components.measures = entries;
-                
-                if (0 === _.keys(entries).length) {
-                    throw new Error ("Error: There are no measures in the selected data set!");
-                } else { // 0 < _.keys(entries)
-                    self.app._.data.selectedMeasure = _.keys(entries)[0];
-                }
-                
-                // execute given callback method
-                callback();
-            }
-        );
-    }
-    
-    /**
      *
      */
     public onChange_selectedDS(event, data) 
@@ -289,26 +253,22 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.destroy();
         
         // load dimensional data
-        this.loadComponentDimensions(function(newComponentDimensions){
-
-            // load measures
-            self.loadComponentMeasures(function(newComponentMeasures){
-                
-                // update link code        
-                CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url, self.app._.data, "data",
-                
-                    // based on updatedLinkCode, load new observations
-                    function(updatedDataHash){
-                        
-                        self.app._.backend.dataHash = updatedDataHash;
-                        
-                        self.render();
-                        
-                        self.hideSpinner();
-                    }
-                );
-            });
+        this.loadComponentDimensions(function(){
+            
+            // update link code        
+            CubeViz_ConfigurationLink.save(
+                self.app._.backend.url, self.app._.data, "data",
+            
+                // based on updatedLinkCode, load new observations
+                function(updatedDataHash){
+                    
+                    self.app._.backend.dataHash = updatedDataHash;
+                    
+                    self.render();
+                    
+                    self.hideSpinner();
+                }
+            );
         });
     }
     

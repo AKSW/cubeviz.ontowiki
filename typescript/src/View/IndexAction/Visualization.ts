@@ -16,10 +16,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onChange_selectedMeasure",
-                handler: this.onChange_selectedMeasure
-            },
-            {
                 name:    "onChange_visualizationClass",
                 handler: this.onChange_visualizationClass
             },
@@ -79,14 +75,6 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public initialize() 
     {        
         this.render();
-    }
-    
-    /**
-     *
-     */
-    public onChange_selectedMeasure(event) : void 
-    {
-        this.renderChart();
     }
     
     /**

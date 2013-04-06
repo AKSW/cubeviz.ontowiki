@@ -15,6 +15,10 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -48,6 +52,36 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
     /**
      *
      */
+    public onChange_selectedDS(event) : void 
+    {
+        var self = this;
+        
+        /**
+         * Load measures
+         */
+        DataCube_Component.loadAllMeasures(
+        
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
+            this.app._.data.selectedDSD.__cv_uri,
+            this.app._.data.selectedDS.__cv_uri,
+            
+            function(entries) {
+                // set components (measures)
+                self.app._.data.components.measures = entries;
+                
+                if (0 === _.keys(entries).length) {
+                    throw new Error ("Error: There are no measures in the selected data set!");
+                } else { // 0 < _.keys(entries)
+                    self.app._.data.selectedMeasure = entries[_.keys(entries)[0]];
+                }
+            }
+        );
+    }
+    
+    /**
+     *
+     */
     public onClick_closeAndUpdate(event) : void 
     {
         var dialogDiv:any = $(event.target).data("dialogDiv"),
@@ -67,7 +101,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             
         // update selected measure
         this.app._.data.selectedMeasure = selectedMeasure;
-        
+
         // close dialog
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         

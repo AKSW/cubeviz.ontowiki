@@ -1158,6 +1158,10 @@ var View_DataselectionModule_Measure = (function (_super) {
         _super.call(this, "View_CubeVizModule_Measure", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            }, 
+            {
                 name: "onStart_application",
                 handler: this.onStart_application
             }
@@ -1172,6 +1176,17 @@ var View_DataselectionModule_Measure = (function (_super) {
         this.collection.reset("__cv_uri");
         this.collection.addList(this.app._.data.components.measures);
         this.render();
+    };
+    View_DataselectionModule_Measure.prototype.onChange_selectedDS = function (event) {
+        var self = this;
+        DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+            self.app._.data.components.measures = entries;
+            if(0 === _.keys(entries).length) {
+                throw new Error("Error: There are no measures in the selected data set!");
+            } else {
+                self.app._.data.selectedMeasure = entries[_.keys(entries)[0]];
+            }
+        });
     };
     View_DataselectionModule_Measure.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
@@ -1351,28 +1366,14 @@ var View_DataselectionModule_Component = (function (_super) {
             callback();
         });
     };
-    View_DataselectionModule_Component.prototype.loadComponentMeasures = function (callback) {
-        var self = this;
-        DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
-            self.app._.data.components.measures = entries;
-            if(0 === _.keys(entries).length) {
-                throw new Error("Error: There are no measures in the selected data set!");
-            } else {
-                self.app._.data.selectedMeasure = _.keys(entries)[0];
-            }
-            callback();
-        });
-    };
     View_DataselectionModule_Component.prototype.onChange_selectedDS = function (event, data) {
         var self = this;
         this.destroy();
-        this.loadComponentDimensions(function (newComponentDimensions) {
-            self.loadComponentMeasures(function (newComponentMeasures) {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                    self.app._.backend.dataHash = updatedDataHash;
-                    self.render();
-                    self.hideSpinner();
-                });
+        this.loadComponentDimensions(function () {
+            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                self.app._.backend.dataHash = updatedDataHash;
+                self.render();
+                self.hideSpinner();
             });
         });
     };
@@ -1638,7 +1639,13 @@ var View_DataselectionModule_Footer = (function (_super) {
     View_DataselectionModule_Footer.prototype.onClick_showVisualization = function (event) {
         var self = this;
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
-            this.triggerGlobalEvent("onReRender_visualization");
+            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
+                DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                    self.app._.backend.retrievedObservations = newEntities;
+                    self.triggerGlobalEvent("onReRender_visualization");
+                });
+                self.app._.backend.dataHash = updatedDataHash;
+            });
         } else {
             if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
                 CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
@@ -1948,10 +1955,6 @@ var View_IndexAction_Visualization = (function (_super) {
         _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onChange_selectedMeasure",
-                handler: this.onChange_selectedMeasure
-            }, 
-            {
                 name: "onChange_visualizationClass",
                 handler: this.onChange_visualizationClass
             }, 
@@ -1980,9 +1983,6 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
         this.render();
-    };
-    View_IndexAction_Visualization.prototype.onChange_selectedMeasure = function (event) {
-        this.renderChart();
     };
     View_IndexAction_Visualization.prototype.onChange_visualizationClass = function () {
         this.renderChart();
