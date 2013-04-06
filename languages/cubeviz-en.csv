@@ -8,6 +8,7 @@ DataSelectionModule_DeselectAllItems;Deselect all items
 DataSelectionModule_Link;Link
 DataSelectionModule_LoadingMessage;I am working ...
 DataSelectionModule_Measure;Measure
+DataSelectionModule_MeasureDialogLabel;Measure
 DataSelectionModule_ObservationCount;Observation Count
 DataSelectionModule_Of;of
 DataSelectionModule_Permalink;Link
