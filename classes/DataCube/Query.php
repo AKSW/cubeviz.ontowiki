@@ -89,6 +89,15 @@ class DataCube_Query
 
             // Nice label using TitleHelper
             $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
+
+            // Comment
+            if (true === isset($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
+                && 0 < strlen ($entry['http://www.w3.org/2000/01/rdf-schema#comment'])) {
+                $entry ['__cv_description'] = $entry['http://www.w3.org/2000/01/rdf-schema#comment'];
+            } else { 
+                $entry ['__cv_description'] = '';
+            }
+            
             $return [] = $entry;
         }
         return $return;
