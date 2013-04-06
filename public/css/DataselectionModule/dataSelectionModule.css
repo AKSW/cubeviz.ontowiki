@@ -50,8 +50,8 @@
 .cubeviz-dataSelectionModule-visualSeparator
 {
     clear:          both; 
-    margin-bottom:  16px;
-    padding-top:    7px; 
+    padding-top:    4px; 
+    padding-bottom: 8px;
 }
 
 .cubeviz-dataSelectionModule-visualSeparator hr
