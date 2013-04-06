@@ -1224,6 +1224,7 @@ var View_DataselectionModule_Measure = (function (_super) {
     View_DataselectionModule_Measure.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_measure");
         $("#cubeviz-measure-label").html(_.str.prune(this.app._.data.selectedMeasure.__cv_niceLabel, 24, "..")).attr("title", this.app._.data.selectedMeasure.__cv_niceLabel);
+        $("#cubeviz-measure-description").html(_.str.prune(this.app._.data.selectedMeasure.__cv_description, 55, "..")).attr("title", this.app._.data.selectedMeasure.__cv_description);
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
             __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(),
             __cv_hashedUri: "measure"

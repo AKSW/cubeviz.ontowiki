@@ -172,6 +172,15 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             )
         ).attr ("title", this.app._.data.selectedMeasure.__cv_niceLabel);
         
+        // set description directly
+        $("#cubeviz-measure-description").html(
+            _.str.prune (
+                this.app._.data.selectedMeasure.__cv_description,
+                55,
+                ".."
+            )
+        ).attr ("title", this.app._.data.selectedMeasure.__cv_description);
+        
         /**
          * Dialog
          */         
