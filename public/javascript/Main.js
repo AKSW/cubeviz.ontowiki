@@ -1067,22 +1067,6 @@ var View_DataselectionModule_DataSet = (function (_super) {
         this.collection.addList(this.app._.data.dataSets);
         this.render();
     };
-    View_DataselectionModule_DataSet.prototype.onChange_list = function () {
-        this.showSpinner();
-        var selectedElementId = $("#cubeviz-dataSet-list").val();
-        var selectedElement = this["collection"].get(selectedElementId);
-        var self = this;
-
-        this.app._.data.selectedDS = selectedElement;
-        this.app._.backend.retrievedObservations = {
-        };
-        _.each(this.app._.data.dataStructureDefinitions, function (dsd) {
-            if(dsd.__cv_uri == selectedElement["http://purl.org/linked-data/cube#structure"]) {
-                self.app._.data.selectedDSD = dsd;
-            }
-        });
-        this.triggerGlobalEvent("onChange_selectedDS");
-    };
     View_DataselectionModule_DataSet.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");
         var dataSets = new CubeViz_Collection("__cv_uri");
@@ -1136,8 +1120,8 @@ var View_DataselectionModule_DataSet = (function (_super) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
         $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
         $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
@@ -1168,6 +1152,109 @@ var View_DataselectionModule_DataSet = (function (_super) {
     };
     return View_DataselectionModule_DataSet;
 })(CubeViz_View_Abstract);
+var View_DataselectionModule_Measure = (function (_super) {
+    __extends(View_DataselectionModule_Measure, _super);
+    function View_DataselectionModule_Measure(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_Measure", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_DataselectionModule_Measure.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-measure-dialog"));
+        return this;
+    };
+    View_DataselectionModule_Measure.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.collection.addList(this.app._.data.components.measures);
+        this.render();
+    };
+    View_DataselectionModule_Measure.prototype.onClick_closeAndUpdate = function (event) {
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var measures = new CubeViz_Collection("__cv_uri");
+        var measureUri = $("input[name=cubeviz-dataSelectionModule-measureRadio]:checked").val();
+        var selectedMeasure = null;
+        var self = this;
+
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        selectedMeasure = measures.addList(this.app._.data.components.measures).get(measureUri);
+        this.app._.data.selectedMeasure = selectedMeasure;
+        CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.closeDialog(dialogDiv);
+        $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
+        this.triggerGlobalEvent("onChange_selectedMeasure");
+    };
+    View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
+        var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
+        var self = this;
+
+        if(1 == elementList.length) {
+            $($(elementList.first()).children().first()).attr("checked", true);
+        } else {
+            _.each(elementList, function (element) {
+                if(self.app._.data.selectedMeasure.__cv_uri == $($(element).children().first()).val()) {
+                    $($(element).children().first()).attr("checked", true);
+                }
+            });
+        }
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-measure"));
+    };
+    View_DataselectionModule_Measure.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_DataselectionModule_Measure.prototype.render = function () {
+        this.triggerGlobalEvent("onBeforeRender_measure");
+        $("#cubeviz-measure-label").html(_.str.prune(this.app._.data.selectedMeasure.__cv_niceLabel, 24, "..")).attr("title", this.app._.data.selectedMeasure.__cv_niceLabel);
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(),
+            __cv_hashedUri: "measure"
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 650
+        });
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+        $("#cubeviz-measure-dialogOpener").data("dialogDiv", dialogDiv);
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
+        var measureElements = new CubeViz_Collection("__cv_uri");
+        var elementContainer = null;
+        var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+
+        measureElements.addList(this.app._.data.components.measures).sortAscendingBy("__cv_niceLabel").each(function (element) {
+            elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                __cv_niceLabel: element.__cv_niceLabel,
+                __cv_uri: element.__cv_uri,
+                radioCSSClass: "cubeviz-dataSelectionModule-measureRadio",
+                radioName: "cubeviz-dataSelectionModule-measureRadio",
+                radioValue: element.__cv_uri
+            }));
+            elementList.append(elementContainer);
+        });
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-measure-dialogOpener": this.onClick_dialogOpener
+        });
+        this.triggerGlobalEvent("onAfterRender_measure");
+        return this;
+    };
+    View_DataselectionModule_Measure.prototype.showSpinner = function () {
+        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
+    };
+    return View_DataselectionModule_Measure;
+})(CubeViz_View_Abstract);
 var View_DataselectionModule_Component = (function (_super) {
     __extends(View_DataselectionModule_Component, _super);
     function View_DataselectionModule_Component(attachedTo, app) {
@@ -1195,8 +1282,8 @@ var View_DataselectionModule_Component = (function (_super) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).data("dialogDiv", dialogDiv);
         $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).data("dialogDiv", dialogDiv);
         opener.data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0)).data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).data("dialogDiv", dialogDiv).data("type", "check status");
         $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).data("dialogDiv", dialogDiv).data("type", "observation count");
@@ -1268,9 +1355,11 @@ var View_DataselectionModule_Component = (function (_super) {
         var self = this;
         DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.measures = entries;
-            self.app._.data.selectedComponents.measures = entries;
-            console.log("");
-            throw new Error("loadComponentMeasures not implemented");
+            if(0 === _.keys(entries).length) {
+                throw new Error("Error: There are no measures in the selected data set!");
+            } else {
+                self.app._.data.selectedMeasure = _.keys(entries)[0];
+            }
             callback();
         });
     };
@@ -1461,7 +1550,7 @@ var View_DataselectionModule_Component = (function (_super) {
             self.collection.add(dimension);
         });
         this.bindUserInterfaceEvents({
-            "click .cubeviz-component-cancel": this.onClick_cancel,
+            "click .cubeviz-dataSelectionModule-cancelBtn": this.onClick_cancel,
             "click .cubeviz-dataSelectionModule-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-dataSelectionModule-selectAllButton": this.onClick_selectAllButton,
             "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
@@ -1859,6 +1948,10 @@ var View_IndexAction_Visualization = (function (_super) {
         _super.call(this, "View_IndexAction_Visualization", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onChange_selectedMeasure",
+                handler: this.onChange_selectedMeasure
+            }, 
+            {
                 name: "onChange_visualizationClass",
                 handler: this.onChange_visualizationClass
             }, 
@@ -1887,6 +1980,9 @@ var View_IndexAction_Visualization = (function (_super) {
     };
     View_IndexAction_Visualization.prototype.initialize = function () {
         this.render();
+    };
+    View_IndexAction_Visualization.prototype.onChange_selectedMeasure = function (event) {
+        this.renderChart();
     };
     View_IndexAction_Visualization.prototype.onChange_visualizationClass = function () {
         this.renderChart();

@@ -10,7 +10,7 @@
 </script>
 
 <!-- 
-    Left sidebar 
+    left sidebar 
 -->
 
 <div id="cubeviz-dataSelectionModule-spinner">
@@ -20,7 +20,7 @@
 
 <div id="cubeviz-dataSelectionModule-dataSelection">
     
-    <!-- Data set and slice section -->
+    <!-- data set and slice section -->
     <div style="float: left; height: 50px; width: 20px; text-align: center; margin-top: 3px;">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
              style="width: 17px; margin-left: 10px;"
@@ -59,15 +59,16 @@
         <br/>
         <br/>
            
-        <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
+        <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-slice-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
     </div>
     
-    <!-- Visual seperator -->
+    <!-- visual seperator -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
     
-    <!-- Data set and slice section -->
+    <!-- attribute and measure section -->
     <div style="float: left; height: 55px; width: 20px; text-align: center;">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
              style="width: 17px; margin-left: 10px;"
@@ -98,6 +99,7 @@
     </div>
     <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
         <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-attribute-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
            
         <br/>
@@ -105,20 +107,21 @@
         <br/>
         <br/>
            
-        <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
+        <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-measure-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
     </div>
     
-    <!-- Visual seperator -->
+    <!-- visual seperator -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
     
-    <!-- Component section -->
+    <!-- component section -->
     <div id="cubviz-component-container">
         <div id="cubviz-component-listBox"></div>
     </div>
     
-    <!-- Visual seperator -->
+    <!-- visual seperator -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
     
@@ -242,9 +245,10 @@
             Cancel and closeAndUpdate buttons
         -->
         <div style="margin-top: 5px; float:right;">            
-            <span class="cubeviz-btn cubeviz-component-cancel"><?php echo $this->translate->_('DataSelectionModule_Cancel'); ?></span>
+            <span class="cubeviz-btn cubeviz-dataSelectionModule-cancelBtn">
+                <?php echo $this->translate->_('DataSelectionModule_Cancel'); ?></span>
             &nbsp;
-            <span class="cubeviz-btn cubeviz-component-closeAndUpdate">
+            <span class="cubeviz-btn cubeviz-dataSelectionModule-closeAndUpdateBtn">
                 <i class="icon-spinner icon-spin cubeviz-dataSelectionModule-closeUpdateSpinner" 
                    style="display: none;"></i>
                 &nbsp;
@@ -284,6 +288,6 @@
     <?php echo $this->translate->_('DataSelectionModule_DataSetDialogLabel'); ?>
 </div>
 
-<div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
+<div id="cubeviz-dataSelectionModule-tra-measureDialog" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_MeasureDialogLabel'); ?>
 </div>

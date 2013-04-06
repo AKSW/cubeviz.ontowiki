@@ -60,12 +60,12 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // to let the user know that CubeViz did something.    
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         
-        // get dataset with given uri
+        // get measure with given uri
         selectedMeasure = measures
             .addList(this.app._.data.components.measures)
-            .get(dataSetUri);
+            .get(measureUri);
             
-        // update selected dataset
+        // update selected measure
         this.app._.data.selectedMeasure = selectedMeasure;
         
         // close dialog
@@ -74,7 +74,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // if only module was loaded, move reloading stuff to footer.ts
         CubeViz_View_Helper.closeDialog(dialogDiv);
         
-        // output new dataset label
+        // output new measure label
         $("#cubeviz-measure-label").html(_.str.prune(
             selectedMeasure.__cv_niceLabel, 24, ".."
         ));
@@ -94,13 +94,21 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure")
                         .find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children(),
             self = this;
-                        
-        _.each(elementList, function(element){
 
-            if(self.app._.data.selectedDS.__cv_uri == $($(element).children().first()).val()) {
-                $($(element).children().first()).attr ("checked", true);
-            }
-        });
+        // TODO how handle the case if there are no measures
+
+        // if its just one in the list, select it directly
+        if (1 == elementList.length) {
+            $($(elementList.first()).children().first()).attr ("checked", true);
+        
+        // go through all elements and select the selectedMeasure
+        } else {
+            _.each(elementList, function(element){
+                if(self.app._.data.selectedMeasure.__cv_uri == $($(element).children().first()).val()) {
+                    $($(element).children().first()).attr ("checked", true);
+                }
+            });
+        }
         
         // open dialog
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-measure"));
@@ -124,15 +132,15 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // set label directly
         $("#cubeviz-measure-label").html(
             _.str.prune (
-                this.app._.data.selectedDS.__cv_niceLabel,
+                this.app._.data.selectedMeasure.__cv_niceLabel,
                 24,
                 ".."
             )
-        ).attr ("title", this.app._.data.selectedDS.__cv_niceLabel);
+        ).attr ("title", this.app._.data.selectedMeasure.__cv_niceLabel);
         
         /**
          * Dialog
-         */
+         */         
         // set dialog reference and template
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
@@ -144,7 +152,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
         
-        // setup jqeruy dialog
+        // setup jquery dialog
         CubeViz_View_Helper.attachDialogTo(
             dialogDiv,
             {closeOnEscape: true, showCross: true, width: 650}
@@ -156,16 +164,17 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
         
         // attach dialog div to dialog opener link
-        $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
+        $("#cubeviz-measure-dialogOpener").data("dialogDiv", dialogDiv);
         
         // attach dialog div to "cancel" button
-        $($(dialogDiv.find(".cubeviz-component-cancel")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
             .data("dialogDiv", dialogDiv);
             
         // attach dialog div to "close and update" button
-        $($(dialogDiv.find(".cubeviz-component-closeAndUpdate")).get(0))
+        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0))
             .data("dialogDiv", dialogDiv)
             .on("click", $.proxy(this.onClick_closeAndUpdate, this));
+            
             
         /**
          * Sort buttons
@@ -187,14 +196,14 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         /**
          * Fill in elements
          */
-        var componentElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+        var measureElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
             elementContainer = null,
             elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
         
-        componentElements
+        measureElements
             
             // add elements of current component
-            .addList(this.app._.data.dataSets)
+            .addList(this.app._.data.components.measures)
             
             // sort
             .sortAscendingBy("__cv_niceLabel")
@@ -207,8 +216,8 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                     {
                         __cv_niceLabel: element.__cv_niceLabel,
                         __cv_uri: element.__cv_uri,
-                        radioCSSClass: "cubeviz-dataSelectionModule-dataSetRadio",
-                        radioName: "cubeviz-dataSelectionModule-dataSetRadio",
+                        radioCSSClass: "cubeviz-dataSelectionModule-measureRadio",
+                        radioName: "cubeviz-dataSelectionModule-measureRadio",
                         radioValue: element.__cv_uri
                     }
                 ));
@@ -223,10 +232,10 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
          * Delegate events to new items of the template
          */
         this.bindUserInterfaceEvents({
-            "click #cubeviz-dataSet-dialogOpener": this.onClick_dialogOpener
+            "click #cubeviz-measure-dialogOpener": this.onClick_dialogOpener
         });
         
-        this.triggerGlobalEvent("onAfterRender_dataSet");
+        this.triggerGlobalEvent("onAfterRender_measure");
         
         return this;
     }
