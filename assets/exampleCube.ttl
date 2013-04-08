@@ -28,6 +28,7 @@ ex:dsd2 a cube:DataStructureDefinition ;
     cube:component  <http://example.cubeviz.org/datacube/cs/geo>, 
                     <http://example.cubeviz.org/datacube/cs/time>,
                     <http://example.cubeviz.org/datacube/cs/unit>, 
+                    <http://example.cubeviz.org/datacube/cs/anotherUnit>, 
                     <http://example.cubeviz.org/datacube/cs/value> .
 
 #
@@ -44,6 +45,10 @@ ex:dsd2 a cube:DataStructureDefinition ;
 <http://example.cubeviz.org/datacube/cs/unit> a cube:ComponentSpecification ;
     rdfs:label "Component Specification of Unit" ;
     cube:attribute exProp:unit .
+
+<http://example.cubeviz.org/datacube/cs/anotherUnit> a cube:ComponentSpecification ;
+    rdfs:label "Another Component Specification of Unit" ;
+    cube:attribute exProp:anotherUnit .
 
 <http://example.cubeviz.org/datacube/cs/value> a cube:ComponentSpecification ;
     rdfs:label "Component Specification of Value" ;
@@ -76,6 +81,9 @@ exProp:date a cube:DimensionProperty ;
 
 exProp:unit a cube:AttributeProperty ;
     rdfs:label "Unit" .
+
+exProp:anotherUnit a cube:AttributeProperty ;
+    rdfs:label "Another Unit" .
 
 exProp:value a cube:MeasureProperty ;
     rdfs:label "Value"@en .
@@ -143,7 +151,7 @@ ex:obs6 a cube:Observation ;
 ex:obs7 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
     exProp:date ex:Y2003 ;
-    exProp:unit "whatever it is about" ;
+    exProp:unit "plain number" ;
     exProp:geo ex:Germany ;
     exProp:value "1998"^^<http://www.w3.org/2001/XMLSchema#float> ;
     rdfs:label "Germany in 2003" .
@@ -151,9 +159,23 @@ ex:obs7 a cube:Observation ;
 ex:obs8 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
     exProp:date ex:Y2004 ;
-    exProp:unit "whatever it is about" ;
+    exProp:unit "plain number" ;
     exProp:geo ex:Germany ;
     exProp:value "2500"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+ex:obs9 a cube:Observation ;
+    cube:dataSet ex:dataset3 ;
+    exProp:date ex:Y2012 ;
+    exProp:anotherUni "another unit (%)" ;
+    exProp:geo ex:Germany ;
+    exProp:value "2501"^^<http://www.w3.org/2001/XMLSchema#float>.
+
+ex:obs10 a cube:Observation ;
+    cube:dataSet ex:dataset3 ;
+    exProp:date ex:Y2013 ;
+    exProp:anotherUni "another unit (%)" ;
+    exProp:geo ex:Germany ;
+    exProp:value "2502"^^<http://www.w3.org/2001/XMLSchema#float>.
 
 #
 # Additional Stuff #############################################################
