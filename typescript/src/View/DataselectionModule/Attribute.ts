@@ -32,7 +32,11 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
     {
         super.destroy();
         
-        CubeViz_View_Helper.destroyDialog($("#cubeviz-attribute-dialog"));
+        $("#cubeviz-attribute-dialogOpener").off();
+        
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-dataSelectionModule-dialog-attribute"));
+        
+        $("#cubeviz-dataSelectionModule-dialog-attribute").remove();
         
         return this;
     }
@@ -58,25 +62,29 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         
         /**
          * Load attributes
-         
-        DataCube_Component.loadAllMeasures(
+         */
+        DataCube_Attribute.loadAll(
         
             this.app._.backend.url,
             this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.__cv_uri,
-            this.app._.data.selectedDS.__cv_uri,
             
             function(entries) {
-                // set components (measures)
-                self.app._.data.components.measures = entries;
+                // set attributes
+                self.app._.data.attributes = entries;
                 
                 if (0 === _.keys(entries).length) {
-                    throw new Error ("Error: There are no measures in the selected data set!");
+                    // no attribute in the selectedDSD
                 } else { // 0 < _.keys(entries)
-                    self.app._.data.selectedMeasure = entries[_.keys(entries)[0]];
+                    self.app._.data.selectedAttribute = entries[_.keys(entries)[0]];
                 }
+                
+                // rebuild dialog
+                self
+                    .destroy()
+                    .initialize();
             }
-        );*/
+        );
     }
     
     /**
@@ -205,6 +213,7 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
          */
         // if attribute is available ...
         if (false === noAttribute) {
+            
             // set dialog reference and template
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-dataSelectionModule-tpl-dialog").html(),

@@ -173,8 +173,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .remove();
         });
         
-        $("#cubeviz-dataSelectionModule-dialogContainer").empty();
-        
         super.destroy();
         
         // Question mark dialog

@@ -193,6 +193,16 @@ class DataCube_Query
             function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
         );
         
+        /**
+         * create an associative array
+         */
+        $tmp = $result;
+        $result = array();
+        
+        foreach ($tmp as $attribute) {
+            $result [$attribute['__cv_uri']] = $attribute;
+        }
+        
         return $result;
     }
     
