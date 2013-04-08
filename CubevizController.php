@@ -63,6 +63,68 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     *
+     */
+    public function getattributesAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dsdUrl = $this->_request->getParam('dsdUrl', '');
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'Model not available'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        // check if dsdUrl is valid
+        if(false === Erfurt_Uri::check($dsdUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsdUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        try {
+            $model = new Erfurt_Rdf_Model($modelIri);
+            $query = new DataCube_Query($model);
+            
+            $code = 200;
+            $content = array(
+                'code' => $code,
+                'content' => $query->getAttributes($dsdUrl),
+                'message' => ''
+            );
+        } catch(CubeViz_Exception $e) {
+            $code = 400;
+            $content = array(
+                'code' => $code, 
+                'content' => '', 
+                'message' => $e->getMessage()
+            );
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
      * 
      */
     public function getcomponentsAction() 

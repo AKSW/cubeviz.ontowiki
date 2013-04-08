@@ -187,12 +187,12 @@ class CubeViz_ConfigurationLink
             }
         }
         
-        
         /**
-         * Measures
+         * measures
          */
         if (false === isset($config['selectedMeasure']) 
-            || 1 > strlen ($config['selectedMeasure'])) {
+            || false === isset($config['components']['measures'])) {
+                
             $measures = $query->getComponents(
                 $config['selectedDSD']['__cv_uri'],
                 $config['selectedDS']['__cv_uri'],
@@ -212,6 +212,24 @@ class CubeViz_ConfigurationLink
             }
         }
         
+        /**
+         * attributes
+         */
+        if (false === isset($config['selectedAttribute'])) {
+            $attributes = $query->getAttributes($config['selectedDSD']['__cv_uri']);
+            
+            $config['selectedAttribute'] = null;
+            
+            // set attributes
+            $config['attributes'] = array();
+            foreach ($attributes as $attribute) {
+                $config['attributes'][] = $attribute;
+                
+                if(null == $config['selectedAttribute']) {
+                    $config['selectedAttribute'] = $attribute;
+                }
+            }
+        }        
         
         /**
          * number of multiple dimensions

@@ -158,6 +158,44 @@ class DataCube_Query
         }
         return $return;
     }
+    
+    /**
+     * Returns an array of attribute properties.
+     * @param $dsdUri Data structure definition URI
+     * @return array
+     */
+    public function getAttributes($dsdUri) 
+    {
+        $result = $this->_model->sparqlQuery (
+          'SELECT DISTINCT ?attribute ?p ?o
+            WHERE {
+              <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
+
+              <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?attributeCS.
+
+              ?attributeCS a <http://purl.org/linked-data/cube#ComponentSpecification>.
+
+              ?attributeCS <http://purl.org/linked-data/cube#attribute> ?attribute.
+              
+              ?attribute ?p ?o.
+            }'
+        );        
+        
+        // generate associative array
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'attribute', 'p', 'o');
+        
+        // enrich array with CubeViz sugar
+        $result = $this->enrichResult($result);
+
+        // sort by label
+        usort ( 
+            $result, 
+            function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
+        );
+        
+        return $result;
+    }
+    
     /**
      * Returns an array of components (Component) with md5 of URI, type and URI.
      * @param $dsdUri Data Structure Definition URI

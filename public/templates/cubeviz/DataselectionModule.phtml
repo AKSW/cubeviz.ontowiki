@@ -4,6 +4,7 @@
     
     cubeVizApp
         .add("View_DataselectionModule_DataSet", "")
+        .add("View_DataselectionModule_Attribute", "")
         .add("View_DataselectionModule_Measure", "")
         .add("View_DataselectionModule_Component", "#cubviz-component-listBox")
         .add("View_DataselectionModule_Footer", "#cubeviz-footer-container");
@@ -20,98 +21,100 @@
 
 <div id="cubeviz-dataSelectionModule-dataSelection">
     
-    <!-- data set and slice section -->
-    <div style="float: left; height: 50px; width: 20px; text-align: center; margin-top: 3px;">
+    <!-- 
+        data set 
+    -->
+    <div class="cubeviz-dataSelectionModule-leftBlock">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
              style="width: 17px; margin-left: 10px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
-             
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-             
+    </div>
+    <div class="cubeviz-dataSelectionModule-middleBlock">
+        <div id="cubeviz-dataSet-label"></div>
+        <div class="cubeviz-dataSelectionModule-smallDescription"
+             id="cubeviz-dataSet-description"></div>
+    </div>
+    <div class="cubeviz-dataSelectionModule-rightBlock">
+        <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-dataSet-dialogOpener"
+           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+    </div>
+    
+    <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
+    
+    
+    <!-- 
+        slice 
+    -->
+    <div class="cubeviz-dataSelectionModule-leftBlock">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
              style="width: 16px; margin-left: 8px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
-    <div style="float: left; width: 180px; margin-left: 20px;">
-        <div id="cubeviz-dataSet-label"></div>
-        <div class="cubeviz-dataSelectionModule-smallDescription"
-             id="cubeviz-dataSet-description">
-            This is a small description text for this thing here.
-        </div>        
-        
-        <br/>
-        
+    <div class="cubeviz-dataSelectionModule-middleBlock">
         <div id="cubeviz-slice-label">Slice 1</div>
         <span class="cubeviz-dataSelectionModule-smallDescription">
             This is a small description text for this thing here.
         </span>
     </div>
-    <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
-        <i class="icon-cogs cubeviz-clickable"
-           id="cubeviz-dataSet-dialogOpener"
-           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
-           
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-           
+    <div class="cubeviz-dataSelectionModule-rightBlock">
         <i class="icon-cogs cubeviz-clickable"
            id="cubeviz-slice-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
     </div>
     
-    <!-- visual seperator -->
+    
+    <!-- 
+        visual seperator 
+    -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
     
-    <!-- attribute and measure section -->
-    <div style="float: left; height: 55px; width: 20px; text-align: center;">
+    <!-- 
+        attribute
+     -->
+    <div class="cubeviz-dataSelectionModule-leftBlock">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
              style="width: 17px; margin-left: 10px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
-             
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-             
+    </div>
+    <div class="cubeviz-dataSelectionModule-middleBlock">
+        <div id="cubeviz-attribute-label"></div>
+        <div class="cubeviz-dataSelectionModule-smallDescription"
+             id="cubeviz-attribute-description"></div>        
+    </div>
+    <div class="cubeviz-dataSelectionModule-rightBlock">
+        <i class="icon-cogs cubeviz-clickable"
+           id="cubeviz-attribute-dialogOpener"
+           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+    </div>
+    
+    <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
+    
+    <!-- 
+        measure
+    -->
+    <div class="cubeviz-dataSelectionModule-leftBlock">
         <img src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png" 
              style="width: 16px; margin-left: 8px;"
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
-    <div style="float: left; width: 180px; margin-left: 20px;">
-        <div id="cubeviz-attribute-label">Attribute1</div>
-        <span class="cubeviz-dataSelectionModule-smallDescription">
-            This is a small description text for this thing here.
-        </span>
-        
-        <br/>
-        <br/>
-        
+    
+    <div class="cubeviz-dataSelectionModule-middleBlock">
         <div id="cubeviz-measure-label"></div>
         <div class="cubeviz-dataSelectionModule-smallDescription"
               id="cubeviz-measure-description"></div>
     </div>
-    <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
-        <i class="icon-cogs cubeviz-clickable"
-           id="cubeviz-attribute-dialogOpener"
-           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
-           
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-           
+    
+    <div class="cubeviz-dataSelectionModule-rightBlock">
         <i class="icon-cogs cubeviz-clickable"
            id="cubeviz-measure-dialogOpener"
            title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
     </div>
     
-    <!-- visual seperator -->
+    <!-- 
+        visual seperator 
+    -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
     
@@ -121,12 +124,10 @@
     </div>
     
     <!-- visual seperator -->
-    <div style="clear: both; margin-top: 5px;  margin-bottom: 10px;">
-        <hr style="background: #DADADA; border: 0px; height: 1px;"/></div>
-    
+    <div class="cubeviz-dataSelectionModule-visualSeparator" style="padding-top: 10px;"><hr/></div>
     
     <div id="cubeviz-footer-container">                
-        <span>
+        <div style="float: left;">
             <a class="cubeviz-btn" 
                id="cubeviz-footer-permaLinkButton"
                style="font-size: 12.5px;">
@@ -136,14 +137,14 @@
                 <span id="cubeviz-footer-permaLink" style="display: none;">
                     <?php echo $this->translate->_('DataSelectionModule_Link'); ?></span>
             </span>
-        </span>
-        <span style="float:right;">
+        </div>
+        <div style="float:right;">
             <a class="cubeviz-btn" 
                id="cubeviz-footer-showVisualizationButton"
                style="font-size: 12.5px;">
                 <i class="icon-refresh" style="font-size: 11px;"></i>
                 <?php echo $this->translate->_('DataSelectionModule_ShowVisualization'); ?></a>
-        </span>
+        </div>
     </div>
 </div>
 
@@ -159,7 +160,7 @@
 <!-- Component-Dimension -->
 <div id="cubeviz-component-tpl-listBoxItem" style="display: none;">
     <div class="cubeviz-component-box" id="cubeviz-component-box-[[__cv_uri]]">            
-        <div style="float: left; height: 50px; width: 20px; text-align: center;">
+        <div class="cubeviz-dataSelectionModule-leftBlock">
             <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement.png" 
                  style="width: 15px; margin-left: 10px; padding-top: 4px;"
                  title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
@@ -167,27 +168,29 @@
             <br/>
                         
         </div>
-        <div style="float: left; width: 180px; height: 50px; padding-left: 20px;">
+        
+        <div class="cubeviz-dataSelectionModule-middleBlock">
             
-            <span style="font-size: 13.5px;">[[__cv_niceLabel]]</span>
-            <span style="color: #696969; font-size: 11px;">
+            <div style="font-size: 13.5px;" title="[[__cv_niceLabel]]">[[shortLabel]]</div>
+            
+            <div style="color: #696969; font-size: 11px;">
                 <span class="cubeviz-component-selectedCount">[[__cv_selectedElementCount]]</span>
                 <?php echo $this->translate->_('DataSelectionModule_Of'); ?> 
                 [[__cv_elementCount]]
                 <?php echo $this->translate->_('DataSelectionModule_Selected'); ?> 
-            </span>
+            </div>
             
-            <br/>
-            <span class="cubeviz-dataSelectionModule-smallDescription">
+            <div class="cubeviz-dataSelectionModule-smallDescription">
                 This is a small description text.
-            </span>
-            
+            </div>            
         </div>
-        <div style="float: left; width: 20px; min-width: 20px; height: 50px; text-align: right; padding-top: 4px;">
+        
+        <div class="cubeviz-dataSelectionModule-rightBlock">
             <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
                title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
         </div>
     </div>
+    <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
 </div>
 
 <!-- Dialog container -->
@@ -286,6 +289,10 @@
 
 <div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_DataSetDialogLabel'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-attributeDialog" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogLabel'); ?>
 </div>
 
 <div id="cubeviz-dataSelectionModule-tra-measureDialog" style="display: none;">

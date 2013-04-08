@@ -25,6 +25,7 @@ src/Model/DataCube/Observation.ts
 
 src/View/DataselectionModule/DataSet.ts
 src/View/DataselectionModule/Measure.ts
+src/View/DataselectionModule/Attribute.ts
 src/View/DataselectionModule/Component.ts
 src/View/DataselectionModule/Footer.ts
 

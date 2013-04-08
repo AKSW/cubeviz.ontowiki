@@ -1271,6 +1271,132 @@ var View_DataselectionModule_Measure = (function (_super) {
     };
     return View_DataselectionModule_Measure;
 })(CubeViz_View_Abstract);
+var View_DataselectionModule_Attribute = (function (_super) {
+    __extends(View_DataselectionModule_Attribute, _super);
+    function View_DataselectionModule_Attribute(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_Attribute", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_DataselectionModule_Attribute.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        CubeViz_View_Helper.destroyDialog($("#cubeviz-attribute-dialog"));
+        return this;
+    };
+    View_DataselectionModule_Attribute.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.collection.addList(this.app._.data.components.attributes);
+        this.render();
+    };
+    View_DataselectionModule_Attribute.prototype.onChange_selectedDS = function (event) {
+        var self = this;
+    };
+    View_DataselectionModule_Attribute.prototype.onClick_closeAndUpdate = function (event) {
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var attributes = new CubeViz_Collection("__cv_uri");
+        var attributeUri = $("input[name=cubeviz-dataSelectionModule-attributeRadio]:checked").val();
+        var selectedAttribute = null;
+        var self = this;
+
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        selectedAttribute = attributes.addList(this.app._.data.attributes).get(attributeUri);
+        this.app._.data.selectedAttribute = selectedAttribute;
+        CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.closeDialog(dialogDiv);
+        $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
+        this.triggerGlobalEvent("onChange_selectedAttribute");
+    };
+    View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
+        var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
+        var self = this;
+
+        if(1 == elementList.length) {
+            $($(elementList.first()).children().first()).attr("checked", true);
+        } else {
+            _.each(elementList, function (element) {
+                if(self.app._.data.selectedAttribute.__cv_uri == $($(element).children().first()).val()) {
+                    $($(element).children().first()).attr("checked", true);
+                }
+            });
+        }
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-attribute"));
+    };
+    View_DataselectionModule_Attribute.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_DataselectionModule_Attribute.prototype.render = function () {
+        this.triggerGlobalEvent("onBeforeRender_attribute");
+        var noAttribute = false;
+        var label = "";
+        var description = "";
+
+        if(true === _.isUndefined(this.app._.data.selectedAttribute) || true === _.isNull(this.app._.data.selectedAttribute)) {
+            label = "[no attribute found]";
+            noAttribute = true;
+        } else {
+            label = this.app._.data.selectedAttribute.__cv_niceLabel;
+            description = this.app._.data.selectedAttribute.__cv_description;
+        }
+        $("#cubeviz-attribute-label").html(_.str.prune(label, 24, "..")).attr("title", label);
+        $("#cubeviz-attribute-description").html(_.str.prune(description, 55, "..")).attr("title", description);
+        if(false === noAttribute) {
+            $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(),
+                __cv_hashedUri: "attribute"
+            }));
+            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
+            CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+                closeOnEscape: true,
+                showCross: true,
+                width: 650
+            });
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+            $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
+            var attributeElements = new CubeViz_Collection("__cv_uri");
+            var elementContainer = null;
+            var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+
+            attributeElements.addList(this.app._.data.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
+                elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                    __cv_niceLabel: element.__cv_niceLabel,
+                    __cv_uri: element.__cv_uri,
+                    radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
+                    radioName: "cubeviz-dataSelectionModule-attributeRadio",
+                    radioValue: element.__cv_uri
+                }));
+                elementList.append(elementContainer);
+            });
+            this.bindUserInterfaceEvents({
+                "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
+            });
+        } else {
+            $("#cubeviz-attribute-dialogOpener").hide();
+        }
+        this.triggerGlobalEvent("onAfterRender_attribute");
+        return this;
+    };
+    View_DataselectionModule_Attribute.prototype.showSpinner = function () {
+        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-module-spinner").slideDown("slow");
+        });
+    };
+    return View_DataselectionModule_Attribute;
+})(CubeViz_View_Abstract);
 var View_DataselectionModule_Component = (function (_super) {
     __extends(View_DataselectionModule_Component, _super);
     function View_DataselectionModule_Component(attachedTo, app) {
@@ -1544,6 +1670,7 @@ var View_DataselectionModule_Component = (function (_super) {
                 dimension.__cv_selectedElementCount = 1;
             }
             dimension.__cv_elementCount = _.size(dimension.__cv_elements);
+            dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);

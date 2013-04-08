@@ -1,6 +1,15 @@
 .cubeviz-component-box 
 {
-    clear: both;
+    clear:               both;
+    padding-top:          5px;
+    height:              auto;
+    display:            block;
+}
+
+#cubviz-component-container
+{
+    clear:    both;
+    display: block;
 }
 
 .cubeviz-legend-componentDimensionInfoList
