@@ -1,7 +1,7 @@
 .cubeviz-dataSelectionModule-blockSeparator
 {
     clear:           both;
-    padding-bottom:  11px;
+    margin-bottom:  11px;
 }
 
 #cubeviz-dataSelectionModule-dataSelection
@@ -81,19 +81,20 @@
 
 .cubeviz-dataSelectionModule-visualSeparator
 {
-    clear:          both; 
-    padding-top:    16px; 
-    padding-bottom: 10px;
-    margin-top:      2px;
-    margin-bottom:   2px;
-    margin:          0px;
+    clear:          both;
+        height:     5px;
+    min-height:     5px;
+    max-height:     5px;
+    padding-top:    1px;
+    padding-bottom: 25px;
 }
 
 .cubeviz-dataSelectionModule-visualSeparator hr
 {
-    background: #DADADA;
-    border:         0px; 
-    height:         1px; 
+    background:         #DADADA;
+    border:             0px; 
+    height:             1px; 
+    margin-top:         20px;
 }
 
 
