@@ -188,12 +188,17 @@ class CubeViz_Visualization_HighCharts_Chart
                     }
                 });
                 
-                self.chartConfig.series.push (obj);
+                // if nothing was added, ignore obj
+                if (0 == _.size(obj.data)) {
+                    // TODO handle ignore obj's
+                } else {
+                    self.chartConfig.series.push (obj);
+                }
             });
         
         // You have one or zero multiple dimensions
         } else if (false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
-            
+
             /**
              * Something like the following example will be generated:
              * 
@@ -261,6 +266,7 @@ class CubeViz_Visualization_HighCharts_Chart
              *  }]
              */
             } else {
+                
                 var seriesObservation:Object = null,
                     seriesDataList:number[] = [],
                     seriesElements:any = observation.getAxesElements(forSeries),

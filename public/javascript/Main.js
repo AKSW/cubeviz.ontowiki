@@ -643,9 +643,6 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 };
                 _.each(seriesElement.observations, function (seriesObservation) {
                     if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                        console.log("");
-                        console.log("ignore");
-                        console.log(seriesObservation);
                         return;
                     }
                     uriCombination = "";
@@ -663,7 +660,10 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                         obj.data.push(null);
                     }
                 });
-                self.chartConfig.series.push(obj);
+                if(0 == _.size(obj.data)) {
+                } else {
+                    self.chartConfig.series.push(obj);
+                }
             });
         } else {
             if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
@@ -676,8 +676,6 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                     _.each(xAxisElements, function (xAxisElement) {
                         seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
                         if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            console.log("");
-                            console.log(seriesObservation);
                             return;
                         }
                         self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
@@ -701,8 +699,6 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                     _.each(seriesElements, function (seriesElement) {
                         seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
                         if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            console.log("");
-                            console.log(seriesObservation);
                             return;
                         }
                         self.chartConfig.series.push({
@@ -2148,6 +2144,16 @@ var View_IndexAction_Visualization = (function (_super) {
         this.setVisualizationHeight();
         if(true === _.str.include(thrownException, "Highcharts error #10")) {
             $("#cubeviz-index-visualization").html($("#cubeviz-visualization-tpl-notificationHightchartsException10").html());
+        } else {
+            if(true === _.str.include(thrownException, "CubeViz error no observations retrieved")) {
+                $("#cubeviz-index-visualization").html($("#cubeviz-visualization-tpl-nothingFoundNotification").text());
+                this.triggerGlobalEvent("onReceived_noData");
+            } else {
+                if(true === _.str.include(thrownException, "CubeViz error no elements to visualize")) {
+                    $("#cubeviz-index-visualization").html("CubeViz error no elements to visualize");
+                    this.triggerGlobalEvent("onVisualize_noElements");
+                }
+            }
         }
         if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
             console.log(thrownException);
@@ -2157,7 +2163,7 @@ var View_IndexAction_Visualization = (function (_super) {
         this.render();
     };
     View_IndexAction_Visualization.prototype.onChange_visualizationClass = function () {
-        this.renderChart();
+        this.render();
     };
     View_IndexAction_Visualization.prototype.onClick_nothingFoundNotificationLink = function (event) {
         $("#cubeviz-visualization-nothingFoundFurtherExplanation").slideDown("slow");
@@ -2169,19 +2175,10 @@ var View_IndexAction_Visualization = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Visualization.prototype.render = function () {
-        if(1 <= _.size(this.app._.backend.retrievedObservations)) {
-            this.renderChart();
-        } else {
-            $("#cubeviz-index-visualization").html("").append($("#cubeviz-visualization-tpl-nothingFoundNotification").text());
-            this.triggerGlobalEvent("onReceived_noData");
-            this.setVisualizationHeight();
+        if(0 == _.size(this.app._.backend.retrievedObservations)) {
+            this.handleException("CubeViz error no observations retrieved");
+            return this;
         }
-        this.bindUserInterfaceEvents({
-            "click #cubeviz-visualization-nothingFoundNotificationLink": this.onClick_nothingFoundNotificationLink
-        });
-        return this;
-    };
-    View_IndexAction_Visualization.prototype.renderChart = function () {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var selectedMeasure = this.app._.data.selectedMeasure;
         var type = null;
@@ -2194,9 +2191,6 @@ var View_IndexAction_Visualization = (function (_super) {
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
         var selectedAttributeUri = null;
-        console.log("");
-        console.log("this.app._.data.selectedAttribute");
-        console.log(this.app._.data.selectedAttribute);
         if((false === _.isNull(this.app._.data.selectedAttribute) && false === _.isUndefined(this.app._.data.selectedAttribute))) {
             if(false === this.app._.data.selectedAttribute.__cv_inUse) {
             } else {
@@ -2217,10 +2211,15 @@ var View_IndexAction_Visualization = (function (_super) {
         chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"], selectedAttributeUri);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
+            if(0 == _.size(chart.getRenderResult().series)) {
+                this.handleException("CubeViz error no elements to visualize");
+                return this;
+            }
             this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
         } catch (ex) {
             this.handleException(ex);
         }
+        return this;
     };
     View_IndexAction_Visualization.prototype.setVisualizationHeight = function (numberOfYAxisElements) {
         if (typeof numberOfYAxisElements === "undefined") { numberOfYAxisElements = 0; }
@@ -2258,6 +2257,10 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             {
                 name: "onStart_application",
                 handler: this.onStart_application
+            }, 
+            {
+                name: "onVisualize_noElements",
+                handler: this.onVisualize_noElements
             }
         ]);
     }
@@ -2340,6 +2343,9 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         if(0 < _.size(this.app._.backend.retrievedObservations)) {
             this.initialize();
         }
+    };
+    View_IndexAction_VisualizationSelector.prototype.onVisualize_noElements = function () {
+        this.hideDongle().hideMenu();
     };
     View_IndexAction_VisualizationSelector.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_visualizationSelector");

@@ -63,6 +63,29 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             );
         }
         
+        /**
+         * No observations retrieved.
+         */
+        else if(true === _.str.include(thrownException, "CubeViz error no observations retrieved")) {
+            
+            $("#cubeviz-index-visualization")
+                .html (
+                    $("#cubeviz-visualization-tpl-nothingFoundNotification").text()
+                );
+                
+            this.triggerGlobalEvent("onReceived_noData");
+        }
+        
+        /**
+         * No elements to visualize.
+         */
+        else if(true === _.str.include(thrownException, "CubeViz error no elements to visualize")) {
+            $("#cubeviz-index-visualization")
+                .html("CubeViz error no elements to visualize"); 
+            
+            this.triggerGlobalEvent("onVisualize_noElements");
+        }
+        
         // Output error
         if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) { 
             console.log(thrownException);
@@ -82,7 +105,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public onChange_visualizationClass() 
     {
-        this.renderChart();
+        this.render();
     }
     
     /**
@@ -109,48 +132,18 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     {
         this.initialize();
     }
-
-    /**
-     *
-     */
-    public render() 
-    {
-        // If at least one observation was retrieved
-        if ( 1 <= _.size(this.app._.backend.retrievedObservations) ) {
-            
-            this.renderChart();
-        } 
-        
-        // If nothing was retrieved
-        else {
-            
-            $("#cubeviz-index-visualization")
-                .html ("")
-                .append (
-                    $("#cubeviz-visualization-tpl-nothingFoundNotification").text()
-                );
-                
-            this.triggerGlobalEvent("onReceived_noData");
-            
-            this.setVisualizationHeight();
-        }
-        
-        /**
-         * Delegate events to new items of the template
-         */
-        this.bindUserInterfaceEvents({
-            "click #cubeviz-visualization-nothingFoundNotificationLink":
-                this.onClick_nothingFoundNotificationLink
-        });
-        
-        return this;
-    }
     
     /**
      *
      */
-    public renderChart() : void
+    public render() : CubeViz_View_Abstract
     {
+        // handle exception if no observation were retrieved
+        if ( 0 == _.size(this.app._.backend.retrievedObservations) ) {
+            this.handleException("CubeViz error no observations retrieved");
+            return this;
+        }        
+        
         // Dynamiclly set visualization container height
         // get chart config
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
@@ -241,6 +234,12 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 chart.getRenderResult().xAxis.categories
             ));
             
+            // check if at least one element to visualize
+            if ( 0 == _.size(chart.getRenderResult().series) ) {
+                this.handleException("CubeViz error no elements to visualize");
+                return this;
+            }
+            
             // show chart
             this.app._.generatedVisualization = new Highcharts.Chart(
                 chart.getRenderResult()
@@ -248,6 +247,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         } catch (ex) { 
             this.handleException(ex);
         }
+        
+        return this;
     }
     
     /**
