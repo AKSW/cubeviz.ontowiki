@@ -167,14 +167,14 @@ ex:obs8 a cube:Observation ;
 ex:obs9 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
     exProp:date ex:Y2012 ;
-    exProp:anotherUni "another unit (%)" ;
+    exProp:anotherUnit "another unit (%)" ;
     exProp:geo ex:Germany ;
     exProp:value "2501"^^<http://www.w3.org/2001/XMLSchema#float>.
 
 ex:obs10 a cube:Observation ;
     cube:dataSet ex:dataset3 ;
     exProp:date ex:Y2013 ;
-    exProp:anotherUni "another unit (%)" ;
+    exProp:anotherUnit "another unit (%)" ;
     exProp:geo ex:Germany ;
     exProp:value "2502"^^<http://www.w3.org/2001/XMLSchema#float>.
 
@@ -197,3 +197,9 @@ ex:Y2003 a ex:date ;
     rdfs:label "2003"@en .
 
 ex:Y2004 a ex:date .
+
+ex:Y2012 a ex:date ;
+    rdfs:label "2012" .
+
+ex:Y2013 a ex:date ;
+    rdfs:label "2013 in de"@de .
