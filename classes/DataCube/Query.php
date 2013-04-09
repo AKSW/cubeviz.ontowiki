@@ -177,7 +177,7 @@ class DataCube_Query
 
               ?attributeCS <http://purl.org/linked-data/cube#attribute> ?attribute.
               
-              ?attribute ?p ?o.
+              ?attributeCS ?p ?o.
             }'
         );        
         

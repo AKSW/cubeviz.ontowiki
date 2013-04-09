@@ -185,6 +185,20 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             this.app._.ui.visualization.className
         );
         
+        // set attribute uri, if available
+        var selectedAttributeUri = null;
+        
+        if ((false === _.isNull(this.app._.data.selectedAttribute)
+             && false === _.isUndefined(this.app._.data.selectedAttribute))) {
+            
+            // if user wants to ignore attribute
+            if (false === this.app._.data.selectedAttribute.__cv_inUse) {
+                // attribute uri is null
+            } else {
+                selectedAttributeUri = this.app._.data.selectedAttribute["http://purl.org/linked-data/cube#attribute"];
+            }
+        }
+        
         /**
          * Render chart with the given data
          */
@@ -217,7 +231,8 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            selectedMeasure["http://purl.org/linked-data/cube#measure"]
+            selectedMeasure["http://purl.org/linked-data/cube#measure"],
+            selectedAttributeUri
         );
                 
         try {            

@@ -16,11 +16,13 @@ class CubeViz_Visualization_HighCharts_Chart
      * @param oneElementDimensions Array of dimension objects where only one
      *                             dimension element was selected.
      * @param selectedMeasureUri Uri of selected measure
+     * @param selectedAttributeUri Uri of selected attribute
      * @return void
      */
     public init (chartConfig:any, retrievedObservations:any[], 
         selectedComponentDimensions:any, multipleDimensions:any[],
-        oneElementDimensions:any[], selectedMeasureUri:string) 
+        oneElementDimensions:any[], selectedMeasureUri:string,
+        selectedAttributeUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     {  
         var forXAxis = null,
@@ -149,6 +151,17 @@ class CubeViz_Visualization_HighCharts_Chart
                 // and add their values (measure) if set
                 _.each(seriesElement.observations, function(seriesObservation){
                     
+                    // check if the current observation has to be ignored
+                    // it will ignored, if attribute uri is set, but the observation
+                    // has no value of it
+                    if (false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                        // TODO implement a way to handle ignored observations
+                        return;
+                    }
+                    
                     /**
                      * check if the combination of dimension elements in this series 
                      * element was already used.
@@ -195,14 +208,25 @@ class CubeViz_Visualization_HighCharts_Chart
              */
             if (false === _.str.isBlank(forXAxis)) {
                
-                var firstObservation:Object = null,
+                var seriesObservation:Object = null,
                     seriesDataList:number[] = [],
                     xAxisElements:any = observation.getAxesElements(forXAxis),
                     value:number = 0;
                     
                 _.each(xAxisElements, function(xAxisElement){
                     
-                    firstObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                    seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                    
+                    // check if the current observation has to be ignored
+                    // it will ignored, if attribute uri is set, but the observation
+                    // has no value of it
+                    if (false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                        // TODO implement a way to handle ignored observations
+                        return;
+                    }
                     
                     // add entry on the y axis
                     self.chartConfig.xAxis.categories.push(
@@ -211,7 +235,7 @@ class CubeViz_Visualization_HighCharts_Chart
                     
                     // save related value
                     seriesDataList.push(
-                        firstObservation [selectedMeasureUri]
+                        seriesObservation [selectedMeasureUri]
                     );
                 });
                 
@@ -237,7 +261,7 @@ class CubeViz_Visualization_HighCharts_Chart
              *  }]
              */
             } else {
-                var firstObservation:Object = null,
+                var seriesObservation:Object = null,
                     seriesDataList:number[] = [],
                     seriesElements:any = observation.getAxesElements(forSeries),
                     value:number = 0;
@@ -248,12 +272,23 @@ class CubeViz_Visualization_HighCharts_Chart
                 // set series elements
                 _.each(seriesElements, function(seriesElement){
 
-                    firstObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
+                    seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
+                    
+                    // check if the current observation has to be ignored
+                    // it will ignored, if attribute uri is set, but the observation
+                    // has no value of it
+                    if (false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                        // TODO implement a way to handle ignored observations
+                        return;
+                    }
                     
                     // add entry on the y axis
                     self.chartConfig.series.push({
                         name: seriesElement.self.__cv_niceLabel,
-                        data: [firstObservation[selectedMeasureUri]]
+                        data: [seriesObservation[selectedMeasureUri]]
                     });
                 });
             }
