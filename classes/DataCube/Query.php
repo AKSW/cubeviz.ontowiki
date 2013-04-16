@@ -224,17 +224,17 @@ class DataCube_Query
         }
             
         $result = $this->_model->sparqlQuery (
-            'SELECT ?comp ?p ?o WHERE {
-                <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
-                ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
-                ?comp <'.$componentType.'> ?comptype.
-                ?comp ?p ?o.
+            'SELECT ?componentItself ?p ?o WHERE {
+                <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?componentSpec.                
+                ?componentSpec <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                ?componentSpec <'.$componentType.'> ?componentItself.
+                ?componentItself ?p ?o.
             }'
 
         );
   
         // generate associative array
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentItself', 'p', 'o');
         
         // enrich array with CubeViz sugar
         $result = $this->enrichResult($result);
@@ -251,16 +251,16 @@ class DataCube_Query
         $tmp = $result;
         $result = array();
         
-        foreach ($tmp as $dimension) {
+        foreach ($tmp as $component) {
             
             // if not measure
             if ($componentType != DataCube_UriOf::Measure) {
-                $dimension ['__cv_elements'] = $this->getComponentElements(
-                    $dsUri, $dimension[$componentType]
+                $component ['__cv_elements'] = $this->getComponentElements(
+                    $dsUri, $component['__cv_uri']
                 );
             }
             
-            $result [$dimension['__cv_uri']] = $dimension;
+            $result [$component['__cv_uri']] = $component;
         }
         return $result;
     }
@@ -396,7 +396,7 @@ class DataCube_Query
         foreach ( $selectedComponentDimensions as $dimension ) {
             
             if (0 < count ($dimension ['__cv_elements'])) {
-                $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+                $where .= ' ?s <'. $dimension ['__cv_uri'] .'> ?d'. $i++ .' .'. "\n";
             }
         }
         

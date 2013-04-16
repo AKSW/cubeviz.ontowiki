@@ -38,7 +38,7 @@ class DataCube_Observation {
      * @param uri Uri to identify axes element
      * @return any Values of axes element
      */
-    public getAxesElements ( uri:string ) : any 
+    public getAxesElements (uri:string) : any 
     {
         if(false === _.isUndefined(this._axes[uri])) {
             return this._axes[uri];
@@ -92,7 +92,7 @@ class DataCube_Observation {
             _.each(selectedComponentDimensions, function(dimension){
                 
                 // e.g. http://data.lod2.eu/scoreboard/properties/indicator
-                dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
+                dimensionPropertyUri = dimension["__cv_uri"];
                 
                 // e.g. http://lod2.eu/score/ind/bb_dsl_TOTAL_FBB__lines
                 observationDimensionProperty = observation[dimensionPropertyUri];

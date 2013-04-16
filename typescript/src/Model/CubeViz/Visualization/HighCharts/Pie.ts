@@ -28,7 +28,7 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         }
         
         var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]
-                ["http://purl.org/linked-data/cube#dimension"],
+                ["__cv_uri"],
             label:string = "",
             observation = new DataCube_Observation (),
             self = this,

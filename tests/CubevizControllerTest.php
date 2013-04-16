@@ -263,15 +263,13 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
             array(
                 'code' => 200,
                 'content' => array(
-                    'http://example.cubeviz.org/datacube/cs/value' => array (
+                    'http://example.cubeviz.org/datacube/properties/value' => array (
                         // type
                         'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
                             => 'http://purl.org/linked-data/cube#ComponentSpecification',
                         // label
                         'http://www.w3.org/2000/01/rdf-schema#label' 
                             => 'Component Specification of Value',
-                        'http://purl.org/linked-data/cube#measure' 
-                            => 'http://example.cubeviz.org/datacube/properties/value',
                         // __cv
                         '__cv_uri' => 'http://example.cubeviz.org/datacube/cs/value',
                         '__cv_hashedUri' => 'b73aeaf8c36224ddbfe4baa3680cedb9',

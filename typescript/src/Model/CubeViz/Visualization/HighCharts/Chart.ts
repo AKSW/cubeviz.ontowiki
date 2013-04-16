@@ -74,9 +74,9 @@ class CubeViz_Visualization_HighCharts_Chart
             }
 
             if ( null == forXAxis ) {
-                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+                forXAxis = selectedDimension["__cv_uri"];
             } else {
-                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+                forSeries = selectedDimension["__cv_uri"];
             }
         });
         
@@ -87,7 +87,7 @@ class CubeViz_Visualization_HighCharts_Chart
             _.each(selectedComponentDimensions, function(selectedDimension) {
                 if (1 == _.keys(selectedDimension.__cv_elements).length
                     && null == forSeries)
-                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+                    forSeries = selectedDimension["__cv_uri"];
             });
         }
         
@@ -101,7 +101,7 @@ class CubeViz_Visualization_HighCharts_Chart
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         
         /**
          * Check if there are exactly one or two multiple dimensions
@@ -123,7 +123,7 @@ class CubeViz_Visualization_HighCharts_Chart
             var selectedDimensionPropertyUris:string[] = [];
             
             _.each(selectedComponentDimensions, function(dimension){
-                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
+                selectedDimensionPropertyUris.push(dimension["__cv_uri"]); 
             });
             
             /**
@@ -178,7 +178,7 @@ class CubeViz_Visualization_HighCharts_Chart
                         // if this combination is already in use, stop execution immediatly
                         return;
                     }                
-                
+                    
                     if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
                         obj.data.push (parseFloat(
                             seriesObservation[selectedMeasureUri]
