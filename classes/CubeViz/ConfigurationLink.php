@@ -190,7 +190,7 @@ class CubeViz_ConfigurationLink
         /**
          * measures
          */
-        if (false === isset($config['selectedMeasure']) 
+        if (false === isset($config['selectedComponents']['measure']) 
             || false === isset($config['components']['measures'])) {
                 
             $measures = $query->getComponents(
@@ -199,15 +199,15 @@ class CubeViz_ConfigurationLink
                 DataCube_UriOf::Measure
             );
             
-            $config['selectedMeasure'] = null;
+            $config['selectedComponents']['measure'] = null;
             
             // set measures
             $config['components']['measures'] = array();
             foreach ($measures as $measure) {
                 $config['components']['measures'][$measure['__cv_uri']] = $measure;
                 
-                if(null == $config['selectedMeasure']) {
-                    $config['selectedMeasure'] = $measure;
+                if(null == $config['selectedComponents']['measure']) {
+                    $config['selectedComponents']['measure'] = $measure;
                 }
             }
         }

@@ -150,7 +150,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
             ),
-            selectedMeasure:any = this.app._.data.selectedMeasure,
+            selectedMeasure:any = this.app._.data.selectedComponents.measure,
             type:string = null, 
             visualizationSetting:any = null;
         

@@ -351,7 +351,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
-        var selectedMeasureUri = this.app._.data.selectedMeasure["__cv_uri"],
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["__cv_uri"],
             self = this;
         
         /**

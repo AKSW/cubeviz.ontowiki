@@ -73,7 +73,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                 if (0 === _.keys(entries).length) {
                     throw new Error ("Error: There are no measures in the selected data set!");
                 } else { // 0 < _.keys(entries)
-                    self.app._.data.selectedMeasure = entries[_.keys(entries)[0]];
+                    self.app._.data.selectedComponents.measure = entries[_.keys(entries)[0]];
                 }
             }
         );
@@ -100,7 +100,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             .get(measureUri);
             
         // update selected measure
-        this.app._.data.selectedMeasure = selectedMeasure;
+        this.app._.data.selectedComponents.measure = selectedMeasure;
 
         // close dialog
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
@@ -138,7 +138,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // go through all elements and select the selectedMeasure
         } else {
             _.each(elementList, function(element){
-                if(self.app._.data.selectedMeasure.__cv_uri == $($(element).children().first()).val()) {
+                if(self.app._.data.selectedComponents.measure.__cv_uri == $($(element).children().first()).val()) {
                     $($(element).children().first()).attr ("checked", true);
                 }
             });
@@ -166,20 +166,20 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // set label directly
         $("#cubeviz-measure-label").html(
             _.str.prune (
-                this.app._.data.selectedMeasure.__cv_niceLabel,
+                this.app._.data.selectedComponents.measure.__cv_niceLabel,
                 24,
                 ".."
             )
-        ).attr ("title", this.app._.data.selectedMeasure.__cv_niceLabel);
+        ).attr ("title", this.app._.data.selectedComponents.measure.__cv_niceLabel);
         
         // set description directly
         $("#cubeviz-measure-description").html(
             _.str.prune (
-                this.app._.data.selectedMeasure.__cv_description,
+                this.app._.data.selectedComponents.measure.__cv_description,
                 55,
                 ".."
             )
-        ).attr ("title", this.app._.data.selectedMeasure.__cv_description);
+        ).attr ("title", this.app._.data.selectedComponents.measure.__cv_description);
         
         /**
          * Dialog
