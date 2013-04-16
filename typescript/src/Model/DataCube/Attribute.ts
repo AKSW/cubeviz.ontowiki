@@ -11,13 +11,14 @@ class DataCube_Attribute
      * @param modelIri
      * @param dsdUrl
      */
-    static loadAll (url:string, modelIri:string, dsdUrl:string, callback) 
+    static loadAll (url:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
     {
         $.ajax({
             url: url + "getattributes",
             data: {
                 modelIri: modelIri, 
-                dsdUrl: dsdUrl
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

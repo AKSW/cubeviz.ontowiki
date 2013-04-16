@@ -842,12 +842,13 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
 })(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_Attribute = (function () {
     function DataCube_Attribute() { }
-    DataCube_Attribute.loadAll = function loadAll(url, modelIri, dsdUrl, callback) {
+    DataCube_Attribute.loadAll = function loadAll(url, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getattributes",
             data: {
                 modelIri: modelIri,
-                dsdUrl: dsdUrl
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Attribute loadAll: " + xhr.responseText);
@@ -1331,11 +1332,11 @@ var View_DataselectionModule_Attribute = (function (_super) {
     };
     View_DataselectionModule_Attribute.prototype.onChange_selectedDS = function (event) {
         var self = this;
-        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, function (entries) {
-            self.app._.data.attributes = entries;
+        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+            self.app._.data.components.attributes = entries;
             if(0 === _.keys(entries).length) {
             } else {
-                self.app._.data.selectedAttribute = entries[_.keys(entries)[0]];
+                self.app._.data.selectedComponents.attribute = entries[_.keys(entries)[0]];
             }
             self.destroy().initialize();
         });
@@ -1348,8 +1349,8 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
-        selectedAttribute = attributes.addList(this.app._.data.attributes).get(attributeUri);
-        this.app._.data.selectedAttribute = selectedAttribute;
+        selectedAttribute = attributes.addList(this.app._.data.components.attributes).get(attributeUri);
+        this.app._.data.selectedComponents.attribute = selectedAttribute;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
@@ -1363,7 +1364,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
             $($(elementList.first()).children().first()).attr("checked", true);
         } else {
             _.each(elementList, function (element) {
-                if(self.app._.data.selectedAttribute.__cv_uri == $($(element).children().first()).val()) {
+                if(self.app._.data.selectedComponents.attribute.__cv_uri == $($(element).children().first()).val()) {
                     $($(element).children().first()).attr("checked", true);
                 }
             });
@@ -1379,12 +1380,12 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var label = "";
         var description = "";
 
-        if(true === _.isUndefined(this.app._.data.selectedAttribute) || true === _.isNull(this.app._.data.selectedAttribute)) {
+        if(true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
         } else {
-            label = this.app._.data.selectedAttribute.__cv_niceLabel;
-            description = this.app._.data.selectedAttribute.__cv_description;
+            label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
+            description = this.app._.data.selectedComponents.attribute.__cv_description;
         }
         $("#cubeviz-attribute-label").html(_.str.prune(label, 24, "..")).attr("title", label);
         $("#cubeviz-attribute-description").html(_.str.prune(description, 55, "..")).attr("title", description);
@@ -1412,7 +1413,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
             var elementContainer = null;
             var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
 
-            attributeElements.addList(this.app._.data.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
+            attributeElements.addList(this.app._.data.components.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
                 elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
                     __cv_niceLabel: element.__cv_niceLabel,
                     __cv_uri: element.__cv_uri,
@@ -2191,10 +2192,10 @@ var View_IndexAction_Visualization = (function (_super) {
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
         type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
         var selectedAttributeUri = null;
-        if((false === _.isNull(this.app._.data.selectedAttribute) && false === _.isUndefined(this.app._.data.selectedAttribute))) {
-            if(false === this.app._.data.selectedAttribute.__cv_inUse) {
+        if((false === _.isNull(this.app._.data.selectedComponents.attribute) && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
+            if(false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
             } else {
-                selectedAttributeUri = this.app._.data.selectedAttribute["http://purl.org/linked-data/cube#attribute"];
+                selectedAttributeUri = this.app._.data.selectedComponents.attribute["__cv_uri"];
             }
         }
         if(false === _.isUndefined(this.app._.generatedVisualization)) {

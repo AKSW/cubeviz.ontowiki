@@ -215,21 +215,27 @@ class CubeViz_ConfigurationLink
         /**
          * attributes
          */
-        if (false === isset($config['selectedAttribute'])) {
-            $attributes = $query->getAttributes($config['selectedDSD']['__cv_uri']);
+        if (false === isset($config['selectedComponents']['attribute'])
+            || false === isset($config['components']['attributes'])) {
+                
+            $attributes = $query->getComponents(
+                $config['selectedDSD']['__cv_uri'],
+                $config['selectedDS']['__cv_uri'],
+                DataCube_UriOf::Attribute
+            );
             
-            $config['selectedAttribute'] = null;
+            $config['selectedComponents']['attribute'] = null;
             
             // set attributes
-            $config['attributes'] = array();
+            $config['components']['attributes'] = array();
             foreach ($attributes as $attribute) {
-                $config['attributes'][] = $attribute;
+                $config['components']['attributes'][] = $attribute;
                 
-                if(null == $config['selectedAttribute']) {
-                    $config['selectedAttribute'] = $attribute;
+                if(null == $config['selectedComponents']['attribute']) {
+                    $config['selectedComponents']['attribute'] = $attribute;
                 }
             }
-        }        
+        }
         
         /**
          * number of multiple dimensions
@@ -308,7 +314,9 @@ class CubeViz_ConfigurationLink
                     'selectedDSD'                   => array(),
                     'selectedDS'                    => array(),
                     'selectedComponents'            => array(
-                        'dimensions'                => array()
+                        'attribute'                 => array(),
+                        'dimensions'                => array(),
+                        'measure'                   => array()
                     )
                 ), $model);                
                 

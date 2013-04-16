@@ -68,15 +68,16 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
             this.app._.backend.url,
             this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.__cv_uri,
+            this.app._.data.selectedDS.__cv_uri,
             
             function(entries) {
                 // set attributes
-                self.app._.data.attributes = entries;
+                self.app._.data.components.attributes = entries;
                 
                 if (0 === _.keys(entries).length) {
                     // no attribute in the selectedDSD
                 } else { // 0 < _.keys(entries)
-                    self.app._.data.selectedAttribute = entries[_.keys(entries)[0]];
+                    self.app._.data.selectedComponents.attribute = entries[_.keys(entries)[0]];
                 }
                 
                 // rebuild dialog
@@ -104,11 +105,11 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         
         // get attribute with given uri
         selectedAttribute = attributes
-            .addList(this.app._.data.attributes)
+            .addList(this.app._.data.components.attributes)
             .get(attributeUri);
             
         // update selected attribute
-        this.app._.data.selectedAttribute = selectedAttribute;
+        this.app._.data.selectedComponents.attribute = selectedAttribute;
 
         // close dialog
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
@@ -146,7 +147,7 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         // go through all elements and select the selectedAttribute
         } else {
             _.each(elementList, function(element){
-                if(self.app._.data.selectedAttribute.__cv_uri == $($(element).children().first()).val()) {
+                if(self.app._.data.selectedComponents.attribute.__cv_uri == $($(element).children().first()).val()) {
                     $($(element).children().first()).attr ("checked", true);
                 }
             });
@@ -179,13 +180,13 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         var label = "",
             description = "";
         
-        if (true === _.isUndefined(this.app._.data.selectedAttribute)
-            || true === _.isNull(this.app._.data.selectedAttribute)) {
+        if (true === _.isUndefined(this.app._.data.selectedComponents.attribute)
+            || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
         } else {
-            label = this.app._.data.selectedAttribute.__cv_niceLabel;
-            description = this.app._.data.selectedAttribute.__cv_description; 
+            label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
+            description = this.app._.data.selectedComponents.attribute.__cv_description; 
         }
         
         // set label directly
@@ -276,7 +277,7 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
             attributeElements
                 
                 // add elements of current component
-                .addList(this.app._.data.attributes)
+                .addList(this.app._.data.components.attributes)
                 
                 // sort
                 .sortAscendingBy("__cv_niceLabel")

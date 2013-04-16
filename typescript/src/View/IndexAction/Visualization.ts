@@ -181,14 +181,14 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // set attribute uri, if available
         var selectedAttributeUri = null;
         
-        if ((false === _.isNull(this.app._.data.selectedAttribute)
-             && false === _.isUndefined(this.app._.data.selectedAttribute))) {
+        if ((false === _.isNull(this.app._.data.selectedComponents.attribute)
+             && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
             
             // if user wants to ignore attribute
-            if (false === this.app._.data.selectedAttribute.__cv_inUse) {
+            if (false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
                 // attribute uri is null
             } else {
-                selectedAttributeUri = this.app._.data.selectedAttribute["http://purl.org/linked-data/cube#attribute"];
+                selectedAttributeUri = this.app._.data.selectedComponents.attribute["__cv_uri"];
             }
         }
         

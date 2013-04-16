@@ -160,78 +160,57 @@ class DataCube_Query
     }
     
     /**
-     * Returns an array of attribute properties.
-     * @param $dsdUri Data structure definition URI
-     * @return array
-     */
-    public function getAttributes($dsdUri) 
-    {
-        $result = $this->_model->sparqlQuery (
-          'SELECT DISTINCT ?attribute ?p ?o
-            WHERE {
-              <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
-
-              <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?attributeCS.
-
-              ?attributeCS a <http://purl.org/linked-data/cube#ComponentSpecification>.
-
-              ?attributeCS <http://purl.org/linked-data/cube#attribute> ?attribute.
-              
-              ?attributeCS ?p ?o.
-            }'
-        );        
-        
-        // generate associative array
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'attribute', 'p', 'o');
-        
-        // enrich array with CubeViz sugar
-        $result = $this->enrichResult($result);
-
-        // sort by label
-        usort ( 
-            $result, 
-            function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
-        );
-        
-        /**
-         * create an associative array
-         */
-        $tmp = $result;
-        $result = array();
-        
-        foreach ($tmp as $attribute) {
-            $result [$attribute['__cv_uri']] = $attribute;
-        }
-        
-        return $result;
-    }
-    
-    /**
      * Returns an array of components (Component) with md5 of URI, type and URI.
      * @param $dsdUri Data Structure Definition URI
      * @param $dsUri Data Set URI
-     * @param $component DataCube_UriOf::Dimension or ::Measure
+     * @param $component DataCube_UriOf::Dimension or ::Measure or ::Attribute
      * @return array
      */
-    public function getComponents($dsdUri, $dsUri, $componentType) {
-              
-        if ( $componentType != DataCube_UriOf::Dimension && 
-             $componentType != DataCube_UriOf::Measure ) {
+    public function getComponents($dsdUri, $dsUri, $componentType) 
+    {
+        // check if type valid
+        if ( $componentType != DataCube_UriOf::Attribute 
+             && $componentType != DataCube_UriOf::Dimension 
+             && $componentType != DataCube_UriOf::Measure ) {
             throw new CubeViz_Exception (
                 'Invalid component type given! '. 
-                'You have to use '. DataCube_UriOf::Dimension .' or '. DataCube_UriOf::Measure
+                'You have to use '. DataCube_UriOf::Dimension .' or '. DataCube_UriOf::Measure .' or '. DataCube_UriOf::Attribute
             );
         }
-            
-        $result = $this->_model->sparqlQuery (
-            'SELECT ?componentItself ?p ?o WHERE {
-                <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?componentSpec.                
-                ?componentSpec <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
-                ?componentSpec <'.$componentType.'> ?componentItself.
-                ?componentItself ?p ?o.
-            }'
+        
+        // type
+        //      = dimension or
+        //      = measure
+        if ($componentType != DataCube_UriOf::Dimension 
+            || $componentType != DataCube_UriOf::Measure) {
+            $result = $this->_model->sparqlQuery (
+                'SELECT ?componentItself ?p ?o WHERE {
+                    <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?componentSpec.                
+                    ?componentSpec <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                    ?componentSpec <'.$componentType.'> ?componentItself.
+                    ?componentItself ?p ?o.
+                }'
 
-        );
+            );
+        }
+        // type
+        //      = attribute
+        else {
+            $result = $this->_model->sparqlQuery (
+              'SELECT DISTINCT ?componentItself ?p ?o
+                WHERE {
+                  <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
+
+                  <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?attributeCS.
+
+                  ?attributeCS a <http://purl.org/linked-data/cube#ComponentSpecification>.
+
+                  ?attributeCS <http://purl.org/linked-data/cube#attribute> ?componentItself.
+                  
+                  ?componentItself ?p ?o.
+                }'
+            );  
+        }
   
         // generate associative array
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentItself', 'p', 'o');

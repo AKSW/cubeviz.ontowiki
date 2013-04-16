@@ -73,6 +73,7 @@ class CubevizController extends OntoWiki_Controller_Component
         // parameter
         $modelIri = $this->_request->getParam ('modelIri', '');
         $dsdUrl = $this->_request->getParam('dsdUrl', '');
+        $dsUrl = $this->_request->getParam('dsUrl', '');
         
         // check if model there
         if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
@@ -102,6 +103,20 @@ class CubevizController extends OntoWiki_Controller_Component
             return;
         }
         
+        // check if dsUrl is valid
+        if(false === Erfurt_Uri::check($dsUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+        
         try {
             $model = new Erfurt_Rdf_Model($modelIri);
             $query = new DataCube_Query($model);
@@ -109,7 +124,11 @@ class CubevizController extends OntoWiki_Controller_Component
             $code = 200;
             $content = array(
                 'code' => $code,
-                'content' => $query->getAttributes($dsdUrl),
+                'content' => $query->getComponents(
+                    $dsdUrl,
+                    $dsUrl,
+                    DataCube_UriOf::Attribute
+                ),
                 'message' => ''
             );
         } catch(CubeViz_Exception $e) {
