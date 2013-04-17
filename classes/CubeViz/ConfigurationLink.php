@@ -238,6 +238,16 @@ class CubeViz_ConfigurationLink
         }
         
         /**
+         * slices
+         */
+        if (0 == count($config['slices'])) {
+            $config['slices'] = $query->getSliceKeys(
+                $config['selectedDSD']['__cv_uri'],
+                $config['selectedDS']['__cv_uri']
+            );
+        }
+        
+        /**
          * number of multiple dimensions
          */
         $config['numberOfMultipleDimensions'] = 0;
@@ -317,7 +327,9 @@ class CubeViz_ConfigurationLink
                         'attribute'                 => array(),
                         'dimensions'                => array(),
                         'measure'                   => array()
-                    )
+                    ),
+                    'selectedSlice'                 => array(),
+                    'slices'                        => array()
                 ), $model);                
                 
                 $type = 'data';

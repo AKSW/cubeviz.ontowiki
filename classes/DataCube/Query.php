@@ -100,6 +100,7 @@ class DataCube_Query
             
             $return [] = $entry;
         }
+        
         return $return;
     }
 
@@ -147,7 +148,6 @@ class DataCube_Query
                  *     }
                  */                
                 // = http://purl.org/linked-data/cube#component
-
                 $predicateValue = $entry[$pKey]; 
 
                 // = http://data.lod2.eu/scoreboard/cs/country
@@ -421,6 +421,91 @@ class DataCube_Query
         
         // enrich data with CubeViz sugar
         $result = $this->enrichResult($result);
+        return $result;
+    }
+    
+    /**
+     * Returns all slice keys associated with the given data structure definition
+     * and data set.
+     * @param $dsdUrl data structure definition url
+     * @param $dsUrl data set url
+     * @return array list of slice keys (array of array)
+     */
+    public function getSliceKeys($dsdUrl, $dsUrl) 
+    {
+        $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+            WHERE {
+              <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
+
+              <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
+
+              <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+
+              ?sliceKey ?p ?o.
+        }');
+        
+        // generate an associated array where ds is mainkey and using p and o for the rest
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
+        
+        // enrich generated array with CubeViz sugar
+        $result = $this->enrichResult($result);
+        
+        // sort by label
+        usort ($result, function ($a, $b) { 
+            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+        });
+        
+        // set __cv_uri as array key and get slices for each slice key
+        $tmp = $result;
+        $result = array();
+        
+        foreach ($tmp as $entry) {
+            // get slices
+            $entry ['slices'] = $this->getSlices($entry['__cv_uri']);
+            
+            $result [$entry['__cv_uri']] = $entry;
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Returns all slices associated with the given slice key.
+     * @param $sliceKeyUrl slice key url
+     * @return array list of slices (array of array)
+     */
+    public function getSlices($sliceKeyUrl) 
+    {
+        $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+            WHERE {
+              <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
+
+              <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
+
+              <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+
+              ?sliceKey ?p ?o.
+        }');
+        
+        // generate an associated array where ds is mainkey and using p and o for the rest
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
+        
+        // enrich generated array with CubeViz sugar
+        $result = $this->enrichResult($result);
+        
+        // sort by label
+        usort ($result, function ($a, $b) { 
+            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+        });
+        
+        // set __cv_uri as array key
+        $tmp = $result;
+        $result = array();
+        
+        foreach ($tmp as $entry) {
+            $result [$entry['__cv_uri']] = $entry;
+        }
+                
         return $result;
     }
 }

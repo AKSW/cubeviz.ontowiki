@@ -4,6 +4,7 @@
     
     cubeVizApp
         .add("View_DataselectionModule_DataSet", "")
+        .add("View_DataselectionModule_Slice", "")
         .add("View_DataselectionModule_Attribute", "")
         .add("View_DataselectionModule_Measure", "")
         .add("View_DataselectionModule_Component", "#cubviz-component-listBox")
@@ -52,10 +53,9 @@
              title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
     </div>
     <div class="cubeviz-dataSelectionModule-middleBlock">
-        <div id="cubeviz-slice-label">Slice 1</div>
-        <span class="cubeviz-dataSelectionModule-smallDescription">
-            This is a small description text for this thing here.
-        </span>
+        <div id="cubeviz-slice-label"></div>
+        <span class="cubeviz-dataSelectionModule-smallDescription"
+              id="cubeviz-slice-description"></span>
     </div>
     <div class="cubeviz-dataSelectionModule-rightBlock">
         <i class="icon-cogs cubeviz-clickable"
@@ -297,4 +297,8 @@
 
 <div id="cubeviz-dataSelectionModule-tra-measureDialog" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_MeasureDialogLabel'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-sliceDialog" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SliceDialogLabel'); ?>
 </div>

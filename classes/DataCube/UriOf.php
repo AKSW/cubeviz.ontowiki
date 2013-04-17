@@ -1,6 +1,6 @@
 <?php
 /**
- * This class provides neccessary URI's
+ * This class provides necessary URI's which are used in the DataCube vocabulary.
  *
  * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
@@ -26,11 +26,12 @@ class DataCube_UriOf
     const Observation = "http://purl.org/linked-data/cube#Observation";
 
     // cube properties
-    const Component = "http://purl.org/linked-data/cube#component";
-    const Measure = "http://purl.org/linked-data/cube#measure";
-    const Dimension = "http://purl.org/linked-data/cube#dimension";
     const Attribute = "http://purl.org/linked-data/cube#attribute";
-    const Order = "http://purl.org/linked-data/cube#order";
+    const Component = "http://purl.org/linked-data/cube#component";
     const DataSetRelation = "http://purl.org/linked-data/cube#dataSet";
+    const Dimension = "http://purl.org/linked-data/cube#dimension";
+    const Measure = "http://purl.org/linked-data/cube#measure";
+    const Order = "http://purl.org/linked-data/cube#order";
+    const SliceKey = "http://purl.org/linked-data/cube#sliceKey";
     const Structure = "http://purl.org/linked-data/cube#structure";
 }

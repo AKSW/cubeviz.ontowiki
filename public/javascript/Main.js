@@ -1184,6 +1184,44 @@ var View_DataselectionModule_DataSet = (function (_super) {
     };
     return View_DataselectionModule_DataSet;
 })(CubeViz_View_Abstract);
+var View_DataselectionModule_Slice = (function (_super) {
+    __extends(View_DataselectionModule_Slice, _super);
+    function View_DataselectionModule_Slice(attachedTo, app) {
+        _super.call(this, "View_CubeVizModule_Slice", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_DataselectionModule_Slice.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_DataselectionModule_Slice.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.collection.addList(this.app._.data.slices);
+        this.render();
+    };
+    View_DataselectionModule_Slice.prototype.onChange_selectedDS = function () {
+    };
+    View_DataselectionModule_Slice.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_DataselectionModule_Slice.prototype.render = function () {
+        console.log("");
+        console.log("slices");
+        console.log(this.app._.data.slices);
+        console.log(this.app._.data.selectedSlices);
+        return this;
+    };
+    return View_DataselectionModule_Slice;
+})(CubeViz_View_Abstract);
 var View_DataselectionModule_Measure = (function (_super) {
     __extends(View_DataselectionModule_Measure, _super);
     function View_DataselectionModule_Measure(attachedTo, app) {
