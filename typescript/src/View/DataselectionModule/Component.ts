@@ -37,7 +37,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
                 __cv_niceLabel: component.__cv_niceLabel, 
-                __cv_hashedUri: component.__cv_hashedUri
+                __cv_hashedUri: component.__cv_hashedUri,
+                __cv_description: component.__cv_description,
+                shortDescription: _.str.prune(component.__cv_description, 400, "..")
             }
         ));
         
