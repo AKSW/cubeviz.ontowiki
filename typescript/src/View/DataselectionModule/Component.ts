@@ -612,6 +612,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             // short label to prevent use two instead of one lines
             dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
             
+            // short description
+            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
+            
             // build html out of template
             componentBox = $(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-component-tpl-listBoxItem").html(),

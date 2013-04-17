@@ -1716,6 +1716,7 @@ var View_DataselectionModule_Component = (function (_super) {
             }
             dimension.__cv_elementCount = _.size(dimension.__cv_elements);
             dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
+            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);
