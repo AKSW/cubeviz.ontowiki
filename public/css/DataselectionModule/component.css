@@ -16,3 +16,8 @@
 {
     list-style-type: none;
 }
+
+.cubeviz-component-dimensionLabel
+{
+    font-size: 13.5px;
+}
