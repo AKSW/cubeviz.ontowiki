@@ -203,8 +203,11 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
                 {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(), 
-                    __cv_hashedUri: "measure"
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialogTitle").html(), 
+                    __cv_hashedUri: "measure",
+                    __cv_description: "",
+                    shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
+                    __cv_title: ""
                 }
             ));
             
@@ -215,6 +218,10 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                 dialogDiv,
                 {closeOnEscape: true, showCross: true, width: 650}
             );
+            
+            // hide description div in dialog
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0))
+                .hide();
             
             // hide a couple of buttons
             $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();

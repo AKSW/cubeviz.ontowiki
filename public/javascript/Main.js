@@ -1301,8 +1301,11 @@ var View_DataselectionModule_Measure = (function (_super) {
             $("#cubeviz-measure-dialogOpener").hide();
         } else {
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(),
-                __cv_hashedUri: "measure"
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialogTitle").html(),
+                __cv_hashedUri: "measure",
+                __cv_description: "",
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
+                __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
             CubeViz_View_Helper.attachDialogTo(dialogDiv, {
@@ -1310,6 +1313,7 @@ var View_DataselectionModule_Measure = (function (_super) {
                 showCross: true,
                 width: 650
             });
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
