@@ -1753,6 +1753,10 @@ var View_DataselectionModule_Component = (function (_super) {
             dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
             dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
+            if(1 === dimension.__cv_elementCount) {
+                $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).hide();
+                $(componentBox.find(".cubeviz-component-selectedElementsBlock").get(0)).hide();
+            }
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);
             self.configureSetupComponentDialog(dimension, componentBox, $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)));

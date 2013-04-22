@@ -629,6 +629,16 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 dimension
             ));
             
+            // hide if component dimension contains only one element
+            if (1 === dimension.__cv_elementCount) {
+                // hide dialog opener
+                $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
+                    .hide();
+                // hide X selected of Y
+                $(componentBox.find(".cubeviz-component-selectedElementsBlock").get(0))
+                    .hide();    
+            }
+            
             // get opener link
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
                 .data("dimension", dimension);

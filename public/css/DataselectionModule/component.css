@@ -21,3 +21,9 @@
 {
     font-size: 13.5px;
 }
+
+.cubeviz-component-selectedElementsBlock
+{
+    color: #696969; 
+    font-size: 11px;
+}
