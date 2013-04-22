@@ -598,15 +598,15 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 return;
             }
             if(null == forXAxis) {
-                forXAxis = selectedDimension["__cv_uri"];
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
-                forSeries = selectedDimension["__cv_uri"];
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
         if(null == forSeries) {
             _.each(selectedComponentDimensions, function (selectedDimension) {
                 if(1 == _.keys(selectedDimension.__cv_elements).length && null == forSeries) {
-                    forSeries = selectedDimension["__cv_uri"];
+                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
                 }
             });
         }
@@ -625,7 +625,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             });
             var selectedDimensionPropertyUris = [];
             _.each(selectedComponentDimensions, function (dimension) {
-                selectedDimensionPropertyUris.push(dimension["__cv_uri"]);
+                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
             });
             var obj = {
             };
@@ -769,7 +769,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
         }
-        var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]["__cv_uri"];
+        var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]["http://purl.org/linked-data/cube#dimension"];
         var label = "";
         var observation = new DataCube_Observation();
         var self = this;
@@ -1033,7 +1033,7 @@ var DataCube_Observation = (function () {
                 return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
-                dimensionPropertyUri = dimension["__cv_uri"];
+                dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 observationDimensionProperty = observation[dimensionPropertyUri];
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
                     self._axes[dimensionPropertyUri] = {
@@ -1140,7 +1140,9 @@ var View_DataselectionModule_DataSet = (function (_super) {
         $("#cubeviz-dataSet-label").html(_.str.prune(this.app._.data.selectedDS.__cv_niceLabel, 24, "..")).attr("title", this.app._.data.selectedDS.__cv_niceLabel);
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
             __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(),
-            __cv_hashedUri: "dataSet"
+            __cv_hashedUri: "dataSet",
+            __cv_description: this.app._.data.selectedDS.__cv_description,
+            shortDescription: _.str.prune(this.app._.data.selectedDS.__cv_description, 400, "..")
         }));
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
         CubeViz_View_Helper.attachDialogTo(dialogDiv, {
@@ -2016,7 +2018,7 @@ var View_IndexAction_Legend = (function (_super) {
         });
     };
     View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
-        var cubeDimensionUri = "__cv_uri";
+        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension";
         var observationLabel = "";
         var dimensionElements = [];
         var label = "";
@@ -2095,7 +2097,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
-        var selectedMeasureUri = this.app._.data.selectedComponents.measure["__cv_uri"];
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
         this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
@@ -2216,7 +2218,7 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         var hC = new CubeViz_Visualization_HighCharts();
         var chart = hC.load(this.app._.ui.visualization.className);
-        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["__cv_uri"], selectedAttributeUri);
+        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"], selectedAttributeUri);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
             if(0 == _.size(chart.getRenderResult().series)) {

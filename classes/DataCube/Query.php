@@ -181,39 +181,42 @@ class DataCube_Query
         // type
         //      = dimension or
         //      = measure
-        if ($componentType != DataCube_UriOf::Dimension 
-            || $componentType != DataCube_UriOf::Measure) {
+        if ($componentType == DataCube_UriOf::Dimension 
+            || $componentType == DataCube_UriOf::Measure) {
             $result = $this->_model->sparqlQuery (
-                'SELECT ?componentItself ?p ?o WHERE {
-                    <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?componentSpec.                
-                    ?componentSpec <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
-                    ?componentSpec <'.$componentType.'> ?componentItself.
-                    ?componentItself ?p ?o.
+                'SELECT ?comp ?p ?o WHERE {
+                
+                    <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
+                
+                    ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                
+                    ?comp <'.$componentType.'> ?comptype.
+                
+                    ?comp ?p ?o.
                 }'
-
             );
         }
         // type
         //      = attribute
         else {
             $result = $this->_model->sparqlQuery (
-              'SELECT DISTINCT ?componentItself ?p ?o
+              'SELECT DISTINCT ?comp ?p ?o
                 WHERE {
                   <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
 
-                  <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?attributeCS.
+                  <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?comp.
 
-                  ?attributeCS a <http://purl.org/linked-data/cube#ComponentSpecification>.
+                  ?comp a <http://purl.org/linked-data/cube#ComponentSpecification>.
 
-                  ?attributeCS <http://purl.org/linked-data/cube#attribute> ?componentItself.
+                  ?comp <http://purl.org/linked-data/cube#attribute> ?componentItself.
                   
-                  ?componentItself ?p ?o.
+                  ?comp ?p ?o.
                 }'
             );  
         }
   
         // generate associative array
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentItself', 'p', 'o');
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
         
         // enrich array with CubeViz sugar
         $result = $this->enrichResult($result);
@@ -235,7 +238,7 @@ class DataCube_Query
             // if not measure
             if ($componentType != DataCube_UriOf::Measure) {
                 $component ['__cv_elements'] = $this->getComponentElements(
-                    $dsUri, $component['__cv_uri']
+                    $dsUri, $component[$componentType]
                 );
             }
             
@@ -264,6 +267,7 @@ class DataCube_Query
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
 
         $result = $this->enrichResult($result);
+        
         return $result;
     }
     
@@ -375,7 +379,7 @@ class DataCube_Query
         foreach ( $selectedComponentDimensions as $dimension ) {
             
             if (0 < count ($dimension ['__cv_elements'])) {
-                $where .= ' ?s <'. $dimension ['__cv_uri'] .'> ?d'. $i++ .' .'. "\n";
+                $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
             }
         }
         
@@ -384,8 +388,8 @@ class DataCube_Query
         // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
         //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
         $i = 0;
-        foreach ( $selectedComponentDimensions as $dimension ) {
-            
+        foreach ( $selectedComponentDimensions as $dimension ) 
+        {
             $dimensionElements = $dimension ['__cv_elements'];
             
             if (0 < count ($dimensionElements)) {
@@ -421,6 +425,7 @@ class DataCube_Query
         
         // enrich data with CubeViz sugar
         $result = $this->enrichResult($result);
+        
         return $result;
     }
 }

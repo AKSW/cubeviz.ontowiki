@@ -148,7 +148,9 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(), 
-                __cv_hashedUri: "dataSet"
+                __cv_hashedUri: "dataSet",
+                __cv_description: this.app._.data.selectedDS.__cv_description,
+                shortDescription: _.str.prune(this.app._.data.selectedDS.__cv_description, 400, "..")
             }
         ));
         
