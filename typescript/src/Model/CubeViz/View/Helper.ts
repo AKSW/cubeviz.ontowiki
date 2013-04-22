@@ -77,6 +77,16 @@ class CubeViz_View_Helper
     }
     
     /**
+     *
+     */
+    static hideLeftSidebarSpinner() : void 
+    {
+        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function(){
+            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+        });
+    }
+    
+    /**
      * Open an attached dialog.
      * @param domElement jQuery element which represents the dialog
      * @return void
@@ -99,6 +109,16 @@ class CubeViz_View_Helper
     {        
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first())
             .show();
+    }
+    
+    /**
+     *
+     */
+    static showLeftSidebarSpinner() : void 
+    {
+        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function(){
+            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        });
     }
     
     /**

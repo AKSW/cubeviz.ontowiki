@@ -336,6 +336,11 @@ var CubeViz_View_Helper = (function () {
     CubeViz_View_Helper.hideCloseAndUpdateSpinner = function hideCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
+    CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+        });
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
@@ -343,6 +348,11 @@ var CubeViz_View_Helper = (function () {
     }
     CubeViz_View_Helper.showCloseAndUpdateSpinner = function showCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
+    }
+    CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
@@ -1107,6 +1117,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedDataSet = dataSets.addList(this.app._.data.dataSets).get(dataSetUri);
         this.app._.data.selectedDS = selectedDataSet;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
@@ -1120,6 +1131,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
             }
         });
         this.triggerGlobalEvent("onChange_selectedDS");
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_DataSet.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1235,12 +1247,14 @@ var View_DataselectionModule_Measure = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedMeasure = measures.addList(this.app._.data.components.measures).get(measureUri);
         this.app._.data.selectedComponents.measure = selectedMeasure;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
         this.triggerGlobalEvent("onChange_selectedMeasure");
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1360,12 +1374,14 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedAttribute = attributes.addList(this.app._.data.components.attributes).get(attributeUri);
         this.app._.data.selectedComponents.attribute = selectedAttribute;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
         this.triggerGlobalEvent("onChange_selectedAttribute");
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1611,6 +1627,7 @@ var View_DataselectionModule_Component = (function (_super) {
             self.triggerGlobalEvent("onUpdate_componentDimensions");
             CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
             CubeViz_View_Helper.closeDialog(dialogDiv);
+            CubeViz_View_Helper.hideLeftSidebarSpinner();
         });
     };
     View_DataselectionModule_Component.prototype.onClick_deselectButton = function (event) {
@@ -1684,6 +1701,7 @@ var View_DataselectionModule_Component = (function (_super) {
         if(undefined === component) {
             return;
         }
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         _.each(elementList, function (element) {
             input = $($(element).children().get(0));
             inputLabel = $($(element).children().get(1));

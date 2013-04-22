@@ -56,9 +56,12 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
             selectedDataSet:any = null,
             self = this;
             
-        // Start handling of new configuration, but before start, show a spinner 
+        // start handling of new configuration, but before start, show a spinner 
         // to let the user know that CubeViz did something.    
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        
+        // show spinner
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         
         // get dataset with given uri
         selectedDataSet = dataSets
@@ -91,6 +94,9 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDS");
+        
+        // hide spinner
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     }
     
     /**

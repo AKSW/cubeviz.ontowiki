@@ -364,6 +364,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 
                 // if only module was loaded, move reloading stuff to footer.ts
                 CubeViz_View_Helper.closeDialog(dialogDiv);
+                
+                // hide spinner
+                CubeViz_View_Helper.hideLeftSidebarSpinner ();                
             }
         );        
     }
@@ -499,6 +502,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         if(undefined === component) {
             return;
         }
+        
+        // show spinner
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         
         /**
          * Go through all checkboxes and save their data if checked

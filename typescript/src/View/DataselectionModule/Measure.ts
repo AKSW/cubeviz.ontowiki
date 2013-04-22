@@ -94,6 +94,9 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         // to let the user know that CubeViz did something.    
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         
+        // show spinner
+        CubeViz_View_Helper.showLeftSidebarSpinner();
+        
         // get measure with given uri
         selectedMeasure = measures
             .addList(this.app._.data.components.measures)
@@ -115,6 +118,9 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedMeasure");
+        
+        // hide spinner
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     }
     
     /**

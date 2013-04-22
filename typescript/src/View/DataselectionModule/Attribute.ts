@@ -103,6 +103,9 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         // to let the user know that CubeViz did something.    
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         
+        // show spinner
+        CubeViz_View_Helper.showLeftSidebarSpinner();
+        
         // get attribute with given uri
         selectedAttribute = attributes
             .addList(this.app._.data.components.attributes)
@@ -124,6 +127,9 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedAttribute");
+        
+        // hide spinner
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     }
     
     /**
