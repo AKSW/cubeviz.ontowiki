@@ -125,7 +125,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_questionMark(event) : void 
+    public onClick_questionmark(event) : void 
     {
         // set dialog reference and template
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
@@ -197,7 +197,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
             
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
             
-            // setup jqeruy dialog
+            // setup jquery dialog
             CubeViz_View_Helper.attachDialogTo(
                 dialogDiv,
                 {closeOnEscape: true, showCross: true, width: 650}
@@ -289,7 +289,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onAfterRender_dataSet");
         
         this.bindUserInterfaceEvents({
-            "click #cubeviz-dataSet-questionmark": this.onClick_questionMark
+            "click #cubeviz-dataSet-questionmark": this.onClick_questionmark
         });
         
         return this;

@@ -1,5 +1,6 @@
 DataSelectionModule_Alphabet;Alphabet
-DataSelectionModule_AttributeDialogLabel;Attribute (Unit of Measure)
+DataSelectionModule_AttributeDialogTitle;Unit Selection
+DataSelectionModule_AttributeDialogDescription;In the following list, different units are available for selection. As the default, CubeViz selects one out of the list automatically, but you can change the selection according to your needs. Please note that you are only allowed to select one of the listed items.
 DataSelectionModule_Cancel;Cancel
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
@@ -13,6 +14,10 @@ DataSelectionModule_ObservationCount;Observation Count
 DataSelectionModule_Of;of
 DataSelectionModule_Permalink;Link
 DataSelectionModule_SelectAllItems;Select all items
+DataSelectionModule_SelectAttributeAndMeasure;Select Unit and Measurement
+DataSelectionModule_SelectAttributeAndMeasureIconText;Why are there different measurements and units?
+DataSelectionModule_SelectAttributeAndMeasureHelpDialogTitle;Why are there different measurements and units?
+DataSelectionModule_SelectAttributeAndMeasureHelpDialogDescription;Sometimes a dataset contains different measurement and units. This is the case where a statistical observation is being expressed for different purposes. For instance, a spatial distance between two things can be expressed using centimeter and meter. To improve the comparability of observations the user should determine both the measurement and the unit. Please use the selection dialogue to configure this according to your needs.
 DataSelectionModule_SelectComponentElements;Select elements of interest
 DataSelectionModule_SelectComponents;Select axis elements
 DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).

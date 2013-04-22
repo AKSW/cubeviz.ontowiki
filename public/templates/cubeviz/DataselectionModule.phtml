@@ -20,10 +20,7 @@
 </div>
 
 <div id="cubeviz-dataSelectionModule-dataSelection">
-    
-    <!-- 
-        visual seperator 
-    -->
+
     <div class="cubeviz-dataSelectionModule-headline">
         <div style="float: left;">
             <?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>
@@ -59,6 +56,16 @@
     -->
     <div class="cubeviz-dataSelectionModule-visualSeparator"><hr/></div>
     
+    <div class="cubeviz-dataSelectionModule-headline">
+        <div style="float: left;">
+            <?php echo $this->translate->_('DataSelectionModule_SelectAttributeAndMeasure'); ?>
+        </div>
+        <div style="float: right; margin-right: 2px;">
+            <i class="icon-question-sign cubeviz-clickable" 
+               id="cubeviz-attributeAndMeasure-questionmark"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectAttributeAndMeasurementIconText'); ?>"></i></div>
+    
+    </div>
     <!-- 
         block containing attribute and measure, if available, otherwise they are hidden
     -->
@@ -313,15 +320,29 @@
     ############
 -->
 
-<div id="cubeviz-dataSelectionModule-tra-attributeDialog" style="display: none;">
-    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogLabel'); ?>
+<div id="cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectAttributeAndMeasureHelpDialogTitle'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectAttributeAndMeasureHelpDialogDescription'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-attributeDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogTitle'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-attributeDialogDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogDescription'); ?>
 </div>
 
 <div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_SelectDSDialogTitle'); ?>
+</div>
 
 <div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_SelectDSDialogDescription'); ?>
+</div>
 
 <div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_SelectDSHelpDialogTitle'); ?>

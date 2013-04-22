@@ -1144,7 +1144,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         });
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
     };
-    View_DataselectionModule_DataSet.prototype.onClick_questionMark = function (event) {
+    View_DataselectionModule_DataSet.prototype.onClick_questionmark = function (event) {
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
             __cv_id: "dataSet",
             __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle").html(),
@@ -1211,7 +1211,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         }
         this.triggerGlobalEvent("onAfterRender_dataSet");
         this.bindUserInterfaceEvents({
-            "click #cubeviz-dataSet-questionmark": this.onClick_questionMark
+            "click #cubeviz-dataSet-questionmark": this.onClick_questionmark
         });
         return this;
     };
@@ -1417,6 +1417,20 @@ var View_DataselectionModule_Attribute = (function (_super) {
         }
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-attribute"));
     };
+    View_DataselectionModule_Attribute.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "attributeAndMeasure",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-attributeAndMeasure");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    };
     View_DataselectionModule_Attribute.prototype.onStart_application = function () {
         this.initialize();
     };
@@ -1441,10 +1455,11 @@ var View_DataselectionModule_Attribute = (function (_super) {
                 $("#cubeviz-attribute-dialogOpener").hide();
             } else {
                 $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(),
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogTitle").html(),
                     __cv_hashedUri: "attribute",
-                    __cv_description: this.app._.data.selectedComponents.attribute.__cv_description,
-                    shortDescription: _.str.prune(this.app._.data.selectedComponents.attribute.__cv_description, 400, "..")
+                    __cv_description: "",
+                    shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
+                    __cv_title: ""
                 }));
                 var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
                 CubeViz_View_Helper.attachDialogTo(dialogDiv, {
@@ -1452,6 +1467,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
                     showCross: true,
                     width: 650
                 });
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
                 $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
                 $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
                 $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
@@ -1484,6 +1500,9 @@ var View_DataselectionModule_Attribute = (function (_super) {
             $("#cubeviz-attribute-dialogOpener").hide();
         }
         this.triggerGlobalEvent("onAfterRender_attribute");
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-attributeAndMeasure-questionmark": this.onClick_questionmark
+        });
         return this;
     };
     View_DataselectionModule_Attribute.prototype.showSpinner = function () {

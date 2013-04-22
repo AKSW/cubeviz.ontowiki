@@ -61,9 +61,10 @@
     font-weight:    bold;
     margin-left:    10px;
     clear:          both;
-    height:         5px;
-    min-height:     5px;
-    max-height:     5px;
+    height:          5px;
+    min-height:      5px;
+    max-height:      5px;
+    padding-top:     5px;
     padding-bottom: 25px;
 }
 

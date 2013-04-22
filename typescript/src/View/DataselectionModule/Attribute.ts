@@ -166,6 +166,33 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
     /**
      *
      */
+    public onClick_questionmark(event) : void 
+    {
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
+            {
+                __cv_id: "attributeAndMeasure",
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogDescription").html()
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-attributeAndMeasure");
+        
+        // setup jquery dialog
+        CubeViz_View_Helper.attachDialogTo(
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
+        
+        // open dialog
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    }
+    
+    /**
+     *
+     */
     public onStart_application() 
     {
         this.initialize();
@@ -235,10 +262,11 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
                 $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
                     {
-                        __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(), 
+                        __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogTitle").html(), 
                         __cv_hashedUri: "attribute",
-                        __cv_description: this.app._.data.selectedComponents.attribute.__cv_description,
-                        shortDescription: _.str.prune(this.app._.data.selectedComponents.attribute.__cv_description, 400, "..")
+                        __cv_description: "",
+                        shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
+                        __cv_title: ""
                     }
                 ));
                 
@@ -249,6 +277,10 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
                     dialogDiv,
                     {closeOnEscape: true, showCross: true, width: 650}
                 );
+                
+                // hide description div in dialog
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0))
+                    .hide();
                 
                 // hide a couple of buttons
                 $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
@@ -336,6 +368,10 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         }
         
         this.triggerGlobalEvent("onAfterRender_attribute");
+        
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-attributeAndMeasure-questionmark": this.onClick_questionmark
+        });
         
         return this;
     }
