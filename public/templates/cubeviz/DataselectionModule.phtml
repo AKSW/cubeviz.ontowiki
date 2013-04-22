@@ -22,6 +22,19 @@
 <div id="cubeviz-dataSelectionModule-dataSelection">
     
     <!-- 
+        visual seperator 
+    -->
+    <div class="cubeviz-dataSelectionModule-headline">
+        <div style="float: left;">
+            <?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>
+        </div>
+        <div style="float: right; margin-right: 2px;">
+            <i class="icon-question-sign cubeviz-clickable" 
+               id="cubeviz-dataSet-questionmark"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectDSIconText'); ?>"></i></div>
+    </div>
+    
+    <!-- 
         data set 
     -->
     <div class="cubeviz-dataSelectionModule-leftBlock">
@@ -183,7 +196,7 @@
 <div id="cubeviz-dataSelectionModule-tpl-dialog" style="display: none;">
     <div class="cubeviz-dataSelectionModule-dialog"
          id="cubeviz-dataSelectionModule-dialog-[[__cv_hashedUri]]"
-         title="Select elements of interest">
+         title="[[__cv_title]]">
          
         <!-- 
             Header
@@ -194,10 +207,17 @@
         </div>
         
         <h3 style="margin-top: 0px;">[[__cv_niceLabel]]</h3>
+    
+        <div class="cubeviz-dataSelectionModule-dialog-description" style="clear: both;">
+            <br/>
+            [[__cv_description]]
+            <br/>
+        </div>
         
-        <br/>
-        
-        <div style="clear: both;" title="[[__cv_description]]">[[shortDescription]]</div>
+        <div class="cubeviz-dataSelectionModule-dialog-smallDescription"
+             style="clear: both;">
+            <br/>[[shortDescription]]
+        </div>
         
         <br/>
         
@@ -269,6 +289,23 @@
     </li>
 </div>
 
+<!-- Template for a help-dialog containing information about something -->
+<div id="cubeviz-dataSelectionModule-tpl-helpDialog" style="display: none;">
+    <div id="cubeviz-dataSelectionModule-helpDialog-[[__cv_id]]">
+        <div style="margin-top: 4px; float: right;">
+            <img class="cubeviz-icon-unsized" src="http://cubeviz.aksw.org/extensions/cubeviz/public/images/cubevizLogo.png">
+        </div>
+        <div style="float: left;">
+            <h3>[[__cv_niceLabel]]</h3>
+        </div>
+        <br>
+        <br>
+        <div style="clear: both;">
+            [[__cv_description]]
+        </div>
+    </div>
+</div>
+
 
 <!-- 
     ############
@@ -276,12 +313,22 @@
     ############
 -->
 
-<div id="cubeviz-dataSelectionModule-tra-dataSetDialog" style="display: none;">
-    <?php echo $this->translate->_('DataSelectionModule_DataSetDialogLabel'); ?>
-</div>
-
 <div id="cubeviz-dataSelectionModule-tra-attributeDialog" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_AttributeDialogLabel'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectDSDialogTitle'); ?>
+
+<div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectDSDialogDescription'); ?>
+
+<div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectDSHelpDialogTitle'); ?>
+</div>
+
+<div id="cubeviz-dataSelectionModule-tra-SelectDSHelpDialogDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SelectDSHelpDialogDescription'); ?>
 </div>
 
 <div id="cubeviz-dataSelectionModule-tra-measureDialog" style="display: none;">

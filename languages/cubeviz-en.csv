@@ -4,7 +4,6 @@ DataSelectionModule_Cancel;Cancel
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
 DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
-DataSelectionModule_DataSetDialogLabel;Data Set
 DataSelectionModule_DeselectAllItems;Deselect all items
 DataSelectionModule_Link;Link
 DataSelectionModule_LoadingMessage;I am working ...
@@ -17,8 +16,12 @@ DataSelectionModule_SelectAllItems;Select all items
 DataSelectionModule_SelectComponentElements;Select elements of interest
 DataSelectionModule_SelectComponents;Select axis elements
 DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
-DataSelectionModule_SelectDS;Select part of group
-DataSelectionModule_SelectDSHelpText;Each structural element of a DataCube contains data sets. A data set is the major entity: it groups statistical data about a specific topic, called observations. 
+DataSelectionModule_SelectDS;Select a dataset
+DataSelectionModule_SelectDSDialogDescription;In the following item list, the DataCube datasets available are part of the given dataset. These DataCube datasets are used to fragment the set of statistical data items. In order to visualize a chart using CubeViz, select one of the DataCube datasets below.
+DataSelectionModule_SelectDSDialogTitle;Dataset Selection 
+DataSelectionModule_SelectDSIconText;What is a dataset and why should I select one?
+DataSelectionModule_SelectDSHelpDialogTitle;What is a dataset and why should I select one?
+DataSelectionModule_SelectDSHelpDialogDescription;The selected RDF dataset contains a subdivision called “DataCube datasets” which are used to group different statistical data items. The structure of a DataCube dataset corresponds to a specific DataStructureDefinition. There may be cases where different DataCube datasets share their corresonding DataStructureDefinition. In the selection dialogue you have the option to change the selected DataCube dataset. If you do not select one of the subdivision, CubeViz will select one automatically.
 DataSelectionModule_Selected;Selected
 DataSelectionModule_ShowVisualization;Show Visualization
 DataSelectionModule_SortBy;Sort By

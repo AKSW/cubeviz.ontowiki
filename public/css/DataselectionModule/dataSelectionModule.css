@@ -6,7 +6,7 @@
 
 #cubeviz-dataSelectionModule-dataSelection
 {
-    margin-top: 5px;
+    margin-top: 0px;
 }
 
 .cubeviz-dataSelectionModule-dialogSortButtonSelected
@@ -40,6 +40,12 @@
     margin-left:    4px;
 }
 
+.cubeviz-dataSelectionModule-dialog-smallDescription
+{
+    color:      #696969; 
+    font-size:     11px;
+}
+
 .cubeviz-dataSelectionModule-leftBlock
 {
     float:        left; 
@@ -47,6 +53,18 @@
     width:        20px; 
     text-align: center; 
     margin-top:    3px;
+}
+
+.cubeviz-dataSelectionModule-headline
+{
+    font-size:      13px;
+    font-weight:    bold;
+    margin-left:    10px;
+    clear:          both;
+    height:         5px;
+    min-height:     5px;
+    max-height:     5px;
+    padding-bottom: 25px;
 }
 
 .cubeviz-dataSelectionModule-middleBlock
