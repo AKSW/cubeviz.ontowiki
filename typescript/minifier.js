@@ -1,3 +1,6 @@
+/**
+ * This small JavaScript file tells nodejs-minifier module to minify Main.js.
+ */
 var compressor = require('node-minify');
 
 // Using YUI Compressor for JS

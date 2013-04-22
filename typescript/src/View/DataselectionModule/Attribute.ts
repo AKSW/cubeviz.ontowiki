@@ -220,7 +220,9 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
                 $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
                 {
                     __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(), 
-                    __cv_hashedUri: "attribute"
+                    __cv_hashedUri: "attribute",
+                    __cv_description: this.app._.data.selectedComponents.attribute.__cv_description,
+                    shortDescription: _.str.prune(this.app._.data.selectedComponents.attribute.__cv_description, 400, "..")
                 }
             ));
             

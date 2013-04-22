@@ -1398,7 +1398,9 @@ var View_DataselectionModule_Attribute = (function (_super) {
         if(false === noAttribute) {
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(),
-                __cv_hashedUri: "attribute"
+                __cv_hashedUri: "attribute",
+                __cv_description: this.app._.data.selectedComponents.attribute.__cv_description,
+                shortDescription: _.str.prune(this.app._.data.selectedComponents.attribute.__cv_description, 400, "..")
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
             CubeViz_View_Helper.attachDialogTo(dialogDiv, {
