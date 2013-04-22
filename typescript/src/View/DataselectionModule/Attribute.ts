@@ -190,6 +190,10 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
             || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
+            
+            // hide attribute block
+            $("#cubeviz-dataSelectionModule-attributeBlock").hide();
+            
         } else {
             label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
             description = this.app._.data.selectedComponents.attribute.__cv_description; 

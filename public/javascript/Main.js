@@ -1410,6 +1410,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
         if(true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
+            $("#cubeviz-dataSelectionModule-attributeBlock").hide();
         } else {
             label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
             description = this.app._.data.selectedComponents.attribute.__cv_description;
