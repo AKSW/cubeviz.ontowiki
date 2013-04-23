@@ -39,11 +39,19 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 __cv_niceLabel: component.__cv_niceLabel, 
                 __cv_hashedUri: component.__cv_hashedUri,
                 __cv_description: component.__cv_description,
-                shortDescription: _.str.prune(component.__cv_description, 400, "..")
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+                __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
             }
         ));
         
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
+        
+        // if no description for the component dimension was given, hide related area
+        if (true == _.str.isBlank(component.__cv_description)) {
+            // hide description div in dialog
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0))
+                .hide();
+        }
         
         dialogDiv
             .data("componentBox", componentBox)

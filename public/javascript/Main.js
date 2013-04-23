@@ -1537,9 +1537,13 @@ var View_DataselectionModule_Component = (function (_super) {
             __cv_niceLabel: component.__cv_niceLabel,
             __cv_hashedUri: component.__cv_hashedUri,
             __cv_description: component.__cv_description,
-            shortDescription: _.str.prune(component.__cv_description, 400, "..")
+            shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+            __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
         }));
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
+        if(true == _.str.isBlank(component.__cv_description)) {
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
+        }
         dialogDiv.data("componentBox", componentBox).data("component", component);
         CubeViz_View_Helper.attachDialogTo(dialogDiv);
         $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).data("dialogDiv", dialogDiv);

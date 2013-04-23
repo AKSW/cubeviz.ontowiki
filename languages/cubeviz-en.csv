@@ -5,6 +5,8 @@ DataSelectionModule_Cancel;Cancel
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
 DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
+DataSelectionModule_ComponentDialogDescription;In the following form, those dimension elements are listed that are used to express the context of the corresponding statistical observations. This is a multiple choice selection, which means that you are able to select a minimum of one and a maximum of all items. Please note that you have to select at least one item. If you select all items it can happen that the server has to respond with a very huge set of data which can can slow down the response and processing time.
+DataSelectionModule_ComponentDialogMainTitle;Dimension Element Selection 
 DataSelectionModule_ComponentHelpDialogDescription;The selected RDF dataset contains statistical context information of the observations. In a DataCube such contextual information are expressed as dimensions and dimension elements. To select observations of your interest you have to select elements belonging to these dimensions. The available dimensions are available in the box. Below every dimension the amount of selected and available dimension elements is diplayed. To change the slection please use the selection dialogue for each dimension.
 DataSelectionModule_ComponentHelpDialogTitle;What is a dimension and why should I select elements belonging to a dimension?
 DataSelectionModule_DeselectAllItems;Deselect all items
