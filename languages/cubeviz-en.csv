@@ -5,7 +5,14 @@ DataSelectionModule_Cancel;Cancel
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
 DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
+DataSelectionModule_ComponentHelpDialogDescription;The selected RDF dataset contains statistical context information of the observations. In a DataCube such contextual information are expressed as dimensions and dimension elements. To select observations of your interest you have to select elements belonging to these dimensions. The available dimensions are available in the box. Below every dimension the amount of selected and available dimension elements is diplayed. To change the slection please use the selection dialogue for each dimension.
+DataSelectionModule_ComponentHelpDialogTitle;What is a dimension and why should I select elements belonging to a dimension?
 DataSelectionModule_DeselectAllItems;Deselect all items
+DataSelectionModule_DataSetDialogDescription;In the following item list, the DataCube datasets available are part of the given dataset. These DataCube datasets are used to fragment the set of statistical data items. In order to visualize a chart using CubeViz, select one of the DataCube datasets below.
+DataSelectionModule_DataSetDialogTitle;Dataset Selection 
+DataSelectionModule_DataSetHelpDialogDescription;The selected RDF dataset contains a subdivision called “DataCube datasets” which are used to group different statistical data items. The structure of a DataCube dataset corresponds to a specific data structure definition. There may be cases where different DataCube datasets share their corresonding DataStructureDefinition. In the selection dialogue you have the option to change the selected DataCube dataset. If you do not select one of the subdivision, CubeViz will select one automatically.
+DataSelectionModule_DataSetHelpDialogTitle;What is a dataset and why should I select one?
+DataSelectionModule_DataSetIconText;What is a dataset and why should I select one?
 DataSelectionModule_Link;Link
 DataSelectionModule_LoadingMessage;I am working ...
 DataSelectionModule_Measure;Measure
@@ -20,22 +27,18 @@ DataSelectionModule_SelectAttributeAndMeasureIconText;Why are there different me
 DataSelectionModule_SelectAttributeAndMeasureHelpDialogTitle;Why are there different measurements and units?
 DataSelectionModule_SelectAttributeAndMeasureHelpDialogDescription;Sometimes a dataset contains different measurement and units. This is the case where a statistical observation is being expressed for different purposes. For instance, a spatial distance between two things can be expressed using centimeter and meter. To improve the comparability of observations the user should determine both the measurement and the unit. Please use the selection dialogue to configure this according to your needs.
 DataSelectionModule_SelectComponentElements;Select elements of interest
-DataSelectionModule_SelectComponents;Select axis elements
+DataSelectionModule_SelectComponents;Configure the Dimensions
+DataSelectionModule_SelectComponentsIconText;What is a dimension and why should I select elements belonging to a dimension?
 DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
 DataSelectionModule_SelectDS;Select a dataset
-DataSelectionModule_SelectDSDialogDescription;In the following item list, the DataCube datasets available are part of the given dataset. These DataCube datasets are used to fragment the set of statistical data items. In order to visualize a chart using CubeViz, select one of the DataCube datasets below.
-DataSelectionModule_SelectDSDialogTitle;Dataset Selection 
-DataSelectionModule_SelectDSIconText;What is a dataset and why should I select one?
-DataSelectionModule_SelectDSHelpDialogTitle;What is a dataset and why should I select one?
-DataSelectionModule_SelectDSHelpDialogDescription;The selected RDF dataset contains a subdivision called “DataCube datasets” which are used to group different statistical data items. The structure of a DataCube dataset corresponds to a specific DataStructureDefinition. There may be cases where different DataCube datasets share their corresonding DataStructureDefinition. In the selection dialogue you have the option to change the selected DataCube dataset. If you do not select one of the subdivision, CubeViz will select one automatically.
 DataSelectionModule_Selected;Selected
 DataSelectionModule_ShowVisualization;Show Visualization
 DataSelectionModule_SortBy;Sort By
 
-IndexAction_ConfigureVisualization;Configure Visualization
 IndexAction_ClickMoreInformation;Click For More Information
 IndexAction_Close;Close
 IndexAction_CloseMenuWithoutApplyingChanges;Close This Menu Without Applying Changes
+IndexAction_ConfigureVisualization;Configure Visualization
 IndexAction_Explanation;Explanation
 IndexAction_GoToSource;Go To Source
 IndexAction_InformationAboutConfiguration;Information About Selected Configuration

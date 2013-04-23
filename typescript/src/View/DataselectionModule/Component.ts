@@ -486,6 +486,33 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     /**
      *
      */
+    public onClick_questionmark(event) : void 
+    {
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
+            {
+                __cv_id: "component",
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogDescription").html()
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-component");
+        
+        // setup jquery dialog
+        CubeViz_View_Helper.attachDialogTo(
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
+        
+        // open dialog
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    }
+    
+    /**
+     *
+     */
     public readAndSaveSetupComponentDialogChanges(dialogDiv, callback) : void
     {        
         // extract and set necessary elements and data
@@ -667,7 +694,14 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.bindUserInterfaceEvents({         
+        this.bindUserInterfaceEvents({       
+            
+            "click .cubeviz-component-setupComponentOpener": 
+                this.onClick_setupComponentOpener,
+                
+            "click #cubeviz-component-questionmark": 
+                this.onClick_questionmark,
+              
             "click .cubeviz-dataSelectionModule-cancelBtn": 
                 this.onClick_cancel,
                 
@@ -676,9 +710,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 
             "click .cubeviz-dataSelectionModule-selectAllButton": 
                 this.onClick_selectAllButton,
-                
-            "click .cubeviz-component-setupComponentOpener": 
-                this.onClick_setupComponentOpener,
             
             "click .cubeviz-dataSelectionModule-dialogSortButtons": 
                 this.onClick_sortButton

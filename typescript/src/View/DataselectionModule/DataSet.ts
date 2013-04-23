@@ -132,8 +132,8 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
             {
                 __cv_id: "dataSet",
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle").html(), 
-                __cv_description: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogDescription").html()
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html()
             }
         ));
         
@@ -187,10 +187,10 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
                 {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle").html(), 
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogTitle").html(), 
                     __cv_hashedUri: "dataSet",
                     __cv_description: "",
-                    shortDescription: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogDescription").html(),
+                    shortDescription: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogDescription").html(),
                     __cv_title: ""
                 }
             ));

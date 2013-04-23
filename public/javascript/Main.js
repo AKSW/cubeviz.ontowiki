@@ -1147,8 +1147,8 @@ var View_DataselectionModule_DataSet = (function (_super) {
     View_DataselectionModule_DataSet.prototype.onClick_questionmark = function (event) {
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
             __cv_id: "dataSet",
-            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle").html(),
-            __cv_description: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogDescription").html()
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html()
         }));
         var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-dataSet");
         CubeViz_View_Helper.attachDialogTo(dialogDiv, {
@@ -1168,10 +1168,10 @@ var View_DataselectionModule_DataSet = (function (_super) {
             $("#cubeviz-dataSet-dialogOpener").hide();
         } else {
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogTitle").html(),
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogTitle").html(),
                 __cv_hashedUri: "dataSet",
                 __cv_description: "",
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-SelectDSHelpDialogDescription").html(),
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogDescription").html(),
                 __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
@@ -1732,6 +1732,20 @@ var View_DataselectionModule_Component = (function (_super) {
             list.append(item);
         });
     };
+    View_DataselectionModule_Component.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "component",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-component");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    };
     View_DataselectionModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
         var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children();
         var componentBox = dialogDiv.data("componentBox");
@@ -1806,10 +1820,11 @@ var View_DataselectionModule_Component = (function (_super) {
             self.collection.add(dimension);
         });
         this.bindUserInterfaceEvents({
+            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
+            "click #cubeviz-component-questionmark": this.onClick_questionmark,
             "click .cubeviz-dataSelectionModule-cancelBtn": this.onClick_cancel,
             "click .cubeviz-dataSelectionModule-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-dataSelectionModule-selectAllButton": this.onClick_selectAllButton,
-            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton
         });
         this.triggerGlobalEvent("onAfterRender_component");
