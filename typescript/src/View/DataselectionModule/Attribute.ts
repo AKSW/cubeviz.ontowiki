@@ -375,15 +375,4 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         
         return this;
     }
-    
-    /**
-     * Show a spinner to let the user know that something is working.
-     * @return void
-     */
-    public showSpinner() : void
-    {        
-        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
-    }
 }

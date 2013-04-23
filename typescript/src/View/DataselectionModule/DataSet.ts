@@ -94,9 +94,6 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedDS");
-        
-        // hide spinner
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
     }
     
     /**
@@ -293,16 +290,5 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         });
         
         return this;
-    }
-    
-    /**
-     * Show a spinner to let the user know that something is working.
-     * @return void
-     */
-    public showSpinner() : void
-    {        
-        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
     }
 }

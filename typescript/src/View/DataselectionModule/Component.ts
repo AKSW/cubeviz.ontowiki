@@ -192,16 +192,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     }
     
     /**
-     * Hide spinner.
-     */
-    public hideSpinner() : void
-    {
-        $("#cubeviz-module-spinner").slideUp("slow", function() {
-            $("#cubeviz-module-dataSelection").slideDown("slow");
-        });
-    }
-    
-    /**
      *
      */
     public initialize() 
@@ -274,7 +264,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     
                     self.render();
                     
-                    self.hideSpinner();
+                    CubeViz_View_Helper.hideLeftSidebarSpinner();
                 }
             );
         });
@@ -371,10 +361,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
                 
                 // if only module was loaded, move reloading stuff to footer.ts
-                CubeViz_View_Helper.closeDialog(dialogDiv);
-                
-                // hide spinner
-                CubeViz_View_Helper.hideLeftSidebarSpinner ();                
+                CubeViz_View_Helper.closeDialog(dialogDiv);            
             }
         );        
     }
@@ -537,9 +524,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         if(undefined === component) {
             return;
         }
-        
-        // show spinner
-        CubeViz_View_Helper.showLeftSidebarSpinner();
         
         /**
          * Go through all checkboxes and save their data if checked
@@ -725,7 +709,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         
         this.triggerGlobalEvent("onAfterRender_component");
         
-        this.hideSpinner();
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
         
         return this;
     }

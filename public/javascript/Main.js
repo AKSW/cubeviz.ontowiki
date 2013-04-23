@@ -1131,7 +1131,6 @@ var View_DataselectionModule_DataSet = (function (_super) {
             }
         });
         this.triggerGlobalEvent("onChange_selectedDS");
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_DataSet.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1214,11 +1213,6 @@ var View_DataselectionModule_DataSet = (function (_super) {
             "click #cubeviz-dataSet-questionmark": this.onClick_questionmark
         });
         return this;
-    };
-    View_DataselectionModule_DataSet.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
     };
     return View_DataselectionModule_DataSet;
 })(CubeViz_View_Abstract);
@@ -1343,11 +1337,6 @@ var View_DataselectionModule_Measure = (function (_super) {
         }
         this.triggerGlobalEvent("onAfterRender_measure");
         return this;
-    };
-    View_DataselectionModule_Measure.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
     };
     return View_DataselectionModule_Measure;
 })(CubeViz_View_Abstract);
@@ -1509,11 +1498,6 @@ var View_DataselectionModule_Attribute = (function (_super) {
         });
         return this;
     };
-    View_DataselectionModule_Attribute.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
-    };
     return View_DataselectionModule_Attribute;
 })(CubeViz_View_Abstract);
 var View_DataselectionModule_Component = (function (_super) {
@@ -1598,11 +1582,6 @@ var View_DataselectionModule_Component = (function (_super) {
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         return this;
     };
-    View_DataselectionModule_Component.prototype.hideSpinner = function () {
-        $("#cubeviz-module-spinner").slideUp("slow", function () {
-            $("#cubeviz-module-dataSelection").slideDown("slow");
-        });
-    };
     View_DataselectionModule_Component.prototype.initialize = function () {
         this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
@@ -1624,7 +1603,7 @@ var View_DataselectionModule_Component = (function (_super) {
             CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
                 self.app._.backend.dataHash = updatedDataHash;
                 self.render();
-                self.hideSpinner();
+                CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
         });
     };
@@ -1674,7 +1653,6 @@ var View_DataselectionModule_Component = (function (_super) {
             self.triggerGlobalEvent("onUpdate_componentDimensions");
             CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
             CubeViz_View_Helper.closeDialog(dialogDiv);
-            CubeViz_View_Helper.hideLeftSidebarSpinner();
         });
     };
     View_DataselectionModule_Component.prototype.onClick_deselectButton = function (event) {
@@ -1762,7 +1740,6 @@ var View_DataselectionModule_Component = (function (_super) {
         if(undefined === component) {
             return;
         }
-        CubeViz_View_Helper.showLeftSidebarSpinner();
         _.each(elementList, function (element) {
             input = $($(element).children().get(0));
             inputLabel = $($(element).children().get(1));
@@ -1832,7 +1809,7 @@ var View_DataselectionModule_Component = (function (_super) {
             "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton
         });
         this.triggerGlobalEvent("onAfterRender_component");
-        this.hideSpinner();
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
         return this;
     };
     return View_DataselectionModule_Component;
