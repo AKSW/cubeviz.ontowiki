@@ -1167,10 +1167,10 @@ var View_DataselectionModule_DataSet = (function (_super) {
             $("#cubeviz-dataSet-dialogOpener").hide();
         } else {
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogTitle").html(),
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(),
                 __cv_hashedUri: "dataSet",
                 __cv_description: "",
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-DataSetHelpDialogDescription").html(),
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html(),
                 __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
