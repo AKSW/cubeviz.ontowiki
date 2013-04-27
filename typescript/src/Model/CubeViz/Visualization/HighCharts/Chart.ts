@@ -152,12 +152,18 @@ class CubeViz_Visualization_HighCharts_Chart
                 _.each(seriesElement.observations, function(seriesObservation){
                     
                     // check if the current observation has to be ignored
-                    // it will ignored, if attribute uri is set, but the observation
-                    // has no value of it
-                    if (false === _.isNull(selectedAttributeUri)
+                    // it will ignored, 
+                    //      if attribute uri is set, but the observation
+                    //      has no value of it
+                    // and
+                    //      if the predicate which is labeled with DataCube's 
+                    //      attribute is not equal to the given selected attribute uri
+                    if ((   false === _.isNull(selectedAttributeUri)
+                            && 
+                            ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                              || true === _.isUndefined(seriesObservation [selectedAttributeUri])))
                         && 
-                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
-                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                            selectedAttributeUri !== seriesObservation ["http://purl.org/linked-data/cube#attribute"]) {
                         // TODO implement a way to handle ignored observations
                         return;
                     }
