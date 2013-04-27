@@ -2277,7 +2277,7 @@ var View_IndexAction_Visualization = (function (_super) {
         if((false === _.isNull(this.app._.data.selectedComponents.attribute) && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
             if(false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
             } else {
-                selectedAttributeUri = this.app._.data.selectedComponents.attribute["__cv_uri"];
+                selectedAttributeUri = this.app._.data.selectedComponents.attribute["http://purl.org/linked-data/cube#attribute"];
             }
         }
         if(false === _.isUndefined(this.app._.generatedVisualization)) {
