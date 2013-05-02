@@ -15,12 +15,16 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onStart_application",
+                handler: this.onStart_application
+            },
+            {
                 name:    "onChange_selectedDS",
                 handler: this.onChange_selectedDS
             },
             {
-                name:    "onStart_application",
-                handler: this.onStart_application
+                name:    "onChange_selectedSlice",
+                handler: this.onChange_selectedSlice
             }
         ]); 
     }
@@ -173,8 +177,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      *
      */
     public destroy() : CubeViz_View_Abstract
-    {
-        // 
+    { 
         _.each(this.collection._, function(component){
             // set dialog to initial state
             $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri)
@@ -268,6 +271,61 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 }
             );
         });
+    }
+    
+    /**
+     * If a slice was selected, all component elements has to be adapted according
+     * to the fixed dimension elements of the slice.
+     */
+    public onChange_selectedSlice(event) : void 
+    {
+        // no slice was selected
+        if (0 === _.size(this.app._.data.selectedSlice)) {
+            
+        // slice selected
+        } else {
+            var componentBox = null,
+                dialogDiv = null,
+                dimensionRelation = "",
+                fixedDimensionElement = "",
+                self = this;
+            
+            // go through all component dimensions
+            _.each(this.app._.data.components.dimensions, function(dimension){
+                
+                /**
+                 * Check if current dimension has a relation to a dimension
+                 * which is part of the selected slice
+                 */
+                // e.g.: http://example.cubeviz.org/cubeWithMaterializedSlices/properties/geo
+                dimensionRelation = dimension ["http://purl.org/linked-data/cube#dimension"];
+                
+                fixedDimensionElement = self.app._.data.selectedSlice [dimensionRelation];
+                 
+                // if slice has that relation
+                if (false === _.str.isBlank(fixedDimensionElement)) {
+                    
+                    _.each(dimension.__cv_elements, function(element){
+                        
+                        if (element.__cv_uri == fixedDimensionElement) {
+                            // set fixed element as the only element of the selected dimension
+                            self.app._.data.selectedComponents.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
+                        }
+                    });
+                }
+            });
+                
+            // update number of X dimensions
+            this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
+                getMultipleDimensions (this.app._.data.selectedComponents.dimensions));
+            this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
+                getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
+            
+            // rebuild all dialogs based on the fixed set of dimension elements
+            this
+                .destroy()
+                .initialize();
+        }
     }
     
     /**

@@ -1652,12 +1652,16 @@ var View_DataselectionModule_Component = (function (_super) {
         _super.call(this, "View_CubeVizModule_Component", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }, 
+            {
                 name: "onChange_selectedDS",
                 handler: this.onChange_selectedDS
             }, 
             {
-                name: "onStart_application",
-                handler: this.onStart_application
+                name: "onChange_selectedSlice",
+                handler: this.onChange_selectedSlice
             }
         ]);
     }
@@ -1752,6 +1756,33 @@ var View_DataselectionModule_Component = (function (_super) {
                 CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
         });
+    };
+    View_DataselectionModule_Component.prototype.onChange_selectedSlice = function (event) {
+        if(0 === _.size(this.app._.data.selectedSlice)) {
+        } else {
+            var componentBox = null;
+            var dialogDiv = null;
+            var dimensionRelation = "";
+            var fixedDimensionElement = "";
+            var self = this;
+
+            _.each(this.app._.data.components.dimensions, function (dimension) {
+                dimensionRelation = dimension["http://purl.org/linked-data/cube#dimension"];
+                fixedDimensionElement = self.app._.data.selectedSlice[dimensionRelation];
+                if(false === _.str.isBlank(fixedDimensionElement)) {
+                    _.each(dimension.__cv_elements, function (element) {
+                        if(element.__cv_uri == fixedDimensionElement) {
+                            self.app._.data.selectedComponents.dimensions[dimension.__cv_uri].__cv_elements = {
+                                0: element
+                            };
+                        }
+                    });
+                }
+            });
+            this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
+            this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
+            this.destroy().initialize();
+        }
     };
     View_DataselectionModule_Component.prototype.onClick_cancel = function (event) {
         CubeViz_View_Helper.closeDialog($(event.target).data("dialogDiv"));
