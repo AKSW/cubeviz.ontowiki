@@ -404,7 +404,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         if ( 1 == numberOfSelectedElements 
              && 2 == this.app._.data.numberOfMultipleDimensions) {
             var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
-            
+
             // deactivate all unchecked checkboxes
             _.each(checkboxes, function(checkbox){
                 if(!$(checkbox).attr("checked")) {
@@ -548,6 +548,9 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
             selectedElements.size()
         );
+        
+        // save new number of selected elements
+        dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         
         // update number of X dimensions
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.

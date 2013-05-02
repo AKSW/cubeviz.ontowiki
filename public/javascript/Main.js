@@ -652,7 +652,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                     name: seriesElement.self.__cv_niceLabel
                 };
                 _.each(seriesElement.observations, function (seriesObservation) {
-                    if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
+                    if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
                         return;
                     }
                     uriCombination = "";
@@ -1867,6 +1867,7 @@ var View_DataselectionModule_Component = (function (_super) {
         });
         this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements = selectedElements.toObject();
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
+        dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
@@ -2395,7 +2396,7 @@ var View_IndexAction_Visualization = (function (_super) {
         if((false === _.isNull(this.app._.data.selectedComponents.attribute) && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
             if(false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
             } else {
-                selectedAttributeUri = this.app._.data.selectedComponents.attribute["__cv_uri"];
+                selectedAttributeUri = this.app._.data.selectedComponents.attribute["http://purl.org/linked-data/cube#attribute"];
             }
         }
         if(false === _.isUndefined(this.app._.generatedVisualization)) {

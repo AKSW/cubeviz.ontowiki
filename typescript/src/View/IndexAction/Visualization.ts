@@ -188,7 +188,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             if (false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
                 // attribute uri is null
             } else {
-                selectedAttributeUri = this.app._.data.selectedComponents.attribute["__cv_uri"];
+                selectedAttributeUri = this.app._.data.selectedComponents.attribute["http://purl.org/linked-data/cube#attribute"];
             }
         }
         
