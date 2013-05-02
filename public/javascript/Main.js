@@ -1267,10 +1267,6 @@ var View_DataselectionModule_Slice = (function (_super) {
         this.initialize();
     };
     View_DataselectionModule_Slice.prototype.render = function () {
-        console.log("");
-        console.log("slices");
-        console.log(this.app._.data.slices);
-        console.log(this.app._.data.selectedSlices);
         this.triggerGlobalEvent("onBeforeRender_slice");
         var label = "";
         var description = "";
@@ -1310,6 +1306,15 @@ var View_DataselectionModule_Slice = (function (_super) {
             var elementContainer = null;
             var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
 
+            elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                __cv_uri: "__cv_noSlice",
+                radioCSSClass: "cubeviz-dataSelectionModule-sliceRadio",
+                radioName: "cubeviz-dataSelectionModule-sliceRadio",
+                radioValue: "true"
+            }));
+            $(elementContainer.children().last()).css("font-weight", "bold");
+            elementList.append(elementContainer);
             this.collection.sortAscendingBy("__cv_niceLabel").each(function (element) {
                 elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
                     __cv_niceLabel: element.__cv_niceLabel,

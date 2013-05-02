@@ -111,14 +111,8 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
      * 
      */
     public render() : CubeViz_View_Abstract
-    {
-        console.log("");
-        console.log("slices");
-        console.log(this.app._.data.slices);
-        console.log(this.app._.data.selectedSlices);
-        
+    {        
         this.triggerGlobalEvent("onBeforeRender_slice");
-        
         
         /**
          * check if slice label and description are setable
@@ -201,12 +195,30 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                 .hide();
             
             
-            /**
-             * Fill in elements
-             */
+            // add element, which is not a slice but if you choose it, you tell CubeViz
+            // not to use any slice for now
             var elementContainer = null,
                 elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
             
+            elementContainer = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(),
+                {
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                    __cv_uri: "__cv_noSlice",
+                    radioCSSClass: "cubeviz-dataSelectionModule-sliceRadio",
+                    radioName: "cubeviz-dataSelectionModule-sliceRadio",
+                    radioValue: "true"
+                }
+            ));
+            
+            // style first element
+            $(elementContainer.children().last())
+                .css ("font-weight", "bold");
+            
+            elementList.append (elementContainer);
+            
+            
+            // ... and add list entries with radio button and label
             this.collection
                 
                 // sort
