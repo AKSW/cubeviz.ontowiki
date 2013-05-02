@@ -1,4 +1,4 @@
-@base           <http://example.cubeviz.org/datacube/> .
+@base           <http://example.cubeviz.org/cubeWithMaterializedSlices/> .
 @prefix owl:    <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
@@ -87,7 +87,7 @@ ex:MatSliceKey1 a qb:SliceKey ;
 
 ex:MatSliceKey2 a qb:SliceKey ; 
     rdfs:label "Slice key 2" ;
-    qb:componentProperty ex:date .
+    qb:componentProperty ex:geo .
 
 
 # materialized slices
@@ -95,7 +95,7 @@ ex:MatSlice1 rdfs:label "First Materialized Slice" ;
              
              qb:sliceStructure ex:MatSliceKey1 ;      # associated slice key
              
-             ex:date ex:Y2001 ;                         # the fixed dimension element
+             ex:date ex:Y2001 ;                       # the fixed dimension element
              
              qb:observation ex:obs1 ;
              qb:observation ex:obs2 ;
@@ -105,14 +105,15 @@ ex:MatSlice2 rdfs:label "Another materialized Slice" ;
              qb:sliceStructure ex:MatSliceKey1;
              ex:date ex:Y2001 ;
              qb:observation ex:obs4 ;
-             qb:observation ex:obs5 ;
+             qb:observation ex:obs5 ; 
              qb:observation ex:obs6 .
 
 
-ex:MatSlice3 rdfs:label "Materialized slice with one observation" ;
+ex:MatSlice3 rdfs:label "Materialized with fixed country and variable date" ;
              qb:sliceStructure ex:MatSliceKey2;
-             ex:date ex:Y2001 ;
-             qb:observation ex:obs7 .
+             ex:geo ex:Helgoland ;
+             qb:observation ex:obs7 ;
+             qb:observation ex:obs8 .
 
 
 #
@@ -200,6 +201,22 @@ ex:obs6 a qb:Observation ;
     exProp:anotherValue "0.3"^^<http://www.w3.org/2001/XMLSchema#float> ;
     rdfs:label "Helgoland in 2001" .
 
+ex:obs7 a qb:Observation ;
+    qb:dataSet ex:dataset ;
+    exProp:date ex:Y2001 ;
+    exProp:anotherUnit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:anotherValue "0.3"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2001" .
+
+ex:obs8 a qb:Observation ;
+    qb:dataSet ex:dataset ;
+    exProp:date ex:Y2002 ;
+    exProp:anotherUnit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:anotherValue "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2002" .
+
 
 #
 # Additional Stuff #############################################################
@@ -219,3 +236,7 @@ ex:Helgoland a exProp:geo ;
 ex:Y2001 a ex:date ;
     rdfs:label "Year 2001"@en ;
     rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." .
+       
+ex:Y2002 a ex:date ;
+    rdfs:label "Year 2002"@en ;
+    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." .
