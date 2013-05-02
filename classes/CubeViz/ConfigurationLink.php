@@ -241,10 +241,19 @@ class CubeViz_ConfigurationLink
          * slices
          */
         if (0 == count($config['slices'])) {
-            $config['slices'] = $query->getSliceKeys(
+            
+            $config['slices'] = array ();
+            
+            // get slice keys
+            $sliceKeys = $query->getSliceKeys(
                 $config['selectedDSD']['__cv_uri'],
                 $config['selectedDS']['__cv_uri']
             );
+            
+            // collect all slices in one list
+            foreach ($sliceKeys as $sliceKey) {
+                $config['slices'] = array_merge ($config['slices'], $sliceKey ['slices']);
+            }
         }
         
         /**

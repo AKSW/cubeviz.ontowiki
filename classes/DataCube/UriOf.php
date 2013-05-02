@@ -14,6 +14,7 @@ class DataCube_UriOf
 {    
     // namespace
     const Qb = "http://purl.org/linked-data/cube#";
+    const Cube = "http://purl.org/linked-data/cube#";
     
     // cube concepts
     const DataStructureDefinition = "http://purl.org/linked-data/cube#DataStructureDefinition";
@@ -33,5 +34,6 @@ class DataCube_UriOf
     const Measure = "http://purl.org/linked-data/cube#measure";
     const Order = "http://purl.org/linked-data/cube#order";
     const SliceKey = "http://purl.org/linked-data/cube#sliceKey";
+    const SliceStructure = "http://purl.org/linked-data/cube#sliceStructure";
     const Structure = "http://purl.org/linked-data/cube#structure";
 }

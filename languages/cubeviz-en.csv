@@ -34,7 +34,13 @@ DataSelectionModule_SelectComponentsIconText;What is a dimension and why should 
 DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
 DataSelectionModule_SelectDS;Select a dataset
 DataSelectionModule_Selected;Selected
+DataSelectionModule_SelectSlice;Select dataset filter
+DataSelectionModule_SelectSliceIconText;Why do i should use dataset filter?
 DataSelectionModule_ShowVisualization;Show Visualization
+DataSelectionModule_SliceDialogDescription;A dataset filter set a fix amount of dimension elements. Its purpose is to give you a specific view of the data.
+DataSelectionModule_SliceDialogTitle;Dataset filter selection
+DataSelectionModule_SliceHelpDialogDescription;A dataset filter set a fix amount of dimension elements. Its purpose is to give you a specific view of the data. In general, the author of the data you see, use slices to show you remarkable observations or interesting facts.
+DataSelectionModule_SliceHelpDialogTitle;Why do i should use dataset filter?
 DataSelectionModule_SortBy;Sort By
 
 IndexAction_ClickMoreInformation;Click For More Information

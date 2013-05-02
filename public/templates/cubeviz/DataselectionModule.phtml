@@ -57,20 +57,33 @@
     <!-- 
         slice 
     -->
-    <div class="cubeviz-dataSelectionModule-leftBlock">
-        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
-             style="width: 16px; margin-left: 8px;"
-             title="<?php echo $this->translate->_('DataSelectionModule_SelectDS'); ?>"/>
-    </div>
-    <div class="cubeviz-dataSelectionModule-middleBlock">
-        <div id="cubeviz-slice-label"></div>
-        <span class="cubeviz-dataSelectionModule-smallDescription"
-              id="cubeviz-slice-description"></span>
-    </div>
-    <div class="cubeviz-dataSelectionModule-rightBlock">
-        <i class="icon-cogs cubeviz-clickable"
-           id="cubeviz-slice-dialogOpener"
-           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+    <div id="cubeviz-dataSelectionModule-sliceBlock">
+        
+        <div class="cubeviz-dataSelectionModule-headline">
+            <div style="float: left;">
+                <?php echo $this->translate->_('DataSelectionModule_SelectSlice'); ?>
+            </div>
+            <div style="float: right; margin-right: 2px;">
+                <i class="icon-question-sign cubeviz-clickable" 
+                   id="cubeviz-slice-questionmark"
+                   title="<?php echo $this->translate->_('DataSelectionModule_SelectSliceIconText'); ?>"></i></div>
+        
+        </div>
+        
+        <div class="cubeviz-dataSelectionModule-leftBlock">
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
+                 style="width: 16px; margin-left: 8px;"/>
+        </div>
+        <div class="cubeviz-dataSelectionModule-middleBlock">
+            <div id="cubeviz-slice-label"></div>
+            <span class="cubeviz-dataSelectionModule-smallDescription"
+                  id="cubeviz-slice-description"></span>
+        </div>
+        <div class="cubeviz-dataSelectionModule-rightBlock">
+            <i class="icon-cogs cubeviz-clickable"
+               id="cubeviz-slice-dialogOpener"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectSlice'); ?>"></i>
+        </div>
     </div>
     
     <!-- 
@@ -403,6 +416,16 @@
     <?php echo $this->translate->_('DataSelectionModule_MeasureDialogDescription'); ?>
 </div>
 
-<div id="cubeviz-dataSelectionModule-tra-sliceDialog" style="display: none;">
-    <?php echo $this->translate->_('DataSelectionModule_SliceDialogLabel'); ?>
+<!-- slice dialog -->
+<div id="cubeviz-dataSelectionModule-tra-sliceDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SliceDialogTitle'); ?>
+</div>
+<div id="cubeviz-dataSelectionModule-tra-sliceDialogDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SliceDialogDescription'); ?>
+</div>
+<div id="cubeviz-dataSelectionModule-tra-sliceHelpDialogTitle" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SliceHelpDialogTitle'); ?>
+</div>
+<div id="cubeviz-dataSelectionModule-tra-sliceHelpDialogDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_SliceHelpDialogDescription'); ?>
 </div>

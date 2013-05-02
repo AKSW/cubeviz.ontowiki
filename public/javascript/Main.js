@@ -1241,6 +1241,27 @@ var View_DataselectionModule_Slice = (function (_super) {
         this.render();
     };
     View_DataselectionModule_Slice.prototype.onChange_selectedDS = function () {
+        throw "No onChange_selectedDS for Slice implemented!";
+    };
+    View_DataselectionModule_Slice.prototype.onClick_closeAndUpdate = function (event) {
+        throw "No onClick_closeAndUpdate for Slice implemented!";
+    };
+    View_DataselectionModule_Slice.prototype.onClick_dialogOpener = function (event) {
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-slice"));
+    };
+    View_DataselectionModule_Slice.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "slice",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-sliceHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-slice");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
     };
     View_DataselectionModule_Slice.prototype.onStart_application = function () {
         this.initialize();
@@ -1250,6 +1271,65 @@ var View_DataselectionModule_Slice = (function (_super) {
         console.log("slices");
         console.log(this.app._.data.slices);
         console.log(this.app._.data.selectedSlices);
+        this.triggerGlobalEvent("onBeforeRender_slice");
+        var label = "";
+        var description = "";
+
+        if(0 === _.size(this.app._.data.slices)) {
+            $("#cubeviz-dataSelectionModule-sliceBlock").hide();
+        } else {
+            $("#cubeviz-dataSelectionModule-sliceBlock").show();
+            if(0 === _.keys(this.app._.data.selectedSlice).length) {
+                label = "[No DataSet filter was selected yet]";
+            } else {
+                label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
+                description = this.app._.data.selectedComponents.attribute.__cv_description;
+            }
+            $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogTitle").html(),
+                __cv_hashedUri: "slice",
+                __cv_description: "",
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
+                __cv_title: ""
+            }));
+            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-slice");
+            CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+                closeOnEscape: true,
+                showCross: true,
+                width: 650
+            });
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+            $("#cubeviz-slice-dialogOpener").data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
+            var elementContainer = null;
+            var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+
+            this.collection.sortAscendingBy("__cv_niceLabel").each(function (element) {
+                elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                    __cv_niceLabel: element.__cv_niceLabel,
+                    __cv_uri: element.__cv_uri,
+                    radioCSSClass: "cubeviz-dataSelectionModule-sliceRadio",
+                    radioName: "cubeviz-dataSelectionModule-sliceRadio",
+                    radioValue: element.__cv_uri
+                }));
+                elementList.append(elementContainer);
+            });
+            this.bindUserInterfaceEvents({
+                "click #cubeviz-slice-dialogOpener": this.onClick_dialogOpener
+            });
+        }
+        $("#cubeviz-slice-label").html(_.str.prune(label, 24, "..")).attr("title", label);
+        $("#cubeviz-slice-description").html(_.str.prune(description, 55, "..")).attr("title", description);
+        this.triggerGlobalEvent("onAfterRender_slice");
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-slice-questionmark": this.onClick_questionmark
+        });
         return this;
     };
     return View_DataselectionModule_Slice;

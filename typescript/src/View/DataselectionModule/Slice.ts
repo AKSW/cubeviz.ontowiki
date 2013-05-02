@@ -53,7 +53,51 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
     public onChange_selectedDS() 
     {
         throw "No onChange_selectedDS for Slice implemented!";
-    }    
+    }
+    
+    /**
+     *
+     */
+    public onClick_closeAndUpdate(event) : void 
+    {
+        throw "No onClick_closeAndUpdate for Slice implemented!";
+    }
+    
+    /**
+     *
+     */
+    public onClick_dialogOpener(event) : void 
+    {        
+        // open dialog
+        CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-slice"));
+    }
+    
+    /**
+     *
+     */
+    public onClick_questionmark(event) : void 
+    {
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
+            {
+                __cv_id: "slice",
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-sliceHelpDialogDescription").html()
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-slice");
+        
+        // setup jquery dialog
+        CubeViz_View_Helper.attachDialogTo(
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
+        
+        // open dialog
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    }
     
     /**
      *
@@ -84,14 +128,17 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         
         // no slices are available
         if (0 === _.size(this.app._.data.slices)) {
-            label = "[no slices found]";
+        
+            $("#cubeviz-dataSelectionModule-sliceBlock").hide();
         
         // there are at least one slice key / slice available
         } else {
             
+            $("#cubeviz-dataSelectionModule-sliceBlock").show();
+            
             // slices are available, but no slice was selected
             if (0 === _.keys(this.app._.data.selectedSlice).length) {
-                label = "[No DataSet filter was selected yet]";
+                label = "[No DataSet filter was selected yet]"; // TODO: translate
                 
             // slices are available and there is one selected
             } else {
@@ -103,12 +150,15 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
                 {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(), 
-                    __cv_hashedUri: "attribute"
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogTitle").html(), 
+                    __cv_hashedUri: "slice",
+                    __cv_description: "",
+                    shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
+                    __cv_title: ""
                 }
             ));
             
-            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
+            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-slice");
             
             // setup jquery dialog
             CubeViz_View_Helper.attachDialogTo(
@@ -122,7 +172,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
             $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
             
             // attach dialog div to dialog opener link
-            $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
+            $("#cubeviz-slice-dialogOpener").data("dialogDiv", dialogDiv);
             
             // attach dialog div to "cancel" button
             $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
@@ -154,14 +204,10 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
             /**
              * Fill in elements
              */
-            var attributeElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
-                elementContainer = null,
+            var elementContainer = null,
                 elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
             
-            attributeElements
-                
-                // add elements of current component
-                .addList(this.app._.data.components.slices)
+            this.collection
                 
                 // sort
                 .sortAscendingBy("__cv_niceLabel")
@@ -190,7 +236,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
              * Delegate events to new items of the template
              */
             this.bindUserInterfaceEvents({
-                "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
+                "click #cubeviz-slice-dialogOpener": this.onClick_dialogOpener
             });
         }
         
@@ -213,6 +259,10 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         ).attr ("title", description);
         
         this.triggerGlobalEvent("onAfterRender_slice");
+        
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-slice-questionmark": this.onClick_questionmark
+        });
         
         return this;
     }

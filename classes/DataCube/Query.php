@@ -481,19 +481,15 @@ class DataCube_Query
      */
     public function getSlices($sliceKeyUrl) 
     {
-        $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+        $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
             WHERE {
-              <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
-
-              <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
-
-              <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
-
-              ?sliceKey ?p ?o.
-        }');
+              ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
+              
+              ?slice ?p ?o.
+            }');
         
         // generate an associated array where ds is mainkey and using p and o for the rest
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
+        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'slice', 'p', 'o');
         
         // enrich generated array with CubeViz sugar
         $result = $this->enrichResult($result);
