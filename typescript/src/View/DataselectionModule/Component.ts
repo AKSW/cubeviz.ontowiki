@@ -37,11 +37,21 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
             {
                 __cv_niceLabel: component.__cv_niceLabel, 
-                __cv_hashedUri: component.__cv_hashedUri
+                __cv_hashedUri: component.__cv_hashedUri,
+                __cv_description: component.__cv_description,
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+                __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
             }
         ));
         
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
+        
+        // if no description for the component dimension was given, hide related area
+        if (true == _.str.isBlank(component.__cv_description)) {
+            // hide description div in dialog
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0))
+                .hide();
+        }
         
         dialogDiv
             .data("componentBox", componentBox)
@@ -182,16 +192,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     }
     
     /**
-     * Hide spinner.
-     */
-    public hideSpinner() : void
-    {
-        $("#cubeviz-module-spinner").slideUp("slow", function() {
-            $("#cubeviz-module-dataSelection").slideDown("slow");
-        });
-    }
-    
-    /**
      *
      */
     public initialize() 
@@ -264,7 +264,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     
                     self.render();
                     
-                    self.hideSpinner();
+                    CubeViz_View_Helper.hideLeftSidebarSpinner();
                 }
             );
         });
@@ -361,7 +361,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
                 
                 // if only module was loaded, move reloading stuff to footer.ts
-                CubeViz_View_Helper.closeDialog(dialogDiv);
+                CubeViz_View_Helper.closeDialog(dialogDiv);            
             }
         );        
     }
@@ -476,6 +476,33 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         _.each(modifiedItemList, function(item){
             list.append(item);
         });
+    }
+    
+    /**
+     *
+     */
+    public onClick_questionmark(event) : void 
+    {
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
+            {
+                __cv_id: "component",
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogDescription").html()
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-component");
+        
+        // setup jquery dialog
+        CubeViz_View_Helper.attachDialogTo(
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
+        
+        // open dialog
+        CubeViz_View_Helper.openDialog(dialogDiv);
     }
     
     /**
@@ -612,11 +639,24 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             // short label to prevent use two instead of one lines
             dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
             
+            // short description
+            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
+            
             // build html out of template
             componentBox = $(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-component-tpl-listBoxItem").html(),
                 dimension
             ));
+            
+            // hide if component dimension contains only one element
+            if (1 === dimension.__cv_elementCount) {
+                // hide dialog opener
+                $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
+                    .hide();
+                // hide X selected of Y
+                $(componentBox.find(".cubeviz-component-selectedElementsBlock").get(0))
+                    .hide();    
+            }
             
             // get opener link
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0))
@@ -646,7 +686,14 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         /**
          * Delegate events to new items of the template
          */
-        this.bindUserInterfaceEvents({         
+        this.bindUserInterfaceEvents({       
+            
+            "click .cubeviz-component-setupComponentOpener": 
+                this.onClick_setupComponentOpener,
+                
+            "click #cubeviz-component-questionmark": 
+                this.onClick_questionmark,
+              
             "click .cubeviz-dataSelectionModule-cancelBtn": 
                 this.onClick_cancel,
                 
@@ -655,9 +702,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 
             "click .cubeviz-dataSelectionModule-selectAllButton": 
                 this.onClick_selectAllButton,
-                
-            "click .cubeviz-component-setupComponentOpener": 
-                this.onClick_setupComponentOpener,
             
             "click .cubeviz-dataSelectionModule-dialogSortButtons": 
                 this.onClick_sortButton
@@ -665,7 +709,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         
         this.triggerGlobalEvent("onAfterRender_component");
         
-        this.hideSpinner();
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
         
         return this;
     }

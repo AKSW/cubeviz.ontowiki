@@ -103,6 +103,9 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         // to let the user know that CubeViz did something.    
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         
+        // show spinner
+        CubeViz_View_Helper.showLeftSidebarSpinner();
+        
         // get attribute with given uri
         selectedAttribute = attributes
             .addList(this.app._.data.components.attributes)
@@ -124,6 +127,9 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
 
         // trigger event
         this.triggerGlobalEvent("onChange_selectedAttribute");
+        
+        // hide spinner
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     }
     
     /**
@@ -160,6 +166,33 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
     /**
      *
      */
+    public onClick_questionmark(event) : void 
+    {
+        // set dialog reference and template
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-dataSelectionModule-tpl-helpDialog").html(),
+            {
+                __cv_id: "attributeAndMeasure",
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogTitle").html(), 
+                __cv_description: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogDescription").html()
+            }
+        ));
+        
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-attributeAndMeasure");
+        
+        // setup jquery dialog
+        CubeViz_View_Helper.attachDialogTo(
+            dialogDiv,
+            {closeOnEscape: true, showCross: true, width: 500}
+        );
+        
+        // open dialog
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    }
+    
+    /**
+     *
+     */
     public onStart_application() 
     {
         this.initialize();
@@ -184,6 +217,10 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
             || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
+            
+            // hide attribute block
+            $("#cubeviz-dataSelectionModule-attributeBlock").hide();
+            
         } else {
             label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
             description = this.app._.data.selectedComponents.attribute.__cv_description; 
@@ -214,100 +251,116 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
          */
         // if attribute is available ...
         if (false === noAttribute) {
-            
-            // set dialog reference and template
-            $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
-                {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(), 
-                    __cv_hashedUri: "attribute"
-                }
-            ));
-            
-            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
-            
-            // setup jquery dialog
-            CubeViz_View_Helper.attachDialogTo(
-                dialogDiv,
-                {closeOnEscape: true, showCross: true, width: 650}
-            );
-            
-            // hide a couple of buttons
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
-            
-            // attach dialog div to dialog opener link
-            $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
-            
-            // attach dialog div to "cancel" button
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
-                .data("dialogDiv", dialogDiv);
+
+            if (1 == _.size(this.app._.data.components.attributes)) {
                 
-            // attach dialog div to "close and update" button
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0))
-                .data("dialogDiv", dialogDiv)
-                .on("click", $.proxy(this.onClick_closeAndUpdate, this));
+                $("#cubeviz-attribute-dialogOpener").hide();
                 
-                
-            /**
-             * Sort buttons
-             */
-            // attach dialog div to "alphabet" button
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
-                .data("dialogDiv", dialogDiv)
-                .data("type", "alphabet");
-                
-            // attach dialog div to "check status" button
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
-                .hide();
-                
-            // attach dialog div to "observation count" button
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
-                .hide();
+            } else {
             
-            
-            /**
-             * Fill in elements
-             */
-            var attributeElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
-                elementContainer = null,
-                elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
-            
-            attributeElements
+                // set dialog reference and template
+                $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-dataSelectionModule-tpl-dialog").html(),
+                    {
+                        __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogTitle").html(), 
+                        __cv_hashedUri: "attribute",
+                        __cv_description: "",
+                        shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
+                        __cv_title: ""
+                    }
+                ));
                 
-                // add elements of current component
-                .addList(this.app._.data.components.attributes)
+                var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
                 
-                // sort
-                .sortAscendingBy("__cv_niceLabel")
+                // setup jquery dialog
+                CubeViz_View_Helper.attachDialogTo(
+                    dialogDiv,
+                    {closeOnEscape: true, showCross: true, width: 650}
+                );
                 
-                // Go through all elements of the given list ..
-                .each(function(element){
+                // hide description div in dialog
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0))
+                    .hide();
+                
+                // hide a couple of buttons
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+                
+                // attach dialog div to dialog opener link
+                $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
+                
+                // attach dialog div to "cancel" button
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0))
+                    .data("dialogDiv", dialogDiv);
                     
-                    elementContainer = $(CubeViz_View_Helper.tplReplace(
-                        $("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(),
-                        {
-                            __cv_niceLabel: element.__cv_niceLabel,
-                            __cv_uri: element.__cv_uri,
-                            radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
-                            radioName: "cubeviz-dataSelectionModule-attributeRadio",
-                            radioValue: element.__cv_uri
-                        }
-                    ));
+                // attach dialog div to "close and update" button
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0))
+                    .data("dialogDiv", dialogDiv)
+                    .on("click", $.proxy(this.onClick_closeAndUpdate, this));
                     
-                    // ... and add list entries with radio button and label
-                    elementList.append(elementContainer);
                     
+                /**
+                 * Sort buttons
+                 */
+                // attach dialog div to "alphabet" button
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0))
+                    .data("dialogDiv", dialogDiv)
+                    .data("type", "alphabet");
+                    
+                // attach dialog div to "check status" button
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1))
+                    .hide();
+                    
+                // attach dialog div to "observation count" button
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2))
+                    .hide();
+                
+                
+                /**
+                 * Fill in elements
+                 */
+                var attributeElements:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+                    elementContainer = null,
+                    elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+                
+                attributeElements
+                    
+                    // add elements of current component
+                    .addList(this.app._.data.components.attributes)
+                    
+                    // sort
+                    .sortAscendingBy("__cv_niceLabel")
+                    
+                    // Go through all elements of the given list ..
+                    .each(function(element){
+                        
+                        elementContainer = $(CubeViz_View_Helper.tplReplace(
+                            $("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(),
+                            {
+                                __cv_niceLabel: element.__cv_niceLabel,
+                                __cv_uri: element.__cv_uri,
+                                radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
+                                radioName: "cubeviz-dataSelectionModule-attributeRadio",
+                                radioValue: element.__cv_uri
+                            }
+                        ));
+                        
+                        // ... and add list entries with radio button and label
+                        elementList.append(elementContainer);
+                        
+                    });
+                    
+                
+                /**
+                 * Delegate events to new items of the template
+                 */
+                this.bindUserInterfaceEvents({
+                    "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
                 });
                 
-            
-            /**
-             * Delegate events to new items of the template
-             */
-            this.bindUserInterfaceEvents({
-                "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
-            });
+                $("#cubeviz-attribute-dialogOpener").show();
+            }
             
         // if no attribute is available ...
         } else {
@@ -316,17 +369,10 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         
         this.triggerGlobalEvent("onAfterRender_attribute");
         
-        return this;
-    }
-    
-    /**
-     * Show a spinner to let the user know that something is working.
-     * @return void
-     */
-    public showSpinner() : void
-    {        
-        $("#cubeviz-module-dataSelection").slideUp("slow", function(){
-            $("#cubeviz-module-spinner").slideDown("slow");
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-attributeAndMeasure-questionmark": this.onClick_questionmark
         });
+        
+        return this;
     }
 }

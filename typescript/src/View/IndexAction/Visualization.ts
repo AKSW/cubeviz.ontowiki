@@ -224,7 +224,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            selectedMeasure["__cv_uri"],
+            selectedMeasure["http://purl.org/linked-data/cube#measure"],
             selectedAttributeUri
         );
                 

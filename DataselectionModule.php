@@ -78,14 +78,19 @@ class DataselectionModule extends OntoWiki_Module
             ->appendFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
             ->appendScript ('_.mixin(_.str.exports());') // for underscore.string
             
-            ->appendFile ($baseJavascriptPath. 'Main.js',                          'text/javascript')
             ->appendFile ($basePath.           'ChartConfig.js',                   'text/javascript');
             
-        // If this module is in the development context
+        // If this module is in the "development" context
         if('development' === $this->_privateConfig->get('context')) {
             $this->view->headScript()
                 ->appendFile ($baseJavascriptPath. 'libraries/munit.js', 'text/javascript')
-                ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript');
+                ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Main.js', 'text/javascript');
+        
+        // otherwise it is in "production" context
+        } else {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'Main-production.js', 'text/javascript');
         }
         
         /**

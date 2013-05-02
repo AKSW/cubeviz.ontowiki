@@ -147,6 +147,6 @@ echo ""
 echo "Tar folder $packageName to $packageName.tar.gz"
 echo ""
 
-rm -f $packageName.tar.gz
-tar czf $packageName.tar.gz $packageName
+rm -f $packageName.7z
+7z a -mx=8 -mfb=64 -md=64m $packageName.7z $packageName
 rm -rf $packageName

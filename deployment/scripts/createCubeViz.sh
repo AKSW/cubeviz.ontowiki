@@ -19,14 +19,16 @@ echo "- Copy files to tar-package folder:"
 echo ""
 rsync -av --exclude='.git' \
 		  --exclude='assets' \
+		  --exclude='ChartConfig.js' \
 		  --exclude='data' \
 		  --exclude='deployment' \
-		  --exclude='tests' \
-		  --exclude='doap.n3-dist' \
-		  --exclude='ChartConfig.js' \
+		  --exclude='doap.n3' \
 		  --exclude='Makefile' \
+		  --exclude='public/javascript/Test.js' \
+		  --exclude='public/javascript/Main.js' \
 		  --exclude='README.md' \
-		  --exclude='typescript' \
+		  --exclude='tests' \
+          --exclude='typescript' \
           $cubevizRoot/* $cubevizRoot/deployment/generated-packages/$packageName
 
 echo ""
@@ -35,10 +37,13 @@ mv $cubevizRoot/deployment/generated-packages/$packageName/LICENSE.md          $
 cp $cubevizRoot/deployment/additional-files/Makefile                           $cubevizRoot/deployment/generated-packages/$packageName
 cp $cubevizRoot/README.md                                                      $cubevizRoot/deployment/generated-packages/$packageName/README.txt
 mv $cubevizRoot/deployment/generated-packages/$packageName/ChartConfig.js.dist $cubevizRoot/deployment/generated-packages/$packageName/ChartConfig.js
+mv $cubevizRoot/deployment/generated-packages/$packageName/doap.n3-dist        $cubevizRoot/deployment/generated-packages/$packageName/doap.n3
 
 echo ""
 echo "- Generate archive"
-cd deployment/generated-packages && rm -f $packageName.tar.gz && tar czf $packageName.tar.gz $packageName
+cd deployment/generated-packages
+rm -f $packageName.7z
+7z a -mx=8 -mfb=64 -md=64m $packageName.7z $packageName
 
 echo ""
 echo "- Remove folder cubeviz"

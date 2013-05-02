@@ -336,6 +336,11 @@ var CubeViz_View_Helper = (function () {
     CubeViz_View_Helper.hideCloseAndUpdateSpinner = function hideCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
+    CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+        });
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
@@ -343,6 +348,11 @@ var CubeViz_View_Helper = (function () {
     }
     CubeViz_View_Helper.showCloseAndUpdateSpinner = function showCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
+    }
+    CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";
@@ -598,15 +608,15 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 return;
             }
             if(null == forXAxis) {
-                forXAxis = selectedDimension["__cv_uri"];
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
-                forSeries = selectedDimension["__cv_uri"];
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
         if(null == forSeries) {
             _.each(selectedComponentDimensions, function (selectedDimension) {
                 if(1 == _.keys(selectedDimension.__cv_elements).length && null == forSeries) {
-                    forSeries = selectedDimension["__cv_uri"];
+                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
                 }
             });
         }
@@ -625,7 +635,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             });
             var selectedDimensionPropertyUris = [];
             _.each(selectedComponentDimensions, function (dimension) {
-                selectedDimensionPropertyUris.push(dimension["__cv_uri"]);
+                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
             });
             var obj = {
             };
@@ -769,7 +779,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
         }
-        var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]["__cv_uri"];
+        var forXAxis = multipleDimensions[_.keys(multipleDimensions)[0]]["http://purl.org/linked-data/cube#dimension"];
         var label = "";
         var observation = new DataCube_Observation();
         var self = this;
@@ -1033,7 +1043,7 @@ var DataCube_Observation = (function () {
                 return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
-                dimensionPropertyUri = dimension["__cv_uri"];
+                dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 observationDimensionProperty = observation[dimensionPropertyUri];
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
                     self._axes[dimensionPropertyUri] = {
@@ -1107,6 +1117,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedDataSet = dataSets.addList(this.app._.data.dataSets).get(dataSetUri);
         this.app._.data.selectedDS = selectedDataSet;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
@@ -1132,55 +1143,76 @@ var View_DataselectionModule_DataSet = (function (_super) {
         });
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-dataSet"));
     };
+    View_DataselectionModule_DataSet.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "dataSet",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-dataSet");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    };
     View_DataselectionModule_DataSet.prototype.onStart_application = function () {
         this.initialize();
     };
     View_DataselectionModule_DataSet.prototype.render = function () {
         this.triggerGlobalEvent("onBeforeRender_dataSet");
         $("#cubeviz-dataSet-label").html(_.str.prune(this.app._.data.selectedDS.__cv_niceLabel, 24, "..")).attr("title", this.app._.data.selectedDS.__cv_niceLabel);
-        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetDialog").html(),
-            __cv_hashedUri: "dataSet"
-        }));
-        var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
-        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
-            closeOnEscape: true,
-            showCross: true,
-            width: 650
-        });
-        $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
-        $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
-        $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
-        $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
-        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
-        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
-        $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
-        var componentElements = new CubeViz_Collection("__cv_uri");
-        var elementContainer = null;
-        var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
-
-        componentElements.addList(this.app._.data.dataSets).sortAscendingBy("__cv_niceLabel").each(function (element) {
-            elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
-                __cv_niceLabel: element.__cv_niceLabel,
-                __cv_uri: element.__cv_uri,
-                radioCSSClass: "cubeviz-dataSelectionModule-dataSetRadio",
-                radioName: "cubeviz-dataSelectionModule-dataSetRadio",
-                radioValue: element.__cv_uri
+        if(1 === _.size(this.app._.data.dataSets)) {
+            $("#cubeviz-dataSet-dialogOpener").hide();
+        } else {
+            $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(),
+                __cv_hashedUri: "dataSet",
+                __cv_description: "",
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html(),
+                __cv_title: ""
             }));
-            elementList.append(elementContainer);
-        });
-        this.bindUserInterfaceEvents({
-            "click #cubeviz-dataSet-dialogOpener": this.onClick_dialogOpener
-        });
+            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
+            CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+                closeOnEscape: true,
+                showCross: true,
+                width: 650
+            });
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+            $("#cubeviz-dataSet-dialogOpener").data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
+            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
+            var componentElements = new CubeViz_Collection("__cv_uri");
+            var elementContainer = null;
+            var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+
+            componentElements.addList(this.app._.data.dataSets).sortAscendingBy("__cv_niceLabel").each(function (element) {
+                elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                    __cv_niceLabel: element.__cv_niceLabel,
+                    __cv_uri: element.__cv_uri,
+                    radioCSSClass: "cubeviz-dataSelectionModule-dataSetRadio",
+                    radioName: "cubeviz-dataSelectionModule-dataSetRadio",
+                    radioValue: element.__cv_uri
+                }));
+                elementList.append(elementContainer);
+            });
+            this.bindUserInterfaceEvents({
+                "click #cubeviz-dataSet-dialogOpener": this.onClick_dialogOpener
+            });
+            $("#cubeviz-dataSet-dialogOpener").show();
+        }
         this.triggerGlobalEvent("onAfterRender_dataSet");
-        return this;
-    };
-    View_DataselectionModule_DataSet.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-dataSet-questionmark": this.onClick_questionmark
         });
+        return this;
     };
     return View_DataselectionModule_DataSet;
 })(CubeViz_View_Abstract);
@@ -1266,12 +1298,14 @@ var View_DataselectionModule_Measure = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedMeasure = measures.addList(this.app._.data.components.measures).get(measureUri);
         this.app._.data.selectedComponents.measure = selectedMeasure;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
         this.triggerGlobalEvent("onChange_selectedMeasure");
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1299,8 +1333,11 @@ var View_DataselectionModule_Measure = (function (_super) {
             $("#cubeviz-measure-dialogOpener").hide();
         } else {
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialog").html(),
-                __cv_hashedUri: "measure"
+                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialogTitle").html(),
+                __cv_hashedUri: "measure",
+                __cv_description: "",
+                shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
+                __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
             CubeViz_View_Helper.attachDialogTo(dialogDiv, {
@@ -1308,6 +1345,7 @@ var View_DataselectionModule_Measure = (function (_super) {
                 showCross: true,
                 width: 650
             });
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
             $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
@@ -1337,11 +1375,6 @@ var View_DataselectionModule_Measure = (function (_super) {
         }
         this.triggerGlobalEvent("onAfterRender_measure");
         return this;
-    };
-    View_DataselectionModule_Measure.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
-        });
     };
     return View_DataselectionModule_Measure;
 })(CubeViz_View_Abstract);
@@ -1391,12 +1424,14 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var self = this;
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.showLeftSidebarSpinner();
         selectedAttribute = attributes.addList(this.app._.data.components.attributes).get(attributeUri);
         this.app._.data.selectedComponents.attribute = selectedAttribute;
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
         this.triggerGlobalEvent("onChange_selectedAttribute");
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
     };
     View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1413,6 +1448,20 @@ var View_DataselectionModule_Attribute = (function (_super) {
         }
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-attribute"));
     };
+    View_DataselectionModule_Attribute.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "attributeAndMeasure",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-attributeAndMeasureHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-attributeAndMeasure");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    };
     View_DataselectionModule_Attribute.prototype.onStart_application = function () {
         this.initialize();
     };
@@ -1425,6 +1474,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
         if(true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
             label = "[no attribute found]";
             noAttribute = true;
+            $("#cubeviz-dataSelectionModule-attributeBlock").hide();
         } else {
             label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
             description = this.app._.data.selectedComponents.attribute.__cv_description;
@@ -1432,52 +1482,59 @@ var View_DataselectionModule_Attribute = (function (_super) {
         $("#cubeviz-attribute-label").html(_.str.prune(label, 24, "..")).attr("title", label);
         $("#cubeviz-attribute-description").html(_.str.prune(description, 55, "..")).attr("title", description);
         if(false === noAttribute) {
-            $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
-                __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialog").html(),
-                __cv_hashedUri: "attribute"
-            }));
-            var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
-            CubeViz_View_Helper.attachDialogTo(dialogDiv, {
-                closeOnEscape: true,
-                showCross: true,
-                width: 650
-            });
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
-            $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
-            $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
-            $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
-            var attributeElements = new CubeViz_Collection("__cv_uri");
-            var elementContainer = null;
-            var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
-
-            attributeElements.addList(this.app._.data.components.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
-                elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
-                    __cv_niceLabel: element.__cv_niceLabel,
-                    __cv_uri: element.__cv_uri,
-                    radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
-                    radioName: "cubeviz-dataSelectionModule-attributeRadio",
-                    radioValue: element.__cv_uri
+            if(1 == _.size(this.app._.data.components.attributes)) {
+                $("#cubeviz-attribute-dialogOpener").hide();
+            } else {
+                $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogTitle").html(),
+                    __cv_hashedUri: "attribute",
+                    __cv_description: "",
+                    shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
+                    __cv_title: ""
                 }));
-                elementList.append(elementContainer);
-            });
-            this.bindUserInterfaceEvents({
-                "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
-            });
+                var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
+                CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+                    closeOnEscape: true,
+                    showCross: true,
+                    width: 650
+                });
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons").get(0)).hide();
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+                $(dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+                $("#cubeviz-attribute-dialogOpener").data("dialogDiv", dialogDiv);
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn")).get(0)).data("dialogDiv", dialogDiv);
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn")).get(0)).data("dialogDiv", dialogDiv).on("click", $.proxy(this.onClick_closeAndUpdate, this));
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(0)).data("dialogDiv", dialogDiv).data("type", "alphabet");
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(1)).hide();
+                $($(dialogDiv.find(".cubeviz-dataSelectionModule-dialogSortButtons")).children().get(2)).hide();
+                var attributeElements = new CubeViz_Collection("__cv_uri");
+                var elementContainer = null;
+                var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
+
+                attributeElements.addList(this.app._.data.components.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
+                    elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                        __cv_niceLabel: element.__cv_niceLabel,
+                        __cv_uri: element.__cv_uri,
+                        radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
+                        radioName: "cubeviz-dataSelectionModule-attributeRadio",
+                        radioValue: element.__cv_uri
+                    }));
+                    elementList.append(elementContainer);
+                });
+                this.bindUserInterfaceEvents({
+                    "click #cubeviz-attribute-dialogOpener": this.onClick_dialogOpener
+                });
+                $("#cubeviz-attribute-dialogOpener").show();
+            }
         } else {
             $("#cubeviz-attribute-dialogOpener").hide();
         }
         this.triggerGlobalEvent("onAfterRender_attribute");
-        return this;
-    };
-    View_DataselectionModule_Attribute.prototype.showSpinner = function () {
-        $("#cubeviz-module-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-module-spinner").slideDown("slow");
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-attributeAndMeasure-questionmark": this.onClick_questionmark
         });
+        return this;
     };
     return View_DataselectionModule_Attribute;
 })(CubeViz_View_Abstract);
@@ -1500,9 +1557,15 @@ var View_DataselectionModule_Component = (function (_super) {
         var self = this;
         $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
             __cv_niceLabel: component.__cv_niceLabel,
-            __cv_hashedUri: component.__cv_hashedUri
+            __cv_hashedUri: component.__cv_hashedUri,
+            __cv_description: component.__cv_description,
+            shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+            __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
         }));
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
+        if(true == _.str.isBlank(component.__cv_description)) {
+            $(dialogDiv.find(".cubeviz-dataSelectionModule-dialog-description").get(0)).hide();
+        }
         dialogDiv.data("componentBox", componentBox).data("component", component);
         CubeViz_View_Helper.attachDialogTo(dialogDiv);
         $(dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).data("dialogDiv", dialogDiv);
@@ -1557,11 +1620,6 @@ var View_DataselectionModule_Component = (function (_super) {
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         return this;
     };
-    View_DataselectionModule_Component.prototype.hideSpinner = function () {
-        $("#cubeviz-module-spinner").slideUp("slow", function () {
-            $("#cubeviz-module-dataSelection").slideDown("slow");
-        });
-    };
     View_DataselectionModule_Component.prototype.initialize = function () {
         this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
@@ -1583,7 +1641,7 @@ var View_DataselectionModule_Component = (function (_super) {
             CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
                 self.app._.backend.dataHash = updatedDataHash;
                 self.render();
-                self.hideSpinner();
+                CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
         });
     };
@@ -1694,6 +1752,20 @@ var View_DataselectionModule_Component = (function (_super) {
             list.append(item);
         });
     };
+    View_DataselectionModule_Component.prototype.onClick_questionmark = function (event) {
+        $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-helpDialog").html(), {
+            __cv_id: "component",
+            __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogTitle").html(),
+            __cv_description: $("#cubeviz-dataSelectionModule-tra-componentHelpDialogDescription").html()
+        }));
+        var dialogDiv = $("#cubeviz-dataSelectionModule-helpDialog-component");
+        CubeViz_View_Helper.attachDialogTo(dialogDiv, {
+            closeOnEscape: true,
+            showCross: true,
+            width: 500
+        });
+        CubeViz_View_Helper.openDialog(dialogDiv);
+    };
     View_DataselectionModule_Component.prototype.readAndSaveSetupComponentDialogChanges = function (dialogDiv, callback) {
         var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children();
         var componentBox = dialogDiv.data("componentBox");
@@ -1754,7 +1826,12 @@ var View_DataselectionModule_Component = (function (_super) {
             }
             dimension.__cv_elementCount = _.size(dimension.__cv_elements);
             dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
+            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
+            if(1 === dimension.__cv_elementCount) {
+                $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).hide();
+                $(componentBox.find(".cubeviz-component-selectedElementsBlock").get(0)).hide();
+            }
             $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).data("dimension", dimension);
             list.append(componentBox);
             self.configureSetupComponentDialog(dimension, componentBox, $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)));
@@ -1762,14 +1839,15 @@ var View_DataselectionModule_Component = (function (_super) {
             self.collection.add(dimension);
         });
         this.bindUserInterfaceEvents({
+            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
+            "click #cubeviz-component-questionmark": this.onClick_questionmark,
             "click .cubeviz-dataSelectionModule-cancelBtn": this.onClick_cancel,
             "click .cubeviz-dataSelectionModule-deselectButton": this.onClick_deselectButton,
             "click .cubeviz-dataSelectionModule-selectAllButton": this.onClick_selectAllButton,
-            "click .cubeviz-component-setupComponentOpener": this.onClick_setupComponentOpener,
             "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton
         });
         this.triggerGlobalEvent("onAfterRender_component");
-        this.hideSpinner();
+        CubeViz_View_Helper.hideLeftSidebarSpinner();
         return this;
     };
     return View_DataselectionModule_Component;
@@ -2051,7 +2129,7 @@ var View_IndexAction_Legend = (function (_super) {
         });
     };
     View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
-        var cubeDimensionUri = "__cv_uri";
+        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension";
         var observationLabel = "";
         var dimensionElements = [];
         var label = "";
@@ -2130,7 +2208,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
-        var selectedMeasureUri = this.app._.data.selectedComponents.measure["__cv_uri"];
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
         this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
@@ -2251,7 +2329,7 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         var hC = new CubeViz_Visualization_HighCharts();
         var chart = hC.load(this.app._.ui.visualization.className);
-        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["__cv_uri"], selectedAttributeUri);
+        chart.init(visualizationSetting, this.app._.backend.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"], selectedAttributeUri);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
             if(0 == _.size(chart.getRenderResult().series)) {

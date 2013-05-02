@@ -74,9 +74,9 @@ class CubeViz_Visualization_HighCharts_Chart
             }
 
             if ( null == forXAxis ) {
-                forXAxis = selectedDimension["__cv_uri"];
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             } else {
-                forSeries = selectedDimension["__cv_uri"];
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             }
         });
         
@@ -87,7 +87,7 @@ class CubeViz_Visualization_HighCharts_Chart
             _.each(selectedComponentDimensions, function(selectedDimension) {
                 if (1 == _.keys(selectedDimension.__cv_elements).length
                     && null == forSeries)
-                    forSeries = selectedDimension["__cv_uri"];
+                    forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
             });
         }
         
@@ -123,7 +123,7 @@ class CubeViz_Visualization_HighCharts_Chart
             var selectedDimensionPropertyUris:string[] = [];
             
             _.each(selectedComponentDimensions, function(dimension){
-                selectedDimensionPropertyUris.push(dimension["__cv_uri"]); 
+                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
             });
             
             /**

@@ -184,7 +184,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public generateList(observations:any[], selectedComponentDimensions:any[], 
         selectedMeasureUri:string) : any[]
     {
-        var cubeDimensionUri = "__cv_uri",
+        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension",
             observationLabel = "",
             dimensionElements:any = [],
             label = "",
@@ -351,7 +351,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
-        var selectedMeasureUri = this.app._.data.selectedComponents.measure["__cv_uri"],
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"],
             self = this;
         
         /**

@@ -324,6 +324,11 @@ var CubeViz_View_Helper = (function () {
     CubeViz_View_Helper.hideCloseAndUpdateSpinner = function hideCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
+    CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+        });
+    }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
         domElement.dialog("open");
         domElement.data("isDialogOpen", true);
@@ -331,6 +336,11 @@ var CubeViz_View_Helper = (function () {
     }
     CubeViz_View_Helper.showCloseAndUpdateSpinner = function showCloseAndUpdateSpinner(dialogDiv) {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
+    }
+    CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function () {
+            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
         var a = "";

@@ -92,7 +92,7 @@ class DataCube_Observation {
             _.each(selectedComponentDimensions, function(dimension){
                 
                 // e.g. http://data.lod2.eu/scoreboard/properties/indicator
-                dimensionPropertyUri = dimension["__cv_uri"];
+                dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 
                 // e.g. http://lod2.eu/score/ind/bb_dsl_TOTAL_FBB__lines
                 observationDimensionProperty = observation[dimensionPropertyUri];
