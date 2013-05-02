@@ -4,7 +4,7 @@
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc:     <http://purl.org/dc/elements/1.1/> .
 
-@prefix qb:   <http://purl.org/linked-data/cube#> .
+@prefix qb:     <http://purl.org/linked-data/cube#> .
 @prefix ex:     <http://example.cubeviz.org/cubeWithMaterializedSlices/> .
 @prefix exProp: <http://example.cubeviz.org/cubeWithMaterializedSlices/properties/> .
 
@@ -22,36 +22,36 @@
 ex:dsd a qb:DataStructureDefinition ;
     rdfs:label "A Data Structure Definition"@en ;
     rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." ;
-    qb:component  <http://example.cubeviz.org/datacube/cs/geo>, 
-                    <http://example.cubeviz.org/datacube/cs/time>,
-                    <http://example.cubeviz.org/datacube/cs/unit>, 
-                    <http://example.cubeviz.org/datacube/cs/value> .
+    qb:component    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/geo>, 
+                    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/time>,
+                    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/unit>, 
+                    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/value> .
 
 
 #
 # Component Specifications
 #
-<http://example.cubeviz.org/datacube/cs/geo> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/geo> a qb:ComponentSpecification ;
     rdfs:label "Component Specification of Region" ;
     qb:dimension exProp:geo .
 
-<http://example.cubeviz.org/datacube/cs/time> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/time> a qb:ComponentSpecification ;
     rdfs:label "Component Specification of Time" ;
     qb:dimension exProp:date .
 
-<http://example.cubeviz.org/datacube/cs/unit> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/unit> a qb:ComponentSpecification ;
     rdfs:label "Component Specification of Unit" ;
     qb:attribute exProp:unit .
 
-<http://example.cubeviz.org/datacube/cs/anotherUnit> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/anotherUnit> a qb:ComponentSpecification ;
     rdfs:label "Another Component Specification of Unit" ;
     qb:attribute exProp:anotherUnit .
 
-<http://example.cubeviz.org/datacube/cs/value> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/value> a qb:ComponentSpecification ;
     rdfs:label "Component Specification of Value" ;
     qb:measure exProp:value .
 
-<http://example.cubeviz.org/datacube/cs/anotherValue> a qb:ComponentSpecification ;
+<http://example.cubeviz.org/cubeWithMaterializedSlices/cs/anotherValue> a qb:ComponentSpecification ;
     rdfs:label "Component Specification of another value" ;
     rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." ;
     qb:measure exProp:anotherValue .
@@ -93,9 +93,9 @@ ex:MatSliceKey2 a qb:SliceKey ;
 # materialized slices
 ex:MatSlice1 rdfs:label "First Materialized Slice" ;
              
-             qb:sliceStructure ex:MatSliceKey1 ;      # associated slice key
+             qb:sliceStructure ex:MatSliceKey1 ;    # associated slice key
              
-             ex:date ex:Y2001 ;                       # the fixed dimension element
+             exProp:date ex:Y2001 ;                 # the fixed dimension element
              
              qb:observation ex:obs1 ;
              qb:observation ex:obs2 ;
@@ -103,7 +103,7 @@ ex:MatSlice1 rdfs:label "First Materialized Slice" ;
 
 ex:MatSlice2 rdfs:label "Another materialized Slice" ;
              qb:sliceStructure ex:MatSliceKey1;
-             ex:date ex:Y2001 ;
+             exProp:date ex:Y2001 ;                 # the fixed dimension element
              qb:observation ex:obs4 ;
              qb:observation ex:obs5 ; 
              qb:observation ex:obs6 .
@@ -111,7 +111,7 @@ ex:MatSlice2 rdfs:label "Another materialized Slice" ;
 
 ex:MatSlice3 rdfs:label "Materialized with fixed country and variable date" ;
              qb:sliceStructure ex:MatSliceKey2;
-             ex:geo ex:Helgoland ;
+             exProp:geo ex:Helgoland ;              # the fixed dimension element
              qb:observation ex:obs7 ;
              qb:observation ex:obs8 .
 
