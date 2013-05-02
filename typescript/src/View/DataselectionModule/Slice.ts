@@ -60,7 +60,47 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
      */
     public onClick_closeAndUpdate(event) : void 
     {
-        throw "No onClick_closeAndUpdate for Slice implemented!";
+        var dialogDiv:any = $(event.target).data("dialogDiv"),
+            slices:CubeViz_Collection = new CubeViz_Collection("__cv_uri"),
+            sliceUri = $("input[name=cubeviz-dataSelectionModule-sliceRadio]:checked").val(),
+            self = this;
+            
+        // Start handling of new configuration, but before start, show a spinner 
+        // to let the user know that CubeViz did something.    
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        
+        // select option that NO slice has to be used
+        if ("noSlice" == sliceUri) {
+            
+            this.app._.data.selectedSlice = {};
+            
+            // output new slice label
+            $("#cubeviz-slice-label").html(_.str.prune(
+                $("#cubeviz-dataSelectionModule-tra-sliceNoSelection").html(), 
+                24, ".."
+            ));
+            
+        } else {
+                
+            // update selected slice
+            this.app._.data.selectedSlice = slices
+                .addList(this.app._.data.slices)
+                .get(sliceUri);
+                
+            // output new slice label
+            $("#cubeviz-slice-label").html(_.str.prune(
+                this.app._.data.selectedSlice.__cv_niceLabel, 24, ".."
+            ));
+        }       
+
+        // close dialog
+        CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
+        
+        // if only module was loaded, move reloading stuff to footer.ts
+        CubeViz_View_Helper.closeDialog(dialogDiv);
+
+        // trigger event
+        this.triggerGlobalEvent("onChange_selectedSlice");
     }
     
     /**
@@ -118,7 +158,8 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
          * check if slice label and description are setable
          */
         var label = "",
-            description = "";
+            description = "",
+            self = this;
         
         // no slices are available
         if (0 === _.size(this.app._.data.slices)) {
@@ -132,7 +173,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
             
             // slices are available, but no slice was selected
             if (0 === _.keys(this.app._.data.selectedSlice).length) {
-                label = "[No DataSet filter was selected yet]"; // TODO: translate
+                label = $("#cubeviz-dataSelectionModule-tra-sliceNoSelection").html();
                 
             // slices are available and there is one selected
             } else {
@@ -207,13 +248,17 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                     __cv_uri: "__cv_noSlice",
                     radioCSSClass: "cubeviz-dataSelectionModule-sliceRadio",
                     radioName: "cubeviz-dataSelectionModule-sliceRadio",
-                    radioValue: "true"
+                    radioValue: "noSlice"
                 }
             ));
             
-            // style first element
-            $(elementContainer.children().last())
-                .css ("font-weight", "bold");
+            // select and style first element
+            if (0 === _.size(this.app._.data.selectedSlice)) {
+                $(elementContainer.children().first()).attr ("checked", true);
+            }
+            
+            $(elementContainer.children().last()).css ("font-weight", "bold");
+            
             
             elementList.append (elementContainer);
             
@@ -237,6 +282,10 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                             radioValue: element.__cv_uri
                         }
                     ));
+                    
+                    if (element.__cv_uri == self.app._.data.selectedSlice.__cv_uri) {
+                        $(elementContainer.children().first()).attr ("checked", true);
+                    }
                     
                     // ... and add list entries with radio button and label
                     elementList.append(elementContainer);

@@ -42,6 +42,7 @@ DataSelectionModule_SliceDialogNoSliceSelectionElement;Do not use any slices
 DataSelectionModule_SliceDialogTitle;Dataset filter selection
 DataSelectionModule_SliceHelpDialogDescription;A dataset filter set a fix amount of dimension elements. Its purpose is to give you a specific view of the data. In general, the author of the data you see, use slices to show you remarkable observations or interesting facts.
 DataSelectionModule_SliceHelpDialogTitle;Why do i should use dataset filter?
+DataSelectionModule_SliceNoSelection;No dataset filter selected yet
 DataSelectionModule_SortBy;Sort By
 
 IndexAction_ClickMoreInformation;Click For More Information

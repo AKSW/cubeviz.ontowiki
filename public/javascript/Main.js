@@ -1244,7 +1244,23 @@ var View_DataselectionModule_Slice = (function (_super) {
         throw "No onChange_selectedDS for Slice implemented!";
     };
     View_DataselectionModule_Slice.prototype.onClick_closeAndUpdate = function (event) {
-        throw "No onClick_closeAndUpdate for Slice implemented!";
+        var dialogDiv = $(event.target).data("dialogDiv");
+        var slices = new CubeViz_Collection("__cv_uri");
+        var sliceUri = $("input[name=cubeviz-dataSelectionModule-sliceRadio]:checked").val();
+        var self = this;
+
+        CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
+        if("noSlice" == sliceUri) {
+            this.app._.data.selectedSlice = {
+            };
+            $("#cubeviz-slice-label").html(_.str.prune($("#cubeviz-dataSelectionModule-tra-sliceNoSelection").html(), 24, ".."));
+        } else {
+            this.app._.data.selectedSlice = slices.addList(this.app._.data.slices).get(sliceUri);
+            $("#cubeviz-slice-label").html(_.str.prune(this.app._.data.selectedSlice.__cv_niceLabel, 24, ".."));
+        }
+        CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
+        CubeViz_View_Helper.closeDialog(dialogDiv);
+        this.triggerGlobalEvent("onChange_selectedSlice");
     };
     View_DataselectionModule_Slice.prototype.onClick_dialogOpener = function (event) {
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-slice"));
@@ -1270,13 +1286,14 @@ var View_DataselectionModule_Slice = (function (_super) {
         this.triggerGlobalEvent("onBeforeRender_slice");
         var label = "";
         var description = "";
+        var self = this;
 
         if(0 === _.size(this.app._.data.slices)) {
             $("#cubeviz-dataSelectionModule-sliceBlock").hide();
         } else {
             $("#cubeviz-dataSelectionModule-sliceBlock").show();
             if(0 === _.keys(this.app._.data.selectedSlice).length) {
-                label = "[No DataSet filter was selected yet]";
+                label = $("#cubeviz-dataSelectionModule-tra-sliceNoSelection").html();
             } else {
                 label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
                 description = this.app._.data.selectedComponents.attribute.__cv_description;
@@ -1311,8 +1328,11 @@ var View_DataselectionModule_Slice = (function (_super) {
                 __cv_uri: "__cv_noSlice",
                 radioCSSClass: "cubeviz-dataSelectionModule-sliceRadio",
                 radioName: "cubeviz-dataSelectionModule-sliceRadio",
-                radioValue: "true"
+                radioValue: "noSlice"
             }));
+            if(0 === _.size(this.app._.data.selectedSlice)) {
+                $(elementContainer.children().first()).attr("checked", true);
+            }
             $(elementContainer.children().last()).css("font-weight", "bold");
             elementList.append(elementContainer);
             this.collection.sortAscendingBy("__cv_niceLabel").each(function (element) {
@@ -1323,6 +1343,9 @@ var View_DataselectionModule_Slice = (function (_super) {
                     radioName: "cubeviz-dataSelectionModule-sliceRadio",
                     radioValue: element.__cv_uri
                 }));
+                if(element.__cv_uri == self.app._.data.selectedSlice.__cv_uri) {
+                    $(elementContainer.children().first()).attr("checked", true);
+                }
                 elementList.append(elementContainer);
             });
             this.bindUserInterfaceEvents({
