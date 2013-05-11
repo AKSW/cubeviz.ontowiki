@@ -1,4 +1,15 @@
+AnalyzeAction_AttributeProperties;Attribute Properties
+AnalyzeAction_DataSets;Data Sets
+AnalyzeAction_DataStructureDefinitions;Data Structure Definitions
+AnalyzeAction_DimensionElements;Dimension Elements
+AnalyzeAction_Dimensions;Dimensions
+AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
+AnalyzeAction_MeasureProperties;Measure Properties
+AnalyzeAction_NumberOf;Number of
+AnalyzeAction_Slices;Slices
+
 AnalyzeModule_AnalyzeDataCube;Analyze DataCube
+AnalyzeModule_InformationAboutKB;Information about Knowledge Base
 
 DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection

@@ -32,7 +32,7 @@ class AnalyzeModule extends OntoWiki_Module
      */
     public function shouldShow()
     {
-        return true;
+        return isset($this->_owApp->selectedModel);
     }
 
     /**
@@ -62,8 +62,6 @@ class AnalyzeModule extends OntoWiki_Module
          */
         return $this->render('public/templates/cubeviz/AnalyzeModule');
     }
-
-    public function layoutType() { return 'inline'; }
 }
 
 

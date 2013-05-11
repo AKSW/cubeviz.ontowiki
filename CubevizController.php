@@ -25,8 +25,44 @@ class CubevizController extends OntoWiki_Controller_Component
      *
      */
     public function analyzeAction() 
-    {
-        echo "foo";
+    {        
+        // set paths
+        $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+        $baseCssPath = $basePath .'public/css/';
+        
+        /**
+         * Including css files for this action
+         */
+        $this->view->headLink()
+            ->appendStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
+            ->appendStylesheet($baseCssPath.'/main.css');
+            
+        /**
+         * Load model information
+         */
+        $model = $this->_owApp->selectedModel;
+        $modelIri = $model->getModelIri();
+        $modelStore = $model->getStore();
+        
+        $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);
+        $modelInformation ['rdfs:label'] = true === isset($modelInformation ['rdfs:label'])
+            ? $modelInformation ['rdfs:label']
+            : $modelIri;
+            
+        
+        $this->view->headLabel = $this->_owApp->translate->_('AnalyzeModule_InformationAboutKB') .' '. $modelInformation ['rdfs:label'];
+        $this->view->translate = $this->_owApp->translate;
+        $this->view->cubevizImagesPath = $basePath .'public/images/';
+            
+        /**
+         * Set view and some of its properties.
+         */        
+        // fill title-field
+        $this->view->placeholder('main.window.title')
+                   ->set($this->view->headLabel);
+        
+        $on = $this->_owApp->getNavigation();
+        $on->disableNavigation (); // disable OntoWiki's Navigation 
     }
     
     /**
