@@ -24,6 +24,14 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      *
      */
+    public function analyzeAction() 
+    {
+        echo "foo";
+    }
+    
+    /**
+     *
+     */
     public function createexamplecubeAction() 
     {
         $this->_helper->viewRenderer->setNoRender();
