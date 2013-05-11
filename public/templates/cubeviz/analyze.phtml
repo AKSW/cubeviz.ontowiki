@@ -2,7 +2,9 @@
     
     <!-- Header -->
     <div class="hero-unit">
-        <h1><?php echo $this->headLabel; ?></h1>
+        <h1><?php echo $this->translate->_('AnalyzeModule_InformationAboutKB'); ?>
+            <a href="<?php echo $this->modelIri; ?>" target="_blank"><?php echo $this->modelLabel; ?></a></h1>
+        
         <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
     </div>
     
@@ -126,179 +128,162 @@
     <!-- Detailed information -->
     <div class="row-fluid">
         
-        <div class="span5 cubeviz-box" style="min-width: 600px;">
-            <h1>
-                <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
-                     style="width: 14px; vertical-align: middle;"/>
-                &nbsp; Foobar</h1>
-            
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinitions'); ?></h3>
-                
-                sssss
-            </div>
-            
-            <hr/>
-            
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
-                
-                Foo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobar
-            </div>
-            
-            <hr/>
-            
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
-                
-                None found
-            </div>
-            
-            <hr/>
-            
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
-                
-                <a href="">Value</a>, another Value
-            </div>
-            
-            <hr/>
-            
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
-                </div>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
-                </div>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, 
-                    </div>
-                </div>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php $i = 0 ; ?>
+        
+        <?php foreach ($this->dataSets as $dataSet) { ?>
+        
+        <?php if (0 == $i++ % 2) { ?>
+    
+    </div>
+    <div class="row-fluid">    
+        
+        <?php } ?>
         
         <div class="span5 cubeviz-box" style="min-width: 600px;">
             <h1>
                 <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
                      style="width: 14px; vertical-align: middle;"/>
-                &nbsp; Foobar</h1>
+                &nbsp; <a href="<?php echo $dataSet ['__cv_uri']; ?>" target="_blank"><?php echo $dataSet ['__cv_niceLabel']; ?></a></h1>
             
+            <!--
+                Data Structure Definition
+            -->
             <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinitions'); ?></h3>
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinition'); ?></h3>
                 
-                sssss
+                <a href="<?php echo $dataSet ['dataStructureDefinition']['__cv_uri']; ?>" target="_blank">
+                    <?php echo $dataSet ['dataStructureDefinition']['__cv_niceLabel']; ?></a>
             </div>
             
-            <hr/>
+            <hr/>            
             
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
-                
-                Foo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobar
-            </div>
-            
-            <hr/>
-            
+            <!--
+                Attribute Properties
+            -->
             <div style="clear: both;">
                 <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
                 
-                None found
+                <?php if (0 == count ($dataSet ['attributes'])) { ?>
+                
+                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                
+                <?php } else { ?>
+                
+                    <?php $j = 0; foreach ($dataSet ['attributes'] as $attribute) { ?>
+                    
+                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                    
+                        <?php echo $attribute ['__cv_niceLabel']; ?>
+                        
+                        (<a href="<?php echo $attribute ['__cv_uri']; ?>" target="_blank"><?php 
+                            echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
+                        
+                        <a href="<?php echo $attribute ['http://purl.org/linked-data/cube#attribute']; ?>" target="_blank">
+                            <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
+                    
+                    <?php } ?>
+                    
+                <?php } ?>
             </div>
             
             <hr/>
             
+            <!--
+                Measure Properties
+            -->
             <div style="clear: both;">
                 <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
                 
-                <a href="">Value</a>, another Value
+                <?php if (0 == count ($dataSet ['measures'])) { ?>
+                
+                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                
+                <?php } else { ?>
+                
+                    <?php $j = 0; foreach ($dataSet ['measures'] as $measure) { ?>
+                    
+                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                    
+                        <?php echo $measure ['__cv_niceLabel']; ?>
+                    
+                        (<a href="<?php echo $measure ['__cv_uri']; ?>" target="_blank" target="_blank"><?php 
+                            echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
+                        
+                        <a href="<?php echo $measure ['http://purl.org/linked-data/cube#measure']; ?>" target="_blank">
+                            <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
+                    
+                    <?php } ?>
+                    
+                <?php } ?>
             </div>
             
             <hr/>
             
+            <!--
+                Slices
+            -->
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+                
+                <?php if (0 == count ($dataSet ['slices'])) { ?>
+                
+                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                
+                <?php } else { ?>
+                
+                    <?php $j = 0; foreach ($dataSet ['slices'] as $slice) { ?>
+                    
+                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                    
+                        <a href="<?php echo $slice ['__cv_uri']; ?>" target="_blank">
+                            <?php echo $slice ['__cv_niceLabel']; ?></a>
+                    
+                    <?php } ?>
+                
+                <?php } ?>
+                
+                
+            </div>
+            
+            <hr/>
+            
+            <!--
+                Dimensions
+            -->
             <div style="clear: both;">
                 <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
                 
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
+                <?php foreach ($dataSet ['dimensions'] as $dimension) { ?> 
+                
+                <div style="clear: both; padding-top: 10px;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                         style="width: 10px; vertical-align: middle;"/>
+                    &nbsp;
+                    <?php echo $dimension ['__cv_niceLabel']; ?>
+                    (<a href="<?php echo $dimension ['__cv_uri']; ?>" target="_blank"><?php 
+                        echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
+                    <a href="<?php echo $dimension ['http://purl.org/linked-data/cube#dimension']; ?>" target="_blank">
+                        <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
+                    
+                    <br/>
+                    
+                    <?php $j = 0; foreach ($dimension ['__cv_elements'] as $element) { ?>
+                    
+                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                    
+                        <a href="<?php echo $element ['__cv_uri']; ?>" target="_blank">
+                            <?php echo $element ['__cv_niceLabel']; ?></a>
+                    
+                    <?php } ?>
+                    
                 </div>
                 
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
-                </div>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, 
-                    </div>
-                </div>
-                
-                <div style="clear: both; padding-top: 5px;">
-                    <div style="float: left;">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                             style="width: 10px; vertical-align: middle;"/>
-                        &nbsp;
-                        <a href="">Country</a></div>
-                    <div style="float: right;">
-                        Germany, England, ...
-                    </div>
-                </div>
+                <?php } ?>
+        
             </div>
         </div>
+        
+        <?php } ?>
         
     </div>
     

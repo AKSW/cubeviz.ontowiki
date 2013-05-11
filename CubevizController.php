@@ -56,13 +56,14 @@ class CubevizController extends OntoWiki_Controller_Component
             : $modelIri;
             
         
-        $this->view->headLabel = $this->_owApp->translate->_('AnalyzeModule_InformationAboutKB') .' '. $modelInformation ['rdfs:label'];
+        $this->view->modelIri = $modelIri;
+        $this->view->modelLabel = $modelInformation ['rdfs:label'];
         $this->view->translate = $this->_owApp->translate;
         $this->view->cubevizImagesPath = $basePath .'public/images/';
     
         // fill title-field
         $this->view->placeholder('main.window.title')
-                   ->set($this->view->headLabel);
+                   ->set($modelInformation ['rdfs:label']);
         
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation 
@@ -73,7 +74,58 @@ class CubevizController extends OntoWiki_Controller_Component
         $query = new DataCube_Query ($model);
         
         $this->view->dataStructureDefinitions = $query->getDataStructureDefinitions();
-        $this->view->dataSets = $query->getDataSets();
+        
+        // go through all datasets and set related information
+        $this->view->dataSets = array ();
+        $tmp = $query->getDataSets();
+        foreach ($tmp as $dataSet) {
+            
+            // data structure definitions
+            foreach ($this->view->dataStructureDefinitions as $ds) {
+                if ($ds['__cv_uri'] == $dataSet[DataCube_UriOf::Structure]) {
+                    $dataSet ['dataStructureDefinition'] = $ds;
+                }
+            }
+            
+            // attributes
+            $attributes = $query->getComponents(
+                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                DataCube_UriOf::Attribute
+            );
+            
+            $dataSet['attributes'] = array ();            
+            foreach ($attributes as $attribute) {
+                $dataSet['attributes'] [] = $attribute;
+            }
+            
+            // measures
+            $measures = $query->getComponents(
+                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                DataCube_UriOf::Measure
+            );
+            
+            $dataSet['measures'] = array();
+            foreach ($measures as $measure) {
+                $dataSet['measures'] [] = $measure;
+            }
+            
+            // slices
+            $dataSet['slices'] = array ();
+            $sliceKeys = $query->getSliceKeys(
+                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri']
+            );
+            foreach ($sliceKeys as $sliceKey) {
+                $dataSet['slices'] = array_merge ($dataSet['slices'], $sliceKey ['slices']);
+            }
+            
+            // dimensions
+            $dataSet['dimensions'] = $query->getComponents(
+                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                DataCube_UriOf::Dimension
+            );
+            
+            $this->view->dataSets [] = $dataSet;
+        }
         
         $this->view->slices = $query->getSlices();
         $this->view->sliceKeys = $query->getSliceKeys();

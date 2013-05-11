@@ -1,12 +1,16 @@
 AnalyzeAction_AttributeProperties;Attribute Properties
+AnalyzeAction_Component;Component
+AnalyzeAction_ComponentSpecification;Component Specification
 AnalyzeAction_DataSet;Data Set
 AnalyzeAction_DataSets;Data Sets
+AnalyzeAction_DataStructureDefinition;Data Structure Definition
 AnalyzeAction_DataStructureDefinitions;Data Structure Definitions
 AnalyzeAction_DetailedInformations;Detailed Information
 AnalyzeAction_DimensionElements;Dimension Elements
 AnalyzeAction_Dimensions;Dimensions
 AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
 AnalyzeAction_MeasureProperties;Measure Properties
+AnalyzeAction_NothingFound;Nothing Found
 AnalyzeAction_NumberOf;Number of
 AnalyzeAction_SliceKeys;Slice Keys
 AnalyzeAction_Slices;Slices
