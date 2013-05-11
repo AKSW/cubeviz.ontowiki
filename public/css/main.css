@@ -79,9 +79,10 @@
 .hero-unit
 {
     padding-left: 30px;
-    padding-top: 20px;
+    padding-top: 15px;
     padding-right: 30px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
+    background-color: #EFEFFF;
 }
 
 .cubeviz-box

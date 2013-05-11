@@ -25,7 +25,13 @@ class CubevizController extends OntoWiki_Controller_Component
      *
      */
     public function analyzeAction() 
-    {        
+    {       
+        // In case no model was selected, it redirect to the root url of OntoWiki
+        if ( false === isset($this->_owApp->selectedModel)) {
+            $this->_helper->redirector->gotoUrl('/');
+            return;
+        }
+         
         // set paths
         $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
         $baseCssPath = $basePath .'public/css/';
@@ -53,16 +59,29 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->headLabel = $this->_owApp->translate->_('AnalyzeModule_InformationAboutKB') .' '. $modelInformation ['rdfs:label'];
         $this->view->translate = $this->_owApp->translate;
         $this->view->cubevizImagesPath = $basePath .'public/images/';
-            
-        /**
-         * Set view and some of its properties.
-         */        
+    
         // fill title-field
         $this->view->placeholder('main.window.title')
                    ->set($this->view->headLabel);
         
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation 
+        
+        /**
+         * collect Datacube related information about the knowledge base
+         */
+        $query = new DataCube_Query ($model);
+        
+        $this->view->dataStructureDefinitions = $query->getDataStructureDefinitions();
+        $this->view->dataSets = $query->getDataSets();
+        
+        $this->view->slices = $query->getSlices();
+        $this->view->sliceKeys = $query->getSliceKeys();
+        
+        $this->view->dimensions = $query->getComponents('', '', DataCube_UriOf::Dimension);
+        
+        $this->view->measureProperties = $query->getComponents('', '', DataCube_UriOf::Measure);
+        $this->view->attributeProperties = $query->getComponents('', '', DataCube_UriOf::Attribute);
     }
     
     /**

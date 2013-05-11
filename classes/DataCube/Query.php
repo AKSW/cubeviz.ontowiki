@@ -27,7 +27,8 @@ class DataCube_Query
     /**
      * Check if there is at least one observation in the knowledgebase
      */
-    public function containsDataCubeInformation () {
+    public function containsDataCubeInformation () 
+    {
         $result = $this->_model->sparqlQuery(
             'PREFIX qb:<http://purl.org/linked-data/cube#>
                 ASK
@@ -183,36 +184,66 @@ class DataCube_Query
         //      = measure
         if ($componentType == DataCube_UriOf::Dimension 
             || $componentType == DataCube_UriOf::Measure) {
-            $result = $this->_model->sparqlQuery (
-                'SELECT ?comp ?p ?o WHERE {
                 
-                    <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
-                
-                    ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
-                
-                    ?comp <'.$componentType.'> ?comptype.
-                
-                    ?comp ?p ?o.
-                }'
-            );
+            if ('' != $dsdUri && '' != $dsUri) {
+                $result = $this->_model->sparqlQuery (
+                    'SELECT ?comp ?p ?o WHERE {
+                    
+                        <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
+                    
+                        ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                    
+                        ?comp <'.$componentType.'> ?comptype.
+                    
+                        ?comp ?p ?o.
+                    }'
+                );
+            } else {
+                // find all dimensions respectively measures
+                $result = $this->_model->sparqlQuery (
+                    'SELECT ?comp ?p ?o WHERE {
+                    
+                        ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
+                    
+                        ?comp <'.$componentType.'> ?comptype.
+                    
+                        ?comp ?p ?o.
+                    }'
+                );
+            }
         }
         // type
         //      = attribute
         else {
-            $result = $this->_model->sparqlQuery (
-              'SELECT DISTINCT ?comp ?p ?o
-                WHERE {
-                  <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
+            if ('' != $dsdUri && '' != $dsUri) {
+                $result = $this->_model->sparqlQuery (
+                  'SELECT DISTINCT ?comp ?p ?o
+                    WHERE {
+                      <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
 
-                  <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?comp.
+                      <'. $dsdUri .'> <http://purl.org/linked-data/cube#component> ?comp.
 
-                  ?comp a <http://purl.org/linked-data/cube#ComponentSpecification>.
+                      ?comp a <http://purl.org/linked-data/cube#ComponentSpecification>.
 
-                  ?comp <http://purl.org/linked-data/cube#attribute> ?componentItself.
-                  
-                  ?comp ?p ?o.
-                }'
-            );  
+                      ?comp <'. DataCube_UriOf::Attribute .'> ?componentItself.
+                      
+                      ?comp ?p ?o.
+                    }'
+                );
+            
+            // find all attributes
+            } else {
+                $result = $this->_model->sparqlQuery (
+                  'SELECT DISTINCT ?comp ?p ?o
+                    WHERE {
+                      ?comp a <http://purl.org/linked-data/cube#ComponentSpecification>.
+
+                      ?comp <'. DataCube_UriOf::Attribute .'> ?componentItself.
+                      
+                      ?comp ?p ?o.
+                    }'
+                );
+            }
         }
   
         // generate associative array
@@ -310,7 +341,7 @@ class DataCube_Query
         
         // sort by label
         usort ($result, function ($a, $b) { 
-                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
         }); 
         
         return $result;
@@ -344,7 +375,7 @@ class DataCube_Query
         
         // sort by label
         usort ($result, function ($a, $b) { 
-                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
         }); 
         
         return $result;
@@ -436,18 +467,27 @@ class DataCube_Query
      * @param $dsUrl data set url
      * @return array list of slice keys (array of array)
      */
-    public function getSliceKeys($dsdUrl, $dsUrl) 
+    public function getSliceKeys($dsdUrl = '', $dsUrl = '') 
     {
-        $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
-            WHERE {
-              <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
+        if ('' == $dsdUrl && '' == $dsUrl) {
+            $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+                WHERE {
+                  ?dsdUrl <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
 
-              <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
+                  ?sliceKey ?p ?o.
+            }');
+        } else {
+            $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+                WHERE {
+                  <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
 
-              <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+                  <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
 
-              ?sliceKey ?p ?o.
-        }');
+                  <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+
+                  ?sliceKey ?p ?o.
+            }');
+        }
         
         // generate an associated array where ds is mainkey and using p and o for the rest
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
@@ -479,14 +519,29 @@ class DataCube_Query
      * @param $sliceKeyUrl slice key url
      * @return array list of slices (array of array)
      */
-    public function getSlices($sliceKeyUrl) 
+    public function getSlices($sliceKeyUrl = '') 
     {
-        $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
-            WHERE {
-              ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
-              
-              ?slice ?p ?o.
-            }');
+        if ('' != $sliceKeyUrl) {
+            $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
+                WHERE {
+                  ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
+                  
+                  ?slice ?p ?o.
+                }');
+        } else {
+            $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
+                WHERE {
+                    {
+                        ?slice ?p ?o.
+                        ?slice <'. DataCube_UriOf::SliceStructure .'> ?sliceKey .
+                    }
+                    UNION
+                    {
+                        ?slice ?p ?o.
+                        ?dataSet <'. DataCube_UriOf::Slice .'> ?slice .
+                    }
+                }');
+        }
         
         // generate an associated array where ds is mainkey and using p and o for the rest
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'slice', 'p', 'o');

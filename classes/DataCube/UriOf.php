@@ -33,6 +33,7 @@ class DataCube_UriOf
     const Dimension = "http://purl.org/linked-data/cube#dimension";
     const Measure = "http://purl.org/linked-data/cube#measure";
     const Order = "http://purl.org/linked-data/cube#order";
+    const Slice = "http://purl.org/linked-data/cube#slice";
     const SliceKey = "http://purl.org/linked-data/cube#sliceKey";
     const SliceStructure = "http://purl.org/linked-data/cube#sliceStructure";
     const Structure = "http://purl.org/linked-data/cube#structure";

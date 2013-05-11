@@ -1,4 +1,6 @@
 <div style="padding: 10px;">
+    
+    <!-- Header -->
     <div class="hero-unit">
         <h1><?php echo $this->headLabel; ?></h1>
         <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
@@ -14,7 +16,7 @@
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->dataStructureDefinitions); ?>
             </div>
         </div>
         
@@ -30,7 +32,7 @@
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->dataSets); ?>
             </div>
         </div>
         
@@ -38,15 +40,15 @@
         <div class="span4 cubeviz-box">
             <div style="float:left;">
                 <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
                          style="width: 17px; margin-left: 10px;"/>
                          
-                    &nbsp; &nbsp;
-                    <?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+                    &nbsp; &nbsp; 
+                    <?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->dimensions); ?>
             </div>
         </div>
         
@@ -65,7 +67,7 @@
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->measureProperties); ?>
             </div>
         </div>
         
@@ -81,9 +83,10 @@
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->attributeProperties); ?>
             </div>
-        </div>
+        </div>        
+        
         
     </div>
     
@@ -92,36 +95,211 @@
         <div class="span4 cubeviz-box">
             <div style="float:left;">
                 <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
                          style="width: 17px; margin-left: 10px;"/>
                          
-                    &nbsp; &nbsp; 
-                    <?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
+                    &nbsp; &nbsp;
+                    <?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->slices); ?>
             </div>
         </div>
-        
-        
+      
         <div class="span4 cubeviz-box">
             <div style="float:left;">
                 <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement2.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp; 
-                    <?php echo $this->translate->_('AnalyzeAction_DimensionElements'); ?></h3>
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    <?php echo $this->translate->_('AnalyzeAction_SliceKeys'); ?></h3>
             </div>
                 
             <div style="float:right; font-size: 29px;">
-                2
+                <?php echo count ($this->sliceKeys); ?>
             </div>
         </div>
         
     </div>
     
     <hr/>
+    
+    <!-- Detailed information -->
+    <div class="row-fluid">
+        
+        <div class="span5 cubeviz-box" style="min-width: 600px;">
+            <h1>
+                <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
+                     style="width: 14px; vertical-align: middle;"/>
+                &nbsp; Foobar</h1>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinitions'); ?></h3>
+                
+                sssss
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+                
+                Foo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobar
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
+                
+                None found
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
+                
+                <a href="">Value</a>, another Value
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, 
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="span5 cubeviz-box" style="min-width: 600px;">
+            <h1>
+                <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
+                     style="width: 14px; vertical-align: middle;"/>
+                &nbsp; Foobar</h1>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinitions'); ?></h3>
+                
+                sssss
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+                
+                Foo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobarFoo, Bar, foobar
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
+                
+                None found
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
+                
+                <a href="">Value</a>, another Value
+            </div>
+            
+            <hr/>
+            
+            <div style="clear: both;">
+                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, Germany, England, 
+                    </div>
+                </div>
+                
+                <div style="clear: both; padding-top: 5px;">
+                    <div style="float: left;">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        <a href="">Country</a></div>
+                    <div style="float: right;">
+                        Germany, England, ...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
     
 </div>
