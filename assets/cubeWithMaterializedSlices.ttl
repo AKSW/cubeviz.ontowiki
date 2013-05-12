@@ -193,6 +193,27 @@ ex:obs7 a qb:Observation ;
     exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
     rdfs:label "Helgoland in 2002" .
 
+ex:obs8 a qb:Observation ;
+    exProp:date ex:Y2002 ;
+    exProp:unit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2002" .
+
+ex:obs9 a qb:Observation ;
+    exProp:date ex:Y2002 ;
+    exProp:unit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2002" .
+
+ex:obs10 a qb:Observation ;
+    exProp:date ex:Y2002 ;
+    exProp:unit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2002" .
+
 
 #
 # Additional Stuff #############################################################
