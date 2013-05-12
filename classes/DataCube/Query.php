@@ -380,6 +380,39 @@ class DataCube_Query
         
         return $result;
     }
+    
+    /**
+     * Get number of used observations (related to a dataset) and
+     * valid observations (have measure and at least one dimension element).
+     */
+    public function getNumberOfUsedAndValidObservations () 
+    {
+        $result = $this->_store->sparqlQuery ('
+            PREFIX qb:<http://purl.org/linked-data/cube#>
+            SELECT ?observation
+            WHERE { 
+                ?observation a qb:Observation . 
+                ?observation qb:dataSet ?dataset . 
+                ?observation ?dimension ?dimelement . 
+                ?observation ?measure ?value . 
+                ?dataset a qb:DataSet . 
+                ?dataset qb:structure ?datastructuredefintion . 
+                ?dimensionspecification a qb:ComponentSpecification . 
+                ?dimensionpecification qb:dimension ?dimension . 
+                ?measurespecification a qb:ComponentSpecification . 
+                ?measurespecification qb:measure ?measure . 
+            }
+            LIMIT 10000;
+        ');
+        
+        $list = array();
+        
+        foreach ($result as $entry) {
+            $list [$entry ['observation']] = 0;
+        }
+        
+        return count (array_keys ($list));
+    }
        
     /**
      * Get all observations which fits to given DSD, DS and selected compontents.

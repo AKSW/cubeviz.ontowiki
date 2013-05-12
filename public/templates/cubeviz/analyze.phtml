@@ -90,6 +90,30 @@
         </div>        
         
         
+        <div class="span4 cubeviz-box">
+            <div style="float:left;">
+                <h3>
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png" 
+                         style="width: 17px; margin-left: 10px;"/>
+                         
+                    &nbsp; &nbsp; 
+                    <?php echo $this->translate->_('AnalyzeAction_ValidObservations'); ?></h3>
+            </div>
+                
+            <div style="float:right; font-size: 29px;">
+                <?php if (10000 <= $this->numberOfUsedAndValidObservations) { ?>
+                
+                    <?php echo $this->translate->_('AnalyzeAction_AtLeastXObservationsFound'); ?>
+                
+                <?php } else { ?>
+                
+                    <?php echo $this->numberOfUsedAndValidObservations; ?>
+                    
+                <?php } ?>
+            </div>
+        </div>        
+        
+        
     </div>
     
     <div class="row-fluid">

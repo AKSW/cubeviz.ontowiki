@@ -68,6 +68,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation 
         
+        
         /**
          * collect Datacube related information about the knowledge base
          */
@@ -134,6 +135,8 @@ class CubevizController extends OntoWiki_Controller_Component
         
         $this->view->measureProperties = $query->getComponents('', '', DataCube_UriOf::Measure);
         $this->view->attributeProperties = $query->getComponents('', '', DataCube_UriOf::Attribute);
+        
+        $this->view->numberOfUsedAndValidObservations = $query->getNumberOfUsedAndValidObservations();
     }
     
     /**

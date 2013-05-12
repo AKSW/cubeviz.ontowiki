@@ -1,3 +1,4 @@
+AnalyzeAction_AtLeastXObservationsFound;At least 10.000 observations found
 AnalyzeAction_AttributeProperties;Attribute Properties
 AnalyzeAction_Component;Component
 AnalyzeAction_ComponentSpecification;Component Specification
@@ -12,8 +13,10 @@ AnalyzeAction_HeadDescriptionText;Here you will find information about the DataC
 AnalyzeAction_MeasureProperties;Measure Properties
 AnalyzeAction_NothingFound;Nothing Found
 AnalyzeAction_NumberOf;Number of
+AnalyzeAction_Observations;Observations
 AnalyzeAction_SliceKeys;Slice Keys
 AnalyzeAction_Slices;Slices
+AnalyzeAction_ValidObservations;Valid Observations
 
 AnalyzeModule_AnalyzeDataCube;Analyze DataCube
 AnalyzeModule_InformationAboutKB;Information about Knowledge Base
