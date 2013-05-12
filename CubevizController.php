@@ -137,6 +137,8 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->attributeProperties = $query->getComponents('', '', DataCube_UriOf::Attribute);
         
         $this->view->numberOfUsedAndValidObservations = $query->getNumberOfUsedAndValidObservations();
+        
+        $this->view->unusedObservations = $query->getUnusedObservations();
     }
     
     /**

@@ -386,10 +386,10 @@ class DataCube_Query
      * valid observations (have measure and at least one dimension element).
      */
     public function getNumberOfUsedAndValidObservations () 
-    {
-        $result = $this->_store->sparqlQuery ('
+    {        
+        $result = $this->_model->sparqlQuery ('
             PREFIX qb:<http://purl.org/linked-data/cube#>
-            SELECT ?observation
+            SELECT DISTINCT ?observation
             WHERE { 
                 ?observation a qb:Observation . 
                 ?observation qb:dataSet ?dataset . 
@@ -402,7 +402,7 @@ class DataCube_Query
                 ?measurespecification a qb:ComponentSpecification . 
                 ?measurespecification qb:measure ?measure . 
             }
-            LIMIT 10000;
+            LIMIT 100000;
         ');
         
         $list = array();
@@ -596,5 +596,51 @@ class DataCube_Query
         }
                 
         return $result;
+    }
+    
+    /**
+     * Get number of unused observations (not related to any dataset).
+     */
+    public function getUnusedObservations () 
+    {
+        // get valid observations
+        $result = $this->_model->sparqlQuery ('
+            PREFIX qb:<http://purl.org/linked-data/cube#>
+            SELECT DISTINCT ?observation
+            WHERE { 
+                ?observation a qb:Observation . 
+                ?observation qb:dataSet ?dataset . 
+                ?dataset a qb:DataSet . 
+            }
+            LIMIT 100000;
+        ');        
+        
+        $usedObservations = array();
+        
+        foreach ($result as $entry) {
+            $usedObservations [$entry ['observation']] = 0;
+        }
+        
+        $usedObservations = array_keys ($usedObservations);
+        
+        // get all observations
+        $result = $this->_model->sparqlQuery ('
+            PREFIX qb:<http://purl.org/linked-data/cube#>
+            SELECT DISTINCT ?observation
+            WHERE { 
+                ?observation a qb:Observation .
+            }
+            LIMIT 100000;
+        ');
+        
+        $unusedObservations = array();
+        
+        foreach ($result as $entry) {
+            if (false === in_array ($entry['observation'], $usedObservations)) {
+                $unusedObservations [] = $entry ['observation'];
+            }
+        }
+        
+        return $unusedObservations;
     }
 }

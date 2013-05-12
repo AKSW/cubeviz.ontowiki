@@ -100,17 +100,17 @@
                     <?php echo $this->translate->_('AnalyzeAction_ValidObservations'); ?></h3>
             </div>
                 
-            <div style="float:right; font-size: 29px;">
-                <?php if (10000 <= $this->numberOfUsedAndValidObservations) { ?>
+            <?php if (10000 <= $this->numberOfUsedAndValidObservations) { ?>
+            
+                <div style="float:right; font-size: 29px; color: orange;">
+                    <?php echo $this->translate->_('AnalyzeAction_AtLeastXObservationsFound'); ?></div>
+            
+            <?php } else { ?>
+            
+                <div style="float:right; font-size: 29px;">
+                    <?php echo $this->numberOfUsedAndValidObservations; ?></div>
                 
-                    <?php echo $this->translate->_('AnalyzeAction_AtLeastXObservationsFound'); ?>
-                
-                <?php } else { ?>
-                
-                    <?php echo $this->numberOfUsedAndValidObservations; ?>
-                    
-                <?php } ?>
-            </div>
+            <?php } ?>
         </div>        
         
         
@@ -144,6 +144,34 @@
                 <?php echo count ($this->sliceKeys); ?>
             </div>
         </div>
+        
+    </div>
+    
+    <hr/>
+    
+    <!-- 
+        Notification and warning area
+     -->
+    <div class="row-fluid">
+        
+        <!-- Unused observations -->
+        <?php if (0 < count($this->unusedObservations)) { ?>
+        
+        <div class="span5 cubeviz-box" style="min-width: 400px; max-width: 800px;">
+            <h2><i class="icon-meh" style="font-size: 20px; color: orange; vertical-align: middle;"></i> &nbsp; There are unused observations!</h2>
+            
+            <?php $j = 0; foreach ($this->unusedObservations as $observation) { ?>
+            
+                <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                    
+                <a href="<?php echo $observation; ?>" target="_blank">
+                    <?php echo $observation; ?></a>
+            
+            <?php } ?>
+            
+        </div>
+        
+        <?php } ?>
         
     </div>
     
