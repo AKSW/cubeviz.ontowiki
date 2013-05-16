@@ -17,6 +17,7 @@ AnalyzeAction_NumberOf;Number of
 AnalyzeAction_Observations;Observations
 AnalyzeAction_SliceKeys;Slice Keys
 AnalyzeAction_Slices;Slices
+AnalyzeAction_UsedQuery;Used Query
 AnalyzeAction_ValidObservations;Valid Observations
 
 ApplicationExtrasMenu_Label;CubeViz: Analyze DataCube

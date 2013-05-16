@@ -59,6 +59,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->modelIri = $modelIri;
         $this->view->modelLabel = $modelInformation ['rdfs:label'];
         $this->view->translate = $this->_owApp->translate;
+        $this->view->staticUrlBase = $this->_config->staticUrlBase;
         $this->view->cubevizImagesPath = $basePath .'public/images/';
     
         // fill title-field
@@ -84,6 +85,7 @@ class CubevizController extends OntoWiki_Controller_Component
             if (true === isset($entry->query)) {
                 
                 $entry->result = count($model->sparqlQuery ($entry->query));
+                $entry->encodedQuery = urlencode ($entry->query);
                 
                 $this->view->generalInformation [] = $entry;  
             }

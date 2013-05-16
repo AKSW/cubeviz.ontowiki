@@ -40,7 +40,12 @@
                         <!-- 
                             LABEL
                         -->
-                        <?php echo $this->translate->_( $entry->label ); ?></h3>
+                        <?php echo $this->translate->_( $entry->label ); ?>
+                        
+                        <!-- 
+                            LINK TO QUERY EDITOR
+                        -->
+                        </h3>
                 </div>
                     
                 <!--
@@ -49,6 +54,17 @@
                 <div style="float:right; font-size: 29px;">
                     <?php echo $entry->result; ?>
                 </div>
+                
+                <div style="clear: both;">
+                    
+                    <div style="float:right;">
+                        <a href="<?php echo $this->staticUrlBase .'queries/editor/?query='. $entry->encodedQuery; ?>" target="_blank">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/sparql3.png" 
+                                 style="width: 17px; margin-left: 10px;"
+                                 title="<?php echo $this->translate->_('AnalyzeAction_UsedQuery'); ?>: &#13<?php echo $entry->query; ?>"/></a>
+                    </div>
+                </div>
+                
             </div>
             
         <?php } ?>
