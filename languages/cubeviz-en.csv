@@ -18,8 +18,7 @@ AnalyzeAction_SliceKeys;Slice Keys
 AnalyzeAction_Slices;Slices
 AnalyzeAction_ValidObservations;Valid Observations
 
-AnalyzeModule_AnalyzeDataCube;Analyze DataCube
-AnalyzeModule_InformationAboutKB;Information about Knowledge Base
+ApplicationExtrasMenu_Label;CubeViz: Analyze DataCube
 
 DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection
