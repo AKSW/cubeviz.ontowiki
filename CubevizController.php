@@ -41,7 +41,8 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         $this->view->headLink()
             ->appendStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
-            ->appendStylesheet($baseCssPath.'/main.css');
+            ->appendStylesheet($baseCssPath.'/main.css')
+            ->appendStylesheet($baseCssPath.'/AnalyzeAction/integrityConstraints.css');
             
         /**
          * Load model information
@@ -75,11 +76,10 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         $query = new DataCube_Query ($model);
         
-        $this->view->generalInformation = array();
-        
         /**
          * Go through all queries which ask for general information about the DataCube
          */
+        $this->view->generalInformation = array();
         foreach ($this->_privateConfig->get('AnalyzeActionConfig')->get('generalInformation') as $entry) 
         {
             if (true === isset($entry->query)) {
@@ -90,8 +90,36 @@ class CubevizController extends OntoWiki_Controller_Component
                 $this->view->generalInformation [] = $entry;  
             }
         }
+        
+        /**
+         * Go through all queries which ask for integrity constraints
+         */
+        $this->view->integrityConstraints = array ();
+        
+        $integrityConstraints = $this->_privateConfig->get('AnalyzeActionConfig')->get('integrityConstraints')->toArray();
+        foreach ($integrityConstraints as $entry) 
+        {
+            if (true === isset($entry ['query'])) {
                 
-        // go through all datasets and set related information
+                $entry ['result'] = $model->sparqlQuery ($entry ['query']);
+                
+                if (true == isset($entry ['result'][0])) {
+                    $entry ['result'] = $entry ['result'][0]['__ask_retval'];
+                } else {
+                    $entry ['result'] = 0;
+                }
+                
+                $entry ['hasError'] = '1' == $entry ['result'];
+                
+                $entry ['encodedQuery'] = urlencode ($entry ['query']);
+                
+                $this->view->integrityConstraints [] = $entry;  
+            }
+        }
+                
+        /**
+         * Go through all datasets and set related information
+         */
         $this->view->dataSets = array ();
         
         $dataStructureDefinitions = $query->getDataStructureDefinitions();
@@ -145,8 +173,6 @@ class CubevizController extends OntoWiki_Controller_Component
             
             $this->view->dataSets [] = $dataSet;
         }
-        
-        $this->view->unusedObservations = $query->getUnusedObservations();
     }
     
     /**

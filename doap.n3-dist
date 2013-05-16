@@ -169,5 +169,163 @@
                     ?dataSet <http://purl.org/linked-data/cube#Slice> ?element .
                 }}"
         ]
-    ].
+    ];
+    
+    #
+    # http://www.w3.org/TR/vocab-data-cube/#wf
+    #
+    # There are 21 checks for a valid DataCube. All of them are listed below. 
+    # Each entry-description is plain copied from http://www.w3.org/TR/vocab-data-cube/#wf-rules!
+    #
+    #   label       -   Tag for the label, used for translation
+    #   descrption  -   Tag for the description, used for translation
+    #
+    owconfig:config [ a owconfig:Config; owconfig:id "integrityConstraints";
+        
+        #
+        # Unique DataSet
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Unique DataSet" ;
+            :label "AnalyzeAction_UniqueDataSet" ;
+            :description "AnalyzeAction_UniqueDataSetDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {{
+                    ?obs a qb:Observation .
+                    FILTER NOT EXISTS { ?obs qb:dataSet ?dataset1 . }
+                } UNION {
+                    ?obs a qb:Observation ;
+                    qb:dataSet ?dataset1, ?dataset2 .
+                    FILTER (?dataset1 != ?dataset2)
+                }}"
+        ];
+        
+        #
+        # Unique DSD
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Unique DSD" ;
+            :label "AnalyzeAction_UniqueDSD" ;
+            :description "AnalyzeAction_UniqueDSDDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {{
+                    ?dataset a qb:DataSet .
+                    FILTER NOT EXISTS { ?dataset qb:structure ?dsd . }
+                } UNION { 
+                    ?dataset a qb:DataSet ;
+                    qb:structure ?dsd1, ?dsd2 .
+                    FILTER (?dsd1 != ?dsd2)
+                }}"
+        ];
+        
+        #
+        # DSD includes measure
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "DSD includes measure" ;
+            :label "AnalyzeAction_DSDIncludesMeasure" ;
+            :description "AnalyzeAction_DSDIncludesMeasureDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?dsd a qb:DataStructureDefinition .
+                    FILTER NOT EXISTS { 
+                        ?dsd qb:component [qb:componentProperty [a qb:MeasureProperty]] 
+                    }
+                }"
+        ];
+        
+        #
+        # Dimensions have range
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Dimensions have range" ;
+            :label "AnalyzeAction_DimensionsHaveRange" ;
+            :description "AnalyzeAction_DimensionsHaveRangeDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?dim a qb:DimensionProperty .
+                    FILTER NOT EXISTS { 
+                        ?dim rdfs:range [] 
+                    }
+                }"
+        ];
+        
+        #
+        # Concept dimensions have code lists
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Concept dimensions have code lists" ;
+            :label "AnalyzeAction_ConceptDimensionsHaveCodeLists" ;
+            :description "AnalyzeAction_ConceptDimensionsHaveCodeListsDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?dsd qb:component ?componentSpec .
+                    ?componentSpec qb:componentRequired \"false\"^^xsd:boolean ;
+                    qb:componentProperty ?component .
+                    FILTER NOT EXISTS { 
+                        ?component a qb:AttributeProperty 
+                    }
+                }"
+        ];
+        
+        #
+        # Only attributes may be optional
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Only attributes may be optional" ;
+            :label "AnalyzeAction_OnlyAttributesMayBeOptional" ;
+            :description "AnalyzeAction_OnlyAttributesMayBeOptionalDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?dsd qb:component ?componentSpec .
+                    ?componentSpec qb:componentRequired \"false\"^^xsd:boolean ;
+                    qb:componentProperty ?component .
+                    FILTER NOT EXISTS { 
+                        ?component a qb:AttributeProperty 
+                    }
+                }"
+        ];
+        
+        #
+        # Slice Keys must be declared
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Slice Keys must be declared" ;
+            :label "AnalyzeAction_SliceKeysMustBeDeclared" ;
+            :description "AnalyzeAction_SliceKeysMustBeDeclaredDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?sliceKey a qb:SliceKey .
+                    FILTER NOT EXISTS { 
+                        [a qb:DataStructureDefinition] qb:sliceKey ?sliceKey 
+                    }
+                }"
+        ];
+        
+        #
+        # Slice Keys consistent with DSD
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Slice Keys consistent with DSD" ;
+            :label "AnalyzeAction_SliceKeysConsistentWithDSD" ;
+            :description "AnalyzeAction_SliceKeysConsistentWithDSDDescription" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                ASK {
+                    ?slicekey a qb:SliceKey;
+                    qb:componentProperty ?prop .
+                    ?dsd qb:sliceKey ?sliceKey .
+                    FILTER NOT EXISTS { 
+                        ?dsd qb:component [qb:componentProperty ?prop] 
+                    }
+                }"
+        ]
+    ] .
     

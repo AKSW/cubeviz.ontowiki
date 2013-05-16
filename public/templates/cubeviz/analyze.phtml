@@ -1,11 +1,20 @@
 <div style="padding: 10px;">
     
-    <!-- Header -->
+    <!-- 
+        Header 
+    -->
     <div class="hero-unit">
         <h1><?php echo $this->translate->_('AnalyzeAction_InformationAboutKB'); ?>
             <a href="<?php echo $this->modelIri; ?>" target="_blank"><?php echo $this->modelLabel; ?></a></h1>
         
         <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
+    </div>
+    
+    <!--
+        General Information
+    -->
+    <div class="hero-unit">
+        <h3><?php echo $this->translate->_('AnalyzeAction_GeneralInformation'); ?></h3>
     </div>
     
     <div class="row-fluid">
@@ -76,30 +85,76 @@
     <!-- 
         Notification and warning area
      -->
+    
+    <div class="hero-unit">
+        <h3><?php echo $this->translate->_('AnalyzeAction_IntegrityConstraints'); ?></h3>
+    </div>
+    
     <div class="row-fluid">
         
-        <!-- Unused observations -->
-        <?php if (0 < count($this->unusedObservations)) { ?>
-        
-        <div class="span5 cubeviz-box" style="min-width: 400px; max-width: 800px;">
-            <h2><i class="icon-meh" style="font-size: 20px; color: orange; vertical-align: middle;"></i> &nbsp; There are unused observations!</h2>
+        <?php $j = 0; foreach ($this->integrityConstraints as $entry) { ?>
             
-            <?php $j = 0; foreach ($this->unusedObservations as $observation) { ?>
-            
-                <?php if ($j++ > 0 ) { echo ', '; } ?> 
-                    
-                <a href="<?php echo $observation; ?>" target="_blank">
-                    <?php echo $observation; ?></a>
-            
+            <?php if ($j++ % 4 == 0) { ?>
+                </div>
+                <div class="row-fluid">
             <?php } ?>
             
-        </div>
-        
+            <!-- In case of an error, set background red -->
+            <div class="span4 cubeviz-integrityConstraintBox" style="<?php if (true == $entry['hasError']) echo 'background-color: #FFC5BE'; ?>">
+            
+                <div class="span1" style="width: 22px;">
+                    
+                    
+                    <!-- 
+                        ICON
+                    -->
+                    <?php if (false == $entry ['hasError']) { ?>
+                        <i class="icon-smile" style="font-size: 15px; color: #40BA40; vertical-align: top; margin-left: 3px;"></i> &nbsp; 
+                    <?php } else { ?>
+                        <i class="icon-frown" style="font-size: 15px; vertical-align: top; margin-left: 3px;"></i> &nbsp;                  
+                    <?php } ?>
+                </div>    
+                <div class="span9" style="width: 220px;">
+                    <strong>
+                        <!-- 
+                            LABEL
+                        -->
+                        <?php echo $this->translate->_( $entry ['label'] ); ?>
+                    </strong>
+                    
+                    <a href="<?php echo $this->staticUrlBase .'queries/editor/?query='. $entry ['encodedQuery']; ?>" target="_blank">
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/sparql3.png" 
+                             style="width: 15px; margin-left: 10px;"
+                             title="<?php echo $this->translate->_('AnalyzeAction_UsedQuery'); ?>: &#13<?php echo $entry['query']; ?>"/></a>
+                    
+                    <br/>
+                    <small><?php echo $this->translate->_($entry ['description']); ?></small>
+                </div> 
+            </div>
+            
         <?php } ?>
         
     </div>
     
     <hr/>
+    
+    <!-- 
+        Notification and warning area
+     -->
+    
+    <div class="hero-unit">
+        <h3><?php echo $this->translate->_('AnalyzeAction_NotificationsAndWarnings'); ?></h3> 
+    </div>
+    
+    <div class="row-fluid">        
+        
+    </div>
+    
+    <hr/>
+    
+    <div class="hero-unit">
+        <h3><?php echo $this->translate->_('AnalyzeAction_DataSets'); ?></h3>
+    </div>
     
     <!-- Detailed information -->
     <div class="row-fluid">

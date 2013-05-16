@@ -2,6 +2,8 @@ AnalyzeAction_AtLeastXObservationsFound;10.000+
 AnalyzeAction_AttributeProperties;Attribute Properties
 AnalyzeAction_Component;Component
 AnalyzeAction_ComponentSpecification;Component Specification
+AnalyzeAction_ConceptDimensionsHaveCodeLists;Concept Dimensions have Code Lists
+AnalyzeAction_ConceptDimensionsHaveCodeListsDescription;Every dimension with range skos:Concept must have a qb:codeList.
 AnalyzeAction_DataSet;Data Set
 AnalyzeAction_DataSets;Data Sets
 AnalyzeAction_DataStructureDefinition;Data Structure Definition
@@ -9,14 +11,31 @@ AnalyzeAction_DataStructureDefinitions;Data Structure Definitions
 AnalyzeAction_DetailedInformations;Detailed Information
 AnalyzeAction_DimensionElements;Dimension Elements
 AnalyzeAction_Dimensions;Dimensions
+AnalyzeAction_DimensionsHaveRange;Dimensions have Range
+AnalyzeAction_DimensionsHaveRangeDescription;Every dimension declared in a qb:DataStructureDefinition must have a declared rdfs:range.
+AnalyzeAction_DSDIncludesMeasure;DSD includes Measure
+AnalyzeAction_DSDIncludesMeasureDescription;Every qb:DataStructureDefinition must include at least one declared measure.
+AnalyzeAction_GeneralInformation;General Information
 AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
 AnalyzeAction_InformationAboutKB;Information about Knowledge Base
+AnalyzeAction_IntegrityConstraints;Integrity Constraints
 AnalyzeAction_MeasureProperties;Measure Properties
 AnalyzeAction_NothingFound;Nothing Found
+AnalyzeAction_NotificationsAndWarnings;Notifications and Warnings
 AnalyzeAction_NumberOf;Number of
+AnalyzeAction_OnlyAttributesMayBeOptional;Only Attributes may be optional
+AnalyzeAction_OnlyAttributesMayBeOptionalDescription;The only components of a qb:DataStructureDefinition that may be marked as optional, using qb:componentRequired are attributes.
 AnalyzeAction_Observations;Observations
 AnalyzeAction_SliceKeys;Slice Keys
+AnalyzeAction_SliceKeysConsistentWithDSD;Slice Keys consistent with DSD
+AnalyzeAction_SliceKeysConsistentWithDSDDescription;Every qb:componentProperty on a qb:SliceKey must also be declared as a qb:component of the associated qb:DataStructureDefinition.
+AnalyzeAction_SliceKeysMustBeDeclaredDescription;Every qb:SliceKey must be associated with a qb:DataStructureDefinition.
+AnalyzeAction_SliceKeysMustBeDeclaredDescription;Every qb:SliceKey must be associated with a qb:DataStructureDefinition.
 AnalyzeAction_Slices;Slices
+AnalyzeAction_UniqueDataSet;Unique DataSet
+AnalyzeAction_UniqueDataSetDescription;Every qb:Observation has exactly one associated qb:DataSet.
+AnalyzeAction_UniqueDSD;Unique DSD
+AnalyzeAction_UniqueDSDDescription;Every qb:DataSet has exactly one associated qb:DataStructureDefinition.
 AnalyzeAction_UsedQuery;Used Query
 AnalyzeAction_ValidObservations;Valid Observations
 
