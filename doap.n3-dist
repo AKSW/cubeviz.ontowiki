@@ -4,7 +4,6 @@
 @prefix owconfig: <http://ns.ontowiki.net/SysOnt/ExtensionConfig/> .
 @prefix extension: <http://ns.ontowiki.net/Extensions/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix event: <http://ns.ontowiki.net/SysOnt/Events/> .
 @prefix : <https://github.com/AKSW/cubeviz/raw/master/doap.n3#> .
 
 <> foaf:primaryTopic :cubeviz .
@@ -21,6 +20,8 @@
   owconfig:templates "public/templates" ;
   owconfig:languages "languages/" ;
   
+  owconfig:config :AnalyzeActionConfig ;
+  
   :context "production"^^xsd:string ;
 
   rdfs:label "CubeViz" .
@@ -30,10 +31,143 @@
   rdfs:label "Default" ;
 
   owconfig:caching "true"^^xsd:boolean ;
-  owconfig:priority "30" ;
+  owconfig:priority "1" ;
   owconfig:context "main.sidewindows" .
 
 :cubeviz doap:release :v1-0 .
 
 :v1-0 a doap:Version ;
   doap:revision "1.0" .
+
+#
+# Analyze Action - Configuration
+#
+# This page provides an overview about the DataCube information in a selected
+# DataCube. The following stuff gives you the possibility to change / add / remove
+# existing queries to the Store and their representation in the frontend.
+#
+:AnalyzeActionConfig a owconfig:Config; owconfig:id "AnalyzeActionConfig";
+
+    #
+    # Each entry is structured as an entry of an associative array
+    # Its purpose is to collect general information about a DataCube
+    # 
+    #   icon    -   Name of the file with extension.
+    #
+    #   label   -   Its not to label itself, but a tag which has a translation
+    #               associated language file.
+    #
+    #   query   -   The query can ask for everything, in the end, only the number 
+    #               of elements (?element) will be used.
+    #
+    owconfig:config [ a owconfig:Config; owconfig:id "generalInformation";
+        
+        #
+        # Data Structure Definitions
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Data Structure Definitions" ;
+            :icon "" ;
+            :label "AnalyzeAction_DataStructureDefinitions" ;
+            :query "SELECT DISTINCT ?element WHERE {
+                ?element <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#DataStructureDefinition>. 
+            }"
+        ];
+        
+        #
+        # Data Sets
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Data Sets" ;
+            :icon "dataset2.png" ;
+            :label "AnalyzeAction_DataSets" ;
+            :query "SELECT DISTINCT ?element WHERE {
+                ?element <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#DataSet>. 
+            }"
+        ];
+        
+        #
+        # Dimensions
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Dimensions" ;
+            :icon "dimension.png" ;
+            :label "AnalyzeAction_Dimensions" ;
+            :query "SELECT DISTINCT ?element WHERE {
+                ?element <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#ComponentSpecification>.
+                ?element <http://purl.org/linked-data/cube#dimension> ?comptype.
+            }"
+        ];
+        
+        #
+        # Measures
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Measure Properties" ;
+            :icon "measure2.png" ;
+            :label "AnalyzeAction_MeasureProperties" ;
+            :query "SELECT DISTINCT ?element WHERE {
+                ?element <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#ComponentSpecification>.
+                ?element <http://purl.org/linked-data/cube#measure> ?comptype.
+            }"
+        ];
+        
+        #
+        # Attributes
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Attribute Properties" ;
+            :icon "attribute2.png" ;
+            :label "AnalyzeAction_AttributeProperties" ;
+            :query "SELECT DISTINCT ?element WHERE {
+                ?element <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#ComponentSpecification>.
+                ?element <http://purl.org/linked-data/cube#attribute> ?comptype.
+            }"
+        ];
+        
+        #
+        # Observations
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Observations" ;
+            :icon "observation.png" ;
+            :label "AnalyzeAction_Observations" ;
+            :query "PREFIX qb:<http://purl.org/linked-data/cube#>
+                SELECT DISTINCT ?element
+                WHERE { 
+                    ?element a qb:Observation . 
+                    ?element qb:dataSet ?dataset . 
+                    ?element ?dimension ?dimelement . 
+                    ?element ?measure ?value . 
+                    ?dataset a qb:DataSet . 
+                    ?dataset qb:structure ?datastructuredefintion . 
+                    ?dimensionspecification a qb:ComponentSpecification . 
+                    ?dimensionpecification qb:dimension ?dimension . 
+                    ?measurespecification a qb:ComponentSpecification . 
+                    ?measurespecification qb:measure ?measure . 
+                }"
+        ];
+        
+        #
+        # Slices
+        #
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "Slices" ;
+            :icon "observation.png" ;
+            :label "AnalyzeAction_Slices" ;
+            :query "SELECT DISTINCT ?element
+                WHERE {{
+                    ?element <http://purl.org/linked-data/cube#sliceStructure> ?sliceKey .
+                } UNION {
+                    ?dataSet <http://purl.org/linked-data/cube#Slice> ?element .
+                }}"
+        ]
+    ].
+    

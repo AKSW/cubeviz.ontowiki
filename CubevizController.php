@@ -74,15 +74,31 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         $query = new DataCube_Query ($model);
         
-        $this->view->dataStructureDefinitions = $query->getDataStructureDefinitions();
+        $this->view->generalInformation = array();
         
+        /**
+         * Go through all queries which ask for general information about the DataCube
+         */
+        foreach ($this->_privateConfig->get('AnalyzeActionConfig')->get('generalInformation') as $entry) 
+        {
+            if (true === isset($entry->query)) {
+                
+                $entry->result = count($model->sparqlQuery ($entry->query));
+                
+                $this->view->generalInformation [] = $entry;  
+            }
+        }
+                
         // go through all datasets and set related information
         $this->view->dataSets = array ();
+        
+        $dataStructureDefinitions = $query->getDataStructureDefinitions();
         $tmp = $query->getDataSets();
+        
         foreach ($tmp as $dataSet) {
             
             // data structure definitions
-            foreach ($this->view->dataStructureDefinitions as $ds) {
+            foreach ($dataStructureDefinitions as $ds) {
                 if ($ds['__cv_uri'] == $dataSet[DataCube_UriOf::Structure]) {
                     $dataSet ['dataStructureDefinition'] = $ds;
                 }
@@ -127,16 +143,6 @@ class CubevizController extends OntoWiki_Controller_Component
             
             $this->view->dataSets [] = $dataSet;
         }
-        
-        $this->view->slices = $query->getSlices();
-        $this->view->sliceKeys = $query->getSliceKeys();
-        
-        $this->view->dimensions = $query->getComponents('', '', DataCube_UriOf::Dimension);
-        
-        $this->view->measureProperties = $query->getComponents('', '', DataCube_UriOf::Measure);
-        $this->view->attributeProperties = $query->getComponents('', '', DataCube_UriOf::Attribute);
-        
-        $this->view->numberOfUsedAndValidObservations = $query->getNumberOfUsedAndValidObservations();
         
         $this->view->unusedObservations = $query->getUnusedObservations();
     }

@@ -2,7 +2,7 @@
     
     <!-- Header -->
     <div class="hero-unit">
-        <h1><?php echo $this->translate->_('AnalyzeModule_InformationAboutKB'); ?>
+        <h1><?php echo $this->translate->_('AnalyzeAction_InformationAboutKB'); ?>
             <a href="<?php echo $this->modelIri; ?>" target="_blank"><?php echo $this->modelLabel; ?></a></h1>
         
         <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
@@ -10,141 +10,49 @@
     
     <div class="row-fluid">
         
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                    <?php echo $this->translate->_('AnalyzeAction_DataStructureDefinitions'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->dataStructureDefinitions); ?>
-            </div>
-        </div>
-        
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp;
-                    <?php echo $this->translate->_('AnalyzeAction_DataSets'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->dataSets); ?>
-            </div>
-        </div>
-        
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp; 
-                    <?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->dimensions); ?>
-            </div>
-        </div>
-        
-    </div>
-    
-    <div class="row-fluid">
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                <img src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png" 
-                     style="width: 17px; margin-left: 10px;"/>
-                     
-                &nbsp; &nbsp;
-                <?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->measureProperties); ?>
-            </div>
-        </div>
-        
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp; 
-                    <?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->attributeProperties); ?>
-            </div>
-        </div>        
-        
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp; 
-                    <?php echo $this->translate->_('AnalyzeAction_ValidObservations'); ?></h3>
-            </div>
-                
-            <?php if (10000 <= $this->numberOfUsedAndValidObservations) { ?>
+        <?php $j = 0; foreach ($this->generalInformation as $entry) { ?>
             
-                <div style="float:right; font-size: 29px; color: orange;">
-                    <?php echo $this->translate->_('AnalyzeAction_AtLeastXObservationsFound'); ?></div>
-            
-            <?php } else { ?>
-            
-                <div style="float:right; font-size: 29px;">
-                    <?php echo $this->numberOfUsedAndValidObservations; ?></div>
-                
+            <?php if ($j++ % 3 == 0) { ?>
+                </div>
+                <div class="row-fluid">
             <?php } ?>
-        </div>        
-        
-        
-    </div>
-    
-    <div class="row-fluid">
-        
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
-                         style="width: 17px; margin-left: 10px;"/>
-                         
-                    &nbsp; &nbsp;
-                    <?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+            
+            <div class="span4 cubeviz-box">
+                <div style="float:left;">
+                    <h3>
+                        
+                        <!-- 
+                            ICON
+                        -->
+                        <?php if ('' == $entry->icon) { ?>
+                        
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        
+                        <?php } else { ?>
+                            
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/<?php echo $entry->icon; ?>" 
+                                 style="width: 17px; margin-left: 10px;"/>
+                                 
+                            &nbsp; &nbsp;
+                            
+                        <?php } ?>
+                            
+                        <!-- 
+                            LABEL
+                        -->
+                        <?php echo $this->translate->_( $entry->label ); ?></h3>
+                </div>
+                    
+                <!--
+                    RESULT
+                -->
+                <div style="float:right; font-size: 29px;">
+                    <?php echo $entry->result; ?>
+                </div>
             </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->slices); ?>
-            </div>
-        </div>
-      
-        <div class="span4 cubeviz-box">
-            <div style="float:left;">
-                <h3>
-                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                    <?php echo $this->translate->_('AnalyzeAction_SliceKeys'); ?></h3>
-            </div>
-                
-            <div style="float:right; font-size: 29px;">
-                <?php echo count ($this->sliceKeys); ?>
-            </div>
-        </div>
-        
+            
+        <?php } ?>
+
     </div>
     
     <hr/>

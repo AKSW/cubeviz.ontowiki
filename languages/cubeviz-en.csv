@@ -10,6 +10,7 @@ AnalyzeAction_DetailedInformations;Detailed Information
 AnalyzeAction_DimensionElements;Dimension Elements
 AnalyzeAction_Dimensions;Dimensions
 AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
+AnalyzeAction_InformationAboutKB;Information about Knowledge Base
 AnalyzeAction_MeasureProperties;Measure Properties
 AnalyzeAction_NothingFound;Nothing Found
 AnalyzeAction_NumberOf;Number of
