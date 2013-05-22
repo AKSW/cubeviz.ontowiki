@@ -13,7 +13,9 @@ AnalyzeAction_CodesFromHierarchyDescription;If a dimension property has a qb:Hie
 AnalyzeAction_CodesFromHierarchyInverse;Codes from Hierarchy (inverse)
 AnalyzeAction_CodesFromHierarchyInverseDescription;If a dimension property has a qb:HierarchicalCodeList with an inverse qb:parentChildProperty then the value of that dimension property on every qb:Observation must be reachable from a root of the hierarchy using zero or more hops along the inverse qb:parentChildProperty links.
 AnalyzeAction_Component;Component
+AnalyzeAction_ComponentShort;C
 AnalyzeAction_ComponentSpecification;Component Specification
+AnalyzeAction_ComponentSpecificationShort;CS
 AnalyzeAction_ConceptDimensionsHaveCodeLists;Concept Dimensions have Code Lists
 AnalyzeAction_ConceptDimensionsHaveCodeListsDescription;Every dimension with range skos:Concept must have a qb:codeList.
 AnalyzeAction_ConsistentDataSetLinks;Consistent Data Set Links
@@ -29,6 +31,7 @@ AnalyzeAction_DimensionsHaveRange;Dimensions have Range
 AnalyzeAction_DimensionsHaveRangeDescription;Every dimension declared in a qb:DataStructureDefinition must have a declared rdfs:range.
 AnalyzeAction_DSDIncludesMeasure;DSD includes Measure
 AnalyzeAction_DSDIncludesMeasureDescription;Every qb:DataStructureDefinition must include at least one declared measure.
+AnalyzeAction_Elements;Elements
 AnalyzeAction_GeneralInformation;General Information
 AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
 AnalyzeAction_IntegrityConstraints;Integrity Constraints

@@ -3,8 +3,8 @@
     <!-- 
         Header 
     -->
-    <div class="hero-unit">
-        <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
+    <div class="hero-unit" style="font-size: 14px;">
+        <em><?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?></em>
     </div>
     
     <!--
@@ -98,6 +98,201 @@
             <?php } ?>
         
         </div>
+    </div>
+    
+    <div style="clear: both;"><hr/></div>
+    
+    <!-- 
+        Detailed information about data sets
+    -->    
+    <div class="hero-unit" style="width: 150px; float: left;">
+        <h5><?php echo $this->translate->_('AnalyzeAction_DataSets'); ?></h5>
+    </div>
+    
+    <div style="float: left; min-width: 740px;">
+        
+        <?php foreach ($this->dataSets as $dataSet) { ?>
+        
+            <div class="span5 cubeviz-box" style="margin-left: 40px; min-width: 300px; max-width: 300px; border: 1px solid #e5e5e5;">
+                <h3>
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
+                         style="width: 14px; vertical-align: middle;"/>
+                    &nbsp; <a href="<?php echo $dataSet ['__cv_uri']; ?>" target="_blank"><?php echo $dataSet ['__cv_niceLabel']; ?></a></h3>
+                
+                <!--
+                    Data Structure Definition
+                -->
+                <div style="clear: both;">
+                    <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinition'); ?></h3>
+                    
+                    <a href="<?php echo $dataSet ['dataStructureDefinition']['__cv_uri']; ?>" target="_blank">
+                        <?php echo $dataSet ['dataStructureDefinition']['__cv_niceLabel']; ?></a>
+                </div>
+                
+                <hr/>            
+                
+                <!--
+                    Attribute Properties
+                -->
+                <div style="clear: both;">
+                    <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
+                    
+                    <?php if (0 == count ($dataSet ['attributes'])) { ?>
+                    
+                        <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                    
+                    <?php } else { ?>
+                    
+                        <?php $j = 0; foreach ($dataSet ['attributes'] as $attribute) { ?>
+                        
+                            <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                        
+                            <strong><?php echo $attribute ['__cv_niceLabel']; ?></strong>
+                            
+                            (<a href="<?php echo $attribute ['__cv_uri']; ?>" 
+                                target="_blank"
+                                title="<?php echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?>"><?php 
+                                    echo $this->translate->_('AnalyzeAction_ComponentSpecificationShort'); ?></a>, 
+                            
+                            <a href="<?php echo $attribute ['http://purl.org/linked-data/cube#attribute']; ?>" 
+                               target="_blank"
+                               title="<?php echo $this->translate->_('AnalyzeAction_Component'); ?>">
+                                        <?php echo $this->translate->_('AnalyzeAction_ComponentShort'); ?></a>)
+                        
+                        <?php } ?>
+                        
+                    <?php } ?>
+                </div>
+                
+                <hr/>
+                
+                <!--
+                    Measure Properties
+                -->
+                <div style="clear: both;">
+                    <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
+                    
+                    <?php if (0 == count ($dataSet ['measures'])) { ?>
+                    
+                        <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                    
+                    <?php } else { ?>
+                    
+                        <?php $j = 0; foreach ($dataSet ['measures'] as $measure) { ?>
+                        
+                            <?php if ($j++ > 0 ) { echo ', '; } ?> 
+                        
+                            <strong><?php echo $measure ['__cv_niceLabel']; ?></strong>
+                            
+                            (<a href="<?php echo $measure ['__cv_uri']; ?>" 
+                                target="_blank"
+                                title="<?php echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?>"><?php 
+                                    echo $this->translate->_('AnalyzeAction_ComponentSpecificationShort'); ?></a>, 
+                            
+                            <a href="<?php echo $measure ['http://purl.org/linked-data/cube#measure']; ?>" 
+                               target="_blank"
+                               title="<?php echo $this->translate->_('AnalyzeAction_Component'); ?>">
+                                        <?php echo $this->translate->_('AnalyzeAction_ComponentShort'); ?></a>)
+                        
+                        <?php } ?>
+                        
+                    <?php } ?>
+                </div>
+                
+                <hr/>
+                
+                <!--
+                    Slices
+                -->
+                <div style="clear: both;">
+                    <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
+                    
+                    <?php if (0 == count ($dataSet ['slices'])) { ?>
+                    
+                        <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
+                    
+                    <?php } else { ?>
+                    
+                        <ul>
+                    
+                        <?php $j = 0; foreach ($dataSet ['slices'] as $slice) { ?>
+                        
+                            <li>
+                                <a href="<?php echo $slice ['__cv_uri']; ?>" target="_blank">
+                                    <?php echo $slice ['__cv_niceLabel']; ?></a></li>
+                        
+                        <?php } ?>
+                        
+                        </ul>
+                    
+                    <?php } ?>
+                    
+                    
+                </div>
+                
+                <hr/>
+                
+                <!--
+                    Dimensions
+                -->
+                <div style="clear: both;">
+                    <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
+                    
+                    <?php foreach ($dataSet ['dimensions'] as $dimension) { ?> 
+                    
+                    <div style="clear: both; padding-top: 7px;">
+                        
+                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                             style="width: 10px; vertical-align: middle;"/>
+                        &nbsp;
+                        
+                        <strong><?php echo $dimension ['__cv_niceLabel']; ?></strong>
+                        
+                        (<a href="<?php echo $dimension ['__cv_uri']; ?>" 
+                            target="_blank"
+                            title="<?php echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?>"><?php 
+                                echo $this->translate->_('AnalyzeAction_ComponentSpecificationShort'); ?></a>, 
+                        
+                        <a href="<?php echo $dimension ['http://purl.org/linked-data/cube#dimension']; ?>" 
+                           target="_blank"
+                           title="<?php echo $this->translate->_('AnalyzeAction_Component'); ?>">
+                                    <?php echo $this->translate->_('AnalyzeAction_ComponentShort'); ?></a>)
+                        
+                        <br/>
+                        <br/>
+                        
+                        <?php if (0 < count($dimension ['__cv_elements'])) { ?>
+                        
+                            <?php echo count($dimension ['__cv_elements']); ?> <?php echo $this->translate->_('AnalyzeAction_Elements'); ?>:
+                            <ul>
+                                <?php $j = 0; foreach ($dimension ['__cv_elements'] as $element) { ?>
+                                
+                                    <li>
+                                        <a href="<?php echo $element ['__cv_uri']; ?>" target="_blank">
+                                        <?php echo $element ['__cv_niceLabel']; ?></a></li>
+                                
+                                <?php } ?>
+                            </ul>
+                            
+                        <?php } else { ?>
+                        
+                            <?php echo $this->translate->_('AnalyzeAction_Elements'); ?>: 
+                            
+                            <strong><?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?></strong>
+                        
+                        <?php } ?>
+                        
+                    </div>
+                    
+                    <hr/>
+                    
+                    <?php } ?>
+            
+                </div>
+            </div>
+        
+        <?php } ?>
+        
     </div>
     
 </div>
