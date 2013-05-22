@@ -52,7 +52,25 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
      */
     public onChange_selectedDS() 
     {
-        throw "No onChange_selectedDS for Slice implemented!";
+        var self = this;
+        
+        DataCube_Slice.loadAll (
+            this.app._.backend.url,
+            this.app._.backend.modelUrl,
+            this.app._.data.selectedDSD.__cv_uri,
+            this.app._.data.selectedDS.__cv_uri,
+            
+            function(entries) {
+                // set slices
+                self.app._.data.slices = entries;
+                
+                if (0 === _.keys(entries).length) {
+                    // no slices in current dataset
+                } else { // 0 < _.keys(entries)
+                    self.app._.data.selectedSlice = {};
+                }
+            }
+        );
     }
     
     /**

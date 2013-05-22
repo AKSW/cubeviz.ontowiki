@@ -1088,6 +1088,26 @@ var DataCube_Observation = (function () {
     };
     return DataCube_Observation;
 })();
+var DataCube_Slice = (function () {
+    function DataCube_Slice() { }
+    DataCube_Slice.loadAll = function loadAll(url, modelIri, dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: url + "getslices",
+            data: {
+                modelIri: modelIri,
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("DataCube_Slice > loadAll: " + xhr.responseText);
+        }).success(function (entries) {
+            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
+                callback(entries.content);
+            }
+        });
+    }
+    return DataCube_Slice;
+})();
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);
     function View_DataselectionModule_DataSet(attachedTo, app) {
@@ -1241,7 +1261,15 @@ var View_DataselectionModule_Slice = (function (_super) {
         this.render();
     };
     View_DataselectionModule_Slice.prototype.onChange_selectedDS = function () {
-        throw "No onChange_selectedDS for Slice implemented!";
+        var self = this;
+        DataCube_Slice.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+            self.app._.data.slices = entries;
+            if(0 === _.keys(entries).length) {
+            } else {
+                self.app._.data.selectedSlice = {
+                };
+            }
+        });
     };
     View_DataselectionModule_Slice.prototype.onClick_closeAndUpdate = function (event) {
         var dialogDiv = $(event.target).data("dialogDiv");

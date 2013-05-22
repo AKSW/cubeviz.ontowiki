@@ -23,6 +23,7 @@ src/Model/DataCube/Component.ts
 src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/Observation.ts
+src/Model/DataCube/Slice.ts
 
 src/View/DataselectionModule/DataSet.ts
 src/View/DataselectionModule/Slice.ts

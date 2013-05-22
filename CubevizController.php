@@ -562,6 +562,85 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     *
+     */
+    public function getslicesAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dsdUrl = $this->_request->getParam ('dsdUrl', '');
+        $dsUrl = $this->_request->getParam ('dsUrl', '');
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
+                $code
+            );
+            return;
+        }        
+        
+        // check if dsdUrl is valid
+        if(false === Erfurt_Uri::check($dsdUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsdUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+        
+        // check if dsUrl is valid
+        if(false === Erfurt_Uri::check($dsUrl)) {
+            $code = 400;
+            $this->_sendJSONResponse(
+                array(
+                    'code' => $code, 
+                    'content' => '', 
+                    'message' => 'dsUrl is not valid'
+                ),
+                $code
+            );
+            return;
+        }
+            
+        try {
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model);            
+            $code = 200;
+            
+            // result object
+            $content = array(
+                'code' => $code, 
+                'content' => array (),
+                'message' => ''
+            );
+
+            // get slice keys
+            $sliceKeys = $query->getSliceKeys($dsdUrl, $dsUrl);
+            
+            // collect all slices in one list
+            foreach ($sliceKeys as $sliceKey) {
+                $content ['content'] = array_merge ($content ['content'], $sliceKey ['slices']);
+            }
+            
+        } catch (Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
      * 
      */
     public function indexAction () 
