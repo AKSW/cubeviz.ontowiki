@@ -1,9 +1,23 @@
+AnalyzeAction_AllDimensionsRequired;All Dimensions required
+AnalyzeAction_AllDimensionsRequiredDescription;Every qb:Observation has a value for each dimension declared in its associated qb:DataStructureDefinition.
+AnalyzeAction_AllMeasuresPresent;All Measures present
+AnalyzeAction_AllMeasuresPresentDescription;In a qb:DataSet which does not use a Measure dimension then each individual qb:Observation must have a value for every declared measure.
 AnalyzeAction_AtLeastXObservationsFound;10.000+
 AnalyzeAction_AttributeProperties;Attribute Properties
+AnalyzeAction_CodesFromCodeList1;Codes from Code List 1
+AnalyzeAction_CodesFromCodeList1Dscription;If a dimension property has a qb:codeList, then the value of the dimension property on every qb:Observation must be in the code list. In the case of a skos:ConceptScheme then each concept must be linked to the scheme using skos:inScheme
+AnalyzeAction_CodesFromCodeList2;Codes from Code List 2
+AnalyzeAction_CodesFromCodeList2Dscription;If a dimension property has a qb:codeList, then the value of the dimension property on every qb:Observation must be in the code list.  In the case of a skos:Collection then the collection must link to each concept (or to nested collections) using skos:member. If the collection uses skos:memberList then the entailment of skos:member values defined by S36 in [SKOS-REFERENCE] must be materialized before this check is applied.
+AnalyzeAction_CodesFromHierarchy;Codes from Hierarchy
+AnalyzeAction_CodesFromHierarchyDescription;If a dimension property has a qb:HierarchicalCodeList with a non-blank qb:parentChildProperty then the value of that dimension property on every qb:Observation must be reachable from a root of the hierarchy using zero or more hops along the qb:parentChildProperty links.
+AnalyzeAction_CodesFromHierarchyInverse;Codes from Hierarchy (inverse)
+AnalyzeAction_CodesFromHierarchyInverseDescription;If a dimension property has a qb:HierarchicalCodeList with an inverse qb:parentChildProperty then the value of that dimension property on every qb:Observation must be reachable from a root of the hierarchy using zero or more hops along the inverse qb:parentChildProperty links.
 AnalyzeAction_Component;Component
 AnalyzeAction_ComponentSpecification;Component Specification
 AnalyzeAction_ConceptDimensionsHaveCodeLists;Concept Dimensions have Code Lists
 AnalyzeAction_ConceptDimensionsHaveCodeListsDescription;Every dimension with range skos:Concept must have a qb:codeList.
+AnalyzeAction_ConsistentDataSetLinks;Consistent Data Set Links
+AnalyzeAction_ConsistentDataSetLinksDescription;If a qb:DataSet D has a qb:slice S, and S has an qb:observation O, then the qb:dataSet corresponding to O must be D.
 AnalyzeAction_DataSet;Data Set
 AnalyzeAction_DataSets;Data Sets
 AnalyzeAction_DataStructureDefinition;Data Structure Definition
@@ -17,8 +31,9 @@ AnalyzeAction_DSDIncludesMeasure;DSD includes Measure
 AnalyzeAction_DSDIncludesMeasureDescription;Every qb:DataStructureDefinition must include at least one declared measure.
 AnalyzeAction_GeneralInformation;General Information
 AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
-AnalyzeAction_InformationAboutKB;Information about Knowledge Base
 AnalyzeAction_IntegrityConstraints;Integrity Constraints
+AnalyzeAction_MeasureDimensionConsistent;Measure Dimension Consistent
+AnalyzeAction_MeasureDimensionConsistentDescription;In a qb:DataSet which uses a Measure dimension then each qb:Observation must have a value for the measure corresponding to its given qb:measureType.
 AnalyzeAction_MeasureProperties;Measure Properties
 AnalyzeAction_NothingFound;Nothing Found
 AnalyzeAction_NotificationsAndWarnings;Notifications and Warnings
@@ -26,16 +41,24 @@ AnalyzeAction_NumberOf;Number of
 AnalyzeAction_OnlyAttributesMayBeOptional;Only Attributes may be optional
 AnalyzeAction_OnlyAttributesMayBeOptionalDescription;The only components of a qb:DataStructureDefinition that may be marked as optional, using qb:componentRequired are attributes.
 AnalyzeAction_Observations;Observations
+AnalyzeAction_RequiredAttributes;Required Attributes
+AnalyzeAction_RequiredAttributesDescription;Every qb:Observation has a value for each declared attribute that is marked as required.
+AnalyzeAction_SingleMeasureOnMeasureDimensionObservation;Single Measure on Measure Dimension Observation
+AnalyzeAction_SingleMeasureOnMeasureDimensionObservationDescription;In a qb:DataSet which uses a Measure dimension then each qb:Observation must only have a value for one measure (by IC-15 this will be the measure corresponding to its qb:measureType).
+AnalyzeAction_SliceDimensionsComplete;Slice Dimensions Complete
+AnalyzeAction_SliceDimensionsCompleteDescriptions;Every qb:Slice must have a value for every dimension declared in its qb:sliceStructure.
 AnalyzeAction_SliceKeys;Slice Keys
 AnalyzeAction_SliceKeysConsistentWithDSD;Slice Keys consistent with DSD
 AnalyzeAction_SliceKeysConsistentWithDSDDescription;Every qb:componentProperty on a qb:SliceKey must also be declared as a qb:component of the associated qb:DataStructureDefinition.
-AnalyzeAction_SliceKeysMustBeDeclaredDescription;Every qb:SliceKey must be associated with a qb:DataStructureDefinition.
+AnalyzeAction_SliceKeysMustBeDeclared;Slice Keys must be declared
 AnalyzeAction_SliceKeysMustBeDeclaredDescription;Every qb:SliceKey must be associated with a qb:DataStructureDefinition.
 AnalyzeAction_Slices;Slices
 AnalyzeAction_UniqueDataSet;Unique DataSet
 AnalyzeAction_UniqueDataSetDescription;Every qb:Observation has exactly one associated qb:DataSet.
 AnalyzeAction_UniqueDSD;Unique DSD
 AnalyzeAction_UniqueDSDDescription;Every qb:DataSet has exactly one associated qb:DataStructureDefinition.
+AnalyzeAction_UniqueSliceStructure;Unique Slice Structure
+AnalyzeAction_UniqueSliceStructureDescription;Each qb:Slice must have exactly one associated qb:sliceStructure.
 AnalyzeAction_UsedQuery;Used Query
 AnalyzeAction_ValidObservations;Valid Observations
 

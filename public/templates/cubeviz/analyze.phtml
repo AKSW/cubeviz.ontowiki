@@ -4,107 +4,80 @@
         Header 
     -->
     <div class="hero-unit">
-        <h1><?php echo $this->translate->_('AnalyzeAction_InformationAboutKB'); ?>
-            <a href="<?php echo $this->modelIri; ?>" target="_blank"><?php echo $this->modelLabel; ?></a></h1>
-        
         <?php echo $this->translate->_('AnalyzeAction_HeadDescriptionText'); ?>
     </div>
     
     <!--
         General Information
     -->
-    <div class="hero-unit">
-        <h3><?php echo $this->translate->_('AnalyzeAction_GeneralInformation'); ?></h3>
+    <div class="hero-unit" style="width: 150px; float: left;">
+        <h5><?php echo $this->translate->_('AnalyzeAction_GeneralInformation'); ?></h5>
     </div>
     
-    <div class="row-fluid">
+    <div style="margin-left: 40px; float: left;">
+        <div class="row-fluid" style="min-width: 680px; ">
         
-        <?php $j = 0; foreach ($this->generalInformation as $entry) { ?>
+            <?php $j = 0; foreach ($this->generalInformation as $entry) { ?>
             
-            <?php if ($j++ % 3 == 0) { ?>
-                </div>
-                <div class="row-fluid">
-            <?php } ?>
-            
-            <div class="span4 cubeviz-box">
-                <div style="float:left;">
-                    <h3>
-                        
+                <?php if ($j++ % 3 == 0) { ?>
+                    </div>
+                    <div class="row-fluid" style="min-width: 600px; ">
+                <?php } ?>
+                
+                <div class="span4 cubeviz-box">               
+                    <div style="width: 100%; text-align: center; font-size: 29px;">
                         <!-- 
                             ICON
                         -->
-                        <?php if ('' == $entry->icon) { ?>
-                        
-                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                        
-                        <?php } else { ?>
-                            
+                        <?php if ('' != $entry->icon) { ?>
                             <img src="<?php echo $this->cubevizImagesPath; ?>semicon/<?php echo $entry->icon; ?>" 
-                                 style="width: 17px; margin-left: 10px;"/>
-                                 
-                            &nbsp; &nbsp;
-                            
+                                 style="width: 17px; vertical-align: middle;"/>
+                            &nbsp;
                         <?php } ?>
-                            
-                        <!-- 
-                            LABEL
+        
+                        <!--
+                            RESULT
                         -->
-                        <?php echo $this->translate->_( $entry->label ); ?>
-                        
-                        <!-- 
-                            LINK TO QUERY EDITOR
-                        -->
-                        </h3>
-                </div>
-                    
-                <!--
-                    RESULT
-                -->
-                <div style="float:right; font-size: 29px;">
-                    <?php echo $entry->result; ?>
-                </div>
-                
-                <div style="clear: both;">
-                    
-                    <div style="float:right;">
-                        <a href="<?php echo $this->staticUrlBase .'queries/editor/?query='. $entry->encodedQuery; ?>" target="_blank">
-                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/sparql3.png" 
-                                 style="width: 17px; margin-left: 10px;"
-                                 title="<?php echo $this->translate->_('AnalyzeAction_UsedQuery'); ?>: &#13<?php echo $entry->query; ?>"/></a>
+                        <?php echo $entry->result; ?>
                     </div>
+                        
+                    <!-- 
+                        LABEL
+                    -->
+                    <div style="font-size: 12px; width: 100%; text-align: center;">
+                        <?php echo $this->translate->_( $entry->label ); ?></div>
+        
                 </div>
                 
-            </div>
-            
-        <?php } ?>
+            <?php } ?>
 
+        </div>        
     </div>
     
-    <hr/>
+    <div style="clear: both;"><hr/></div>
+    
     
     <!-- 
-        Notification and warning area
+        Integrity constraints
      -->
     
-    <div class="hero-unit">
-        <h3><?php echo $this->translate->_('AnalyzeAction_IntegrityConstraints'); ?></h3>
+    <div class="hero-unit" style="width: 150px; float: left;">
+        <h5><?php echo $this->translate->_('AnalyzeAction_IntegrityConstraints'); ?></h5>
     </div>
     
-    <div class="row-fluid">
+    
+    <div style="margin-left: 40px; float: left;">
+        <div class="row-fluid" style="min-width: 680px;">
         
-        <?php $j = 0; foreach ($this->integrityConstraints as $entry) { ?>
-            
-            <?php if ($j++ % 4 == 0) { ?>
-                </div>
-                <div class="row-fluid">
-            <?php } ?>
-            
-            <!-- In case of an error, set background red -->
-            <div class="span4 cubeviz-integrityConstraintBox" style="<?php if (true == $entry['hasError']) echo 'background-color: #FFC5BE'; ?>">
-            
-                <div class="span1" style="width: 22px;">
-                    
-                    
+            <?php $j = 0; foreach ($this->integrityConstraints as $entry) { ?>
+                
+                <?php if ($j++ % 5 == 0) { ?>
+                    </div>
+                    <div class="row-fluid" style="min-width: 600px; ">
+                <?php } ?>
+                
+                <!-- In case of an error, set background red -->
+                <div class="span4 cubeviz-integrityConstraintBox" style="<?php if (true == $entry['hasError']) echo 'background-color: #FFC5BE'; ?>">
                     <!-- 
                         ICON
                     -->
@@ -113,209 +86,18 @@
                     <?php } else { ?>
                         <i class="icon-frown" style="font-size: 15px; vertical-align: top; margin-left: 3px;"></i> &nbsp;                  
                     <?php } ?>
-                </div>    
-                <div class="span9" style="width: 220px;">
-                    <strong>
-                        <!-- 
-                            LABEL
-                        -->
-                        <?php echo $this->translate->_( $entry ['label'] ); ?>
-                    </strong>
-                    
-                    <a href="<?php echo $this->staticUrlBase .'queries/editor/?query='. $entry ['encodedQuery']; ?>" target="_blank">
-                        <img src="<?php echo $this->cubevizImagesPath; ?>semicon/sparql3.png" 
-                             style="width: 15px; margin-left: 10px;"
-                             title="<?php echo $this->translate->_('AnalyzeAction_UsedQuery'); ?>: &#13<?php echo $entry['query']; ?>"/></a>
-                    
-                    <br/>
-                    <small><?php echo $this->translate->_($entry ['description']); ?></small>
-                </div> 
-            </div>
-            
-        <?php } ?>
-        
-    </div>
-    
-    <hr/>
-    
-    <!-- 
-        Notification and warning area
-     -->
-    
-    <div class="hero-unit">
-        <h3><?php echo $this->translate->_('AnalyzeAction_NotificationsAndWarnings'); ?></h3> 
-    </div>
-    
-    <div class="row-fluid">        
-        
-    </div>
-    
-    <hr/>
-    
-    <div class="hero-unit">
-        <h3><?php echo $this->translate->_('AnalyzeAction_DataSets'); ?></h3>
-    </div>
-    
-    <!-- Detailed information -->
-    <div class="row-fluid">
-        
-        <?php $i = 0 ; ?>
-        
-        <?php foreach ($this->dataSets as $dataSet) { ?>
-        
-        <?php if (0 == $i++ % 2) { ?>
-    
-    </div>
-    <div class="row-fluid">    
-        
-        <?php } ?>
-        
-        <div class="span5 cubeviz-box" style="min-width: 600px;">
-            <h1>
-                <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dataset2.png" 
-                     style="width: 14px; vertical-align: middle;"/>
-                &nbsp; <a href="<?php echo $dataSet ['__cv_uri']; ?>" target="_blank"><?php echo $dataSet ['__cv_niceLabel']; ?></a></h1>
-            
-            <!--
-                Data Structure Definition
-            -->
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_DataStructureDefinition'); ?></h3>
-                
-                <a href="<?php echo $dataSet ['dataStructureDefinition']['__cv_uri']; ?>" target="_blank">
-                    <?php echo $dataSet ['dataStructureDefinition']['__cv_niceLabel']; ?></a>
-            </div>
-            
-            <hr/>            
-            
-            <!--
-                Attribute Properties
-            -->
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_AttributeProperties'); ?></h3>
-                
-                <?php if (0 == count ($dataSet ['attributes'])) { ?>
-                
-                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
-                
-                <?php } else { ?>
-                
-                    <?php $j = 0; foreach ($dataSet ['attributes'] as $attribute) { ?>
-                    
-                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
-                    
-                        <?php echo $attribute ['__cv_niceLabel']; ?>
-                        
-                        (<a href="<?php echo $attribute ['__cv_uri']; ?>" target="_blank"><?php 
-                            echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
-                        
-                        <a href="<?php echo $attribute ['http://purl.org/linked-data/cube#attribute']; ?>" target="_blank">
-                            <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
-                    
-                    <?php } ?>
-                    
-                <?php } ?>
-            </div>
-            
-            <hr/>
-            
-            <!--
-                Measure Properties
-            -->
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_MeasureProperties'); ?></h3>
-                
-                <?php if (0 == count ($dataSet ['measures'])) { ?>
-                
-                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
-                
-                <?php } else { ?>
-                
-                    <?php $j = 0; foreach ($dataSet ['measures'] as $measure) { ?>
-                    
-                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
-                    
-                        <?php echo $measure ['__cv_niceLabel']; ?>
-                    
-                        (<a href="<?php echo $measure ['__cv_uri']; ?>" target="_blank" target="_blank"><?php 
-                            echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
-                        
-                        <a href="<?php echo $measure ['http://purl.org/linked-data/cube#measure']; ?>" target="_blank">
-                            <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
-                    
-                    <?php } ?>
-                    
-                <?php } ?>
-            </div>
-            
-            <hr/>
-            
-            <!--
-                Slices
-            -->
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Slices'); ?></h3>
-                
-                <?php if (0 == count ($dataSet ['slices'])) { ?>
-                
-                    <?php echo $this->translate->_('AnalyzeAction_NothingFound'); ?>
-                
-                <?php } else { ?>
-                
-                    <?php $j = 0; foreach ($dataSet ['slices'] as $slice) { ?>
-                    
-                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
-                    
-                        <a href="<?php echo $slice ['__cv_uri']; ?>" target="_blank">
-                            <?php echo $slice ['__cv_niceLabel']; ?></a>
-                    
-                    <?php } ?>
-                
-                <?php } ?>
-                
-                
-            </div>
-            
-            <hr/>
-            
-            <!--
-                Dimensions
-            -->
-            <div style="clear: both;">
-                <h3 style="color: #999999;"><?php echo $this->translate->_('AnalyzeAction_Dimensions'); ?></h3>
-                
-                <?php foreach ($dataSet ['dimensions'] as $dimension) { ?> 
-                
-                <div style="clear: both; padding-top: 10px;">
-                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
-                         style="width: 10px; vertical-align: middle;"/>
-                    &nbsp;
-                    <?php echo $dimension ['__cv_niceLabel']; ?>
-                    (<a href="<?php echo $dimension ['__cv_uri']; ?>" target="_blank"><?php 
-                        echo $this->translate->_('AnalyzeAction_ComponentSpecification'); ?></a>,
-                    <a href="<?php echo $dimension ['http://purl.org/linked-data/cube#dimension']; ?>" target="_blank">
-                        <?php echo $this->translate->_('AnalyzeAction_Component'); ?></a>)
-                    
-                    <br/>
-                    
-                    <?php $j = 0; foreach ($dimension ['__cv_elements'] as $element) { ?>
-                    
-                        <?php if ($j++ > 0 ) { echo ', '; } ?> 
-                    
-                        <a href="<?php echo $element ['__cv_uri']; ?>" target="_blank">
-                            <?php echo $element ['__cv_niceLabel']; ?></a>
-                    
-                    <?php } ?>
-                    
+
+                    <!-- 
+                        SHORT LABEL
+                    -->
+                    <span title="<?php echo $this->translate->_( $entry ['label'] ); ?>">
+                        <?php echo $entry ['shortLabel']; ?></span>
+                     
                 </div>
                 
-                <?php } ?>
+            <?php } ?>
         
-            </div>
         </div>
-        
-        <?php } ?>
-        
     </div>
     
 </div>

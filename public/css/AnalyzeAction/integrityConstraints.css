@@ -1,8 +1,12 @@
 .cubeviz-integrityConstraintBox
 {
-    max-width: 270px;
-    height: 140px;
-    padding: 10px 10px 10px;
+    min-width: 70px;
+    max-width: 120px;
+    height: 40px;
+    padding-left: 7px;
+    padding-top: 9px;
+    padding-right: 7px;
+    padding-bottom: 12px;
     margin: 0 auto 20px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
