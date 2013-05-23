@@ -188,7 +188,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Unique DataSet" ;
-            :shortLabel "U_DS" ;
+            :shortLabel "IC-1" ;
             :label "AnalyzeAction_UniqueDataSet" ;
             :description "AnalyzeAction_UniqueDataSetDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -208,7 +208,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Unique DSD" ;
-            :shortLabel "U_DSD" ;
+            :shortLabel "IC-2" ;
             :label "AnalyzeAction_UniqueDSD" ;
             :description "AnalyzeAction_UniqueDSDDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -228,7 +228,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "DSD includes measure" ;
-            :shortLabel "DSD_IM" ;
+            :shortLabel "IC-3" ;
             :label "AnalyzeAction_DSDIncludesMeasure" ;
             :description "AnalyzeAction_DSDIncludesMeasureDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -246,7 +246,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Dimensions have range" ;
-            :shortLabel "D_HR" ;
+            :shortLabel "IC-4" ;
             :label "AnalyzeAction_DimensionsHaveRange" ;
             :description "AnalyzeAction_DimensionsHaveRangeDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -264,7 +264,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Concept dimensions have code lists" ;
-            :shortLabel "CDHCL" ;
+            :shortLabel "IC-5" ;
             :label "AnalyzeAction_ConceptDimensionsHaveCodeLists" ;
             :description "AnalyzeAction_ConceptDimensionsHaveCodeListsDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -284,7 +284,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Only attributes may be optional" ;
-            :shortLabel "OAMBO" ;
+            :shortLabel "IC-6" ;
             :label "AnalyzeAction_OnlyAttributesMayBeOptional" ;
             :description "AnalyzeAction_OnlyAttributesMayBeOptionalDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -304,7 +304,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Slice Keys must be declared" ;
-            :shortLabel "SK_MBD" ;
+            :shortLabel "IC-7" ;
             :label "AnalyzeAction_SliceKeysMustBeDeclared" ;
             :description "AnalyzeAction_SliceKeysMustBeDeclaredDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -322,7 +322,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Slice Keys consistent with DSD" ;
-            :shortLabel "SK_CWDSD" ;
+            :shortLabel "IC-8" ;
             :label "AnalyzeAction_SliceKeysConsistentWithDSD" ;
             :description "AnalyzeAction_SliceKeysConsistentWithDSDDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -342,7 +342,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Unique slice structure" ;
-            :shortLabel "U_SS" ;
+            :shortLabel "IC-9" ;
             :label "AnalyzeAction_UniqueSliceStructure" ;
             :description "AnalyzeAction_UniqueSliceStructureDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -365,7 +365,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Slice dimensions complete" ;
-            :shortLabel "SDC" ;
+            :shortLabel "IC-10" ;
             :label "AnalyzeAction_SliceDimensionsComplete" ;
             :description "AnalyzeAction_SliceDimensionsCompleteDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -383,7 +383,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "All dimensions required" ;
-            :shortLabel "ALL_DR" ;
+            :shortLabel "IC-11" ;
             :label "AnalyzeAction_AllDimensionsRequired" ;
             :description "AnalyzeAction_AllDimensionsRequiredDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -412,7 +412,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Required attributes" ;
-            :shortLabel "R_A" ;
+            :shortLabel "IC-13" ;
             :label "AnalyzeAction_RequiredAttributes" ;
             :description "AnalyzeAction_RequiredAttributesDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -434,7 +434,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "All measures present" ;
-            :shortLabel "ALL_MP" ;
+            :shortLabel "IC-14" ;
             :label "AnalyzeAction_AllMeasuresPresent" ;
             :description "AnalyzeAction_AllMeasuresPresentDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -461,7 +461,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Measure dimension consistent" ;
-            :shortLabel "MDC" ;
+            :shortLabel "IC-15" ;
             :label "AnalyzeAction_MeasureDimensionConsistent" ;
             :description "AnalyzeAction_MeasureDimensionConsistentDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -483,7 +483,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Single measure on measure dimension observation" ;
-            :shortLabel "SMoMDO" ;
+            :shortLabel "IC-16" ;
             :label "AnalyzeAction_SingleMeasureOnMeasureDimensionObservation" ;
             :description "AnalyzeAction_SingleMeasureOnMeasureDimensionObservationDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -516,7 +516,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Consistent data set links" ;
-            :shortLabel "C_DS_L" ;
+            :shortLabel "IC-18" ;
             :label "AnalyzeAction_ConsistentDataSetLinks" ;
             :description "AnalyzeAction_ConsistentDataSetLinksDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -535,7 +535,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Codes from code list 1" ;
-            :shortLabel "CfCL_1" ;
+            :shortLabel "IC-19" ;
             :label "AnalyzeAction_CodesFromCodeList1" ;
             :description "AnalyzeAction_CodesFromCodeList1Description" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -563,7 +563,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Codes from code list 2" ;
-            :shortLabel "CfCL_2" ;
+            :shortLabel "IC-19-2" ;
             :label "AnalyzeAction_CodesFromCodeList2" ;
             :description "AnalyzeAction_CodesFromCodeList2Description" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -589,7 +589,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Codes from hierarchy" ;
-            :shortLabel "CfH" ;
+            :shortLabel "IC-20" ;
             :label "AnalyzeAction_CodesFromHierarchy" ;
             :description "AnalyzeAction_CodesFromHierarchyDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
@@ -626,7 +626,7 @@
         owconfig:config [
             a owconfig:Config;
             owconfig:id "Codes from hierarchy (inverse)" ;
-            :shortLabel "CfHi" ;
+            :shortLabel "IC-21" ;
             :label "AnalyzeAction_CodesFromHierarchyInverse" ;
             :description "AnalyzeAction_CodesFromHierarchyInverseDescription" ;
             :query "PREFIX qb:<http://purl.org/linked-data/cube#>
