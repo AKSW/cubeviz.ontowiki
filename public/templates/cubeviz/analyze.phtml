@@ -91,7 +91,8 @@
                         SHORT LABEL
                     -->
                     <span title="<?php echo $this->translate->_( $entry ['label'] ); ?>">
-                        <?php echo $entry ['shortLabel']; ?></span>
+                        <a href="<?php echo $this->staticUrlBase .'queries/editor/?query='. $entry ['encodedQuery']; ?>" target="_blank">
+                            <?php echo $entry ['shortLabel']; ?></a></span>
                      
                 </div>
                 
