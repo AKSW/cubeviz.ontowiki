@@ -160,8 +160,11 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     checkbox.attr("checked", true);
                 }
                 
-                // set click event
-                checkbox.click(self.onClick_dimensionElementCheckbox);
+                // set click event                
+                $(checkbox ).on("click", $.proxy(
+                    self.onClick_dimensionElementCheckbox, 
+                    self
+                ));
                 
                 // save element instance
                 elementInstance
@@ -351,11 +354,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .data("component")
                 .__cv_selectedElementCount;
             
-        if (1 < numberOfSelectedElements) {
+        if (1 < numberOfSelectedElements
+            || 1 == this.app._.data.numberOfMultipleDimensions) {
             return;
         }
             
-        // deactivate all unchecked checkboxes
+        // check if anything was checked before
         _.each(dialogCheckboxList, function(checkbox){
             if($(checkbox).attr("checked")) {
                 anythingChecked = true;
@@ -429,9 +433,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onClick_deselectButton(event) : void
     {
-        $(event.target).data("dialogDiv")
-            .find("[type=\"checkbox\"]")
-            .attr("checked", false);
+        if ("false" == $(event.target).attr("disabled")
+            || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv")
+                .find("[type=\"checkbox\"]")
+                .attr("checked", false);
+        }
     }
     
     /**
@@ -439,9 +446,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onClick_selectAllButton(event) : void
     {
-        $(event.target).data("dialogDiv")
-            .find("[type=\"checkbox\"]")
-            .attr("checked", true);
+        if ("false" == $(event.target).attr("disabled")
+            || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv")
+                .find("[type=\"checkbox\"]")
+                .attr("checked", true);
+        }
     }
     
     /**
@@ -456,13 +466,15 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             .data("component")
             .__cv_selectedElementCount;
         
-        // if there are already two ultiple dimensions and if the dialog is not
+        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        
+        // if there are already two multiple dimensions and if the dialog is not
         // associated to one of the multiple dimensions, deactivate all unchecked 
         // checkboxes in the dialog
         if ( 1 == numberOfSelectedElements 
-             && 2 == this.app._.data.numberOfMultipleDimensions) {
-            var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
-
+             && 2 == this.app._.data.numberOfMultipleDimensions
+             && 2 < _.size(this.app._.data.components.dimensions)) {
+            
             // deactivate all unchecked checkboxes
             _.each(checkboxes, function(checkbox){
                 if(!$(checkbox).attr("checked")) {
@@ -475,6 +487,19 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .attr("disabled", true).addClass("ui-state-disabled");
             $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .attr("disabled", true).addClass("ui-state-disabled");
+        
+        // just in case that all checkboxes were deactivated before, reactivate them!
+        } else {
+            // reactivate all checkboxes checkboxes
+            _.each(checkboxes, function(checkbox){
+                $(checkbox).attr("disabled", false);
+            });
+            
+            // reactivate both select buttons
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
+                .attr("disabled", false).removeClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
+                .attr("disabled", false).removeClass("ui-state-disabled");
         }
         
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
@@ -769,8 +794,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         });
         
         this.triggerGlobalEvent("onAfterRender_component");
-        
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
         
         return this;
     }

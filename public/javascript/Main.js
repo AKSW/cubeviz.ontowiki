@@ -337,8 +337,8 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
     CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
-        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function () {
-            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+        $("#cubeviz-dataSelectionModule-spinner").fadeOut("slow", function () {
+            $("#cubeviz-dataSelectionModule-dataSelection").fadeIn("slow");
         });
     }
     CubeViz_View_Helper.openDialog = function openDialog(domElement) {
@@ -350,8 +350,8 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
     }
     CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
-        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function () {
-            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        $("#cubeviz-dataSelectionModule-dataSelection").fadeOut("slow", function () {
+            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow");
         });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
@@ -1746,7 +1746,7 @@ var View_DataselectionModule_Component = (function (_super) {
             if(true == setElementChecked) {
                 checkbox.attr("checked", true);
             }
-            checkbox.click(self.onClick_dimensionElementCheckbox);
+            $(checkbox).on("click", $.proxy(self.onClick_dimensionElementCheckbox, self));
             elementInstance.data("data", element).data("dialogDiv", dialogDiv);
             elementList.append(elementInstance);
         });
@@ -1822,7 +1822,7 @@ var View_DataselectionModule_Component = (function (_super) {
         var anythingChecked = false;
         var numberOfSelectedElements = $(parentContainer.data("dialogDiv")).data("component").__cv_selectedElementCount;
 
-        if(1 < numberOfSelectedElements) {
+        if(1 < numberOfSelectedElements || 1 == this.app._.data.numberOfMultipleDimensions) {
             return;
         }
         _.each(dialogCheckboxList, function (checkbox) {
@@ -1861,16 +1861,20 @@ var View_DataselectionModule_Component = (function (_super) {
         });
     };
     View_DataselectionModule_Component.prototype.onClick_deselectButton = function (event) {
-        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+        if("false" == $(event.target).attr("disabled") || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+        }
     };
     View_DataselectionModule_Component.prototype.onClick_selectAllButton = function (event) {
-        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
+        if("false" == $(event.target).attr("disabled") || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
+        }
     };
     View_DataselectionModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
         var numberOfSelectedElements = $($(event.target).data("dialogDiv")).data("component").__cv_selectedElementCount;
-        if(1 == numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions) {
-            var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        if(1 == numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions && 2 < _.size(this.app._.data.components.dimensions)) {
             _.each(checkboxes, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {
                     $(checkbox).attr("disabled", true);
@@ -1878,6 +1882,12 @@ var View_DataselectionModule_Component = (function (_super) {
             });
             $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
             $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).attr("disabled", true).addClass("ui-state-disabled");
+        } else {
+            _.each(checkboxes, function (checkbox) {
+                $(checkbox).attr("disabled", false);
+            });
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
+            $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).attr("disabled", false).removeClass("ui-state-disabled");
         }
         CubeViz_View_Helper.openDialog($(event.target).data("dialogDiv"));
     };
@@ -2015,7 +2025,6 @@ var View_DataselectionModule_Component = (function (_super) {
             "click .cubeviz-dataSelectionModule-dialogSortButtons": this.onClick_sortButton
         });
         this.triggerGlobalEvent("onAfterRender_component");
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
         return this;
     };
     return View_DataselectionModule_Component;
