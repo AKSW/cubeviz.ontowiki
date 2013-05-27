@@ -375,9 +375,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onClick_deselectButton(event) : void
     {
-        $(event.target).data("dialogDiv")
-            .find("[type=\"checkbox\"]")
-            .attr("checked", false);
+        if ("false" == $(event.target).attr("disabled")
+            || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv")
+                .find("[type=\"checkbox\"]")
+                .attr("checked", false);
+        }
     }
     
     /**
@@ -385,9 +388,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onClick_selectAllButton(event) : void
     {
-        $(event.target).data("dialogDiv")
-            .find("[type=\"checkbox\"]")
-            .attr("checked", true);
+        if ("false" == $(event.target).attr("disabled")
+            || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv")
+                .find("[type=\"checkbox\"]")
+                .attr("checked", true);
+        }
     }
     
     /**

@@ -1656,10 +1656,14 @@ var View_DataselectionModule_Component = (function (_super) {
         });
     };
     View_DataselectionModule_Component.prototype.onClick_deselectButton = function (event) {
-        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+        if("false" == $(event.target).attr("disabled") || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+        }
     };
     View_DataselectionModule_Component.prototype.onClick_selectAllButton = function (event) {
-        $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
+        if("false" == $(event.target).attr("disabled") || true === _.isUndefined($(event.target).attr("disabled"))) {
+            $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
+        }
     };
     View_DataselectionModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
