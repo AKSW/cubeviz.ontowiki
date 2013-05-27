@@ -737,8 +737,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         
         this.triggerGlobalEvent("onAfterRender_component");
         
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
-        
         return this;
     }
 }

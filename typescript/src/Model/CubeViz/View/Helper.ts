@@ -80,9 +80,9 @@ class CubeViz_View_Helper
      *
      */
     static hideLeftSidebarSpinner() : void 
-    {
-        $("#cubeviz-dataSelectionModule-spinner").slideUp("slow", function(){
-            $("#cubeviz-dataSelectionModule-dataSelection").slideDown("slow");
+    {        
+        $("#cubeviz-dataSelectionModule-spinner").fadeOut("slow", function(){
+            $("#cubeviz-dataSelectionModule-dataSelection").fadeIn("slow");
         });
     }
     
@@ -116,8 +116,8 @@ class CubeViz_View_Helper
      */
     static showLeftSidebarSpinner() : void 
     {
-        $("#cubeviz-dataSelectionModule-dataSelection").slideUp("slow", function(){
-            $("#cubeviz-dataSelectionModule-spinner").slideDown("slow");
+        $("#cubeviz-dataSelectionModule-dataSelection").fadeOut("slow", function(){
+            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow");
         });
     }
     
