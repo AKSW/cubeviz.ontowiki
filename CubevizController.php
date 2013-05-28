@@ -238,6 +238,42 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     * Exports dataselection given by dataHash.
+     */
+    public function exportdataselectionAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        // parameter
+        $dataHash = $this->_request->getParam ('dataHash', '');
+        $type = $this->_request->getParam ('type', '');
+        $filename = 'cubevizExport_'. $dataHash;
+        
+        $model = $this->_owApp->selectedModel;
+        $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        
+        switch ($type)
+        {
+            default: // turtle
+                $contentType = 'application/x-turtle';
+                $filename .= '.ttl';
+                break;
+        }
+        
+        // setup response
+        $response = $this->getResponse();
+        $response->setHeader('Content-Type', $contentType, true);
+        $response->setHeader('Content-Disposition', ('filename="' . $filename . '"'));
+        
+        // output data itself (ouput directly to avoid caching the result)
+        echo "#" . PHP_EOL .
+             "# CubeViz Export of data hash " . $dataHash . PHP_EOL .
+             "#" . PHP_EOL . PHP_EOL .
+             CubeViz_DataSelectionExporter::_($type, $dataHash, $model, $cacheDir);
+    }
+    
+    /**
      *
      */
     public function getattributesAction() 
@@ -687,7 +723,7 @@ class CubevizController extends OntoWiki_Controller_Component
         // Libraries
         $this->view->headScript()
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
-            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');    
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');  
     
         /**
          * Including css files for this action
@@ -695,6 +731,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->headLink()
             ->prependStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
             ->prependStylesheet($baseCssPath.'/main.css')
+            ->prependStylesheet($baseCssPath.'/IndexAction/exportArea.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/header.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/legend.css')
             ->prependStylesheet($baseCssPath.'/IndexAction/visualization.css')

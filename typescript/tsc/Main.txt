@@ -32,6 +32,7 @@ src/View/DataselectionModule/Attribute.ts
 src/View/DataselectionModule/Component.ts
 src/View/DataselectionModule/Footer.ts
 
+src/View/IndexAction/ExportArea.ts
 src/View/IndexAction/Header.ts
 src/View/IndexAction/Legend.ts
 src/View/IndexAction/Visualization.ts

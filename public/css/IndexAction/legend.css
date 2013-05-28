@@ -1,6 +1,7 @@
 #cubeviz-index-legend
 {
     margin-bottom: 10px;
+    float: left;
 }
 
 .cubeviz-legend-componentDimensionList

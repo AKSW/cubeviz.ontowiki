@@ -119,6 +119,7 @@ IndexAction_Close;Close
 IndexAction_CloseMenuWithoutApplyingChanges;Close This Menu Without Applying Changes
 IndexAction_ConfigureVisualization;Configure Visualization
 IndexAction_Explanation;Explanation
+IndexAction_ExportAs;Export as
 IndexAction_GoToSource;Go To Source
 IndexAction_InformationAboutConfiguration;Information About Selected Configuration
 IndexAction_InformationAboutRetrievedData;Information About Retrieved Data

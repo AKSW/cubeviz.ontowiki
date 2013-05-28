@@ -2154,6 +2154,53 @@ var View_DataselectionModule_Footer = (function (_super) {
     };
     return View_DataselectionModule_Footer;
 })(CubeViz_View_Abstract);
+var View_IndexAction_ExportArea = (function (_super) {
+    __extends(View_IndexAction_ExportArea, _super);
+    function View_IndexAction_ExportArea(attachedTo, app) {
+        _super.call(this, "View_IndexAction_ExportArea", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReRender_visualization",
+                handler: this.onReRender_visualization
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }, 
+            {
+                name: "onUpdate_componentDimensions",
+                handler: this.onUpdate_componentDimensions
+            }
+        ]);
+    }
+    View_IndexAction_ExportArea.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_IndexAction_ExportArea.prototype.initialize = function () {
+        this.render();
+    };
+    View_IndexAction_ExportArea.prototype.onReRender_visualization = function () {
+        this.initialize();
+    };
+    View_IndexAction_ExportArea.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_IndexAction_ExportArea.prototype.onUpdate_componentDimensions = function () {
+        this.initialize();
+    };
+    View_IndexAction_ExportArea.prototype.render = function () {
+        this.setUrlToDownload();
+        return this;
+    };
+    View_IndexAction_ExportArea.prototype.setUrlToDownload = function () {
+        var urlToDownload = this.app._.backend.url + "exportdataselection/?";
+        urlToDownload += "dataHash=" + this.app._.backend.dataHash;
+        urlToDownload += "&type=turtle";
+        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload);
+    };
+    return View_IndexAction_ExportArea;
+})(CubeViz_View_Abstract);
 var View_IndexAction_Header = (function (_super) {
     __extends(View_IndexAction_Header, _super);
     function View_IndexAction_Header(attachedTo, app) {

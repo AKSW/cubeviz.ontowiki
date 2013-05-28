@@ -6,7 +6,8 @@
         .add("View_IndexAction_Header", "#cubeviz-index-headerDialogBox")
         .add("View_IndexAction_Visualization", "#cubeviz-index-visualization")
         .add("View_IndexAction_VisualizationSelector", "#cubeviz-visualizationselector-menuItems")
-        .add("View_IndexAction_Legend", "");
+        .add("View_IndexAction_Legend", "")
+        .add("View_IndexAction_ExportArea", "");
 </script>
 
 <div style="margin-left: 6px; margin-top: 10px;">
@@ -67,6 +68,17 @@
                 </p>
             </div>
         </div>
+    </div>
+
+    <!-- Export area -->
+    <div id="cubeviz-index-exportArea">
+        <strong><?php echo $this->translate->_('IndexAction_ExportAs'); ?></strong>
+        
+        &nbsp;
+        
+        <a id="cubeviz-index-exportArea-btnTurtle">
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/turtle.png"
+                 style="width: 20px;"/></a>
     </div>
 
     <!-- Visualization selector > menu + dongle -->    
