@@ -1190,7 +1190,7 @@ var View_DataselectionModule_DataSet = (function (_super) {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogTitle").html(),
                 __cv_hashedUri: "dataSet",
                 __cv_description: "",
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html(),
+                __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription").html(),
                 __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-dataSet");
@@ -1330,7 +1330,7 @@ var View_DataselectionModule_Slice = (function (_super) {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogTitle").html(),
                 __cv_hashedUri: "slice",
                 __cv_description: "",
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
+                __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
                 __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-slice");
@@ -1472,7 +1472,7 @@ var View_DataselectionModule_Measure = (function (_super) {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialogTitle").html(),
                 __cv_hashedUri: "measure",
                 __cv_description: "",
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
+                __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
                 __cv_title: ""
             }));
             var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-measure");
@@ -1625,7 +1625,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
                     __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogTitle").html(),
                     __cv_hashedUri: "attribute",
                     __cv_description: "",
-                    shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
+                    __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-attributeDialogDescription").html(),
                     __cv_title: ""
                 }));
                 var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-attribute");
@@ -1699,7 +1699,7 @@ var View_DataselectionModule_Component = (function (_super) {
             __cv_niceLabel: component.__cv_niceLabel,
             __cv_hashedUri: component.__cv_hashedUri,
             __cv_description: component.__cv_description,
-            shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+            __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
             __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
         }));
         var dialogDiv = $("#cubeviz-dataSelectionModule-dialog-" + component.__cv_hashedUri);
@@ -2003,8 +2003,8 @@ var View_DataselectionModule_Component = (function (_super) {
                 dimension.__cv_selectedElementCount = 1;
             }
             dimension.__cv_elementCount = _.size(dimension.__cv_elements);
-            dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
-            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
+            dimension.__cv_shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
+            dimension.__cv_shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
             componentBox = $(CubeViz_View_Helper.tplReplace($("#cubeviz-component-tpl-listBoxItem").html(), dimension));
             if(1 === dimension.__cv_elementCount) {
                 $(componentBox.find(".cubeviz-component-setupComponentOpener").get(0)).hide();
@@ -2319,7 +2319,7 @@ var View_IndexAction_Legend = (function (_super) {
                 infoList.append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationInfoListEntry").html(), {
                     dimensionLabel: dimensionElement.dimensionLabel,
                     fullLabel: dimensionElement.__cv_niceLabel,
-                    shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
+                    __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
                     __cv_uri: dimensionElement.__cv_uri
                 }));
             });
@@ -2343,7 +2343,7 @@ var View_IndexAction_Legend = (function (_super) {
             dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.__cv_elements))).sortAscendingBy().each(function (dimensionElement) {
                 dimensionElementList.append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-componentDimensionEntry").html(), {
                     fullLabel: dimensionElement.__cv_niceLabel,
-                    shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
+                    __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
                     __cv_uri: dimensionElement.__cv_uri
                 }));
                 observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());

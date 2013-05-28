@@ -43,7 +43,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 __cv_niceLabel: component.__cv_niceLabel, 
                 __cv_hashedUri: component.__cv_hashedUri,
                 __cv_description: component.__cv_description,
-                shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
+                __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-componentDialogDescription").html(),
                 __cv_title: $("#cubeviz-dataSelectionModule-tra-componentDialogMainTitle").html()
             }
         ));
@@ -723,10 +723,10 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             dimension.__cv_elementCount = _.size(dimension.__cv_elements);
             
             // short label to prevent use two instead of one lines
-            dimension.shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
+            dimension.__cv_shortLabel = _.str.prune(dimension.__cv_niceLabel, 23, "..");
             
             // short description
-            dimension.shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
+            dimension.__cv_shortDescription = _.str.prune(dimension.__cv_description, 38, "..");
             
             // build html out of template
             componentBox = $(CubeViz_View_Helper.tplReplace(

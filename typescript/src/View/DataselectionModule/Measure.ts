@@ -206,7 +206,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                     __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-measureDialogTitle").html(), 
                     __cv_hashedUri: "measure",
                     __cv_description: "",
-                    shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
+                    __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-measureDialogDescription").html(),
                     __cv_title: ""
                 }
             ));

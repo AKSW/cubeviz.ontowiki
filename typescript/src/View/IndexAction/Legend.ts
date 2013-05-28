@@ -94,7 +94,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     {
                         dimensionLabel: dimensionElement.dimensionLabel,
                         fullLabel: dimensionElement.__cv_niceLabel,
-                        shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
+                        __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
                         __cv_uri: dimensionElement.__cv_uri
                     }
                 ));
@@ -151,7 +151,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         $("#cubeviz-legend-tpl-componentDimensionEntry").html(),
                         {
                             fullLabel: dimensionElement.__cv_niceLabel,
-                            shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
+                            __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
                             __cv_uri: dimensionElement.__cv_uri
                         }
                     ));

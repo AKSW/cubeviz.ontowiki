@@ -206,7 +206,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                     __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogTitle").html(), 
                     __cv_hashedUri: "slice",
                     __cv_description: "",
-                    shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
+                    __cv_shortDescription: $("#cubeviz-dataSelectionModule-tra-sliceDialogDescription").html(),
                     __cv_title: ""
                 }
             ));
