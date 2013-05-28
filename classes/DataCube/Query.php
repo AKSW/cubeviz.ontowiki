@@ -93,6 +93,7 @@ class DataCube_Query
 
             // Comment
             if (true === isset($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
+                && true === is_string($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
                 && 0 < strlen ($entry['http://www.w3.org/2000/01/rdf-schema#comment'])) {
                 $entry ['__cv_description'] = $entry['http://www.w3.org/2000/01/rdf-schema#comment'];
             } else { 
