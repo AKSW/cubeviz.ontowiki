@@ -154,7 +154,22 @@ class DataCube_Query
                 // = http://data.lod2.eu/scoreboard/cs/country
                 $objectValue = true === isset($entry[$oKey]) ? $entry[$oKey] : '';
 
-                $return [$latestMainKey][$predicateValue] = $objectValue;
+                // for the given predicate there is no object set yet
+                if (false === isset($return [$latestMainKey][$predicateValue])) {
+                    $return [$latestMainKey][$predicateValue] = $objectValue;
+                
+                // there are multiple entries for the same predicate
+                } else if (true === is_array($return [$latestMainKey][$predicateValue])) {
+                    $return [$latestMainKey][$predicateValue][] = $objectValue;
+                
+                // there was an object set before, but it was a string
+                // now transform it into an array
+                } else {
+                    $return [$latestMainKey][$predicateValue] = array (
+                        $return [$latestMainKey][$predicateValue],
+                        $objectValue
+                    );
+                }
             }
         }
         return $return;
