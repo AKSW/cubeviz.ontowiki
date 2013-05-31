@@ -18,7 +18,7 @@ class DataCube_Query
     /**
      * Constructor
      */
-    public function __construct (&$model)
+    public function __construct ($model)
     {
         $this->_model = $model;
         $this->_store = $model->getStore();
@@ -29,9 +29,10 @@ class DataCube_Query
      */
     public function containsDataCubeInformation () 
     {
-        $result = $this->_model->sparqlQuery(
+        $result = $this->_store->sparqlAsk(
             'PREFIX qb:<http://purl.org/linked-data/cube#>
                 ASK
+                FROM <'.$this->_model->getModelUri().'>
                 {
                     ?observation a qb:Observation .
                     ?observation qb:dataSet ?dataset .
@@ -52,8 +53,10 @@ class DataCube_Query
                     ?measurespecification qb:measure ?measure .
                 }'
         );
-
-        return 1 == count ($result) && false !== $result ? true : false;
+        if (!empty ($result) ) {
+            return true;
+        }
+        return false;
     }
 
     /**
