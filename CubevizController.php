@@ -255,6 +255,11 @@ class CubevizController extends OntoWiki_Controller_Component
         
         switch ($type)
         {
+            case 'csv': // comma separated file
+                $contentType = 'text/csv';
+                $filename .= '.csv';
+                break;
+            
             default: // turtle
                 $contentType = 'application/x-turtle';
                 $filename .= '.ttl';
@@ -264,13 +269,12 @@ class CubevizController extends OntoWiki_Controller_Component
         // setup response
         $response = $this->getResponse();
         $response->setHeader('Content-Type', $contentType, true);
-        $response->setHeader('Content-Disposition', ('filename="' . $filename . '"'));
+        $response->setHeader('Content-Disposition', 'filename="' . $filename . '"');
+        $response->setHeader('Pragma', 'no-cache');
+        $response->setHeader('Expires', '0');
         
         // output data itself (ouput directly to avoid caching the result)
-        echo "#" . PHP_EOL .
-             "# CubeViz Export of data hash " . $dataHash . PHP_EOL .
-             "#" . PHP_EOL . PHP_EOL .
-             CubeViz_DataSelectionExporter::_($type, $dataHash, $model, $cacheDir);
+        echo CubeViz_DataSelectionExporter::_($type, $dataHash, $model, $cacheDir);
     }
     
     /**

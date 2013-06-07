@@ -2196,8 +2196,8 @@ var View_IndexAction_ExportArea = (function (_super) {
     View_IndexAction_ExportArea.prototype.setUrlToDownload = function () {
         var urlToDownload = this.app._.backend.url + "exportdataselection/?";
         urlToDownload += "dataHash=" + this.app._.backend.dataHash;
-        urlToDownload += "&type=turtle";
-        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload);
+        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload + "&type=turtle");
+        $("#cubeviz-index-exportArea-btnCsv").attr("href", urlToDownload + "&type=csv");
     };
     return View_IndexAction_ExportArea;
 })(CubeViz_View_Abstract);
