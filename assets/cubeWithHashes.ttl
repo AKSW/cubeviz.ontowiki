@@ -1,0 +1,102 @@
+@base <http://example.cubeviz.org/datacubeWithHashes#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix cube: <http://purl.org/linked-data/cube#> .
+@prefix ex: <http://example.cubeviz.org/datacubeWithHashes#> .
+@prefix exCs: <http://example.cubeviz.org/datacubeWithHashes/cs#> .
+@prefix exProp: <http://example.cubeviz.org/datacubeWithHashes#properties-> .
+
+<> a owl:Ontology ;
+   rdfs:label "DataCube: Test Hash-Handling in CubeViz" ;
+   dc:description "Its purpose is to test that CubeViz is able to handle hashed URIs." .
+
+# 
+# Data Structure Definitions
+#
+ex:dsd a cube:DataStructureDefinition ;
+    rdfs:label "A Data Structure Definition"@en ;
+    rdfs:comment "Defines the structure of a DataSet or slice." ;
+    cube:component  exCs:geo, 
+                    exCs:time,
+                    exCs:unit, 
+                    exCs:value .
+
+#
+# Component Specifications
+#
+exCs:geo a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Region" ;
+    cube:dimension exProp:geo .
+
+exCs:time a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Time" ;
+    cube:dimension exProp:date .
+
+exCs:unit a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Unit" ;
+    cube:attribute exProp:unit .
+    
+exCs:value a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Value" ;
+    cube:measure exProp:value .
+
+#
+# Data Set
+#
+ex:dataset a cube:DataSet ;
+    rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
+    cube:structure ex:dsd .
+
+#
+# Dimensions, Unit and Measure
+#
+exProp:geo a cube:DimensionProperty ;
+    rdfs:label "Region"@en .
+        
+exProp:date a cube:DimensionProperty ;
+    rdfs:label "Date"@en .
+
+exProp:unit a cube:AttributeProperty ;
+    rdfs:label "Unit" ;
+    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr." .
+
+exProp:value a cube:MeasureProperty ;
+    rdfs:label "Value"@en .
+    
+#
+# Observation #################################################################
+#
+
+#
+# Data Set 1
+#
+ex:obs1 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    exProp:date ex:Y2001 ;
+    exProp:unit "whatever it is about" ;
+    exProp:geo ex:Germany ;
+    exProp:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Germany in 2001" .
+
+ex:obs2 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    exProp:date ex:Y2001 ;
+    exProp:unit "whatever it is about" ;
+    exProp:geo ex:England ;    
+    exProp:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+#
+# Additional Stuff #############################################################
+#
+ex:Germany a exProp:geo ;
+    rdfs:label "Germany"@en .
+    
+ex:England a exProp:geo ;
+    rdfs:label "England"@en .
+       
+ex:Y2001 a ex:date ;
+    rdfs:label "2001"@en .

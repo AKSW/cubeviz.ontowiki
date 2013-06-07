@@ -225,6 +225,8 @@
         #
         # DSD includes measure
         #
+        # TODO: Replaced "componentProperty" with "measure"
+        # Check if the integrity constraint in the vocabulary is false
         owconfig:config [
             a owconfig:Config;
             owconfig:id "DSD includes measure" ;
@@ -235,7 +237,7 @@
                 ASK {
                     ?dsd a qb:DataStructureDefinition .
                     FILTER NOT EXISTS { 
-                        ?dsd qb:component [qb:componentProperty [a qb:MeasureProperty]] 
+                        ?dsd qb:component [qb:measure [a qb:MeasureProperty]] 
                     }
                 }"
         ];
