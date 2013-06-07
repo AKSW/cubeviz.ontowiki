@@ -120,6 +120,8 @@ IndexAction_CloseMenuWithoutApplyingChanges;Close This Menu Without Applying Cha
 IndexAction_ConfigureVisualization;Configure Visualization
 IndexAction_Explanation;Explanation
 IndexAction_ExportAs;Export as
+IndexAction_ExportAsTurtle;Export as RDF/Turtle
+IndexAction_ExportAsCsv;Export as CSV
 IndexAction_GoToSource;Go To Source
 IndexAction_InformationAboutConfiguration;Information About Selected Configuration
 IndexAction_InformationAboutRetrievedData;Information About Retrieved Data
