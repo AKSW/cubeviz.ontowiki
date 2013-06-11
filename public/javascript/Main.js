@@ -574,8 +574,12 @@ var CubeViz_Visualization_HighCharts = (function (_super) {
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
     CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri, selectedAttributeUri) {
+        var categoriesElementAssign = {
+        };
+        var diff = 0;
         var forXAxis = null;
         var forSeries = null;
+        var i = 0;
         var observation = new DataCube_Observation();
         var self = this;
 
@@ -632,6 +636,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             var xAxisElements = observation.getAxesElements(forXAxis);
             _.each(xAxisElements, function (xAxisElement) {
                 self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+                categoriesElementAssign[xAxisElement.self.__cv_uri] = i++;
             });
             var selectedDimensionPropertyUris = [];
             _.each(selectedComponentDimensions, function (dimension) {
@@ -649,8 +654,12 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 obj = {
                     color: CubeViz_Visualization_Controller.getColor(seriesElement.self.__cv_uri),
                     data: [],
-                    name: seriesElement.self.__cv_niceLabel
+                    name: seriesElement.self.__cv_niceLabel,
+                    __cv_uri: seriesElement.self.__cv_uri
                 };
+                for(i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
+                    obj.data.push(null);
+                }
                 _.each(seriesElement.observations, function (seriesObservation) {
                     if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
                         return;
@@ -665,9 +674,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                         return;
                     }
                     if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
-                        obj.data.push(parseFloat(seriesObservation[selectedMeasureUri]));
+                        obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(seriesObservation[selectedMeasureUri]);
                     } else {
-                        obj.data.push(null);
+                        obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = null;
                     }
                 });
                 if(0 == _.size(obj.data)) {

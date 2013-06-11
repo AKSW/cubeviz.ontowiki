@@ -25,8 +25,11 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedAttributeUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     {  
-        var forXAxis = null,
+        var categoriesElementAssign = {},
+            diff:number = 0,
+            forXAxis = null,
             forSeries = null,
+            i:number = 0,
             observation = new DataCube_Observation (),
             self = this; 
         
@@ -102,7 +105,7 @@ class CubeViz_Visualization_HighCharts_Chart
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        
+
         /**
          * Check if there are exactly one or two multiple dimensions
          * If both forXAxis and forSeries strings are not blank, than you have 
@@ -112,9 +115,12 @@ class CubeViz_Visualization_HighCharts_Chart
             var xAxisElements:any = observation
                 .getAxesElements(forXAxis);
                 
-            // put labels for properties to the axis
+            /**
+             * put labels for properties to the axis (categories)
+             */
             _.each(xAxisElements, function(xAxisElement){
                 self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+                categoriesElementAssign [xAxisElement.self.__cv_uri] = i++;
             });
             
             /**
@@ -144,14 +150,20 @@ class CubeViz_Visualization_HighCharts_Chart
                         seriesElement.self.__cv_uri
                     ),
                     data: [],
-                    name: seriesElement.self.__cv_niceLabel
+                    name: seriesElement.self.__cv_niceLabel,
+                    __cv_uri: seriesElement.self.__cv_uri
                 };
+                
+                // fill data properties with as many null values as categories are
+                for (i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
+                    obj.data.push (null);
+                }
                 
                 // go through all observations associated with this seriesElement
                 // and add their values (measure) if set
                 _.each(seriesElement.observations, function(seriesObservation){
                     
-                    // check if the current observation has to be ignored
+                    // check if the current observation has to be ignored:
                     // it will ignored, 
                     //      if attribute uri is set, but the observation
                     //      has no value of it
@@ -183,14 +195,17 @@ class CubeViz_Visualization_HighCharts_Chart
                     } else {
                         // if this combination is already in use, stop execution immediatly
                         return;
-                    }                
-                    
-                    if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
-                        obj.data.push (parseFloat(
+                    }
+                        
+                    /**
+                     * check if measure value is set, if not add null
+                     */
+                    if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {                        
+                        obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(
                             seriesObservation[selectedMeasureUri]
-                        ));
+                        );
                     } else {
-                        obj.data.push (null);
+                        obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = null;
                     }
                 });
                 
