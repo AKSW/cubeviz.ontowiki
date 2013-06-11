@@ -26,8 +26,10 @@ class CubevizController extends OntoWiki_Controller_Component
      */
     public function analyzeAction() 
     {       
-        // In case no model was selected, it redirect to the root url of OntoWiki
-        if ( false === isset($this->_owApp->selectedModel)) {
+        // In case no model was selected or if analyze tool was deactivated, 
+        // it redirects to the root url of OntoWiki
+        if (false === isset($this->_owApp->selectedModel) 
+            || false === $this->_privateConfig->get('useAnalyzeTool')) {
             $this->_helper->redirector->gotoUrl('/');
             return;
         }
@@ -244,6 +246,11 @@ class CubevizController extends OntoWiki_Controller_Component
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
+        
+        // do nothing, if export was deactivated
+        if (false === $this->_privateConfig->get('useExport')) {
+            return;
+        }
         
         // parameter
         $dataHash = $this->_request->getParam ('dataHash', '');
@@ -779,6 +786,8 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_request->getParam ('cv_uiHash'),
             $modelInformation
         );
+        
+        $this->view->useExport = $this->_privateConfig->get('useExport');
         
         if(null !== $config) {
             $this->view->headScript()

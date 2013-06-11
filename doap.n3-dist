@@ -12,6 +12,7 @@
   doap:release :v1-0 ;
   doap:description "" ;
   doap:name "CubeViz" ;
+  rdfs:label "CubeViz" ;
 
   owconfig:authorLabel "" ;
   owconfig:enabled "true"^^xsd:boolean ;
@@ -23,8 +24,14 @@
   owconfig:config :AnalyzeActionConfig ;
   
   :context "production"^^xsd:string ;
-
-  rdfs:label "CubeViz" .
+  
+  #
+  # Activate / deactivate certain functionalities
+  #     true  = activated
+  #     false = deactivated
+  #
+  :useAnalyzeTool "true"^^xsd:boolean ;
+  :useExport "true"^^xsd:boolean .
 
 :Default a owconfig:Module ;
 
@@ -225,8 +232,6 @@
         #
         # DSD includes measure
         #
-        # TODO: Replaced "componentProperty" with "measure"
-        # Check if the integrity constraint in the vocabulary is false
         owconfig:config [
             a owconfig:Config;
             owconfig:id "DSD includes measure" ;
@@ -237,7 +242,7 @@
                 ASK {
                     ?dsd a qb:DataStructureDefinition .
                     FILTER NOT EXISTS { 
-                        ?dsd qb:component [qb:measure [a qb:MeasureProperty]] 
+                        ?dsd qb:component [qb:componentProperty [a qb:MeasureProperty]] 
                     }
                 }"
         ];
