@@ -246,7 +246,7 @@ class CubeViz_DataSelectionExporter
         return "#" . PHP_EOL .
                "# CubeViz Export of data hash " . $dataHash . PHP_EOL .
                "#" . PHP_EOL . PHP_EOL .
-               $graph->serialise($type);
+               $graph->serialise('turtle');
     }
     
     /**
