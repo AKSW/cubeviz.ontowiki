@@ -12,9 +12,11 @@ can be used to filter interactively observations to be visualized in charts.
 Based on the selected structure, CubeViz offer beneficiary chart types and options which can be selected by users.
 
 Do you want to read further information about the project and its background, please have a look into 
-[about](https://github.com/AKSW/cubeviz.ontowiki/wiki/About-the-project) page.
+[**about**](https://github.com/AKSW/cubeviz.ontowiki/wiki/About-the-project) page.
 
-![Line of different charts](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/differentCharts.png)
+![](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/v0.5_IndexActionScreenshot.png)
+
+![](https://raw.github.com/wiki/AKSW/cubeviz.ontowiki/images/v0.6_visualization.png)
 
 ## Getting started
 
