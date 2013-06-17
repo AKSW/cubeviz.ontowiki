@@ -797,6 +797,59 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     * 
+     */
+    public function modelinfoAction()
+    {
+        if (true === isset($this->_request->m)) {
+            // reset resource/class
+            unset($this->_owApp->selectedResource);
+            unset($this->_owApp->selectedClass);
+            unset($this->_session->hierarchyOpen);
+        }
+        
+        $on = $this->_owApp->getNavigation();
+        $on->disableNavigation (); // disable OntoWiki's Navigation    
+        
+        /**
+         * Load model information
+         */
+        $graph       = $this->_owApp->selectedModel;
+        $resource    = $this->_owApp->selectedResource;
+        $store       = $this->_owApp->erfurt->getStore();
+        
+        $titleHelper = new OntoWiki_Model_TitleHelper($graph);
+        $model       = new OntoWiki_Model_Resource($store, $graph, (string)$resource);
+        
+        $predicates  = $model->getPredicates();
+        $graphs      = array_keys($predicates);
+        
+        $titleHelper->addResource($this->_request->m);
+        $titleHelper->addResources($graphs);
+        
+        // model info
+        $graphInfo = array();
+        
+        foreach ($graphs as $g) {
+            $graphInfo[$g]     = $titleHelper->getTitle($g, $this->_config->languages->locale);
+        }
+        
+        $infoUris = $this->_config->descriptionHelper->properties;
+        $this->view->infoPredicates = array();
+        foreach ($infoUris as $infoUri) {
+            if (isset($predicates[(string)$graph]) && array_key_exists($infoUri, $predicates[(string)$graph])) {
+                $this->view->infoPredicates[$infoUri] = $predicates[(string)$graph][$infoUri];
+            }
+        }
+        
+        $this->view->modelTitle = $titleHelper->getTitle($this->_request->m);
+        
+        // check for DataCube information
+        $q = new DataCube_Query ($this->_owApp->selectedModel);
+        $this->view->containsDataCubeInformation = $q->containsDataCubeInformation();
+    }
+    
+    /**
      *
      */
     public function removeexamplecubeAction() 

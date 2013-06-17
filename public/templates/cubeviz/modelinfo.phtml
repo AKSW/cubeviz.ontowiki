@@ -1,0 +1,40 @@
+<script type="text/javascript">  
+    cubeVizApp.add("View_ModelinfoAction_Footer", "");
+</script>
+
+<br/>
+<small>Your selected model is </small>
+<div style="margin-top: 5px; font-size: 23px; color: #151544;"><?php echo $this->modelTitle ?></div>
+
+<br/>
+<br/>
+
+<?php if (0 < count ($this->infoPredicates)): ?>
+    <?php foreach ($this->infoPredicates as $uri => $predicate): ?>
+        <?php foreach ($values[$uri] as $entry): ?>
+            <p class="messagebox info"><?php echo trim($entry['object']) ?></p>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p class="messagebox info"><em>The model you select contains no description information about itself.</em></p>
+<?php endif; ?>
+
+<br/>
+
+<div style="width: 100%; text-align:center;">
+    <div style="margin-top: 5px; font-size: 17px; color: #414176;">
+        Statistical information</div>
+
+    <br/>
+    <?php if (true === $this->containsDataCubeInformation): ?>
+        
+        <div id="cubeviz-modelinfo-showAnalyzeBtn" class="cubeviz-btn">
+            <i class="icon-info-sign"></i>&nbsp; Show Statistical Information</div>
+        <div id="cubeviz-modelinfo-showVisualizationBtn" class="cubeviz-btn">
+            <i class="icon-bar-chart"></i>&nbsp; Show Visualization</div>
+        <br/>
+        <br/>
+    <?php else: ?>
+        <p class="messagebox info"><em>There are no valid DataCube information to visualize.</em></p>
+    <?php endif; ?>
+</div>

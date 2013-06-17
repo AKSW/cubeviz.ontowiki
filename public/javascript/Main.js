@@ -2792,6 +2792,38 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
     };
     return View_IndexAction_VisualizationSelector;
 })(CubeViz_View_Abstract);
+var View_ModelinfoAction_Footer = (function (_super) {
+    __extends(View_ModelinfoAction_Footer, _super);
+    function View_ModelinfoAction_Footer(attachedTo, app) {
+        _super.call(this, "View_Modelinfo_Footer", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_ModelinfoAction_Footer.prototype.initialize = function () {
+        this.render();
+    };
+    View_ModelinfoAction_Footer.prototype.onClick_showAnalyzeBtn = function () {
+        window.location.href = this.app._.backend.url + "analyze/";
+    };
+    View_ModelinfoAction_Footer.prototype.onClick_showVisualizationBtn = function () {
+        $("#cubeviz-footer-showVisualizationButton").click();
+    };
+    View_ModelinfoAction_Footer.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_ModelinfoAction_Footer.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-modelinfo-showAnalyzeBtn": this.onClick_showAnalyzeBtn,
+            "click #cubeviz-modelinfo-showVisualizationBtn": this.onClick_showVisualizationBtn
+        });
+        return this;
+    };
+    return View_ModelinfoAction_Footer;
+})(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
     if("development" == cubeVizApp._.backend.context) {
