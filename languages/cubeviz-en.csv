@@ -91,7 +91,7 @@ DataSelectionModule_MeasureDialogTitle;Measurement Selection
 DataSelectionModule_MeasureDialogDescription;In the following list, different measurements are available for selection. As the default, CubeViz selects one out of the list automatically, but you can change the selection according to your needs. Please note that you are only allowed to select one of the listed items.
 DataSelectionModule_ObservationCount;Observation Count
 DataSelectionModule_Of;of
-DataSelectionModule_Permalink;Link
+DataSelectionModule_Permalink;Share
 DataSelectionModule_SelectAllItems;Select all items
 DataSelectionModule_SelectAttributeAndMeasure;Select Unit and Measurement
 DataSelectionModule_SelectAttributeAndMeasureIconText;Why are there different measurements and units?
