@@ -64,8 +64,8 @@ class CubeViz_ViewHelper
      * 
      */
     public static function initApp(&$view, &$model, $backend, $cacheDir, 
-        $context, $modelIri, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash) 
-    {
+        $context, $modelIri, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash, $titleHelperLimit) 
+    {        
         // if cubeVizApp was not loaded yet
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
             
@@ -102,9 +102,9 @@ class CubeViz_ViewHelper
             $generatedDataHash = '';
             $generatedUiHash = '';
             
-            list($config['data'], $generatedDataHash) = $c->read ($dataHash, $model);
+            list($config['data'], $generatedDataHash) = $c->read ($dataHash, $model, $titleHelperLimit);
             
-            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, $model);
+            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, $model, $titleHelperLimit);
 
             $config['backend'] = array(
                 'context'               => $context, 
@@ -124,7 +124,7 @@ class CubeViz_ViewHelper
             );
             
             // load observations related to given data
-            $query = new DataCube_Query($model);
+            $query = new DataCube_Query($model, $titleHelperLimit);
             
             $config['backend']['retrievedObservations'] = $query->getObservations(
                 $config['data']['selectedDS']['__cv_uri'],

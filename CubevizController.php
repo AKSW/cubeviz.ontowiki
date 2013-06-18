@@ -6,6 +6,7 @@
 class CubevizController extends OntoWiki_Controller_Component 
 {
     protected $_configuration = null;
+    protected $_titleHelperLimit = -1;
     
     public function init () 
     {
@@ -19,6 +20,10 @@ class CubevizController extends OntoWiki_Controller_Component
             get_include_path() . PATH_SEPARATOR . 
             $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR
         );
+        
+        $this->_titleHelperLimit = 0 < (int) $this->_privateConfig->get('titleHelperLimit')
+            ? $this->_privateConfig->get('titleHelperLimit')
+            : 400;
     }
     
     /**
@@ -76,7 +81,7 @@ class CubevizController extends OntoWiki_Controller_Component
         /**
          * collect Datacube related information about the knowledge base
          */
-        $query = new DataCube_Query ($model);
+        $query = new DataCube_Query ($model, $this->_titleHelperLimit);
         
         /**
          * Go through all queries which ask for general information about the DataCube
@@ -344,7 +349,7 @@ class CubevizController extends OntoWiki_Controller_Component
         
         try {
             $model = new Erfurt_Rdf_Model($modelIri);
-            $query = new DataCube_Query($model);
+            $query = new DataCube_Query($model, $this->_titleHelperLimit);
             
             $code = 200;
             $content = array(
@@ -444,7 +449,7 @@ class CubevizController extends OntoWiki_Controller_Component
         
         try {
             $model = new Erfurt_Rdf_Model($modelIri);
-            $query = new DataCube_Query($model);
+            $query = new DataCube_Query($model, $this->_titleHelperLimit);
             
             $code = 200;
             $content = array(
@@ -507,7 +512,7 @@ class CubevizController extends OntoWiki_Controller_Component
         // load data sets
         try {
             $model = new Erfurt_Rdf_Model ($m);
-            $query = new DataCube_Query($model);
+            $query = new DataCube_Query($model, $this->_titleHelperLimit);
             $code = 200;
             $content = array(
                 'code' => $code, 
@@ -554,7 +559,7 @@ class CubevizController extends OntoWiki_Controller_Component
         
         try {
             $model = new Erfurt_Rdf_Model($modelIri);            
-            $query = new DataCube_Query($model);
+            $query = new DataCube_Query($model, $this->_titleHelperLimit);
 
             $code = 200;
             $content = array(
@@ -604,14 +609,15 @@ class CubevizController extends OntoWiki_Controller_Component
             
         try {
             $model = new Erfurt_Rdf_Model ($modelIri);
-            $query = new DataCube_Query ($model);
+            $query = new DataCube_Query ($model, $this->_titleHelperLimit);
             
             $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->erfurt->getCacheDir()
+                $this->_owApp->erfurt->getCacheDir(),
+                $this->_titleHelperLimit
             );
 
             // load configuration which is associated with given linkCode
-            list($c, $hash) = $configuration->read ($dataHash, $model);
+            list($c, $hash) = $configuration->read ($dataHash, $model, $this->_titleHelperLimit);
             
             $code = 200;
 
@@ -685,7 +691,7 @@ class CubevizController extends OntoWiki_Controller_Component
             
         try {
             $model = new Erfurt_Rdf_Model ($modelIri);
-            $query = new DataCube_Query ($model);            
+            $query = new DataCube_Query ($model, $this->_titleHelperLimit);            
             $code = 200;
             
             // result object
@@ -787,7 +793,8 @@ class CubevizController extends OntoWiki_Controller_Component
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),
             $this->_request->getParam ('cv_uiHash'),
-            $modelInformation
+            $modelInformation,
+            $this->_titleHelperLimit
         );
         
         $this->view->useExport = $this->_privateConfig->get('useExport');
@@ -844,7 +851,7 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         // check for DataCube information
-        $q = new DataCube_Query ($this->_owApp->selectedModel);
+        $q = new DataCube_Query ($this->_owApp->selectedModel, $this->_titleHelperLimit);
         $this->view->containsDataCubeInformation = $q->containsDataCubeInformation();
     }
     
@@ -905,7 +912,8 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->layout->disableLayout();
         
         $configuration = new CubeViz_ConfigurationLink(
-            $this->_owApp->erfurt->getCacheDir()
+            $this->_owApp->erfurt->getCacheDir(),
+            $this->_titleHelperLimit
         );
         
         // write given content to file

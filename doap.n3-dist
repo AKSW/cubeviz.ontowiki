@@ -25,6 +25,8 @@
   
   :context "production"^^xsd:string ;
   
+  :titleHelperLimit "1000"^^xsd:integer ;
+  
   #
   # Activate / deactivate certain functionalities
   #     true  = activated

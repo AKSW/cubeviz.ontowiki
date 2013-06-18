@@ -14,14 +14,16 @@ class DataCube_Query
 {    
     protected $_model = null;
     protected $_store = null;
+    protected $_titleHelperLimit = -1;
     
     /**
      * Constructor
      */
-    public function __construct ($model)
+    public function __construct ($model, $titleHelperLimit)
     {
         $this->_model = $model;
         $this->_store = $model->getStore();
+        $this->_titleHelperLimit = $titleHelperLimit;
     }
     
     /**
@@ -53,10 +55,7 @@ class DataCube_Query
                     ?measurespecification qb:measure ?measure .
                 }'
         );
-        if (!empty ($result) ) {
-            return true;
-        }
-        return false;
+        return false === empty ($result);
     }
 
     /**
@@ -69,14 +68,17 @@ class DataCube_Query
     public function enrichResult($assocSPOArray)
     {
         $return = array();
+        $spoArrayCount = count($assocSPOArray);
         $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
 
         /**
          * go through all entries to add them to title helper
          */
-        foreach($assocSPOArray as $mainKey => $entry) {
-            if (Erfurt_Uri::check($mainKey)) {
-                $titleHelper->addResource($mainKey);
+        if ($this->_titleHelperLimit >= $spoArrayCount) {
+            foreach($assocSPOArray as $mainKey => $entry) {
+                if (true === Erfurt_Uri::check($mainKey)) {
+                    $titleHelper->addResource($mainKey);
+                }
             }
         }
 
@@ -91,8 +93,12 @@ class DataCube_Query
             // hashed URI of the element
             $entry ['__cv_hashedUri'] = md5($mainKey);
 
-            // Nice label using TitleHelper
-            $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
+            if ($this->_titleHelperLimit >= $spoArrayCount) {
+                // Nice label using TitleHelper
+                $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
+            } else {
+                $entry ['__cv_niceLabel'] = $mainKey;
+            }
 
             // Comment
             if (true === isset($entry['http://www.w3.org/2000/01/rdf-schema#comment'])

@@ -39,9 +39,9 @@ class CubeViz_ConfigurationLink
     /**
      *
      */
-    public function loadStandardConfigForData($config, &$model) 
+    public function loadStandardConfigForData($config, &$model, $titleHelperLimit) 
     {
-        $query = new DataCube_Query($model);
+        $query = new DataCube_Query($model, $titleHelperLimit);
         
         // if no data structure definitions were selected
         if(0 === count($config['dataSets'])) {
@@ -282,7 +282,7 @@ class CubeViz_ConfigurationLink
     /**
      *
      */
-    public function read($hash, &$model) 
+    public function read($hash, &$model, $titleHelperLimit) 
     {
         /**
          * load and return file content, if file exists
@@ -339,7 +339,7 @@ class CubeViz_ConfigurationLink
                     ),
                     'selectedSlice'                 => array(),
                     'slices'                        => array()
-                ), $model);                
+                ), $model, $titleHelperLimit);                
                 
                 $type = 'data';
                 

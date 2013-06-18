@@ -13,7 +13,8 @@
  */
 class DataselectionModule extends OntoWiki_Module
 {
-    protected $session = null;
+    protected $session = null;    
+    protected $_titleHelperLimit = -1;
 
     public function init() 
     {
@@ -28,6 +29,11 @@ class DataselectionModule extends OntoWiki_Module
             $path . DIRECTORY_SEPARATOR . PATH_SEPARATOR .
             $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR
         );
+        
+        // 
+        $this->_titleHelperLimit = 0 < $this->_privateConfig->get('titleHelperLimit')
+            ? $this->_privateConfig->get('titleHelperLimit')
+            : 400;
     }
 
     public function getTitle() 
@@ -42,7 +48,7 @@ class DataselectionModule extends OntoWiki_Module
     public function shouldShow()
     {
         if (true == isset($this->_owApp->selectedModel)) {
-            $q = new DataCube_Query ( $this->_owApp->selectedModel );
+            $q = new DataCube_Query ($this->_owApp->selectedModel, $this->_titleHelperLimit);
             return $q->containsDataCubeInformation();
         } 
         return false;
@@ -53,7 +59,7 @@ class DataselectionModule extends OntoWiki_Module
      */
     public function getContents() 
     {
-        $q = new DataCube_Query ( $this->_owApp->selectedModel );
+        $q = new DataCube_Query ($this->_owApp->selectedModel, $this->_titleHelperLimit);
         if (false === $q->containsDataCubeInformation()) {
             return false;
         }
@@ -133,7 +139,8 @@ class DataselectionModule extends OntoWiki_Module
             $this->_config->staticUrlBase,
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),
-            $this->_request->getParam ('cv_uiHash')
+            $this->_request->getParam ('cv_uiHash'),
+            $this->_titleHelperLimit
         );
         
         if(null !== $config) {
