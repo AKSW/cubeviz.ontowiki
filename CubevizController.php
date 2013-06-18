@@ -145,56 +145,59 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         $this->view->dataSets = array ();
         
-        $dataStructureDefinitions = $query->getDataStructureDefinitions();
-        $tmp = $query->getDataSets();
+        if (true === $this->_privateConfig->get('showAnalyzeToolDataSets')) {
+            
+            $dataStructureDefinitions = $query->getDataStructureDefinitions();
+            $tmp = $query->getDataSets();
         
-        foreach ($tmp as $dataSet) {
-            
-            // data structure definitions
-            foreach ($dataStructureDefinitions as $ds) {
-                if ($ds['__cv_uri'] == $dataSet[DataCube_UriOf::Structure]) {
-                    $dataSet ['dataStructureDefinition'] = $ds;
+            foreach ($tmp as $dataSet) {
+                
+                // data structure definitions
+                foreach ($dataStructureDefinitions as $ds) {
+                    if ($ds['__cv_uri'] == $dataSet[DataCube_UriOf::Structure]) {
+                        $dataSet ['dataStructureDefinition'] = $ds;
+                    }
                 }
+                
+                // attributes
+                $attributes = $query->getComponents(
+                    $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                    DataCube_UriOf::Attribute
+                );
+                
+                $dataSet['attributes'] = array ();            
+                foreach ($attributes as $attribute) {
+                    $dataSet['attributes'] [] = $attribute;
+                }
+                
+                // measures
+                $measures = $query->getComponents(
+                    $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                    DataCube_UriOf::Measure
+                );
+                
+                $dataSet['measures'] = array();
+                foreach ($measures as $measure) {
+                    $dataSet['measures'] [] = $measure;
+                }
+                
+                // slices
+                $dataSet['slices'] = array ();
+                $sliceKeys = $query->getSliceKeys(
+                    $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri']
+                );
+                foreach ($sliceKeys as $sliceKey) {
+                    $dataSet['slices'] = array_merge ($dataSet['slices'], $sliceKey ['slices']);
+                }
+                
+                // dimensions
+                $dataSet['dimensions'] = $query->getComponents(
+                    $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
+                    DataCube_UriOf::Dimension
+                );
+                
+                $this->view->dataSets [] = $dataSet;
             }
-            
-            // attributes
-            $attributes = $query->getComponents(
-                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
-                DataCube_UriOf::Attribute
-            );
-            
-            $dataSet['attributes'] = array ();            
-            foreach ($attributes as $attribute) {
-                $dataSet['attributes'] [] = $attribute;
-            }
-            
-            // measures
-            $measures = $query->getComponents(
-                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
-                DataCube_UriOf::Measure
-            );
-            
-            $dataSet['measures'] = array();
-            foreach ($measures as $measure) {
-                $dataSet['measures'] [] = $measure;
-            }
-            
-            // slices
-            $dataSet['slices'] = array ();
-            $sliceKeys = $query->getSliceKeys(
-                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri']
-            );
-            foreach ($sliceKeys as $sliceKey) {
-                $dataSet['slices'] = array_merge ($dataSet['slices'], $sliceKey ['slices']);
-            }
-            
-            // dimensions
-            $dataSet['dimensions'] = $query->getComponents(
-                $dataSet ['dataStructureDefinition']['__cv_uri'], $dataSet['__cv_uri'],
-                DataCube_UriOf::Dimension
-            );
-            
-            $this->view->dataSets [] = $dataSet;
         }
     }
     

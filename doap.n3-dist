@@ -31,6 +31,7 @@
   #     false = deactivated
   #
   :useAnalyzeTool "true"^^xsd:boolean ;
+  :showAnalyzeToolDataSets "true"^^xsd:boolean ;
   :useExport "true"^^xsd:boolean .
 
 :Default a owconfig:Module ;
