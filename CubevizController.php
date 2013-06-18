@@ -759,8 +759,8 @@ class CubevizController extends OntoWiki_Controller_Component
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
         $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);
-        $modelInformation ['rdfs:label'] = true === isset($modelInformation ['rdfs:label'])
-            ? $modelInformation ['rdfs:label']
+        $modelInformation ['rdfs:label'] = true === isset($modelInformation ['http://www.w3.org/2000/01/rdf-schema#label'])
+            ? $modelInformation ['http://www.w3.org/2000/01/rdf-schema#label']['content']
             : $modelIri;
             
         /**
