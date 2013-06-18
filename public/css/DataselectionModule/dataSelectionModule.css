@@ -71,15 +71,15 @@
 .cubeviz-dataSelectionModule-middleBlock
 {
     float:           left; 
-    width:          180px; 
+    width:          140px; 
     margin-left:     20px;
 }
 
 .cubeviz-dataSelectionModule-rightBlock
 {
     float:           left; 
-        width:       20px; 
-    min-width:       20px; 
+        width:       60px; 
+    min-width:       60px; 
     height:          30px; 
     text-align:     right; 
     padding-top:      4px;

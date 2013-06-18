@@ -71,6 +71,7 @@ DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection
 DataSelectionModule_AttributeDialogDescription;In the following list, different units are available for selection. As the default, CubeViz selects one out of the list automatically, but you can change the selection according to your needs. Please note that you are only allowed to select one of the listed items.
 DataSelectionModule_Cancel;Cancel
+DataSelectionModule_ChangeSelection;Change
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
 DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
