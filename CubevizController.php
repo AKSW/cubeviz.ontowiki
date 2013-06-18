@@ -833,7 +833,15 @@ class CubevizController extends OntoWiki_Controller_Component
             : $modelIri;
         
         $this->view->modelTitle = $modelInformation ['rdfs:label'];
-        $this->view->modelInformation = $modelInformation;
+        
+        $this->view->modelDescriptions = array();
+        foreach ($modelInformation as $entry) 
+        {
+            if ('skos:description' == $entry ['predicateLabel']
+                || 'rdfs:comment' == $entry ['predicateLabel']) {
+                $this->view->modelDescriptions [] = $entry ['content'];
+            }
+        }
         
         // check for DataCube information
         $q = new DataCube_Query ($this->_owApp->selectedModel);

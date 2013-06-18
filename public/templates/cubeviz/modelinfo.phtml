@@ -9,10 +9,10 @@
     <br/>
     <br/>
 
-    <?php if (0 < count ($this->modelInformation)): ?>
-        <?php foreach ($this->modelInformation as $url => $predicate): if ('http://purl.org/dc/elements/1.1/description' == $url):?>
-            <p class="messagebox info"><?php echo trim($predicate['content']) ?></p>
-        <?php endif; endforeach; ?>
+    <?php if (0 < count ($this->modelDescriptions)): ?>
+        <?php foreach ($this->modelDescriptions as $description): ?>
+            <p class="messagebox info"><?php echo $description; ?></p>
+        <?php endforeach; ?>
     <?php else: ?>
         <p class="messagebox info"><em>The model you select contains no description information about itself.</em></p>
     <?php endif; ?>
