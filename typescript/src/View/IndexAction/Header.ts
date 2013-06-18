@@ -133,7 +133,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public renderHeader() 
     {
-        var modelLabel
+        var modelLabel;
         
         // if model label is set and not blank, use it!
         if(false === _.isUndefined(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])
@@ -145,9 +145,16 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
             modelLabel = this.app._.backend.modelUrl;
         }
         
+        // set headline
         $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
             $("#cubeviz-index-tpl-header").html(),
             { modelLabel: modelLabel }
+        ));
+        
+        // set sub headline
+        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-index-tpl-headerSubheadline").html(),
+            { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
         ));
     }
 }

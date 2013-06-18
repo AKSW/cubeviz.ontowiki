@@ -261,7 +261,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public setVisualizationHeight (numberOfYAxisElements:number = 0) 
     {
         var offset:any = $(this.attachedTo).offset(),
-            minHeight:number = $(window).height() - offset.top - 95,
+            minHeight:number = $(window).height() - offset.top - 105,
             tmp:number = 0;
             
         if(0 < numberOfYAxisElements) {

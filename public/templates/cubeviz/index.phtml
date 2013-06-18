@@ -20,6 +20,7 @@
     <!-- Header -->
     <div style="float: left;">
         <h2 id="cubeviz-index-header"></h2>
+        <div id="cubeviz-index-headerSubheadline"></div>
     </div>
 
     <!-- Visualization -->
@@ -90,6 +91,8 @@
                  style="width: 17px;"/></a>
     </div>
     <?php } ?>
+    
+    <div style="clear: both;"></div>
 
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
@@ -131,11 +134,18 @@
     Header
 -->
 <div id="cubeviz-index-tpl-header" style="display: none;">
-    <?php echo $this->translate->_('IndexAction_VisualizationOf'); ?> [[modelLabel]]
-    &nbsp;
+    [[modelLabel]]
     <i class="icon-lightbulb cubeviz-clickable"
        id="cubeviz-index-headerQuestionMarkHeadline" 
        title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"></i>
+</div>
+<div id="cubeviz-index-tpl-headerSubheadline" style="display: none;">
+    [[selectedDataSet]]    
+    &nbsp;
+    &nbsp;
+    <i class="icon-table"></i>
+    <a href="#cubeviz-index-legend">
+        <?php echo $this->translate->_('IndexAction_JumpToLegend'); ?></a>
 </div>
 
 <!-- 

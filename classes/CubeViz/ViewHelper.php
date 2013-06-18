@@ -21,8 +21,7 @@ class CubeViz_ViewHelper
      * @param $modelStore Store of selected model
      * @param $model Model itself
      * @param $modelIri Iri of the selected model
-     * @return Array Array with fields about dc:creator, dc:description, 
-     *               rdfs:label, doap:license, doap:revision, doap:shortdesc
+     * @return Array Array with fields containing information about the model
      */
     public static function getModelInformation ($modelStore, $model, $modelIri) 
     {

@@ -125,6 +125,7 @@ IndexAction_ExportAsCsv;Export as CSV
 IndexAction_GoToSource;Go To Source
 IndexAction_InformationAboutConfiguration;Information About Selected Configuration
 IndexAction_InformationAboutRetrievedData;Information About Retrieved Data
+IndexAction_JumpToLegend;Jump to Legend
 IndexAction_MetaDataAboutDimensionElement;Metadata about the dimension element
 IndexAction_NotificationHighChartsException10;That chart can not be produced because the selected data contains zero or subzero values. Please change the configuration in the left sidebar or use another Scale value but not Logarithmic.
 IndexAction_NotificationNoDataFitsSelection;No data fits to your selection, please adapt your selection in the left sidebar manually.

@@ -2277,6 +2277,9 @@ var View_IndexAction_Header = (function (_super) {
         $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-header").html(), {
             modelLabel: modelLabel
         }));
+        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+            selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+        }));
     };
     return View_IndexAction_Header;
 })(CubeViz_View_Abstract);
@@ -2578,7 +2581,7 @@ var View_IndexAction_Visualization = (function (_super) {
     View_IndexAction_Visualization.prototype.setVisualizationHeight = function (numberOfYAxisElements) {
         if (typeof numberOfYAxisElements === "undefined") { numberOfYAxisElements = 0; }
         var offset = $(this.attachedTo).offset();
-        var minHeight = $(window).height() - offset.top - 95;
+        var minHeight = $(window).height() - offset.top - 105;
         var tmp = 0;
 
         if(0 < numberOfYAxisElements) {
