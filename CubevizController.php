@@ -821,31 +821,19 @@ class CubevizController extends OntoWiki_Controller_Component
         $resource    = $this->_owApp->selectedResource;
         $store       = $this->_owApp->erfurt->getStore();
         
-        $titleHelper = new OntoWiki_Model_TitleHelper($graph);
-        $model       = new OntoWiki_Model_Resource($store, $graph, (string)$resource);
+        /**
+         * Load model information
+         */
+        $model = $this->_owApp->selectedModel;
+        $modelIri = $model->getModelIri();
+        $modelStore = $model->getStore();
+        $modelInformation = CubeViz_ViewHelper::getModelInformation($modelStore, $model, $modelIri);
+        $modelInformation ['rdfs:label'] = true === isset($modelInformation ['http://www.w3.org/2000/01/rdf-schema#label'])
+            ? $modelInformation ['http://www.w3.org/2000/01/rdf-schema#label']['content']
+            : $modelIri;
         
-        $predicates  = $model->getPredicates();
-        $graphs      = array_keys($predicates);
-        
-        $titleHelper->addResource($this->_request->m);
-        $titleHelper->addResources($graphs);
-        
-        // model info
-        $graphInfo = array();
-        
-        foreach ($graphs as $g) {
-            $graphInfo[$g]     = $titleHelper->getTitle($g, $this->_config->languages->locale);
-        }
-        
-        $infoUris = $this->_config->descriptionHelper->properties;
-        $this->view->infoPredicates = array();
-        foreach ($infoUris as $infoUri) {
-            if (isset($predicates[(string)$graph]) && array_key_exists($infoUri, $predicates[(string)$graph])) {
-                $this->view->infoPredicates[$infoUri] = $predicates[(string)$graph][$infoUri];
-            }
-        }
-        
-        $this->view->modelTitle = $titleHelper->getTitle($this->_request->m);
+        $this->view->modelTitle = $modelInformation ['rdfs:label'];
+        $this->view->modelInformation = $modelInformation;
         
         // check for DataCube information
         $q = new DataCube_Query ($this->_owApp->selectedModel);
