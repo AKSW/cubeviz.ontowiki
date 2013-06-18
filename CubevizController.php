@@ -835,10 +835,10 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->modelTitle = $modelInformation ['rdfs:label'];
         
         $this->view->modelDescriptions = array();
-        foreach ($modelInformation as $entry) 
+        foreach ($modelInformation as $url => $entry) 
         {
-            if ('skos:description' == $entry ['predicateLabel']
-                || 'rdfs:comment' == $entry ['predicateLabel']) {
+            if ('http://www.w3.org/2004/02/skos/core#description' == $url
+                || 'http://www.w3.org/2000/01/rdf-schema#comment' == $url) {
                 $this->view->modelDescriptions [] = $entry ['content'];
             }
         }
