@@ -137,9 +137,6 @@
 -->
 <div id="cubeviz-index-tpl-header" style="display: none;">
     [[modelLabel]]
-    <i class="icon-lightbulb cubeviz-clickable"
-       id="cubeviz-index-headerQuestionMarkHeadline" 
-       title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"></i>
 </div>
 <div id="cubeviz-index-tpl-headerSubheadline" style="display: none;">
     [[selectedDataSet]]    
@@ -148,6 +145,12 @@
     <i class="icon-table"></i>
     <a href="#cubeviz-index-legend">
         <?php echo $this->translate->_('IndexAction_JumpToLegend'); ?></a>
+    &nbsp;
+    &nbsp;
+    <i class="icon-lightbulb"></i>
+    <a class="cubeviz-clickable"
+       id="cubeviz-index-headerQuestionMarkHeadline" 
+       title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"><?php echo $this->translate->_('IndexAction_ShowMetaData'); ?></a>
 </div>
 
 <!-- 
