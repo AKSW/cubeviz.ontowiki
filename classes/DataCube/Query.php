@@ -311,7 +311,20 @@ class DataCube_Query
      */
     public function getComponentElements($dataSetUri, $componentProperty) 
     {
-        $result = $this->_model->sparqlQuery('SELECT ?componentUri ?p ?o WHERE {
+        
+#        var_dump('SELECT ?componentUri ?p ?o WHERE {
+#            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+#            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
+#            ?observation <'.$componentProperty.'> ?componentUri.
+#            OPTIONAL {
+#                ?componentUri ?p ?o.
+#            }
+#        }');
+        
+        
+        
+        
+        $result = $this->_model->sparqlQuery('SELECT DISTINCT ?componentUri ?p ?o WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
             ?observation <'.$componentProperty.'> ?componentUri.
