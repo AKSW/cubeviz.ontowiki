@@ -2246,9 +2246,15 @@ var View_IndexAction_Header = (function (_super) {
         this.render();
     };
     View_IndexAction_Header.prototype.onChange_selectedDS = function () {
-        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
-            selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
-        }));
+        if(false === this.app._.backend.uiSettings.useDataSetInsteadOfModel) {
+            $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+                selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+            }));
+        } else {
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+                selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+            }));
+        }
     };
     View_IndexAction_Header.prototype.onClick_questionMark = function () {
         $("#cubeviz-index-headerDialogBox").dialog("open");
@@ -2295,12 +2301,19 @@ var View_IndexAction_Header = (function (_super) {
         } else {
             modelLabel = this.app._.backend.modelUrl;
         }
-        $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-header").html(), {
-            modelLabel: modelLabel
-        }));
-        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
-            selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
-        }));
+        if(false === this.app._.backend.uiSettings.useDataSetInsteadOfModel) {
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-header").html(), {
+                modelLabel: modelLabel
+            }));
+            $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+                selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+            }) + $("#cubeviz-index-tpl-headerSubheadlineButtons").html());
+        } else {
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+                selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+            }));
+            $("#cubeviz-index-headerSubheadline").html($("#cubeviz-index-tpl-headerSubheadlineButtons").html());
+        }
     };
     return View_IndexAction_Header;
 })(CubeViz_View_Abstract);

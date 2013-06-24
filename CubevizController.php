@@ -797,7 +797,10 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_titleHelperLimit
         );
         
+        // load settings from the doap.n3
         $this->view->useExport = $this->_privateConfig->get('useExport');
+        $this->view->uiUseDataSetInsteadOfModel = true !== $this->_privateConfig->get('uiUseDataSetInsteadOfModel')
+            ? 'false' : 'true';
         
         if(null !== $config) {
             $this->view->headScript()

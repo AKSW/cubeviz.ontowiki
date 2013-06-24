@@ -34,7 +34,16 @@
   #
   :useAnalyzeTool "true"^^xsd:boolean ;
   :showAnalyzeToolDataSets "true"^^xsd:boolean ;
-  :useExport "true"^^xsd:boolean .
+  :useExport "true"^^xsd:boolean ;
+  
+  #
+  # Adapt user interface
+  #     true  = activated
+  #     false = deactivated
+  #
+  
+  # If true, replace model label by data set label
+  :uiUseDataSetInsteadOfModel "true"^^xsd:boolean .
 
 :Default a owconfig:Module ;
 
