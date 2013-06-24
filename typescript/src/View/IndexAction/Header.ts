@@ -15,6 +15,10 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -42,6 +46,18 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
     public initialize() 
     {
         this.render();
+    }
+
+    /**
+     *
+     */
+    public onChange_selectedDS() 
+    {
+        // update data set title
+        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-index-tpl-headerSubheadline").html(),
+            { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
+        ));
     }
 
     /**

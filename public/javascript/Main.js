@@ -2216,6 +2216,10 @@ var View_IndexAction_Header = (function (_super) {
         _super.call(this, "View_IndexAction_Header", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            }, 
+            {
                 name: "onStart_application",
                 handler: this.onStart_application
             }
@@ -2228,6 +2232,11 @@ var View_IndexAction_Header = (function (_super) {
     };
     View_IndexAction_Header.prototype.initialize = function () {
         this.render();
+    };
+    View_IndexAction_Header.prototype.onChange_selectedDS = function () {
+        $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace($("#cubeviz-index-tpl-headerSubheadline").html(), {
+            selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel
+        }));
     };
     View_IndexAction_Header.prototype.onClick_questionMark = function () {
         $("#cubeviz-index-headerDialogBox").dialog("open");
