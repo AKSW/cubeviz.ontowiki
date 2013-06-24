@@ -93,7 +93,7 @@ DataSelectionModule_MeasureDialogDescription;In the following list, different me
 DataSelectionModule_ObservationCount;Observation Count
 DataSelectionModule_Of;of
 DataSelectionModule_Permalink;Share
-DataSelectionModule_PermaLinkLabel;Here the link to share
+DataSelectionModule_PermaLinkLabel;Use the following Link to share the current output
 DataSelectionModule_SelectAllItems;Select all items
 DataSelectionModule_SelectAttributeAndMeasure;Select Unit and Measurement
 DataSelectionModule_SelectAttributeAndMeasureIconText;Why are there different measurements and units?
