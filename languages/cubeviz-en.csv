@@ -33,7 +33,7 @@ AnalyzeAction_DSDIncludesMeasure;DSD includes Measure
 AnalyzeAction_DSDIncludesMeasureDescription;Every qb:DataStructureDefinition must include at least one declared measure.
 AnalyzeAction_Elements;Elements
 AnalyzeAction_GeneralInformation;General Information
-AnalyzeAction_HeadDescriptionText;Here you will find information about the DataCube information in the selected knowledgebase.
+AnalyzeAction_HeadDescriptionText;In the following you see a few statistical observations about the selected dataset.
 AnalyzeAction_IntegrityConstraints;Integrity Constraints
 AnalyzeAction_MeasureDimensionConsistent;Measure Dimension Consistent
 AnalyzeAction_MeasureDimensionConsistentDescription;In a qb:DataSet which uses a Measure dimension then each qb:Observation must have a value for the measure corresponding to its given qb:measureType.
@@ -74,7 +74,7 @@ DataSelectionModule_Cancel;Cancel
 DataSelectionModule_ChangeSelection;Change
 DataSelectionModule_CheckStatus;Check Status
 DataSelectionModule_ClickMoreInformation;Click for more information
-DataSelectionModule_CloseAndUpdateVisz;Close and update visualization
+DataSelectionModule_CloseAndUpdateVisz;Update Selection
 DataSelectionModule_ComponentDialogDescription;In the following form, those dimension elements are listed that are used to express the context of the corresponding statistical observations. This is a multiple choice selection, which means that you are able to select a minimum of one and a maximum of all items. Please note that you have to select at least one item. If you select all items it can happen that the server has to respond with a very huge set of data which can can slow down the response and processing time.
 DataSelectionModule_ComponentDialogMainTitle;Dimension Element Selection 
 DataSelectionModule_ComponentHelpDialogDescription;The selected RDF dataset contains statistical context information of the observations. In a DataCube such contextual information are expressed as dimensions and dimension elements. To select observations of your interest you have to select elements belonging to these dimensions. The available dimensions are available in the box. Below every dimension the amount of selected and available dimension elements is diplayed. To change the slection please use the selection dialogue for each dimension.
@@ -102,11 +102,11 @@ DataSelectionModule_SelectComponentElements;Select elements of interest
 DataSelectionModule_SelectComponents;Configure the Dimensions
 DataSelectionModule_SelectComponentsIconText;What is a dimension and why should I select elements belonging to a dimension?
 DataSelectionModule_SelectComponentsHelpText;Each data set contains statistical data. These data is a collection of so-called observations. Under an observation you can picture a point in a room. This point has coordinates which locates him at a specific position in this room. In general these coordinates are 3 dimensional: height, width and deep. In the DataCube context these coordinates are dimensions and it is possible to have more than these 3. But these dimension are not positions in a room, you may think, but could be everything, like a scala of money (e.g. from 1000 EUR to 100.000 EUR).
-DataSelectionModule_SelectDS;Select a dataset
+DataSelectionModule_SelectDS;Select a part of the Dataset
 DataSelectionModule_Selected;Selected
 DataSelectionModule_SelectSlice;Select dataset filter
 DataSelectionModule_SelectSliceIconText;Why do i should use dataset filter?
-DataSelectionModule_ShowVisualization;Show Visualization
+DataSelectionModule_ShowVisualization;Update Chart
 DataSelectionModule_SliceDialogDescription;A dataset filter set a fix amount of dimension elements. Its purpose is to give you a specific view of the data.
 DataSelectionModule_SliceDialogNoSliceSelectionElement;Do not use any slices
 DataSelectionModule_SliceDialogTitle;Dataset filter selection
