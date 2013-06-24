@@ -797,7 +797,10 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_titleHelperLimit
         );
         
+        // load settings from the doap.n3
         $this->view->useExport = $this->_privateConfig->get('useExport');
+        $this->view->uiUseDataSetInsteadOfModel = true !== $this->_privateConfig->get('uiUseDataSetInsteadOfModel')
+            ? 'false' : 'true';
         
         if(null !== $config) {
             $this->view->headScript()
@@ -826,6 +829,7 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         $graph       = $this->_owApp->selectedModel;
         $resource    = $this->_owApp->selectedResource;
+        $erfurt      = $this->_owApp->erfurt;  
         $store       = $this->_owApp->erfurt->getStore();
         
         /**
@@ -838,6 +842,8 @@ class CubevizController extends OntoWiki_Controller_Component
         $modelInformation ['rdfs:label'] = true === isset($modelInformation ['http://www.w3.org/2000/01/rdf-schema#label'])
             ? $modelInformation ['http://www.w3.org/2000/01/rdf-schema#label']['content']
             : $modelIri;
+        
+        $this->view->sparqlService = $erfurt->getConfig()->store->sparql->serviceUrl;
         
         $this->view->modelTitle = $modelInformation ['rdfs:label'];
         

@@ -118,6 +118,7 @@ class CubeViz_ViewHelper
                     'dataselectionModule' => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),
                     'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
+                'uiSettings'            => array (),
                 'retrievedObservations' => array(),
                 'sparqlEndpoint'        => 'local',
                 'url'                   => $staticUrlBase . 'cubeviz/'

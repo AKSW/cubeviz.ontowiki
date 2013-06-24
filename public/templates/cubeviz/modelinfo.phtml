@@ -2,38 +2,74 @@
     cubeVizApp.add("View_ModelinfoAction_Footer", "");
 </script>
 
+<style>
+    #dataselection {
+        display : none;
+    }
+    .moduleHeadline {
+        display : none;
+    }
+</style>
+
 <div id="cubeviz-modelinfoDiv">
-    <small>Your selected model is </small>
-    <div style="margin-top: 5px; font-size: 23px; color: #151544;"><?php echo $this->modelTitle ?></div>
-
+    <div class="messagebox info">
+        <b>The dataset you selected provide the title: </b>
+        <div style="margin-top: 5px; font-size: 16px; color: #151544;"><em></em><?php echo $this->modelTitle ?></em></div>
+        <small>If you dont see a title, but an Url instead, the the dataset do not contain title information.</small>
+        <br/>
+        <br/>
+        <?php if (0 < count ($this->modelDescriptions)): ?>
+            <b>Description (provided by the dataset)</b><br/>
+            <?php foreach ($this->modelDescriptions as $description): ?>
+                <?php echo $description; ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <em>The model you selected do not provide descriptions about itself.</em>
+        <?php endif; ?>
+    </div>
     <br/>
+    <div class="messagebox info">    
+        <b>The model you selected is received from the data provider.</b>
+        <div style="margin-top: 5px; font-size: 16px; color: #151544;"><?php echo $this->sparqlService ?></div>
+        <small>All data will be received from this data provider (SPARQL endpoint). In dependence to the workload of this service, data request can take time.</small>
+    </div>
     <br/>
+    <?php if (true === $this->containsDataCubeInformation): ?>
 
-    <?php if (0 < count ($this->modelDescriptions)): ?>
-        <?php foreach ($this->modelDescriptions as $description): ?>
-            <p class="messagebox info"><?php echo $description; ?></p>
-        <?php endforeach; ?>
+        <div class="messagebox success">
+            <b>Success</b>
+            <br/>
+            <em>
+                The model you selected contain statistical information.
+                Please click on the following button to start CubeViz.
+            </em>
+                <br/>
+                <br/>
+                <div id="cubeviz-modelinfo-showVisualizationBtn" class="cubeviz-btn">
+                    <i class="icon-bar-chart"></i>
+                    &nbsp; Start CubeViz
+                </div>
+            <br>
+        </div>
+<br/>
+        <div class="messagebox info">    
+            <b>Statistics about the selected model</b>
+            <br/>
+            <em>
+                The model you selected contain statistical information.<br/>
+                Please click on the following button to get some insights about what the selected dataset provide.<br/>
+                Please note, that this can take some time (it depends to the workload of the data provider and the size of the dataset).
+            </em>
+            <br/>
+            <br/>
+            <div id="cubeviz-modelinfo-showAnalyzeBtn" class="cubeviz-btn">
+                <i class="icon-info-sign"></i>
+                &nbsp; Show statistics about the selected dataset.
+            </div>
     <?php else: ?>
-        <p class="messagebox info"><em>The model you select contains no description information about itself.</em></p>
+            <p class="messagebox error"><em>The selected model do not provide statistics in the required representation (RDF DataCube). <br>
+            Please select an other Sparql endpoint and/or model from the settings panel.</em></p>
     <?php endif; ?>
 
-    <br/>
-
-    <div style="width: 100%; text-align:center;">
-        <div style="margin-top: 5px; font-size: 17px; color: #414176;">
-            Statistical information</div>
-
-        <br/>
-        <?php if (true === $this->containsDataCubeInformation): ?>
-            
-            <div id="cubeviz-modelinfo-showAnalyzeBtn" class="cubeviz-btn">
-                <i class="icon-info-sign"></i>&nbsp; Show Statistical Information</div>
-            <div id="cubeviz-modelinfo-showVisualizationBtn" class="cubeviz-btn">
-                <i class="icon-bar-chart"></i>&nbsp; Show Visualization</div>
-            <br/>
-            <br/>
-        <?php else: ?>
-            <p class="messagebox info"><em>There are no valid DataCube information to visualize.</em></p>
-        <?php endif; ?>
     </div>
 </div>

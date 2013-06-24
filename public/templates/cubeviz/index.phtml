@@ -2,6 +2,9 @@
     
     cubeVizApp._.backend.uiParts.index.isLoaded = true;
     
+    // ui settings to adapt user interface
+    cubeVizApp._.backend.uiSettings.useDataSetInsteadOfModel = <?php echo $this->uiUseDataSetInsteadOfModel; ?>;
+    
     cubeVizApp
         .add("View_IndexAction_Header", "#cubeviz-index-headerDialogBox")
         .add("View_IndexAction_Visualization", "#cubeviz-index-visualization")
@@ -18,7 +21,7 @@
     </div>
     
     <!-- Header -->
-    <div style="float: left;">
+    <div id="cubeviz-index-headerContainer" style="float: left;">
         <h2 id="cubeviz-index-header"></h2>
         <div id="cubeviz-index-headerSubheadline"></div>
     </div>
@@ -139,7 +142,9 @@
     [[modelLabel]]
 </div>
 <div id="cubeviz-index-tpl-headerSubheadline" style="display: none;">
-    [[selectedDataSet]]    
+    [[selectedDataSet]]
+</div>
+<div id="cubeviz-index-tpl-headerSubheadlineButtons" style="display: none;">
     &nbsp;
     &nbsp;
     <i class="icon-table"></i>
@@ -149,7 +154,7 @@
     &nbsp;
     <i class="icon-lightbulb"></i>
     <a class="cubeviz-clickable"
-       id="cubeviz-index-headerQuestionMarkHeadline" 
+       id="cubeviz-index-headerQuestionMarkHeadline"
        title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"><?php echo $this->translate->_('IndexAction_ShowMetaData'); ?></a>
 </div>
 
