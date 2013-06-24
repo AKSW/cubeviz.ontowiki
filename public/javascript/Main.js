@@ -2078,24 +2078,19 @@ var View_DataselectionModule_Footer = (function (_super) {
         ]);
     }
     View_DataselectionModule_Footer.prototype.changePermaLinkButton = function () {
-        var value = "";
         if(true == _.isUndefined(this.collection.get("buttonVal"))) {
             this.collection.add({
                 "id": "buttonVal",
                 "value": $("#cubeviz-footer-permaLinkButton").html()
             });
-            this.showLink("<");
+            this.showLink();
         } else {
-            value = this.collection.get("buttonVal").value;
             this.collection.remove("buttonVal");
-            this.closeLink(value);
+            this.closeLink();
         }
     };
-    View_DataselectionModule_Footer.prototype.closeLink = function (label) {
-        $("#cubeviz-footer-permaLinkButton").fadeOut("slow");
-        $("#cubeviz-footer-permaLinkMenu").fadeOut("slow", function () {
-            $("#cubeviz-footer-permaLinkButton").html(label).show();
-        });
+    View_DataselectionModule_Footer.prototype.closeLink = function () {
+        $("#cubeviz-footer-permaLinkMenu").fadeOut("slow");
     };
     View_DataselectionModule_Footer.prototype.initialize = function () {
         this.collection.add({
@@ -2114,7 +2109,7 @@ var View_DataselectionModule_Footer = (function (_super) {
         } else {
             var value = this.collection.get("buttonVal").value;
             this.collection.remove("buttonVal");
-            this.closeLink(value);
+            this.closeLink();
         }
     };
     View_DataselectionModule_Footer.prototype.onChange_selectedDS = function () {
@@ -2153,7 +2148,7 @@ var View_DataselectionModule_Footer = (function (_super) {
         } else {
             var value = this.collection.get("buttonVal").value;
             this.collection.remove("buttonVal");
-            this.closeLink(value);
+            this.closeLink();
         }
     };
     View_DataselectionModule_Footer.prototype.render = function () {
@@ -2163,15 +2158,12 @@ var View_DataselectionModule_Footer = (function (_super) {
         });
         return this;
     };
-    View_DataselectionModule_Footer.prototype.showLink = function (label) {
-        var self = this;
-        $("#cubeviz-footer-permaLinkButton").fadeOut("slow", function () {
-            $("#cubeviz-footer-permaLinkButton").html(label).fadeIn("slow");
-            var link = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-            var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
-            $("#cubeviz-footer-permaLink").html(url).fadeIn("slow");
-            $("#cubeviz-footer-permaLinkMenu").fadeIn("slow");
-        });
+    View_DataselectionModule_Footer.prototype.showLink = function () {
+        var link = this.app._.backend.url + "?m=" + encodeURIComponent(this.app._.backend.modelUrl) + "&cv_dataHash=" + this.app._.backend.dataHash + "&cv_uiHash=" + this.app._.backend.uiHash;
+        var url = $("<a></a>").attr("href", link).attr("target", "_self").html(this.collection.get("cubeviz-footer-permaLink").html);
+        $("#cubeviz-footer-permaLink").html(url);
+        var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+        $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
     };
     return View_DataselectionModule_Footer;
 })(CubeViz_View_Abstract);

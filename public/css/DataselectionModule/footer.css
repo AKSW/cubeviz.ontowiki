@@ -19,3 +19,19 @@
 #cubeviz-footer-permaLinkButton
 {
 }
+
+#cubeviz-footer-permaLinkMenu
+{
+    background-color: #FFFFFF;
+    position: absolute;
+    z-index: 10000;
+    padding-top: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 4px;
+    min-height: 18px;
+    display: none;
+    border: 1px solid #BDBDBD;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+}
