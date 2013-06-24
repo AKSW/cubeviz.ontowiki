@@ -270,7 +270,29 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     
                     self.render();
                     
-                    CubeViz_View_Helper.hideLeftSidebarSpinner();
+                    // update link code        
+                    CubeViz_ConfigurationLink.save(
+                        self.app._.backend.url, self.app._.data, "data",
+                        
+                        // based on updatedLinkCode, load new observations
+                        function(updatedDataHash){
+                                    
+                            DataCube_Observation.loadAll(
+                                self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                                function(newEntities){
+                                    
+                                    // save new observations
+                                    self.app._.backend.retrievedObservations = newEntities;
+                                    
+                                    CubeViz_View_Helper.hideLeftSidebarSpinner();
+                                    
+                                    data.callback();
+                                }
+                            );
+                            
+                            self.app._.backend.dataHash = updatedDataHash;
+                        }
+                    );
                 }
             );
         });

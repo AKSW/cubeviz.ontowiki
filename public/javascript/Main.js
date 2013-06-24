@@ -1159,7 +1159,12 @@ var View_DataselectionModule_DataSet = (function (_super) {
                 self.app._.data.selectedDSD = dsd;
             }
         });
-        this.triggerGlobalEvent("onChange_selectedDS");
+        var data = {
+            callback: function () {
+                self.triggerGlobalEvent("onReRender_visualization");
+            }
+        };
+        this.triggerGlobalEvent("onChange_selectedDS", data);
     };
     View_DataselectionModule_DataSet.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-dataSet").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1790,7 +1795,14 @@ var View_DataselectionModule_Component = (function (_super) {
             CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
                 self.app._.backend.dataHash = updatedDataHash;
                 self.render();
-                CubeViz_View_Helper.hideLeftSidebarSpinner();
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                    DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                        self.app._.backend.retrievedObservations = newEntities;
+                        CubeViz_View_Helper.hideLeftSidebarSpinner();
+                        data.callback();
+                    });
+                    self.app._.backend.dataHash = updatedDataHash;
+                });
             });
         });
     };
