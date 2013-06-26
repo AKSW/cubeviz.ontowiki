@@ -125,7 +125,10 @@ class DataselectionModule extends OntoWiki_Module
         $model = $this->_owApp->selectedModel;
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
-        $serviceUrl = $_SESSION ['ONTOWIKI']['serviceUrl'];
+        
+        $serviceUrl = true === isset($_SESSION ['ONTOWIKI']['serviceUrl'])
+            ? $_SESSION ['ONTOWIKI']['serviceUrl']
+            : null;
         
         CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded = true;
         
