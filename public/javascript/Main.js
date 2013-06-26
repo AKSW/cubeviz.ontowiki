@@ -337,6 +337,8 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
     CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinnerIcon").hide();
+        $("#cubeviz-dataSelectionModule-spinnerText").hide();
         $("#cubeviz-dataSelectionModule-spinner").fadeOut("slow", function () {
             $("#cubeviz-dataSelectionModule-dataSelection").fadeIn("slow");
         });
@@ -350,8 +352,10 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
     }
     CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinnerIcon").show();
+        $("#cubeviz-dataSelectionModule-spinnerText").show();
         $("#cubeviz-dataSelectionModule-dataSelection").fadeOut("slow", function () {
-            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow");
+            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow").show();
         });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {
@@ -1459,8 +1463,15 @@ var View_DataselectionModule_Measure = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
-        this.triggerGlobalEvent("onChange_selectedMeasure");
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
+            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                self.app._.backend.retrievedObservations = newEntities;
+                self.triggerGlobalEvent("onChange_selectedMeasure");
+                self.triggerGlobalEvent("onReRender_visualization");
+                CubeViz_View_Helper.hideLeftSidebarSpinner();
+            });
+            self.app._.backend.dataHash = updatedDataHash;
+        });
     };
     View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-measure").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
@@ -1585,8 +1596,15 @@ var View_DataselectionModule_Attribute = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
-        this.triggerGlobalEvent("onChange_selectedAttribute");
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
+            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                self.app._.backend.retrievedObservations = newEntities;
+                self.triggerGlobalEvent("onChange_selectedAttribute");
+                self.triggerGlobalEvent("onReRender_visualization");
+                CubeViz_View_Helper.hideLeftSidebarSpinner();
+            });
+            self.app._.backend.dataHash = updatedDataHash;
+        });
     };
     View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();

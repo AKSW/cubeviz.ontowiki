@@ -115,12 +115,32 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         $("#cubeviz-measure-label").html(_.str.prune(
             selectedMeasure.__cv_niceLabel, 24, ".."
         ));
-
-        // trigger event
-        this.triggerGlobalEvent("onChange_selectedMeasure");
         
-        // hide spinner
-        CubeViz_View_Helper.hideLeftSidebarSpinner();
+        // update link code        
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.data, "data",
+            
+            // based on updatedLinkCode, load new observations
+            function(updatedDataHash){
+                        
+                DataCube_Observation.loadAll(
+                    self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                    function(newEntities){
+                        
+                        // save new observations
+                        self.app._.backend.retrievedObservations = newEntities;
+                        
+                        // trigger events
+                        self.triggerGlobalEvent("onChange_selectedMeasure");
+                        self.triggerGlobalEvent("onReRender_visualization");
+                        
+                        CubeViz_View_Helper.hideLeftSidebarSpinner();
+                    }
+                );
+                
+                self.app._.backend.dataHash = updatedDataHash;
+            }
+        );
     }
     
     /**
