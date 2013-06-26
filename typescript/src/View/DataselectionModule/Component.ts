@@ -302,7 +302,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      * If a slice was selected, all component elements has to be adapted according
      * to the fixed dimension elements of the slice.
      */
-    public onChange_selectedSlice(event) : void 
+    public onChange_selectedSlice(event, data) : void 
     {
         // no slice was selected
         if (0 === _.size(this.app._.data.selectedSlice)) {
@@ -350,6 +350,48 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             this
                 .destroy()
                 .initialize();
+                
+            // load dimensional data
+            this.loadComponentDimensions(function(){
+                
+                // update link code        
+                CubeViz_ConfigurationLink.save(
+                    self.app._.backend.url, self.app._.data, "data",
+                
+                    // based on updatedLinkCode, load new observations
+                    function(updatedDataHash){
+                        
+                        self.app._.backend.dataHash = updatedDataHash;
+                        
+                        self.render();
+                        
+                        // update link code        
+                        CubeViz_ConfigurationLink.save(
+                            self.app._.backend.url, self.app._.data, "data",
+                            
+                            // based on updatedLinkCode, load new observations
+                            function(updatedDataHash){
+                                        
+                                DataCube_Observation.loadAll(
+                                    self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                                    function(newEntities){
+                                        
+                                        // save new observations
+                                        self.app._.backend.retrievedObservations = newEntities;
+                                        
+                                        CubeViz_View_Helper.hideLeftSidebarSpinner();
+                                        
+                                        // call given callback function
+                                        data.callback();
+                                    }
+                                );
+                                
+                                self.app._.backend.dataHash = updatedDataHash;
+                            }
+                        );
+                    }
+                );
+            });
         }
     }
     

@@ -117,8 +117,14 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         // if only module was loaded, move reloading stuff to footer.ts
         CubeViz_View_Helper.closeDialog(dialogDiv);
 
+        // prepare data element to attach on global event
+        // callback function will be called after the event was fully handled
+        var data:any = {callback: function(){
+            self.triggerGlobalEvent("onReRender_visualization");
+        }};
+
         // trigger event
-        this.triggerGlobalEvent("onChange_selectedSlice");
+        this.triggerGlobalEvent("onChange_selectedSlice", data);
     }
     
     /**

@@ -1302,7 +1302,12 @@ var View_DataselectionModule_Slice = (function (_super) {
         }
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        this.triggerGlobalEvent("onChange_selectedSlice");
+        var data = {
+            callback: function () {
+                self.triggerGlobalEvent("onReRender_visualization");
+            }
+        };
+        this.triggerGlobalEvent("onChange_selectedSlice", data);
     };
     View_DataselectionModule_Slice.prototype.onClick_dialogOpener = function (event) {
         CubeViz_View_Helper.openDialog($("#cubeviz-dataSelectionModule-dialog-slice"));
@@ -1806,7 +1811,7 @@ var View_DataselectionModule_Component = (function (_super) {
             });
         });
     };
-    View_DataselectionModule_Component.prototype.onChange_selectedSlice = function (event) {
+    View_DataselectionModule_Component.prototype.onChange_selectedSlice = function (event, data) {
         if(0 === _.size(this.app._.data.selectedSlice)) {
         } else {
             var componentBox = null;
@@ -1831,6 +1836,20 @@ var View_DataselectionModule_Component = (function (_super) {
             this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
             this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
             this.destroy().initialize();
+            this.loadComponentDimensions(function () {
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                    self.app._.backend.dataHash = updatedDataHash;
+                    self.render();
+                    CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
+                        DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                            self.app._.backend.retrievedObservations = newEntities;
+                            CubeViz_View_Helper.hideLeftSidebarSpinner();
+                            data.callback();
+                        });
+                        self.app._.backend.dataHash = updatedDataHash;
+                    });
+                });
+            });
         }
     };
     View_DataselectionModule_Component.prototype.onClick_cancel = function (event) {
