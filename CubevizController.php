@@ -289,7 +289,13 @@ class CubevizController extends OntoWiki_Controller_Component
         $response->setHeader('Expires', '0');
         
         // output data itself (ouput directly to avoid caching the result)
-        echo CubeViz_DataSelectionExporter::_($type, $dataHash, $model, $cacheDir);
+        echo CubeViz_DataSelectionExporter::_(
+            $type, 
+            $dataHash, 
+            $model, 
+            $cacheDir, 
+            $this->_titleHelperLimit
+        );
     }
     
     /**

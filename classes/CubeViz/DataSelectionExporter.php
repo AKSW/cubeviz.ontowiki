@@ -16,27 +16,27 @@ class CubeViz_DataSelectionExporter
     /**
      * 
      */
-    public static function _($type, $dataHash, &$model, $cacheDir) 
+    public static function _($type, $dataHash, &$model, $cacheDir, $titleHelperLimit) 
     {
         if ('csv' == $type) {
-            return CubeViz_DataSelectionExporter::exportAsCSV($dataHash, $model, $cacheDir);
+            return CubeViz_DataSelectionExporter::exportAsCSV($dataHash, $model, $cacheDir, $titleHelperLimit);
         
         // 'turtle' == $type
         } else { 
-            return CubeViz_DataSelectionExporter::exportAsRdfTurtle($dataHash, $model, $cacheDir);
+            return CubeViz_DataSelectionExporter::exportAsRdfTurtle($dataHash, $model, $cacheDir, $titleHelperLimit);
         }
     }    
     
     /**
      *
      */
-    public static function exportAsRdfTurtle($dataHash, &$model, $cacheDir)
+    public static function exportAsRdfTurtle($dataHash, &$model, $cacheDir, $titleHelperLimit)
     {
         $c = new CubeViz_ConfigurationLink($cacheDir);
         $data = array ();
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash, $model);
+        list($data, $dh) = $c->read ($dataHash, $model, $titleHelperLimit);
         
         $graph = new EasyRdf_Graph();
         
@@ -223,7 +223,7 @@ class CubeViz_DataSelectionExporter
         /**
          * Observations
          */
-        $query = new DataCube_Query($model);
+        $query = new DataCube_Query($model, $titleHelperLimit);
             
         $retrievedObservations = $query->getObservations(
             $data['selectedDS']['__cv_uri'],
