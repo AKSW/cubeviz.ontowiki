@@ -125,6 +125,7 @@ class DataselectionModule extends OntoWiki_Module
         $model = $this->_owApp->selectedModel;
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();
+        $serviceUrl = $_SESSION ['ONTOWIKI']['serviceUrl'];
         
         CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded = true;
         
@@ -136,6 +137,7 @@ class DataselectionModule extends OntoWiki_Module
             $this->_owApp->erfurt->getCacheDir(),
             $this->_privateConfig->get('context'),
             $modelIri,
+            $serviceUrl,
             $this->_config->staticUrlBase,
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),

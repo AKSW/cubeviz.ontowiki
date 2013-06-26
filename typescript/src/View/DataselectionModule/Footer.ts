@@ -144,7 +144,8 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
                 function(updatedDataHash){
                             
                     DataCube_Observation.loadAll(
-                        self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                        self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
+                        updatedDataHash, self.app._.backend.url,
                         function(newEntities){
                             
                             // save new observations
@@ -235,18 +236,25 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
     }
     
     /**
-     *
+     * build ahref + link including the permalink
      */
     public showLink() 
     {
-        /**
-         * build ahref + link including the permalink
-         */
-        var link = this.app._.backend.url
-                   + "?m=" + encodeURIComponent (this.app._.backend.modelUrl)
-                   + "&cv_dataHash=" + this.app._.backend.dataHash
-                   + "&cv_uiHash=" + this.app._.backend.uiHash;
+        var link = this.app._.backend.url + "?";
+                   
+        // only set serviceUrl if it was set by server
+        if (false == _.str.isBlank(this.app._.backend.serviceUrl)) {
+            link += "serviceUrl=" + encodeURIComponent (this.app._.backend.serviceUrl) + "&";
+        }
+        
+        // add selected model url      
+        link += "m=" + encodeURIComponent (this.app._.backend.modelUrl)
+        
+        // add both hashes to the url
+              + "&cv_dataHash=" + this.app._.backend.dataHash
+              + "&cv_uiHash=" + this.app._.backend.uiHash;
 
+        // create url object
         var url = $("<a></a>")
             .attr ("href", link)
             .attr ("target", "_self")

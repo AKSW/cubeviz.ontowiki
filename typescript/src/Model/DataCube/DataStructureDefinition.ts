@@ -1,15 +1,18 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
-class DataCube_DataStructureDefinition {
-    
+class DataCube_DataStructureDefinition 
+{    
     /**
      * @result JSON
      */
-    static loadAll (url, modelUrl, callback) : void
+    static loadAll (url:string, serviceUrl:string, modelIri:string, callback) : void
     {
         $.ajax({
             url: url + "getdatastructuredefinitions/",
-            data: { m: modelUrl }
+            data: { 
+                serviceUrl: serviceUrl,
+                modelIri: modelIri 
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             throw new Error( "loadAll error: " + xhr.responseText );

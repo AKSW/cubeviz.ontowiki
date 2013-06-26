@@ -147,13 +147,14 @@ class DataCube_Observation {
     /**
      * 
      */
-    static loadAll (modelIri:string, dataHash:string, url:string, callback) 
+    static loadAll (serviceUrl:string, modelIri:string, dataHash:string, url:string, callback) 
     {        
         $.ajax({
             url: url + "getobservations/",
             data: {
-                cv_dataHash: dataHash,
-                modelIri: modelIri
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                cv_dataHash: dataHash
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

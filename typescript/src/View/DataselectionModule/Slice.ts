@@ -56,6 +56,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         
         DataCube_Slice.loadAll (
             this.app._.backend.url,
+            this.app._.backend.serviceUrl,
             this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.__cv_uri,
             this.app._.data.selectedDS.__cv_uri,

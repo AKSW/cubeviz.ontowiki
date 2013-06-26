@@ -865,10 +865,11 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
 })(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_Attribute = (function () {
     function DataCube_Attribute() { }
-    DataCube_Attribute.loadAll = function loadAll(url, modelIri, dsdUrl, dsUrl, callback) {
+    DataCube_Attribute.loadAll = function loadAll(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getattributes",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl
@@ -885,10 +886,11 @@ var DataCube_Attribute = (function () {
 })();
 var DataCube_Component = (function () {
     function DataCube_Component() { }
-    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, modelIri, dsdUrl, dsUrl, callback) {
+    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
@@ -902,10 +904,11 @@ var DataCube_Component = (function () {
             }
         });
     }
-    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, modelIri, dsdUrl, dsUrl, callback) {
+    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
@@ -968,12 +971,13 @@ var DataCube_Component = (function () {
 })();
 var DataCube_DataSet = (function () {
     function DataCube_DataSet() { }
-    DataCube_DataSet.loadAll = function loadAll(url, modelIri, dsdUrl, callback) {
+    DataCube_DataSet.loadAll = function loadAll(url, serviceUrl, modelIri, dsdUrl, callback) {
         $.ajax({
             url: url + "getdatasets/",
             data: {
-                dsdUrl: dsdUrl,
-                modelIri: modelIri
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsdUrl: dsdUrl
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("loadAll error: " + xhr.responseText);
@@ -987,11 +991,12 @@ var DataCube_DataSet = (function () {
 })();
 var DataCube_DataStructureDefinition = (function () {
     function DataCube_DataStructureDefinition() { }
-    DataCube_DataStructureDefinition.loadAll = function loadAll(url, modelUrl, callback) {
+    DataCube_DataStructureDefinition.loadAll = function loadAll(url, serviceUrl, modelIri, callback) {
         $.ajax({
             url: url + "getdatastructuredefinitions/",
             data: {
-                m: modelUrl
+                serviceUrl: serviceUrl,
+                modelIri: modelIri
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("loadAll error: " + xhr.responseText);
@@ -1083,12 +1088,13 @@ var DataCube_Observation = (function () {
         });
         return this;
     };
-    DataCube_Observation.loadAll = function loadAll(modelIri, dataHash, url, callback) {
+    DataCube_Observation.loadAll = function loadAll(serviceUrl, modelIri, dataHash, url, callback) {
         $.ajax({
             url: url + "getobservations/",
             data: {
-                cv_dataHash: dataHash,
-                modelIri: modelIri
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                cv_dataHash: dataHash
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Observation loadAll error: " + xhr.responseText);
@@ -1103,10 +1109,11 @@ var DataCube_Observation = (function () {
 })();
 var DataCube_Slice = (function () {
     function DataCube_Slice() { }
-    DataCube_Slice.loadAll = function loadAll(url, modelIri, dsdUrl, dsUrl, callback) {
+    DataCube_Slice.loadAll = function loadAll(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getslices",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri,
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl
@@ -1280,7 +1287,7 @@ var View_DataselectionModule_Slice = (function (_super) {
     };
     View_DataselectionModule_Slice.prototype.onChange_selectedDS = function () {
         var self = this;
-        DataCube_Slice.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Slice.loadAll(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.slices = entries;
             if(0 === _.keys(entries).length) {
             } else {
@@ -1440,7 +1447,7 @@ var View_DataselectionModule_Measure = (function (_super) {
     };
     View_DataselectionModule_Measure.prototype.onChange_selectedDS = function (event) {
         var self = this;
-        DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Component.loadAllMeasures(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.measures = entries;
             if(0 === _.keys(entries).length) {
                 throw new Error("Error: There are no measures in the selected data set!");
@@ -1464,7 +1471,7 @@ var View_DataselectionModule_Measure = (function (_super) {
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedMeasure");
                 self.triggerGlobalEvent("onReRender_visualization");
@@ -1573,7 +1580,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
     };
     View_DataselectionModule_Attribute.prototype.onChange_selectedDS = function (event) {
         var self = this;
-        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.attributes = entries;
             if(0 === _.keys(entries).length) {
             } else {
@@ -1597,7 +1604,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedAttribute");
                 self.triggerGlobalEvent("onReRender_visualization");
@@ -1804,7 +1811,7 @@ var View_DataselectionModule_Component = (function (_super) {
     };
     View_DataselectionModule_Component.prototype.loadComponentDimensions = function (callback) {
         var self = this;
-        DataCube_Component.loadAllDimensions(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Component.loadAllDimensions(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.dimensions = entries;
             self.app._.data.selectedComponents.dimensions = DataCube_Component.getDefaultSelectedDimensions(entries);
             self.collection.reset("__cv_hashedUri").addList(entries);
@@ -1819,7 +1826,7 @@ var View_DataselectionModule_Component = (function (_super) {
                 self.app._.backend.dataHash = updatedDataHash;
                 self.render();
                 CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                    DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                    DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                         self.app._.backend.retrievedObservations = newEntities;
                         CubeViz_View_Helper.hideLeftSidebarSpinner();
                         data.callback();
@@ -1859,7 +1866,7 @@ var View_DataselectionModule_Component = (function (_super) {
                     self.app._.backend.dataHash = updatedDataHash;
                     self.render();
                     CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                        DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                        DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                             self.app._.backend.retrievedObservations = newEntities;
                             CubeViz_View_Helper.hideLeftSidebarSpinner();
                             data.callback();
@@ -2026,7 +2033,7 @@ var View_DataselectionModule_Component = (function (_super) {
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 callback();
             });
@@ -2159,7 +2166,7 @@ var View_DataselectionModule_Footer = (function (_super) {
         var self = this;
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-                DataCube_Observation.loadAll(self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                     self.app._.backend.retrievedObservations = newEntities;
                     self.triggerGlobalEvent("onReRender_visualization");
                 });
@@ -2196,7 +2203,11 @@ var View_DataselectionModule_Footer = (function (_super) {
         return this;
     };
     View_DataselectionModule_Footer.prototype.showLink = function () {
-        var link = this.app._.backend.url + "?m=" + encodeURIComponent(this.app._.backend.modelUrl) + "&cv_dataHash=" + this.app._.backend.dataHash + "&cv_uiHash=" + this.app._.backend.uiHash;
+        var link = this.app._.backend.url + "?";
+        if(false == _.str.isBlank(this.app._.backend.serviceUrl)) {
+            link += "serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl) + "&";
+        }
+        link += "m=" + encodeURIComponent(this.app._.backend.modelUrl) + "&cv_dataHash=" + this.app._.backend.dataHash + "&cv_uiHash=" + this.app._.backend.uiHash;
         var url = $("<a></a>").attr("href", link).attr("target", "_self").html(this.collection.get("cubeviz-footer-permaLink").html);
         $("#cubeviz-footer-permaLink").html(url);
         var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();

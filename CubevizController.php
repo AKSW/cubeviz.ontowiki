@@ -768,6 +768,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $modelInformation ['rdfs:label'] = true === isset($modelInformation ['http://www.w3.org/2000/01/rdf-schema#label'])
             ? $modelInformation ['http://www.w3.org/2000/01/rdf-schema#label']['content']
             : $modelIri;
+        $serviceUrl = $_SESSION ['ONTOWIKI']['serviceUrl'];
             
         /**
          * Set view and some of its properties.
@@ -790,6 +791,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 $this->_owApp->erfurt->getCacheDir(),
                 $this->_privateConfig->get('context'),
                 $modelIri,
+                $serviceUrl,
                 $this->_config->staticUrlBase,
                 $baseImagesPath,
                 $this->_request->getParam ('cv_dataHash'),

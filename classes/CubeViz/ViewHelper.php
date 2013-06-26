@@ -64,7 +64,8 @@ class CubeViz_ViewHelper
      * 
      */
     public static function initApp(&$view, &$model, $backend, $cacheDir, 
-        $context, $modelIri, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash, $titleHelperLimit) 
+        $context, $modelIri, $serviceUrl, $staticUrlBase, $baseImagesPath, $dataHash, 
+        $uiHash, $titleHelperLimit) 
     {        
         // if cubeVizApp was not loaded yet
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
@@ -113,6 +114,7 @@ class CubeViz_ViewHelper
                 'imagesPath'            => $baseImagesPath,
                 'modelInformation'      => $modelInformation,
                 'modelUrl'              => $modelIri,
+                'serviceUrl'              => $serviceUrl,
                 'uiHash'                => $generatedUiHash,
                 'uiParts'               => array(
                     'dataselectionModule' => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),

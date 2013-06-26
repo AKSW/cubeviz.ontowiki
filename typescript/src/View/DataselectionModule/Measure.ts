@@ -62,6 +62,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         DataCube_Component.loadAllMeasures(
         
             this.app._.backend.url,
+            this.app._.backend.serviceUrl,
             this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.__cv_uri,
             this.app._.data.selectedDS.__cv_uri,
@@ -124,7 +125,8 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             function(updatedDataHash){
                         
                 DataCube_Observation.loadAll(
-                    self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url,
+                    self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
+                    updatedDataHash, self.app._.backend.url,
                     function(newEntities){
                         
                         // save new observations
