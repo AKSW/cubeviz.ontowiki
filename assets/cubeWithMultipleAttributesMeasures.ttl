@@ -1,0 +1,113 @@
+@base <http://example.cubeviz.org/cubeWithMultipleAttributesMeasures/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix cube: <http://purl.org/linked-data/cube#> .
+@prefix ex: <http://example.cubeviz.org/cubeWithMultipleAttributesMeasures/> .
+@prefix exProp: <http://example.cubeviz.org/cubeWithMultipleAttributesMeasures/properties/> .
+
+<> a owl:Ontology ;
+   rdfs:label "Cube with multiple Attributes and Measures" ;
+   dc:description "This knowledgebase contains one Data Structure Definition with one Data Set. This Data Set has a couple of Components and Observations." .
+
+# 
+# Data Structure Definition
+#
+ex:dsd a cube:DataStructureDefinition ;
+    rdfs:label "A Data Structure Definition"@en ;
+    rdfs:comment "Defines the structure of a DataSet or slice." ;
+    cube:component  <http://example.cubeviz.org/datacube/cs/geo>, 
+                    <http://example.cubeviz.org/datacube/cs/time>,
+                    <http://example.cubeviz.org/datacube/cs/unit>, 
+                    <http://example.cubeviz.org/datacube/cs/anotherUnit>, 
+                    <http://example.cubeviz.org/datacube/cs/value>,
+                    <http://example.cubeviz.org/datacube/cs/anotherValue> .
+
+#
+# Component Specifications
+#
+<http://example.cubeviz.org/datacube/cs/geo> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Region" ;
+    cube:dimension exProp:geo .
+
+<http://example.cubeviz.org/datacube/cs/time> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Time" ;
+    cube:dimension exProp:date .
+
+<http://example.cubeviz.org/datacube/cs/unit> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Unit" ;
+    cube:attribute exProp:unit .
+
+<http://example.cubeviz.org/datacube/cs/anotherUnit> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Another Unit" ;
+    cube:attribute exProp:anotherUnit .
+
+<http://example.cubeviz.org/datacube/cs/value> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Value" ;
+    cube:measure exProp:value .
+
+<http://example.cubeviz.org/datacube/cs/anotherValue> a cube:ComponentSpecification ;
+    rdfs:label "Component Specification of Another Value" ;
+    cube:measure exProp:anotherValue .
+
+#
+# Data Set
+#
+ex:dataset a cube:DataSet ;
+    rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    rdfs:comment "Represents a collection of observations and conforming to some common dimensional structure." ;
+    cube:structure ex:dsd .
+
+#
+# Dimensions, Units and Measures
+#
+exProp:geo a cube:DimensionProperty ;
+    rdfs:label "Region"@en .
+        
+exProp:date a cube:DimensionProperty ;
+    rdfs:label "Date"@en .
+
+exProp:unit a cube:AttributeProperty ;
+    rdfs:label "Unit" ;
+    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." .
+
+exProp:anotherUnit a cube:AttributeProperty ;
+    rdfs:label "Another Unit" .
+
+exProp:value a cube:MeasureProperty ;
+    rdfs:label "Value"@en .
+
+exProp:anotherValue a cube:MeasureProperty ;
+    rdfs:label "Another Value"@en .
+    
+#
+# Observation #################################################################
+#
+ex:obs1 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    exProp:date ex:Y2001 ;
+    exProp:unit "unit" ;
+    exProp:geo ex:Germany ;
+    exProp:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs2 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    exProp:date ex:Y2002 ;
+    exProp:anotherUnit "another unit" ;
+    exProp:geo ex:Germany ;
+    exProp:anotherValue "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Germany in 2002" .
+
+#
+# Additional Stuff #############################################################
+#
+ex:Germany a exProp:geo ;
+    rdfs:label "Germany"@en .
+    
+ex:Y2001 a ex:date ;
+    rdfs:label "2001"@en .
+
+ex:Y2002 a ex:date ;
+    rdfs:label "2002"@en .
