@@ -782,21 +782,27 @@ class CubevizController extends OntoWiki_Controller_Component
         CubeViz_ViewHelper::$isCubeVizIndexLoaded = true;
         
         // init cubeVizApp
-        $config = CubeViz_ViewHelper::initApp(
-            $this->view,
-            $model,
-            $this->_owApp->getConfig()->store->backend,
-            $this->_owApp->erfurt->getCacheDir(),
-            $this->_privateConfig->get('context'),
-            $modelIri,
-            $this->_config->staticUrlBase,
-            $baseImagesPath,
-            $this->_request->getParam ('cv_dataHash'),
-            $this->_request->getParam ('cv_uiHash'),
-            $modelInformation,
-            $this->_titleHelperLimit
-        );
-        
+        try {
+            $config = CubeViz_ViewHelper::initApp(
+                $this->view,
+                $model,
+                $this->_owApp->getConfig()->store->backend,
+                $this->_owApp->erfurt->getCacheDir(),
+                $this->_privateConfig->get('context'),
+                $modelIri,
+                $this->_config->staticUrlBase,
+                $baseImagesPath,
+                $this->_request->getParam ('cv_dataHash'),
+                $this->_request->getParam ('cv_uiHash'),
+                $modelInformation,
+                $this->_titleHelperLimit
+            );
+        } catch (Exception $e) {
+            $this->_redirect(
+                OntoWiki::getInstance()->getConfig()->urlBase . "/cubeviz/modelinfo",
+                array('code' => 302)
+            );
+        }
         // load settings from the doap.n3
         $this->view->useExport = $this->_privateConfig->get('useExport');
         $this->view->uiUseDataSetInsteadOfModel = true !== $this->_privateConfig->get('uiUseDataSetInsteadOfModel')

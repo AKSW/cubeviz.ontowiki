@@ -311,19 +311,6 @@ class DataCube_Query
      */
     public function getComponentElements($dataSetUri, $componentProperty) 
     {
-        
-#        var_dump('SELECT ?componentUri ?p ?o WHERE {
-#            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
-#            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
-#            ?observation <'.$componentProperty.'> ?componentUri.
-#            OPTIONAL {
-#                ?componentUri ?p ?o.
-#            }
-#        }');
-        
-        
-        
-        
         $result = $this->_model->sparqlQuery('SELECT DISTINCT ?componentUri ?p ?o WHERE {
             ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
             ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
@@ -356,7 +343,7 @@ class DataCube_Query
     public function getDataStructureDefinitions ()
     {
         // get all data structure definitions from the store for this particular model
-        $result = $this->_model->sparqlQuery('SELECT ?dsd ?p ?o WHERE {
+        $result = $this->_model->sparqlQuery('SELECT DISTINCT ?dsd ?p ?o WHERE {
             ?dsd ?p ?o.
             ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
         }');

@@ -47,10 +47,10 @@ class CubeViz_ConfigurationLink
         if(0 === count($config['dataSets'])) {
             $config['dataSets'] = $query->getDataSets();
         } 
-        
+
         // if no data sets were selected
         if(0 === count($config['selectedDS'])) {
-            $config['selectedDS'] = $config['dataSets'][0];
+            $config['selectedDS'] = isset($config['dataSets'][0]) ? $config['dataSets'][0] : null;
         }
         
         // if no data structure definitions were selected
