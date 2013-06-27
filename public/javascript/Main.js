@@ -1598,11 +1598,17 @@ var View_DataselectionModule_Attribute = (function (_super) {
 
         CubeViz_View_Helper.showCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.showLeftSidebarSpinner();
-        selectedAttribute = attributes.addList(this.app._.data.components.attributes).get(attributeUri);
-        this.app._.data.selectedComponents.attribute = selectedAttribute;
+        if("noAttribute" == attributeUri) {
+            this.app._.data.selectedComponents.attribute = null;
+            $("#cubeviz-attribute-label").html(_.str.prune($("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html(), 24, "..")).attr("title", $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html());
+            $("#cubeviz-attribute-description").html(_.str.prune($("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html(), 55, "..")).attr("title", $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html());
+        } else {
+            selectedAttribute = attributes.addList(this.app._.data.components.attributes).get(attributeUri);
+            this.app._.data.selectedComponents.attribute = selectedAttribute;
+            $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
+        }
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        $("#cubeviz-attribute-label").html(_.str.prune(selectedAttribute.__cv_niceLabel, 24, ".."));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
             DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
@@ -1617,9 +1623,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute").find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children();
         var self = this;
 
-        if(1 == elementList.length) {
-            $($(elementList.first()).children().first()).attr("checked", true);
-        } else {
+        if(false === _.isUndefined(this.app._.data.selectedComponents.attribute) && false === _.isNull(this.app._.data.selectedComponents.attribute)) {
             _.each(elementList, function (element) {
                 if(self.app._.data.selectedComponents.attribute.__cv_uri == $($(element).children().first()).val()) {
                     $($(element).children().first()).attr("checked", true);
@@ -1651,18 +1655,23 @@ var View_DataselectionModule_Attribute = (function (_super) {
         var label = "";
         var description = "";
 
-        if(true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
+        if(0 === _.size(this.app._.data.components.attributes)) {
             label = "[no attribute found]";
             noAttribute = true;
             $("#cubeviz-dataSelectionModule-attributeBlock").hide();
         } else {
-            label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
-            description = this.app._.data.selectedComponents.attribute.__cv_description;
+            if(0 < _.size(this.app._.data.components.attributes) && (true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute))) {
+                label = $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html();
+                description = $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html();
+            } else {
+                label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
+                description = this.app._.data.selectedComponents.attribute.__cv_description;
+            }
         }
         $("#cubeviz-attribute-label").html(_.str.prune(label, 24, "..")).attr("title", label);
         $("#cubeviz-attribute-description").html(_.str.prune(description, 55, "..")).attr("title", description);
         if(false === noAttribute) {
-            if(1 == _.size(this.app._.data.components.attributes)) {
+            if(0 == _.size(this.app._.data.components.attributes)) {
                 $("#cubeviz-attribute-dialogOpener").hide();
             } else {
                 $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
@@ -1692,6 +1701,18 @@ var View_DataselectionModule_Attribute = (function (_super) {
                 var elementContainer = null;
                 var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
 
+                elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                    __cv_uri: "__cv_noAttribute",
+                    radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
+                    radioName: "cubeviz-dataSelectionModule-attributeRadio",
+                    radioValue: "noAttribute"
+                }));
+                $(elementContainer.children().last()).css("font-weight", "bold");
+                if(true === _.isUndefined(this.app._.data.selectedComponents.attribute) || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
+                    $(elementContainer.children().first()).attr("checked", true);
+                }
+                elementList.append(elementContainer);
                 attributeElements.addList(this.app._.data.components.attributes).sortAscendingBy("__cv_niceLabel").each(function (element) {
                     elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
                         __cv_niceLabel: element.__cv_niceLabel,

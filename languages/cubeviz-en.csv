@@ -70,6 +70,9 @@ ApplicationExtrasMenu_Label;CubeViz: Analyze DataCube
 DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection
 DataSelectionModule_AttributeDialogDescription;In the following list, different units are available for selection. As the default, CubeViz selects one out of the list automatically, but you can change the selection according to your needs. Please note that you are only allowed to select one of the listed items.
+DataSelectionModule_AttributeDialogNoAttributeSelectedLabel;No attribute selected
+DataSelectionModule_AttributeDialogNoAttributeSelectedDescription;Attributes available for selection
+DataSelectionModule_AttributeDialogNoAttributeSelectionElement;Do not use any attribute
 DataSelectionModule_Cancel;Cancel
 DataSelectionModule_ChangeSelection;Change
 DataSelectionModule_CheckStatus;Check Status

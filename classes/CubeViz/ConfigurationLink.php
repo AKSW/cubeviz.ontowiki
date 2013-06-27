@@ -228,13 +228,12 @@ class CubeViz_ConfigurationLink
             
             // set attributes
             $config['components']['attributes'] = array();
+            
             foreach ($attributes as $attribute) {
                 $config['components']['attributes'][$attribute['__cv_uri']] = $attribute;
-                
-                if(null == $config['selectedComponents']['attribute']) {
-                    $config['selectedComponents']['attribute'] = $attribute;
-                }
             }
+            
+            $config['selectedComponents']['attribute'] = null;
         }
         
         /**

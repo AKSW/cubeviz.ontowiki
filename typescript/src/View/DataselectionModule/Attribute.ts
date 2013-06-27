@@ -107,24 +107,50 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         // show spinner
         CubeViz_View_Helper.showLeftSidebarSpinner();
         
-        // get attribute with given uri
-        selectedAttribute = attributes
-            .addList(this.app._.data.components.attributes)
-            .get(attributeUri);
+        // no attribute was selected
+        if ("noAttribute" == attributeUri) {
             
-        // update selected attribute
-        this.app._.data.selectedComponents.attribute = selectedAttribute;
-
+            // update selected attribute
+            this.app._.data.selectedComponents.attribute = null;  
+            
+            // set new attribute label
+            $("#cubeviz-attribute-label").html(_.str.prune(
+                $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html(), 
+                24, ".."
+            )).attr ("title", $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html());
+            
+            // set attribute description
+            $("#cubeviz-attribute-description").html(
+                _.str.prune (
+                    $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html(),
+                    55,
+                    ".."
+                )
+            ).attr ("title", $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html());
+            
+        
+        // one attribute was selected
+        } else {
+            
+            // get attribute with given uri
+            selectedAttribute = attributes
+                .addList(this.app._.data.components.attributes)
+                .get(attributeUri);
+                
+            // update selected attribute
+            this.app._.data.selectedComponents.attribute = selectedAttribute;            
+            
+            // output new attribute label
+            $("#cubeviz-attribute-label").html(_.str.prune(
+                selectedAttribute.__cv_niceLabel, 24, ".."
+            ));
+        }
+        
         // close dialog
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         
         // if only module was loaded, move reloading stuff to footer.ts
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        
-        // output new attribute label
-        $("#cubeviz-attribute-label").html(_.str.prune(
-            selectedAttribute.__cv_niceLabel, 24, ".."
-        ));        
         
         // update link code        
         CubeViz_ConfigurationLink.save(
@@ -163,17 +189,13 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         // element in the dialog but cancel it, the HTML remembers your selection
         // and after re-open it, you will see your last selection
         var elementList = $($("#cubeviz-dataSelectionModule-dialog-attribute")
-                        .find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children(),
+                          .find(".cubeviz-dataSelectionModule-dialogElements").get(0)).children(),
             self = this;
-
-        // TODO how handle the case if there are no attributes
-
-        // if its just one in the list, select it directly
-        if (1 == elementList.length) {
-            $($(elementList.first()).children().first()).attr ("checked", true);
         
         // go through all elements and select the selectedAttribute
-        } else {
+        if ( false === _.isUndefined(this.app._.data.selectedComponents.attribute)
+             && false === _.isNull(this.app._.data.selectedComponents.attribute)) {
+         
             _.each(elementList, function(element){
                 if(self.app._.data.selectedComponents.attribute.__cv_uri == $($(element).children().first()).val()) {
                     $($(element).children().first()).attr ("checked", true);
@@ -235,14 +257,23 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         var label = "",
             description = "";
         
-        if (true === _.isUndefined(this.app._.data.selectedComponents.attribute)
-            || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
+        // no attributes available
+        if (0 === _.size(this.app._.data.components.attributes)) {
             label = "[no attribute found]";
             noAttribute = true;
             
             // hide attribute block
             $("#cubeviz-dataSelectionModule-attributeBlock").hide();
             
+        // attributes available, no attribute selected (yet)
+        } else if (0 < _.size(this.app._.data.components.attributes)
+                   && ( true === _.isUndefined(this.app._.data.selectedComponents.attribute)
+                        || true === _.isNull(this.app._.data.selectedComponents.attribute))) {
+            
+            label = $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel").html();
+            description = $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription").html();
+            
+        // attributes available and one attribute selected
         } else {
             label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
             description = this.app._.data.selectedComponents.attribute.__cv_description; 
@@ -271,13 +302,14 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         /**
          * Dialog
          */
-        // if attribute is available ...
+        // if attributes are available ...
         if (false === noAttribute) {
 
-            if (1 == _.size(this.app._.data.components.attributes)) {
+            if (0 == _.size(this.app._.data.components.attributes)) {
                 
                 $("#cubeviz-attribute-dialogOpener").hide();
                 
+            // there are at least 2 attributes to choose
             } else {
             
                 // set dialog reference and template
@@ -346,6 +378,28 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
                     elementContainer = null,
                     elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
                 
+                elementContainer = $(CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(),
+                    {
+                        __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                        __cv_uri: "__cv_noAttribute",
+                        radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
+                        radioName: "cubeviz-dataSelectionModule-attributeRadio",
+                        radioValue: "noAttribute"
+                    }
+                ));
+                
+                // style first element (no attribute selection)
+                $(elementContainer.children().last()).css ("font-weight", "bold");           
+                
+                // select first element, if no attribute was selected before
+                if (true === _.isUndefined(this.app._.data.selectedComponents.attribute)
+                     || true === _.isNull(this.app._.data.selectedComponents.attribute)) {
+                    $(elementContainer.children().first()).attr ("checked", true);
+                }
+                
+                elementList.append (elementContainer);
+                
                 attributeElements
                     
                     // add elements of current component
@@ -372,7 +426,6 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
                         elementList.append(elementContainer);
                         
                     });
-                    
                 
                 /**
                  * Delegate events to new items of the template
