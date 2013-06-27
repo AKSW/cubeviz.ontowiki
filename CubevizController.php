@@ -791,13 +791,20 @@ class CubevizController extends OntoWiki_Controller_Component
         
         CubeViz_ViewHelper::$isCubeVizIndexLoaded = true;
         
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
+        
         // init cubeVizApp
         try {
             $config = CubeViz_ViewHelper::initApp(
                 $this->view,
                 $model,
                 $this->_owApp->getConfig()->store->backend,
-                $this->_owApp->erfurt->getCacheDir(),
+                $cacheDir,
                 $this->_privateConfig->get('context'),
                 $modelIri,
                 $serviceUrl,

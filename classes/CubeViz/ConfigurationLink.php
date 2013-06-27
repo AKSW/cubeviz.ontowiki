@@ -286,8 +286,8 @@ class CubeViz_ConfigurationLink
         /**
          * load and return file content, if file exists
          */
-        if(true === file_exists($this->_hashDirectory . $hash)){
-            $c = file($this->_hashDirectory . $hash);
+        if(true === file_exists($this->_hashDirectory .'/'. $hash)){
+            $c = file($this->_hashDirectory .'/'. $hash);
             
             // if configuration file contains information
             if (true == isset ($c [0])) {
@@ -400,7 +400,7 @@ class CubeViz_ConfigurationLink
         $filename .= $this->generateHash ($content);
         
         // set full file path
-        $filePath = $this->_hashDirectory . $filename;
+        $filePath = $this->_hashDirectory .'/'. $filename;
 
         if(false == file_exists($filePath)) {
             // can't open the file: throw exception
