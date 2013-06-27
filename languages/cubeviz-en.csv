@@ -66,6 +66,7 @@ AnalyzeAction_UsedQuery;Used Query
 AnalyzeAction_ValidObservations;Valid Observations
 
 ApplicationExtrasMenu_Label;CubeViz: Analyze DataCube
+ApplicationExtrasMenu_ComparingLabel;CubeViz: Compare DataSets
 
 DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection

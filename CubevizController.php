@@ -207,6 +207,34 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     * 
+     * @param
+     * @return
+     * throw
+     */
+    public function compareAction()
+    {       
+        // set paths
+        $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+        $baseCssPath = $basePath .'public/css/';
+        
+        /**
+         * Including css files for this action
+         */
+        $this->view->headLink()
+            ->appendStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
+            ->appendStylesheet($baseCssPath.'/CompareAction/CompareAction.css')
+            ->appendStylesheet($baseCssPath.'/main.css');
+        
+        $this->view->translate = $this->_owApp->translate;
+        $this->view->staticUrlBase = $this->_config->staticUrlBase;
+        $this->view->cubevizImagesPath = $basePath .'public/images/';
+        
+        $on = $this->_owApp->getNavigation();
+        $on->disableNavigation (); // disable OntoWiki's Navigation 
+    }    
+    
+    /**
      *
      */
     public function createexamplecubeAction() 
