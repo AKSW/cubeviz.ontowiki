@@ -90,15 +90,23 @@ ex:obs1 a cube:Observation ;
     exProp:date ex:Y2001 ;
     exProp:unit "unit" ;
     exProp:geo ex:Germany ;
-    exProp:value "1500"^^<http://www.w3.org/2001/XMLSchema#float> .
+    exProp:value "1"^^<http://www.w3.org/2001/XMLSchema#float> .
     
 ex:obs2 a cube:Observation ;
     cube:dataSet ex:dataset ;
     exProp:date ex:Y2002 ;
     exProp:anotherUnit "another unit" ;
     exProp:geo ex:Germany ;
-    exProp:anotherValue "1500"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    exProp:value "5"^^<http://www.w3.org/2001/XMLSchema#float> ;
     rdfs:label "Germany in 2002" .
+    
+ex:obs3 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    exProp:date ex:Y2003 ;
+    exProp:anotherUnit "another unit" ;
+    exProp:geo ex:Germany ;
+    exProp:anotherValue "20"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Germany in 2003" .
 
 #
 # Additional Stuff #############################################################
@@ -111,3 +119,6 @@ ex:Y2001 a ex:date ;
 
 ex:Y2002 a ex:date ;
     rdfs:label "2002"@en .
+
+ex:Y2003 a ex:date ;
+    rdfs:label "2003"@en .
