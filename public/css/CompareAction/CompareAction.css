@@ -3,12 +3,15 @@
  */
 #cubeviz-compare-container
 {
-    padding-top: 10px;
+    margin-top: 0px;
+    
+    padding-top: 0px;
     padding-left: 10px;
     padding-bottom: 10px;
     
     width: 98%;
-    min-width: 800px;
+    min-width: 98%;
+    max-width: 98%;
     
     height: auto;
 }
@@ -19,15 +22,6 @@
  */
 #cubeviz-compare-datasetSelection
 {
-    padding-top: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
-
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #BFBFBF;
 }
 
 .cubeviz-compare-dataSelection-colorBox
@@ -66,15 +60,7 @@
  */
 #cubeviz-compare-modelSelection
 {
-    padding-top: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
-
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #BFBFBF;
+    
 }
 
 #cubeviz-compare-modelSelection-headline
