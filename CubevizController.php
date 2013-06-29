@@ -208,9 +208,8 @@ class CubevizController extends OntoWiki_Controller_Component
     
     /**
      * 
-     * @param
-     * @return
-     * throw
+     * @param void
+     * @return void
      */
     public function compareAction()
     {       
@@ -218,6 +217,7 @@ class CubevizController extends OntoWiki_Controller_Component
         $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
         $baseCssPath = $basePath .'public/css/';
         $baseJavascriptPath = $basePath .'public/javascript/';
+        $baseImagesPath = $basePath .'public/images/';
         
         /**
          * Including css files for this action
@@ -231,13 +231,26 @@ class CubevizController extends OntoWiki_Controller_Component
         // Libraries
         $this->view->headScript()
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
-            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');  
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
+            ->appendFile($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
             
-        if (false === CubeViz_ViewHelper::$isCubeVizIndexLoaded 
-            && false === CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded) {
-            //$this->view->headScript()
-            //     ->appendFile ($baseJavascriptPath. 'Main-production.js', 'text/javascript');
-        }   
+            ->appendFile($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
+            ->appendFile($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
+            ->appendScript ('_.mixin(_.str.exports());'); // for underscore.string
+            
+        // If this module is in the "development" context
+        if('development' === $this->_privateConfig->get('context')) {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'libraries/munit.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Main.js', 'text/javascript');
+        
+        // otherwise it is in "production" context
+        } else {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'Main-production.js', 'text/javascript');
+        }
         
         $this->view->translate = $this->_owApp->translate;
         $this->view->staticUrlBase = $this->_config->staticUrlBase;
@@ -245,6 +258,44 @@ class CubevizController extends OntoWiki_Controller_Component
         
         $on = $this->_owApp->getNavigation();
         $on->disableNavigation (); // disable OntoWiki's Navigation 
+        
+        /**
+         * load data and setup view
+         */
+        $store = $this->_erfurt->getStore();
+        $th = new OntoWiki_Model_TitleHelper (null, $store);
+        
+        $models = $store->getAvailableModels();
+        $this->view->models = array ();    
+                
+        // config for frontend
+        $config['backend'] = array(
+            'context'               => $this->_privateConfig->get('context'), 
+            'database'              => $this->_owApp->getConfig()->store->backend,
+            'dataHash'              => '',
+            'imagesPath'            => $baseImagesPath,
+            'modelInformation'      => array(),
+            'modelUrl'              => '',
+            'serviceUrl'            => '',
+            'uiHash'                => '',
+            'uiParts'               => array(),
+            'uiSettings'            => array (),
+            'retrievedObservations' => array(),
+            'sparqlEndpoint'        => 'local',
+            'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
+        );
+        
+        $this->view->headScript()
+             ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';');
+         
+        // modellist
+        foreach ($models as $modelUri => $entry) { $th->addResource ($modelUri); }
+        foreach ($models as $modelUri => $entry) { 
+            $this->view->models [] = array (
+                'label' => $th->getTitle ($modelUri),
+                'uri' => $modelUri
+            );
+        }
     }    
     
     /**
@@ -543,7 +594,7 @@ class CubevizController extends OntoWiki_Controller_Component
         }
     
         // check if dsdUrl is valid
-        if(false === Erfurt_Uri::check($dsdUrl)) {
+        if('' != $dsdUrl && false === Erfurt_Uri::check($dsdUrl)) {
             $code = 400;
             $this->_sendJSONResponse(
                 array(

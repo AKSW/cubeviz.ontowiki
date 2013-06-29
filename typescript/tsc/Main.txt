@@ -25,6 +25,9 @@ src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/Observation.ts
 src/Model/DataCube/Slice.ts
 
+src/View/CompareAction/ModelSelection.ts
+src/View/CompareAction/DatasetSelection.ts
+
 src/View/DataselectionModule/DataSet.ts
 src/View/DataselectionModule/Slice.ts
 src/View/DataselectionModule/Measure.ts

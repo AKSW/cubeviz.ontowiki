@@ -1128,6 +1128,121 @@ var DataCube_Slice = (function () {
     }
     return DataCube_Slice;
 })();
+var View_CompareAction_ModelSelection = (function (_super) {
+    __extends(View_CompareAction_ModelSelection, _super);
+    function View_CompareAction_ModelSelection(attachedTo, app) {
+        _super.call(this, "View_CompareAction_ModelSelection", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_ModelSelection.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_ModelSelection.prototype.handleModelSelectorChanges = function (modelNr) {
+        if('' != $("#cubeviz-compare-modelSelector1").val() && '' != $("#cubeviz-compare-modelSelector2").val()) {
+            this.triggerGlobalEvent("onSelect_model1AndModel2", {
+                model1Uri: $("#cubeviz-compare-modelSelector1").val(),
+                model2Uri: $("#cubeviz-compare-modelSelector2").val()
+            });
+        }
+        if('' != $("#cubeviz-compare-modelSelector" + modelNr).val()) {
+            this.triggerGlobalEvent("onSelect_model" + modelNr, {
+                modelUri: $("#cubeviz-compare-modelSelector" + modelNr).val()
+            });
+        } else {
+            this.triggerGlobalEvent("onSelect_noModel" + modelNr);
+        }
+    };
+    View_CompareAction_ModelSelection.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_ModelSelection.prototype.onChange_modelSelector1 = function () {
+        this.handleModelSelectorChanges("1");
+    };
+    View_CompareAction_ModelSelection.prototype.onChange_modelSelector2 = function () {
+        this.handleModelSelectorChanges("2");
+    };
+    View_CompareAction_ModelSelection.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_ModelSelection.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "change #cubeviz-compare-modelSelector1": this.onChange_modelSelector1,
+            "change #cubeviz-compare-modelSelector2": this.onChange_modelSelector2
+        });
+        return this;
+    };
+    return View_CompareAction_ModelSelection;
+})(CubeViz_View_Abstract);
+var View_CompareAction_DatasetSelection = (function (_super) {
+    __extends(View_CompareAction_DatasetSelection, _super);
+    function View_CompareAction_DatasetSelection(attachedTo, app) {
+        _super.call(this, "View_CompareAction_DatasetSelection", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onSelect_model1",
+                handler: this.onSelect_model1
+            }, 
+            {
+                name: "onSelect_model2",
+                handler: this.onSelect_model2
+            }, 
+            {
+                name: "onSelect_noModel1",
+                handler: this.onSelect_noModel1
+            }, 
+            {
+                name: "onSelect_noModel2",
+                handler: this.onSelect_noModel2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_DatasetSelection.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_DatasetSelection.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_model1 = function (event, data) {
+        $("#cubeviz-compare-datasetSelection").show();
+        $("#cubeviz-compare-dataset1Selection").show();
+        DataCube_DataSet.loadAll(this.app._.backend.url, "", data.modelUri, "", function (result) {
+            console.log("");
+            console.log(result);
+        });
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_model2 = function (data) {
+        $("#cubeviz-compare-datasetSelection").show();
+        $("#cubeviz-compare-dataset2Selection").show();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_noModel1 = function () {
+        $("#cubeviz-compare-dataset1Selection").hide();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_noModel2 = function () {
+        $("#cubeviz-compare-dataset2Selection").hide();
+    };
+    View_CompareAction_DatasetSelection.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_DatasetSelection.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_DatasetSelection;
+})(CubeViz_View_Abstract);
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);
     function View_DataselectionModule_DataSet(attachedTo, app) {
@@ -2919,7 +3034,7 @@ var View_ModelinfoAction_Footer = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
-    if("development" == cubeVizApp._.backend.context) {
+    if(0 < _.size(cubeVizApp._) && "development" == cubeVizApp._.backend.context) {
         console.log("cubeVizApp._:");
         console.log(cubeVizApp._);
     }

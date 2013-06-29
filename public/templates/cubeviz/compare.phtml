@@ -1,3 +1,9 @@
+<script type="text/javascript">
+    cubeVizApp
+        .add("View_CompareAction_ModelSelection", "")
+        .add("View_CompareAction_DatasetSelection", "");
+</script>
+
 <div class="" id="cubeviz-compare-container" style="" title="">
 
     <div class="row-fluid">
@@ -24,18 +30,24 @@
                     <div class="row-fluid">
                         
                         <div class="span6">
-                            <select>
-                                <option>Model 1</option>
-                                <option>Model 2</option>
-                                <option>Model 3</option>
+                            <select id="cubeviz-compare-modelSelector1" name="" style="width: 220px; min-width: 220px;">
+                                <option value="">- please select -</option>
+                                
+                                <?php foreach ($this->models as $model): ?>
+                                    <option value="<?php echo $model ['uri']; ?>">
+                                        <?php echo $model ['label']; ?></option>
+                                <?php endforeach;?>
                             </select>
                         </div>
                         
                         <div class="span6">
-                            <select>
-                                <option>Model 1</option>
-                                <option>Model 2</option>
-                                <option>Model 3</option>
+                            <select id="cubeviz-compare-modelSelector2" name="" style="width: 220px; min-width: 220px;">
+                                <option value="">- please select -</option>
+                                
+                                <?php foreach ($this->models as $model): ?>
+                                    <option value="<?php echo $model ['uri']; ?>">
+                                        <?php echo $model ['label']; ?></option>
+                                <?php endforeach;?>
                             </select>
                         </div>
                         
@@ -43,15 +55,13 @@
                 </div>
                 
                 <!-- right -->
-                <div class="span6">
-                    
-                </div>
+                <div class="span6"></div>
             </div>
             
             <!--  
                 block 
             -->
-            <div class="row-fluid">
+            <div class="row-fluid" id="cubeviz-compare-datasetSelection">
                 <!-- left -->
                 <div class="span6">                    
                     
@@ -63,19 +73,23 @@
                     <div class="row-fluid">
                         
                         <div class="span6">
-                            <select>
-                                <option>DS 1</option>
-                                <option>DS 2</option>
-                                <option>DS 3</option>
-                            </select>
+                            <div class="" id="cubeviz-compare-dataset1Selection" name="" style="">
+                                <select>
+                                    <option>DS 1</option>
+                                    <option>DS 2</option>
+                                    <option>DS 3</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <div class="span6">
-                            <select>
-                                <option>DS 1</option>
-                                <option>DS 2</option>
-                                <option>DS 3</option>
-                            </select>
+                            <div class="" id="cubeviz-compare-dataset2Selection" name="" style="">
+                                <select>
+                                    <option>DS 1</option>
+                                    <option>DS 2</option>
+                                    <option>DS 3</option>
+                                </select>
+                            </div>
                         </div>
                         
                     </div>

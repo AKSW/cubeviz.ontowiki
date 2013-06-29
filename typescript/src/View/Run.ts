@@ -2,9 +2,11 @@
 
 var cubeVizApp = new CubeViz_View_Application;
 
-$(document).ready(function(){
+$(document).ready(function(){    
+    
     // show intern data only if context is development
-    if("development" == cubeVizApp._.backend.context) {
+    if(0 < _.size(cubeVizApp._)
+       && "development" == cubeVizApp._.backend.context) {
         console.log("cubeVizApp._:");
         console.log(cubeVizApp._);
     }

@@ -22,6 +22,17 @@
  */
 #cubeviz-compare-datasetSelection
 {
+    display: none;
+}
+
+#cubeviz-compare-dataset1Selection
+{
+    display: none;
+}
+
+#cubeviz-compare-dataset2Selection
+{
+    display: none;
 }
 
 .cubeviz-compare-dataSelection-colorBox
