@@ -217,14 +217,27 @@ class CubevizController extends OntoWiki_Controller_Component
         // set paths
         $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
         $baseCssPath = $basePath .'public/css/';
+        $baseJavascriptPath = $basePath .'public/javascript/';
         
         /**
          * Including css files for this action
          */
         $this->view->headLink()
             ->appendStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
+            ->appendStylesheet($baseCssPath.'foreign/FontAwesome/css/font-awesome.min.css')
             ->appendStylesheet($baseCssPath.'/CompareAction/CompareAction.css')
             ->appendStylesheet($baseCssPath.'/main.css');
+            
+        // Libraries
+        $this->view->headScript()
+            ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');  
+            
+        if (false === CubeViz_ViewHelper::$isCubeVizIndexLoaded 
+            && false === CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded) {
+            //$this->view->headScript()
+            //     ->appendFile ($baseJavascriptPath. 'Main-production.js', 'text/javascript');
+        }   
         
         $this->view->translate = $this->_owApp->translate;
         $this->view->staticUrlBase = $this->_config->staticUrlBase;

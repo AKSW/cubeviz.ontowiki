@@ -7,9 +7,8 @@
     padding-left: 10px;
     padding-bottom: 10px;
     
-    width: 80%;
-    min-width: 500px;
-    max-width: 800px;
+    width: 98%;
+    min-width: 800px;
     
     height: auto;
 }
@@ -29,6 +28,18 @@
     -moz-border-radius: 10px;
     border-radius: 10px;
     border: 1px solid #BFBFBF;
+}
+
+.cubeviz-compare-dataSelection-colorBox
+{
+    width: 35px; 
+    min-width: 35px; 
+    height: 35px; 
+    min-height: 35px;
+    
+    margin-right: 10px;
+    
+    float: left;
 }
 
 
@@ -82,6 +93,9 @@
 }
 
 
+/**
+ * 
+ */
 .cubeviz-compare-warningBox
 {
     background-color: #f2dede;
