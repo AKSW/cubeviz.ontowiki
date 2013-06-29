@@ -100,11 +100,23 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         DataCube_DataSet.loadAll (
             this.app._.backend.url, "", modelUri, "", function(result) {
                 
-                // fill select box with received items
-                self.fillSelectBox (
-                    "#cubeviz-compare-datasetSelector" + modelNr,
-                    result
-                );
+                if (0 < _.size(result)) {
+                    
+                    $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).hide();
+                    
+                    // fill select box with received items
+                    self.fillSelectBox (
+                        "#cubeviz-compare-datasetSelector" + modelNr,
+                        result
+                    );
+                    
+                // no elements received, show warning box
+                } else {                
+                    $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).show();
+                    
+                    $("#cubeviz-compare-datasetSelector" + modelNr)
+                        .html ("<option value=\"\">Choose another model ... </option>");
+                }
             }
         );
     }
