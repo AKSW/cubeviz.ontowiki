@@ -104,7 +104,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
             
             this.selected ["dataset" + datasetNr] = null;
             
-            this.triggerGlobalEvent ("onSelect_noDataset" + datasetNr);
+            this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
           
         // dataset selected
         } else {
@@ -118,20 +118,8 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         
             //
             this.triggerGlobalEvent (
-                "onSelect_dataset" + datasetNr, 
+                "onSelected_dataset" + datasetNr, 
                 this.selected["dataset" + datasetNr]
-            );
-        }
-        
-        // there are two datasets selected
-        if (false === _.isNull(this.selected ["dataset1"])
-            && false === _.isNull(this.selected ["dataset2"])) {
-            this.triggerGlobalEvent (
-                "onSelect_dataset1AndDataset2",
-                { 
-                    dataset1Self: this.selected ["dataset1"],
-                    dataset2Self: this.selected ["dataset2"]
-                }
             );
         }
     }

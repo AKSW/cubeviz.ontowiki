@@ -1242,20 +1242,14 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     View_CompareAction_DatasetSelection.prototype.handleDatasetSelectorChanges = function (datasetNr, element) {
         if("" == $("#cubeviz-compare-datasetSelector" + datasetNr).val()) {
             this.selected["dataset" + datasetNr] = null;
-            this.triggerGlobalEvent("onSelect_noDataset" + datasetNr);
+            this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
         } else {
             this.selected["dataset" + datasetNr] = {
                 datasetNr: datasetNr,
                 datasetUri: $("#cubeviz-compare-datasetSelector" + datasetNr).val(),
                 datasetSelf: element
             };
-            this.triggerGlobalEvent("onSelect_dataset" + datasetNr, this.selected["dataset" + datasetNr]);
-        }
-        if(false === _.isNull(this.selected["dataset1"]) && false === _.isNull(this.selected["dataset2"])) {
-            this.triggerGlobalEvent("onSelect_dataset1AndDataset2", {
-                dataset1Self: this.selected["dataset1"],
-                dataset2Self: this.selected["dataset2"]
-            });
+            this.triggerGlobalEvent("onSelected_dataset" + datasetNr, this.selected["dataset" + datasetNr]);
         }
     };
     View_CompareAction_DatasetSelection.prototype.handleModelSelectorChanges = function (modelNr, modelUri) {
@@ -1332,19 +1326,21 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             dataset2: null
         };
         this.dimensions = {
+            dataset1: null,
+            dataset2: null
         };
         this.bindGlobalEvents([
             {
-                name: "onSelect_dataset1",
-                handler: this.onSelect_dataset1
+                name: "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
             }, 
             {
-                name: "onSelect_dataset2",
-                handler: this.onSelect_dataset2
+                name: "onSelected_dataset1",
+                handler: this.onSelected_dataset1
             }, 
             {
-                name: "onSelect_dataset1AndDataset2",
-                handler: this.onSelect_dataset1AndDataset2
+                name: "onSelected_dataset2",
+                handler: this.onSelected_dataset2
             }, 
             {
                 name: "onSelect_model1",
@@ -1356,11 +1352,11 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             }, 
             {
                 name: "onSelect_noDataset1",
-                handler: this.onSelect_noDataset1
+                handler: this.onSelected_noDataset1
             }, 
             {
                 name: "onSelect_noDataset2",
-                handler: this.onSelect_noDataset2
+                handler: this.onSelected_noDataset2
             }, 
             {
                 name: "onSelect_noModel1",
@@ -1380,23 +1376,49 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
+    View_CompareAction_DimensionOverview.prototype.connectDataSets = function (foundUri, dimension) {
+        console.log("");
+        console.log(foundUri);
+        this.dimensions["dataset1"][foundUri].__cv_sameAsDataSet = dimension;
+        console.log("");
+        console.log(this.dimensions["dataset1"]);
+    };
     View_CompareAction_DimensionOverview.prototype.handleDatasetSelectorChanges = function (datasetNr, data) {
+        var self = this;
         this.selected["dataset" + datasetNr] = data;
         DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.selected["model" + datasetNr].modelUri, data.datasetSelf["http://purl.org/linked-data/cube#structure"], data.datasetUri, function (result) {
-            console.log("");
-            console.log("components");
-            console.log(result);
+            self.dimensions["dataset" + datasetNr] = result;
+            if(false === _.isNull(self.dimensions["dataset1"]) && false === _.isNull(self.dimensions["dataset2"])) {
+                self.triggerGlobalEvent("onReceived_dimensions1AndDimensions2", {
+                    dataset1Self: self.selected["dataset1"],
+                    dataset2Self: self.selected["dataset2"]
+                });
+            }
         });
     };
-    View_CompareAction_DimensionOverview.prototype.onSelect_dataset1 = function (event, data) {
+    View_CompareAction_DimensionOverview.prototype.onSelected_dataset1 = function (event, data) {
         this.handleDatasetSelectorChanges("1", data);
     };
-    View_CompareAction_DimensionOverview.prototype.onSelect_dataset2 = function (event, data) {
+    View_CompareAction_DimensionOverview.prototype.onSelected_dataset2 = function (event, data) {
         this.handleDatasetSelectorChanges("2", data);
     };
-    View_CompareAction_DimensionOverview.prototype.onSelect_dataset1AndDataset2 = function (event, data) {
-        console.log("");
-        console.log("onSelect_dataset1AndDataset2");
+    View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event, data) {
+        var self = this;
+        var urisToCheck = [];
+
+        _.each(this.dimensions["dataset1"], function (dimension) {
+            urisToCheck.push(dimension.__cv_uri);
+            if(false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck.push(dimension["http://www.w3.org/2002/07/owl#sameAs"]);
+            }
+        });
+        _.each(this.dimensions["dataset2"], function (dimension) {
+            if(-1 < $.inArray(dimension.__cv_uri, urisToCheck)) {
+            }
+            if(-1 < $.inArray(dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
+                self.connectDataSets(dimension["http://www.w3.org/2002/07/owl#sameAs"], dimension);
+            }
+        });
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_model1 = function (event, data) {
         this.selected["model1"] = data;
@@ -1404,19 +1426,23 @@ var View_CompareAction_DimensionOverview = (function (_super) {
     View_CompareAction_DimensionOverview.prototype.onSelect_model2 = function (event, data) {
         this.selected["model2"] = data;
     };
-    View_CompareAction_DimensionOverview.prototype.onSelect_noDataset1 = function () {
+    View_CompareAction_DimensionOverview.prototype.onSelected_noDataset1 = function () {
         this.selected["dataset1"] = null;
+        this.selected["dimensions"]["1"] = null;
     };
-    View_CompareAction_DimensionOverview.prototype.onSelect_noDataset2 = function () {
+    View_CompareAction_DimensionOverview.prototype.onSelected_noDataset2 = function () {
         this.selected["dataset2"] = null;
+        this.selected["dimensions"]["2"] = null;
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_noModel1 = function () {
         this.selected["model1"] = null;
         this.selected["dataset1"] = null;
+        this.dimensions["dataset1"] = null;
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_noModel2 = function () {
         this.selected["model2"] = null;
         this.selected["dataset2"] = null;
+        this.dimensions["dataset2"] = null;
     };
     View_CompareAction_DimensionOverview.prototype.onStart_application = function () {
         this.initialize();

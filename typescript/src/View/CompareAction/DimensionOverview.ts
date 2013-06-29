@@ -13,10 +13,13 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     
     /**
      * Remembers received dimensions
-     * dimensions [1] according to dataset1 
-     *            [2] according to dataset2
+     * dimensions [dataset1] according to dataset1 
+     *            [dataset2] according to dataset2
      */
-    public dimensions = {};
+    public dimensions = {
+        dataset1: null,
+        dataset2: null
+    };
        
     /**
      * 
@@ -30,16 +33,16 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onSelect_dataset1",
-                handler: this.onSelect_dataset1
+                name:    "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
             },
             {
-                name:    "onSelect_dataset2",
-                handler: this.onSelect_dataset2
+                name:    "onSelected_dataset1",
+                handler: this.onSelected_dataset1
             },
             {
-                name:    "onSelect_dataset1AndDataset2",
-                handler: this.onSelect_dataset1AndDataset2
+                name:    "onSelected_dataset2",
+                handler: this.onSelected_dataset2
             },
             {
                 name:    "onSelect_model1",
@@ -51,11 +54,11 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             },
             {
                 name:    "onSelect_noDataset1",
-                handler: this.onSelect_noDataset1
+                handler: this.onSelected_noDataset1
             },
             {
                 name:    "onSelect_noDataset2",
-                handler: this.onSelect_noDataset2
+                handler: this.onSelected_noDataset2
             },
             {
                 name:    "onSelect_noModel1",
@@ -84,8 +87,24 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
+    public connectDataSets(foundUri:string, dimension:any) 
+    {
+        console.log("");
+        console.log(foundUri);
+        
+        this.dimensions["dataset1"][foundUri].__cv_sameAsDataSet = dimension;
+        
+        console.log("");
+        console.log(this.dimensions["dataset1"]);
+    }
+    
+    /**
+     *
+     */
     public handleDatasetSelectorChanges(datasetNr:string, data:any) 
     {
+        var self = this;
+        
         this.selected["dataset" + datasetNr] = data;
         
         // load according dimensions
@@ -93,9 +112,19 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             this.app._.backend.url, "", this.selected ["model" + datasetNr].modelUri,
             data.datasetSelf ["http://purl.org/linked-data/cube#structure"], 
             data.datasetUri, function(result){
-                console.log("");
-                console.log("components");
-                console.log(result);
+                self.dimensions ["dataset"+datasetNr] = result;
+            
+                // there are two dimension groups received
+                if (false === _.isNull(self.dimensions ["dataset1"])
+                    && false === _.isNull(self.dimensions ["dataset2"])) {
+                    self.triggerGlobalEvent (
+                        "onReceived_dimensions1AndDimensions2",
+                        { 
+                            dataset1Self: self.selected ["dataset1"],
+                            dataset2Self: self.selected ["dataset2"]
+                        }
+                    );
+                }
             }
         );
     }
@@ -103,7 +132,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public onSelect_dataset1(event, data) 
+    public onSelected_dataset1(event, data) 
     {
         this.handleDatasetSelectorChanges("1", data);
     }
@@ -111,7 +140,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public onSelect_dataset2(event, data) 
+    public onSelected_dataset2(event, data) 
     {
         this.handleDatasetSelectorChanges("2", data);
     }
@@ -119,10 +148,36 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public onSelect_dataset1AndDataset2(event, data) 
+    public onReceived_dimensions1AndDimensions2(event, data) 
     {
-        console.log("");
-        console.log("onSelect_dataset1AndDataset2");
+        var self = this,
+            urisToCheck:string[] = [];
+        
+        // go through all dimensions of dataset1
+        _.each (this.dimensions ["dataset1"], function(dimension){
+            urisToCheck.push (dimension.__cv_uri);
+            
+            if (false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck.push (dimension["http://www.w3.org/2002/07/owl#sameAs"]);
+            }
+        });
+        
+        _.each (this.dimensions ["dataset2"], function(dimension){
+            
+            // dimension uri found
+            if (-1 < $.inArray (dimension.__cv_uri, urisToCheck)) {
+                
+            }
+            
+            // sameAs relation found
+            if (-1 < $.inArray (dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
+                
+                self.connectDataSets (
+                    dimension["http://www.w3.org/2002/07/owl#sameAs"],
+                    dimension
+                );                
+            }
+        });
     }
     
     /**
@@ -144,17 +199,19 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public onSelect_noDataset1() 
+    public onSelected_noDataset1() 
     {
         this.selected["dataset1"] = null;
+        this.selected["dimensions"]["1"] = null;
     }
     
     /**
      *
      */
-    public onSelect_noDataset2() 
+    public onSelected_noDataset2() 
     {
         this.selected["dataset2"] = null;
+        this.selected["dimensions"]["2"] = null;
     }
     
     /**
@@ -165,6 +222,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         // nullify model information
         this.selected ["model1"] = null;
         this.selected ["dataset1"] = null;
+        this.dimensions["dataset1"] = null;
     }
     
     /**
@@ -175,6 +233,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         // nullify model and dataset information
         this.selected ["model2"] = null;
         this.selected ["dataset2"] = null;
+        this.dimensions["dataset2"] = null;
     }
     
     /**
