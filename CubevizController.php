@@ -1033,8 +1033,15 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
+        
         $configuration = new CubeViz_ConfigurationLink(
-            $this->_owApp->erfurt->getCacheDir(),
+            $cacheDir,
             $this->_titleHelperLimit
         );
         
