@@ -9,7 +9,7 @@
 
 <> a owl:Ontology ;
    rdfs:label "DataCube: Estimated Mortality in Europe" ;
-   dc:description "Its purpose is to participate as an example use case for comparision. Source: http://www.indexmundi.com/g/g.aspx?c=gm&v=26" .
+   dc:description "Its purpose is to participate as an example use case for comparision. Source: http://www.indexmundi.com" .
 
 # 
 # Data Structure Definition
@@ -27,7 +27,8 @@ ex:countryCS a cube:ComponentSpecification ;
 
 ex:yearCS a cube:ComponentSpecification ;
     rdfs:label "year (CS)" ;
-    cube:dimension ex:year .
+    cube:dimension ex:year ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/yearCS> .
 
 ex:unitCS a cube:ComponentSpecification ;
     rdfs:label "straight deaths" ;
@@ -55,10 +56,10 @@ ex:year a cube:DimensionProperty ;
     rdfs:label "Year"@en .
 
 ex:unit a cube:AttributeProperty ;
-    rdfs:label "Unit" .
+    rdfs:label "straight deaths" .
 
 ex:value a cube:MeasureProperty ;
-    rdfs:label "Value"@en .
+    rdfs:label "deaths (CS)"@en .
     
 #
 # Observation #################################################################
@@ -163,14 +164,14 @@ ex:obs13 a cube:Observation ;
     ex:country ex:UnitedKingdom ;
     ex:year ex:Y2000 ;
     ex:unit "straight deaths" ;
-    ex:value "617713.8"^^<http://www.w3.org/2001/XMLSchema#float> .
+    ex:value "617713"^^<http://www.w3.org/2001/XMLSchema#float> .
     
 ex:obs14 a cube:Observation ;
     cube:dataSet ex:dataset ;
     ex:country ex:UnitedKingdom ;
     ex:year ex:Y2001 ;
     ex:unit "straight deaths" ;
-    ex:value "617377.5"^^<http://www.w3.org/2001/XMLSchema#float> .
+    ex:value "617377"^^<http://www.w3.org/2001/XMLSchema#float> .
     
 ex:obs15 a cube:Observation ;
     cube:dataSet ex:dataset ;
