@@ -269,24 +269,28 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->view->models = array ();    
                 
         // config for frontend
-        $config['backend'] = array(
-            'context'               => $this->_privateConfig->get('context'), 
-            'database'              => $this->_owApp->getConfig()->store->backend,
-            'dataHash'              => '',
-            'imagesPath'            => $baseImagesPath,
-            'modelInformation'      => array(),
-            'modelUrl'              => '',
-            'serviceUrl'            => '',
-            'uiHash'                => '',
-            'uiParts'               => array(),
-            'uiSettings'            => array (),
-            'retrievedObservations' => array(),
-            'sparqlEndpoint'        => 'local',
-            'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
-        );
-        
-        $this->view->headScript()
-             ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';');
+        if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
+            $config['backend'] = array(
+                'context'               => $this->_privateConfig->get('context'), 
+                'database'              => $this->_owApp->getConfig()->store->backend,
+                'dataHash'              => '',
+                'imagesPath'            => $baseImagesPath,
+                'modelInformation'      => array(),
+                'modelUrl'              => '',
+                'serviceUrl'            => '',
+                'uiHash'                => '',
+                'uiParts'               => array(
+                    'dataselectionModule' => array ()
+                ),
+                'uiSettings'            => array (),
+                'retrievedObservations' => array(),
+                'sparqlEndpoint'        => 'local',
+                'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
+            );
+            
+            $this->view->headScript()
+                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';');
+        }
          
         // modellist
         foreach ($models as $modelUri => $entry) { $th->addResource ($modelUri); }
