@@ -38,7 +38,7 @@ class View_CompareAction_ModelSelection extends CubeViz_View_Abstract
      */
     public handleModelSelectorChanges(modelNr:string) 
     {
-        // there are two models were selected
+        // there are two models selected
         if ('' != $("#cubeviz-compare-modelSelector1").val()
             && '' != $("#cubeviz-compare-modelSelector2").val()) {
             this.triggerGlobalEvent (
@@ -53,8 +53,9 @@ class View_CompareAction_ModelSelection extends CubeViz_View_Abstract
         // model was selected
         if ('' != $("#cubeviz-compare-modelSelector" + modelNr).val()) {
             this.triggerGlobalEvent (
-                "onSelect_model" + modelNr, 
-                { modelUri: $("#cubeviz-compare-modelSelector" + modelNr).val() }
+                "onSelect_model" + modelNr, { 
+                    modelUri: $("#cubeviz-compare-modelSelector" + modelNr).val() 
+                }
             );
         
         // model is now empty (again)

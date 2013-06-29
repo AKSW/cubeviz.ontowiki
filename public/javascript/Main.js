@@ -1184,7 +1184,21 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     __extends(View_CompareAction_DatasetSelection, _super);
     function View_CompareAction_DatasetSelection(attachedTo, app) {
         _super.call(this, "View_CompareAction_DatasetSelection", attachedTo, app);
+        this.selected = {
+            model1: null,
+            model2: null,
+            dataset1: null,
+            dataset2: null
+        };
         this.bindGlobalEvents([
+            {
+                name: "onReceive_datasets",
+                handler: this.onReceive_datasets
+            }, 
+            {
+                name: "onReceive_noDatasets",
+                handler: this.onReceive_noDatasets
+            }, 
             {
                 name: "onSelect_model1",
                 handler: this.onSelect_model1
@@ -1214,10 +1228,10 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     View_CompareAction_DatasetSelection.prototype.fillSelectBox = function (selectId, elements) {
         var newOption = {
         };
-        $(selectId).html("");
+        $(selectId).html("<option value=\"\">- please select -</option>");
         _.each(elements, function (element) {
             newOption = $('<option/>');
-            newOption.attr("value", element.__cv_uri).text(element.__cv_niceLabel);
+            newOption.attr("value", element.__cv_uri).data("self", element).text(element.__cv_niceLabel);
             $(selectId).append(newOption);
         });
     };
@@ -1225,20 +1239,61 @@ var View_CompareAction_DatasetSelection = (function (_super) {
         this.collection.reset("__cv_uri");
         this.render();
     };
+    View_CompareAction_DatasetSelection.prototype.handleDatasetSelectorChanges = function (datasetNr, element) {
+        if("" == $("#cubeviz-compare-datasetSelector" + datasetNr).val()) {
+            this.selected["dataset" + datasetNr] = null;
+            this.triggerGlobalEvent("onSelect_noDataset" + datasetNr);
+        } else {
+            this.selected["dataset" + datasetNr] = {
+                datasetNr: datasetNr,
+                datasetUri: $("#cubeviz-compare-datasetSelector" + datasetNr).val(),
+                datasetSelf: element
+            };
+            this.triggerGlobalEvent("onSelect_dataset" + datasetNr, this.selected["dataset" + datasetNr]);
+        }
+        if(false === _.isNull(this.selected["dataset1"]) && false === _.isNull(this.selected["dataset2"])) {
+            this.triggerGlobalEvent("onSelect_dataset1AndDataset2", {
+                dataset1Self: this.selected["dataset1"],
+                dataset2Self: this.selected["dataset2"]
+            });
+        }
+    };
     View_CompareAction_DatasetSelection.prototype.handleModelSelectorChanges = function (modelNr, modelUri) {
         var self = this;
+        this.selected["model" + modelNr] = {
+            modelUri: modelUri
+        };
         $("#cubeviz-compare-datasetSelection").show();
         $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
         $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">please wait ... </option>");
         DataCube_DataSet.loadAll(this.app._.backend.url, "", modelUri, "", function (result) {
             if(0 < _.size(result)) {
-                $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).hide();
                 self.fillSelectBox("#cubeviz-compare-datasetSelector" + modelNr, result);
+                self.triggerGlobalEvent("onReceive_datasets", {
+                    dataSets: result,
+                    modelNr: modelNr,
+                    modelUri: modelUri
+                });
             } else {
-                $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).show();
                 $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">Choose another model ... </option>");
+                self.triggerGlobalEvent("onReceive_noDatasets", {
+                    modelNr: modelNr,
+                    modelUri: modelUri
+                });
             }
         });
+    };
+    View_CompareAction_DatasetSelection.prototype.onReceive_datasets = function (event, data) {
+        $("#cubeviz-compare-datasetSelectorWarningBox" + data.modelNr).hide();
+    };
+    View_CompareAction_DatasetSelection.prototype.onReceive_noDatasets = function (event, data) {
+        $("#cubeviz-compare-datasetSelectorWarningBox" + data.modelNr).show();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_dataset1 = function (event) {
+        this.handleDatasetSelectorChanges("1", $(event.target).find("option:selected").data("self"));
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_dataset2 = function (event) {
+        this.handleDatasetSelectorChanges("2", $(event.target).find("option:selected").data("self"));
     };
     View_CompareAction_DatasetSelection.prototype.onSelect_model1 = function (event, data) {
         this.handleModelSelectorChanges("1", data.modelUri);
@@ -1248,19 +1303,130 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     };
     View_CompareAction_DatasetSelection.prototype.onSelect_noModel1 = function () {
         $("#cubeviz-compare-datasetSelectionDiv1").hide();
+        this.selected["model1"] = null;
     };
     View_CompareAction_DatasetSelection.prototype.onSelect_noModel2 = function () {
         $("#cubeviz-compare-datasetSelectionDiv2").hide();
+        this.selected["model2"] = null;
     };
     View_CompareAction_DatasetSelection.prototype.onStart_application = function () {
         this.initialize();
     };
     View_CompareAction_DatasetSelection.prototype.render = function () {
         this.bindUserInterfaceEvents({
+            "change #cubeviz-compare-datasetSelector1": this.onSelect_dataset1,
+            "change #cubeviz-compare-datasetSelector2": this.onSelect_dataset2
         });
         return this;
     };
     return View_CompareAction_DatasetSelection;
+})(CubeViz_View_Abstract);
+var View_CompareAction_DimensionOverview = (function (_super) {
+    __extends(View_CompareAction_DimensionOverview, _super);
+    function View_CompareAction_DimensionOverview(attachedTo, app) {
+        _super.call(this, "View_CompareAction_DimensionOverview", attachedTo, app);
+        this.selected = {
+            model1: null,
+            model2: null,
+            dataset1: null,
+            dataset2: null
+        };
+        this.dimensions = {
+        };
+        this.bindGlobalEvents([
+            {
+                name: "onSelect_dataset1",
+                handler: this.onSelect_dataset1
+            }, 
+            {
+                name: "onSelect_dataset2",
+                handler: this.onSelect_dataset2
+            }, 
+            {
+                name: "onSelect_dataset1AndDataset2",
+                handler: this.onSelect_dataset1AndDataset2
+            }, 
+            {
+                name: "onSelect_model1",
+                handler: this.onSelect_model1
+            }, 
+            {
+                name: "onSelect_model2",
+                handler: this.onSelect_model2
+            }, 
+            {
+                name: "onSelect_noDataset1",
+                handler: this.onSelect_noDataset1
+            }, 
+            {
+                name: "onSelect_noDataset2",
+                handler: this.onSelect_noDataset2
+            }, 
+            {
+                name: "onSelect_noModel1",
+                handler: this.onSelect_noModel1
+            }, 
+            {
+                name: "onSelect_noModel2",
+                handler: this.onSelect_noModel2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_DimensionOverview.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_DimensionOverview.prototype.handleDatasetSelectorChanges = function (datasetNr, data) {
+        this.selected["dataset" + datasetNr] = data;
+        DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.selected["model" + datasetNr].modelUri, data.datasetSelf["http://purl.org/linked-data/cube#structure"], data.datasetUri, function (result) {
+            console.log("");
+            console.log("components");
+            console.log(result);
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_dataset1 = function (event, data) {
+        this.handleDatasetSelectorChanges("1", data);
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_dataset2 = function (event, data) {
+        this.handleDatasetSelectorChanges("2", data);
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_dataset1AndDataset2 = function (event, data) {
+        console.log("");
+        console.log("onSelect_dataset1AndDataset2");
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_model1 = function (event, data) {
+        this.selected["model1"] = data;
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_model2 = function (event, data) {
+        this.selected["model2"] = data;
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_noDataset1 = function () {
+        this.selected["dataset1"] = null;
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_noDataset2 = function () {
+        this.selected["dataset2"] = null;
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_noModel1 = function () {
+        this.selected["model1"] = null;
+        this.selected["dataset1"] = null;
+    };
+    View_CompareAction_DimensionOverview.prototype.onSelect_noModel2 = function () {
+        this.selected["model2"] = null;
+        this.selected["dataset2"] = null;
+    };
+    View_CompareAction_DimensionOverview.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_DimensionOverview.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_DimensionOverview;
 })(CubeViz_View_Abstract);
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);
