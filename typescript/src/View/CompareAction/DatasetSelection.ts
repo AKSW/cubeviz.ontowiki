@@ -47,6 +47,28 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     }
     
     /**
+     * @param selectId string ID of the select box
+     * @param elements List of objects to add
+     * @return void
+     */
+    public fillSelectBox(selectId:string, elements:any[]) : void
+    {
+        var newOption:any = {};
+        
+        $(selectId).html("");
+        
+        _.each(elements, function(element){
+            newOption = $('<option/>');
+            
+            newOption
+                .attr("value", element.__cv_uri)
+                .text(element.__cv_niceLabel);
+            
+            $(selectId).append (newOption);
+        });
+    }
+    
+    /**
      * 
      */
     public initialize() : void 
@@ -56,19 +78,33 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     }
     
     /**
-     * @param event Event thrown jQuery event
-     * @param data object Data attached to the event
+     * Handles changes in both model selectors
+     * @param modelNr string Number of the model as string
+     * @param modelUri string URI of the model
+     * @return
+     * @throw
      */
-    public onSelect_model1(event, data) 
+    public handleModelSelectorChanges(modelNr:string, modelUri:string) 
     {
+        var self = this;
+        
         // show dataset selection
         $("#cubeviz-compare-datasetSelection").show();
-        $("#cubeviz-compare-dataset1Selection").show();
+        $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
         
+        // show wait message
+        $("#cubeviz-compare-datasetSelector" + modelNr)
+            .html ("<option value=\"\">please wait ... </option>");
+        
+        // load datasets according to given model uri
         DataCube_DataSet.loadAll (
-            this.app._.backend.url, "", data.modelUri, "", function(result) {
-                console.log("");
-                console.log(result);
+            this.app._.backend.url, "", modelUri, "", function(result) {
+                
+                // fill select box with received items
+                self.fillSelectBox (
+                    "#cubeviz-compare-datasetSelector" + modelNr,
+                    result
+                );
             }
         );
     }
@@ -77,11 +113,18 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      * @param event Event thrown jQuery event
      * @param data object Data attached to the event
      */
-    public onSelect_model2(data) 
+    public onSelect_model1(event, data) 
     {
-        // show dataset selection
-        $("#cubeviz-compare-datasetSelection").show();
-        $("#cubeviz-compare-dataset2Selection").show();
+        this.handleModelSelectorChanges("1", data.modelUri);
+    }
+    
+    /**
+     * @param event Event thrown jQuery event
+     * @param data object Data attached to the event
+     */
+    public onSelect_model2(event, data) 
+    {
+        this.handleModelSelectorChanges("2", data.modelUri);
     }
     
     /**
@@ -89,7 +132,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_noModel1() 
     {
-        $("#cubeviz-compare-dataset1Selection").hide();
+        $("#cubeviz-compare-datasetSelectionDiv1").hide();
     }
     
     /**
@@ -97,7 +140,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_noModel2() 
     {
-        $("#cubeviz-compare-dataset2Selection").hide();
+        $("#cubeviz-compare-datasetSelectionDiv2").hide();
     }
     
     /**

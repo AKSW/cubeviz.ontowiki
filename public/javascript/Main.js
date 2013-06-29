@@ -1211,27 +1211,40 @@ var View_CompareAction_DatasetSelection = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
+    View_CompareAction_DatasetSelection.prototype.fillSelectBox = function (selectId, elements) {
+        var newOption = {
+        };
+        $(selectId).html("");
+        _.each(elements, function (element) {
+            newOption = $('<option/>');
+            newOption.attr("value", element.__cv_uri).text(element.__cv_niceLabel);
+            $(selectId).append(newOption);
+        });
+    };
     View_CompareAction_DatasetSelection.prototype.initialize = function () {
         this.collection.reset("__cv_uri");
         this.render();
     };
-    View_CompareAction_DatasetSelection.prototype.onSelect_model1 = function (event, data) {
+    View_CompareAction_DatasetSelection.prototype.handleModelSelectorChanges = function (modelNr, modelUri) {
+        var self = this;
         $("#cubeviz-compare-datasetSelection").show();
-        $("#cubeviz-compare-dataset1Selection").show();
-        DataCube_DataSet.loadAll(this.app._.backend.url, "", data.modelUri, "", function (result) {
-            console.log("");
-            console.log(result);
+        $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
+        $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">please wait ... </option>");
+        DataCube_DataSet.loadAll(this.app._.backend.url, "", modelUri, "", function (result) {
+            self.fillSelectBox("#cubeviz-compare-datasetSelector" + modelNr, result);
         });
     };
-    View_CompareAction_DatasetSelection.prototype.onSelect_model2 = function (data) {
-        $("#cubeviz-compare-datasetSelection").show();
-        $("#cubeviz-compare-dataset2Selection").show();
+    View_CompareAction_DatasetSelection.prototype.onSelect_model1 = function (event, data) {
+        this.handleModelSelectorChanges("1", data.modelUri);
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_model2 = function (event, data) {
+        this.handleModelSelectorChanges("2", data.modelUri);
     };
     View_CompareAction_DatasetSelection.prototype.onSelect_noModel1 = function () {
-        $("#cubeviz-compare-dataset1Selection").hide();
+        $("#cubeviz-compare-datasetSelectionDiv1").hide();
     };
     View_CompareAction_DatasetSelection.prototype.onSelect_noModel2 = function () {
-        $("#cubeviz-compare-dataset2Selection").hide();
+        $("#cubeviz-compare-datasetSelectionDiv2").hide();
     };
     View_CompareAction_DatasetSelection.prototype.onStart_application = function () {
         this.initialize();
