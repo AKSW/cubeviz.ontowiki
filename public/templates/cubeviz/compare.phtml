@@ -488,208 +488,123 @@
             
             <h2>Dimension Selection</h2>
             
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <div style="width: 100%; text-align: center;">
-                        <h3>Dimension 1</h3>
-                    </div>
-                    
-                    <table class="table table-bordered">
-                        <tr>
-                            <td>Dimension Element 3</td>
-                            <td>Dimension Element 4</td>
-                        </tr>
-                    </table>
-                    
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <div style="width: 100%; text-align: center;">
-                        <h3>Dimension 1</h3>
-                    </div>
-                    
-                    <table class="table table-bordered">
-                        <tr class="success">
-                            <td colspan="2" style="text-align: center;">Dimension Element 1</td>
-                        </tr>
-                        <tr class="success">
-                            <td colspan="2" style="text-align: center;">Dimension Element 2</td>
-                        </tr>
-                        <tr>
-                            <td>Dimension Element 3</td>
-                            <td>Dimension Element 4</td>
-                        </tr>
-                    </table>
-                    
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    <!--  
-                        block 
-                    -->
-                    <div class="row-fluid">
-                        <!-- left -->
-                        <div class="span6">
-                            <h3>Dimension 2</h3>
-                        </div>
-                        <!-- right -->
-                        <div class="span6">
-                            <h3>Dimension 3</h3>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <table class="table table-bordered">
-                        <tr class="success">
-                            <td colspan="2" style="text-align: center;">Dimension Element 1</td>
-                        </tr>
-                        <tr class="success">
-                            <td colspan="2" style="text-align: center;">Dimension Element 2</td>
-                        </tr>
-                        <tr>
-                            <td>Dimension Element 3</td>
-                            <td>Dimension Element 4</td>
-                        </tr>
-                    </table>
-                        
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                
-                <!-- left -->
-                <div class="span6">
-                    <!--  
-                        block 
-                    -->
-                    <div class="row-fluid">
-                        <!-- left -->
-                        <div class="span6">
-                            
-                            <h3>Dimension 4</h3>
-                    
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>Dimension Element 3</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 3</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 3</td>
-                                </tr>
-                            </table>                            
-                            
-                        </div>
-                        <!-- right -->
-                        <div class="span6">
-                            <h3>Dimension 5</h3>
-                    
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>Dimension Element 5</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 5</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 5</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                
-                <!-- left -->
-                <div class="span6">
-                    <!--  
-                        block 
-                    -->
-                    <div class="row-fluid">
-                        <!-- left -->
-                        <div class="span6">
-                            
-                        
-                        </div>
-                        <!-- right -->
-                        <div class="span6">
-                            <h3>Dimension 6</h3>
-                    
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>Dimension Element 4</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 4</td>
-                                </tr>
-                                <tr>
-                                    <td>Dimension Element 4</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>
-            
+            <div class="" id="cubeviz-compare-dimensionOverview" style="" title=""></div>
             
         </div>        
     </div>
     
     <br/>
 
+</div>
+
+
+<!-- 
+    Templates
+-->
+<div id="cubeviz-compare-tpl-dimensionInBothDatasets" style="display:none;">
+    <div class="row-fluid">
+        <!-- left -->
+        <div class="span6">
+            
+            <div style="width: 100%; text-align: center;">
+                <h3>[[dimensionLabel]]</h3>
+            </div>
+            
+            <table class="table table-bordered"></table>
+            
+        </div>
+        
+        <!-- right -->
+        <div class="span6">&nbsp;</div>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-twoDifferentDimensions" style="display:none;">
+    <div class="row-fluid">
+        <!-- left -->
+        <div class="span6">
+
+            <div class="row-fluid">
+                
+                <!-- left -->
+                <div class="span6">
+                    
+                    <h3>[[dimensionLabel1]]</h3>
+            
+                    <table class="table table-bordered"></table>                           
+                    
+                </div>
+                <!-- right -->
+                <div class="span6">
+                    
+                    <h3>[[dimensionLabel2]]</h3>
+            
+                    <table class="table table-bordered"></table>
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- right -->
+        <div class="span6">&nbsp;</div>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-onlyDimensionInDataset1" style="display:none;">
+    <div class="row-fluid">
+        <!-- left -->
+        <div class="span6">
+
+            <div class="row-fluid">
+                
+                <!-- left -->
+                <div class="span6">
+                    
+                    <h3>Dimension 4</h3>
+            
+                    <table class="table table-bordered"></table>                           
+                    
+                </div>
+                
+                <!-- right -->
+                <div class="span6"></div>
+            </div>
+            
+        </div>
+        
+        <!-- right -->
+        <div class="span6">&nbsp;</div>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-onlyDimensionInDataset2" style="display:none;">
+    <div class="row-fluid">
+        <!-- left -->
+        <div class="span6">
+
+            <div class="row-fluid">
+                
+                <!-- left -->
+                <div class="span6"></div>
+                
+                <!-- right -->
+                <div class="span6">
+                    <h3>Dimension 4</h3>
+            
+                    <table class="table table-bordered"></table>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- right -->
+        <div class="span6">&nbsp;</div>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-sameDeInBothDatasets" style="display:none;">
+    <tr class="success">
+        <td colspan="2" style="text-align: center;">[[dimensionElementLabel]]</td>
+    </tr>
 </div>

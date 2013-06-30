@@ -1376,12 +1376,67 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_DimensionOverview.prototype.connectDataSets = function (foundUri, dimension) {
-        console.log("");
-        console.log(foundUri);
-        this.dimensions["dataset1"][foundUri].__cv_sameAsDataSet = dimension;
-        console.log("");
-        console.log(this.dimensions["dataset1"]);
+    View_CompareAction_DimensionOverview.prototype.displayDimensionsAndDimensionElements = function () {
+        var dimensionContainer = null;
+        var dimensionElementList = null;
+        var ds2Counter = 0;
+        var j = 0;
+        var self = this;
+
+        $("#cubeviz-compare-dimensionOverview").html("");
+        _.each(this.dimensions["dataset1"], function (componentSpecification) {
+            dimensionContainer = null;
+            ds2Counter = 0;
+            if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec)) {
+                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
+                    dimensionLabel: componentSpecification.__cv_niceLabel
+                });
+            } else {
+                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                    dimensionLabel1: componentSpecification.__cv_niceLabel,
+                    dimensionLabel2: "TODO"
+                });
+            }
+            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
+            dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
+            console.log("");
+            console.log("componentSpecification");
+            console.log(componentSpecification);
+            console.log("");
+            console.log("dimensionElementList");
+            console.log(dimensionElementList);
+            _.each(componentSpecification.__cv_elements, function (dimensionElementDs1) {
+                j = 0;
+                console.log("");
+                console.log("dimensionElementDs1");
+                console.log(dimensionElementDs1);
+                _.each(self.dimensions["dataset2"], function (cS) {
+                    if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec) && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
+                        _.each(cS.__cv_elements, function (dimensionElementDs2) {
+                            if(j++ == ds2Counter) {
+                                dimensionElementList.append(CubeViz_View_Helper.tplReplace("<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
+                                    dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
+                                    dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
+                                }));
+                            }
+                        });
+                    } else {
+                        _.each(cS.__cv_elements, function (dimensionElementDs2) {
+                            if(j++ == ds2Counter) {
+                                dimensionElementList.append(CubeViz_View_Helper.tplReplace("<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
+                                    dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
+                                    dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
+                                }));
+                            }
+                        });
+                    }
+                });
+                ++ds2Counter;
+            });
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.connectComponentSpecifications = function (foundUri, dimension) {
+        this.dimensions["dataset1"][foundUri].__cv_sameAsCompSpec = dimension;
     };
     View_CompareAction_DimensionOverview.prototype.handleDatasetSelectorChanges = function (datasetNr, data) {
         var self = this;
@@ -1416,9 +1471,10 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             if(-1 < $.inArray(dimension.__cv_uri, urisToCheck)) {
             }
             if(-1 < $.inArray(dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
-                self.connectDataSets(dimension["http://www.w3.org/2002/07/owl#sameAs"], dimension);
+                self.connectComponentSpecifications(dimension["http://www.w3.org/2002/07/owl#sameAs"], dimension);
             }
         });
+        this.displayDimensionsAndDimensionElements();
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_model1 = function (event, data) {
         this.selected["model1"] = data;

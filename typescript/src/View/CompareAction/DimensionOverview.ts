@@ -87,15 +87,92 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public connectDataSets(foundUri:string, dimension:any) 
+    public displayDimensionsAndDimensionElements() 
     {
-        console.log("");
-        console.log(foundUri);
+        var dimensionContainer:any = null,
+            dimensionElementList:any = null,
+            ds2Counter:number = 0,
+            j:number = 0,
+            self = this;          
         
-        this.dimensions["dataset1"][foundUri].__cv_sameAsDataSet = dimension;
+        $("#cubeviz-compare-dimensionOverview").html ("");
         
-        console.log("");
-        console.log(this.dimensions["dataset1"]);
+        // go through all dimensions of dataset1
+        _.each (this.dimensions["dataset1"], function(componentSpecification){
+            
+            dimensionContainer = null;
+            ds2Counter = 0;
+            
+            if (true === _.isObject(componentSpecification.__cv_sameAsCompSpec)) {
+                
+                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
+                        dimensionLabel: componentSpecification.__cv_niceLabel
+                    }
+                );
+            } else {
+                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                        dimensionLabel1: componentSpecification.__cv_niceLabel,
+                        dimensionLabel2: "TODO"
+                    }
+                );
+            }
+            
+            // set dimension header
+            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
+            
+            // set dimension elements for both datasets
+            dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
+            
+            console.log("");
+            console.log("componentSpecification");
+            console.log(componentSpecification);
+            
+            console.log("");
+            console.log("dimensionElementList");
+            console.log(dimensionElementList);
+            
+            // go through all dimension elements of dataset1
+            _.each (componentSpecification.__cv_elements, function(dimensionElementDs1){
+                
+                j = 0;
+                
+                console.log("");
+                console.log("dimensionElementDs1");
+                console.log(dimensionElementDs1);
+                
+                _.each (self.dimensions["dataset2"], function(cS){
+                    
+                    if (true === _.isObject(componentSpecification.__cv_sameAsCompSpec)
+                        && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
+                    
+                        _.each (cS.__cv_elements, function(dimensionElementDs2){
+                            
+                            if (j++ == ds2Counter) {
+                                dimensionElementList.append(CubeViz_View_Helper.tplReplace(
+                                    "<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
+                                        dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
+                                        dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
+                                    }
+                                ));
+                            }
+                        });
+                    } else {
+                    }
+                });
+                
+                ++ds2Counter;
+            });
+        });
+    }
+    
+    /**
+     *
+     */
+    public connectComponentSpecifications(foundUri:string, dimension:any) 
+    {
+        this.dimensions["dataset1"][foundUri].__cv_sameAsCompSpec = dimension;
     }
     
     /**
@@ -172,12 +249,14 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             // sameAs relation found
             if (-1 < $.inArray (dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
                 
-                self.connectDataSets (
+                self.connectComponentSpecifications (
                     dimension["http://www.w3.org/2002/07/owl#sameAs"],
                     dimension
                 );                
             }
         });
+        
+        this.displayDimensionsAndDimensionElements ();
     }
     
     /**
