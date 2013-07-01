@@ -270,6 +270,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 
         // config for frontend
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
+            
             $config['backend'] = array(
                 'context'               => $this->_privateConfig->get('context'), 
                 'database'              => $this->_owApp->getConfig()->store->backend,
@@ -284,8 +285,18 @@ class CubevizController extends OntoWiki_Controller_Component
                 ),
                 'uiSettings'            => array (),
                 'retrievedObservations' => array(),
-                'sparqlEndpoint'        => 'local',
                 'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
+            );
+            
+            $config['compareAction'] = array(
+                'datasets' => array(),
+                'dimensions' => array(),
+                'models' => array(),
+                
+                // assignment tables
+                'modelNr2UriAssignment' => array (1 => '', 2 => ''),
+                'datasetNr2UriAssignment' => array (1 => '', 2 => ''),
+                'dimensionNr2UriAssignment' => array (1 => '', 2 => '')
             );
             
             $this->view->headScript()

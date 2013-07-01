@@ -2,15 +2,7 @@
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
 class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract 
-{     
-    /**
-     * Saves information about selected model and dataset
-     */
-    public selected = {
-        model1: null, model2: null,
-        dataset1: null, dataset2: null
-    };
-       
+{            
     /**
      * 
      */
@@ -71,6 +63,10 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     {
         var newOption:any = {};
         
+        console.log("");
+        console.log("fillSelectBox");
+        console.log(elements);
+        
         $(selectId).html("<option value=\"\">- please select -</option>");
         
         _.each(elements, function(element){
@@ -99,46 +95,39 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public handleDatasetSelectorChanges(datasetNr:string, element:any) 
     {
+        var selectedDatasetUri = $("#cubeviz-compare-datasetSelector" + datasetNr).val();
+        
         // no dataset selected
-        if ("" == $("#cubeviz-compare-datasetSelector" + datasetNr).val()) {
+        if (true === _.str.isBlank(selectedDatasetUri)) {
             
-            this.selected ["dataset" + datasetNr] = null;
+            this.app._.compareAction.datasets [selectedDatasetUri] = null;
+            this.app._.compareAction.datasetNr2UriAssignment [datasetNr] = "";
             
             this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
           
         // dataset selected
-        } else {
-        
+        } else {        
+            // 
+            this.app._.compareAction.datasetNr2UriAssignment [datasetNr] = selectedDatasetUri;
+               
             // save information
-            this.selected ["dataset" + datasetNr] = {
-                datasetNr: datasetNr,
-                datasetUri: $("#cubeviz-compare-datasetSelector" + datasetNr).val(),
-                datasetSelf: element
-            };
+            element.__cv_compareNr = datasetNr;                
+            this.app._.compareAction.datasets [selectedDatasetUri] = element;
         
             //
-            this.triggerGlobalEvent (
-                "onSelected_dataset" + datasetNr, 
-                this.selected["dataset" + datasetNr]
-            );
+            this.triggerGlobalEvent ("onSelected_dataset" + datasetNr);
         }
     }
     
     /**
      * Handles changes in both model selectors
      * @param modelNr string Number of the model as string
-     * @param modelUri string URI of the model
      * @return
      * @throw
      */
-    public handleModelSelectorChanges(modelNr:string, modelUri:string) 
+    public handleModelSelectorChanges(modelNr:string) 
     {
         var self = this;
-        
-        // save model information
-        this.selected ["model" + modelNr] = {
-            modelUri: modelUri
-        };
         
         // show dataset selection
         $("#cubeviz-compare-datasetSelection").show();
@@ -150,31 +139,9 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         
         // load datasets according to given model uri
         DataCube_DataSet.loadAll (
-            this.app._.backend.url, "", modelUri, "", function(result) {
-                
-                if (0 < _.size(result)) {                    
-                    // fill select box with received items
-                    self.fillSelectBox (
-                        "#cubeviz-compare-datasetSelector" + modelNr,
-                        result
-                    );
-                    
-                    self.triggerGlobalEvent ("onReceive_datasets", {
-                        dataSets: result,
-                        modelNr: modelNr,
-                        modelUri: modelUri
-                    });
-                    
-                // no elements received, show warning box
-                } else {                    
-                    $("#cubeviz-compare-datasetSelector" + modelNr)
-                        .html ("<option value=\"\">Choose another model ... </option>");
-                    
-                    self.triggerGlobalEvent ("onReceive_noDatasets", {
-                        modelNr: modelNr,
-                        modelUri: modelUri
-                    });
-                }
+            this.app._.backend.url, "", this.app._.compareAction.modelNr2UriAssignment[modelNr], "", 
+            function(result) { // callback
+                self.onReceive_datasets (result, modelNr);
             }
         );
     }
@@ -182,9 +149,29 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     /**
      *
      */
-    public onReceive_datasets(event, data) 
+    public onReceive_datasets(result:any, modelNr:string) 
     {
-        $("#cubeviz-compare-datasetSelectorWarningBox" + data.modelNr).hide();
+        var self = this;
+        
+        $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).hide();
+        
+        if (0 < _.size(result)) {                    
+            // fill select box with received items
+            self.fillSelectBox (
+                "#cubeviz-compare-datasetSelector" + modelNr,
+                result
+            );
+            
+        // no elements received, show warning box
+        } else {                    
+            $("#cubeviz-compare-datasetSelector" + modelNr)
+                .html ("<option value=\"\">Choose another model ... </option>");
+            
+            self.triggerGlobalEvent ("onReceive_noDatasets", {
+                modelNr: modelNr,
+                modelUri: self.app._.compareAction.modelNr2UriAssignment[modelNr]
+            });
+        }
     }
     
     /**
@@ -200,7 +187,10 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_dataset1(event) 
     {
-        this.handleDatasetSelectorChanges ("1", $(event.target).find("option:selected").data("self"));
+        this.handleDatasetSelectorChanges (
+            "1", 
+            $(event.target).find("option:selected").data("self")
+        );
     }
     
     /**
@@ -208,7 +198,10 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_dataset2(event) 
     {
-        this.handleDatasetSelectorChanges ("2", $(event.target).find("option:selected").data("self"));
+        this.handleDatasetSelectorChanges (
+            "2", 
+            $(event.target).find("option:selected").data("self")
+        );
     }
     
     /**
@@ -217,7 +210,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_model1(event, data) 
     {
-        this.handleModelSelectorChanges("1", data.modelUri);
+        this.handleModelSelectorChanges("1");
     }
     
     /**
@@ -226,7 +219,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
      */
     public onSelect_model2(event, data) 
     {
-        this.handleModelSelectorChanges("2", data.modelUri);
+        this.handleModelSelectorChanges("2");
     }
     
     /**
@@ -235,9 +228,6 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     public onSelect_noModel1() 
     {
         $("#cubeviz-compare-datasetSelectionDiv1").hide();
-        
-        // nullify model information
-        this.selected ["model1"] = null;
     }
     
     /**
@@ -246,9 +236,6 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     public onSelect_noModel2() 
     {
         $("#cubeviz-compare-datasetSelectionDiv2").hide();
-        
-        // nullify model information
-        this.selected ["model2"] = null;
     }
     
     /**

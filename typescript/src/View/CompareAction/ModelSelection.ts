@@ -37,29 +37,47 @@ class View_CompareAction_ModelSelection extends CubeViz_View_Abstract
      * @throw
      */
     public handleModelSelectorChanges(modelNr:string) 
-    {
-        // there are two models selected
-        if ('' != $("#cubeviz-compare-modelSelector1").val()
-            && '' != $("#cubeviz-compare-modelSelector2").val()) {
-            this.triggerGlobalEvent (
-                "onSelect_model1AndModel2",
-                { 
-                    model1Uri: $("#cubeviz-compare-modelSelector1").val(),
-                    model2Uri: $("#cubeviz-compare-modelSelector2").val()
-                }
-            );
-        }
+    {        
+        var selectedModelUri = $("#cubeviz-compare-modelSelector" + modelNr).val();
         
         // model was selected
-        if ('' != $("#cubeviz-compare-modelSelector" + modelNr).val()) {
-            this.triggerGlobalEvent (
-                "onSelect_model" + modelNr, { 
-                    modelUri: $("#cubeviz-compare-modelSelector" + modelNr).val() 
-                }
-            );
+        if ('' != selectedModelUri) {
+            
+            // save selected model
+            this.app._.compareAction.models [selectedModelUri] = {
+                __cv_compareNr: modelNr,
+                __cv_uri:       selectedModelUri,
+                __cv_niceLabel: _.str.trim($("#cubeviz-compare-modelSelector" + modelNr + " option:selected").text())
+            };
+            
+            this.app._.compareAction.modelNr2UriAssignment[modelNr] = selectedModelUri;
+            
+            this.triggerGlobalEvent("onSelect_model" + modelNr);
+            
+            // there are two models selected
+            if ('' != $("#cubeviz-compare-modelSelector1").val()
+                && '' != $("#cubeviz-compare-modelSelector2").val()) {
+                this.triggerGlobalEvent (
+                    "onSelect_model1AndModel2",
+                    { 
+                        model1Uri: $("#cubeviz-compare-modelSelector1").val(),
+                        model2Uri: $("#cubeviz-compare-modelSelector2").val()
+                    }
+                );
+            }
         
-        // model is now empty (again)
+        // specific model is empty (again)
         } else {
+            
+            // nullify model instance
+            var modelUri = this.app._.compareAction.modelNr2UriAssignment[modelNr];
+            this.app._.compareAction.models[modelUri] = null;
+            
+            // nullify model nr to uri assignment
+            if (false == _.str.isBlank(this.app._.compareAction.modelNr2UriAssignment[modelNr])) {
+                this.app._.compareAction.modelNr2UriAssignment[modelNr] = '';
+            }
+            
             this.triggerGlobalEvent ("onSelect_noModel" + modelNr);
         }
     }
