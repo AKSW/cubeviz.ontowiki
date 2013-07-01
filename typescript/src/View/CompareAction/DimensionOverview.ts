@@ -199,9 +199,6 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public onReceived_dimensions1AndDimensions2(event, data) 
     {
-        console.log("");
-        console.log("onReceived_dimensions1AndDimensions2");
-        
         var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment [1],
             datasetUri2 = this.app._.compareAction.dimensionNr2UriAssignment [2],
             self = this,

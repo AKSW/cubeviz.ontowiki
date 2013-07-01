@@ -1144,20 +1144,19 @@ var View_CompareAction_ModelSelection = (function (_super) {
         return this;
     };
     View_CompareAction_ModelSelection.prototype.handleModelSelectorChanges = function (modelNr) {
+        var selectedModelLabel = _.str.trim($("#cubeviz-compare-modelSelector" + modelNr + " option:selected").text());
         var selectedModelUri = $("#cubeviz-compare-modelSelector" + modelNr).val();
+
         if('' != selectedModelUri) {
             this.app._.compareAction.models[selectedModelUri] = {
                 __cv_compareNr: modelNr,
                 __cv_uri: selectedModelUri,
-                __cv_niceLabel: _.str.trim($("#cubeviz-compare-modelSelector" + modelNr + " option:selected").text())
+                __cv_niceLabel: selectedModelLabel
             };
             this.app._.compareAction.modelNr2UriAssignment[modelNr] = selectedModelUri;
             this.triggerGlobalEvent("onSelect_model" + modelNr);
-            if('' != $("#cubeviz-compare-modelSelector1").val() && '' != $("#cubeviz-compare-modelSelector2").val()) {
-                this.triggerGlobalEvent("onSelect_model1AndModel2", {
-                    model1Uri: $("#cubeviz-compare-modelSelector1").val(),
-                    model2Uri: $("#cubeviz-compare-modelSelector2").val()
-                });
+            if('' != this.app._.compareAction.modelNr2UriAssignment[1] && '' != this.app._.compareAction.modelNr2UriAssignment[2]) {
+                this.triggerGlobalEvent("onSelect_model1AndModel2");
             }
         } else {
             var modelUri = this.app._.compareAction.modelNr2UriAssignment[modelNr];
