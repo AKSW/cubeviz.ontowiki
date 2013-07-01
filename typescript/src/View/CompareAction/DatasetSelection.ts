@@ -63,10 +63,6 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
     {
         var newOption:any = {};
         
-        console.log("");
-        console.log("fillSelectBox");
-        console.log(elements);
-        
         $(selectId).html("<option value=\"\">- please select -</option>");
         
         _.each(elements, function(element){
@@ -100,19 +96,17 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         // no dataset selected
         if (true === _.str.isBlank(selectedDatasetUri)) {
             
-            this.app._.compareAction.datasets [selectedDatasetUri] = null;
-            this.app._.compareAction.datasetNr2UriAssignment [datasetNr] = "";
+            // nullify saved dataset information
+            this.app._.compareAction.datasets [datasetNr] = null
             
             this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
           
         // dataset selected
         } else {        
-            // 
-            this.app._.compareAction.datasetNr2UriAssignment [datasetNr] = selectedDatasetUri;
-               
+                           
             // save information
             element.__cv_compareNr = datasetNr;                
-            this.app._.compareAction.datasets [selectedDatasetUri] = element;
+            this.app._.compareAction.datasets [datasetNr] = element;
         
             //
             this.triggerGlobalEvent ("onSelected_dataset" + datasetNr);
@@ -139,7 +133,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         
         // load datasets according to given model uri
         DataCube_DataSet.loadAll (
-            this.app._.backend.url, "", this.app._.compareAction.modelNr2UriAssignment[modelNr], "", 
+            this.app._.backend.url, "", this.app._.compareAction.models[modelNr].__cv_uri, "", 
             function(result) { // callback
                 self.onReceive_datasets (result, modelNr);
             }
@@ -169,7 +163,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
             
             self.triggerGlobalEvent ("onReceive_noDatasets", {
                 modelNr: modelNr,
-                modelUri: self.app._.compareAction.modelNr2UriAssignment[modelNr]
+                modelUri: self.app._.compareAction.model[modelNr].__cv_uri
             });
         }
     }

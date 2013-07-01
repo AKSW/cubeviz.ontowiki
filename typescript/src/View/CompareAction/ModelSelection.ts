@@ -46,20 +46,17 @@ class View_CompareAction_ModelSelection extends CubeViz_View_Abstract
         if ('' != selectedModelUri) {
             
             // save selected model
-            this.app._.compareAction.models [selectedModelUri] = {
+            this.app._.compareAction.models [modelNr] = {
                 __cv_compareNr: modelNr,
                 __cv_uri:       selectedModelUri,
                 __cv_niceLabel: selectedModelLabel
             };
             
-            // save assignment
-            this.app._.compareAction.modelNr2UriAssignment[modelNr] = selectedModelUri;
-            
             this.triggerGlobalEvent("onSelect_model" + modelNr);
             
             // there are two models selected
-            if ('' != this.app._.compareAction.modelNr2UriAssignment[1]
-                && '' != this.app._.compareAction.modelNr2UriAssignment[2]) {
+            if ('' != this.app._.compareAction.models[1]
+                && '' != this.app._.compareAction.models[2]) {
                 this.triggerGlobalEvent ("onSelect_model1AndModel2");
             }
         
@@ -67,14 +64,9 @@ class View_CompareAction_ModelSelection extends CubeViz_View_Abstract
         } else {
             
             // nullify model instance
-            var modelUri = this.app._.compareAction.modelNr2UriAssignment[modelNr];
-            this.app._.compareAction.models[modelUri] = null;
+            this.app._.compareAction.models[modelNr] = null;
             
-            // nullify model nr to uri assignment
-            if (false == _.str.isBlank(this.app._.compareAction.modelNr2UriAssignment[modelNr])) {
-                this.app._.compareAction.modelNr2UriAssignment[modelNr] = '';
-            }
-            
+            //             
             this.triggerGlobalEvent ("onSelect_noModel" + modelNr);
         }
     }

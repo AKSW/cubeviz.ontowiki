@@ -55,9 +55,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public displayDimensionsAndDimensionElements() 
     {
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment [1],
-            datasetUri2 = this.app._.compareAction.dimensionNr2UriAssignment [2],
-            dimensionContainer:any = null,
+        var dimensionContainer:any = null,
             dimensionElementList:any = null,
             ds2Counter:number = 0,
             j:number = 0,
@@ -66,7 +64,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         $("#cubeviz-compare-dimensionOverview").html ("");
         
         // go through all dimensions of dataset1
-        _.each (this.app._.compareAction.dimensions[datasetUri1], function(componentSpecification){
+        _.each (this.app._.compareAction.dimensions[1], function(componentSpecification){
             
             dimensionContainer = null;
             ds2Counter = 0;
@@ -93,24 +91,12 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             // set dimension elements for both datasets
             dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
             
-            console.log("");
-            console.log("componentSpecification");
-            console.log(componentSpecification);
-            
-            console.log("");
-            console.log("dimensionElementList");
-            console.log(dimensionElementList);
-            
             // go through all dimension elements of dataset1
             _.each (componentSpecification.__cv_elements, function(dimensionElementDs1){
                 
                 j = 0;
                 
-                console.log("");
-                console.log("dimensionElementDs1");
-                console.log(dimensionElementDs1);
-                
-                _.each (self.app._.compareAction.dimensions[datasetUri2], function(cS){
+                _.each (self.app._.compareAction.dimensions[2], function(cS){
                     
                     if (true === _.isObject(componentSpecification.__cv_sameAsCompSpec)
                         && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
@@ -138,40 +124,29 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public connectComponentSpecifications(foundUri:string, dimension:any) 
-    {
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment [1];
-        
-        this.app._.compareAction.dimensions [datasetUri1][foundUri].__cv_sameAsCompSpec = dimension;
-    }
-    
-    /**
-     *
-     */
     public handleDatasetSelectorChanges(datasetNr:string) 
     {
-        var datasetUri = this.app._.compareAction.datasetNr2UriAssignment [datasetNr],
-            self = this;
+        var self = this;
         
         // nullify dimension information, for the case, the following loadAllDimensions
         // does not return anything / is not working
-        this.app._.compareAction.dimensions [datasetUri] = null;
-        this.app._.compareAction.dimensionNr2UriAssignment [datasetNr] = '';
+        this.app._.compareAction.dimensions [datasetNr] = null;
         
         // load according dimensions
         DataCube_Component.loadAllDimensions(
-            this.app._.backend.url, "", this.app._.compareAction.modelNr2UriAssignment[datasetNr],
-            this.app._.compareAction.datasets [datasetUri]["http://purl.org/linked-data/cube#structure"], 
-            this.app._.compareAction.datasetNr2UriAssignment [datasetNr], 
+            this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri,
+            this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], 
+            this.app._.compareAction.datasets[datasetNr].__cv_uri, 
+            
+            // callback
             function(result){
                 
                 // set dimension > dataset assignment and data new
-                self.app._.compareAction.dimensions [datasetUri] = result;
-                self.app._.compareAction.dimensionNr2UriAssignment [datasetNr] = datasetUri;
+                self.app._.compareAction.dimensions [datasetNr] = result;
             
                 // there are two dimension groups received
-                if ("" != self.app._.compareAction.dimensionNr2UriAssignment[1]
-                    && "" != self.app._.compareAction.dimensionNr2UriAssignment[2]) {
+                if (false === _.isNull (self.app._.compareAction.dimensions[1])
+                    && false === _.isNull (self.app._.compareAction.dimensions[2])) {
                     self.triggerGlobalEvent ("onReceived_dimensions1AndDimensions2");
                 }
             }
@@ -199,13 +174,11 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public onReceived_dimensions1AndDimensions2(event, data) 
     {
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment [1],
-            datasetUri2 = this.app._.compareAction.dimensionNr2UriAssignment [2],
-            self = this,
+        var self = this,
             urisToCheck:string[] = [];
         
         // go through all dimensions of dataset1
-        _.each (this.app._.compareAction.dimensions[datasetUri1], function(dimension){
+        _.each (this.app._.compareAction.dimensions[1], function(dimension){
             urisToCheck.push (dimension.__cv_uri);
             
             if (false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
@@ -213,7 +186,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             }
         });
         
-        _.each (this.app._.compareAction.dimensions[datasetUri2], function(dimension){
+        _.each (this.app._.compareAction.dimensions[2], function(dimension){
             
             // dimension uri found
             if (-1 < $.inArray (dimension.__cv_uri, urisToCheck)) {
@@ -223,14 +196,15 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             // sameAs relation found
             if (-1 < $.inArray (dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
                 
+                /*
                 self.connectComponentSpecifications (
                     dimension["http://www.w3.org/2002/07/owl#sameAs"],
                     dimension
-                );                
+                ); */               
             }
         });
         
-        this.displayDimensionsAndDimensionElements ();
+        // this.displayDimensionsAndDimensionElements ();
     }
     
     /**

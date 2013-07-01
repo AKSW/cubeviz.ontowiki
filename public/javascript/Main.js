@@ -1148,22 +1148,17 @@ var View_CompareAction_ModelSelection = (function (_super) {
         var selectedModelUri = $("#cubeviz-compare-modelSelector" + modelNr).val();
 
         if('' != selectedModelUri) {
-            this.app._.compareAction.models[selectedModelUri] = {
+            this.app._.compareAction.models[modelNr] = {
                 __cv_compareNr: modelNr,
                 __cv_uri: selectedModelUri,
                 __cv_niceLabel: selectedModelLabel
             };
-            this.app._.compareAction.modelNr2UriAssignment[modelNr] = selectedModelUri;
             this.triggerGlobalEvent("onSelect_model" + modelNr);
-            if('' != this.app._.compareAction.modelNr2UriAssignment[1] && '' != this.app._.compareAction.modelNr2UriAssignment[2]) {
+            if('' != this.app._.compareAction.models[1] && '' != this.app._.compareAction.models[2]) {
                 this.triggerGlobalEvent("onSelect_model1AndModel2");
             }
         } else {
-            var modelUri = this.app._.compareAction.modelNr2UriAssignment[modelNr];
-            this.app._.compareAction.models[modelUri] = null;
-            if(false == _.str.isBlank(this.app._.compareAction.modelNr2UriAssignment[modelNr])) {
-                this.app._.compareAction.modelNr2UriAssignment[modelNr] = '';
-            }
+            this.app._.compareAction.models[modelNr] = null;
             this.triggerGlobalEvent("onSelect_noModel" + modelNr);
         }
     };
@@ -1231,9 +1226,6 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     View_CompareAction_DatasetSelection.prototype.fillSelectBox = function (selectId, elements) {
         var newOption = {
         };
-        console.log("");
-        console.log("fillSelectBox");
-        console.log(elements);
         $(selectId).html("<option value=\"\">- please select -</option>");
         _.each(elements, function (element) {
             newOption = $('<option/>');
@@ -1248,13 +1240,11 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     View_CompareAction_DatasetSelection.prototype.handleDatasetSelectorChanges = function (datasetNr, element) {
         var selectedDatasetUri = $("#cubeviz-compare-datasetSelector" + datasetNr).val();
         if(true === _.str.isBlank(selectedDatasetUri)) {
-            this.app._.compareAction.datasets[selectedDatasetUri] = null;
-            this.app._.compareAction.datasetNr2UriAssignment[datasetNr] = "";
+            this.app._.compareAction.datasets[datasetNr] = null;
             this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
         } else {
-            this.app._.compareAction.datasetNr2UriAssignment[datasetNr] = selectedDatasetUri;
             element.__cv_compareNr = datasetNr;
-            this.app._.compareAction.datasets[selectedDatasetUri] = element;
+            this.app._.compareAction.datasets[datasetNr] = element;
             this.triggerGlobalEvent("onSelected_dataset" + datasetNr);
         }
     };
@@ -1263,7 +1253,7 @@ var View_CompareAction_DatasetSelection = (function (_super) {
         $("#cubeviz-compare-datasetSelection").show();
         $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
         $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">please wait ... </option>");
-        DataCube_DataSet.loadAll(this.app._.backend.url, "", this.app._.compareAction.modelNr2UriAssignment[modelNr], "", function (result) {
+        DataCube_DataSet.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[modelNr].__cv_uri, "", function (result) {
             self.onReceive_datasets(result, modelNr);
         });
     };
@@ -1276,7 +1266,7 @@ var View_CompareAction_DatasetSelection = (function (_super) {
             $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">Choose another model ... </option>");
             self.triggerGlobalEvent("onReceive_noDatasets", {
                 modelNr: modelNr,
-                modelUri: self.app._.compareAction.modelNr2UriAssignment[modelNr]
+                modelUri: self.app._.compareAction.model[modelNr].__cv_uri
             });
         }
     };
@@ -1349,8 +1339,6 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         return this;
     };
     View_CompareAction_DimensionOverview.prototype.displayDimensionsAndDimensionElements = function () {
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment[1];
-        var datasetUri2 = this.app._.compareAction.dimensionNr2UriAssignment[2];
         var dimensionContainer = null;
         var dimensionElementList = null;
         var ds2Counter = 0;
@@ -1358,7 +1346,7 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         var self = this;
 
         $("#cubeviz-compare-dimensionOverview").html("");
-        _.each(this.app._.compareAction.dimensions[datasetUri1], function (componentSpecification) {
+        _.each(this.app._.compareAction.dimensions[1], function (componentSpecification) {
             dimensionContainer = null;
             ds2Counter = 0;
             if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec)) {
@@ -1373,18 +1361,9 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             }
             $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
             dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
-            console.log("");
-            console.log("componentSpecification");
-            console.log(componentSpecification);
-            console.log("");
-            console.log("dimensionElementList");
-            console.log(dimensionElementList);
             _.each(componentSpecification.__cv_elements, function (dimensionElementDs1) {
                 j = 0;
-                console.log("");
-                console.log("dimensionElementDs1");
-                console.log(dimensionElementDs1);
-                _.each(self.app._.compareAction.dimensions[datasetUri2], function (cS) {
+                _.each(self.app._.compareAction.dimensions[2], function (cS) {
                     if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec) && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
                         _.each(cS.__cv_elements, function (dimensionElementDs2) {
                             if(j++ == ds2Counter) {
@@ -1401,20 +1380,12 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             });
         });
     };
-    View_CompareAction_DimensionOverview.prototype.connectComponentSpecifications = function (foundUri, dimension) {
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment[1];
-        this.app._.compareAction.dimensions[datasetUri1][foundUri].__cv_sameAsCompSpec = dimension;
-    };
     View_CompareAction_DimensionOverview.prototype.handleDatasetSelectorChanges = function (datasetNr) {
-        var datasetUri = this.app._.compareAction.datasetNr2UriAssignment[datasetNr];
         var self = this;
-
-        this.app._.compareAction.dimensions[datasetUri] = null;
-        this.app._.compareAction.dimensionNr2UriAssignment[datasetNr] = '';
-        DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.app._.compareAction.modelNr2UriAssignment[datasetNr], this.app._.compareAction.datasets[datasetUri]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasetNr2UriAssignment[datasetNr], function (result) {
-            self.app._.compareAction.dimensions[datasetUri] = result;
-            self.app._.compareAction.dimensionNr2UriAssignment[datasetNr] = datasetUri;
-            if("" != self.app._.compareAction.dimensionNr2UriAssignment[1] && "" != self.app._.compareAction.dimensionNr2UriAssignment[2]) {
+        this.app._.compareAction.dimensions[datasetNr] = null;
+        DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.dimensions[datasetNr] = result;
+            if(false === _.isNull(self.app._.compareAction.dimensions[1]) && false === _.isNull(self.app._.compareAction.dimensions[2])) {
                 self.triggerGlobalEvent("onReceived_dimensions1AndDimensions2");
             }
         });
@@ -1426,27 +1397,21 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         this.handleDatasetSelectorChanges("2");
     };
     View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event, data) {
-        console.log("");
-        console.log("onReceived_dimensions1AndDimensions2");
-        var datasetUri1 = this.app._.compareAction.dimensionNr2UriAssignment[1];
-        var datasetUri2 = this.app._.compareAction.dimensionNr2UriAssignment[2];
         var self = this;
         var urisToCheck = [];
 
-        _.each(this.app._.compareAction.dimensions[datasetUri1], function (dimension) {
+        _.each(this.app._.compareAction.dimensions[1], function (dimension) {
             urisToCheck.push(dimension.__cv_uri);
             if(false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
                 urisToCheck.push(dimension["http://www.w3.org/2002/07/owl#sameAs"]);
             }
         });
-        _.each(this.app._.compareAction.dimensions[datasetUri2], function (dimension) {
+        _.each(this.app._.compareAction.dimensions[2], function (dimension) {
             if(-1 < $.inArray(dimension.__cv_uri, urisToCheck)) {
             }
             if(-1 < $.inArray(dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
-                self.connectComponentSpecifications(dimension["http://www.w3.org/2002/07/owl#sameAs"], dimension);
             }
         });
-        this.displayDimensionsAndDimensionElements();
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_noModel1 = function () {
         this.app._.compareAction.dimensions[this.app._.compareAction.datasetNr2UriAssignment[1]] = null;

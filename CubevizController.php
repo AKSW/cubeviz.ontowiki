@@ -288,15 +288,12 @@ class CubevizController extends OntoWiki_Controller_Component
                 'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
             );
             
+            // each element will be an object (acting as an associative array)
+            // with "1" or "2" as key (index)
             $config['compareAction'] = array(
                 'datasets' => array(),
                 'dimensions' => array(),
-                'models' => array(),
-                
-                // assignment tables
-                'modelNr2UriAssignment' => array (1 => '', 2 => ''),
-                'datasetNr2UriAssignment' => array (1 => '', 2 => ''),
-                'dimensionNr2UriAssignment' => array (1 => '', 2 => '')
+                'models' => array()
             );
             
             $this->view->headScript()
