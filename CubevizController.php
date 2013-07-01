@@ -291,9 +291,19 @@ class CubevizController extends OntoWiki_Controller_Component
             // each element will be an object (acting as an associative array)
             // with "1" or "2" as key (index)
             $config['compareAction'] = array(
-                'datasets' => array(),
-                'dimensions' => array(),
-                'models' => array()
+                'datasets'                      => array(),
+                'dimensions'                    => array(),
+                'equalDimensions'               => array(),
+                'models'                        => array(),
+                'shareDimensions'               => array(),
+                'unequalDimensions'             => array(
+                    1 => array(),
+                    2 => array()
+                ),
+                
+                'mainDatasetNr'                 => 1, // main dataset is which has 
+                                                      // the most dimensions
+                'secondaryDatasetNr'            => 2
             );
             
             $this->view->headScript()

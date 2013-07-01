@@ -1338,54 +1338,125 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_DimensionOverview.prototype.displayDimensionsAndDimensionElements = function () {
-        var dimensionContainer = null;
-        var dimensionElementList = null;
+    View_CompareAction_DimensionOverview.prototype.displayDimensionElementsOfEqualDimensions = function (tableInstance, mainDimension, secondaryDimension) {
+        var currentDimension2 = "";
+        var dimension2Used = false;
         var ds2Counter = 0;
-        var j = 0;
+        var i = 0;
+        var self = this;
+
+        _.each(mainDimension.__cv_elements, function (dimensionElementDs1) {
+            i = 0;
+            _.each(secondaryDimension.__cv_elements, function (dimensionElementDs2) {
+                if(i++ == ds2Counter) {
+                    tableInstance.append(CubeViz_View_Helper.tplReplace("<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
+                        dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
+                        dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
+                    }));
+                }
+            });
+            ++ds2Counter;
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.displayDimensionElementsOfUnequalDimensions = function (tableInstance, dimension) {
+        var currentDimension2 = "";
+        var dimension2Used = false;
+        var ds2Counter = 0;
+        var i = 0;
+        var self = this;
+
+        _.each(dimension.__cv_elements, function (dimensionElementDs1) {
+            tableInstance.append(CubeViz_View_Helper.tplReplace("<tr><td>[[dimensionElementLabel]]</td></tr>", {
+                dimensionElementLabel: dimensionElementDs1.__cv_niceLabel
+            }));
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.displayDimensions = function () {
+        var dimensionContainer = null;
+        var dimensionIndex = 0;
+        var i = 0;
+        var secondaryDimension = null;
         var self = this;
 
         $("#cubeviz-compare-dimensionOverview").html("");
-        _.each(this.app._.compareAction.dimensions[1], function (componentSpecification) {
-            dimensionContainer = null;
-            ds2Counter = 0;
-            if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec)) {
-                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
-                    dimensionLabel: componentSpecification.__cv_niceLabel
-                });
-            } else {
-                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
-                    dimensionLabel1: componentSpecification.__cv_niceLabel,
-                    dimensionLabel2: "TODO"
-                });
-            }
-            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
-            dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
-            _.each(componentSpecification.__cv_elements, function (dimensionElementDs1) {
-                j = 0;
-                _.each(self.app._.compareAction.dimensions[2], function (cS) {
-                    if(true === _.isObject(componentSpecification.__cv_sameAsCompSpec) && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
-                        _.each(cS.__cv_elements, function (dimensionElementDs2) {
-                            if(j++ == ds2Counter) {
-                                dimensionElementList.append(CubeViz_View_Helper.tplReplace("<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
-                                    dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
-                                    dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
-                                }));
-                            }
-                        });
-                    } else {
-                    }
-                });
-                ++ds2Counter;
+        _.each(this.app._.compareAction.equalDimensions, function (dimensions) {
+            dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
+                dimensionLabel: dimensions[0].__cv_niceLabel
             });
+            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
+            self.displayDimensionElementsOfEqualDimensions($($("#cubeviz-compare-dimensionOverview").find(".table").last()), dimensions[0], dimensions[1]);
         });
+        _.each(this.app._.compareAction.unequalDimensions[this.app._.compareAction.mainDatasetNr], function (mainDimension) {
+            secondaryDimension = null;
+            _.each(self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr], function (otherDimension) {
+                if(i++ == dimensionIndex) {
+                    secondaryDimension = otherDimension;
+                }
+            });
+            dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                dimensionLabel1: mainDimension.__cv_niceLabel,
+                dimensionLabel2: secondaryDimension.__cv_niceLabel
+            });
+            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
+            self.displayDimensionElementsOfUnequalDimensions($($("#cubeviz-compare-dimensionOverview").find(".mainTable").last()), mainDimension);
+            self.displayDimensionElementsOfUnequalDimensions($($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), secondaryDimension);
+            dimensionIndex++;
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.findEqualDimensions = function () {
+        var mainDimension = null;
+        var self = this;
+        var urisToCheck = {
+        };
+        var usedMainDatasetDimensions = [];
+
+        self.app._.compareAction.equalDimensions = [];
+        self.app._.compareAction.unequalDimensions = {
+            1: [],
+            2: []
+        };
+        self.app._.compareAction.shareDimensions = {
+        };
+        if(_.size(this.app._.compareAction.dimensions[1]) < _.size(this.app._.compareAction.dimensions[2])) {
+            this.app._.compareAction.mainDatasetNr = 2;
+            this.app._.compareAction.secondaryDatasetNr = 1;
+        }
+        _.each(this.app._.compareAction.dimensions[this.app._.compareAction.mainDatasetNr], function (dimension) {
+            urisToCheck[dimension.__cv_uri] = dimension.__cv_uri;
+            if(false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]] = dimension.__cv_uri;
+            }
+        });
+        _.each(this.app._.compareAction.dimensions[this.app._.compareAction.secondaryDatasetNr], function (dimension) {
+            if(false === _.isUndefined(urisToCheck[dimension.__cv_uri]) || false === _.isUndefined(urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                if(false === _.isUndefined(urisToCheck[dimension.__cv_uri])) {
+                    mainDimension = self.app._.compareAction.dimensions[self.app._.compareAction.mainDatasetNr][urisToCheck[dimension.__cv_uri]];
+                } else {
+                    mainDimension = self.app._.compareAction.dimensions[self.app._.compareAction.mainDatasetNr][urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]]];
+                }
+                self.app._.compareAction.equalDimensions.push([
+                    mainDimension, 
+                    dimension
+                ]);
+                usedMainDatasetDimensions.push(mainDimension.__cv_uri);
+            } else {
+                self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr].push(dimension);
+            }
+        });
+        _.each(this.app._.compareAction.dimensions[this.app._.compareAction.mainDatasetNr], function (dimension) {
+            if(-1 === $.inArray(dimension.__cv_uri, usedMainDatasetDimensions)) {
+                self.app._.compareAction.unequalDimensions[self.app._.compareAction.mainDatasetNr].push(dimension);
+            }
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.findEqualDimensionElements = function () {
     };
     View_CompareAction_DimensionOverview.prototype.handleDatasetSelectorChanges = function (datasetNr) {
         var self = this;
         this.app._.compareAction.dimensions[datasetNr] = null;
         DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
             self.app._.compareAction.dimensions[datasetNr] = result;
-            if(false === _.isNull(self.app._.compareAction.dimensions[1]) && false === _.isNull(self.app._.compareAction.dimensions[2])) {
+            if(false === _.isUndefined(self.app._.compareAction.dimensions[1]) && false === _.isUndefined(self.app._.compareAction.dimensions[2])) {
                 self.triggerGlobalEvent("onReceived_dimensions1AndDimensions2");
             }
         });
@@ -1396,22 +1467,10 @@ var View_CompareAction_DimensionOverview = (function (_super) {
     View_CompareAction_DimensionOverview.prototype.onSelected_dataset2 = function (event) {
         this.handleDatasetSelectorChanges("2");
     };
-    View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event, data) {
-        var self = this;
-        var urisToCheck = [];
-
-        _.each(this.app._.compareAction.dimensions[1], function (dimension) {
-            urisToCheck.push(dimension.__cv_uri);
-            if(false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
-                urisToCheck.push(dimension["http://www.w3.org/2002/07/owl#sameAs"]);
-            }
-        });
-        _.each(this.app._.compareAction.dimensions[2], function (dimension) {
-            if(-1 < $.inArray(dimension.__cv_uri, urisToCheck)) {
-            }
-            if(-1 < $.inArray(dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
-            }
-        });
+    View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event) {
+        this.findEqualDimensions();
+        this.findEqualDimensionElements();
+        this.displayDimensions();
     };
     View_CompareAction_DimensionOverview.prototype.onSelect_noModel1 = function () {
         this.app._.compareAction.dimensions[this.app._.compareAction.datasetNr2UriAssignment[1]] = null;

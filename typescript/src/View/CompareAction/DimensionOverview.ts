@@ -51,74 +51,214 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     }
     
     /**
+     * @param tableInstance any jQuery instance of table containing dimension elements
+     * @param dimension1 any A dimension of dataset1
+     */
+    public displayDimensionElementsOfEqualDimensions(tableInstance:any, mainDimension:any, 
+        secondaryDimension:any) : void
+    {
+        var currentDimension2:string = "",
+            dimension2Used:bool = false,
+            ds2Counter:number = 0,
+            i:number = 0,
+            self = this;
+        
+        // go through all dimension elements of dataset1
+        _.each (mainDimension.__cv_elements, function(dimensionElementDs1){
+            
+            i = 0;
+            
+            _.each (secondaryDimension.__cv_elements, function(dimensionElementDs2){
+                        
+                if (i++ == ds2Counter) {
+                    tableInstance.append(CubeViz_View_Helper.tplReplace(
+                        "<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
+                            dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
+                            dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
+                        }
+                    ))
+                }
+            });
+            
+            ++ds2Counter;
+        });
+    }
+    
+    /**
+     * @param tableInstance any jQuery instance of table containing dimension elements
+     * @param dimension1 any A dimension of dataset1
+     */
+    public displayDimensionElementsOfUnequalDimensions(tableInstance:any, dimension:any) : void
+    {
+        var currentDimension2:string = "",
+            dimension2Used:bool = false,
+            ds2Counter:number = 0,
+            i:number = 0,
+            self = this;
+        
+        // go through all dimension elements of dataset1
+        _.each (dimension.__cv_elements, function(dimensionElementDs1){
+            
+            tableInstance.append(CubeViz_View_Helper.tplReplace(
+                "<tr><td>[[dimensionElementLabel]]</td></tr>", {
+                    dimensionElementLabel: dimensionElementDs1.__cv_niceLabel
+                }
+            ));
+        });
+    }
+    
+    /**
      *
      */
-    public displayDimensionsAndDimensionElements() 
+    public displayDimensions() : void
     {
         var dimensionContainer:any = null,
-            dimensionElementList:any = null,
-            ds2Counter:number = 0,
-            j:number = 0,
+            dimensionIndex:number = 0,
+            i:number = 0,
+            secondaryDimension:any = null,
             self = this;          
         
         $("#cubeviz-compare-dimensionOverview").html ("");
         
-        // go through all dimensions of dataset1
-        _.each (this.app._.compareAction.dimensions[1], function(componentSpecification){
-            
-            dimensionContainer = null;
-            ds2Counter = 0;
-            
-            if (true === _.isObject(componentSpecification.__cv_sameAsCompSpec)) {
-                
-                dimensionContainer = CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
-                        dimensionLabel: componentSpecification.__cv_niceLabel
-                    }
-                );
-            } else {
-                dimensionContainer = CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
-                        dimensionLabel1: componentSpecification.__cv_niceLabel,
-                        dimensionLabel2: "TODO"
-                    }
-                );
-            }
+        // go through all equal dimensions
+        _.each (this.app._.compareAction.equalDimensions, function(dimensions){
+            dimensionContainer = CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
+                    dimensionLabel: dimensions[0].__cv_niceLabel
+                }
+            );
             
             // set dimension header
             $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
             
-            // set dimension elements for both datasets
-            dimensionElementList = $($("#cubeviz-compare-dimensionOverview").find(".table").last());
-            
-            // go through all dimension elements of dataset1
-            _.each (componentSpecification.__cv_elements, function(dimensionElementDs1){
-                
-                j = 0;
-                
-                _.each (self.app._.compareAction.dimensions[2], function(cS){
-                    
-                    if (true === _.isObject(componentSpecification.__cv_sameAsCompSpec)
-                        && cS.__cv_uri == componentSpecification.__cv_sameAsCompSpec.__cv_uri) {
-                    
-                        _.each (cS.__cv_elements, function(dimensionElementDs2){
-                            
-                            if (j++ == ds2Counter) {
-                                dimensionElementList.append(CubeViz_View_Helper.tplReplace(
-                                    "<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
-                                        dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
-                                        dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
-                                    }
-                                ));
-                            }
-                        });
-                    } else {
-                    }
-                });
-                
-                ++ds2Counter;
-            });
+            // display elements of the LEFT dimension
+            self.displayDimensionElementsOfEqualDimensions(
+                $($("#cubeviz-compare-dimensionOverview").find(".table").last()), // table instance
+                dimensions[0], // current dimension of dataset1
+                dimensions[1] // current dimension of dataset2
+            );
         });
+        
+        // go through all UNequal dimensions
+        _.each (this.app._.compareAction.unequalDimensions[this.app._.compareAction.mainDatasetNr], function(mainDimension){
+            
+            secondaryDimension = null;
+            
+            _.each (self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr], function(otherDimension){
+                if (i++ == dimensionIndex) {
+                    secondaryDimension = otherDimension;
+                }
+            });
+            
+            dimensionContainer = CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                    dimensionLabel1: mainDimension.__cv_niceLabel,
+                    dimensionLabel2: secondaryDimension.__cv_niceLabel
+                }
+            );
+            
+            // set dimension header
+            $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
+            
+            // display elements of the LEFT dimension
+            self.displayDimensionElementsOfUnequalDimensions(
+                $($("#cubeviz-compare-dimensionOverview").find(".mainTable").last()), // table instance
+                mainDimension
+            );
+            
+            // display elements of the RIGHT dimension
+            self.displayDimensionElementsOfUnequalDimensions(
+                $($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), // table instance
+                secondaryDimension
+            );
+            
+            dimensionIndex++;
+        });
+    }
+    
+    /**
+     *
+     */
+    public findEqualDimensions() 
+    {
+        var mainDimension:any = null,
+            self = this,
+            urisToCheck:any = {},
+            usedMainDatasetDimensions:string[] = [];
+            
+        self.app._.compareAction.equalDimensions = [];
+        self.app._.compareAction.unequalDimensions = {1:[], 2:[]};
+        self.app._.compareAction.shareDimensions = {};
+        
+        // set mainDatasetNr:
+        // means, that mainDatasetNr contains more dimensions as the other one
+        if (_.size(this.app._.compareAction.dimensions[1])
+            < _.size(this.app._.compareAction.dimensions[2])) {
+            this.app._.compareAction.mainDatasetNr = 2;
+            this.app._.compareAction.secondaryDatasetNr = 1;
+        }
+        
+        // go through all dimensions of dataset1 and 
+        // save 
+        //      - dimension uri
+        //      - sameAs object, if available
+        // to check afterwards, if there are relations in dimensions[2]
+        _.each (this.app._.compareAction.dimensions[this.app._.compareAction.mainDatasetNr], function(dimension){
+            urisToCheck[dimension.__cv_uri] = dimension.__cv_uri;
+            
+            if (false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]] = dimension.__cv_uri;
+            }
+        });
+        
+        // go through all dimensions of dataset2
+        _.each (this.app._.compareAction.dimensions[this.app._.compareAction.secondaryDatasetNr], function(dimension){
+            
+            // dimension uri found OR sameAs relation found, which means that both 
+            // dimensions are the "same"/equal
+            if (false === _.isUndefined(urisToCheck[dimension.__cv_uri])
+                || false === _.isUndefined(urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                  
+                if (false === _.isUndefined(urisToCheck[dimension.__cv_uri])) {
+                    mainDimension = self.app._.compareAction.dimensions[self.app._.compareAction.mainDatasetNr][urisToCheck[dimension.__cv_uri]];
+                } else {
+                    mainDimension = self.app._.compareAction.dimensions[self.app._.compareAction.mainDatasetNr][urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]]];
+                }
+                  
+                self.app._.compareAction.equalDimensions.push ([
+                    // related dimension of the main dataset
+                    mainDimension,
+                    
+                    // related dimension of the secondary dataset
+                    dimension
+                ]);
+                
+                usedMainDatasetDimensions.push(mainDimension.__cv_uri);
+                
+            } else {
+                
+                // save current dimension in according list
+                self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr]
+                    .push (dimension);
+            }
+        });
+        
+        // get the rest of the main dataset dimensions, which are not equal to
+        // any dimension of secondary dataset
+        _.each (this.app._.compareAction.dimensions[this.app._.compareAction.mainDatasetNr], function(dimension){
+            if (-1 === $.inArray (dimension.__cv_uri, usedMainDatasetDimensions)) {
+                self.app._.compareAction.unequalDimensions[self.app._.compareAction.mainDatasetNr]
+                    .push (dimension);
+            }
+        });
+    }
+    
+    /**
+     *
+     */
+    public findEqualDimensionElements() 
+    {
+        
     }
     
     /**
@@ -145,8 +285,8 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                 self.app._.compareAction.dimensions [datasetNr] = result;
             
                 // there are two dimension groups received
-                if (false === _.isNull (self.app._.compareAction.dimensions[1])
-                    && false === _.isNull (self.app._.compareAction.dimensions[2])) {
+                if (false === _.isUndefined (self.app._.compareAction.dimensions[1])
+                    && false === _.isUndefined (self.app._.compareAction.dimensions[2])) {
                     self.triggerGlobalEvent ("onReceived_dimensions1AndDimensions2");
                 }
             }
@@ -172,39 +312,16 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public onReceived_dimensions1AndDimensions2(event, data) 
+    public onReceived_dimensions1AndDimensions2(event) 
     {
-        var self = this,
-            urisToCheck:string[] = [];
+        this.findEqualDimensions();        
         
-        // go through all dimensions of dataset1
-        _.each (this.app._.compareAction.dimensions[1], function(dimension){
-            urisToCheck.push (dimension.__cv_uri);
-            
-            if (false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
-                urisToCheck.push (dimension["http://www.w3.org/2002/07/owl#sameAs"]);
-            }
-        });
+        // at this point, we know which dimension of dataset1 is equal or has
+        // a sameAs-relation to which other dimension of dataset2 (save in shareDimensions)
         
-        _.each (this.app._.compareAction.dimensions[2], function(dimension){
-            
-            // dimension uri found
-            if (-1 < $.inArray (dimension.__cv_uri, urisToCheck)) {
-                
-            }
-            
-            // sameAs relation found
-            if (-1 < $.inArray (dimension["http://www.w3.org/2002/07/owl#sameAs"], urisToCheck)) {
-                
-                /*
-                self.connectComponentSpecifications (
-                    dimension["http://www.w3.org/2002/07/owl#sameAs"],
-                    dimension
-                ); */               
-            }
-        });
+        this.findEqualDimensionElements();
         
-        // this.displayDimensionsAndDimensionElements ();
+        this.displayDimensions();
     }
     
     /**
