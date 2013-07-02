@@ -22,9 +22,9 @@ class DataCube_Query
     public function __construct ($model, $titleHelperLimit)
     {
         $this->_model = $model;
-        $this->_store = $model->getStore();
         $this->_titleHelperLimit = $titleHelperLimit;
     
+        // caching
         $this->_objectCache = OntoWiki::getInstance()->erfurt->getCache();
         $this->_queryCache  = OntoWiki::getInstance()->erfurt->getQueryCache();
     }
@@ -266,22 +266,7 @@ class DataCube_Query
             }
         }
         
-        $hashedSparql = md5($sparql);
-        
-        $result = $this->_objectCache->load($hashedSparql);
-        
-        // if nothing is in the cache
-        if (false === $result) {
-            $this->_queryCache->startTransaction($hashedSparql);
-            
-            $result = $this->_model->sparqlQuery ($sparql);
-            
-            // close the object cache transaction
-            $this->_queryCache->endTransaction($hashedSparql);
-            
-            // save the result value in the object cache
-            $this->_objectCache->save($result, $hashedSparql);
-        }
+        $result = $this->getCachedResult ($sparql);
   
         // generate associative array
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
@@ -312,6 +297,7 @@ class DataCube_Query
             
             $result [$component['__cv_uri']] = $component;
         }
+        
         return $result;
     }
     
@@ -352,15 +338,16 @@ class DataCube_Query
      */
     public function getCachedResult($sparql)
     {
-        $hashedSparql = md5($sparql);
+        $hashedSparql = md5($this->_model->getModelIri() . $sparql);
         
         $result = $this->_objectCache->load($hashedSparql);
         
         // if nothing is in the cache
         if (false === $result) {
+            
             $this->_queryCache->startTransaction($hashedSparql);
             
-            $result = $this->_store->sparqlQuery($sparql);
+            $result = $this->_model->sparqlQuery($sparql);
             
             // close the object cache transaction
             $this->_queryCache->endTransaction($hashedSparql);

@@ -63,9 +63,9 @@ class CubeViz_ViewHelper
     /**
      * 
      */
-    public static function initApp(&$view, &$model, $backend, $cacheDir, 
-        $context, $modelIri, $serviceUrl, $staticUrlBase, $baseImagesPath, $dataHash, 
-        $uiHash, $titleHelperLimit) 
+    public static function initApp(&$view, &$model, $backend, $context, $modelIri,
+        $serviceUrl, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash, 
+        $titleHelperLimit) 
     {        
         // if cubeVizApp was not loaded yet
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
@@ -98,14 +98,14 @@ class CubeViz_ViewHelper
             /**
              * Read information from files according to given hashes
              */
-            $c = new CubeViz_ConfigurationLink($cacheDir);
+            $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
             $config = array();
             $generatedDataHash = '';
             $generatedUiHash = '';
             
-            list($config['data'], $generatedDataHash) = $c->read ($dataHash, $model, $titleHelperLimit);
+            list($config['data'], $generatedDataHash) = $c->read ($dataHash);
             
-            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, $model, $titleHelperLimit);
+            list($config['ui'], $generatedUiHash) = $c->read ($uiHash);
 
             $config['backend'] = array(
                 'context'               => $context, 
