@@ -120,7 +120,9 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         
         $("#cubeviz-compare-dimensionOverview").html ("");
         
-        // go through all equal dimensions
+        /**
+         * go through all equal dimensions
+         */
         _.each (this.app._.compareAction.equalDimensions, function(dimensions){
             dimensionContainer = CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-compare-tpl-dimensionInBothDatasets").html(), {
@@ -139,10 +141,13 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             );
         });
         
-        // go through all UNequal dimensions
+        /**
+         * go through all UNequal dimensions
+         */
         _.each (this.app._.compareAction.unequalDimensions[this.app._.compareAction.mainDatasetNr], function(mainDimension){
             
             secondaryDimension = null;
+            i = 0;
             
             _.each (self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr], function(otherDimension){
                 if (i++ == dimensionIndex) {
@@ -150,14 +155,24 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                 }
             });
             
-            dimensionContainer = CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
-                    dimensionLabel1: mainDimension.__cv_niceLabel,
-                    dimensionLabel2: secondaryDimension.__cv_niceLabel
-                }
-            );
+            // set dimension
+            if (false === _.isUndefined(secondaryDimension)
+                && false === _.isNull(secondaryDimension)) {
+                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                        dimensionLabel1: mainDimension.__cv_niceLabel,
+                        dimensionLabel2: secondaryDimension.__cv_niceLabel
+                    }
+                );
+            } else {
+                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-compare-tpl-lonelyDimension").html(), {
+                        dimensionLabel: mainDimension.__cv_niceLabel
+                    }
+                );
+            }
             
-            // set dimension header
+            // add dimension container
             $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
             
             // display elements of the LEFT dimension
@@ -167,10 +182,13 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             );
             
             // display elements of the RIGHT dimension
-            self.displayDimensionElementsOfUnequalDimensions(
-                $($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), // table instance
-                secondaryDimension
-            );
+            if (false === _.isUndefined(secondaryDimension)
+                && false === _.isNull(secondaryDimension)) {
+                self.displayDimensionElementsOfUnequalDimensions(
+                    $($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), // table instance
+                    secondaryDimension
+                );
+            }
             
             dimensionIndex++;
         });

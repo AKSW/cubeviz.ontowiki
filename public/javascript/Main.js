@@ -1388,18 +1388,27 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         });
         _.each(this.app._.compareAction.unequalDimensions[this.app._.compareAction.mainDatasetNr], function (mainDimension) {
             secondaryDimension = null;
+            i = 0;
             _.each(self.app._.compareAction.unequalDimensions[self.app._.compareAction.secondaryDatasetNr], function (otherDimension) {
                 if(i++ == dimensionIndex) {
                     secondaryDimension = otherDimension;
                 }
             });
-            dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
-                dimensionLabel1: mainDimension.__cv_niceLabel,
-                dimensionLabel2: secondaryDimension.__cv_niceLabel
-            });
+            if(false === _.isUndefined(secondaryDimension) && false === _.isNull(secondaryDimension)) {
+                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-twoDifferentDimensions").html(), {
+                    dimensionLabel1: mainDimension.__cv_niceLabel,
+                    dimensionLabel2: secondaryDimension.__cv_niceLabel
+                });
+            } else {
+                dimensionContainer = CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-lonelyDimension").html(), {
+                    dimensionLabel: mainDimension.__cv_niceLabel
+                });
+            }
             $("#cubeviz-compare-dimensionOverview").append(dimensionContainer);
             self.displayDimensionElementsOfUnequalDimensions($($("#cubeviz-compare-dimensionOverview").find(".mainTable").last()), mainDimension);
-            self.displayDimensionElementsOfUnequalDimensions($($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), secondaryDimension);
+            if(false === _.isUndefined(secondaryDimension) && false === _.isNull(secondaryDimension)) {
+                self.displayDimensionElementsOfUnequalDimensions($($("#cubeviz-compare-dimensionOverview").find(".secondaryTable").last()), secondaryDimension);
+            }
             dimensionIndex++;
         });
     };
