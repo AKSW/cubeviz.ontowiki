@@ -1250,7 +1250,6 @@ var View_CompareAction_DatasetSelection = (function (_super) {
     };
     View_CompareAction_DatasetSelection.prototype.handleModelSelectorChanges = function (modelNr) {
         var self = this;
-        $("#cubeviz-compare-datasetSelection").show();
         $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
         $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">please wait ... </option>");
         DataCube_DataSet.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[modelNr].__cv_uri, "", function (result) {
@@ -1266,7 +1265,7 @@ var View_CompareAction_DatasetSelection = (function (_super) {
             $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">Choose another model ... </option>");
             self.triggerGlobalEvent("onReceive_noDatasets", {
                 modelNr: modelNr,
-                modelUri: self.app._.compareAction.model[modelNr].__cv_uri
+                modelUri: self.app._.compareAction.models[modelNr].__cv_uri
             });
         }
     };

@@ -124,7 +124,6 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
         var self = this;
         
         // show dataset selection
-        $("#cubeviz-compare-datasetSelection").show();
         $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
         
         // show wait message
@@ -163,7 +162,7 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
             
             self.triggerGlobalEvent ("onReceive_noDatasets", {
                 modelNr: modelNr,
-                modelUri: self.app._.compareAction.model[modelNr].__cv_uri
+                modelUri: self.app._.compareAction.models[modelNr].__cv_uri
             });
         }
     }

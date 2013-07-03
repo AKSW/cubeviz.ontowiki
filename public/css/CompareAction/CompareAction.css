@@ -3,7 +3,8 @@
  */
 #cubeviz-compare-container
 {
-    margin-top: 0px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     
     padding-top: 0px;
     padding-left: 10px;
@@ -13,26 +14,23 @@
     min-width: 98%;
     max-width: 98%;
     
-    height: auto;
+    height: 820px;
+    min-height: 800px;
+    max-height: 800px;
+    
+    overflow-x: auto;
+    overflow-y: visible;
+    
+    clear: both;
 }
 
 
 /**
  * 
  */
-#cubeviz-compare-datasetSelection
+.cubeviz-compare-datasetSelection
 {
-    display: none;
-}
-
-#cubeviz-compare-dataset1Selection
-{
-    display: none;
-}
-
-#cubeviz-compare-dataset2Selection
-{
-    display: none;
+    width: 20em;
 }
 
 .cubeviz-compare-dataSelection-colorBox
@@ -47,46 +45,23 @@
     float: left;
 }
 
-
-/**
- * 
- */
-#cubeviz-compare-introduction
+#cubeviz-compare-datasetSelectionDiv1
 {
-    padding-top: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 10px;
+    display: none;
+}
 
-    margin-bottom: 20px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #BFBFBF;
+#cubeviz-compare-datasetSelectionDiv2
+{
+    display: none;
 }
 
 
 /**
  * 
  */
-#cubeviz-compare-modelSelection
+.cubeviz-compare-modelSelection
 {
-    
-}
-
-#cubeviz-compare-modelSelection-headline
-{
-    font-size: 20px;
-}
-
-#cubeviz-compare-modelSelection-leftContainer
-{
-    float: left;
-}
-
-#cubeviz-compare-modelSelection-rightContainer
-{
-    float: right;
+    width: 20em;
 }
 
 

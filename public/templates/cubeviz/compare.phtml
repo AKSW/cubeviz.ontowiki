@@ -6,495 +6,73 @@
 </script>
 
 <div class="" id="cubeviz-compare-container" style="" title="">
-
-    <div class="row-fluid">
-        
+    <table>
+                
         <!-- 
-            row 
+            top 
         -->
-        <div class="span12">
+        <tr style="height: 390px;">
             
-            <h2>Source Selection</h2>
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <h3>Choose model</h3>
-                    
-                    <i class="icon-lightbulb"></i>
-                    <em>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt massa dolor, eget sodales dui convallis ac.</em>
-                    
-                    <div class="row-fluid">
-                        
-                        <div class="span6">
-                            <select id="cubeviz-compare-modelSelector1" name="" style="width: 220px; min-width: 220px;">
-                                <option value="">- please select -</option>
-                                
-                                <?php foreach ($this->models as $model): ?>
-                                    <option value="<?php echo $model ['uri']; ?>">
-                                        <?php echo $model ['label']; ?></option>
-                                <?php endforeach;?>
-                            </select>
-                        </div>
-                        
-                        <div class="span6">
-                            <select id="cubeviz-compare-modelSelector2" name="" style="width: 220px; min-width: 220px;">
-                                <option value="">- please select -</option>
-                                
-                                <?php foreach ($this->models as $model): ?>
-                                    <option value="<?php echo $model ['uri']; ?>">
-                                        <?php echo $model ['label']; ?></option>
-                                <?php endforeach;?>
-                            </select>
-                        </div>
-                        
-                    </div>
-                </div>
+            <!-- Model selection -->
+            <td class="cubeviz-compare-modelSelection">
+                <h3>Model Selection</h3>
                 
-                <!-- right -->
-                <div class="span6"></div>
-            </div>
+                <select id="cubeviz-compare-modelSelector1" name="" style="width: 220px; min-width: 220px;">
+                    <option value="">- please select -</option>
+                    
+                    <?php foreach ($this->models as $model): ?>
+                        <option value="<?php echo $model ['uri']; ?>">
+                            <?php echo $model ['label']; ?></option>
+                    <?php endforeach;?>
+                </select>
+            </td>
             
-            <!--  
-                block 
-            -->
-            <div class="row-fluid" id="cubeviz-compare-datasetSelection">
-                <!-- left -->
-                <div class="span6">                    
-                    
-                    <h3>Choose dataset</h3>
-                    
-                    <i class="icon-lightbulb"></i>
-                    <em>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt massa dolor, eget sodales dui convallis ac.</em>
-                    
-                    <div class="row-fluid">
-                        
-                        <div class="span6">
-                            <div class="" id="cubeviz-compare-datasetSelectionDiv1" name="" style="">
-                                
-                                <select id="cubeviz-compare-datasetSelector1"></select>
-                                
-                                <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox1" style="display: none;" title="">
-                                    Selected model contains no datasets!
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="span6">
-                            <div class="" id="cubeviz-compare-datasetSelectionDiv2" name="" style="">
-                                <select id="cubeviz-compare-datasetSelector2"></select>
-                            </div>
-                            
-                            <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox2" style="display: none;" title="">
-                                Selected model contains no datasets!
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
+            <!-- DataSet selection -->
+            <td class="cubeviz-compare-datasetSelection" id="cubeviz-compare-datasetSelectionDiv1">
+                <h3>DataSet Selection</h3>
                 
-                <!-- right -->
-                <div class="span6">
-                    
-                </div>
-            </div>            
-        </div>
-    </div>
-    
-    <br/>
-        
-    <div class="row-fluid">
-        <!--    
-            row 
-        -->
-        <div class="span12">
-            
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <div id="container" style="min-width: 400px; height: 650px; margin: 0 auto"></div>
-                    
-                    <script>
-                        $(document).ready(function(){
-                            $("#container").highcharts({
-                                xAxis: {
-                                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                                },
-                                series: [{
-                                    name: 'Tokyo',
-                                    data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-                                }]
-                            });
-                        });
-                    </script>
-                    
-                </div>
+                <select id="cubeviz-compare-datasetSelector1"></select>
                 
-                <!-- right -->
-                <div class="span6">
-                    
-                    <strong>Data overview</strong>
-                    
-                    <br/>
-                    <br/>
-                    
-                    <div style="height: 500px; overflow-y: auto; border-bottom: 1px solid #BFBFBF;">
-                        <table class="table table-bordered">
-                            <tr>
-                                <td style="height: 70px;"><div style="-webkit-transform:rotate(-90deg);">Dimension Element 1</div></td>
-                                <td><div style="-webkit-transform:rotate(-90deg);">Dimension Element 2</div></td>
-                                <td colspan="2" style="text-align: center;">Value</td>
-                                <!--
-                                <td>Value 1</td>
-                                <td>Value 2</td>
-                                -->
-                                <td><div style="-webkit-transform:rotate(-90deg);">Dimension Element 1</div></td>
-                                <td><div style="-webkit-transform:rotate(-90deg);">Dimension Element 2</div></td>
-                            </tr>
-                            <tr>
-                                <td>United States of America</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                            <tr>
-                                <td>Germany</td>
-                                <td>2010</td>
-                                <td>0.45</td>
-                                <td>0.70</td>
-                                <td>2011</td>
-                                <td>England</td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    
-                    
-                    <h3>Value Handling</h3>
-                    
-                    <!--  
-                        block 
-                    -->
-                    <div class="row-fluid">
-                        <!-- left -->
-                        <div class="span6">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>Value 1</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <!-- right -->
-                        <div class="span6">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td>Value 2</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    
+                <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox1" style="display: none;" title="">
+                    Selected model contains no datasets!
                 </div>
-            </div>
-        </div>        
-    </div>
-    
-    <br/>
-        
-    <div class="row-fluid">
-        <!--    
-            row 
-        -->
-        <div class="span12">
+            </td>
             
-            <!--  
-                block 
-            -->
-            <div class="row-fluid">
-                <!-- left -->
-                <div class="span6">
-                    
-                    <div class="" id="" style="text-align: center;" title="">
-                    
-                        <div class="btn" id="" style="" title="">
-                            <img src="<?php echo $this->cubevizImagesPath; ?>bar_stacked.png" style="width: 30px;"/>
-                        </div>            
-                        
-                        <div class="btn" id="" style="" title="">
-                            <img src="<?php echo $this->cubevizImagesPath; ?>column.png" style="width: 30px;"/>
-                        </div>  
-                    
-                    </div> 
-                    
-                </div>
-                
-                <!-- right -->
-                <div class="span6">&nbsp;</div>
-            </div>         
-            
-        </div>        
-    </div>
-    
-    <br/>
-        
-    <div class="row-fluid">
-        <!--    
-            row 
-        -->
-        <div class="span12">
-            
-            <h2>Dimension Selection</h2>
-            
-            <div class="" id="cubeviz-compare-dimensionOverview" style="" title=""></div>
-            
-        </div>        
-    </div>
-    
-    <br/>
+        </tr>        
 
+        <!-- 
+            bottom 
+        -->
+        <tr style="height: 390px;">
+        
+            <!-- Model selection -->
+            <td class="cubeviz-compare-modelSelection">
+                <h3>Model Selection</h3>
+                
+                <select id="cubeviz-compare-modelSelector2" name="" style="width: 220px; min-width: 220px;">
+                    <option value="">- please select -</option>
+                    
+                    <?php foreach ($this->models as $model): ?>
+                        <option value="<?php echo $model ['uri']; ?>">
+                            <?php echo $model ['label']; ?></option>
+                    <?php endforeach;?>
+                </select>
+            </td>
+            
+            <!-- DataSet selection -->
+            <td class="cubeviz-compare-datasetSelection" id="cubeviz-compare-datasetSelectionDiv2">
+                <h3>DataSet Selection</h3>
+                
+                <select id="cubeviz-compare-datasetSelector2"></select>
+                    
+                <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox2" style="display: none;" title="">
+                    Selected model contains no datasets!
+                </div>
+            </td>
+            
+        </tr>
+        
+    </table>
 </div>
 
 
