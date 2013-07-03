@@ -109,7 +109,13 @@ class View_CompareAction_DatasetSelection extends CubeViz_View_Abstract
             this.app._.compareAction.datasets [datasetNr] = element;
         
             //
-            this.triggerGlobalEvent ("onSelected_dataset" + datasetNr);
+            this.triggerGlobalEvent("onSelected_dataset" + datasetNr);
+        }
+        
+        if (false === _.isNull(this.app._.compareAction.datasets[1])
+            && false === _.isNull(this.app._.compareAction.datasets[2]))
+        {
+            this.triggerGlobalEvent("onSelected_dataset1AndDataset2");
         }
     }
     

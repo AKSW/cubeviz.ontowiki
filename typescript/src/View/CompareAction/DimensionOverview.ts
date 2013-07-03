@@ -14,17 +14,9 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         // if one of these events get triggered, the associated handler will
         // be executed to handle it
         this.bindGlobalEvents([
-            {
+            /*{
                 name:    "onReceived_dimensions1AndDimensions2",
                 handler: this.onReceived_dimensions1AndDimensions2
-            },
-            {
-                name:    "onSelected_dataset1",
-                handler: this.onSelected_dataset1
-            },
-            {
-                name:    "onSelected_dataset2",
-                handler: this.onSelected_dataset2
             },
             {
                 name:    "onSelect_noModel1",
@@ -37,7 +29,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             {
                 name:    "onStart_application",
                 handler: this.onStart_application
-            }
+            }*/
         ]);
     }
     
@@ -277,54 +269,6 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     public findEqualDimensionElements() 
     {
         
-    }
-    
-    /**
-     *
-     */
-    public handleDatasetSelectorChanges(datasetNr:string) 
-    {
-        var self = this;
-        
-        // nullify dimension information, for the case, the following loadAllDimensions
-        // does not return anything / is not working
-        this.app._.compareAction.dimensions [datasetNr] = null;
-        
-        // load according dimensions
-        DataCube_Component.loadAllDimensions(
-            this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri,
-            this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], 
-            this.app._.compareAction.datasets[datasetNr].__cv_uri, 
-            
-            // callback
-            function(result){
-                
-                // set dimension > dataset assignment and data new
-                self.app._.compareAction.dimensions [datasetNr] = result;
-            
-                // there are two dimension groups received
-                if (false === _.isUndefined (self.app._.compareAction.dimensions[1])
-                    && false === _.isUndefined (self.app._.compareAction.dimensions[2])) {
-                    self.triggerGlobalEvent ("onReceived_dimensions1AndDimensions2");
-                }
-            }
-        );
-    }
-    
-    /**
-     *
-     */
-    public onSelected_dataset1(event) 
-    {
-        this.handleDatasetSelectorChanges("1");
-    }
-    
-    /**
-     *
-     */
-    public onSelected_dataset2(event) 
-    {
-        this.handleDatasetSelectorChanges("2");
     }
     
     /**

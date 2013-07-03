@@ -2,16 +2,17 @@
     cubeVizApp
         .add("View_CompareAction_ModelSelection", "")
         .add("View_CompareAction_DatasetSelection", "")
+        .add("View_CompareAction_GeneralDatasetInformation", "")
         .add("View_CompareAction_DimensionOverview", "");
 </script>
 
 <div class="" id="cubeviz-compare-container" style="" title="">
-    <table>
+    <table style="width: auto;">
                 
         <!-- 
             top 
         -->
-        <tr style="height: 390px;">
+        <tr style="height: 387px;">
             
             <!-- Model selection -->
             <td class="cubeviz-compare-modelSelection">
@@ -38,12 +39,81 @@
                 </div>
             </td>
             
+            <!-- General information about the dataset -->
+            <td class="cubeviz-compare-generalDatasetInformation" id="cubeviz-compare-generalDatasetInformation1">
+                <h3>General information</h3>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Dimensions -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">                        
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Dimensions
+                    </div>
+                    
+                    <!-- Measures -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Measures
+                    </div>
+                    
+                    <!-- Attributes -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Attributes
+                    </div>
+                    
+                    <!-- Slices -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Slices
+                    </div>
+                </div>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Observations -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Observations
+                    </div>
+                    
+                </div>
+                
+            </td>
+            
         </tr>        
+
 
         <!-- 
             bottom 
         -->
-        <tr style="height: 390px;">
+        <tr style="height: 387px;">
         
             <!-- Model selection -->
             <td class="cubeviz-compare-modelSelection">
@@ -68,6 +138,74 @@
                 <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox2" style="display: none;" title="">
                     Selected model contains no datasets!
                 </div>
+            </td>
+            
+            <!-- General information about the dataset -->
+            <td class="cubeviz-compare-generalDatasetInformation" id="cubeviz-compare-generalDatasetInformation2">
+                <h3>General information</h3>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Dimensions -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">                        
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Dimensions
+                    </div>
+                    
+                    <!-- Measures -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Measures
+                    </div>
+                    
+                    <!-- Attributes -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Attributes
+                    </div>
+                    
+                    <!-- Slices -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Slices
+                    </div>
+                </div>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Observations -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImage">
+                            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png" 
+                                     style="width: 17px; vertical-align: middle;"/>
+                            
+                            <div class="cubeviz-compare-informationPieceBoxValue">0</div>
+                        </div>
+                        Observations
+                    </div>
+                    
+                </div>
+                
             </td>
             
         </tr>

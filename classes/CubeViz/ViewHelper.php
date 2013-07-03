@@ -122,7 +122,6 @@ class CubeViz_ViewHelper
                 ),
                 'uiSettings'            => array (),
                 'retrievedObservations' => array(),
-                'sparqlEndpoint'        => 'local',
                 'url'                   => $staticUrlBase . 'cubeviz/'
             );
             

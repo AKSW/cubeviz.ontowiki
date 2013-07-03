@@ -27,6 +27,7 @@ src/Model/DataCube/Slice.ts
 
 src/View/CompareAction/ModelSelection.ts
 src/View/CompareAction/DatasetSelection.ts
+src/View/CompareAction/GeneralDatasetInformation.ts
 src/View/CompareAction/DimensionOverview.ts
 
 src/View/DataselectionModule/DataSet.ts
