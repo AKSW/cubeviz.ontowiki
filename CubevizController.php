@@ -289,7 +289,7 @@ class CubevizController extends OntoWiki_Controller_Component
             );
             
             $this->view->headScript()
-                 ->appendScript('cubeVizApp._.backend = '. json_encode($config, JSON_FORCE_OBJECT) .';');
+                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';');
         }
             
         // each element will be an object (acting as an associative array)
@@ -314,7 +314,7 @@ class CubevizController extends OntoWiki_Controller_Component
         
         $this->view->headScript()
              ->appendScript('cubeVizApp._.compareAction = '. json_encode($config['compareAction'], JSON_FORCE_OBJECT) .';');
-         
+        
         // modellist
         foreach ($models as $modelUri => $entry) { $th->addResource ($modelUri); }
         foreach ($models as $modelUri => $entry) { 

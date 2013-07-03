@@ -15,8 +15,8 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onSelected_dataset1AndDataset2",
-                handler: this.onSelected_dataset1AndDataset2
+                name:    "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
             },
             {
                 name:    "onSelected_dataset1",
@@ -45,7 +45,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     /**
      *
      */
-    public displayGeneralInformationAboutDataset1() 
+    public displayDimensionInformation1() 
     {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         
@@ -56,14 +56,13 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 _.size(this.app._.compareAction.components.dimensions [1])
             );
         
-        
         $("#cubeviz-compare-generalDatasetInformation1").show();
     }
     
     /**
      *
      */
-    public displayGeneralInformationAboutDataset2() 
+    public displayDimensionInformation2() 
     {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         
@@ -73,7 +72,6 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
             .html (
                 _.size(this.app._.compareAction.components.dimensions [2])
             );
-        
         
         $("#cubeviz-compare-generalDatasetInformation2").show();
     }
@@ -118,8 +116,9 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 self.triggerGlobalEvent ("onReceived_dimensions" + datasetNr);                
             
                 // there are two dimension groups received
-                if (false === _.isUndefined (self.app._.compareAction.components.dimensions[1])
-                    && false === _.isUndefined (self.app._.compareAction.components.dimensions[2])) {
+                if (false === _.isNull (self.app._.compareAction.components.dimensions[1])
+                    && false === _.isNull (self.app._.compareAction.components.dimensions[2])) {
+                    
                     self.triggerGlobalEvent ("onReceived_dimensions1AndDimensions2");
                 }
             }
@@ -142,8 +141,8 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 self.triggerGlobalEvent ("onReceived_measures" + datasetNr);                
             
                 // there are two dimension groups received
-                if (false === _.isUndefined (self.app._.compareAction.components.measures[1])
-                    && false === _.isUndefined (self.app._.compareAction.components.measures[2])) {
+                if (false === _.isNull (self.app._.compareAction.components.measures[1])
+                    && false === _.isNull (self.app._.compareAction.components.measures[2])) {
                     self.triggerGlobalEvent ("onReceived_measure1AndMeasure2");
                 }
             }
@@ -169,10 +168,10 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     /**
      *
      */
-    public onSelected_dataset1AndDataset2() 
+    public onReceived_dimensions1AndDimensions2() 
     {
-        this.displayGeneralInformationAboutDataset1 ();
-        this.displayGeneralInformationAboutDataset2 ();
+        this.displayDimensionInformation1 ();
+        this.displayDimensionInformation2 ();
     }
     
     /**

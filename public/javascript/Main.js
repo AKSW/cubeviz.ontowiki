@@ -1311,8 +1311,8 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         _super.call(this, "View_CompareAction_GeneralDatasetInformation", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onSelected_dataset1AndDataset2",
-                handler: this.onSelected_dataset1AndDataset2
+                name: "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
             }, 
             {
                 name: "onSelected_dataset1",
@@ -1332,12 +1332,12 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_GeneralDatasetInformation.prototype.displayGeneralInformationAboutDataset1 = function () {
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[1]));
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
-    View_CompareAction_GeneralDatasetInformation.prototype.displayGeneralInformationAboutDataset2 = function () {
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionInformation2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
@@ -1354,14 +1354,14 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
             self.app._.compareAction.components.dimensions[datasetNr] = result;
             self.triggerGlobalEvent("onReceived_dimensions" + datasetNr);
-            if(false === _.isUndefined(self.app._.compareAction.components.dimensions[1]) && false === _.isUndefined(self.app._.compareAction.components.dimensions[2])) {
+            if(false === _.isNull(self.app._.compareAction.components.dimensions[1]) && false === _.isNull(self.app._.compareAction.components.dimensions[2])) {
                 self.triggerGlobalEvent("onReceived_dimensions1AndDimensions2");
             }
         });
         DataCube_Component.loadAllMeasures(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
             self.app._.compareAction.components.measures[datasetNr] = result;
             self.triggerGlobalEvent("onReceived_measures" + datasetNr);
-            if(false === _.isUndefined(self.app._.compareAction.components.measures[1]) && false === _.isUndefined(self.app._.compareAction.components.measures[2])) {
+            if(false === _.isNull(self.app._.compareAction.components.measures[1]) && false === _.isNull(self.app._.compareAction.components.measures[2])) {
                 self.triggerGlobalEvent("onReceived_measure1AndMeasure2");
             }
         });
@@ -1372,9 +1372,9 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset2 = function (event) {
         this.handleDatasetSelectorChanges("2");
     };
-    View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1AndDataset2 = function () {
-        this.displayGeneralInformationAboutDataset1();
-        this.displayGeneralInformationAboutDataset2();
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_dimensions1AndDimensions2 = function () {
+        this.displayDimensionInformation1();
+        this.displayDimensionInformation2();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onStart_application = function () {
         this.initialize();
@@ -3331,7 +3331,7 @@ var View_ModelinfoAction_Footer = (function (_super) {
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
     if(0 < _.size(cubeVizApp._) && "development" == cubeVizApp._.backend.context) {
-        console.log("cubeVizApp._:");
+        console.log("CubeViz - Development Information:");
         console.log(cubeVizApp._);
     }
     cubeVizApp.triggerEvent("onStart_application");
