@@ -14,34 +14,38 @@
 class CubeViz_ConfigurationLink
 {   
     /**
-     * Path to the links folder
+     * model instance
      */
-    protected $_hashDirectory = '';    
+    protected $_model = null;    
 
     /**
      * filePrefix for cv_dataHash
      */
-    public static $filePrefForDataHash = 'cv_dataHash-';
+    public static $filePrefForDataHash = 'cv_dataHash__';
     
     /**
      * filePrefix for cv_uiHash
      */
-    public static $filePrefForUiHash = 'cv_uiHash-';
+    public static $filePrefForUiHash = 'cv_uiHash__';
     
     /**
      * Constructor
      */
-    public function __construct($path) 
-    {
-        $this->_hashDirectory = $path;
+    public function __construct($model, $titleHelperLimit) 
+    {        
+        $this->_model = $model;
+        $this->_titleHelperLimit = $titleHelperLimit;
+        
+        // caching
+        $this->_objectCache = OntoWiki::getInstance()->erfurt->getCache();
     }
     
     /**
      *
      */
-    public function loadStandardConfigForData($config, &$model, $titleHelperLimit) 
+    public function loadStandardConfigForData($config) 
     {
-        $query = new DataCube_Query($model, $titleHelperLimit);
+        $query = new DataCube_Query($this->_model, $this->_titleHelperLimit);
         
         // if no data structure definitions were selected
         if(0 === count($config['dataSets'])) {
@@ -281,20 +285,16 @@ class CubeViz_ConfigurationLink
     /**
      *
      */
-    public function read($hash, &$model, $titleHelperLimit) 
+    public function read($hash) 
     {
         /**
          * load and return file content, if file exists
          */
-        if(true === file_exists($this->_hashDirectory .'/'. $hash)){
-            $c = file($this->_hashDirectory .'/'. $hash);
-            
-            // if configuration file contains information
-            if (true == isset ($c [0])) {
-                
-                // contains stuff e.g. selectedDSD, ...
-                return array(json_decode($c[0], true), $hash);
-            }
+        $content = $this->_objectCache->load($hash);
+         
+        if (false !== $content) {            
+            // contains stuff e.g. selectedDSD, ...
+            return array(json_decode($content, true), $hash);
         }
         
         /**
@@ -338,7 +338,7 @@ class CubeViz_ConfigurationLink
                     ),
                     'selectedSlice'                 => array(),
                     'slices'                        => array()
-                ), $model, $titleHelperLimit);                
+                ));                
                 
                 $type = 'data';
                 
@@ -390,31 +390,18 @@ class CubeViz_ConfigurationLink
             return;
         }
         
+        // adapt content
         $content = trim($content);
         $content = str_replace(array("\r\n", "\\r", "\\n"), ' ', $content);
         $content = preg_replace('/\s\s+/', ' ', $content);
         $content = preg_replace('/\s+/', ' ', $content);
         $content = preg_replace('/\r\n|\r|\n/', ' ', $content);
         
-        // attach hash based on the given string
-        $filename .= $this->generateHash ($content);
+        // generate unique id which is based on the content
+        $filename = $this->generateHash ($content);
         
-        // set full file path
-        $filePath = $this->_hashDirectory .'/'. $filename;
-
-        if(false == file_exists($filePath)) {
-            // can't open the file: throw exception
-            if(false === ($fh = fopen($filePath, 'w'))) {
-                $m = 'No write permissions for '. $filePath;
-                throw new CubeViz_Exception ( $m );
-                return $m;
-            }
-
-            // write all parameters line by line
-            fwrite($fh, $content);
-            chmod ($filePath, 0755);
-            fclose($fh);
-        } 
+        // save (override) content
+        $this->_objectCache->save($content, $filename);
         
         return $filename;
     }

@@ -22,8 +22,11 @@ class DataCube_Query
     public function __construct ($model, $titleHelperLimit)
     {
         $this->_model = $model;
-        $this->_store = $model->getStore();
         $this->_titleHelperLimit = $titleHelperLimit;
+    
+        // caching
+        $this->_objectCache = OntoWiki::getInstance()->erfurt->getCache();
+        $this->_queryCache  = OntoWiki::getInstance()->erfurt->getQueryCache();
     }
     
     /**
@@ -31,30 +34,30 @@ class DataCube_Query
      */
     public function containsDataCubeInformation () 
     {
-        $result = $this->_store->sparqlAsk(
-            'PREFIX qb:<http://purl.org/linked-data/cube#>
-                ASK
-                FROM <'.$this->_model->getModelUri().'>
-                {
-                    ?observation a qb:Observation .
-                    ?observation qb:dataSet ?dataset .
-                    ?observation ?dimension ?dimelement .
-                    ?observation ?measure ?value .
+        $result = $this->getCachedResult ('
+            PREFIX qb:<http://purl.org/linked-data/cube#>
+            ASK
+            FROM <'.$this->_model->getModelUri().'>
+            {
+                ?observation a qb:Observation .
+                ?observation qb:dataSet ?dataset .
+                ?observation ?dimension ?dimelement .
+                ?observation ?measure ?value .
 
-                    ?dataset a qb:DataSet .
-                    ?dataset qb:structure ?datastructuredefintion .
+                ?dataset a qb:DataSet .
+                ?dataset qb:structure ?datastructuredefintion .
 
-                    ?datastructuredefintion a qb:DataStructureDefinition .
-                    ?datastructuredefintion qb:component ?dimensionspecification .
-                    ?datastructuredefintion qb:component ?measurespecification .
+                ?datastructuredefintion a qb:DataStructureDefinition .
+                ?datastructuredefintion qb:component ?dimensionspecification .
+                ?datastructuredefintion qb:component ?measurespecification .
 
-                    ?dimensionspecification a qb:ComponentSpecification .
-                    ?dimensionpecification qb:dimension ?dimension .
+                ?dimensionspecification a qb:ComponentSpecification .
+                ?dimensionpecification qb:dimension ?dimension .
 
-                    ?measurespecification a qb:ComponentSpecification .
-                    ?measurespecification qb:measure ?measure .
-                }'
-        );
+                ?measurespecification a qb:ComponentSpecification .
+                ?measurespecification qb:measure ?measure .
+            }');
+        
         return false === empty ($result);
     }
 
@@ -211,9 +214,8 @@ class DataCube_Query
             || $componentType == DataCube_UriOf::Measure) {
                 
             if ('' != $dsdUri && '' != $dsUri) {
-                $result = $this->_model->sparqlQuery (
-                    'SELECT ?comp ?p ?o WHERE {
-                    
+                $sparql = 'SELECT ?comp ?p ?o 
+                    WHERE {                    
                         <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
                     
                         ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
@@ -221,28 +223,24 @@ class DataCube_Query
                         ?comp <'.$componentType.'> ?comptype.
                     
                         ?comp ?p ?o.
-                    }'
-                );
+                    }';
             } else {
                 // find all dimensions respectively measures
-                $result = $this->_model->sparqlQuery (
-                    'SELECT ?comp ?p ?o WHERE {
-                    
+                $sparql = 'SELECT ?comp ?p ?o 
+                    WHERE {                    
                         ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
                     
                         ?comp <'.$componentType.'> ?comptype.
                     
                         ?comp ?p ?o.
-                    }'
-                );
+                    }';
             }
         }
         // type
         //      = attribute
         else {
             if ('' != $dsdUri && '' != $dsUri) {
-                $result = $this->_model->sparqlQuery (
-                  'SELECT DISTINCT ?comp ?p ?o
+                $sparql = 'SELECT DISTINCT ?comp ?p ?o
                     WHERE {
                       <'. $dsdUri .'> a <http://purl.org/linked-data/cube#DataStructureDefinition>.
 
@@ -253,23 +251,22 @@ class DataCube_Query
                       ?comp <'. DataCube_UriOf::Attribute .'> ?componentItself.
                       
                       ?comp ?p ?o.
-                    }'
-                );
+                    }';
             
             // find all attributes
             } else {
-                $result = $this->_model->sparqlQuery (
-                  'SELECT DISTINCT ?comp ?p ?o
+                $sparql = 'SELECT DISTINCT ?comp ?p ?o
                     WHERE {
                       ?comp a <http://purl.org/linked-data/cube#ComponentSpecification>.
 
                       ?comp <'. DataCube_UriOf::Attribute .'> ?componentItself.
                       
                       ?comp ?p ?o.
-                    }'
-                );
+                    }';
             }
         }
+        
+        $result = $this->getCachedResult ($sparql);
   
         // generate associative array
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
@@ -300,6 +297,7 @@ class DataCube_Query
             
             $result [$component['__cv_uri']] = $component;
         }
+        
         return $result;
     }
     
@@ -311,14 +309,20 @@ class DataCube_Query
      */
     public function getComponentElements($dataSetUri, $componentProperty) 
     {
-        $result = $this->_model->sparqlQuery('SELECT DISTINCT ?componentUri ?p ?o WHERE {
-            ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
-            ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
-            ?observation <'.$componentProperty.'> ?componentUri.
-            OPTIONAL {
-                ?componentUri ?p ?o.
-            }
-        }');
+        $result = $this->getCachedResult (
+           'SELECT DISTINCT ?componentUri ?p ?o 
+            WHERE {
+                ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
+             
+                ?observation <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUri.'>.
+             
+                ?observation <'.$componentProperty.'> ?componentUri.
+             
+                OPTIONAL {
+                    ?componentUri ?p ?o.
+                }
+            }'
+        );
         
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
 
@@ -326,6 +330,34 @@ class DataCube_Query
         
         return $result;
     }
+    
+    /**
+     * Executes the given sparql using Erfurt Object- and Querycache.
+     * @param $sparql string SPARQL query to execute
+     * @return array Result of the query
+     */
+    public function getCachedResult($sparql)
+    {
+        $hashedSparql = md5($this->_model->getModelIri() . $sparql);
+        
+        $result = $this->_objectCache->load($hashedSparql);
+        
+        // if nothing is in the cache
+        if (false === $result) {
+            
+            $this->_queryCache->startTransaction($hashedSparql);
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($hashedSparql);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $hashedSparql);
+        }
+        
+        return $result;
+    }    
     
     /**
      * 
@@ -343,10 +375,13 @@ class DataCube_Query
     public function getDataStructureDefinitions ()
     {
         // get all data structure definitions from the store for this particular model
-        $result = $this->_model->sparqlQuery('SELECT DISTINCT ?dsd ?p ?o WHERE {
-            ?dsd ?p ?o.
-            ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
-        }');
+        $result = $this->getCachedResult (
+           'SELECT DISTINCT ?dsd ?p ?o 
+            WHERE {
+                ?dsd ?p ?o.
+                ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
+            }'
+        );
         
         // generate an associated array where dsd is mainkey and using p and o for the rest
         // Example:
@@ -386,12 +421,15 @@ class DataCube_Query
             $dsdPart = '';
         }
         
-        $result = $this->_model->sparqlQuery('SELECT ?ds ?p ?o WHERE {
-            ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>. '. 
-            $dsdPart 
-            .'?ds ?p ?o.
-        }');
-
+        $result = $this->getCachedResult (
+           'SELECT ?ds ?p ?o 
+            WHERE {
+                ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>. '. 
+                $dsdPart 
+                .'?ds ?p ?o.
+            }'
+        );
+        
         // generate an associated array where ds is mainkey and using p and o for the rest
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'ds', 'p', 'o');
         
@@ -412,8 +450,8 @@ class DataCube_Query
      */
     public function getNumberOfUsedAndValidObservations () 
     {        
-        $result = $this->_model->sparqlQuery ('
-            PREFIX qb:<http://purl.org/linked-data/cube#>
+        $result = $this->getCachedResult (
+           'PREFIX qb:<http://purl.org/linked-data/cube#>
             SELECT DISTINCT ?observation
             WHERE { 
                 ?observation a qb:Observation . 
@@ -507,7 +545,7 @@ class DataCube_Query
         $queryObject->setWherePart($where);
         
         // execute generated query
-        $result = $this->_store->sparqlQuery ((string) $queryObject);
+        $result = $this->getCachedResult ((string) $queryObject);
         
         // generate associative array out of given observation result
         $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
@@ -528,23 +566,26 @@ class DataCube_Query
     public function getSliceKeys($dsdUrl = '', $dsUrl = '') 
     {
         if ('' == $dsdUrl && '' == $dsUrl) {
-            $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+            $result = $this->getCachedResult (
+               'SELECT ?sliceKey ?p ?o
                 WHERE {
-                  ?dsdUrl <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
-
-                  ?sliceKey ?p ?o.
-            }');
+                    ?dsdUrl <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+                    ?sliceKey ?p ?o.
+                }'
+            );
         } else {
-            $result = $this->_model->sparqlQuery('SELECT ?sliceKey ?p ?o
+            $result = $this->getCachedResult (
+               'SELECT ?sliceKey ?p ?o
                 WHERE {
-                  <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
+                    <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
 
-                  <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
+                    <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
 
-                  <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+                    <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
 
-                  ?sliceKey ?p ?o.
-            }');
+                    ?sliceKey ?p ?o.
+                }'
+            );
         }
         
         // generate an associated array where ds is mainkey and using p and o for the rest
@@ -580,14 +621,16 @@ class DataCube_Query
     public function getSlices($sliceKeyUrl = '') 
     {
         if ('' != $sliceKeyUrl) {
-            $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
+            $result = $this->getCachedResult (
+               'SELECT ?slice ?p ?o
                 WHERE {
-                  ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
-                  
-                  ?slice ?p ?o.
-                }');
+                    ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
+                    ?slice ?p ?o.
+                }'
+            );
         } else {
-            $result = $this->_model->sparqlQuery('SELECT ?slice ?p ?o
+            $result = $this->getCachedResult(
+               'SELECT ?slice ?p ?o
                 WHERE {
                     {
                         ?slice ?p ?o.
@@ -598,7 +641,8 @@ class DataCube_Query
                         ?slice ?p ?o.
                         ?dataSet <'. DataCube_UriOf::Slice .'> ?slice .
                     }
-                }');
+                }'
+            );
         }
         
         // generate an associated array where ds is mainkey and using p and o for the rest
@@ -629,7 +673,7 @@ class DataCube_Query
     public function getUnusedObservations () 
     {
         // get valid observations
-        $result = $this->_model->sparqlQuery ('
+        $result = $this->getCachedResult ('
             PREFIX qb:<http://purl.org/linked-data/cube#>
             SELECT DISTINCT ?observation
             WHERE { 
@@ -649,7 +693,7 @@ class DataCube_Query
         $usedObservations = array_keys ($usedObservations);
         
         // get all observations
-        $result = $this->_model->sparqlQuery ('
+        $result = $this->getCachedResult ('
             PREFIX qb:<http://purl.org/linked-data/cube#>
             SELECT DISTINCT ?observation
             WHERE { 

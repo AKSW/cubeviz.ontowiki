@@ -386,7 +386,6 @@ class CubevizController extends OntoWiki_Controller_Component
         $filename = 'cubevizExport_'. $dataHash;
         
         $model = $this->_owApp->selectedModel;
-        $cacheDir = $this->_owApp->erfurt->getCacheDir();
         
         switch ($type)
         {
@@ -412,8 +411,7 @@ class CubevizController extends OntoWiki_Controller_Component
         echo CubeViz_DataSelectionExporter::_(
             $type, 
             $dataHash, 
-            $model, 
-            $cacheDir, 
+            $model,
             $this->_titleHelperLimit
         );
     }
@@ -645,7 +643,7 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         // check if model there
-        if('' == $dataHash || 44 > strlen($dataHash)) {
+        if('' == $dataHash) {
             $code = 404;
             $this->_sendJSONResponse(
                 array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
@@ -659,7 +657,7 @@ class CubevizController extends OntoWiki_Controller_Component
             $query = new DataCube_Query ($model, $this->_titleHelperLimit);
             
             $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->erfurt->getCacheDir(),
+                $this->_owApp->selectedModel,
                 $this->_titleHelperLimit
             );
 
@@ -832,20 +830,12 @@ class CubevizController extends OntoWiki_Controller_Component
         
         CubeViz_ViewHelper::$isCubeVizIndexLoaded = true;
         
-        // get cache dir
-        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir();
-        } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir();
-        }
-        
         // init cubeVizApp
         try {
             $config = CubeViz_ViewHelper::initApp(
                 $this->view,
                 $model,
                 $this->_owApp->getConfig()->store->backend,
-                $cacheDir,
                 $this->_privateConfig->get('context'),
                 $modelIri,
                 $serviceUrl,
@@ -990,7 +980,7 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         $configuration = new CubeViz_ConfigurationLink(
-            $cacheDir,
+            $this->_owApp->selectedModel,
             $this->_titleHelperLimit
         );
         
