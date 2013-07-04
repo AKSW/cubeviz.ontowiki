@@ -1320,6 +1320,10 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 handler: this.onReceived_measures1AndMeasures2
             }, 
             {
+                name: "onReceived_slices1AndSlices2",
+                handler: this.onReceived_slices1AndSlices2
+            }, 
+            {
                 name: "onSelected_dataset1",
                 handler: this.onSelected_dataset1
             }, 
@@ -1367,6 +1371,16 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
+    View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
     View_CompareAction_GeneralDatasetInformation.prototype.initialize = function () {
         this.collection.reset("__cv_uri");
         this.render();
@@ -1397,6 +1411,13 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 self.triggerGlobalEvent("onReceived_attributes1AndAttributes2");
             }
         });
+        DataCube_Slice.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.slices[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_slices" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.slices[1]) && false === _.isNull(self.app._.compareAction.slices[2])) {
+                self.triggerGlobalEvent("onReceived_slices1AndSlices2");
+            }
+        });
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1 = function (event) {
         this.handleDatasetSelectorChanges("1");
@@ -1415,6 +1436,10 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_measures1AndMeasures2 = function () {
         this.displayMeasuresInformation1();
         this.displayMeasuresInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_slices1AndSlices2 = function () {
+        this.displaySlicesInformation1();
+        this.displaySlicesInformation2();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onStart_application = function () {
         this.initialize();

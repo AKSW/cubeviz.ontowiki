@@ -27,6 +27,10 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 handler: this.onReceived_measures1AndMeasures2
             },
             {
+                name:    "onReceived_slices1AndSlices2",
+                handler: this.onReceived_slices1AndSlices2
+            },
+            {
                 name:    "onSelected_dataset1",
                 handler: this.onSelected_dataset1
             },
@@ -153,6 +157,40 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     }
     
     /**
+     *
+     */
+    public displaySlicesInformation1() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        
+        // Measures
+        $($(informationPieceBoxes.get(3))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (
+                _.size(this.app._.compareAction.slices[1])
+            );
+        
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    }
+    
+    /**
+     *
+     */
+    public displaySlicesInformation2() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        
+        // Measures
+        $($(informationPieceBoxes.get(3))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (
+                _.size(this.app._.compareAction.slices[2])
+            );
+        
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    }
+    
+    /**
      * 
      */
     public initialize() : void 
@@ -247,6 +285,30 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 }
             }
         );
+        
+        /**
+         * load according slices
+         */
+        DataCube_Slice.loadAll(
+            this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri,
+            this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], 
+            this.app._.compareAction.datasets[datasetNr].__cv_uri, 
+            
+            // callback
+            function(result){
+                
+                // set dimension > dataset assignment and data new
+                self.app._.compareAction.slices [datasetNr] = result;
+                
+                self.triggerGlobalEvent ("onReceived_slices" + datasetNr);                
+            
+                // there are two dimension groups received
+                if (false === _.isNull (self.app._.compareAction.slices[1])
+                    && false === _.isNull (self.app._.compareAction.slices[2])) {
+                    self.triggerGlobalEvent ("onReceived_slices1AndSlices2");
+                }
+            }
+        );
     }
     
     /**
@@ -290,6 +352,15 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     {
         this.displayMeasuresInformation1 ();
         this.displayMeasuresInformation2 ();
+    }
+    
+    /**
+     *
+     */
+    public onReceived_slices1AndSlices2() 
+    {
+        this.displaySlicesInformation1 ();
+        this.displaySlicesInformation2 ();
     }
     
     /**
