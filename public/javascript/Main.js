@@ -1099,6 +1099,20 @@ var DataCube_Observation = (function () {
             callback(entries.content);
         });
     }
+    DataCube_Observation.loadNumberOfObservations = function loadNumberOfObservations(url, serviceUrl, modelIri, dsUri, callback) {
+        $.ajax({
+            url: url + "getnumberofobservations/",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsUri: dsUri
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("Observation loadNumberOfObservations error: " + xhr.responseText);
+        }).done(function (entries) {
+            callback(entries.content);
+        });
+    }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         return this;
     };
@@ -1320,6 +1334,10 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 handler: this.onReceived_measures1AndMeasures2
             }, 
             {
+                name: "onReceived_numbersOfObservations1AndNumbersOfObservations2",
+                handler: this.onReceived_numbersOfObservations1AndNumbersOfObservations2
+            }, 
+            {
                 name: "onReceived_slices1AndSlices2",
                 handler: this.onReceived_slices1AndSlices2
             }, 
@@ -1371,6 +1389,16 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[1]);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[2]);
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
     View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[1]));
@@ -1418,6 +1446,13 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 self.triggerGlobalEvent("onReceived_slices1AndSlices2");
             }
         });
+        DataCube_Observation.loadNumberOfObservations(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.numberOfObservations[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_observationNumber" + datasetNr);
+            if(-1 < self.app._.compareAction.numberOfObservations[1] && -1 < self.app._.compareAction.numberOfObservations[2]) {
+                self.triggerGlobalEvent("onReceived_numbersOfObservations1AndNumbersOfObservations2");
+            }
+        });
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1 = function (event) {
         this.handleDatasetSelectorChanges("1");
@@ -1436,6 +1471,10 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_measures1AndMeasures2 = function () {
         this.displayMeasuresInformation1();
         this.displayMeasuresInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_numbersOfObservations1AndNumbersOfObservations2 = function () {
+        this.displayNumberOfObservations1();
+        this.displayNumberOfObservations2();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_slices1AndSlices2 = function () {
         this.displaySlicesInformation1();

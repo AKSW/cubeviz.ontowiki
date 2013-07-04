@@ -445,6 +445,22 @@ class DataCube_Query
     }
     
     /**
+     * Get number of all observations
+     */
+    public function getNumberOfObservations ($dsUri) 
+    {        
+        return count ($this->getCachedResult (
+           'PREFIX qb:<http://purl.org/linked-data/cube#>
+            SELECT DISTINCT ?observation
+            WHERE { 
+                ?observation a qb:Observation . 
+                ?observation qb:dataSet <'. $dsUri .'> .
+            }
+            LIMIT 10000;'
+        ));
+    }
+    
+    /**
      * Get number of used observations (related to a dataset) and
      * valid observations (have measure and at least one dimension element).
      */

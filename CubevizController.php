@@ -308,6 +308,8 @@ class CubevizController extends OntoWiki_Controller_Component
             'shareDimensions'               => array(),
             'unequalDimensions'             => array(1 => null, 2 => null),
             
+            'numberOfObservations'          => array(1 => -1, 2 => -1),
+            
             'mainDatasetNr'                 => 1, // main dataset is which has 
                                                   // the most dimensions
             'secondaryDatasetNr'            => 2
@@ -615,6 +617,58 @@ class CubevizController extends OntoWiki_Controller_Component
         } catch(Exception $e) {
             $code = 404;
             $content = $e->getMessage();
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     *
+     */
+    public function getnumberofobservationsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dsUri = trim($this->_request->getParam ('dsUri', ''));
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
+                $code
+            );
+            return;
+        }
+        
+        // check if model there
+        if(false === Erfurt_Uri::check($dsUri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Dataset URI is not valid: '. $dsUri),
+                $code
+            );
+            return;
+        }
+            
+        try {
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model, $this->_titleHelperLimit);
+            
+            $code = 200;
+
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getNumberOfObservations($dsUri),
+                'message' => ''
+            );
+            
+        } catch (Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
         }
         
         $this->_sendJSONResponse($content, $code);

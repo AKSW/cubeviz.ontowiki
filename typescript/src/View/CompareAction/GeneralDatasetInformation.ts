@@ -27,6 +27,10 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 handler: this.onReceived_measures1AndMeasures2
             },
             {
+                name:    "onReceived_numbersOfObservations1AndNumbersOfObservations2",
+                handler: this.onReceived_numbersOfObservations1AndNumbersOfObservations2
+            },
+            {
                 name:    "onReceived_slices1AndSlices2",
                 handler: this.onReceived_slices1AndSlices2
             },
@@ -151,6 +155,40 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.components.measures [2])
+            );
+        
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    }
+    
+    /**
+     *
+     */
+    public displayNumberOfObservations1() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        
+        // Measures
+        $($(informationPieceBoxes.get(4))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (
+                this.app._.compareAction.numberOfObservations [1]
+            );
+        
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    }
+    
+    /**
+     *
+     */
+    public displayNumberOfObservations2() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        
+        // Measures
+        $($(informationPieceBoxes.get(4))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (
+                this.app._.compareAction.numberOfObservations [2]
             );
         
         $("#cubeviz-compare-generalDatasetInformation2").show();
@@ -309,6 +347,29 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 }
             }
         );
+        
+        /**
+         * load according number of observations
+         */
+        DataCube_Observation.loadNumberOfObservations(
+            this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri,
+            this.app._.compareAction.datasets[datasetNr].__cv_uri, 
+            
+            // callback
+            function(result){
+                
+                // set dimension > dataset assignment and data new
+                self.app._.compareAction.numberOfObservations [datasetNr] = result;
+                
+                self.triggerGlobalEvent ("onReceived_observationNumber" + datasetNr);                
+            
+                // there are two dimension groups received
+                if (-1 < self.app._.compareAction.numberOfObservations[1]
+                    && -1 < self.app._.compareAction.numberOfObservations[2]) {
+                    self.triggerGlobalEvent ("onReceived_numbersOfObservations1AndNumbersOfObservations2");
+                }
+            }
+        );
     }
     
     /**
@@ -352,6 +413,15 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     {
         this.displayMeasuresInformation1 ();
         this.displayMeasuresInformation2 ();
+    }
+    
+    /**
+     *
+     */
+    public onReceived_numbersOfObservations1AndNumbersOfObservations2() 
+    {
+        this.displayNumberOfObservations1 ();
+        this.displayNumberOfObservations2 ();
     }
     
     /**

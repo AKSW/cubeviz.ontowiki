@@ -164,6 +164,27 @@ class DataCube_Observation {
             callback(entries.content);
         });
     }
+    
+    /**
+     * 
+     */
+    static loadNumberOfObservations (url:string, serviceUrl:string, modelIri:string, dsUri:string, callback) 
+    {        
+        $.ajax({
+            url: url + "getnumberofobservations/",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsUri: dsUri
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("Observation loadNumberOfObservations error: " + xhr.responseText);
+        })
+        .done( function (entries) {
+            callback(entries.content);
+        });
+    }
 
     /**
      * Sort axis elements
