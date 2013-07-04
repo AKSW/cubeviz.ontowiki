@@ -18,7 +18,6 @@ src/Model/CubeViz/Visualization/HighCharts/Pie.ts
 src/Model/CubeViz/Visualization/HighCharts/Polar.ts
 src/Model/CubeViz/Visualization/HighCharts/Spline.ts
 
-src/Model/DataCube/Attribute.ts
 src/Model/DataCube/Component.ts
 src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts

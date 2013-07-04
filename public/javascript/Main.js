@@ -863,16 +863,17 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
     }
     return CubeViz_Visualization_HighCharts_Spline;
 })(CubeViz_Visualization_HighCharts_Chart);
-var DataCube_Attribute = (function () {
-    function DataCube_Attribute() { }
-    DataCube_Attribute.loadAll = function loadAll(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
+var DataCube_Component = (function () {
+    function DataCube_Component() { }
+    DataCube_Component.loadAllAttributes = function loadAllAttributes(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
-            url: url + "getattributes",
+            url: url + "getcomponents",
             data: {
                 serviceUrl: serviceUrl,
                 modelIri: modelIri,
                 dsdUrl: dsdUrl,
-                dsUrl: dsUrl
+                dsUrl: dsUrl,
+                componentType: "attribute"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Attribute loadAll: " + xhr.responseText);
@@ -882,10 +883,6 @@ var DataCube_Attribute = (function () {
             }
         });
     }
-    return DataCube_Attribute;
-})();
-var DataCube_Component = (function () {
-    function DataCube_Component() { }
     DataCube_Component.loadAllDimensions = function loadAllDimensions(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
@@ -1311,8 +1308,16 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         _super.call(this, "View_CompareAction_GeneralDatasetInformation", attachedTo, app);
         this.bindGlobalEvents([
             {
+                name: "onReceived_attributes1AndAttributes2",
+                handler: this.onReceived_attributes1AndAttributes2
+            }, 
+            {
                 name: "onReceived_dimensions1AndDimensions2",
                 handler: this.onReceived_dimensions1AndDimensions2
+            }, 
+            {
+                name: "onReceived_measure1AndMeasure2",
+                handler: this.onReceived_measures1AndMeasures2
             }, 
             {
                 name: "onSelected_dataset1",
@@ -1332,14 +1337,34 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionInformation1 = function () {
+    View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionsInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[1]));
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
-    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionInformation2 = function () {
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionsInformation2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.initialize = function () {
@@ -1365,6 +1390,13 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 self.triggerGlobalEvent("onReceived_measure1AndMeasure2");
             }
         });
+        DataCube_Component.loadAllAttributes(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.components.attributes[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_attributes" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.components.measures[1]) && false === _.isNull(self.app._.compareAction.components.measures[2])) {
+                self.triggerGlobalEvent("onReceived_attributes1AndAttributes2");
+            }
+        });
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1 = function (event) {
         this.handleDatasetSelectorChanges("1");
@@ -1372,9 +1404,17 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset2 = function (event) {
         this.handleDatasetSelectorChanges("2");
     };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_attributes1AndAttributes2 = function () {
+        this.displayAttributesInformation1();
+        this.displayAttributesInformation2();
+    };
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_dimensions1AndDimensions2 = function () {
-        this.displayDimensionInformation1();
-        this.displayDimensionInformation2();
+        this.displayDimensionsInformation1();
+        this.displayDimensionsInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_measures1AndMeasures2 = function () {
+        this.displayMeasuresInformation1();
+        this.displayMeasuresInformation2();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onStart_application = function () {
         this.initialize();
@@ -1991,7 +2031,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
     };
     View_DataselectionModule_Attribute.prototype.onChange_selectedDS = function (event) {
         var self = this;
-        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Component.loadAllAttributes(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.attributes = entries;
             if(0 === _.keys(entries).length) {
             } else {

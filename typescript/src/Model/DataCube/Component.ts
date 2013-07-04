@@ -3,7 +3,37 @@
 /**
  * Represents a component which can be a dimension or a measure.
  */
-class DataCube_Component {
+class DataCube_Component 
+{    
+    /**
+     * Loads all attributes for a given dataset.
+     * @param url 
+     * @param modelIri
+     * @param dsdUrl
+     */
+    static loadAllAttributes (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri, 
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "attribute"
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("Attribute loadAll: " + xhr.responseText);
+        })
+        .success( function (entries) {
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+               callback(entries.content);
+            }
+        });
+    }
     
     /**
      * Loads all component dimensions, specified by model uri, data structure definition, dataset
@@ -18,7 +48,7 @@ class DataCube_Component {
                 modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                componentType: "dimension" // possible: dimension, measure
+                componentType: "dimension"
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
@@ -37,8 +67,8 @@ class DataCube_Component {
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (url:string, serviceUrl: string, modelIri:string, dsdUrl:string, dsUrl:string, callback) {
-        
+    static loadAllMeasures (url:string, serviceUrl: string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
         $.ajax({
             url: url + "getcomponents",
             data: {
@@ -46,7 +76,7 @@ class DataCube_Component {
                 modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
-                componentType: "measure" // possible: dimension, measure
+                componentType: "measure"
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

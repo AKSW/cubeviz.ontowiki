@@ -63,7 +63,7 @@ class View_DataselectionModule_Attribute extends CubeViz_View_Abstract
         /**
          * Load attributes
          */
-        DataCube_Attribute.loadAll(
+        DataCube_Component.loadAllAttributes(
         
             this.app._.backend.url,
             this.app._.backend.serviceUrl,
