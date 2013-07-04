@@ -35,45 +35,12 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     }
     
     /**
-     * @param tableInstance any jQuery instance of table containing dimension elements
-     * @param dimension1 any A dimension of dataset1
-     */
-    public displayDimensionElementsOfEqualDimensions(tableInstance:any, mainDimension:any, 
-        secondaryDimension:any) : void
-    {
-        var currentDimension2:string = "",
-            dimension2Used:bool = false,
-            ds2Counter:number = 0,
-            i:number = 0,
-            self = this;
-        
-        // go through all dimension elements of dataset1
-        _.each (mainDimension.__cv_elements, function(dimensionElementDs1){
-            
-            i = 0;
-            
-            _.each (secondaryDimension.__cv_elements, function(dimensionElementDs2){
-                        
-                if (i++ == ds2Counter) {
-                    tableInstance.append(CubeViz_View_Helper.tplReplace(
-                        "<tr><td>[[dimensionElementLabel1]]</td><td>[[dimensionElementLabel2]]</td></tr>", {
-                            dimensionElementLabel1: dimensionElementDs1.__cv_niceLabel,
-                            dimensionElementLabel2: dimensionElementDs2.__cv_niceLabel
-                        }
-                    ))
-                }
-            });
-            
-            ++ds2Counter;
-        });
-    }
-    
-    /**
      *
      */
     public displayDimensions() : void
     {        
         var dimensionContainer:any = null,
+            dimensionElementContainer:any = null,
             dimensionIndex:number = 0,
             i:number = 0,
             newWidth:number = 1000,
@@ -95,30 +62,105 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
              */
             _.each (this.app._.compareAction.equalDimensions, function(dimensions){
                 
-                // add table to top
-                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                /**
+                 *  add table to top
+                 */
+                dimensionContainer = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-compare-tpl-equalDimension").html(), {
                         dimensionLabel: dimensions[0].__cv_niceLabel,
                         dimensionDescription: dimensions[0].__cv_description
                     }
-                );
+                ));
+                
+                // if there are equal dimension elements
+                if (false === _.isUndefined(dimensions[0].__cv_equalElements)
+                    && 0 < _.size(dimensions[0].__cv_equalElements)) {
+                    
+                    dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
+                    
+                    // title
+                    dimensionElementContainer.append(
+                        $("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + 
+                            "<div style=\"-webkit-transform:rotate(-90deg);\">Dimension Elements</div></td>")
+                    );
+                    
+                    // add elements
+                    _.each (dimensions[0].__cv_equalElements, function(element){
+                        dimensionElementContainer.append(
+                            $("<td rowspan=\"3\" style=\"vertical-align: middle;\">" +
+                                "<div style=\"-webkit-transform:rotate(-90deg);\">" + 
+                                    element.__cv_niceLabel + "</div></td>")
+                        );
+                    });
+
+                    // set number of UNequal dimension elements
+                    $($(dimensionContainer)
+                        .find(".cubeviz-compare-dimensionNumberOfUnequalDimensionElements")
+                        .first())
+                        .html (_.size(dimensions[0].__cv_elements)
+                               - _.size(dimensions[0].__cv_equalElements));
+
+                    // set number of equal dimension elements
+                    $($(dimensionContainer)
+                        .find(".cubeviz-compare-dimensionNumberOfEqualDimensionElements")
+                        .first())
+                        .html (_.size(dimensions[0].__cv_equalElements));
+                }
                 
                 $("#cubeviz-compare-equalDimensionsTableContainer1")
                     .append(dimensionContainer);
                     
-                // add table to bottom
-                dimensionContainer = CubeViz_View_Helper.tplReplace(
+                
+                /**
+                 *  add table to bottom
+                 */
+                dimensionContainer = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-compare-tpl-equalDimension").html(), {
                         dimensionLabel: dimensions[1].__cv_niceLabel,
                         dimensionDescription: dimensions[1].__cv_description
                     }
-                );
+                ));
+                
+                // if there are equal dimension elements
+                if (false === _.isUndefined(dimensions[1].__cv_equalElements)
+                    && 0 < _.size(dimensions[1].__cv_equalElements)) {
+                    
+                    dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
+                    
+                    // title
+                    dimensionElementContainer.append(
+                        $("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + 
+                            "<div style=\"-webkit-transform:rotate(-90deg);\">Dimension Elements</div></td>")
+                    );
+                    
+                    // add elements
+                    _.each (dimensions[1].__cv_equalElements, function(element){
+                        dimensionElementContainer.append(
+                            $("<td rowspan=\"3\" style=\"vertical-align: middle;\">" +
+                                "<div style=\"-webkit-transform:rotate(-90deg);\">" + 
+                                    element.__cv_niceLabel + "</div></td>")
+                        );
+                    });                    
+                    
+                    // set number of UNequal dimension elements
+                    $($(dimensionContainer)
+                        .find(".cubeviz-compare-dimensionNumberOfUnequalDimensionElements")
+                        .first())
+                        .html (_.size(dimensions[1].__cv_elements)
+                               - _.size(dimensions[1].__cv_equalElements));
+
+                    // set number of equal dimension elements
+                    $($(dimensionContainer)
+                        .find(".cubeviz-compare-dimensionNumberOfEqualDimensionElements")
+                        .first())
+                        .html (_.size(dimensions[1].__cv_equalElements));
+                }
                 
                 $("#cubeviz-compare-equalDimensionsTableContainer2")
                     .append(dimensionContainer);                    
                     
                 // compute new width of div
-                newWidth += 800;
+                newWidth += 1000;
             });
                         
             // set new width                
@@ -135,7 +177,8 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public findEqualDimensions() 
     {
-        var dimension1:any = null,
+        var equalDimensionElements:any = null,
+            dimension1:any = null,
             self = this,
             urisToCheck:any = {},
             usedDatasetDimensions:string[] = [];
@@ -174,13 +217,18 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                         urisToCheck[dimension2["http://www.w3.org/2002/07/owl#sameAs"]]
                     ];
                 }
-                  
+                
+                // find dimension elements which are in both dimensions
+                equalDimensionElements = self.findEqualDimensionElements(
+                    dimension1, dimension2
+                );
+                
+                dimension1.__cv_equalElements = equalDimensionElements[1];
+                dimension2.__cv_equalElements = equalDimensionElements[2];
+                 
+                // save equal dimensions
                 self.app._.compareAction.equalDimensions.push ([
-                    // related dimension of the main dataset
-                    dimension1,
-                    
-                    // related dimension of the secondary dataset
-                    dimension2
+                    dimension1, dimension2
                 ]);
                 
                 usedDatasetDimensions.push(dimension1.__cv_uri);
@@ -204,11 +252,54 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     }
     
     /**
-     *
+     * Finds equal dimension elements in two dimensions.
+     * @param dimension1 any Dimension object out of dataset1
+     * @param dimension2 any Dimension object out of dataset2
+     * @return object Object with two fields each containing a list which contains
+     *                dimension elements which are in both dimensions
      */
-    public findEqualDimensionElements() 
+    public findEqualDimensionElements(dimension1:any, dimension2:any) : any
     {
+        var result:any = {1:[], 2:[]},
+            urisToCheck:any = {};
         
+        // if one of the dimension does not have any elements
+        if (0 == _.size(dimension1.__cv_elements)
+            || 0 == _.size(dimension2.__cv_elements)) {
+            return result;
+        }
+        
+        // go through all elements of dimension1 and collect:
+        //      - dimension element uri
+        //      - if available a sameAs relation object
+        _.each (dimension1.__cv_elements, function(dimensionElement){
+            urisToCheck[dimensionElement.__cv_uri] = dimensionElement;
+            
+            if (false === _.str.isBlank(dimensionElement["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]] 
+                    = dimensionElement;
+            }
+        });
+        
+        // go through all elements of dimension2 and try to find 
+        //      - an element with the same URI
+        //      - an element which has a same-As relation to an element of dimension1
+        _.each (dimension2.__cv_elements, function(dimensionElement){
+            
+            // dimension element uri found OR ...
+            if (false === _.isUndefined(urisToCheck[dimensionElement.__cv_uri])) {
+                result [1].push (urisToCheck[dimensionElement.__cv_uri]);
+                result [2].push (dimensionElement);
+            }
+            // ... sameAs relation found, which means that both dimension elements 
+            // are the "same"/equal
+            if (false === _.isUndefined(urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                result [1].push (urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]]);
+                result [2].push (dimensionElement);
+            }
+        });
+        
+        return result;
     }
     
     /**
@@ -220,8 +311,6 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         
         // at this point, we know which dimension of dataset1 is equal or has
         // a sameAs-relation to which other dimension of dataset2 (save in shareDimensions)
-        
-        this.findEqualDimensionElements();
         
         this.displayDimensions();
     }
