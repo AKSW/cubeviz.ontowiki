@@ -59,8 +59,26 @@
 /**
  * 
  */
-.cubeviz-compare-dimensions
+.cubeviz-compare-equalDimension
 {
+    float: left;
+    margin-left: 50px;
+}
+
+.cubeviz-compare-equalDimensions
+{
+    width: auto;
+}
+
+#cubeviz-compare-equalDimensions1
+{
+    display: none;
+    width: auto;
+}
+
+#cubeviz-compare-equalDimensions2
+{
+    display: none;
     width: auto;
 }
 
@@ -72,6 +90,7 @@
 {
     display: none;
     width: 30em;
+    min-width: 30em;
     padding-left: 10px;
 }
 

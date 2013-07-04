@@ -308,11 +308,7 @@ class CubevizController extends OntoWiki_Controller_Component
             'shareDimensions'               => array(),
             'unequalDimensions'             => array(1 => null, 2 => null),
             
-            'numberOfObservations'          => array(1 => -1, 2 => -1),
-            
-            'mainDatasetNr'                 => 1, // main dataset is which has 
-                                                  // the most dimensions
-            'secondaryDatasetNr'            => 2
+            'numberOfObservations'          => array(1 => -1, 2 => -1)
         );
         
         $this->view->headScript()
