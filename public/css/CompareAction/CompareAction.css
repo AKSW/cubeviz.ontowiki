@@ -14,7 +14,7 @@
     min-width: 98%;
     max-width: 98%;
     
-    height: 820px;
+    height: 650px;
     min-height: 800px;
     max-height: 800px;
     
@@ -53,6 +53,15 @@
 #cubeviz-compare-datasetSelectionDiv2
 {
     display: none;
+}
+
+
+/**
+ * 
+ */
+.cubeviz-compare-dimensions
+{
+    width: auto;
 }
 
 
