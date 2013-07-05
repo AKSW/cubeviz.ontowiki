@@ -1361,12 +1361,12 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[1]));
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[1]));
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[2]));
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionsInformation1 = function () {
@@ -1379,34 +1379,58 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
         $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionElementsInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        var numberOfDimensionElements = 0;
+        var self = this;
+
+        _.each(this.app._.compareAction.components.dimensions[1], function (dimension) {
+            numberOfDimensionElements += _.size(dimension.__cv_elements);
+        });
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(numberOfDimensionElements);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionElementsInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        var numberOfDimensionElements = 0;
+        var self = this;
+
+        _.each(this.app._.compareAction.components.dimensions[2], function (dimension) {
+            _.each(dimension.__cv_elements, function (dimensionElement) {
+                ++numberOfDimensionElements;
+            });
+        });
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(numberOfDimensionElements);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
     View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[1]));
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[1]));
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[1]);
+        $($(informationPieceBoxes.get(5)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[1]);
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[2]);
+        $($(informationPieceBoxes.get(5)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[2]);
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation1 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[1]));
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[1]));
         $("#cubeviz-compare-generalDatasetInformation1").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation2 = function () {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
-        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[2]));
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[2]));
         $("#cubeviz-compare-generalDatasetInformation2").show();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.initialize = function () {
@@ -1467,6 +1491,8 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_dimensions1AndDimensions2 = function () {
         this.displayDimensionsInformation1();
         this.displayDimensionsInformation2();
+        this.displayDimensionElementsInformation1();
+        this.displayDimensionElementsInformation2();
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onReceived_measures1AndMeasures2 = function () {
         this.displayMeasuresInformation1();

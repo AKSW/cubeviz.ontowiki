@@ -66,7 +66,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         
         // Dimensions
-        $($(informationPieceBoxes.get(2))
+        $($(informationPieceBoxes.get(3))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.components.attributes [1])
@@ -83,7 +83,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         
         // Dimensions
-        $($(informationPieceBoxes.get(2))
+        $($(informationPieceBoxes.get(3))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.components.attributes [2])
@@ -129,12 +129,58 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     /**
      *
      */
+    public displayDimensionElementsInformation1() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        
+        var numberOfDimensionElements:number = 0,
+            self:any = this;
+        
+        _.each (this.app._.compareAction.components.dimensions[1], function(dimension){
+            numberOfDimensionElements += _.size(dimension.__cv_elements);
+        });
+        
+        // Dimension elements
+        $($(informationPieceBoxes.get(1))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (numberOfDimensionElements);
+        
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    }
+    
+    /**
+     *
+     */
+    public displayDimensionElementsInformation2() 
+    {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        
+        var numberOfDimensionElements:number = 0,
+            self:any = this;
+        
+        _.each (this.app._.compareAction.components.dimensions[2], function(dimension){
+            _.each (dimension.__cv_elements, function(dimensionElement){
+                ++numberOfDimensionElements;
+            });
+        });
+        
+        // Dimension elements
+        $($(informationPieceBoxes.get(1))
+            .find(".cubeviz-compare-informationPieceBoxValue").first())
+            .html (numberOfDimensionElements);
+        
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    }
+    
+    /**
+     *
+     */
     public displayMeasuresInformation1() 
     {
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(1))
+        $($(informationPieceBoxes.get(2))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.components.measures [1])
@@ -151,7 +197,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(1))
+        $($(informationPieceBoxes.get(2))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.components.measures [2])
@@ -168,7 +214,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(4))
+        $($(informationPieceBoxes.get(5))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 this.app._.compareAction.numberOfObservations [1]
@@ -185,7 +231,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(4))
+        $($(informationPieceBoxes.get(5))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 this.app._.compareAction.numberOfObservations [2]
@@ -202,7 +248,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(3))
+        $($(informationPieceBoxes.get(4))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.slices[1])
@@ -219,7 +265,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
         var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
         
         // Measures
-        $($(informationPieceBoxes.get(3))
+        $($(informationPieceBoxes.get(4))
             .find(".cubeviz-compare-informationPieceBoxValue").first())
             .html (
                 _.size(this.app._.compareAction.slices[2])
@@ -404,6 +450,9 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
     {
         this.displayDimensionsInformation1 ();
         this.displayDimensionsInformation2 ();
+        
+        this.displayDimensionElementsInformation1 ();
+        this.displayDimensionElementsInformation2 ();
     }
     
     /**
