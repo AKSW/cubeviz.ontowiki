@@ -62,7 +62,7 @@
 .cubeviz-compare-equalDimension
 {
     float: left;
-    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .cubeviz-compare-equalDimensions
@@ -91,7 +91,6 @@
     display: none;
     width: 30em;
     min-width: 30em;
-    padding-left: 10px;
 }
 
 .cubeviz-compare-generalInformationSeparator
@@ -116,18 +115,21 @@
 .cubeviz-compare-informationPieceBox
 {
     float: left;
+    text-align: center;
 
-        width: auto;
-    min-width: 50px;
-    max-width: 200px;
-    padding-left: 15px;
-    padding-top: 2px;
-    padding-right: 15px;
-    padding-bottom: 5px;
+        width: 66px;
+    min-width: 66px;
+    max-width: 66px;
+    
+    padding-left: 5px;
+    padding-top: 0px;
+    padding-right: 5px;
+    padding-bottom: 2px;
     
     font-size: 10px;
     
     margin-top: 5px;
+    margin-left: 0px;
     margin-right: 5px;
     
     background-color: #fff;
@@ -143,7 +145,7 @@
 {
     width: 100%; 
     text-align: center; 
-    font-size: 29px;
+    font-size: 22px;
 }
  
 .cubeviz-compare-warningBox
