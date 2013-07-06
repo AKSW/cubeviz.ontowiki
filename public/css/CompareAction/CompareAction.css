@@ -14,9 +14,9 @@
     min-width: 98%;
     max-width: 98%;
     
-    height: 650px;
-    min-height: 800px;
-    max-height: 800px;
+    height: 560px;
+    min-height: 560px;
+    max-height: 560px;
     
     overflow-x: auto;
     overflow-y: visible;
@@ -30,7 +30,8 @@
  */
 .cubeviz-compare-datasetSelection
 {
-    width: 20em;
+    width: 260px;
+    max-width: 260px;
 }
 
 .cubeviz-compare-dataSelection-colorBox
@@ -84,6 +85,23 @@
 
 
 /**
+ * General dataset information
+ */
+.cubeviz-compare-generalDatasetInformation
+{
+    display: none;
+    width: 30em;
+    min-width: 30em;
+}
+
+.cubeviz-compare-generalInformationSeparator
+{
+    clear: both;
+    padding-bottom: 5px;
+}
+
+
+/**
  * 
  */ 
 .cubeviz-compare-informationPieceBox
@@ -96,7 +114,7 @@
     max-width: 66px;
     
     padding-left: 5px;
-    padding-top: 0px;
+    padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 2px;
     
@@ -115,28 +133,21 @@
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
-.cubeviz-compare-informationPieceBoxImage
+.cubeviz-compare-informationPieceBoxImageContainer
 {
     width: 100%; 
-    text-align: center; 
-    font-size: 22px;
+    text-align: center;
+    margin-top: 2px;
 }
-
-
-/**
- * General dataset information
- */
-.cubeviz-compare-generalDatasetInformation
+.cubeviz-compare-informationPieceBoxImage
 {
-    display: none;
-    width: 30em;
-    min-width: 30em;
+    padding-top: 5px;
+    padding-right: 2px;
+    width: 18px;
 }
-
-.cubeviz-compare-generalInformationSeparator
+.cubeviz-compare-informationPieceBoxValue
 {
-    clear: both;
-    padding-bottom: 5px;
+    font-size: 21px;
 }
 
 
@@ -146,6 +157,31 @@
 .cubeviz-compare-modelSelection
 {
     width: 20em;
+}
+
+
+.cubeviz-compare-noDescription
+{
+    width: 100%; 
+    font-style: italic;
+    font-size: 9px;
+    font-weight: normal;
+    text-align: center;
+}
+
+
+/**
+ * 
+ */
+.cubeviz-compare-table
+{
+    padding: 0px;
+    margin: 0px;
+}
+
+.cubeviz-compare-table td
+{
+
 }
 
 

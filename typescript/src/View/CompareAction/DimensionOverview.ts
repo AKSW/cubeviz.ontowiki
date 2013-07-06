@@ -39,11 +39,12 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public displayEqualDimensions() : void
     {        
-        var dimensionContainer:any = null,
+        var description:string = "",
+            dimensionContainer:any = null,
             dimensionElementContainer:any = null,
             dimensionIndex:number = 0,
             i:number = 0,
-            newWidth:number = 1000,
+            newWidth:number = 2000,
             self = this;
             
         // there are at least two equal dimensions
@@ -65,10 +66,16 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                 /**
                  *  add table to top
                  */
+                description = dimensions[0].__cv_description;
+            
+                if (true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
+                
                 dimensionContainer = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-compare-tpl-equalDimension").html(), {
                         dimensionLabel: dimensions[0].__cv_niceLabel,
-                        dimensionDescription: dimensions[0].__cv_description
+                        dimensionDescription: description
                     }
                 ));
                 
@@ -114,10 +121,16 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                 /**
                  *  add table to bottom
                  */
+                description = dimensions[1].__cv_description;
+            
+                if (true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
+                 
                 dimensionContainer = $(CubeViz_View_Helper.tplReplace(
                     $("#cubeviz-compare-tpl-equalDimension").html(), {
                         dimensionLabel: dimensions[1].__cv_niceLabel,
-                        dimensionDescription: dimensions[1].__cv_description
+                        dimensionDescription: description
                     }
                 ));
                 
@@ -177,22 +190,33 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public displayUnequalDimensions() : void
     {       
-        var $container:any = null;
+        var $container:any = null,
+            description:string = "";
         
         $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
         
-        $("#cubeviz-compare-unequalDimensions1").show();
-        $("#cubeviz-compare-unequalDimensions2").show();
+        if (0 < _.size(this.app._.compareAction.unequalDimensions[1])
+            || 0 < _.size(this.app._.compareAction.unequalDimensions[2])) {
+            $("#cubeviz-compare-unequalDimensions1").show();
+            $("#cubeviz-compare-unequalDimensions2").show();
+        }        
          
         /** 
          * go through all unequal dimensions of dataset1
          */
         _.each (this.app._.compareAction.unequalDimensions[1], function(dimension){
             
+            description = dimension.__cv_description;
+            
+            if (true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
+            
             // build container with dimension information
             $container = $(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-compare-tpl-unequalDimension").html(), {
-                dimensionLabel: dimension.__cv_niceLabel
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
             }));
             
             // set number of dimension elements
@@ -209,10 +233,17 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
          */
         _.each (this.app._.compareAction.unequalDimensions[2], function(dimension){
             
+            description = dimension.__cv_description;
+            
+            if (true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
+            
             // build container with dimension information
             $container = $(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-compare-tpl-unequalDimension").html(), {
-                dimensionLabel: dimension.__cv_niceLabel
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
             }));
             
             // set number of dimension elements

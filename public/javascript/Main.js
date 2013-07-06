@@ -1536,11 +1536,12 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         return this;
     };
     View_CompareAction_DimensionOverview.prototype.displayEqualDimensions = function () {
+        var description = "";
         var dimensionContainer = null;
         var dimensionElementContainer = null;
         var dimensionIndex = 0;
         var i = 0;
-        var newWidth = 1000;
+        var newWidth = 2000;
         var self = this;
 
         if(0 < _.size(this.app._.compareAction.equalDimensions)) {
@@ -1549,9 +1550,13 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             $("#cubeviz-compare-equalDimensionsTableContainer1").html("");
             $("#cubeviz-compare-equalDimensionsTableContainer2").html("");
             _.each(this.app._.compareAction.equalDimensions, function (dimensions) {
+                description = dimensions[0].__cv_description;
+                if(true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
                 dimensionContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-equalDimension").html(), {
                     dimensionLabel: dimensions[0].__cv_niceLabel,
-                    dimensionDescription: dimensions[0].__cv_description
+                    dimensionDescription: description
                 }));
                 if(false === _.isUndefined(dimensions[0].__cv_equalElements) && 0 < _.size(dimensions[0].__cv_equalElements)) {
                     dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
@@ -1563,9 +1568,13 @@ var View_CompareAction_DimensionOverview = (function (_super) {
                     $($(dimensionContainer).find(".cubeviz-compare-dimensionNumberOfEqualDimensionElements").first()).html(_.size(dimensions[0].__cv_equalElements));
                 }
                 $("#cubeviz-compare-equalDimensionsTableContainer1").append(dimensionContainer);
+                description = dimensions[1].__cv_description;
+                if(true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
                 dimensionContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-equalDimension").html(), {
                     dimensionLabel: dimensions[1].__cv_niceLabel,
-                    dimensionDescription: dimensions[1].__cv_description
+                    dimensionDescription: description
                 }));
                 if(false === _.isUndefined(dimensions[1].__cv_equalElements) && 0 < _.size(dimensions[1].__cv_equalElements)) {
                     dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
@@ -1585,19 +1594,33 @@ var View_CompareAction_DimensionOverview = (function (_super) {
     };
     View_CompareAction_DimensionOverview.prototype.displayUnequalDimensions = function () {
         var $container = null;
+        var description = "";
+
         $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
-        $("#cubeviz-compare-unequalDimensions1").show();
-        $("#cubeviz-compare-unequalDimensions2").show();
+        if(0 < _.size(this.app._.compareAction.unequalDimensions[1]) || 0 < _.size(this.app._.compareAction.unequalDimensions[2])) {
+            $("#cubeviz-compare-unequalDimensions1").show();
+            $("#cubeviz-compare-unequalDimensions2").show();
+        }
         _.each(this.app._.compareAction.unequalDimensions[1], function (dimension) {
+            description = dimension.__cv_description;
+            if(true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
             $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
-                dimensionLabel: dimension.__cv_niceLabel
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
             }));
             $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
             $("#cubeviz-compare-unequalDimensionsTableContainer1").append($container);
         });
         _.each(this.app._.compareAction.unequalDimensions[2], function (dimension) {
+            description = dimension.__cv_description;
+            if(true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
             $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
-                dimensionLabel: dimension.__cv_niceLabel
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
             }));
             $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
             $("#cubeviz-compare-unequalDimensionsTableContainer2").append($container);
