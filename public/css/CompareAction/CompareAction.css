@@ -80,6 +80,12 @@
     margin-right: 50px;
 }
 
+.cubeviz-compare-equalDimension table
+{
+    height: 140px;
+    min-height: 140px;
+}
+
 .cubeviz-compare-equalDimensions
 {
     width: auto;
@@ -226,6 +232,12 @@
 {
     float: left;
     margin-right: 50px;
+}
+
+.cubeviz-compare-unequalDimension table
+{
+    height: 140px;
+    min-height: 140px;
 }
  
 .cubeviz-compare-unequalDimensions
