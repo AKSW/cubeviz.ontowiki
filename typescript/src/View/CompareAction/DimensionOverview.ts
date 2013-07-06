@@ -37,7 +37,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public displayDimensions() : void
+    public displayEqualDimensions() : void
     {        
         var dimensionContainer:any = null,
             dimensionElementContainer:any = null,
@@ -175,7 +175,61 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     /**
      *
      */
-    public findEqualDimensions() 
+    public displayUnequalDimensions() : void
+    {       
+        var $container:any = null;
+        
+        $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
+        
+        $("#cubeviz-compare-unequalDimensions1").show();
+        $("#cubeviz-compare-unequalDimensions2").show();
+         
+        /** 
+         * go through all unequal dimensions of dataset1
+         */
+        _.each (this.app._.compareAction.unequalDimensions[1], function(dimension){
+            
+            // build container with dimension information
+            $container = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel
+            }));
+            
+            // set number of dimension elements
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first())
+                .html (_.size(dimension.__cv_elements));
+            
+            // add container
+            $("#cubeviz-compare-unequalDimensionsTableContainer1").append($container);
+        });
+        
+        
+        /**
+         * go through all unequal dimensions of dataset2
+         */
+        _.each (this.app._.compareAction.unequalDimensions[2], function(dimension){
+            
+            // build container with dimension information
+            $container = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel
+            }));
+            
+            // set number of dimension elements
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first())
+                .html (_.size(dimension.__cv_elements));
+            
+            // add container
+            $("#cubeviz-compare-unequalDimensionsTableContainer2").append($container);
+        });
+    }
+    
+    /**
+     * Find and save equal dimensions. Two dimensions are equal if they have the
+     * same URI or there is a sameAs-relation between them.
+     * @return void
+     */
+    public findEqualDimensions() : void
     {
         var equalDimensionElements:any = null,
             dimension1:any = null,
@@ -185,7 +239,6 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             
         self.app._.compareAction.equalDimensions = [];
         self.app._.compareAction.unequalDimensions = {1:[], 2:[]};
-        self.app._.compareAction.shareDimensions = {};
         
         // go through all dimensions of dataset1 and 
         // save 
@@ -310,9 +363,14 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         this.findEqualDimensions();        
         
         // at this point, we know which dimension of dataset1 is equal or has
-        // a sameAs-relation to which other dimension of dataset2 (save in shareDimensions)
+        // a sameAs-relation to which other dimension of dataset2
         
-        this.displayDimensions();
+        // first display all unequal dimensions, because their information
+        // part is smaller than the part of the equal ones
+        this.displayUnequalDimensions();
+        
+        // display equal dimensions with their bigger information part
+        this.displayEqualDimensions();
     }
     
     /**

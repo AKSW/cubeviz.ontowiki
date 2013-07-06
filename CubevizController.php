@@ -305,7 +305,6 @@ class CubevizController extends OntoWiki_Controller_Component
             'slices'                        => array(1 => null, 2 => null),
             
             'equalDimensions'               => array(),
-            'shareDimensions'               => array(),
             'unequalDimensions'             => array(1 => null, 2 => null),
             
             'numberOfObservations'          => array(1 => -1, 2 => -1)

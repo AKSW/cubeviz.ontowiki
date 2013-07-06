@@ -84,34 +84,8 @@
 
 
 /**
- * General dataset information
- */
-.cubeviz-compare-generalDatasetInformation
-{
-    display: none;
-    width: 30em;
-    min-width: 30em;
-}
-
-.cubeviz-compare-generalInformationSeparator
-{
-    clear: both;
-    padding-bottom: 5px;
-}
-
-/**
- * Model selection
- */
-.cubeviz-compare-modelSelection
-{
-    width: 20em;
-}
-
-
-/**
- * Misc
- */
- 
+ * 
+ */ 
 .cubeviz-compare-informationPieceBox
 {
     float: left;
@@ -147,7 +121,63 @@
     text-align: center; 
     font-size: 22px;
 }
+
+
+/**
+ * General dataset information
+ */
+.cubeviz-compare-generalDatasetInformation
+{
+    display: none;
+    width: 30em;
+    min-width: 30em;
+}
+
+.cubeviz-compare-generalInformationSeparator
+{
+    clear: both;
+    padding-bottom: 5px;
+}
+
+
+/**
+ * Model selection
+ */
+.cubeviz-compare-modelSelection
+{
+    width: 20em;
+}
+
+
+/**
+ * 
+ */
+.cubeviz-compare-unequalDimension
+{
+    float: left;
+    margin-right: 50px;
+}
  
+.cubeviz-compare-unequalDimensions
+{
+    width: auto;
+    min-width: 250px;
+}
+
+#cubeviz-compare-unequalDimensions1
+{
+    display: none;
+}
+
+#cubeviz-compare-unequalDimensions2
+{
+    display: none;
+}
+
+ 
+/**
+ * 
+ */
 .cubeviz-compare-warningBox
 {
     width: 240px;

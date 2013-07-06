@@ -1535,7 +1535,7 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_DimensionOverview.prototype.displayDimensions = function () {
+    View_CompareAction_DimensionOverview.prototype.displayEqualDimensions = function () {
         var dimensionContainer = null;
         var dimensionElementContainer = null;
         var dimensionIndex = 0;
@@ -1583,6 +1583,26 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             $("#cubeviz-compare-equalDimensionsTableContainer2").width(newWidth);
         }
     };
+    View_CompareAction_DimensionOverview.prototype.displayUnequalDimensions = function () {
+        var $container = null;
+        $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
+        $("#cubeviz-compare-unequalDimensions1").show();
+        $("#cubeviz-compare-unequalDimensions2").show();
+        _.each(this.app._.compareAction.unequalDimensions[1], function (dimension) {
+            $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel
+            }));
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
+            $("#cubeviz-compare-unequalDimensionsTableContainer1").append($container);
+        });
+        _.each(this.app._.compareAction.unequalDimensions[2], function (dimension) {
+            $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel
+            }));
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
+            $("#cubeviz-compare-unequalDimensionsTableContainer2").append($container);
+        });
+    };
     View_CompareAction_DimensionOverview.prototype.findEqualDimensions = function () {
         var equalDimensionElements = null;
         var dimension1 = null;
@@ -1595,8 +1615,6 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         self.app._.compareAction.unequalDimensions = {
             1: [],
             2: []
-        };
-        self.app._.compareAction.shareDimensions = {
         };
         _.each(this.app._.compareAction.components.dimensions[1], function (dimension) {
             urisToCheck[dimension.__cv_uri] = dimension.__cv_uri;
@@ -1660,7 +1678,8 @@ var View_CompareAction_DimensionOverview = (function (_super) {
     };
     View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event) {
         this.findEqualDimensions();
-        this.displayDimensions();
+        this.displayUnequalDimensions();
+        this.displayEqualDimensions();
     };
     View_CompareAction_DimensionOverview.prototype.onStart_application = function () {
         this.initialize();

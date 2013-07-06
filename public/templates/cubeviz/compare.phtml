@@ -118,18 +118,21 @@
                     </div>
                     
                 </div>
+            </td>            
+                  
+            <!-- UNequal Dimensions -->
+            <td class="cubeviz-compare-unequalDimensions" id="cubeviz-compare-unequalDimensions1">
+                
+                <h3>Unequal dimensions</h3>
+                
+                <div id="cubeviz-compare-unequalDimensionsTableContainer1" 
+                     style="clear: both;"></div>
+                
             </td>
             
             <!-- equal Dimensions -->
             <td class="cubeviz-compare-equalDimensions" id="cubeviz-compare-equalDimensions1">
-                <h3>Equal dimensions</h3>
                 
-                <div id="cubeviz-compare-equalDimensionsTableContainer1" style="clear: both;" title=""></div>
-                
-            </td>
-            
-            <!-- equal Dimensions -->
-            <td class="cubeviz-compare-equalDimensions" id="cubeviz-compare-equalDimensions1">
                 <h3>Equal dimensions</h3>
                 
                 <div id="cubeviz-compare-equalDimensionsTableContainer1" style="clear: both;" title=""></div>
@@ -248,6 +251,14 @@
                 </div>
             </td>
                         
+            <!-- UNequal Dimensions -->
+            <td class="cubeviz-compare-unequalDimensions" id="cubeviz-compare-unequalDimensions2">
+                
+                <div id="cubeviz-compare-unequalDimensionsTableContainer2" 
+                     style="clear: both;"></div>
+                
+            </td>
+                        
             <!-- equal Dimensions -->
             <td class="cubeviz-compare-equalDimensions" id="cubeviz-compare-equalDimensions2">
                 
@@ -297,6 +308,41 @@
                     <br/>
                     <br/>
                     <div class="cubeviz-compare-dimensionNumberOfEqualDimensionElements" style="font-size: 20px;">0</div>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-unequalDimension" style="display:none;">
+    <div class="cubeviz-compare-unequalDimension">
+        <table class="table table-bordered responsive-utilities">
+
+            <tr class="cubeviz-compare-dimensionTitleAndElements">
+                <td colspan="2" style="text-align: center;">
+                    <strong>[[dimensionLabel]]</strong>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="2" style="width: 200px; max-width: 200px;">
+                    <small>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et odio a leo condimentum volutpat id nec eros. Aenean purus neque, dictum eu nisl non, adipiscing pretium nibh. Pellentesque mattis, nibh sed molestie ultricies, diam arcu ullamcorper dui, sodales consectetur erat odio vel nibh.</small>
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="text-align: center;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement2.png" 
+                         style="width: 20px; vertical-align: middle;"
+                         title="Dimension elements"/>
+                    &nbsp;
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/unequalDimensionElements5.png" 
+                         style="width: 20px; vertical-align: middle;"
+                         title="Unequal dimension elements"/>
+                    <br/>
+                    <br/>
+                    <div class="cubeviz-compare-numberOfDimensionElements" style="font-size: 20px;">0</div>
                 </td>
             </tr>
             
