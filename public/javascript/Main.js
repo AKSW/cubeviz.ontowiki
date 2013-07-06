@@ -1669,6 +1669,9 @@ var View_CompareAction_DimensionOverview = (function (_super) {
                 self.app._.compareAction.unequalDimensions[1].push(dimension);
             }
         });
+        if(0 < _.size(this.app._.compareAction.equalDimensions)) {
+            this.triggerGlobalEvent("onFound_equalDimensions");
+        }
     };
     View_CompareAction_DimensionOverview.prototype.findEqualDimensionElements = function (dimension1, dimension2) {
         var result = {
@@ -1713,6 +1716,147 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         return this;
     };
     return View_CompareAction_DimensionOverview;
+})(CubeViz_View_Abstract);
+var View_CompareAction_VisualizationSetup = (function (_super) {
+    __extends(View_CompareAction_VisualizationSetup, _super);
+    function View_CompareAction_VisualizationSetup(attachedTo, app) {
+        _super.call(this, "View_CompareAction_VisualizationSetup", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onFound_equalDimensions",
+                handler: this.onFound_equalDimensions
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_VisualizationSetup.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_VisualizationSetup.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
+        var data = {
+            components: {
+                attributes: null,
+                dimensions: {
+                },
+                measures: {
+                }
+            },
+            dataSets: {
+            },
+            dataStructureDefinitions: {
+            },
+            numberOfMultipleDimensions: 0,
+            numberOfOneElementDimensions: 0,
+            selectedComponents: {
+            },
+            selectedDS: {
+            },
+            selectedDSD: {
+            },
+            selectedSlice: {
+            },
+            slices: {
+            }
+        };
+        var dimensionUri = "";
+        var i = 0;
+        var usedElementUris = [];
+
+        data.dataSets = {
+            0: {
+                __cv_description: "",
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataset"),
+                __cv_niceLabel: "A DataSet",
+                __cv_uri: "__cv_dummyDataset",
+                "http://purl.org/linked-data/cube#structure": "__cv_dummyDataStructureDefinition",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+                "http://www.w3.org/2000/01/rdf-schema#label": "A DataSet"
+            }
+        };
+        data.dataStructureDefinitions = {
+            0: {
+                __cv_description: "",
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataStructureDefinition"),
+                __cv_niceLabel: "A DataStructureDefinition",
+                __cv_uri: "__cv_dummyDataStructureDefinition",
+                "http://purl.org/linked-data/cube#component": {
+                    0: "http://example.cubeviz.org/compare/populationEurope/countryCS",
+                    1: "http://example.cubeviz.org/compare/populationEurope/yearCS",
+                    2: "http://example.cubeviz.org/compare/populationEurope/unitCS",
+                    3: "http://example.cubeviz.org/compare/populationEurope/valueCS"
+                },
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
+                "http://www.w3.org/2000/01/rdf-schema#label": "A DataStructureDefinition"
+            }
+        };
+        data.components.measures = {
+            0: {
+                __cv_description: "",
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyMeasureCs"),
+                __cv_niceLabel: "Measure",
+                __cv_uri: "__cv_dummyMeasureCs",
+                "http://purl.org/linked-data/cube#measure": "__cv_dummyMeasure",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Measure"
+            }
+        };
+        if(1 == _.size(this.app._.compareAction.equalDimensions)) {
+            dimensionUri = this.app._.compareAction.equalDimensions[0][0].__cv_uri;
+            data.components.dimensions[dimensionUri] = {
+                __cv_uri: dimensionUri,
+                __cv_hashedUri: CryptoJS.MD5(dimensionUri),
+                __cv_niceLabel: "country (CS)",
+                __cv_shortLabel: "country (CS)",
+                "http://www.w3.org/2000/01/rdf-schema#label": this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
+                __cv_description: "",
+                __cv_shortDescription: "",
+                __cv_elementCount: 0,
+                __cv_elements: {
+                },
+                __cv_selectedElementCount: 0,
+                "http://purl.org/linked-data/cube#dimension": this.app._.compareAction.equalDimensions[0][0]["http://purl.org/linked-data/cube#dimension"],
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
+            };
+            _.each(this.app._.compareAction.equalDimensions[0][0].__cv_elements, function (element) {
+                data.components.dimensions[dimensionUri].__cv_elements[i++] = element;
+                usedElementUris.push(element.__cv_uri);
+            });
+            _.each(this.app._.compareAction.equalDimensions[0][1].__cv_elements, function (element) {
+                if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
+                    data.components.dimensions[dimensionUri].__cv_elements[i++] = element;
+                    usedElementUris.push(element.__cv_uri);
+                }
+            });
+        } else {
+            if(2 == _.size(this.app._.compareAction.equalDimensions)) {
+            } else {
+                if(2 < _.size(this.app._.compareAction.equalDimensions)) {
+                } else {
+                    data = null;
+                }
+            }
+        }
+        console.log("");
+        console.log(_.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
+        console.log(data);
+    };
+    View_CompareAction_VisualizationSetup.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_VisualizationSetup.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_VisualizationSetup;
 })(CubeViz_View_Abstract);
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);

@@ -333,6 +333,11 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
                     .push (dimension);
             }
         });
+        
+        // check if there are equal dimensions and if so, trigger global event
+        if (0 < _.size(this.app._.compareAction.equalDimensions)) {
+            this.triggerGlobalEvent("onFound_equalDimensions");
+        }
     }
     
     /**
