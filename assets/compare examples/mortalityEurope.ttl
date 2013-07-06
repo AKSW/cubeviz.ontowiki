@@ -262,13 +262,16 @@ ex:UnitedKingdom a ex:country ;
     
 # years
 ex:Y2000 a ex:year ;
-    rdfs:label "2000"@en .
+    rdfs:label "2000"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2000> .
     
 ex:Y2001 a ex:year ;
-    rdfs:label "2001"@en .
+    rdfs:label "2001"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2001> .
     
 ex:Y2002 a ex:year ;
-    rdfs:label "2002"@en .
+    rdfs:label "2002"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2002> .
     
 ex:Y2003 a ex:year ;
     rdfs:label "2003"@en .
@@ -298,4 +301,5 @@ ex:Y2011 a ex:year ;
     rdfs:label "2011"@en .
     
 ex:Y2012 a ex:year ;
-    rdfs:label "2012"@en .
+    rdfs:label "2012"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2012> .
