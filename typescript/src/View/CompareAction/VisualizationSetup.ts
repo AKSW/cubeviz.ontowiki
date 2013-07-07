@@ -42,6 +42,42 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         this.collection.reset("__cv_uri");        
         this.render();
     }
+    
+    /**
+     * @param dimensionElements1 any Object containing a list of dimension elements of dataset1
+     * @param dimensionElements2 any Object containing a list of dimension elements of dataset2
+     */
+    public mergeDimensionElements(dimensionElements1:any, dimensionElements2:any) : any
+    {
+        var i = 0,
+            mergedDimensionElements:any = {},
+            usedElementUris:string[] = [];
+        
+        // from dataset 1
+        _.each (dimensionElements1, function(element){
+            
+            // simply add element
+            mergedDimensionElements[i++] = element;
+            
+            // CubeViz assumes that all elements are unique
+            usedElementUris.push (element.__cv_uri);
+        });        
+        
+        // from dataset 2
+        _.each (dimensionElements2, function (element){
+
+            // only add element of the other dataset's dimension, if its URI
+            // was not used before
+            if (-1 == $.inArray (element.__cv_uri, usedElementUris)) {
+                
+                mergedDimensionElements[i++] = element;
+                
+                usedElementUris.push (element.__cv_uri);
+            }
+        });
+        
+        return mergedDimensionElements;
+    }
 
     /**
      *
@@ -65,16 +101,18 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 selectedSlice: {},
                 slices: {}
             },
-            dimensionUri:string = "",
-            i:number = 0,
-            usedElementUris:string[] = [];
+            dimensionUri:string = "";
         
         // set dataset
         data.dataSets = { 0: {
             __cv_description: "",
-            __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataset"),
+            __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataset") + "",
             __cv_niceLabel: "A DataSet",
             __cv_uri: "__cv_dummyDataset",
+            __cv_consistsOf: [ // add relation to the two origin datasets
+                this.app._.compareAction.datasets[1].__cv_uri,
+                this.app._.compareAction.datasets[2].__cv_uri,
+            ],
             "http://purl.org/linked-data/cube#structure": "__cv_dummyDataStructureDefinition",
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
             "http://www.w3.org/2000/01/rdf-schema#label": "A DataSet"
@@ -83,23 +121,21 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         // set data structure definition
         data.dataStructureDefinitions = { 0: {
             __cv_description: "",
-            __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataStructureDefinition"),
+            __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataStructureDefinition") + "",
             __cv_niceLabel: "A DataStructureDefinition",
             __cv_uri: "__cv_dummyDataStructureDefinition",
             "http://purl.org/linked-data/cube#component": {
-                0: "http://example.cubeviz.org/compare/populationEurope/countryCS",
-                1: "http://example.cubeviz.org/compare/populationEurope/yearCS",
-                2: "http://example.cubeviz.org/compare/populationEurope/unitCS",
-                3: "http://example.cubeviz.org/compare/populationEurope/valueCS"
+                0: this.app._.compareAction.equalDimensions[0][0].__cv_uri,
+                1: "__cv_dummyMeasureCs"
             },
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
             "http://www.w3.org/2000/01/rdf-schema#label": "A DataStructureDefinition"
         } };
         
-        // set measures
+        // set measure
         data.components.measures = { 0: {
             __cv_description: "",
-            __cv_hashedUri: CryptoJS.MD5("__cv_dummyMeasureCs"),
+            __cv_hashedUri: CryptoJS.MD5("__cv_dummyMeasureCs") + "",
             __cv_niceLabel: "Measure",
             __cv_uri: "__cv_dummyMeasureCs",
             "http://purl.org/linked-data/cube#measure": "__cv_dummyMeasure",
@@ -110,23 +146,24 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         
         /**
-         * two dimensions are equal
+         * One pair of two equal dimensions
          */
         if (1 == _.size(this.app._.compareAction.equalDimensions)) {
             
             dimensionUri = this.app._.compareAction.equalDimensions[0][0].__cv_uri;
             
-            // set dimensions (component specification):
-            // first element where its key is the uri of the first of 
-            // two equal dimensions
+            // set equal dimension (component specification):
             data.components.dimensions[dimensionUri] = {
+                
                 // uri
                 __cv_uri: dimensionUri,
-                __cv_hashedUri: CryptoJS.MD5(dimensionUri),
+                __cv_hashedUri: CryptoJS.MD5(dimensionUri) + "",
                 
                 // labels
-                __cv_niceLabel: "country (CS)",
-                __cv_shortLabel: "country (CS)",
+                __cv_niceLabel: 
+                    this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
+                __cv_shortLabel: 
+                    this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
                 "http://www.w3.org/2000/01/rdf-schema#label": 
                     this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
                 
@@ -146,34 +183,15 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                     "http://purl.org/linked-data/cube#ComponentSpecification"
             };
             
-            // add elements of each dimension
-            // from dataset 1
-            _.each (this.app._.compareAction.equalDimensions[0][0].__cv_elements, function(element){
-                
-                // simply add element
-                data.components.dimensions[dimensionUri]
-                    .__cv_elements
-                    [i++] = element;
-                
-                // CubeViz assumes that all elements are unique
-                usedElementUris.push (element.__cv_uri);
-            });
+            // add elements of both dimension
+            data.components.dimensions[dimensionUri].__cv_elements = this.mergeDimensionElements (
+                this.app._.compareAction.equalDimensions[0][0].__cv_elements,
+                this.app._.compareAction.equalDimensions[0][1].__cv_elements
+            );         
             
-            
-            // from dataset 2
-            _.each (this.app._.compareAction.equalDimensions[0][1].__cv_elements, function (element){
-
-                // only add element of the other dataset's dimension, if its URI
-                // was not used before
-                if (-1 == $.inArray (element.__cv_uri, usedElementUris)) {
-                    
-                    data.components.dimensions[dimensionUri]
-                        .__cv_elements
-                        [i++] = element;
-                    
-                    usedElementUris.push (element.__cv_uri);
-                }
-            });                
+            data.components.dimensions[dimensionUri].__cv_elementCount = _.size(
+                data.components.dimensions[dimensionUri].__cv_elements
+            );
         }
         
         

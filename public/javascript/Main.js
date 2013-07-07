@@ -1740,6 +1740,24 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         this.collection.reset("__cv_uri");
         this.render();
     };
+    View_CompareAction_VisualizationSetup.prototype.mergeDimensionElements = function (dimensionElements1, dimensionElements2) {
+        var i = 0;
+        var mergedDimensionElements = {
+        };
+        var usedElementUris = [];
+
+        _.each(dimensionElements1, function (element) {
+            mergedDimensionElements[i++] = element;
+            usedElementUris.push(element.__cv_uri);
+        });
+        _.each(dimensionElements2, function (element) {
+            if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
+                mergedDimensionElements[i++] = element;
+                usedElementUris.push(element.__cv_uri);
+            }
+        });
+        return mergedDimensionElements;
+    };
     View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
         var data = {
             components: {
@@ -1767,15 +1785,18 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             }
         };
         var dimensionUri = "";
-        var i = 0;
-        var usedElementUris = [];
 
         data.dataSets = {
             0: {
                 __cv_description: "",
-                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataset"),
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataset") + "",
                 __cv_niceLabel: "A DataSet",
                 __cv_uri: "__cv_dummyDataset",
+                __cv_consistsOf: [
+                    this.app._.compareAction.datasets[1].__cv_uri, 
+                    this.app._.compareAction.datasets[2].__cv_uri, 
+                    
+                ],
                 "http://purl.org/linked-data/cube#structure": "__cv_dummyDataStructureDefinition",
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
                 "http://www.w3.org/2000/01/rdf-schema#label": "A DataSet"
@@ -1784,14 +1805,12 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         data.dataStructureDefinitions = {
             0: {
                 __cv_description: "",
-                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataStructureDefinition"),
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyDataStructureDefinition") + "",
                 __cv_niceLabel: "A DataStructureDefinition",
                 __cv_uri: "__cv_dummyDataStructureDefinition",
                 "http://purl.org/linked-data/cube#component": {
-                    0: "http://example.cubeviz.org/compare/populationEurope/countryCS",
-                    1: "http://example.cubeviz.org/compare/populationEurope/yearCS",
-                    2: "http://example.cubeviz.org/compare/populationEurope/unitCS",
-                    3: "http://example.cubeviz.org/compare/populationEurope/valueCS"
+                    0: this.app._.compareAction.equalDimensions[0][0].__cv_uri,
+                    1: "__cv_dummyMeasureCs"
                 },
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
                 "http://www.w3.org/2000/01/rdf-schema#label": "A DataStructureDefinition"
@@ -1800,7 +1819,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         data.components.measures = {
             0: {
                 __cv_description: "",
-                __cv_hashedUri: CryptoJS.MD5("__cv_dummyMeasureCs"),
+                __cv_hashedUri: CryptoJS.MD5("__cv_dummyMeasureCs") + "",
                 __cv_niceLabel: "Measure",
                 __cv_uri: "__cv_dummyMeasureCs",
                 "http://purl.org/linked-data/cube#measure": "__cv_dummyMeasure",
@@ -1812,9 +1831,9 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             dimensionUri = this.app._.compareAction.equalDimensions[0][0].__cv_uri;
             data.components.dimensions[dimensionUri] = {
                 __cv_uri: dimensionUri,
-                __cv_hashedUri: CryptoJS.MD5(dimensionUri),
-                __cv_niceLabel: "country (CS)",
-                __cv_shortLabel: "country (CS)",
+                __cv_hashedUri: CryptoJS.MD5(dimensionUri) + "",
+                __cv_niceLabel: this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
+                __cv_shortLabel: this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
                 "http://www.w3.org/2000/01/rdf-schema#label": this.app._.compareAction.equalDimensions[0][0].__cv_niceLabel,
                 __cv_description: "",
                 __cv_shortDescription: "",
@@ -1825,16 +1844,8 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
                 "http://purl.org/linked-data/cube#dimension": this.app._.compareAction.equalDimensions[0][0]["http://purl.org/linked-data/cube#dimension"],
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
             };
-            _.each(this.app._.compareAction.equalDimensions[0][0].__cv_elements, function (element) {
-                data.components.dimensions[dimensionUri].__cv_elements[i++] = element;
-                usedElementUris.push(element.__cv_uri);
-            });
-            _.each(this.app._.compareAction.equalDimensions[0][1].__cv_elements, function (element) {
-                if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
-                    data.components.dimensions[dimensionUri].__cv_elements[i++] = element;
-                    usedElementUris.push(element.__cv_uri);
-                }
-            });
+            data.components.dimensions[dimensionUri].__cv_elements = this.mergeDimensionElements(this.app._.compareAction.equalDimensions[0][0].__cv_elements, this.app._.compareAction.equalDimensions[0][1].__cv_elements);
+            data.components.dimensions[dimensionUri].__cv_elementCount = _.size(data.components.dimensions[dimensionUri].__cv_elements);
         } else {
             if(2 == _.size(this.app._.compareAction.equalDimensions)) {
             } else {
