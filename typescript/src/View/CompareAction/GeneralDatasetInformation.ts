@@ -23,7 +23,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 handler: this.onReceived_dimensions1AndDimensions2
             },
             {
-                name:    "onReceived_measure1AndMeasure2",
+                name:    "onReceived_measures1AndMeasures2",
                 handler: this.onReceived_measures1AndMeasures2
             },
             {
@@ -341,7 +341,7 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
                 // there are two dimension groups received
                 if (false === _.isNull (self.app._.compareAction.components.measures[1])
                     && false === _.isNull (self.app._.compareAction.components.measures[2])) {
-                    self.triggerGlobalEvent ("onReceived_measure1AndMeasure2");
+                    self.triggerGlobalEvent ("onReceived_measures1AndMeasures2");
                 }
             }
         );

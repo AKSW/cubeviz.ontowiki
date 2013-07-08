@@ -230,13 +230,14 @@ class CubevizController extends OntoWiki_Controller_Component
             
         // Libraries
         $this->view->headScript()
-            ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
-            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript')
-            ->appendFile($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
-            ->appendFile($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts.js',            'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js',       'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/CryptoJS_Md5.js',          'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/json2.js',                 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/javascriptStats-1.0.1.js', 'text/javascript')
             
-            ->appendFile($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
-            ->appendFile($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/underscore.js',            'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/underscore.string.js',     'text/javascript')
             ->appendScript ('_.mixin(_.str.exports());'); // for underscore.string
             
         // If this module is in the "development" context

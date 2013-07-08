@@ -1330,7 +1330,7 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 handler: this.onReceived_dimensions1AndDimensions2
             }, 
             {
-                name: "onReceived_measure1AndMeasure2",
+                name: "onReceived_measures1AndMeasures2",
                 handler: this.onReceived_measures1AndMeasures2
             }, 
             {
@@ -1453,7 +1453,7 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
             self.app._.compareAction.components.measures[datasetNr] = result;
             self.triggerGlobalEvent("onReceived_measures" + datasetNr);
             if(false === _.isNull(self.app._.compareAction.components.measures[1]) && false === _.isNull(self.app._.compareAction.components.measures[2])) {
-                self.triggerGlobalEvent("onReceived_measure1AndMeasure2");
+                self.triggerGlobalEvent("onReceived_measures1AndMeasures2");
             }
         });
         DataCube_Component.loadAllAttributes(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
@@ -1716,6 +1716,43 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         return this;
     };
     return View_CompareAction_DimensionOverview;
+})(CubeViz_View_Abstract);
+var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
+    __extends(View_CompareAction_MeasureAndAttributeInformation, _super);
+    function View_CompareAction_MeasureAndAttributeInformation(attachedTo, app) {
+        _super.call(this, "View_CompareAction_MeasureAndAttributeInformation", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReceived_measures1AndMeasures2",
+                handler: this.onReceived_measures1AndMeasures2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_MeasureAndAttributeInformation.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onReceived_measures1AndMeasures2 = function () {
+        $("#cubeviz-compare-measureAndAttributeInformation1").show();
+        $("#cubeviz-compare-measureAndAttributeInformation2").show();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_MeasureAndAttributeInformation;
 })(CubeViz_View_Abstract);
 var View_CompareAction_VisualizationSetup = (function (_super) {
     __extends(View_CompareAction_VisualizationSetup, _super);
