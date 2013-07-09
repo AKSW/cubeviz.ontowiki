@@ -84,7 +84,7 @@ ex:obs2 a cube:Observation ;
     ex:country ex:Germany ;
     ex:year ex:Y2002 ;
     ex:unit "straight number of people" ;
-    ex:value "8231000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    ex:value "82310000"^^<http://www.w3.org/2001/XMLSchema#float> .
     
 ex:obs3 a cube:Observation ;
     cube:dataSet ex:dataset ;
