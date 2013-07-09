@@ -303,6 +303,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 'attributes'    => array (1 => null, 2 => null)
             ),
             'models'                        => array(1 => null, 2 => null),
+            'observations'                  => array(1 => null, 2 => null),
             'slices'                        => array(1 => null, 2 => null),
             
             'equalDimensions'               => array(),
@@ -681,6 +682,7 @@ class CubevizController extends OntoWiki_Controller_Component
         // parameter
         $modelIri = $this->_request->getParam ('modelIri', '');
         $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
+        $datasetUri = trim($this->_request->getParam ('datasetUri', ''));
         
         // check if model there
         if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
@@ -692,35 +694,55 @@ class CubevizController extends OntoWiki_Controller_Component
             return;
         }
         
-        // check if model there
-        if('' == $dataHash) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
-                $code
-            );
-            return;
+        // check if datahash or dataset uri set
+        if('' == $dataHash && false === Erfurt_Uri::check($datasetUri)) {
+            if('' == $dataHash) {
+                $code = 404;
+                $this->_sendJSONResponse(
+                    array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
+                    $code
+                );
+                return;
+            }
+            // false === Erfurt_Uri::check($datasetUri)
+            else {
+                $code = 404;
+                $this->_sendJSONResponse(
+                    array('code' => $code, 'content' => '', 'message' => 'Dataset Uri is not valid'),
+                    $code
+                );
+                return;
+            }
         }
             
         try {
             $model = new Erfurt_Rdf_Model ($modelIri);
             $query = new DataCube_Query ($model, $this->_titleHelperLimit);
             
-            $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->selectedModel,
-                $this->_titleHelperLimit
-            );
+            if('' != $dataHash) {
+                $configuration = new CubeViz_ConfigurationLink(
+                    $this->_owApp->selectedModel,
+                    $this->_titleHelperLimit
+                );
 
-            // load configuration which is associated with given linkCode
-            list($c, $hash) = $configuration->read ($dataHash, $model, $this->_titleHelperLimit);
+                // load configuration which is associated with given linkCode
+                list($c, $hash) = $configuration->read ($dataHash, $model, $this->_titleHelperLimit);
+                
+                $datasetUri = $c ['selectedDS']['__cv_uri'];
+                $dimensions = $c ['selectedComponents']['dimensions'];
+            
+            // datasetUri set
+            } else {
+                $dimensions = null;
+            }
             
             $code = 200;
 
             $content = array(
                 'code' => $code, 
                 'content' => $query->getObservations(
-                    $c ['selectedDS']['__cv_uri'],
-                    $c ['selectedComponents']['dimensions']
+                    $datasetUri,
+                    $dimensions
                 ),
                 'message' => ''
             );

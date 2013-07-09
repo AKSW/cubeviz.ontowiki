@@ -498,7 +498,7 @@ class DataCube_Query
      * @param $dataSetUrl URL of a data set
      * @param $selectedComponentDimensions 
      */
-    public function getObservations ($dataSetUrl, $selectedComponentDimensions) 
+    public function getObservations ($dataSetUrl, $selectedComponentDimensions = null) 
     {
         /**
          * Fill SimpleQuery object with live!
@@ -516,49 +516,55 @@ class DataCube_Query
             ?s ?p ?o .' ."\n" .'
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
             ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
-        
-        // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
-        $i = 0;
-        foreach ( $selectedComponentDimensions as $dimension ) {
-            
-            if (0 < count ($dimension ['__cv_elements'])) {
-                $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+         
+        if (null != $selectedComponentDimensions
+            && 0 < count($selectedComponentDimensions)) {
+            // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
+            $i = 0;
+            foreach ( $selectedComponentDimensions as $dimension ) {
+                
+                if (0 < count ($dimension ['__cv_elements'])) {
+                    $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+                }
             }
-        }
-        
-        // Set FILTER
-        // e.g.: FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002")
-        // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
-        //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
-        $i = 0;
-        foreach ( $selectedComponentDimensions as $dimension ) 
-        {
-            $dimensionElements = $dimension ['__cv_elements'];
             
-            if (0 < count ($dimensionElements)) {
-            
-                $filter = array ();
-            
-                foreach ($dimensionElements as $elementUri => $element) {
-                    
-                    // If __cv_uri is set and an URL
-                    if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
-                        $value = '<'. $element ['__cv_uri'] .'>';
-                    } else {
-                        $value = '"'. $element ['__cv_niceLabel'] .'"';
+            // Set FILTER
+            // e.g.: FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002")
+            // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
+            //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
+            $i = 0;
+            foreach ( $selectedComponentDimensions as $dimension ) 
+            {
+                $dimensionElements = $dimension ['__cv_elements'];
+                
+                if (0 < count ($dimensionElements)) {
+                
+                    $filter = array ();
+                
+                    foreach ($dimensionElements as $elementUri => $element) {
+                        
+                        // If __cv_uri is set and an URL
+                        if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
+                            $value = '<'. $element ['__cv_uri'] .'>';
+                        } else {
+                            $value = '"'. $element ['__cv_niceLabel'] .'"';
+                        }
+                        
+                        $filter [] = ' ?d'. $i .' = '. $value .' ';
                     }
                     
-                    $filter [] = ' ?d'. $i .' = '. $value .' ';
+                    $i++;
+                    $where .= ' FILTER (' . implode ( 'OR', $filter ) .') ' . "\n";
                 }
-                
-                $i++;
-                $where .= ' FILTER (' . implode ( 'OR', $filter ) .') ' . "\n";
             }
+            
         }
         
-        $where .= '}';    
-        
+        $where .= '}';                
         $queryObject->setWherePart($where);
+        
+        // set max number of observations to 1000
+        $queryObject->setLimit (1000);
         
         // execute generated query
         $result = $this->getCachedResult ((string) $queryObject);
