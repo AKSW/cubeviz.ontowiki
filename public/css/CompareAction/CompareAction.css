@@ -202,6 +202,26 @@
 /**
  * 
  */
+.cubeviz-compare-mAATableHeader
+{
+    font-size: 12px;
+    text-align: center !important;
+        width: 100px; 
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.cubeviz-compare-mAATableCell
+{
+    font-size: 10px;
+}
+
+.cubeviz-compare-mAAValues
+{
+    font-size: 15px;
+    text-align: center !important;
+}
+
 #cubeviz-compare-measureAndAttributeInformation1
 {
 
