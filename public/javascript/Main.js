@@ -1128,7 +1128,7 @@ var DataCube_Observation = (function () {
             } else {
                 parsedValue = parseFloat(value);
             }
-            if(false === _.isNaN(value) && _.isFinite(value)) {
+            if(false === _.isNaN(parsedValue) && _.isFinite(parsedValue)) {
                 return parsedValue;
             }
         } catch (ex) {

@@ -217,7 +217,7 @@ class DataCube_Observation
             }
             
             // check if its a valid number
-            if (false === _.isNaN(value) && _.isFinite(value)) {
+            if (false === _.isNaN(parsedValue) && _.isFinite(parsedValue)) {
                 return parsedValue;
             }
             
