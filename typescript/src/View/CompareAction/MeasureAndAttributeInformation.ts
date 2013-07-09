@@ -42,52 +42,77 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
     {
         var $container:any = $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr),
         
+            foundInvalidNumbers:bool = false,
+        
             // get the measure
             measure = this.app._.compareAction.components.measures[datasetNr]
                 [Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]],
             
-            // get a list of the values of the observations
-            observationValues = DataCube_Observation.getValues(
-                this.app._.compareAction.observations[datasetNr],
-                measure ["http://purl.org/linked-data/cube#measure"]
-            );
+            observationValues:any[] = null,
+            valuesResult:any[] = null;
+            
+        // get a list of the values of the observations
+        valuesResult = DataCube_Observation.getValues(
+            this.app._.compareAction.observations[datasetNr],
+            measure ["http://purl.org/linked-data/cube#measure"]
+        );        
+        observationValues = valuesResult[0];
+        foundInvalidNumbers = valuesResult[1];
+            
+        // show notification if invalid numbers were found, to notify the user
+        // that the following computed values are not exact
+        if (true === foundInvalidNumbers) {
+            $("#cubeviz-compare-mAAInvalidNumbersFound" + datasetNr).show();
+        }
             
         /**
          * range
          */
         $($container.find(".cubeviz-compare-mAARangeMin").first()).html (
-            jsStats.min (observationValues)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.min (observationValues)).substring(0, 10)
+            : String(jsStats.min (observationValues)).substring(0, 10)
         );
         $($container.find(".cubeviz-compare-mAARangeMax").first()).html (
-            jsStats.max (observationValues)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.max (observationValues)).substring(0, 10)
+            : String(jsStats.max (observationValues)).substring(0, 10)
         );
         
         /**
          * median
          */
         $($container.find(".cubeviz-compare-mAAMedian").first()).html (
-            String(jsStats.median (observationValues)).substring(0, 10)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.median (observationValues)).substring(0, 10)
+            : String(jsStats.median (observationValues)).substring(0, 10)
         );
         
         /**
          * mean
          */
         $($container.find(".cubeviz-compare-mAAMean").first()).html (
-            String(jsStats.mean (observationValues)).substring(0, 10)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.mean (observationValues)).substring(0, 10)
+            : String(jsStats.mean (observationValues)).substring(0, 10)
         );
         
         /**
          * variance
          */
         $($container.find(".cubeviz-compare-mAAVariance").first()).html (
-            String(jsStats.variance (observationValues)).substring(0, 10)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.variance (observationValues)).substring(0, 10)
+            : String(jsStats.variance (observationValues)).substring(0, 10)
         );
         
         /**
          * standard deviation
          */
         $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html (
-            String(jsStats.standardDeviation (observationValues)).substring(0, 10)
+            true === foundInvalidNumbers 
+            ? "~ " + String(jsStats.standardDeviation (observationValues)).substring(0, 10)
+            : String(jsStats.standardDeviation (observationValues)).substring(0, 10)
         );
         
         // show panel

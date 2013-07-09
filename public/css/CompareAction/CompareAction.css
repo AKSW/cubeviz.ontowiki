@@ -202,6 +202,20 @@
 /**
  * 
  */
+#cubeviz-compare-mAAInvalidNumbersFound1
+{
+    display: none;
+    color: #B40000;
+    font-weight: bold;
+}
+
+#cubeviz-compare-mAAInvalidNumbersFound2
+{
+    display: none;
+    color: #B40000;
+    font-weight: bold;
+}
+
 .cubeviz-compare-mAATableHeader
 {
     font-size: 12px;
@@ -277,7 +291,7 @@
 .cubeviz-compare-unequalDimensions
 {
     width: auto;
-    min-width: 250px;
+    min-width: 1000px;
 }
 
 #cubeviz-compare-unequalDimensions1
@@ -288,6 +302,18 @@
 #cubeviz-compare-unequalDimensions2
 {
     display: none;
+}
+
+#unequalDimensionsTableContainer1
+{
+        width: 1000px;
+    min-width: 1000px;
+}
+
+#unequalDimensionsTableContainer2
+{
+        width: 1000px;
+    min-width: 1000px;
 }
 
  

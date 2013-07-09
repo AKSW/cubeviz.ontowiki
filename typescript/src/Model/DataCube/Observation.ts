@@ -49,10 +49,15 @@ class DataCube_Observation
     
     /**
      * Returns a list containing values of the given observations
+     * @param 
+     * @param 
+     * @return any[] 2-element array: first element are the values, 
+     *               second if invalid numbers were found 
      */
     static getValues(observations:any, measureUri:string) : any[] 
     {
-        var value:any = null,
+        var foundInvalidNumber:bool = false,
+            value:any = null,
             values:any[] = [];
         
         _.each(observations, function(observation){
@@ -60,6 +65,7 @@ class DataCube_Observation
             
             // something was wrong with the given observation value
             if (false === value) {
+                foundInvalidNumber = true;
                 return;
             
             // everything is fine, use this value!
@@ -68,7 +74,7 @@ class DataCube_Observation
             }
         });
         
-        return values;
+        return [values, foundInvalidNumber];
     }
 
     /**

@@ -1034,18 +1034,23 @@ var DataCube_Observation = (function () {
         }
     };
     DataCube_Observation.getValues = function getValues(observations, measureUri) {
+        var foundInvalidNumber = false;
         var value = null;
         var values = [];
 
         _.each(observations, function (observation) {
             value = DataCube_Observation.parseValue(observation[measureUri]);
             if(false === value) {
+                foundInvalidNumber = true;
                 return;
             } else {
                 values.push(value);
             }
         });
-        return values;
+        return [
+            values, 
+            foundInvalidNumber
+        ];
     }
     DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
         var dimensionElementInfoObject = {
@@ -1768,15 +1773,23 @@ var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
     };
     View_CompareAction_MeasureAndAttributeInformation.prototype.displayMeasuresAndAttributesInformation = function (datasetNr) {
         var $container = $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr);
+        var foundInvalidNumbers = false;
         var measure = this.app._.compareAction.components.measures[datasetNr][Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]];
-        var observationValues = DataCube_Observation.getValues(this.app._.compareAction.observations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
+        var observationValues = null;
+        var valuesResult = null;
 
-        $($container.find(".cubeviz-compare-mAARangeMin").first()).html(jsStats.min(observationValues));
-        $($container.find(".cubeviz-compare-mAARangeMax").first()).html(jsStats.max(observationValues));
-        $($container.find(".cubeviz-compare-mAAMedian").first()).html(String(jsStats.median(observationValues)).substring(0, 10));
-        $($container.find(".cubeviz-compare-mAAMean").first()).html(String(jsStats.mean(observationValues)).substring(0, 10));
-        $($container.find(".cubeviz-compare-mAAVariance").first()).html(String(jsStats.variance(observationValues)).substring(0, 10));
-        $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html(String(jsStats.standardDeviation(observationValues)).substring(0, 10));
+        valuesResult = DataCube_Observation.getValues(this.app._.compareAction.observations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
+        observationValues = valuesResult[0];
+        foundInvalidNumbers = valuesResult[1];
+        if(true === foundInvalidNumbers) {
+            $("#cubeviz-compare-mAAInvalidNumbersFound" + datasetNr).show();
+        }
+        $($container.find(".cubeviz-compare-mAARangeMin").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.min(observationValues)).substring(0, 10) : String(jsStats.min(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAARangeMax").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.max(observationValues)).substring(0, 10) : String(jsStats.max(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAMedian").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.median(observationValues)).substring(0, 10) : String(jsStats.median(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAMean").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.mean(observationValues)).substring(0, 10) : String(jsStats.mean(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAVariance").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.variance(observationValues)).substring(0, 10) : String(jsStats.variance(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.standardDeviation(observationValues)).substring(0, 10) : String(jsStats.standardDeviation(observationValues)).substring(0, 10));
         $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr).show();
     };
     View_CompareAction_MeasureAndAttributeInformation.prototype.initialize = function () {
