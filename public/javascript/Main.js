@@ -1033,6 +1033,20 @@ var DataCube_Observation = (function () {
             };
         }
     };
+    DataCube_Observation.getValues = function getValues(observations, measureUri) {
+        var value = null;
+        var values = [];
+
+        _.each(observations, function (observation) {
+            value = DataCube_Observation.parseValue(observation[measureUri]);
+            if(false === value) {
+                return;
+            } else {
+                values.push(value);
+            }
+        });
+        return values;
+    }
     DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
         var dimensionElementInfoObject = {
         };
@@ -1045,16 +1059,8 @@ var DataCube_Observation = (function () {
         this._axes = {
         };
         _.each(retrievedObservations, function (observation) {
-            try  {
-                value = parseFloat(observation[measureUri]);
-                if(true === _.str.include(observation[measureUri], " ")) {
-                    value = parseFloat(observation[measureUri].replace(/ /gi, ""));
-                }
-                if(true === _.isNaN(value)) {
-                    return;
-                }
-                observation[measureUri] = value;
-            } catch (ex) {
+            value = DataCube_Observation.parseValue(observation[measureUri]);
+            if(false === value) {
                 return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
@@ -1085,13 +1091,14 @@ var DataCube_Observation = (function () {
         });
         return this;
     };
-    DataCube_Observation.loadAll = function loadAll(serviceUrl, modelIri, dataHash, url, callback) {
+    DataCube_Observation.loadAll = function loadAll(url, serviceUrl, modelIri, dataHash, datasetUri, callback) {
         $.ajax({
             url: url + "getobservations/",
             data: {
                 serviceUrl: serviceUrl,
                 modelIri: modelIri,
-                cv_dataHash: dataHash
+                cv_dataHash: dataHash,
+                datasetUri: datasetUri
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Observation loadAll error: " + xhr.responseText);
@@ -1112,6 +1119,22 @@ var DataCube_Observation = (function () {
         }).done(function (entries) {
             callback(entries.content);
         });
+    }
+    DataCube_Observation.parseValue = function parseValue(value) {
+        var parsedValue = null;
+        try  {
+            if(true === _.str.include(value, " ")) {
+                parsedValue = parseFloat(value.replace(/ /gi, ""));
+            } else {
+                parsedValue = parseFloat(value);
+            }
+            if(false === _.isNaN(value) && _.isFinite(value)) {
+                return parsedValue;
+            }
+        } catch (ex) {
+            return false;
+        }
+        return false;
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         return this;
@@ -1477,6 +1500,13 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
                 self.triggerGlobalEvent("onReceived_numbersOfObservations1AndNumbersOfObservations2");
             }
         });
+        DataCube_Observation.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, "", this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.observations[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_observations" + datasetNr);
+            if(false == _.isNull(self.app._.compareAction.observations[1]) && false == _.isNull(self.app._.compareAction.observations[2])) {
+                self.triggerGlobalEvent("onReceived_observations1AndObservations2");
+            }
+        });
     };
     View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1 = function (event) {
         this.handleDatasetSelectorChanges("1");
@@ -1723,8 +1753,8 @@ var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
         _super.call(this, "View_CompareAction_MeasureAndAttributeInformation", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onReceived_measures1AndMeasures2",
-                handler: this.onReceived_measures1AndMeasures2
+                name: "onReceived_observations1AndObservations2",
+                handler: this.onReceived_observations1AndObservations2
             }, 
             {
                 name: "onStart_application",
@@ -1736,13 +1766,26 @@ var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.displayMeasuresAndAttributesInformation = function (datasetNr) {
+        var $container = $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr);
+        var measure = this.app._.compareAction.components.measures[datasetNr][Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]];
+        var observationValues = DataCube_Observation.getValues(this.app._.compareAction.observations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
+
+        $($container.find(".cubeviz-compare-mAARangeMin").first()).html(jsStats.min(observationValues));
+        $($container.find(".cubeviz-compare-mAARangeMax").first()).html(jsStats.max(observationValues));
+        $($container.find(".cubeviz-compare-mAAMedian").first()).html(String(jsStats.median(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAMean").first()).html(String(jsStats.mean(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAVariance").first()).html(String(jsStats.variance(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html(String(jsStats.standardDeviation(observationValues)).substring(0, 10));
+        $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr).show();
+    };
     View_CompareAction_MeasureAndAttributeInformation.prototype.initialize = function () {
         this.collection.reset("__cv_uri");
         this.render();
     };
-    View_CompareAction_MeasureAndAttributeInformation.prototype.onReceived_measures1AndMeasures2 = function () {
-        $("#cubeviz-compare-measureAndAttributeInformation1").show();
-        $("#cubeviz-compare-measureAndAttributeInformation2").show();
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onReceived_observations1AndObservations2 = function () {
+        this.displayMeasuresAndAttributesInformation(1);
+        this.displayMeasuresAndAttributesInformation(2);
     };
     View_CompareAction_MeasureAndAttributeInformation.prototype.onStart_application = function () {
         this.initialize();
@@ -2249,7 +2292,7 @@ var View_DataselectionModule_Measure = (function (_super) {
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedMeasure");
                 self.triggerGlobalEvent("onReRender_visualization");
@@ -2388,7 +2431,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedAttribute");
                 self.triggerGlobalEvent("onReRender_visualization");
@@ -2625,7 +2668,7 @@ var View_DataselectionModule_Component = (function (_super) {
                 self.app._.backend.dataHash = updatedDataHash;
                 self.render();
                 CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                    DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                    DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                         self.app._.backend.retrievedObservations = newEntities;
                         CubeViz_View_Helper.hideLeftSidebarSpinner();
                         data.callback();
@@ -2665,7 +2708,7 @@ var View_DataselectionModule_Component = (function (_super) {
                     self.app._.backend.dataHash = updatedDataHash;
                     self.render();
                     CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.data, "data", function (updatedDataHash) {
-                        DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                        DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                             self.app._.backend.retrievedObservations = newEntities;
                             CubeViz_View_Helper.hideLeftSidebarSpinner();
                             data.callback();
@@ -2828,7 +2871,7 @@ var View_DataselectionModule_Component = (function (_super) {
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                 self.app._.backend.retrievedObservations = newEntities;
                 callback();
             });
@@ -2961,7 +3004,7 @@ var View_DataselectionModule_Footer = (function (_super) {
         var self = this;
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.data, "data", function (updatedDataHash) {
-                DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
                     self.app._.backend.retrievedObservations = newEntities;
                     self.triggerGlobalEvent("onReRender_visualization");
                 });

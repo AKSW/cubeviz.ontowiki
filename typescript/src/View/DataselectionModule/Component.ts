@@ -279,8 +279,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                         function(updatedDataHash){
                                     
                             DataCube_Observation.loadAll(
-                                self.app._.backend.serviceUrl,self.app._.backend.modelUrl, 
-                                updatedDataHash, self.app._.backend.url,
+                                self.app._.backend.url, self.app._.backend.serviceUrl,
+                                self.app._.backend.modelUrl, updatedDataHash, "",
                                 function(newEntities){
                                     
                                     // save new observations
@@ -375,8 +375,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                             function(updatedDataHash){
                                         
                                 DataCube_Observation.loadAll(
-                                    self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
-                                    updatedDataHash, self.app._.backend.url,
+                                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                                    self.app._.backend.modelUrl, updatedDataHash, "",
                                     function(newEntities){
                                         
                                         // save new observations
@@ -710,8 +710,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             function(updatedDataHash){
                         
                 DataCube_Observation.loadAll(
-                    self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
-                    updatedDataHash, self.app._.backend.url,
+                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                    self.app._.backend.modelUrl, updatedDataHash, "",
                     function(newEntities){
                         
                         // save new observations

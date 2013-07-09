@@ -220,16 +220,17 @@
 {
     font-size: 15px;
     text-align: center !important;
+    vertical-align: middle !important;
 }
 
-#cubeviz-compare-measureAndAttributeInformation1
+#cubeviz-compare-measuresAndAttributesInformation1
 {
-
+    display: none;
 }
 
-#cubeviz-compare-measureAndAttributeInformation2
+#cubeviz-compare-measuresAndAttributesInformation2
 {
-
+    display: none;
 }
 
 

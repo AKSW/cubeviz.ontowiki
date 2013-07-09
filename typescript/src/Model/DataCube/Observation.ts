@@ -1,7 +1,7 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
-class DataCube_Observation {
-        
+class DataCube_Observation 
+{        
     /**
      * 
      */
@@ -46,6 +46,30 @@ class DataCube_Observation {
             return {};
         }
     }
+    
+    /**
+     * Returns a list containing values of the given observations
+     */
+    static getValues(observations:any, measureUri:string) : any[] 
+    {
+        var value:any = null,
+            values:any[] = [];
+        
+        _.each(observations, function(observation){
+            value = DataCube_Observation.parseValue(observation [measureUri]);
+            
+            // something was wrong with the given observation value
+            if (false === value) {
+                return;
+            
+            // everything is fine, use this value!
+            } else {
+                values.push(value);
+            }
+        });
+        
+        return values;
+    }
 
     /**
      * Initializing with given observations, selected component dimensions and
@@ -62,32 +86,17 @@ class DataCube_Observation {
             dimensionPropertyUri:string = "",
             observationDimensionProperty:any = {},
             self = this,
-            value = 0;
+            value:any = 0;
         
         this._axes = {};
         
         _.each(retrievedObservations, function(observation){
             
-            // Parse observation value, if it is not a number, ignore it.
-            try {
-                value = parseFloat(observation[measureUri]);
-                
-                // If value contains whitespaces and it was able to parse
-                // it was float, remove whitespaces and parse it again
-                if(true === _.str.include(observation[measureUri], " ")) {
-                    value = parseFloat(
-                        observation[measureUri].replace(/ /gi, "")
-                    );
-                }
-                
-                if (true === _.isNaN(value)) {
-                    return;
-                }
-                
-                observation[measureUri] = value;
-                
-            // its not a number, ignore it!
-            } catch (ex) { return; }
+            // try to parse the value
+            value = DataCube_Observation.parseValue(observation[measureUri]);
+            
+            if (false === value) 
+                return;
             
             _.each(selectedComponentDimensions, function(dimension){
                 
@@ -145,16 +154,19 @@ class DataCube_Observation {
     }
     
     /**
-     * 
+     * Loads observation based on datahash or dataset uri.
+     * @return void
      */
-    static loadAll (serviceUrl:string, modelIri:string, dataHash:string, url:string, callback) 
+    static loadAll (url:string, serviceUrl:string, modelIri:string, dataHash:string, 
+        datasetUri:string, callback) : void
     {        
         $.ajax({
             url: url + "getobservations/",
             data: {
                 serviceUrl: serviceUrl,
                 modelIri: modelIri,
-                cv_dataHash: dataHash
+                cv_dataHash: dataHash,
+                datasetUri: datasetUri
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
@@ -184,6 +196,35 @@ class DataCube_Observation {
         .done( function (entries) {
             callback(entries.content);
         });
+    }
+    
+    /**
+     * @param value string|float The observation value to parse
+     * @return float|false False if value is not a float, otherwise returns the parsed one
+     */
+    static parseValue(value:string) : any 
+    {
+        var parsedValue:number = null;
+        
+        // Parse observation value, if it is not a number, ignore it.
+        try {
+            // If value contains whitespaces and it was able to parse
+            // it was float, remove whitespaces and parse it again
+            if(true === _.str.include(value, " ")) {
+                parsedValue = parseFloat(value.replace(/ /gi, ""));
+            } else {
+                parsedValue = parseFloat(value);
+            }
+            
+            // check if its a valid number
+            if (false === _.isNaN(value) && _.isFinite(value)) {
+                return parsedValue;
+            }
+            
+        // its not a number
+        } catch (ex) { return false; }
+        
+        return false;
     }
 
     /**

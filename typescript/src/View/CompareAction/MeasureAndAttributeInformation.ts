@@ -1,3 +1,4 @@
+/// <reference path="..\..\..\declaration\libraries\jsStats.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
@@ -15,8 +16,8 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onReceived_measures1AndMeasures2",
-                handler: this.onReceived_measures1AndMeasures2
+                name:    "onReceived_observations1AndObservations2",
+                handler: this.onReceived_observations1AndObservations2
             },
             {
                 name:    "onStart_application",
@@ -35,6 +36,65 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
     }
     
     /**
+     *
+     */
+    public displayMeasuresAndAttributesInformation(datasetNr:number): void
+    {
+        var $container:any = $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr),
+        
+            // get the measure
+            measure = this.app._.compareAction.components.measures[datasetNr]
+                [Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]],
+            
+            // get a list of the values of the observations
+            observationValues = DataCube_Observation.getValues(
+                this.app._.compareAction.observations[datasetNr],
+                measure ["http://purl.org/linked-data/cube#measure"]
+            );
+            
+        /**
+         * range
+         */
+        $($container.find(".cubeviz-compare-mAARangeMin").first()).html (
+            jsStats.min (observationValues)
+        );
+        $($container.find(".cubeviz-compare-mAARangeMax").first()).html (
+            jsStats.max (observationValues)
+        );
+        
+        /**
+         * median
+         */
+        $($container.find(".cubeviz-compare-mAAMedian").first()).html (
+            String(jsStats.median (observationValues)).substring(0, 10)
+        );
+        
+        /**
+         * mean
+         */
+        $($container.find(".cubeviz-compare-mAAMean").first()).html (
+            String(jsStats.mean (observationValues)).substring(0, 10)
+        );
+        
+        /**
+         * variance
+         */
+        $($container.find(".cubeviz-compare-mAAVariance").first()).html (
+            String(jsStats.variance (observationValues)).substring(0, 10)
+        );
+        
+        /**
+         * standard deviation
+         */
+        $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html (
+            String(jsStats.standardDeviation (observationValues)).substring(0, 10)
+        );
+        
+        // show panel
+        $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr).show();
+    }
+    
+    /**
      * 
      */
     public initialize() : void 
@@ -46,10 +106,11 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
     /**
      *
      */
-    public onReceived_measures1AndMeasures2() : void
+    public onReceived_observations1AndObservations2() : void
     {
-        $("#cubeviz-compare-measureAndAttributeInformation1").show();
-        $("#cubeviz-compare-measureAndAttributeInformation2").show();
+        this.displayMeasuresAndAttributesInformation(1);
+        
+        this.displayMeasuresAndAttributesInformation(2);
     }
     
     /**

@@ -404,15 +404,38 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
             // callback
             function(result){
                 
-                // set dimension > dataset assignment and data new
+                // set received number
                 self.app._.compareAction.numberOfObservations [datasetNr] = result;
                 
                 self.triggerGlobalEvent ("onReceived_observationNumber" + datasetNr);                
             
-                // there are two dimension groups received
+                // there were two observation numbers received
                 if (-1 < self.app._.compareAction.numberOfObservations[1]
                     && -1 < self.app._.compareAction.numberOfObservations[2]) {
                     self.triggerGlobalEvent ("onReceived_numbersOfObservations1AndNumbersOfObservations2");
+                }
+            }
+        );
+        
+        /**
+         * load according observations
+         */
+        DataCube_Observation.loadAll(
+            this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri,
+            "", this.app._.compareAction.datasets[datasetNr].__cv_uri, 
+            
+            // callback
+            function(result){
+                
+                // set observation for according dataset
+                self.app._.compareAction.observations [datasetNr] = result;
+                
+                self.triggerGlobalEvent ("onReceived_observations" + datasetNr);                
+            
+                // there are two observation groups received
+                if (false == _.isNull(self.app._.compareAction.observations[1])
+                    && false == _.isNull(self.app._.compareAction.observations[2])) {
+                    self.triggerGlobalEvent ("onReceived_observations1AndObservations2");
                 }
             }
         );
