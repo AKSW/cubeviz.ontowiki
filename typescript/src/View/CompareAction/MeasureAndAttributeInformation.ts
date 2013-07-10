@@ -4,6 +4,9 @@
 
 class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abstract 
 {        
+    private _measures1And2Recveived:bool = false;
+    private _observations1And2Received:bool = false;
+    
     /**
      * 
      */
@@ -15,6 +18,10 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
         // if one of these events get triggered, the associated handler will
         // be executed to handle it
         this.bindGlobalEvents([
+            {
+                name:    "onReceived_measures1AndMeasures2",
+                handler: this.onReceived_measures1AndMeasures2
+            },
             {
                 name:    "onReceived_observations1AndObservations2",
                 handler: this.onReceived_observations1AndObservations2
@@ -131,11 +138,29 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
     /**
      *
      */
+    public onReceived_measures1AndMeasures2() : void
+    {
+        this._measures1And2Recveived = true;
+        
+        if (true === this._measures1And2Recveived
+            && true === this._observations1And2Received) {
+            this.displayMeasuresAndAttributesInformation(1);
+            this.displayMeasuresAndAttributesInformation(2);
+        }
+    }
+    
+    /**
+     *
+     */
     public onReceived_observations1AndObservations2() : void
     {
-        this.displayMeasuresAndAttributesInformation(1);
+        this._observations1And2Received = true;
         
-        this.displayMeasuresAndAttributesInformation(2);
+        if (true === this._measures1And2Recveived
+            && true === this._observations1And2Received) {
+            this.displayMeasuresAndAttributesInformation(1);
+            this.displayMeasuresAndAttributesInformation(2);
+        }
     }
     
     /**
