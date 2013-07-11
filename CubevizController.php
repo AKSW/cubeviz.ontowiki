@@ -1048,9 +1048,10 @@ class CubevizController extends OntoWiki_Controller_Component
         $modelIri = $this->_request->getParam('modelIri', '');
         $stringifiedContent = $this->_request->getParam('stringifiedContent', '');
         $type = $this->_request->getParam('type', '');
+        $useObservations = $this->_request->getParam('useObservations', '');
         
         // if type is data, than load observations before save content
-        if ('data' == $type) {
+        if ('data' == $type && 'false' == $useObservations) {
             
             // setup 
             $model = new Erfurt_Rdf_Model ($modelIri);
