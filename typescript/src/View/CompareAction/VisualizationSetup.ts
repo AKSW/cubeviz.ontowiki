@@ -51,11 +51,12 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         }
         
         // object representing the data part of configuration
-        var measure1:any = null,
+        var dimensionUri:string = "",
+            measure1:any = null,
             measure2:any = null,
             mergedDataCube:any = {},
             mergedDataCubeUri:string = "",
-            dimensionUri:string = "",
+            self = this,
             virtualDimensions:any[] = [];
             
         // TODO check if there is already a merged data cube
@@ -136,6 +137,28 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");
         console.log(mergedDataCube);
+        
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, mergedDataCube, "data",
+            function(generatedHash){
+                console.log("");
+                console.log("generated hash: " + generatedHash);
+                
+                var href = self.app._.backend.url + "?";
+                
+                if (false === _.isNull(self.app._.backend.serviceUrl)) {
+                    href += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
+                            + "&";
+                }
+                           
+                href += "m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                           + "&cv_dataHash=" + generatedHash;
+                
+                $("#cubeviz-compare-visualizeLink")
+                    .attr ("href", href)
+                    .show ();
+                    
+            }
+        );
         
         
         /**

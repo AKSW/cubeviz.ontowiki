@@ -2041,12 +2041,13 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this._equalDimensionsFound || false === this._measuresReceived || false === this._observationsReceived) {
             return;
         }
+        var dimensionUri = "";
         var measure1 = null;
         var measure2 = null;
         var mergedDataCube = {
         };
         var mergedDataCubeUri = "";
-        var dimensionUri = "";
+        var self = this;
         var virtualDimensions = [];
 
         mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
@@ -2066,6 +2067,16 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");
         console.log(mergedDataCube);
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, mergedDataCube, "data", function (generatedHash) {
+            console.log("");
+            console.log("generated hash: " + generatedHash);
+            var href = self.app._.backend.url + "?";
+            if(false === _.isNull(self.app._.backend.serviceUrl)) {
+                href += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+            }
+            href += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + generatedHash;
+            $("#cubeviz-compare-visualizeLink").attr("href", href).show();
+        });
         if(1 == _.size(this.app._.compareAction.equalDimensions)) {
         } else {
             if(2 == _.size(this.app._.compareAction.equalDimensions)) {

@@ -316,6 +316,12 @@
     min-width: 1000px;
 }
 
+
+#cubeviz-compare-visualizeLink
+{
+    display: none;
+}
+
  
 /**
  * 
