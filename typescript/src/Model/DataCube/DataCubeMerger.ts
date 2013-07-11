@@ -186,6 +186,32 @@ class DataCube_DataCubeMerger
     }
     
     /**
+     *
+     */
+    static buildRetrievedObservations(mergedDataCubeUri:string, retrievedObservations:any) : any
+    {
+        // create a real clone of retrieved observations list
+        retrievedObservations = $.parseJSON(JSON.stringify(retrievedObservations));
+        
+        var adaptedObservations:any = {},
+            i:number = 0;
+            
+        retrievedObservations = retrievedObservations[1].concat (retrievedObservations[2]);
+        
+        // go through all retrieved observations
+        _.each(retrievedObservations, function(observation){
+            
+            // update relation to dataset
+            observation ["http://purl.org/linked-data/cube#dataSet"] =
+                mergedDataCubeUri + "dataset";
+                
+            adaptedObservations[i++] = observation;
+        });
+        
+        return adaptedObservations;
+    }
+    
+    /**
      * Generates a new and dereferenceable uri of a data cube
      * @param url string URL this system is running on
      * @param stringifiedObject string Stringified compareAction object
@@ -215,6 +241,7 @@ class DataCube_DataCubeMerger
             dataStructureDefinitions: {},
             numberOfMultipleDimensions: 0,
             numberOfOneElementDimensions: 0,
+            retrievedObservations: {},
             selectedComponents: {},
             selectedDS: {},
             selectedDSD: {},

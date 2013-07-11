@@ -60,7 +60,7 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
             
         // get a list of the values of the observations
         valuesResult = DataCube_Observation.getValues(
-            this.app._.compareAction.observations[datasetNr],
+            this.app._.compareAction.retrievedObservations[datasetNr],
             measure ["http://purl.org/linked-data/cube#measure"]
         );        
         observationValues = valuesResult[0];

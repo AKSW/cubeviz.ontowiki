@@ -124,6 +124,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
         
+        
+        /**
+         * set retrieved observations
+         */
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(
+            mergedDataCubeUri, this.app._.compareAction.retrievedObservations
+        );
+        
         console.log("");
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");

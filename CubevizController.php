@@ -303,7 +303,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 'attributes'    => array (1 => null, 2 => null)
             ),
             'models'                        => array(1 => null, 2 => null),
-            'observations'                  => array(1 => null, 2 => null),
+            'retrievedObservations'         => array(1 => null, 2 => null),
             'slices'                        => array(1 => null, 2 => null),
             
             'equalDimensions'               => array(),

@@ -1043,6 +1043,19 @@ var DataCube_DataCubeMerger = (function () {
             }
         };
     }
+    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, retrievedObservations) {
+        retrievedObservations = $.parseJSON(JSON.stringify(retrievedObservations));
+        var adaptedObservations = {
+        };
+        var i = 0;
+
+        retrievedObservations = retrievedObservations[1].concat(retrievedObservations[2]);
+        _.each(retrievedObservations, function (observation) {
+            observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
+            adaptedObservations[i++] = observation;
+        });
+        return adaptedObservations;
+    }
     DataCube_DataCubeMerger.generateMergedDataCubeUri = function generateMergedDataCubeUri(url, stringifiedObject) {
         return url + "go/mergeddatacube/" + CryptoJS.MD5(stringifiedObject) + "#";
     }
@@ -1061,6 +1074,8 @@ var DataCube_DataCubeMerger = (function () {
             },
             numberOfMultipleDimensions: 0,
             numberOfOneElementDimensions: 0,
+            retrievedObservations: {
+            },
             selectedComponents: {
             },
             selectedDS: {
@@ -1676,9 +1691,9 @@ var View_CompareAction_GeneralDatasetInformation = (function (_super) {
             }
         });
         DataCube_Observation.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, "", this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
-            self.app._.compareAction.observations[datasetNr] = result;
+            self.app._.compareAction.retrievedObservations[datasetNr] = result;
             self.triggerGlobalEvent("onReceived_observations" + datasetNr);
-            if(false == _.isNull(self.app._.compareAction.observations[1]) && false == _.isNull(self.app._.compareAction.observations[2])) {
+            if(false == _.isNull(self.app._.compareAction.retrievedObservations[1]) && false == _.isNull(self.app._.compareAction.retrievedObservations[2])) {
                 self.triggerGlobalEvent("onReceived_observations1AndObservations2");
             }
         });
@@ -1954,7 +1969,7 @@ var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
         var observationValues = null;
         var valuesResult = null;
 
-        valuesResult = DataCube_Observation.getValues(this.app._.compareAction.observations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
+        valuesResult = DataCube_Observation.getValues(this.app._.compareAction.retrievedObservations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
         observationValues = valuesResult[0];
         foundInvalidNumbers = valuesResult[1];
         if(true === foundInvalidNumbers) {
@@ -2046,6 +2061,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations);
         console.log("");
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");
