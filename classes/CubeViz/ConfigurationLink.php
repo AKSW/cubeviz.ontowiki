@@ -73,6 +73,7 @@ class CubeViz_ConfigurationLink
             
             // if no related data structure definition was found, throw an exception
             if (0 == count($config['selectedDSD'])) {
+                
                 throw new CubeViz_Exception(
                     'Selected DataSet '. $config['selectedDS'] .' has no '.
                     'related Data Structure Definition!' 
@@ -278,6 +279,14 @@ class CubeViz_ConfigurationLink
                 ++$config['numberOfOneElementDimensions'];
             }
         }
+        
+        /**
+         * Observations
+         */
+        $config['retrievedObservations'] = $query->getObservations(
+            $config['selectedDS']['__cv_uri'],
+            $config['selectedComponents']['dimensions']
+        );
         
         return $config;
     }

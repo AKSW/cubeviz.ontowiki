@@ -83,7 +83,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         ));
         
         // nulling retrievedObservations
-        this.app._.backend.retrievedObservations = {};
+        this.app._.data.retrievedObservations = {};
         
         // update selectedDSD
         _.each(this.app._.data.dataStructureDefinitions, function(dsd){

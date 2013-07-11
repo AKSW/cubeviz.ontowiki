@@ -138,7 +138,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         console.log("");
         console.log(mergedDataCube);
         
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, mergedDataCube, "data",
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
             function(generatedHash){
                 console.log("");
                 console.log("generated hash: " + generatedHash);

@@ -733,7 +733,7 @@ class CubevizController extends OntoWiki_Controller_Component
             
             // datasetUri set
             } else {
-                $dimensions = null;
+                $dimensions = array();
             }
             
             $code = 200;
@@ -1044,23 +1044,36 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
-        // get cache dir
-        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir();
-        } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        // save parameter 
+        $modelIri = $this->_request->getParam('modelIri', '');
+        $stringifiedContent = $this->_request->getParam('stringifiedContent', '');
+        $type = $this->_request->getParam('type', '');
+        
+        // if type is data, than load observations before save content
+        if ('data' == $type) {
+            
+            // setup 
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model, $this->_titleHelperLimit);
+            
+            // decode content
+            $content = json_decode($stringifiedContent, true);
+            
+            // load observations
+            $content ['retrievedObservations'] = $query->getObservations(
+                $content ['selectedDS']['__cv_uri'],
+                $content ['selectedComponents']['dimensions']
+            );
+            
+            $stringifiedContent = json_encode($content, JSON_FORCE_OBJECT);
         }
         
-        $configuration = new CubeViz_ConfigurationLink(
-            $this->_owApp->selectedModel,
-            $this->_titleHelperLimit
-        );
-        
         // write given content to file
-        $hash = $configuration->write(
-            $this->_request->getParam('stringifiedContent', ''),
-            $this->_request->getParam('type', '')
+        $configuration = new CubeViz_ConfigurationLink(
+            $this->_owApp->selectedModel, $this->_titleHelperLimit
         );
+                
+        $hash = $configuration->write($stringifiedContent, $type);
         
         // send back generated hash
         $this->_sendJSONResponse($hash);

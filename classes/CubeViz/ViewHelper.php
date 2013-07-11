@@ -121,16 +121,7 @@ class CubeViz_ViewHelper
                     'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
                 'uiSettings'            => array (),
-                'retrievedObservations' => array(),
                 'url'                   => $staticUrlBase . 'cubeviz/'
-            );
-            
-            // load observations related to given data
-            $query = new DataCube_Query($model, $titleHelperLimit);
-            
-            $config['backend']['retrievedObservations'] = $query->getObservations(
-                $config['data']['selectedDS']['__cv_uri'],
-                $config['data']['selectedComponents']['dimensions']
             );
                 
             CubeViz_ViewHelper::$isCubeVizAppLoaded = true;
