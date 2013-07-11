@@ -990,9 +990,9 @@ var DataCube_DataCubeMerger = (function () {
     DataCube_DataCubeMerger.buildDataSets = function buildDataSets(mergedDataCubeUri, datasetLabel1, datasetLabel2, datasetUri1, datasetUri2) {
         return {
             0: {
-                __cv_niceLabel: "Merged Dataset",
+                __cv_niceLabel: "Artifical Dataset",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Merged DataSet",
-                __cv_description: "This dataset was merged and consists of data from '" + datasetLabel1 + "' and '" + datasetLabel2 + "'",
+                __cv_description: "This is an artifical data set and it consists of '" + datasetLabel1 + "' and '" + datasetLabel2 + "'",
                 __cv_uri: mergedDataCubeUri + "dataset",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataset") + "",
                 "http://purl.org/dc/terms/source": [
@@ -1026,49 +1026,19 @@ var DataCube_DataCubeMerger = (function () {
         });
         return dsd;
     }
-    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions) {
-        var componentSpecification = {
-        };
-        var i = 0;
-        var virtualDimensions = {
-        };
-
-        _.each(equalDimensions, function (dimensionPair) {
-            componentSpecification = {
-                __cv_niceLabel: "Merged Component Specification",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification",
-                __cv_description: "This Component Specification was merged and consists of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
-                __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
-                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
-                "http://www.w3.org/2002/07/owl#sameAs": [
-                    dimensionPair[0].__cv_uri, 
-                    dimensionPair[1].__cv_uri
-                ],
-                "http://purl.org/dc/terms/source": [
-                    dimensionPair[0].__cv_uri, 
-                    dimensionPair[1].__cv_uri
-                ],
-                __cv_elements: {
-                },
-                "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
-            };
-            componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements);
-            componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements(mergedDataCubeUri, componentSpecification.__cv_elements, i);
-            virtualDimensions[i] = componentSpecification;
-            ++i;
-        });
-        return virtualDimensions;
-    }
-    DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri) {
+    DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measureUri1, measureUri2, measureLabel1, measureLabel2) {
         return {
             0: {
                 __cv_niceLabel: "Artifical Measure",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
-                __cv_description: "This is an artifical measure created during " + "a data cube merge.",
+                __cv_description: "This is an artifical measure and it consists of '" + measureLabel1 + "' and '" + measureLabel2 + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
                 "http://purl.org/linked-data/cube#measure": mergedDataCubeUri + "measure",
+                "http://purl.org/dc/terms/source": [
+                    measureUri1, 
+                    measureUri2
+                ],
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
             }
         };
@@ -1128,6 +1098,17 @@ var DataCube_DataCubeMerger = (function () {
             selectedComponentDimensions[dimension.__cv_uri] = dimension;
         });
         return selectedComponentDimensions;
+    }
+    DataCube_DataCubeMerger.getSingleDimensions = function getSingleDimensions(equalDimensions) {
+        var dimensions = {
+        };
+        var i = 0;
+
+        _.each(equalDimensions, function (dimensionPair) {
+            dimensions[i++] = dimensionPair[0];
+            dimensions[i++] = dimensionPair[1];
+        });
+        return dimensions;
     }
     DataCube_DataCubeMerger.mergeDimensionElements = function mergeDimensionElements(dimensionElements1, dimensionElements2) {
         var i = 0;
@@ -2045,6 +2026,8 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this._equalDimensionsFound || false === this._measuresReceived || false === this._observationsReceived) {
             return;
         }
+        var measure1 = null;
+        var measure2 = null;
         var mergedDataCube = {
         };
         var mergedDataCubeUri = "";
@@ -2055,9 +2038,11 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(this.app._.backend.url, JSON.stringify(this.app._.compareAction));
         mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, this.app._.compareAction.datasets[1].__cv_niceLabel, this.app._.compareAction.datasets[2].__cv_niceLabel, this.app._.compareAction.datasets[1].__cv_uri, this.app._.compareAction.datasets[2].__cv_uri);
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, this.app._.compareAction.equalDimensions);
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.getSingleDimensions(this.app._.compareAction.equalDimensions);
         mergedDataCube.selectedComponents.dimensions = DataCube_DataCubeMerger.getSelectedDimensionElements(mergedDataCube.components.dimensions);
-        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri);
+        measure1 = this.app._.compareAction.components.measures[1][Object.keys(this.app._.compareAction.components.measures[1])[0]];
+        measure2 = this.app._.compareAction.components.measures[2][Object.keys(this.app._.compareAction.components.measures[2])[0]];
+        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1.__cv_uri, measure2.__cv_uri, measure1.__cv_niceLabel, measure2.__cv_niceLabel);
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];

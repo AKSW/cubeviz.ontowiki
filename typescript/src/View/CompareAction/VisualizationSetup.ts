@@ -51,7 +51,9 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         }
         
         // object representing the data part of configuration
-        var mergedDataCube:any = {},
+        var measure1:any = null,
+            measure2:any = null,
+            mergedDataCube:any = {},
             mergedDataCubeUri:string = "",
             dimensionUri:string = "",
             virtualDimensions:any[] = [];
@@ -85,10 +87,9 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         
         /**
-         * build new virtual component specifications according to equal dimension pairs
+         * set equal dimension pair(s) as dimensions
          */
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
-            mergedDataCubeUri,
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.getSingleDimensions(
             this.app._.compareAction.equalDimensions
         );
         
@@ -100,8 +101,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         /**
          * set measure
          */
+        measure1 = this.app._.compareAction.components.measures[1]
+            [Object.keys(this.app._.compareAction.components.measures[1])[0]];
+        measure2 = this.app._.compareAction.components.measures[2]
+            [Object.keys(this.app._.compareAction.components.measures[2])[0]];
+        
         mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(
-            mergedDataCubeUri
+            mergedDataCubeUri, measure1.__cv_uri, measure2.__cv_uri,
+            measure1.__cv_niceLabel, measure2.__cv_niceLabel
         );
                 
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures [0];

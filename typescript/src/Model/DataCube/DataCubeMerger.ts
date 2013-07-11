@@ -70,11 +70,11 @@ class DataCube_DataCubeMerger
         return { 0: {
             
             // label
-            __cv_niceLabel: "Merged Dataset",
+            __cv_niceLabel: "Artifical Dataset",
             "http://www.w3.org/2000/01/rdf-schema#label": "Merged DataSet",
             
             // describe
-            __cv_description: "This dataset was merged and consists of data from '"
+            __cv_description: "This is an artifical data set and it consists of '"
                 + datasetLabel1
                 + "' and '"
                 + datasetLabel2
@@ -145,87 +145,16 @@ class DataCube_DataCubeMerger
     }
     
     /**
-     * Build component specifications and related dimension elements.
-     * @param mergedDataCubeUri string Generated uri of the merged data cube
-     * @param equalDimensions any[] List of equal dimension pairs
-     * @return any Object with numeric keys which contains built component specifications 
-     *             and dimension elements
-     */
-    static buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri:string, 
-        equalDimensions:any[]) : any
-    {
-        var componentSpecification:any = {},
-            i:number = 0,
-            virtualDimensions:any = {};
-        
-        // go through all equal dimensions and add their uri
-        _.each (equalDimensions, function(dimensionPair){
-            
-            componentSpecification = {
-                
-                // label
-                __cv_niceLabel: "Merged Component Specification",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification",
-                
-                // describe
-                __cv_description: "This Component Specification was merged and consists of '"
-                    + dimensionPair[0].__cv_niceLabel
-                    + "' and '"
-                    + dimensionPair[1].__cv_niceLabel
-                    + "'",
-                
-                // uri
-                __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
-                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
-                
-                // sameAs relations to both component specifications of dimension pair
-                "http://www.w3.org/2002/07/owl#sameAs": [
-                    dimensionPair[0].__cv_uri, dimensionPair[1].__cv_uri
-                ],
-                
-                // add relation to the two origin datasets
-                "http://purl.org/dc/terms/source": [ 
-                    dimensionPair[0].__cv_uri, dimensionPair[1].__cv_uri
-                ],
-                
-                // dimension elements
-                __cv_elements: {},
-                
-                // set relation to dimension itself
-                "http://purl.org/linked-data/cube#dimension": 
-                    mergedDataCubeUri + "dimension" + i,
-                
-                // type
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
-                    "http://purl.org/linked-data/cube#ComponentSpecification"
-            };
-            
-            // set dimension elements
-            componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements (
-                dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements
-            );
-                  
-            componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements (
-                mergedDataCubeUri,
-                componentSpecification.__cv_elements,
-                i
-            );
-            
-            // save adapted
-            virtualDimensions[i] = componentSpecification;
-            
-            ++i;
-        });
-        
-        return virtualDimensions;
-    }
-    
-    /**
      * Generates a new artifical measure using merged data cube uri.
      * @param mergedDataCubeUri string Generated uri of the merged data cube
+     * @param measureUri1 string URI of Measure1
+     * @param measureUri2 string URI of Measure2
+     * @param measureLabel1 string Label of Measure1
+     * @param measureLabel2 string Label of Measure2
      * @return any Object with one element representing new measure
      */
-    static buildMeasure(mergedDataCubeUri:string) : any 
+    static buildMeasure(mergedDataCubeUri:string, measureUri1:string, measureUri2:string,
+        measureLabel1:string, measureLabel2:string) : any 
     {
         return { 0: {
             
@@ -234,15 +163,21 @@ class DataCube_DataCubeMerger
             "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
             
             // describe
-            __cv_description: "This is an artifical measure created during "
-                + "a data cube merge.",
+            __cv_description: "This is an artifical measure and it consists of '"
+                + measureLabel1
+                + "' and '"
+                + measureLabel2
+                + "'",                              
             
             // uri
             __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
             __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
             
-            // relation to measure
+            // relation to measure property
             "http://purl.org/linked-data/cube#measure": mergedDataCubeUri + "measure",
+            
+            // relation to origin measures
+            "http://purl.org/dc/terms/source": [measureUri1, measureUri2],
             
             // type
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
@@ -330,6 +265,23 @@ class DataCube_DataCubeMerger
         });
         
         return selectedComponentDimensions;
+    }
+    
+    /**
+     * @param equalDimensions any[] List of dimension pairs, a pair consists of 
+     *                              equal dimensions
+     */
+    static getSingleDimensions(equalDimensions:any[]) : any 
+    {
+        var dimensions:any = {},
+            i:number = 0;
+        
+        _.each(equalDimensions, function(dimensionPair){
+            dimensions[i++] = dimensionPair[0];
+            dimensions[i++] = dimensionPair[1];
+        });
+        
+        return dimensions;
     }
     
     /**
