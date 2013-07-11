@@ -10,7 +10,7 @@ class CubeViz_ConfigurationLink
      * @param callback Function to call after saving is complete
      * @return void
      */
-    static save (url, content, type, callback) : void
+    static save (url:string, modelIri:string, content:any, type:string, callback) : void
     {        
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
@@ -23,7 +23,11 @@ class CubeViz_ConfigurationLink
         // Execute Ajax 
         $.ajax({
             "url": url + "savecontenttofile/",
-            "data": { type: type, stringifiedContent: JSON.stringify(content) }
+            "data": { 
+                modelIri: modelIri,
+                stringifiedContent: JSON.stringify(content),
+                type: type
+            }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
             

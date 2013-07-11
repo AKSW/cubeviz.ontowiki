@@ -34,10 +34,8 @@ class DataCube_Query
      */
     public function containsDataCubeInformation () 
     {
-        $result = $this->getCachedResult ('
-            PREFIX qb:<http://purl.org/linked-data/cube#>
+        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
             ASK
-            FROM <'.$this->_model->getModelUri().'>
             {
                 ?observation a qb:Observation .
                 ?observation qb:dataSet ?dataset .
@@ -56,7 +54,23 @@ class DataCube_Query
 
                 ?measurespecification a qb:ComponentSpecification .
                 ?measurespecification qb:measure ?measure .
-            }');
+            }';
+            
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+        
+        $result = $this->_objectCache->load($objectId);
+        
+        if (false === $result) {
+            
+            // start QueryCache transaction
+            $this->_queryCache->startTransaction($objectId);
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            // end QueryCache transaction
+            $this->_queryCache->endTransaction($objectId);            
+            $this->_objectCache->save($result, $objectId);
+        }
         
         return false === empty ($result);
     }
@@ -70,49 +84,68 @@ class DataCube_Query
      */
     public function enrichResult($assocSPOArray)
     {
-        $return = array();
-        $spoArrayCount = count($assocSPOArray);
-        $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+        // generate unique hash using given SPO array and model uri
+        $objectId = md5($this->_model->getModelIri() . json_encode($assocSPOArray));
+        
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+        
+        // no cache entry found
+        if (false === $result) {
+            
+            // start QueryCache transaction
+            $this->_queryCache->startTransaction($objectId);
+        
+            $return = array();
+            $spoArrayCount = count($assocSPOArray);
+            $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
 
-        /**
-         * go through all entries to add them to title helper
-         */
-        if ($this->_titleHelperLimit >= $spoArrayCount) {
-            foreach($assocSPOArray as $mainKey => $entry) {
-                if (true === Erfurt_Uri::check($mainKey)) {
-                    $titleHelper->addResource($mainKey);
+            /**
+             * go through all entries to add them to title helper
+             */
+            if ($this->_titleHelperLimit >= $spoArrayCount) {
+                foreach($assocSPOArray as $mainKey => $entry) {
+                    if (true === Erfurt_Uri::check($mainKey)) {
+                        $titleHelper->addResource($mainKey);
+                    }
                 }
             }
-        }
 
-        /**
-         * enrich data with CubeViz specific stuff
-         */
-        foreach($assocSPOArray as $mainKey => $entry) {
+            /**
+             * enrich data with CubeViz specific stuff
+             */
+            foreach($assocSPOArray as $mainKey => $entry) {
 
-            // URI of the element
-            $entry ['__cv_uri'] = $mainKey;
+                // URI of the element
+                $entry ['__cv_uri'] = $mainKey;
 
-            // hashed URI of the element
-            $entry ['__cv_hashedUri'] = md5($mainKey);
+                // hashed URI of the element
+                $entry ['__cv_hashedUri'] = md5($mainKey);
 
-            if ($this->_titleHelperLimit >= $spoArrayCount) {
-                // Nice label using TitleHelper
-                $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
-            } else {
-                $entry ['__cv_niceLabel'] = $mainKey;
-            }
+                if ($this->_titleHelperLimit >= $spoArrayCount) {
+                    // Nice label using TitleHelper
+                    $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
+                } else {
+                    $entry ['__cv_niceLabel'] = $mainKey;
+                }
 
-            // Comment
-            if (true === isset($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
-                && true === is_string($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
-                && 0 < strlen ($entry['http://www.w3.org/2000/01/rdf-schema#comment'])) {
-                $entry ['__cv_description'] = $entry['http://www.w3.org/2000/01/rdf-schema#comment'];
-            } else { 
-                $entry ['__cv_description'] = '';
+                // Comment
+                if (true === isset($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
+                    && true === is_string($entry['http://www.w3.org/2000/01/rdf-schema#comment'])
+                    && 0 < strlen ($entry['http://www.w3.org/2000/01/rdf-schema#comment'])) {
+                    $entry ['__cv_description'] = $entry['http://www.w3.org/2000/01/rdf-schema#comment'];
+                } else { 
+                    $entry ['__cv_description'] = '';
+                }
+                
+                $return [] = $entry;
             }
             
-            $return [] = $entry;
+            // end the QueryCache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
         
         return $return;
@@ -120,71 +153,91 @@ class DataCube_Query
 
     /**
      * Transforms a given SPARQL result of Erfurt into an associative array.
-     * @param $result SPARQL result
+     * @param $spoResult SPARQL result
      * @param $mainKey Name of the subject whichs groups all the entries
      * @param $pKey Name of the predicate
      * @param $oKey Name of the object
      * @result Array
      */
-    public function generateAssocSPOArrayFromSparqlResult($result, $mainKey, $pKey, $oKey) 
+    public function generateAssocSPOArrayFromSparqlResult($spoResult, $mainKey, $pKey, $oKey) 
     {
-        $return = array();
-        $latestMainKey = '';
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . json_encode($spoResult));
+        
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+        
+        // no cache entry found
+        if (false === $result) {
+            
+            // start QueryCache transaction
+            $this->_queryCache->startTransaction($objectId);
+        
+            $return = array();
+            $latestMainKey = '';
 
-        /**
-         *
-         */
-        foreach ($result as $entry) {
-            // same main key as before
-            if($latestMainKey == $entry[$mainKey]) {
+            /**
+             *
+             */
+            foreach ($spoResult as $entry) {
+                // same main key as before
+                if($latestMainKey == $entry[$mainKey]) {
 
-            // main key differs
-            } elseif ($latestMainKey == $entry[$mainKey]) {
-                $latestMainKey = $entry[$mainKey];
-                $return [$latestMainKey] = array();
+                // main key differs
+                } elseif ($latestMainKey == $entry[$mainKey]) {
+                    $latestMainKey = $entry[$mainKey];
+                    $return [$latestMainKey] = array();
 
-            // at the start ($latestDsd is empty)
-            } else {
-                $latestMainKey = $entry[$mainKey];
-                $return [$latestMainKey] = array();
-            }
-
-            if (true === isset($entry[$pKey])) {
-                /**
-                 * [2]=>
-                 *     array(3) {
-                 *       ["dsd"]=>
-                 *       string(39) "http://data.lod2.eu/scoreboard/dsd/year"
-                 *       ["p"]=>
-                 *       string(42) "http://purl.org/linked-data/cube#component"
-                 *       ["o"]=>
-                 *       string(41) "http://data.lod2.eu/scoreboard/cs/country"
-                 *     }
-                 */                
-                // = http://purl.org/linked-data/cube#component
-                $predicateValue = $entry[$pKey]; 
-
-                // = http://data.lod2.eu/scoreboard/cs/country
-                $objectValue = true === isset($entry[$oKey]) ? $entry[$oKey] : '';
-
-                // for the given predicate there is no object set yet
-                if (false === isset($return [$latestMainKey][$predicateValue])) {
-                    $return [$latestMainKey][$predicateValue] = $objectValue;
-                
-                // there are multiple entries for the same predicate
-                } else if (true === is_array($return [$latestMainKey][$predicateValue])) {
-                    $return [$latestMainKey][$predicateValue][] = $objectValue;
-                
-                // there was an object set before, but it was a string
-                // now transform it into an array
+                // at the start ($latestDsd is empty)
                 } else {
-                    $return [$latestMainKey][$predicateValue] = array (
-                        $return [$latestMainKey][$predicateValue],
-                        $objectValue
-                    );
+                    $latestMainKey = $entry[$mainKey];
+                    $return [$latestMainKey] = array();
+                }
+
+                if (true === isset($entry[$pKey])) {
+                    /**
+                     * [2]=>
+                     *     array(3) {
+                     *       ["dsd"]=>
+                     *       string(39) "http://data.lod2.eu/scoreboard/dsd/year"
+                     *       ["p"]=>
+                     *       string(42) "http://purl.org/linked-data/cube#component"
+                     *       ["o"]=>
+                     *       string(41) "http://data.lod2.eu/scoreboard/cs/country"
+                     *     }
+                     */                
+                    // = http://purl.org/linked-data/cube#component
+                    $predicateValue = $entry[$pKey]; 
+
+                    // = http://data.lod2.eu/scoreboard/cs/country
+                    $objectValue = true === isset($entry[$oKey]) ? $entry[$oKey] : '';
+
+                    // for the given predicate there is no object set yet
+                    if (false === isset($return [$latestMainKey][$predicateValue])) {
+                        $return [$latestMainKey][$predicateValue] = $objectValue;
+                    
+                    // there are multiple entries for the same predicate
+                    } else if (true === is_array($return [$latestMainKey][$predicateValue])) {
+                        $return [$latestMainKey][$predicateValue][] = $objectValue;
+                    
+                    // there was an object set before, but it was a string
+                    // now transform it into an array
+                    } else {
+                        $return [$latestMainKey][$predicateValue] = array (
+                            $return [$latestMainKey][$predicateValue],
+                            $objectValue
+                        );
+                    }
                 }
             }
+            
+            // end the QueryCache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
+        
         return $return;
     }
     
@@ -266,36 +319,53 @@ class DataCube_Query
             }
         }
         
-        $result = $this->getCachedResult ($sparql);
-  
-        // generate associative array
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
         
-        // enrich array with CubeViz sugar
-        $result = $this->enrichResult($result);
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
 
-        // sort by label
-        usort ( 
-            $result, 
-            function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
-        );
+        if (false === $result) {
         
-        /**
-         * add component elements, if component type is NOT measure
-         */
-        $tmp = $result;
-        $result = array();
-        
-        foreach ($tmp as $component) {
+            $this->_queryCache->startTransaction($objectId);
+    
+            $result = $this->_model->sparqlQuery($sparql);
+      
+            // generate associative array
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'comp', 'p', 'o');
             
-            // if not measure
-            if ($componentType != DataCube_UriOf::Measure) {
-                $component ['__cv_elements'] = $this->getComponentElements(
-                    $dsUri, $component[$componentType]
-                );
-            }
+            // enrich array with CubeViz sugar
+            $result = $this->enrichResult($result);
+
+            // sort by label
+            usort ( 
+                $result, 
+                function ($a, $b) { return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); } 
+            );
             
-            $result [$component['__cv_uri']] = $component;
+            /**
+             * add component elements, if component type is NOT measure
+             */
+            $tmp = $result;
+            $result = array();
+            
+            foreach ($tmp as $component) {
+                
+                // if not measure
+                if ($componentType != DataCube_UriOf::Measure) {
+                    $component ['__cv_elements'] = $this->getComponentElements(
+                        $dsUri, $component[$componentType]
+                    );
+                }
+                
+                $result [$component['__cv_uri']] = $component;
+            }            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
         
         return $result;
@@ -309,8 +379,7 @@ class DataCube_Query
      */
     public function getComponentElements($dataSetUri, $componentProperty) 
     {
-        $result = $this->getCachedResult (
-           'SELECT DISTINCT ?componentUri ?p ?o 
+        $sparql = 'SELECT DISTINCT ?componentUri ?p ?o 
             WHERE {
                 ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::Observation.'>.
              
@@ -321,43 +390,34 @@ class DataCube_Query
                 OPTIONAL {
                     ?componentUri ?p ?o.
                 }
-            }'
-        );
+            }';
+            
         
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
-
-        $result = $this->enrichResult($result);
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
         
-        return $result;
-    }
-    
-    /**
-     * Executes the given sparql using Erfurt Object- and Querycache.
-     * @param $sparql string SPARQL query to execute
-     * @return array Result of the query
-     */
-    public function getCachedResult($sparql)
-    {
-        $hashedSparql = md5($this->_model->getModelIri() . $sparql);
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
         
-        $result = $this->_objectCache->load($hashedSparql);
-        
-        // if nothing is in the cache
         if (false === $result) {
-            
-            $this->_queryCache->startTransaction($hashedSparql);
-            
+
+            $this->_queryCache->startTransaction($objectId);
+    
             $result = $this->_model->sparqlQuery($sparql);
             
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
+
+            $result = $this->enrichResult($result);
+            
             // close the object cache transaction
-            $this->_queryCache->endTransaction($hashedSparql);
+            $this->_queryCache->endTransaction($objectId);
             
             // save the result value in the object cache
-            $this->_objectCache->save($result, $hashedSparql);
+            $this->_objectCache->save($result, $objectId);
         }
         
         return $result;
-    }    
+    }
     
     /**
      * 
@@ -365,7 +425,7 @@ class DataCube_Query
      */
     public function getComponentElementCount($dsUri, $componentProperty) {
 
-        return count ( $this->getComponentElements ( $dsUri, $componentProperty ) );
+        return count ($this->getComponentElements ($dsUri, $componentProperty));
     }
     
     /**
@@ -375,34 +435,52 @@ class DataCube_Query
     public function getDataStructureDefinitions ()
     {
         // get all data structure definitions from the store for this particular model
-        $result = $this->getCachedResult (
-           'SELECT DISTINCT ?dsd ?p ?o 
+        $sparql = 'SELECT DISTINCT ?dsd ?p ?o 
             WHERE {
                 ?dsd ?p ?o.
                 ?dsd <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'>. 
-            }'
-        );
+            }';
+            
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model . $sparql);
         
-        // generate an associated array where dsd is mainkey and using p and o for the rest
-        // Example:
-        // [1]=>
-        //      array(5) {
-        //        ["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]=>
-        //        string(56) "http://purl.org/linked-data/cube#DataStructureDefinition"
-        //        ["http://www.w3.org/2000/01/rdf-schema#label"]=>
-        //        string(13) "per Indicator"
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'dsd', 'p', 'o');
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
         
-        // enrich generated array with CubeViz sugar
-        // Example:
-        //      ["__cv_uri"]       => string(44) "http://data.lod2.eu/scoreboard/dsd/indicator"
-        //      ["__cv_niceLabel"] => string(13) "per Indicator"
-        $result = $this->enrichResult($result);
+        if (false === $result) {
         
-        // sort by label
-        usort ($result, function ($a, $b) { 
-            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
-        }); 
+            $this->_queryCache->startTransaction($objectId);
+            
+            // execute sparql
+            $result = $this->_model->sparqlQuery($sparql);
+        
+            // generate an associated array where dsd is mainkey and using p and o for the rest
+            // Example:
+            // [1]=>
+            //      array(5) {
+            //        ["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]=>
+            //        string(56) "http://purl.org/linked-data/cube#DataStructureDefinition"
+            //        ["http://www.w3.org/2000/01/rdf-schema#label"]=>
+            //        string(13) "per Indicator"
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'dsd', 'p', 'o');
+            
+            // enrich generated array with CubeViz sugar
+            // Example:
+            //      ["__cv_uri"]       => string(44) "http://data.lod2.eu/scoreboard/dsd/indicator"
+            //      ["__cv_niceLabel"] => string(13) "per Indicator"
+            $result = $this->enrichResult($result);
+            
+            // sort by label
+            usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            }); 
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
+        }
         
         return $result;
     }  
@@ -421,25 +499,45 @@ class DataCube_Query
             $dsdPart = '';
         }
         
-        $result = $this->getCachedResult (
-           'SELECT ?ds ?p ?o 
+        $sparql = 'SELECT ?ds ?p ?o 
             WHERE {
                 ?ds <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::DataSet.'>. '. 
                 $dsdPart 
                 .'?ds ?p ?o.
-            }'
-        );
+            }';
+            
         
-        // generate an associated array where ds is mainkey and using p and o for the rest
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'ds', 'p', 'o');
-        
-        // enrich generated array with CubeViz sugar
-        $result = $this->enrichResult($result);
-        
-        // sort by label
-        usort ($result, function ($a, $b) { 
-            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
-        }); 
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
+            
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            // generate an associated array where ds is mainkey and using p and o for the rest
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'ds', 'p', 'o');
+            
+            // enrich generated array with CubeViz sugar
+            $result = $this->enrichResult($result);
+            
+            // sort by label
+            usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            }); 
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
+        }
         
         return $result;
     }
@@ -450,8 +548,7 @@ class DataCube_Query
      */
     public function getNumberOfUsedAndValidObservations () 
     {        
-        $result = $this->getCachedResult (
-           'PREFIX qb:<http://purl.org/linked-data/cube#>
+        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
             SELECT DISTINCT ?observation
             WHERE { 
                 ?observation a qb:Observation . 
@@ -465,16 +562,38 @@ class DataCube_Query
                 ?measurespecification a qb:ComponentSpecification . 
                 ?measurespecification qb:measure ?measure . 
             }
-            LIMIT 100000;
-        ');
+            LIMIT 1000;';
         
-        $list = array();
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
+            
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            $list = array();
         
-        foreach ($result as $entry) {
-            $list [$entry ['observation']] = 0;
+            foreach ($result as $entry) {
+                $list [$entry ['observation']] = 0;
+            }
+            
+            $result = count (array_keys ($list));
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
         
-        return count (array_keys ($list));
+        return $result;
     }
        
     /**
@@ -484,74 +603,96 @@ class DataCube_Query
      */
     public function getObservations ($dataSetUrl, $selectedComponentDimensions) 
     {
-        /**
-         * Fill SimpleQuery object with live!
-         */
-        $queryObject = new Erfurt_Sparql_SimpleQuery();
-        
-        // CONSTRUCT
-        $queryObject->setProloguePart('SELECT ?s ?p ?o');
-    
-        // FROM
-        $queryObject->setFrom(array ($this->_model->getModelIri()));
-        
-        // WHERE
-        $where = 'WHERE { ' ."\n" .'
-            ?s ?p ?o .' ."\n" .'
-            ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
-            ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
-        
-        // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
-        $i = 0;
-        foreach ( $selectedComponentDimensions as $dimension ) {
+        // generate unique hash using given result and model uri
+        $objectId = md5(
+            $this->_model->getModelIri()
+            . $dataSetUrl
+            . json_encode($selectedComponentDimensions)
+        );
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
             
-            if (0 < count ($dimension ['__cv_elements'])) {
-                $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+            
+            /**
+             * Fill SimpleQuery object with live!
+             */
+            $queryObject = new Erfurt_Sparql_SimpleQuery();
+            
+            // CONSTRUCT
+            $queryObject->setProloguePart('SELECT ?s ?p ?o');
+        
+            // FROM
+            $queryObject->setFrom(array ($this->_model->getModelIri()));
+            
+            // WHERE
+            $where = 'WHERE { ' ."\n" .'
+                ?s ?p ?o .' ."\n" .'
+                ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::Observation.'> .' . "\n".'
+                ?s <'.DataCube_UriOf::DataSetRelation.'> <'.$dataSetUrl.'> .' ."\n";
+            
+            // Set selected properties (e.g. ?s <http://data.lod2.eu/scoreboard/properties/year> ?d0 .)
+            $i = 0;
+            foreach ( $selectedComponentDimensions as $dimension ) {
+                
+                if (0 < count ($dimension ['__cv_elements'])) {
+                    $where .= ' ?s <'. $dimension [DataCube_UriOf::Dimension] .'> ?d'. $i++ .' .'. "\n";
+                }
             }
-        }
-        
-        // Set FILTER
-        // e.g.: FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002")
-        // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
-        //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
-        $i = 0;
-        foreach ( $selectedComponentDimensions as $dimension ) 
-        {
-            $dimensionElements = $dimension ['__cv_elements'];
             
-            if (0 < count ($dimensionElements)) {
-            
-                $filter = array ();
-            
-                foreach ($dimensionElements as $elementUri => $element) {
-                    
-                    // If __cv_uri is set and an URL
-                    if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
-                        $value = '<'. $element ['__cv_uri'] .'>';
-                    } else {
-                        $value = '"'. $element ['__cv_niceLabel'] .'"';
+            // Set FILTER
+            // e.g.: FILTER (?d1 = "2003" OR ?d1 = "2001" OR ?d1 = "2002")
+            // e.g. 2: FILTER ( ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_fcov_RURAL_POP__pop> OR 
+            //                  ?d0 = <http://data.lod2.eu/scoreboard/indicators/bb_lines_TOTAL_FBB_nbr_lines> )
+            $i = 0;
+            foreach ( $selectedComponentDimensions as $dimension ) 
+            {
+                $dimensionElements = $dimension ['__cv_elements'];
+                
+                if (0 < count ($dimensionElements)) {
+                
+                    $filter = array ();
+                
+                    foreach ($dimensionElements as $elementUri => $element) {
+                        
+                        // If __cv_uri is set and an URL
+                        if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
+                            $value = '<'. $element ['__cv_uri'] .'>';
+                        } else {
+                            $value = '"'. $element ['__cv_niceLabel'] .'"';
+                        }
+                        
+                        $filter [] = ' ?d'. $i .' = '. $value .' ';
                     }
                     
-                    $filter [] = ' ?d'. $i .' = '. $value .' ';
+                    $i++;
+                    $where .= ' FILTER (' . implode ( 'OR', $filter ) .') ' . "\n";
                 }
-                
-                $i++;
-                $where .= ' FILTER (' . implode ( 'OR', $filter ) .') ' . "\n";
             }
+            
+            $where .= '}';    
+            
+            $queryObject->setWherePart($where);
+            
+            $result = $this->_model->sparqlQuery((string) $queryObject);
+            
+            // generate associative array out of given observation result
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
+            
+            // enrich data with CubeViz sugar
+            $result = $this->enrichResult($result);
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
-        
-        $where .= '}';    
-        
-        $queryObject->setWherePart($where);
-        
-        // execute generated query
-        $result = $this->getCachedResult ((string) $queryObject);
-        
-        // generate associative array out of given observation result
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
-        
-        // enrich data with CubeViz sugar
-        $result = $this->enrichResult($result);
         
         return $result;
     }
@@ -566,16 +707,13 @@ class DataCube_Query
     public function getSliceKeys($dsdUrl = '', $dsUrl = '') 
     {
         if ('' == $dsdUrl && '' == $dsUrl) {
-            $result = $this->getCachedResult (
-               'SELECT ?sliceKey ?p ?o
+            $sparql = 'SELECT ?sliceKey ?p ?o
                 WHERE {
                     ?dsdUrl <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
                     ?sliceKey ?p ?o.
-                }'
-            );
+                }';
         } else {
-            $result = $this->getCachedResult (
-               'SELECT ?sliceKey ?p ?o
+            $sparql = 'SELECT ?sliceKey ?p ?o
                 WHERE {
                     <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
 
@@ -584,30 +722,50 @@ class DataCube_Query
                     <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
 
                     ?sliceKey ?p ?o.
-                }'
-            );
+                }';
         }
         
-        // generate an associated array where ds is mainkey and using p and o for the rest
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
-        
-        // enrich generated array with CubeViz sugar
-        $result = $this->enrichResult($result);
-        
-        // sort by label
-        usort ($result, function ($a, $b) { 
-            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
-        });
-        
-        // set __cv_uri as array key and get slices for each slice key
-        $tmp = $result;
-        $result = array();
-        
-        foreach ($tmp as $entry) {
-            // get slices
-            $entry ['slices'] = $this->getSlices($entry['__cv_uri']);
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
             
-            $result [$entry['__cv_uri']] = $entry;
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            // generate an associated array where slicekey is mainkey and using p and o for the rest
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'sliceKey', 'p', 'o');
+            
+            // enrich generated array with CubeViz sugar
+            $result = $this->enrichResult($result);
+            
+            // sort by label
+            usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            });
+            
+            // set __cv_uri as array key and get slices for each slice key
+            $tmp = $result;
+            $result = array();
+            
+            foreach ($tmp as $entry) {
+                // get slices
+                $entry ['slices'] = $this->getSlices($entry['__cv_uri']);
+                
+                $result [$entry['__cv_uri']] = $entry;
+            }
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
         
         return $result;
@@ -621,16 +779,13 @@ class DataCube_Query
     public function getSlices($sliceKeyUrl = '') 
     {
         if ('' != $sliceKeyUrl) {
-            $result = $this->getCachedResult (
-               'SELECT ?slice ?p ?o
+            $sparql = 'SELECT ?slice ?p ?o
                 WHERE {
                     ?slice <'. DataCube_UriOf::SliceStructure .'> <'. $sliceKeyUrl .'> .
                     ?slice ?p ?o.
-                }'
-            );
+                }';
         } else {
-            $result = $this->getCachedResult(
-               'SELECT ?slice ?p ?o
+            $sparql = 'SELECT ?slice ?p ?o
                 WHERE {
                     {
                         ?slice ?p ?o.
@@ -641,27 +796,47 @@ class DataCube_Query
                         ?slice ?p ?o.
                         ?dataSet <'. DataCube_UriOf::Slice .'> ?slice .
                     }
-                }'
-            );
+                }';
         }
         
-        // generate an associated array where ds is mainkey and using p and o for the rest
-        $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'slice', 'p', 'o');
-        
-        // enrich generated array with CubeViz sugar
-        $result = $this->enrichResult($result);
-        
-        // sort by label
-        usort ($result, function ($a, $b) { 
-            return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
-        });
-        
-        // set __cv_uri as array key
-        $tmp = $result;
-        $result = array();
-        
-        foreach ($tmp as $entry) {
-            $result [$entry['__cv_uri']] = $entry;
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
+            
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            // generate an associated array where slice is mainkey and using p and o for the rest
+            $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'slice', 'p', 'o');
+            
+            // enrich generated array with CubeViz sugar
+            $result = $this->enrichResult($result);
+            
+            // sort by label
+            usort ($result, function ($a, $b) { 
+                return strcasecmp ($a['__cv_niceLabel'], $b['__cv_niceLabel']); 
+            });
+            
+            // set __cv_uri as array key
+            $tmp = $result;
+            $result = array();
+            
+            foreach ($tmp as $entry) {
+                $result [$entry['__cv_uri']] = $entry;
+            }
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
                 
         return $result;
@@ -673,41 +848,60 @@ class DataCube_Query
     public function getUnusedObservations () 
     {
         // get valid observations
-        $result = $this->getCachedResult ('
-            PREFIX qb:<http://purl.org/linked-data/cube#>
+        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
             SELECT DISTINCT ?observation
             WHERE { 
                 ?observation a qb:Observation . 
                 ?observation qb:dataSet ?dataset . 
                 ?dataset a qb:DataSet . 
             }
-            LIMIT 100000;
-        ');        
+            LIMIT 100000;';        
+    
+        // generate unique hash using given result and model uri
+        $objectId = md5($this->_model->getModelIri() . $sparql);
+
+        // check there is already a cached object for this hash
+        $result = $this->_objectCache->load($objectId);
+
+        if (false === $result) {
+
+            $this->_queryCache->startTransaction($objectId);
+            
+            
+            $result = $this->_model->sparqlQuery($sparql);
+            
+            $usedObservations = array();
         
-        $usedObservations = array();
-        
-        foreach ($result as $entry) {
-            $usedObservations [$entry ['observation']] = 0;
-        }
-        
-        $usedObservations = array_keys ($usedObservations);
-        
-        // get all observations
-        $result = $this->getCachedResult ('
-            PREFIX qb:<http://purl.org/linked-data/cube#>
-            SELECT DISTINCT ?observation
-            WHERE { 
-                ?observation a qb:Observation .
+            foreach ($result as $entry) {
+                $usedObservations [$entry ['observation']] = 0;
             }
-            LIMIT 100000;
-        ');
-        
-        $unusedObservations = array();
-        
-        foreach ($result as $entry) {
-            if (false === in_array ($entry['observation'], $usedObservations)) {
-                $unusedObservations [] = $entry ['observation'];
+            
+            $usedObservations = array_keys ($usedObservations);
+            
+            // get all observations
+            $result = $this->_model->sparqlQuery ('
+                PREFIX qb:<http://purl.org/linked-data/cube#>
+                SELECT DISTINCT ?observation
+                WHERE { 
+                    ?observation a qb:Observation .
+                }
+                LIMIT 100000;
+            ');
+            
+            $unusedObservations = array();
+            
+            foreach ($result as $entry) {
+                if (false === in_array ($entry['observation'], $usedObservations)) {
+                    $unusedObservations [] = $entry ['observation'];
+                }
             }
+            
+            
+            // close the object cache transaction
+            $this->_queryCache->endTransaction($objectId);
+            
+            // save the result value in the object cache
+            $this->_objectCache->save($result, $objectId);
         }
         
         return $unusedObservations;

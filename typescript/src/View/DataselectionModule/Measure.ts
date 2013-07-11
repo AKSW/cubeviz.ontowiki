@@ -119,7 +119,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
         
         // update link code        
         CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.data, "data",
+            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
             
             // based on updatedLinkCode, load new observations
             function(updatedDataHash){
@@ -130,7 +130,7 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                     function(newEntities){
                         
                         // save new observations
-                        self.app._.backend.retrievedObservations = newEntities;
+                        self.app._.data.retrievedObservations = newEntities;
                         
                         // trigger events
                         self.triggerGlobalEvent("onChange_selectedMeasure");

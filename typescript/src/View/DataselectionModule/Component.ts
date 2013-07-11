@@ -262,7 +262,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             
             // update link code        
             CubeViz_ConfigurationLink.save(
-                self.app._.backend.url, self.app._.data, "data",
+                self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
             
                 // based on updatedLinkCode, load new observations
                 function(updatedDataHash){
@@ -273,7 +273,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     
                     // update link code        
                     CubeViz_ConfigurationLink.save(
-                        self.app._.backend.url, self.app._.data, "data",
+                        self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
                         
                         // based on updatedLinkCode, load new observations
                         function(updatedDataHash){
@@ -284,7 +284,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                                 function(newEntities){
                                     
                                     // save new observations
-                                    self.app._.backend.retrievedObservations = newEntities;
+                                    self.app._.data.retrievedObservations = newEntities;
                                     
                                     CubeViz_View_Helper.hideLeftSidebarSpinner();
                                     
@@ -358,7 +358,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 
                 // update link code        
                 CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url, self.app._.data, "data",
+                    self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
                 
                     // based on updatedLinkCode, load new observations
                     function(updatedDataHash){
@@ -369,7 +369,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                         
                         // update link code        
                         CubeViz_ConfigurationLink.save(
-                            self.app._.backend.url, self.app._.data, "data",
+                            self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
                             
                             // based on updatedLinkCode, load new observations
                             function(updatedDataHash){
@@ -380,7 +380,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                                     function(newEntities){
                                         
                                         // save new observations
-                                        self.app._.backend.retrievedObservations = newEntities;
+                                        self.app._.data.retrievedObservations = newEntities;
                                         
                                         CubeViz_View_Helper.hideLeftSidebarSpinner();
                                         
@@ -606,7 +606,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 modifiedItemList = CubeViz_View_Helper.sortLiItemsByObservationCount(
                     listItems,
                     dimensionTypeUrl,
-                    this.app._.backend.retrievedObservations
+                    this.app._.data.retrievedObservations
                 );
                 break;
                 
@@ -704,7 +704,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         
         // update link code        
         CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.data, "data",
+            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
             
             // based on updatedLinkCode, load new observations
             function(updatedDataHash){
@@ -715,7 +715,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     function(newEntities){
                         
                         // save new observations
-                        self.app._.backend.retrievedObservations = newEntities;
+                        self.app._.data.retrievedObservations = newEntities;
                         
                         callback();
                     }
@@ -740,7 +740,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onComplete_loadObservations(event, updatedRetrievedObservations) 
     {
-        this.app._.backend.retrievedObservations = updatedRetrievedObservations;
+        this.app._.data.retrievedObservations = updatedRetrievedObservations;
     }
     
     /**
