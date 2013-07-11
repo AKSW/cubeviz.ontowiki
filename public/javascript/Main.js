@@ -1,6 +1,7 @@
 var CubeViz_ConfigurationLink = (function () {
     function CubeViz_ConfigurationLink() { }
-    CubeViz_ConfigurationLink.save = function save(url, modelIri, content, type, callback) {
+    CubeViz_ConfigurationLink.save = function save(url, modelIri, content, type, callback, useObservations) {
+        if (typeof useObservations === "undefined") { useObservations = false; }
         var oldAjaxSetup = $.ajaxSetup();
         var oldSupportOrs = $.support.cors;
 
@@ -15,7 +16,8 @@ var CubeViz_ConfigurationLink = (function () {
             "data": {
                 modelIri: modelIri,
                 stringifiedContent: JSON.stringify(content),
-                type: type
+                type: type,
+                useObservations: true === useObservations ? "true" : "false"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             $.ajaxSetup(oldAjaxSetup);
@@ -1044,15 +1046,23 @@ var DataCube_DataCubeMerger = (function () {
             }
         };
     }
-    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, retrievedObservations) {
-        retrievedObservations = $.parseJSON(JSON.stringify(retrievedObservations));
+    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, observations1, observations2, oldMeasureUri1, oldMeasureUri2) {
+        observations1 = $.parseJSON(JSON.stringify(observations1));
+        observations2 = $.parseJSON(JSON.stringify(observations2));
         var adaptedObservations = {
         };
         var i = 0;
 
-        retrievedObservations = retrievedObservations[1].concat(retrievedObservations[2]);
-        _.each(retrievedObservations, function (observation) {
+        _.each(observations1, function (observation) {
             observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
+            observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri1];
+            delete observation[oldMeasureUri1];
+            adaptedObservations[i++] = observation;
+        });
+        _.each(observations2, function (observation) {
+            observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
+            observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri2];
+            delete observation[oldMeasureUri2];
             adaptedObservations[i++] = observation;
         });
         return adaptedObservations;
@@ -1118,11 +1128,9 @@ var DataCube_DataCubeMerger = (function () {
     DataCube_DataCubeMerger.getSingleDimensions = function getSingleDimensions(equalDimensions) {
         var dimensions = {
         };
-        var i = 0;
-
         _.each(equalDimensions, function (dimensionPair) {
-            dimensions[i++] = dimensionPair[0];
-            dimensions[i++] = dimensionPair[1];
+            dimensions[dimensionPair[0].__cv_uri] = dimensionPair[0];
+            dimensions[dimensionPair[1].__cv_uri] = dimensionPair[1];
         });
         return dimensions;
     }
@@ -2063,7 +2071,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
-        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations);
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], measure1["http://purl.org/linked-data/cube#measure"], measure2["http://purl.org/linked-data/cube#measure"]);
         console.log("");
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");
@@ -2077,7 +2085,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             }
             href += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + generatedHash;
             $("#cubeviz-compare-visualizeLink").attr("href", href).show();
-        });
+        }, true);
         if(1 == _.size(this.app._.compareAction.equalDimensions)) {
         } else {
             if(2 == _.size(this.app._.compareAction.equalDimensions)) {

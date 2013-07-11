@@ -186,24 +186,53 @@ class DataCube_DataCubeMerger
     }
     
     /**
-     *
+     * Adapts observations and updates a couple of their relations.
+     * @param mergedDataCubeUri string
+     * @param observations1 any
+     * @param observations2 any
+     * @param oldMeasureUri1 string
+     * @param oldMeasureUri2 string
+     * @return any
      */
-    static buildRetrievedObservations(mergedDataCubeUri:string, retrievedObservations:any) : any
+    static buildRetrievedObservations(mergedDataCubeUri:string, observations1:any,
+        observations2:any, oldMeasureUri1:string, oldMeasureUri2:string) : any
     {
-        // create a real clone of retrieved observations list
-        retrievedObservations = $.parseJSON(JSON.stringify(retrievedObservations));
+        // create a real clone of retrieved observations lists
+        observations1 = $.parseJSON(JSON.stringify(observations1));
+        observations2 = $.parseJSON(JSON.stringify(observations2));
         
         var adaptedObservations:any = {},
             i:number = 0;
-            
-        retrievedObservations = retrievedObservations[1].concat (retrievedObservations[2]);
         
-        // go through all retrieved observations
-        _.each(retrievedObservations, function(observation){
+        // go through observations of dataset 1
+        _.each(observations1, function(observation){
             
             // update relation to dataset
             observation ["http://purl.org/linked-data/cube#dataSet"] =
                 mergedDataCubeUri + "dataset";
+            
+            // update relation to measure
+            observation [mergedDataCubeUri + "measure"] =
+                observation [oldMeasureUri1];
+                
+            delete observation [oldMeasureUri1];
+                
+            adaptedObservations[i++] = observation;
+        });
+        
+        // go through observations of dataset 2
+        _.each(observations2, function(observation){
+            
+            // update relation to dataset
+            observation ["http://purl.org/linked-data/cube#dataSet"] =
+                mergedDataCubeUri + "dataset";
+            
+            // update relation to measure
+            observation [mergedDataCubeUri + "measure"] =
+                observation [oldMeasureUri2];
+                
+            // remove old measure relation
+            delete observation [oldMeasureUri2];
                 
             adaptedObservations[i++] = observation;
         });
@@ -300,12 +329,11 @@ class DataCube_DataCubeMerger
      */
     static getSingleDimensions(equalDimensions:any[]) : any 
     {
-        var dimensions:any = {},
-            i:number = 0;
+        var dimensions:any = {};
         
         _.each(equalDimensions, function(dimensionPair){
-            dimensions[i++] = dimensionPair[0];
-            dimensions[i++] = dimensionPair[1];
+            dimensions[dimensionPair[0].__cv_uri] = dimensionPair[0];
+            dimensions[dimensionPair[1].__cv_uri] = dimensionPair[1];
         });
         
         return dimensions;

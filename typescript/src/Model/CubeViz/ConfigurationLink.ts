@@ -8,9 +8,12 @@ class CubeViz_ConfigurationLink
      * @param content Usally an object to save
      * @param type Determine if its "ui" or "data"
      * @param callback Function to call after saving is complete
+     * @param useObservations bool False, if CubeViz has to get observations by 
+     *                             itself, true, if it has to use your ones
      * @return void
      */
-    static save (url:string, modelIri:string, content:any, type:string, callback) : void
+    static save (url:string, modelIri:string, content:any, type:string, callback, 
+        useObservations:bool = false) : void
     {        
         // save current ajax setup
         var oldAjaxSetup = $.ajaxSetup(),
@@ -26,7 +29,8 @@ class CubeViz_ConfigurationLink
             "data": { 
                 modelIri: modelIri,
                 stringifiedContent: JSON.stringify(content),
-                type: type
+                type: type,
+                useObservations: true === useObservations ? "true" : "false"
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

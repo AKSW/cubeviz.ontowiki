@@ -130,7 +130,11 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
          * set retrieved observations
          */
         mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(
-            mergedDataCubeUri, this.app._.compareAction.retrievedObservations
+            mergedDataCubeUri, 
+            this.app._.compareAction.retrievedObservations[1],
+            this.app._.compareAction.retrievedObservations[2],
+            measure1["http://purl.org/linked-data/cube#measure"],
+            measure2["http://purl.org/linked-data/cube#measure"]
         );
         
         console.log("");
@@ -158,7 +162,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                     .attr ("href", href)
                     .show ();
                     
-            }
+            }, true
         );
         
         
