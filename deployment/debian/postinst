@@ -1,0 +1,10 @@
+#!/bin/sh -e
+# postinst script
+#
+# see: dh_installdeb(1)
+
+# this will force OntoWiki to reload all extensions
+rm -f /var/cache/ontowiki/zend_cache---OW_ow_extensionConfig
+
+#DEBHELPER#
+
