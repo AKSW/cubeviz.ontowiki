@@ -8,7 +8,7 @@ class CubeViz_Visualization_HighCharts_Chart
     /**
      *
      */
-    public handleExactlyOneOrTwoMultipleDimensions(selectedComponentDimensions:any,
+    public handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions:any,
         forXAxis:string, forSeries:string, selectedAttributeUri:string, 
         selectedMeasureUri:string, observation:DataCube_Observation ) : void 
     {
@@ -121,6 +121,104 @@ class CubeViz_Visualization_HighCharts_Chart
     }
     
     /**
+     *
+     */
+    public handleOnlyOneElementDimension(forSeries:string, selectedAttributeUri:string, 
+        selectedMeasureUri:string, observation:DataCube_Observation ) : void
+    {
+        var self = this,
+            seriesObservation:Object = null,
+            seriesDataList:number[] = [],
+            seriesElements:any = observation.getAxesElements(forSeries),
+            value:number = 0;
+            
+        // set xAxis categories
+        this.chartConfig.xAxis.categories = ["."];
+            
+        // set series elements
+        _.each(seriesElements, function(seriesElement){
+
+            seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
+            
+            // check if the current observation has to be ignored
+            // it will ignored, if attribute uri is set, but the observation
+            // has no value of it
+            if (false === _.isNull(selectedAttributeUri)
+                && 
+                ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                  || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                // TODO implement a way to handle ignored observations
+                return;
+            }
+            
+            // add entry on the y axis
+            self.chartConfig.series.push({
+                name: seriesElement.self.__cv_niceLabel,
+                data: [seriesObservation[selectedMeasureUri]]
+            });
+        });
+    }
+    
+    /**
+     * Only one dimension which is multiple:
+     * 
+     * Something like the following example will be generated:
+     * 
+     *  xAxis: {
+     *      categories: ["foo", "bar"]
+     *  }
+     * 
+     *  series: [{
+     *      name: ".",
+     *      data: [10, 20]
+     *  }]
+     */
+    public handleOnlyOneMultipleDimension(forXAxis:string, selectedAttributeUri:string, 
+        selectedMeasureUri:string, observation:DataCube_Observation ) : void
+    {
+        var self = this,
+            seriesObservation:Object = null,
+            seriesDataList:number[] = [],
+            xAxisElements:any = observation.getAxesElements(forXAxis),
+            value:any = 0;
+            
+        _.each(xAxisElements, function(xAxisElement){
+            
+            seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+            
+            value = DataCube_Observation.parseValue (seriesObservation [selectedMeasureUri]);
+            
+            if (false === value)
+                return;
+            
+            // check if the current observation has to be ignored
+            // it will ignored, if attribute uri is set, but the observation
+            // has no value of it
+            if (false === _.isNull(selectedAttributeUri)
+                && 
+                ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                  || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                // TODO implement a way to handle ignored observations
+                return;
+            }
+            
+            // add entry on the y axis
+            self.chartConfig.xAxis.categories.push(
+                xAxisElement.self.__cv_niceLabel
+            );
+            
+            // save related value
+            seriesDataList.push(value);
+        });
+        
+        // set series element
+        this.chartConfig.series = [{
+            name: ".",
+            data: seriesDataList
+        }];
+    }
+    
+    /**
      * Initialize a chart instance.
      * @param chartConfig Related chart configuration
      * @param retrievedObservations Array of retrieved observations 
@@ -221,13 +319,13 @@ class CubeViz_Visualization_HighCharts_Chart
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
 
         /**
-         * Check if there are exactly one or two multiple dimensions
+         * Check if there are two dimensions with at least one dimension element.
          * If both forXAxis and forSeries strings are not blank, than you have 
          * two multiple dimensions
          */
         if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
                 
-            this.handleExactlyOneOrTwoMultipleDimensions(
+            this.handleTwoDimensionsWithAtLeastOneDimensionElement(
                 selectedComponentDimensions, 
                 forXAxis,
                 forSeries,
@@ -240,6 +338,8 @@ class CubeViz_Visualization_HighCharts_Chart
         } else if (false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
 
             /**
+             * Only one dimension which is multiple:
+             * 
              * Something like the following example will be generated:
              * 
              *  xAxis: {
@@ -253,45 +353,12 @@ class CubeViz_Visualization_HighCharts_Chart
              */
             if (false === _.str.isBlank(forXAxis)) {
                
-                var seriesObservation:Object = null,
-                    seriesDataList:number[] = [],
-                    xAxisElements:any = observation.getAxesElements(forXAxis),
-                    value:any = 0;
-                    
-                _.each(xAxisElements, function(xAxisElement){
-                    
-                    seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
-                    
-                    value = DataCube_Observation.parseValue (seriesObservation [selectedMeasureUri]);
-                    
-                    if (false === value)
-                        return;
-                    
-                    // check if the current observation has to be ignored
-                    // it will ignored, if attribute uri is set, but the observation
-                    // has no value of it
-                    if (false === _.isNull(selectedAttributeUri)
-                        && 
-                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
-                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
-                        // TODO implement a way to handle ignored observations
-                        return;
-                    }
-                    
-                    // add entry on the y axis
-                    self.chartConfig.xAxis.categories.push(
-                        xAxisElement.self.__cv_niceLabel
-                    );
-                    
-                    // save related value
-                    seriesDataList.push(value);
-                });
-                
-                // set series element
-                this.chartConfig.series = [{
-                    name: ".",
-                    data: seriesDataList
-                }];
+                this.handleOnlyOneMultipleDimension(
+                    forXAxis, 
+                    selectedAttributeUri, 
+                    selectedMeasureUri, 
+                    observation
+                );
                
             /**
              * Something like the following example will be generated:
@@ -310,36 +377,12 @@ class CubeViz_Visualization_HighCharts_Chart
              */
             } else {
                 
-                var seriesObservation:Object = null,
-                    seriesDataList:number[] = [],
-                    seriesElements:any = observation.getAxesElements(forSeries),
-                    value:number = 0;
-                    
-                // set xAxis categories
-                this.chartConfig.xAxis.categories = ["."];
-                    
-                // set series elements
-                _.each(seriesElements, function(seriesElement){
-
-                    seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
-                    
-                    // check if the current observation has to be ignored
-                    // it will ignored, if attribute uri is set, but the observation
-                    // has no value of it
-                    if (false === _.isNull(selectedAttributeUri)
-                        && 
-                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
-                          || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
-                        // TODO implement a way to handle ignored observations
-                        return;
-                    }
-                    
-                    // add entry on the y axis
-                    self.chartConfig.series.push({
-                        name: seriesElement.self.__cv_niceLabel,
-                        data: [seriesObservation[selectedMeasureUri]]
-                    });
-                });
+                this.handleOnlyOneElementDimension (
+                    forSeries, 
+                    selectedAttributeUri, 
+                    selectedMeasureUri, 
+                    observation
+                );
             }
         }
         

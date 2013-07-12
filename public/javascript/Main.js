@@ -580,7 +580,7 @@ var CubeViz_Visualization_HighCharts = (function (_super) {
 })(CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
-    CubeViz_Visualization_HighCharts_Chart.prototype.handleExactlyOneOrTwoMultipleDimensions = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleTwoDimensionsWithAtLeastOneDimensionElement = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
         var categoriesElementAssign = {
         };
         var i = 0;
@@ -637,6 +637,55 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 self.chartConfig.series.push(obj);
             }
         });
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneElementDimension = function (forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
+        var self = this;
+        var seriesObservation = null;
+        var seriesDataList = [];
+        var seriesElements = observation.getAxesElements(forSeries);
+        var value = 0;
+
+        this.chartConfig.xAxis.categories = [
+            "."
+        ];
+        _.each(seriesElements, function (seriesElement) {
+            seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
+            if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
+                return;
+            }
+            self.chartConfig.series.push({
+                name: seriesElement.self.__cv_niceLabel,
+                data: [
+                    seriesObservation[selectedMeasureUri]
+                ]
+            });
+        });
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observation) {
+        var self = this;
+        var seriesObservation = null;
+        var seriesDataList = [];
+        var xAxisElements = observation.getAxesElements(forXAxis);
+        var value = 0;
+
+        _.each(xAxisElements, function (xAxisElement) {
+            seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+            value = DataCube_Observation.parseValue(seriesObservation[selectedMeasureUri]);
+            if(false === value) {
+                return;
+            }
+            if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
+                return;
+            }
+            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+            seriesDataList.push(value);
+        });
+        this.chartConfig.series = [
+            {
+                name: ".",
+                data: seriesDataList
+            }
+        ];
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri, selectedAttributeUri) {
         var diff = 0;
@@ -696,54 +745,13 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            this.handleExactlyOneOrTwoMultipleDimensions(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation);
+            this.handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation);
         } else {
             if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
                 if(false === _.str.isBlank(forXAxis)) {
-                    var seriesObservation = null;
-                    var seriesDataList = [];
-                    var xAxisElements = observation.getAxesElements(forXAxis);
-                    var value = 0;
-
-                    _.each(xAxisElements, function (xAxisElement) {
-                        seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
-                        value = DataCube_Observation.parseValue(seriesObservation[selectedMeasureUri]);
-                        if(false === value) {
-                            return;
-                        }
-                        if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            return;
-                        }
-                        self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-                        seriesDataList.push(value);
-                    });
-                    this.chartConfig.series = [
-                        {
-                            name: ".",
-                            data: seriesDataList
-                        }
-                    ];
+                    this.handleOnlyOneMultipleDimension(forXAxis, selectedAttributeUri, selectedMeasureUri, observation);
                 } else {
-                    var seriesObservation = null;
-                    var seriesDataList = [];
-                    var seriesElements = observation.getAxesElements(forSeries);
-                    var value = 0;
-
-                    this.chartConfig.xAxis.categories = [
-                        "."
-                    ];
-                    _.each(seriesElements, function (seriesElement) {
-                        seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
-                        if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            return;
-                        }
-                        self.chartConfig.series.push({
-                            name: seriesElement.self.__cv_niceLabel,
-                            data: [
-                                seriesObservation[selectedMeasureUri]
-                            ]
-                        });
-                    });
+                    this.handleOnlyOneElementDimension(forSeries, selectedAttributeUri, selectedMeasureUri, observation);
                 }
             }
         }
