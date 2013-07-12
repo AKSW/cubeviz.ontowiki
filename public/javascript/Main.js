@@ -1098,27 +1098,38 @@ var DataCube_DataCubeMerger = (function () {
             }
         };
     }
-    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, observations1, observations2, oldMeasureUri1, oldMeasureUri2, dimensionUri1, dimensionUri2, i) {
+    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, observations1, observations2, oldMeasureUri1, oldMeasureUri2, dimension1, dimension2, i) {
         observations1 = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         var adaptedObservations = {
         };
+        var adaptedDimensionElementUri = "";
         var j = 0;
 
         _.each(observations1, function (observation) {
             observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
             observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri1];
             delete observation[oldMeasureUri1];
-            observation[mergedDataCubeUri + "dimension" + i] = observation[dimensionUri1];
-            delete observation[dimensionUri1];
+            _.each(dimension1.__cv_elements, function (element) {
+                if(element["http://purl.org/dc/terms/source"] == observation[dimension1["http://purl.org/linked-data/cube#dimension"]]) {
+                    adaptedDimensionElementUri = element.__cv_uri;
+                }
+            });
+            observation[mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
+            delete observation[dimension1.__cv_uri];
             adaptedObservations[j++] = observation;
         });
         _.each(observations2, function (observation) {
             observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
             observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri2];
             delete observation[oldMeasureUri2];
-            observation[mergedDataCubeUri + "dimension" + i] = observation[dimensionUri2];
-            delete observation[dimensionUri2];
+            _.each(dimension2.__cv_elements, function (element) {
+                if(element["http://purl.org/dc/terms/source"] == observation[dimension2["http://purl.org/linked-data/cube#dimension"]]) {
+                    adaptedDimensionElementUri = element.__cv_uri;
+                }
+            });
+            observation[mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
+            delete observation[dimension2["http://purl.org/linked-data/cube#dimension"]];
             adaptedObservations[j++] = observation;
         });
         return adaptedObservations;
@@ -2119,7 +2130,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
         if(1 == _.size(this.app._.compareAction.equalDimensions)) {
-            mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], measure1["http://purl.org/linked-data/cube#measure"], measure2["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.equalDimensions[0][0]["http://purl.org/linked-data/cube#dimension"], this.app._.compareAction.equalDimensions[0][1]["http://purl.org/linked-data/cube#dimension"], 0);
+            mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], measure1["http://purl.org/linked-data/cube#measure"], measure2["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.equalDimensions[0][0], this.app._.compareAction.equalDimensions[0][1], 0);
         } else {
             if(2 == _.size(this.app._.compareAction.equalDimensions)) {
             } else {

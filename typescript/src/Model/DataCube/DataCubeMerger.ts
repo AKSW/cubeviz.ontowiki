@@ -266,17 +266,21 @@ class DataCube_DataCubeMerger
      * @param observations2 any
      * @param oldMeasureUri1 string
      * @param oldMeasureUri2 string
+     * @param dimension1 any
+     * @param dimension2 any
+     * @param i number
      * @return any
      */
     static buildRetrievedObservations(mergedDataCubeUri:string, observations1:any,
         observations2:any, oldMeasureUri1:string, oldMeasureUri2:string,
-        dimensionUri1:string, dimensionUri2:string, i:number) : any
+        dimension1:any, dimension2:any, i:number) : any
     {
         // create a real clone of retrieved observations lists
         observations1 = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         
         var adaptedObservations:any = {},
+            adaptedDimensionElementUri:string = "",
             j:number = 0;
         
         // go through observations of dataset 1
@@ -291,8 +295,14 @@ class DataCube_DataCubeMerger
             delete observation [oldMeasureUri1];
             
             // replace relation to old equal dimension1
-            observation [mergedDataCubeUri + "dimension" + i] = observation [dimensionUri1];
-            delete observation [dimensionUri1];
+            _.each (dimension1.__cv_elements, function(element){
+                if (element["http://purl.org/dc/terms/source"] == observation [dimension1["http://purl.org/linked-data/cube#dimension"]]) {
+                    adaptedDimensionElementUri = element.__cv_uri;
+                }
+            });
+            observation [mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
+            
+            delete observation [dimension1.__cv_uri];
                 
             adaptedObservations[j++] = observation;
         });
@@ -308,9 +318,16 @@ class DataCube_DataCubeMerger
             observation [mergedDataCubeUri + "measure"] = observation [oldMeasureUri2];
             delete observation [oldMeasureUri2];
             
-            // replace relation to old equal dimension1
-            observation [mergedDataCubeUri + "dimension" + i] = observation [dimensionUri2];
-            delete observation [dimensionUri2];
+            // replace relation to old equal dimension2
+            _.each (dimension2.__cv_elements, function(element){
+                if (element["http://purl.org/dc/terms/source"] == observation [dimension2["http://purl.org/linked-data/cube#dimension"]]) {
+                    adaptedDimensionElementUri = element.__cv_uri;
+                }
+            });
+            
+            observation [mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
+            
+            delete observation [dimension2["http://purl.org/linked-data/cube#dimension"]];
                 
             adaptedObservations[j++] = observation;
         });

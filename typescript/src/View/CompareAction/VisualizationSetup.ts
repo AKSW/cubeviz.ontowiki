@@ -139,8 +139,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 this.app._.compareAction.retrievedObservations[2],
                 measure1["http://purl.org/linked-data/cube#measure"],
                 measure2["http://purl.org/linked-data/cube#measure"],
-                this.app._.compareAction.equalDimensions[0][0]["http://purl.org/linked-data/cube#dimension"],
-                this.app._.compareAction.equalDimensions[0][1]["http://purl.org/linked-data/cube#dimension"],
+                this.app._.compareAction.equalDimensions[0][0],
+                this.app._.compareAction.equalDimensions[0][1],
                 0
             );
             // TODO adapt to enable more than one equal dimension
