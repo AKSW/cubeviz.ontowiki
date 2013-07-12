@@ -6,6 +6,121 @@ class CubeViz_Visualization_HighCharts_Chart
     public chartConfig:any;
     
     /**
+     *
+     */
+    public handleExactlyOneOrTwoMultipleDimensions(selectedComponentDimensions:any,
+        forXAxis:string, forSeries:string, selectedAttributeUri:string, 
+        selectedMeasureUri:string, observation:DataCube_Observation ) : void 
+    {
+        var categoriesElementAssign = {},
+            i:number = 0,
+            self = this,
+            xAxisElements:any = observation.getAxesElements(forXAxis);
+        
+        /**
+         * put labels for properties to the axis (categories)
+         */
+        _.each(xAxisElements, function(xAxisElement){
+            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+            categoriesElementAssign [xAxisElement.self.__cv_uri] = i++;
+        });
+        
+        /**
+         * collect URI's of selected dimensions
+         */
+        var selectedDimensionPropertyUris:string[] = [];
+        
+        _.each(selectedComponentDimensions, function(dimension){
+            selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
+        });
+        
+        /**
+         * now we take care about the series
+         */
+        var obj:any = {},
+            seriesElements:any = observation.getAxesElements(forSeries),
+            uriCombination:string = "",
+            usedDimensionElementCombinations:any = {};
+            
+        self.chartConfig.series = [];
+
+        _.each(seriesElements, function(seriesElement){
+            
+            // this represents one item of the series array (of highcharts)
+            obj = { 
+                color: CubeViz_Visualization_Controller.getColor(
+                    seriesElement.self.__cv_uri
+                ),
+                data: [],
+                name: seriesElement.self.__cv_niceLabel,
+                __cv_uri: seriesElement.self.__cv_uri
+            };
+            
+            // fill data properties with as many null values as categories are
+            for (i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
+                obj.data.push (null);
+            }
+            
+            // go through all observations associated with this seriesElement
+            // and add their values (measure) if set
+            _.each(seriesElement.observations, function(seriesObservation){
+                
+                // check if the current observation has to be ignored:
+                // it will ignored, 
+                //      if attribute uri is set, but the observation
+                //      has no value of it
+                // and
+                //      if the predicate which is labeled with DataCube's 
+                //      attribute is not equal to the given selected attribute uri
+                if ((   false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation [selectedAttributeUri])))
+                    && 
+                        selectedAttributeUri !== seriesObservation ["http://purl.org/linked-data/cube#attribute"]) {
+                    // TODO implement a way to handle ignored observations
+                    return;
+                }
+                
+                /**
+                 * check if the combination of dimension elements in this series 
+                 * element was already used.
+                 */
+                uriCombination = "";
+                
+                _.each(selectedDimensionPropertyUris, function(dimensionUri){
+                    uriCombination += seriesObservation[dimensionUri];
+                });
+                
+                if (true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
+                    usedDimensionElementCombinations[uriCombination] = true;
+                } else {
+                    // if this combination is already in use, stop execution immediatly
+                    return;
+                }
+                    
+                /**
+                 * check if measure value is set, if not add null
+                 */
+                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {                        
+                    obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(
+                        seriesObservation[selectedMeasureUri]
+                    );
+                } else {
+                    obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = null;
+                }
+            });
+            
+            // if nothing was added, ignore obj
+            if (0 == _.size(obj.data)) {
+                // TODO handle ignore obj's
+            } else {
+                self.chartConfig.series.push (obj);
+            }
+        });
+    }
+    
+    /**
      * Initialize a chart instance.
      * @param chartConfig Related chart configuration
      * @param retrievedObservations Array of retrieved observations 
@@ -25,8 +140,7 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedAttributeUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     {  
-        var categoriesElementAssign = {},
-            diff:number = 0,
+        var diff:number = 0,
             forXAxis = null,
             forSeries = null,
             i:number = 0,
@@ -112,110 +226,15 @@ class CubeViz_Visualization_HighCharts_Chart
          * two multiple dimensions
          */
         if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            var xAxisElements:any = observation
-                .getAxesElements(forXAxis);
                 
-            /**
-             * put labels for properties to the axis (categories)
-             */
-            _.each(xAxisElements, function(xAxisElement){
-                self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-                categoriesElementAssign [xAxisElement.self.__cv_uri] = i++;
-            });
-            
-            /**
-             * collect URI's of selected dimensions
-             */
-            var selectedDimensionPropertyUris:string[] = [];
-            
-            _.each(selectedComponentDimensions, function(dimension){
-                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]); 
-            });
-            
-            /**
-             * now we take care about the series
-             */
-            var obj:any = {},
-                seriesElements:any = observation.getAxesElements(forSeries),
-                uriCombination:string = "",
-                usedDimensionElementCombinations:any = {};
-                
-            self.chartConfig.series = [];
-
-            _.each(seriesElements, function(seriesElement){
-                
-                // this represents one item of the series array (of highcharts)
-                obj = { 
-                    color: CubeViz_Visualization_Controller.getColor(
-                        seriesElement.self.__cv_uri
-                    ),
-                    data: [],
-                    name: seriesElement.self.__cv_niceLabel,
-                    __cv_uri: seriesElement.self.__cv_uri
-                };
-                
-                // fill data properties with as many null values as categories are
-                for (i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
-                    obj.data.push (null);
-                }
-                
-                // go through all observations associated with this seriesElement
-                // and add their values (measure) if set
-                _.each(seriesElement.observations, function(seriesObservation){
-                    
-                    // check if the current observation has to be ignored:
-                    // it will ignored, 
-                    //      if attribute uri is set, but the observation
-                    //      has no value of it
-                    // and
-                    //      if the predicate which is labeled with DataCube's 
-                    //      attribute is not equal to the given selected attribute uri
-                    if ((   false === _.isNull(selectedAttributeUri)
-                            && 
-                            ( true === _.isNull(seriesObservation [selectedAttributeUri])
-                              || true === _.isUndefined(seriesObservation [selectedAttributeUri])))
-                        && 
-                            selectedAttributeUri !== seriesObservation ["http://purl.org/linked-data/cube#attribute"]) {
-                        // TODO implement a way to handle ignored observations
-                        return;
-                    }
-                    
-                    /**
-                     * check if the combination of dimension elements in this series 
-                     * element was already used.
-                     */
-                    uriCombination = "";
-                    
-                    _.each(selectedDimensionPropertyUris, function(dimensionUri){
-                        uriCombination += seriesObservation[dimensionUri];
-                    });
-                    
-                    if (true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
-                        usedDimensionElementCombinations[uriCombination] = true;
-                    } else {
-                        // if this combination is already in use, stop execution immediatly
-                        return;
-                    }
-                        
-                    /**
-                     * check if measure value is set, if not add null
-                     */
-                    if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {                        
-                        obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(
-                            seriesObservation[selectedMeasureUri]
-                        );
-                    } else {
-                        obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = null;
-                    }
-                });
-                
-                // if nothing was added, ignore obj
-                if (0 == _.size(obj.data)) {
-                    // TODO handle ignore obj's
-                } else {
-                    self.chartConfig.series.push (obj);
-                }
-            });
+            this.handleExactlyOneOrTwoMultipleDimensions(
+                selectedComponentDimensions, 
+                forXAxis,
+                forSeries,
+                selectedAttributeUri,
+                selectedMeasureUri,
+                observation
+            );
         
         // You have one or zero multiple dimensions
         } else if (false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
