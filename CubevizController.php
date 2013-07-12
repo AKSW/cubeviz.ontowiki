@@ -261,9 +261,9 @@ class CubevizController extends OntoWiki_Controller_Component
     
         // get cache dir
         if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+            $cacheDir = $this->_owApp->erfurt->getCacheDir() . '/';
         } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+            $cacheDir = $this->_owApp->erfurt->getTmpDir() . '/';
         }
         
         switch ($type)
@@ -611,9 +611,9 @@ class CubevizController extends OntoWiki_Controller_Component
             
             // get cache dir
             if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-                $cacheDir = $this->_owApp->erfurt->getCacheDir();
+                $cacheDir = $this->_owApp->erfurt->getCacheDir() . '/';
             } else {
-                $cacheDir = $this->_owApp->erfurt->getTmpDir();
+                $cacheDir = $this->_owApp->erfurt->getTmpDir() . '/';
             }
             
             $configuration = new CubeViz_ConfigurationLink($cacheDir);
@@ -785,9 +785,9 @@ class CubevizController extends OntoWiki_Controller_Component
         
         // get cache dir
         if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+            $cacheDir = $this->_owApp->erfurt->getCacheDir() . '/';
         } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+            $cacheDir = $this->_owApp->erfurt->getTmpDir() . '/';
         }
         
         // init cubeVizApp
@@ -872,9 +872,9 @@ class CubevizController extends OntoWiki_Controller_Component
         
         // get cache dir
         if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+            $cacheDir = $this->_owApp->erfurt->getCacheDir() . '/';
         } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+            $cacheDir = $this->_owApp->erfurt->getTmpDir() . '/';
         }
         
         $configuration = new CubeViz_ConfigurationLink($cacheDir);
