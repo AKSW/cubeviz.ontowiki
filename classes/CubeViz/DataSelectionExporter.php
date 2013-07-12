@@ -55,16 +55,8 @@ class CubeViz_DataSelectionExporter
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
                         
-                        // is object an URI
-                        if(true === Erfurt_Uri::check($object)) {
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
                         // assuming, object is an array
-                        } else {
+                        if(true === is_array($object)) {
                             foreach ($object as $entry) {
                                 if(true === Erfurt_Uri::check($entry)) {
                                     $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
@@ -72,6 +64,17 @@ class CubeViz_DataSelectionExporter
                                     $graph->add($element ['__cv_uri'], $predicateUri, $entry);
                                 }
                             }
+                                                    
+                        // is object NOT an array
+                        } else if (false === is_array($object)) {
+                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
+                        
+                        // is object an URI
+                        } elseif(true === Erfurt_Uri::check($entry)) {                            
+                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
+                        
+                        } else {
+                            
                         }
                     }
                 }
@@ -91,16 +94,8 @@ class CubeViz_DataSelectionExporter
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
                         
-                        // is object an URI
-                        if(true === Erfurt_Uri::check($object)) {
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
                         // assuming, object is an array
-                        } else {
+                        if(true === is_array($object)) {
                             foreach ($object as $entry) {
                                 if(true === Erfurt_Uri::check($entry)) {
                                     $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
@@ -108,6 +103,15 @@ class CubeViz_DataSelectionExporter
                                     $graph->add($element ['__cv_uri'], $predicateUri, $entry);
                                 }
                             }
+                        
+                        // is object NOT an array
+                        } else if (false === is_array($object)) {
+                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
+                        
+                        // is object an URI
+                        } elseif(true === Erfurt_Uri::check($object)) {
+                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
+                            
                         }
                     }
                 }
@@ -124,16 +128,8 @@ class CubeViz_DataSelectionExporter
                 // no cubeviz internal information, its plain from the store
                 if (false === strstr ($predicateUri, '__cv_')) {
                     
-                    // is object an URI
-                    if(true === Erfurt_Uri::check($object)) {
-                        $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                    
-                    // is object NOT an array
-                    } else if (false === is_array($object)) {
-                        $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                    
                     // assuming, object is an array
-                    } else {
+                    if(true === is_array($object)) {
                         foreach ($object as $entry) {
                             if(true === Erfurt_Uri::check($entry)) {
                                 $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
@@ -141,6 +137,14 @@ class CubeViz_DataSelectionExporter
                                 $graph->add($element ['__cv_uri'], $predicateUri, $entry);
                             }
                         }
+                    
+                    // is object NOT an array
+                    } else if (false === is_array($object)) {
+                        $graph->add($element ['__cv_uri'], $predicateUri, $object);
+                    
+                    // is object an URI
+                    } elseif(true === Erfurt_Uri::check($object)) {
+                        $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
                     }
                 }
             }
@@ -157,16 +161,8 @@ class CubeViz_DataSelectionExporter
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
                         
-                        // is object an URI
-                        if(true === Erfurt_Uri::check($object)) {
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
                         // assuming, object is an array
-                        } else {
+                        if(true === is_array($object)) {
                             foreach ($object as $entry) {
                                 if(true === Erfurt_Uri::check($entry)) {
                                     $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
@@ -174,6 +170,14 @@ class CubeViz_DataSelectionExporter
                                     $graph->add($element ['__cv_uri'], $predicateUri, $entry);
                                 }
                             }
+                            
+                        // is object NOT an array
+                        } else if (false === is_array($object)) {
+                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
+                        
+                        // is object an URI
+                        } elseif(true === Erfurt_Uri::check($object)) {
+                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
                         }
                     }
                 }
