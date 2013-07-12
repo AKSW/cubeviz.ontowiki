@@ -237,11 +237,16 @@ class CubeViz_Visualization_HighCharts_Chart
                 var seriesObservation:Object = null,
                     seriesDataList:number[] = [],
                     xAxisElements:any = observation.getAxesElements(forXAxis),
-                    value:number = 0;
+                    value:any = 0;
                     
                 _.each(xAxisElements, function(xAxisElement){
                     
                     seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+                    
+                    value = DataCube_Observation.parseValue (seriesObservation [selectedMeasureUri]);
+                    
+                    if (false === value)
+                        return;
                     
                     // check if the current observation has to be ignored
                     // it will ignored, if attribute uri is set, but the observation
@@ -260,9 +265,7 @@ class CubeViz_Visualization_HighCharts_Chart
                     );
                     
                     // save related value
-                    seriesDataList.push(
-                        seriesObservation [selectedMeasureUri]
-                    );
+                    seriesDataList.push(value);
                 });
                 
                 // set series element

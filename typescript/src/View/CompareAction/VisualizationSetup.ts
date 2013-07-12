@@ -90,13 +90,12 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         /**
          * set equal dimension pair(s) as dimensions
          */
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.getSingleDimensions(
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
+            mergedDataCubeUri, 
             this.app._.compareAction.equalDimensions
         );
         
-        mergedDataCube.selectedComponents.dimensions = DataCube_DataCubeMerger.getSelectedDimensionElements(
-            mergedDataCube.components.dimensions
-        );
+        mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
         
         
         /**
@@ -127,50 +126,24 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         
         /**
-         * set retrieved observations
-         */
-        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(
-            mergedDataCubeUri, 
-            this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2],
-            measure1["http://purl.org/linked-data/cube#measure"],
-            measure2["http://purl.org/linked-data/cube#measure"]
-        );
-        
-        console.log("");
-        console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
-        console.log("");
-        console.log(mergedDataCube);
-        
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
-            function(generatedHash){
-                console.log("");
-                console.log("generated hash: " + generatedHash);
-                
-                var href = self.app._.backend.url + "?";
-                
-                if (false === _.isNull(self.app._.backend.serviceUrl)) {
-                    href += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
-                            + "&";
-                }
-                           
-                href += "m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                           + "&cv_dataHash=" + generatedHash;
-                
-                $("#cubeviz-compare-visualizeLink")
-                    .attr ("href", href)
-                    .show ();
-                    
-            }, true
-        );
-        
-        
-        /**
          * One pair of two equal dimensions
          */
         if (1 == _.size(this.app._.compareAction.equalDimensions)) {
             
+            /**
+             * set retrieved observations
+             */
+            mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(
+                mergedDataCubeUri, 
+                this.app._.compareAction.retrievedObservations[1],
+                this.app._.compareAction.retrievedObservations[2],
+                measure1["http://purl.org/linked-data/cube#measure"],
+                measure2["http://purl.org/linked-data/cube#measure"],
+                this.app._.compareAction.equalDimensions[0][0]["http://purl.org/linked-data/cube#dimension"],
+                this.app._.compareAction.equalDimensions[0][1]["http://purl.org/linked-data/cube#dimension"],
+                0
+            );
+            // TODO adapt to enable more than one equal dimension
             
         }
         
@@ -196,7 +169,41 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
          */
         else { 
             mergedDataCube = null;
-        }        
+        }       
+        
+        console.log("");
+        console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
+        console.log("");
+        console.log(mergedDataCube);
+        
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
+            function(generatedHash){
+                console.log("");
+                console.log("generated hash: " + generatedHash);
+                
+                var href = self.app._.backend.url + "?";
+                
+                if (false === _.isNull(self.app._.backend.serviceUrl)) {
+                    href += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
+                            + "&";
+                }
+                           
+                if (true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                    href += "m=" + encodeURIComponent (self.app._.compareAction.models[1].__cv_uri);
+                } else {
+                    href += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
+                               
+                }
+                
+                href += "&cv_dataHash=" + generatedHash;
+                
+                $("#cubeviz-compare-visualizeLink")
+                    .attr ("href", href)
+                    .show ();
+                    
+            }, true
+        ); 
     }
     
     /**
