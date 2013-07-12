@@ -1072,7 +1072,14 @@ class CubeVizControllerTest extends OntoWiki_Test_ControllerTestCase
      */
     public function _writeDataToDataHashedFile($content, $dataHash) 
     {
-        $filePath = Erfurt_App::getInstance ()->getCacheDir() . $dataHash;
+        // get cache dir
+        if (true === method_exists (Erfurt_App::getInstance (), 'getCacheDir')) {
+            $cacheDir = Erfurt_App::getInstance ()->getCacheDir();
+        } else {
+            $cacheDir = Erfurt_App::getInstance ()->getTmpDir();
+        }
+        
+        $filePath = $cacheDir . $dataHash;
         file_put_contents($filePath, $content);
     }
 }

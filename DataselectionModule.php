@@ -118,7 +118,14 @@ class DataselectionModule extends OntoWiki_Module
          */
         $model = $this->_owApp->selectedModel;
         $modelIri = $model->getModelIri();
-        $modelStore = $model->getStore();
+        $modelStore = $model->getStore();        
+        
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
         
         CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded = true;
         
@@ -127,7 +134,7 @@ class DataselectionModule extends OntoWiki_Module
             $this->view,
             $model,
             $this->_owApp->getConfig()->store->backend,
-            $this->_owApp->erfurt->getCacheDir(),
+            $cacheDir,
             $this->_privateConfig->get('context'),
             $modelIri,
             $this->_config->staticUrlBase,

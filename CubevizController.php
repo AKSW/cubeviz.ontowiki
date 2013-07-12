@@ -258,7 +258,13 @@ class CubevizController extends OntoWiki_Controller_Component
         $filename = 'cubevizExport_'. $dataHash;
         
         $model = $this->_owApp->selectedModel;
-        $cacheDir = $this->_owApp->erfurt->getCacheDir();
+    
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
         
         switch ($type)
         {
@@ -603,9 +609,14 @@ class CubevizController extends OntoWiki_Controller_Component
             $model = new Erfurt_Rdf_Model ($modelIri);
             $query = new DataCube_Query ($model);
             
-            $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->erfurt->getCacheDir()
-            );
+            // get cache dir
+            if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+                $cacheDir = $this->_owApp->erfurt->getCacheDir();
+            } else {
+                $cacheDir = $this->_owApp->erfurt->getTmpDir();
+            }
+            
+            $configuration = new CubeViz_ConfigurationLink($cacheDir);
 
             // load configuration which is associated with given linkCode
             list($c, $hash) = $configuration->read ($dataHash, $model);
@@ -772,12 +783,19 @@ class CubevizController extends OntoWiki_Controller_Component
         
         CubeViz_ViewHelper::$isCubeVizIndexLoaded = true;
         
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
+        
         // init cubeVizApp
         $config = CubeViz_ViewHelper::initApp(
             $this->view,
             $model,
             $this->_owApp->getConfig()->store->backend,
-            $this->_owApp->erfurt->getCacheDir(),
+            $cacheDir,
             $this->_privateConfig->get('context'),
             $modelIri,
             $this->_config->staticUrlBase,
@@ -852,9 +870,14 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
-        $configuration = new CubeViz_ConfigurationLink(
-            $this->_owApp->erfurt->getCacheDir()
-        );
+        // get cache dir
+        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
+            $cacheDir = $this->_owApp->erfurt->getCacheDir();
+        } else {
+            $cacheDir = $this->_owApp->erfurt->getTmpDir();
+        }
+        
+        $configuration = new CubeViz_ConfigurationLink($cacheDir);
         
         // write given content to file
         $hash = $configuration->write(
