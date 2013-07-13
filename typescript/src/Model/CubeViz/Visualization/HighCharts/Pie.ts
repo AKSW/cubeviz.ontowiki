@@ -63,7 +63,7 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
         // after init, sorting the x axis elements ascending
         observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
         var xAxisElements:any = observation
-            // .sortAxis(forXAxis, "ascending")
+            .sortAxis(forXAxis, "ascending")
             .getAxesElements(forXAxis);
             
         this.chartConfig.series.push ({ 

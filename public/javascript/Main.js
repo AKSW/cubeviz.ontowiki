@@ -665,7 +665,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         var self = this;
         var seriesObservation = null;
         var seriesDataList = [];
-        var xAxisElements = observation.getAxesElements(forXAxis);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         var value = 0;
 
         _.each(xAxisElements, function (xAxisElement) {
@@ -839,7 +839,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
             };
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        var xAxisElements = observation.getAxesElements(forXAxis);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         this.chartConfig.series.push({
             type: "pie",
             name: this.chartConfig.title.text,
@@ -1394,6 +1394,43 @@ var DataCube_Observation = (function () {
         return false;
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
+        var axesEntries = this._axes[axisUri];
+        var mode = true === _.isUndefined(mode) ? "ascending" : mode;
+        var stuffToSort = [];
+        var sortedObj = {
+        };
+        var self = this;
+
+        _.each(axesEntries, function (entry, key) {
+            stuffToSort.push({
+                key: key,
+                label: entry.self.__cv_niceLabel
+            });
+        });
+        switch(mode) {
+            case "descending": {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+                });
+                break;
+
+            }
+            default: {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                break;
+
+            }
+        }
+        _.each(stuffToSort, function (entry) {
+            sortedObj[entry.key] = self._axes[axisUri][entry.key];
+        });
+        this._axes[axisUri] = sortedObj;
         return this;
     };
     return DataCube_Observation;

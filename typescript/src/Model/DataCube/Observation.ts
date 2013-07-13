@@ -238,43 +238,47 @@ class DataCube_Observation
      * @param axisUri Key string of the axis to sort
      * @param mode Possible values: ascending (default), descending
      */
-    public sortAxis ( axisUri:string, mode?:string ) : DataCube_Observation 
+    public sortAxis(axisUri:string, mode?:string) : DataCube_Observation 
     {
-        /*var axesEntries = this._axes[axisUri],
+        var axesEntries = this._axes[axisUri],
             mode = true === _.isUndefined(mode) ? "ascending" : mode,
-            sortedKeys = [], 
+            stuffToSort = [], 
             sortedObj = {},
             self = this;
 
-        // Separate keys and sort them
-        _.each(axesEntries, function(e, key){
-            sortedKeys.push(key);
+        // Separate keys and entry labels
+        _.each(axesEntries, function(entry, key){
+            stuffToSort.push({
+                key: key,
+                label: entry.self.__cv_niceLabel
+            });
         });
         
-        switch ( mode ) {
+        // decide wheter to do ascending or descending
+        switch (mode) {
             case "descending": 
-                sortedKeys.sort(function(a,b) {
-                    a = a.self.__cv_niceLabel.toString().toLowerCase();
-                    b = b.self.__cv_niceLabel.toString().toLowerCase(); 
+                stuffToSort.sort(function(a,b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase(); 
                     return ((a > b) ? -1 : ((a < b) ? 1 : 0));
                 });
                 break;
             default: // = ascending
-                sortedKeys.sort(function(a,b) {
-                    a = a.self.__cv_niceLabel.toString().toLowerCase();
-                    b = b.self.__cv_niceLabel.toString().toLowerCase(); 
+                stuffToSort.sort(function(a,b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();  
                     return ((a < b) ? -1 : ((a > b) ? 1 : 0));
                 });
                 break;
         }
 
         // Reconstructing previously sorted obj based on keys
-        _.each(sortedKeys, function(key){
-            sortedObj[key] = self._axes[axisUri][key];
+        _.each(stuffToSort, function(entry){
+            sortedObj[entry.key] = self._axes[axisUri][entry.key];
         });
         
         this._axes[axisUri] = sortedObj;
-        */
+
         return this;
     }
 }

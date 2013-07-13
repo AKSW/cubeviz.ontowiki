@@ -179,7 +179,8 @@ class CubeViz_Visualization_HighCharts_Chart
         var self = this,
             seriesObservation:Object = null,
             seriesDataList:number[] = [],
-            xAxisElements:any = observation.getAxesElements(forXAxis),
+            xAxisElements:any = observation.sortAxis(forXAxis, "ascending")
+                                           .getAxesElements(forXAxis),
             value:any = 0;
             
         _.each(xAxisElements, function(xAxisElement){
