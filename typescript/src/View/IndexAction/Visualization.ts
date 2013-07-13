@@ -138,14 +138,18 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
-        // handle exception if no observation were retrieved
+        /**
+         * handle exception if no observation were retrieved
+         */
         if ( 0 == _.size(this.app._.data.retrievedObservations) ) {
             this.handleException("CubeViz error no observations retrieved");
             return this;
         }        
         
-        // Dynamiclly set visualization container height
-        // get chart config
+        /**
+         * Dynamiclly set visualization container height
+         * get chart config
+         */
         var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
                 this.app._.ui.visualization.className,
                 this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
@@ -154,7 +158,9 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             type:string = null, 
             visualizationSetting:any = null;
         
-        // set default className
+        /**
+         * set default className
+         */
         if(true === _.isUndefined(fromChartConfig)) {
             this.app._.ui.visualization.className = this.app._.backend.chartConfig[
                 this.app._.data.numberOfMultipleDimensions
@@ -166,19 +172,25 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             );
         }
         
-        // extract visualization settings
+        /** 
+         * extract visualization settings
+         */ 
         visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings(
             [],
             this.app._.ui.visualizationSettings[this.app._.ui.visualization.className],
             fromChartConfig.defaultConfig
         );
         
-        // determine if using HighCharts or CubeViz
+        /**
+         * determine if using HighCharts or CubeViz
+         */
         type = CubeViz_Visualization_Controller.getVisualizationType(
             this.app._.ui.visualization.className
         );
         
-        // set attribute uri, if available
+        /**
+         * set attribute uri, if available
+         */
         var selectedAttributeUri = null;
         
         if ((false === _.isNull(this.app._.data.selectedComponents.attribute)
@@ -224,12 +236,12 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            selectedMeasure["http://purl.org/linked-data/cube#measure"],
+            selectedMeasure,
             selectedAttributeUri
         );
                 
         try {            
-            // set visualization height
+            // set visualization height, which depends on the number of categories
             this.setVisualizationHeight(_.size(
                 chart.getRenderResult().xAxis.categories
             ));

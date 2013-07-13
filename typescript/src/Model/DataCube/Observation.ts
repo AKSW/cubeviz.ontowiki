@@ -237,6 +237,7 @@ class DataCube_Observation
      * Sort axis elements
      * @param axisUri Key string of the axis to sort
      * @param mode Possible values: ascending (default), descending
+     * @return DataCube_Observation
      */
     public sortAxis(axisUri:string, mode?:string) : DataCube_Observation 
     {

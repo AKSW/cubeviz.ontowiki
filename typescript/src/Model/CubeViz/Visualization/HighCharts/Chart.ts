@@ -235,7 +235,7 @@ class CubeViz_Visualization_HighCharts_Chart
      */
     public init (chartConfig:any, retrievedObservations:any[], 
         selectedComponentDimensions:any, multipleDimensions:any[],
-        oneElementDimensions:any[], selectedMeasureUri:string,
+        oneElementDimensions:any[], selectedMeasure:any,
         selectedAttributeUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     {  
@@ -317,7 +317,11 @@ class CubeViz_Visualization_HighCharts_Chart
         
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
+        observation.initialize(
+            retrievedObservations, 
+            selectedComponentDimensions, 
+            selectedMeasure["http://purl.org/linked-data/cube#measure"]
+        );
 
         /**
          * Check if there are two dimensions with at least one dimension element.
@@ -331,7 +335,7 @@ class CubeViz_Visualization_HighCharts_Chart
                 forXAxis,
                 forSeries,
                 selectedAttributeUri,
-                selectedMeasureUri,
+                selectedMeasure["http://purl.org/linked-data/cube#measure"],
                 observation
             );
         
@@ -357,7 +361,7 @@ class CubeViz_Visualization_HighCharts_Chart
                 this.handleOnlyOneMultipleDimension(
                     forXAxis, 
                     selectedAttributeUri, 
-                    selectedMeasureUri, 
+                    selectedMeasure["http://purl.org/linked-data/cube#measure"], 
                     observation
                 );
                
@@ -381,20 +385,55 @@ class CubeViz_Visualization_HighCharts_Chart
                 this.handleOnlyOneElementDimension (
                     forSeries, 
                     selectedAttributeUri, 
-                    selectedMeasureUri, 
+                    selectedMeasure["http://purl.org/linked-data/cube#measure"], 
                     observation
                 );
             }
         }
         
+        // initialize tooltip
+        this.setTooltip(
+            // first selected dimension
+            selectedComponentDimensions[
+                Object.keys(selectedComponentDimensions)[0]
+            ],
+            // selected measure object
+            selectedMeasure
+        );
+        
         return this;
     }
     
     /**
-     * 
+     * Simply returns the adapted chartConfig.
+     * @return any Object to configure HighCharts instance.
      */
     public getRenderResult () : any 
     {       
         return this.chartConfig;
+    }
+    
+    /**
+     * Initializes the tooltip functionality of HighCharts
+     * @param selectedMeasure any Selected measure object
+     * @return void
+     */
+    public setTooltip(xAxisDimension:any, selectedMeasure:any) : void
+    {
+        var self = this;
+        
+        this.chartConfig.tooltip = {
+            
+            /**
+             * HighCharts API Description of formatter function:
+             * http://api.highcharts.com/highcharts#tooltip.formatter
+             */
+            formatter: function() {
+                
+                return xAxisDimension.__cv_niceLabel + ': <b>'+ this.x + '</b> <br/> ' 
+                       + selectedMeasure.__cv_niceLabel + ': '
+                       + '<b>'+ _.str.numberFormat(this.y, 4, ',', '.') + '</b>';
+            }
+        };
     }
 }
