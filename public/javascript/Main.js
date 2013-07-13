@@ -687,7 +687,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             }
         ];
     };
-    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri, selectedAttributeUri) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         var diff = 0;
         var forXAxis = null;
         var forSeries = null;
@@ -743,22 +743,31 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             forXAxis = forSeries;
             forSeries = tmp;
         }
-        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            this.handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation);
+            this.handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
         } else {
             if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
                 if(false === _.str.isBlank(forXAxis)) {
-                    this.handleOnlyOneMultipleDimension(forXAxis, selectedAttributeUri, selectedMeasureUri, observation);
+                    this.handleOnlyOneMultipleDimension(forXAxis, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
                 } else {
-                    this.handleOnlyOneElementDimension(forSeries, selectedAttributeUri, selectedMeasureUri, observation);
+                    this.handleOnlyOneElementDimension(forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
                 }
             }
         }
+        this.setTooltip(selectedComponentDimensions[Object.keys(selectedComponentDimensions)[0]], selectedMeasure);
         return this;
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {
         return this.chartConfig;
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.setTooltip = function (xAxisDimension, selectedMeasure) {
+        var self = this;
+        this.chartConfig.tooltip = {
+            formatter: function () {
+                return xAxisDimension.__cv_niceLabel + ': <b>' + this.x + '</b> <br/> ' + selectedMeasure.__cv_niceLabel + ': ' + '<b>' + _.str.numberFormat(this.y, 4, ',', '.') + '</b>';
+            }
+        };
     };
     return CubeViz_Visualization_HighCharts_Chart;
 })();
@@ -1056,8 +1065,8 @@ var DataCube_DataCubeMerger = (function () {
 
         _.each(equalDimensions, function (dimensionPair) {
             componentSpecification = {
-                __cv_niceLabel: "Merged Component Specification",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification",
+                __cv_niceLabel: "Merged Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
                 __cv_description: "This Component Specification was merged and consists of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
@@ -3754,7 +3763,7 @@ var View_IndexAction_Visualization = (function (_super) {
         }
         var hC = new CubeViz_Visualization_HighCharts();
         var chart = hC.load(this.app._.ui.visualization.className);
-        chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"], selectedAttributeUri);
+        chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure, selectedAttributeUri);
         try  {
             this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
             if(0 == _.size(chart.getRenderResult().series)) {

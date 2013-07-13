@@ -164,8 +164,16 @@ class DataCube_DataCubeMerger
             componentSpecification = {
                 
                 // label
-                __cv_niceLabel: "Merged Component Specification",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification",
+                __cv_niceLabel: "Merged Component Specification of '"
+                    + dimensionPair[0].__cv_niceLabel
+                    + "' and '"
+                    + dimensionPair[1].__cv_niceLabel
+                    + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification of '"
+                    + dimensionPair[0].__cv_niceLabel
+                    + "' and '"
+                    + dimensionPair[1].__cv_niceLabel
+                    + "'",
                 
                 // describe
                 __cv_description: "This Component Specification was merged and consists of '"
