@@ -560,6 +560,27 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
+var CubeViz_Visualization_D3js = (function (_super) {
+    __extends(CubeViz_Visualization_D3js, _super);
+    function CubeViz_Visualization_D3js() {
+        _super.call(this);
+        this.name = "D3js";
+        this.supportedClassNames = [
+            "CubeViz_Visualization_D3js_CirclePacking"
+        ];
+    }
+    return CubeViz_Visualization_D3js;
+})(CubeViz_Visualization);
+var CubeViz_Visualization_D3js_CirclePacking = (function () {
+    function CubeViz_Visualization_D3js_CirclePacking() { }
+    CubeViz_Visualization_D3js_CirclePacking.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
+        return this;
+    };
+    CubeViz_Visualization_D3js_CirclePacking.prototype.getRenderResult = function () {
+        return this.chartConfig;
+    };
+    return CubeViz_Visualization_D3js_CirclePacking;
+})();
 var CubeViz_Visualization_HighCharts = (function (_super) {
     __extends(CubeViz_Visualization_HighCharts, _super);
     function CubeViz_Visualization_HighCharts() {

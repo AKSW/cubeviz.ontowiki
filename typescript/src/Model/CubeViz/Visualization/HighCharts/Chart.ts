@@ -231,7 +231,7 @@ class CubeViz_Visualization_HighCharts_Chart
      *                             dimension element was selected.
      * @param selectedMeasureUri Uri of selected measure
      * @param selectedAttributeUri Uri of selected attribute
-     * @return void
+     * @return CubeViz_Visualization_HighCharts_Chart
      */
     public init (chartConfig:any, retrievedObservations:any[], 
         selectedComponentDimensions:any, multipleDimensions:any[],
