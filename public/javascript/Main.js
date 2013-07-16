@@ -1084,6 +1084,11 @@ var DataCube_DataCubeMerger = (function () {
         var virtualDimensions = {
         };
 
+        console.log("");
+        console.log("buildDimensionsAndTheirComponentSpecifications");
+        console.log("");
+        console.log("equalDimensions");
+        console.log(equalDimensions);
         _.each(equalDimensions, function (dimensionPair) {
             componentSpecification = {
                 __cv_niceLabel: "Merged Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
@@ -1101,66 +1106,86 @@ var DataCube_DataCubeMerger = (function () {
                 ],
                 __cv_elements: {
                 },
+                __cv_oldCubeDimension: [
+                    dimensionPair[0]["http://purl.org/linked-data/cube#dimension"], 
+                    dimensionPair[1]["http://purl.org/linked-data/cube#dimension"]
+                ],
                 "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
             };
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements);
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements(mergedDataCubeUri, componentSpecification.__cv_elements, i);
+            console.log("");
+            console.log("new component specification:");
+            console.log(componentSpecification);
             virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
             ++i;
         });
         return virtualDimensions;
     }
-    DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measureUri1, measureUri2, measureLabel1, measureLabel2) {
+    DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measure1, measure2) {
         return {
             0: {
                 __cv_niceLabel: "Artifical Measure",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
-                __cv_description: "This is an artifical measure and it consists of '" + measureLabel1 + "' and '" + measureLabel2 + "'",
+                __cv_description: "This is an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
+                __cv_oldCubeMeasure: [
+                    measure1["http://purl.org/linked-data/cube#measure"], 
+                    measure2["http://purl.org/linked-data/cube#measure"]
+                ],
                 "http://purl.org/linked-data/cube#measure": mergedDataCubeUri + "measure",
                 "http://purl.org/dc/terms/source": [
-                    measureUri1, 
-                    measureUri2
+                    measure1.__cv_uri, 
+                    measure2.__cv_uri
                 ],
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
             }
         };
     }
-    DataCube_DataCubeMerger.buildRetrievedObservations = function buildRetrievedObservations(mergedDataCubeUri, observations1, observations2, oldMeasureUri1, oldMeasureUri2, dimension1, dimension2, i) {
-        observations1 = $.parseJSON(JSON.stringify(observations1));
-        observations2 = $.parseJSON(JSON.stringify(observations2));
+    DataCube_DataCubeMerger.buildObservations = function buildObservations(mergedDataCubeUri, observations1, observations2, measure, dimensions, dimensionIndex) {
         var adaptedObservations = {
         };
-        var adaptedDimensionElementUri = "";
-        var j = 0;
+        var adaptedDimensionElementUri = null;
+        var i = _.size(observations1);
+        var mergedObservations = {
+        };
+        var tmp = {
+        };
 
-        _.each(observations1, function (observation) {
-            observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
-            observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri1];
-            delete observation[oldMeasureUri1];
-            _.each(dimension1.__cv_elements, function (element) {
-                if(element["http://purl.org/dc/terms/source"] == observation[dimension1["http://purl.org/linked-data/cube#dimension"]]) {
-                    adaptedDimensionElementUri = element.__cv_uri;
-                }
-            });
-            observation[mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
-            delete observation[dimension1.__cv_uri];
-            adaptedObservations[j++] = observation;
-        });
+        console.log("");
+        console.log("buildObservationsAccordingToEqualDimensionPair");
+        mergedObservations = $.parseJSON(JSON.stringify(observations1));
+        observations2 = $.parseJSON(JSON.stringify(observations2));
         _.each(observations2, function (observation) {
+            mergedObservations[i++] = observation;
+        });
+        i = 0;
+        _.each(mergedObservations, function (observation) {
+            observation["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
+            observation["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            observation.__cv_uri = mergedDataCubeUri + "observation" + i;
+            observation.__cv_hashedUri = CryptoJS.MD5(mergedDataCubeUri + "observation" + i) + "";
             observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
-            observation[mergedDataCubeUri + "measure"] = observation[oldMeasureUri2];
-            delete observation[oldMeasureUri2];
-            _.each(dimension2.__cv_elements, function (element) {
-                if(element["http://purl.org/dc/terms/source"] == observation[dimension2["http://purl.org/linked-data/cube#dimension"]]) {
-                    adaptedDimensionElementUri = element.__cv_uri;
-                }
+            observation[mergedDataCubeUri + "measure"] = observation[measure.__cv_oldCubeMeasure[0]];
+            delete observation[measure.__cv_oldCubeMeasure[0]];
+            adaptedObservations[i++] = observation;
+        });
+        _.each(dimensions, function (dimension) {
+            i = 0;
+            _.each(adaptedObservations, function (observation) {
+                adaptedDimensionElementUri = null;
+                _.each(dimension.__cv_elements, function (element) {
+                    if(element["http://www.w3.org/2002/07/owl#sameAs"] == observation[dimension.__cv_oldCubeDimension[0]]) {
+                        adaptedDimensionElementUri = element.__cv_uri;
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;
+                        delete observation[dimension.__cv_oldCubeDimension[0]];
+                    }
+                });
+                adaptedObservations[i++] = observation;
             });
-            observation[mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
-            delete observation[dimension2["http://purl.org/linked-data/cube#dimension"]];
-            adaptedObservations[j++] = observation;
+            ++dimensionIndex;
         });
         return adaptedObservations;
     }
@@ -2176,11 +2201,14 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         var dimensionUri = "";
+        var dimensionIndex = 0;
+        var observationIndex = 0;
         var measure1 = null;
         var measure2 = null;
         var mergedDataCube = {
         };
         var mergedDataCubeUri = "";
+        var newObservations = null;
         var self = this;
         var virtualDimensions = [];
 
@@ -2192,21 +2220,11 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
         measure1 = this.app._.compareAction.components.measures[1][Object.keys(this.app._.compareAction.components.measures[1])[0]];
         measure2 = this.app._.compareAction.components.measures[2][Object.keys(this.app._.compareAction.components.measures[2])[0]];
-        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1.__cv_uri, measure2.__cv_uri, measure1.__cv_niceLabel, measure2.__cv_niceLabel);
+        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1, measure2);
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
-        if(1 == _.size(this.app._.compareAction.equalDimensions)) {
-            mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(mergedDataCubeUri, this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], measure1["http://purl.org/linked-data/cube#measure"], measure2["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.equalDimensions[0][0], this.app._.compareAction.equalDimensions[0][1], 0);
-        } else {
-            if(2 == _.size(this.app._.compareAction.equalDimensions)) {
-            } else {
-                if(2 < _.size(this.app._.compareAction.equalDimensions)) {
-                } else {
-                    mergedDataCube = null;
-                }
-            }
-        }
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(mergedDataCubeUri, self.app._.compareAction.retrievedObservations[1], self.app._.compareAction.retrievedObservations[2], mergedDataCube.selectedComponents.measure, mergedDataCube.selectedComponents.dimensions, dimensionIndex++);
         console.log("");
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");

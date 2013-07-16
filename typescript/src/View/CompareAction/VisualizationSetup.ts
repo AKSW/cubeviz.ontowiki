@@ -52,10 +52,13 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         // object representing the data part of configuration
         var dimensionUri:string = "",
+            dimensionIndex:number = 0,
+            observationIndex:number = 0,
             measure1:any = null,
             measure2:any = null,
             mergedDataCube:any = {},
             mergedDataCubeUri:string = "",
+            newObservations = null,
             self = this,
             virtualDimensions:any[] = [];
             
@@ -107,8 +110,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             [Object.keys(this.app._.compareAction.components.measures[2])[0]];
         
         mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(
-            mergedDataCubeUri, measure1.__cv_uri, measure2.__cv_uri,
-            measure1.__cv_niceLabel, measure2.__cv_niceLabel
+            mergedDataCubeUri, measure1, measure2
         );
                 
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures [0];
@@ -126,56 +128,25 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         
         /**
-         * One pair of two equal dimensions
+         * set observations
          */
-        if (1 == _.size(this.app._.compareAction.equalDimensions)) {
-            
-            /**
-             * set retrieved observations
-             */
-            mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildRetrievedObservations(
-                mergedDataCubeUri, 
-                this.app._.compareAction.retrievedObservations[1],
-                this.app._.compareAction.retrievedObservations[2],
-                measure1["http://purl.org/linked-data/cube#measure"],
-                measure2["http://purl.org/linked-data/cube#measure"],
-                this.app._.compareAction.equalDimensions[0][0],
-                this.app._.compareAction.equalDimensions[0][1],
-                0
-            );
-            // TODO adapt to enable more than one equal dimension
-            
-        }
-        
-        
-        /**
-         * two pairs of two equal dimensions
-         */
-        else if (2 == _.size(this.app._.compareAction.equalDimensions)) {
-            
-        }
-        
-        
-        /**
-         * more than two pairs of two equal dimensions
-         */
-        else if (2 < _.size(this.app._.compareAction.equalDimensions)) {
-            
-        }
-        
-        
-        /**
-         * no equal dimensions, do nothing
-         */
-        else { 
-            mergedDataCube = null;
-        }       
+        // adapt related information to the observations, which depends on 
+        // the dimension pair
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(
+            mergedDataCubeUri, 
+            self.app._.compareAction.retrievedObservations[1],
+            self.app._.compareAction.retrievedObservations[2],
+            mergedDataCube.selectedComponents.measure,
+            mergedDataCube.selectedComponents.dimensions,
+            dimensionIndex++
+        );
         
         console.log("");
         console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
         console.log("");
         console.log(mergedDataCube);
         
+        // save generated object and remember given hash
         CubeViz_ConfigurationLink.save(
             this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
             function(generatedHash){

@@ -157,6 +157,12 @@ class DataCube_DataCubeMerger
         var componentSpecification:any = {},
             i:number = 0,
             virtualDimensions:any = {};
+            
+        console.log("");
+        console.log("buildDimensionsAndTheirComponentSpecifications");
+        console.log("");
+        console.log("equalDimensions");
+        console.log(equalDimensions);
         
         // go through all equal dimensions and add their uri
         _.each (equalDimensions, function(dimensionPair){
@@ -199,6 +205,12 @@ class DataCube_DataCubeMerger
                 // dimension elements
                 __cv_elements: {},
                 
+                // remember old qb:measure relation object
+                __cv_oldCubeDimension: [
+                    dimensionPair[0]["http://purl.org/linked-data/cube#dimension"],
+                    dimensionPair[1]["http://purl.org/linked-data/cube#dimension"]
+                ],
+                
                 // set relation to dimension itself
                 "http://purl.org/linked-data/cube#dimension": 
                     mergedDataCubeUri + "dimension" + i,
@@ -217,6 +229,10 @@ class DataCube_DataCubeMerger
                 mergedDataCubeUri, componentSpecification.__cv_elements, i
             );
             
+            console.log("");
+            console.log("new component specification:");
+            console.log(componentSpecification);
+            
             // save adapted
             virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
             
@@ -229,14 +245,11 @@ class DataCube_DataCubeMerger
     /**
      * Generates a new artifical measure using merged data cube uri.
      * @param mergedDataCubeUri string Generated uri of the merged data cube
-     * @param measureUri1 string URI of Measure1
-     * @param measureUri2 string URI of Measure2
-     * @param measureLabel1 string Label of Measure1
-     * @param measureLabel2 string Label of Measure2
+     * @param measure1 any
+     * @param measure2 any
      * @return any Object with one element representing new measure
      */
-    static buildMeasure(mergedDataCubeUri:string, measureUri1:string, measureUri2:string,
-        measureLabel1:string, measureLabel2:string) : any 
+    static buildMeasure(mergedDataCubeUri:string, measure1:any, measure2:any) : any 
     {
         return { 0: {
             
@@ -246,20 +259,29 @@ class DataCube_DataCubeMerger
             
             // describe
             __cv_description: "This is an artifical measure and it consists of '"
-                + measureLabel1
+                + measure1.__cv_niceLabel
                 + "' and '"
-                + measureLabel2
+                + measure2.__cv_niceLabel
                 + "'",                              
             
             // uri
             __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
             __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
             
+            // remember old qb:measure relation object
+            __cv_oldCubeMeasure: [
+                measure1 ["http://purl.org/linked-data/cube#measure"],
+                measure2 ["http://purl.org/linked-data/cube#measure"]
+            ],
+            
             // relation to measure property
             "http://purl.org/linked-data/cube#measure": mergedDataCubeUri + "measure",
             
             // relation to origin measures
-            "http://purl.org/dc/terms/source": [measureUri1, measureUri2],
+            "http://purl.org/dc/terms/source": [
+                measure1.__cv_uri, 
+                measure2.__cv_uri
+            ],
             
             // type
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
@@ -268,76 +290,92 @@ class DataCube_DataCubeMerger
     }
     
     /**
-     * Adapts observations and updates a couple of their relations.
+     * Adapts observations and updates a couple of their relations, in case
+     * that exactly one dimension pair was found.
      * @param mergedDataCubeUri string
      * @param observations1 any
      * @param observations2 any
-     * @param oldMeasureUri1 string
-     * @param oldMeasureUri2 string
-     * @param dimension1 any
-     * @param dimension2 any
+     * @param measure any
+     * @param dimensions any
      * @param i number
      * @return any
      */
-    static buildRetrievedObservations(mergedDataCubeUri:string, observations1:any,
-        observations2:any, oldMeasureUri1:string, oldMeasureUri2:string,
-        dimension1:any, dimension2:any, i:number) : any
-    {
+    static buildObservations(mergedDataCubeUri:string, observations1:any, 
+        observations2:any, measure:any, dimensions:any, dimensionIndex:number) : any
+    {        
+        var adaptedObservations:any = {},
+            adaptedDimensionElementUri:string = null,
+            i:number = _.size(observations1),
+            mergedObservations:any = {},
+            tmp:any = {};
+            
+        console.log("");
+        
+        
+        check http://data.lod2.eu/scoreboard/items/i_iuse/RF_GE1/_ind/EuropeanUnion-27countries/2011/ind
+        
+        
+        
+        console.log("buildObservationsAccordingToEqualDimensionPair");
+        
         // create a real clone of retrieved observations lists
-        observations1 = $.parseJSON(JSON.stringify(observations1));
+        mergedObservations = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         
-        var adaptedObservations:any = {},
-            adaptedDimensionElementUri:string = "",
-            j:number = 0;
-        
-        // go through observations of dataset 1
-        _.each(observations1, function(observation){
-            
-            // update relation to dataset
-            observation ["http://purl.org/linked-data/cube#dataSet"] =
-                mergedDataCubeUri + "dataset";
-            
-            // update relation to measure
-            observation [mergedDataCubeUri + "measure"] = observation [oldMeasureUri1];
-            delete observation [oldMeasureUri1];
-            
-            // replace relation to old equal dimension1
-            _.each (dimension1.__cv_elements, function(element){
-                if (element["http://purl.org/dc/terms/source"] == observation [dimension1["http://purl.org/linked-data/cube#dimension"]]) {
-                    adaptedDimensionElementUri = element.__cv_uri;
-                }
-            });
-            observation [mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
-            
-            delete observation [dimension1.__cv_uri];
-                
-            adaptedObservations[j++] = observation;
+        _.each(observations2, function(observation){
+            mergedObservations [i++] = observation;
         });
         
-        // go through observations of dataset 2
-        _.each(observations2, function(observation){
+        i = 0;
+        
+        _.each(mergedObservations, function(observation){
+            
+            // remember old uri using a sameAs and dct:source relation
+            observation ["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
+            observation ["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            
+            
+            // update uri
+            observation.__cv_uri = mergedDataCubeUri + "observation" + i;
+            observation.__cv_hashedUri = CryptoJS.MD5 (mergedDataCubeUri + "observation" + i) + "";
+            
             
             // update relation to dataset
             observation ["http://purl.org/linked-data/cube#dataSet"] =
                 mergedDataCubeUri + "dataset";
             
-            // update relation to measure
-            observation [mergedDataCubeUri + "measure"] = observation [oldMeasureUri2];
-            delete observation [oldMeasureUri2];
             
-            // replace relation to old equal dimension2
-            _.each (dimension2.__cv_elements, function(element){
-                if (element["http://purl.org/dc/terms/source"] == observation [dimension2["http://purl.org/linked-data/cube#dimension"]]) {
-                    adaptedDimensionElementUri = element.__cv_uri;
-                }
+            // update relation to measure
+            observation [mergedDataCubeUri + "measure"] = observation [measure.__cv_oldCubeMeasure[0]];
+            delete observation [measure.__cv_oldCubeMeasure[0]];
+            
+            
+            // update observation
+            adaptedObservations [i++] = observation;
+        });
+        
+        /**
+         * for each merged dimension go through all observations
+         */
+        _.each(dimensions, function(dimension){
+            i = 0;            
+            _.each(adaptedObservations, function(observation){
+                
+                // replace relation to dimension
+                adaptedDimensionElementUri = null;
+                _.each (dimension.__cv_elements, function(element){
+                    
+                    if (element["http://www.w3.org/2002/07/owl#sameAs"] == observation [dimension.__cv_oldCubeDimension[0]]) {
+                        adaptedDimensionElementUri = element.__cv_uri;
+                        observation [mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;                    
+                        delete observation [dimension.__cv_oldCubeDimension[0]];
+                    }
+                });
+                    
+                adaptedObservations[i++] = observation;
             });
             
-            observation [mergedDataCubeUri + "dimension" + i] = adaptedDimensionElementUri;
-            
-            delete observation [dimension2["http://purl.org/linked-data/cube#dimension"]];
-                
-            adaptedObservations[j++] = observation;
+            ++dimensionIndex;
         });
         
         return adaptedObservations;
