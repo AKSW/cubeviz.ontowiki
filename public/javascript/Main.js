@@ -138,6 +138,8 @@ var CubeViz_Collection = (function () {
 })();
 var CubeViz_Visualization = (function () {
     function CubeViz_Visualization() {
+        this.name = "CubeViz_Visualization";
+        this.supportedClassNames = [];
     }
     CubeViz_Visualization.prototype.getName = function () {
         return this.name;
@@ -145,16 +147,20 @@ var CubeViz_Visualization = (function () {
     CubeViz_Visualization.prototype.getSupportedClassNames = function () {
         return this.supportedClassNames;
     };
-    CubeViz_Visualization.prototype.load = function (c) {
-        if(true === this.isResponsibleFor(c)) {
-            var chartInstance;
-            eval("chartInstance = new " + c + "();");
-            return chartInstance;
-        }
-        throw new Error("Invalid c (" + c + ") given!");
-    };
     CubeViz_Visualization.prototype.isResponsibleFor = function (className) {
         return _.contains(this.getSupportedClassNames(), className);
+    };
+    CubeViz_Visualization.prototype.load = function (c) {
+        if(true === this.isResponsibleFor(c)) {
+            var chart = null;
+            eval("chart = new " + c + "();");
+            return chart;
+        } else {
+            throw new Error("Invalid c (" + c + ") given!");
+        }
+    };
+    CubeViz_Visualization.prototype.render = function (chart) {
+        return null;
     };
     return CubeViz_Visualization;
 })();
@@ -465,9 +471,9 @@ var CubeViz_Visualization_Controller = (function () {
         return color;
     }
     CubeViz_Visualization_Controller.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
-        var result = undefined;
+        var result = null;
         _.each(charts, function (chart) {
-            if(true === _.isUndefined(result)) {
+            if(true === _.isNull(result)) {
                 if(className == chart.className) {
                     result = chart;
                 }
@@ -508,10 +514,17 @@ var CubeViz_Visualization_Controller = (function () {
     }
     CubeViz_Visualization_Controller.getVisualizationType = function getVisualizationType(className) {
         var hC = new CubeViz_Visualization_HighCharts();
+        var d3js = new CubeViz_Visualization_D3js();
+
         if(true === hC.isResponsibleFor(className)) {
             return hC.getName();
+        } else {
+            if(true === d3js.isResponsibleFor(className)) {
+                return d3js.getName();
+            } else {
+                throw new Error("Unknown className " + className);
+            }
         }
-        throw new Error("Unknown className " + className);
     }
     CubeViz_Visualization_Controller.linkify = function linkify(inputText) {
         var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim;
@@ -519,6 +532,12 @@ var CubeViz_Visualization_Controller = (function () {
         var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
         return inputText.replace(urlPattern, '<a href="$&" target="_blank">$&</a>').replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>').replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+    }
+    CubeViz_Visualization_Controller.getDefaultChartConfig = function getDefaultChartConfig(chartConfig, numberOfMultipleDimensions) {
+        return {
+            className: chartConfig[numberOfMultipleDimensions].charts[0].className,
+            chartConfig: chartConfig[numberOfMultipleDimensions].charts[0]
+        };
     }
     CubeViz_Visualization_Controller.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
@@ -569,15 +588,79 @@ var CubeViz_Visualization_D3js = (function (_super) {
             "CubeViz_Visualization_D3js_CirclePacking"
         ];
     }
+    CubeViz_Visualization_D3js.prototype.render = function (chart) {
+        chart.getRenderResult();
+    };
     return CubeViz_Visualization_D3js;
 })(CubeViz_Visualization);
 var CubeViz_Visualization_D3js_CirclePacking = (function () {
-    function CubeViz_Visualization_D3js_CirclePacking() { }
+    function CubeViz_Visualization_D3js_CirclePacking() {
+        this.chartConfig = {
+        };
+        this.generatedData = {
+            name: "",
+            children: []
+        };
+    }
+    CubeViz_Visualization_D3js_CirclePacking.prototype.computeData = function (observations, multipleDimensions, selectedMeasure) {
+        var children = [];
+        var circleLabel = [];
+        var self = this;
+
+        _.each(observations, function (observation) {
+            circleLabel = [];
+            children = [
+                {
+                    name: "",
+                    size: ""
+                }
+            ];
+            _.each(multipleDimensions, function (dimension) {
+                _.each(dimension.__cv_elements, function (element) {
+                    if(element.__cv_uri === observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
+                        circleLabel.push(element.__cv_niceLabel);
+                    }
+                });
+            });
+            children[0].name = circleLabel.join(" - ");
+            children[0].size = DataCube_Observation.parseValue(observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]]);
+            self.generatedData.children.push({
+                name: observation.__cv_niceLabel,
+                children: children
+            });
+        });
+    };
     CubeViz_Visualization_D3js_CirclePacking.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
+        this.chartConfig = chartConfig;
+        this.computeData(retrievedObservations, multipleDimensions, selectedMeasure);
         return this;
     };
     CubeViz_Visualization_D3js_CirclePacking.prototype.getRenderResult = function () {
-        return this.chartConfig;
+        var diameter = 960;
+        var pack = d3.layout.pack().size([
+            diameter - 4, 
+            diameter - 4
+        ]).value(function (d) {
+            return d.size;
+        });
+        var svg = d3.select("#cubeviz-index-visualization").append("svg").attr("width", diameter).attr("height", diameter).append("g").attr("transform", "translate(2,2)");
+        var node = svg.datum(this.generatedData).selectAll(".node").data(pack.nodes).enter().append("g").attr("class", function (d) {
+            return d.children ? "node" : "cubeviz-visualization-d3js-circleLeaf node";
+        }).attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+        node.append("title").text(function (d) {
+            return d.name + (d.children ? "" : ": " + d.size);
+        });
+        node.append("circle").attr("r", function (d) {
+            return d.r;
+        });
+        node.filter(function (d) {
+            return !d.children;
+        }).append("text").attr("dy", ".3em").style("fill", this.chartConfig.style.circle["fill"]).style("font-size", this.chartConfig.style.circle["font-size"]).style("font-weight", this.chartConfig.style.circle["font-weight"]).style("text-anchor", this.chartConfig.style.circle["text-anchor"]).text(function (d) {
+            return d.name.substring(0, d.r * 0.3);
+        });
+        return svg;
     };
     return CubeViz_Visualization_D3js_CirclePacking;
 })();
@@ -597,6 +680,9 @@ var CubeViz_Visualization_HighCharts = (function (_super) {
             "CubeViz_Visualization_HighCharts_Spline"
         ];
     }
+    CubeViz_Visualization_HighCharts.prototype.render = function (chart) {
+        return new Highcharts.Chart(chart.getRenderResult());
+    };
     return CubeViz_Visualization_HighCharts;
 })(CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts_Chart = (function () {
@@ -2222,6 +2308,8 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
         mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, this.app._.compareAction.equalDimensions);
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
+        mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
+        mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
         measure1 = this.app._.compareAction.components.measures[1][Object.keys(this.app._.compareAction.components.measures[1])[0]];
         measure2 = this.app._.compareAction.components.measures[2][Object.keys(this.app._.compareAction.components.measures[2])[0]];
         mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1, measure2);
@@ -3777,17 +3865,6 @@ var View_IndexAction_Visualization = (function (_super) {
             this.handleException("CubeViz error no observations retrieved");
             return this;
         }
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        var selectedMeasure = this.app._.data.selectedComponents.measure;
-        var type = null;
-        var visualizationSetting = null;
-
-        if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.className = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].className;
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        }
-        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
-        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
         var selectedAttributeUri = null;
         if((false === _.isNull(this.app._.data.selectedComponents.attribute) && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
             if(false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
@@ -3795,25 +3872,63 @@ var View_IndexAction_Visualization = (function (_super) {
                 selectedAttributeUri = this.app._.data.selectedComponents.attribute["http://purl.org/linked-data/cube#attribute"];
             }
         }
-        if(false === _.isUndefined(this.app._.generatedVisualization)) {
-            try  {
-                this.app._.generatedVisualization.destroy();
-            } catch (ex) {
-                if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
-                    console.log(ex);
+        var chart = null;
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var libraryInstance = null;
+        var selectedMeasure = this.app._.data.selectedComponents.measure;
+        var type = null;
+        var visualizationSetting = null;
+
+        if(true === _.isNull(fromChartConfig)) {
+            var defaultChartConfig = CubeViz_Visualization_Controller.getDefaultChartConfig(this.app._.backend.chartConfig, this.app._.data.numberOfMultipleDimensions);
+            this.app._.ui.visualization.className = defaultChartConfig.className;
+            fromChartConfig = defaultChartConfig.chartConfig;
+        }
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
+        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
+        switch(type) {
+            case 'HighCharts': {
+                if(false === _.isUndefined(this.app._.generatedVisualization)) {
+                    try  {
+                        this.app._.generatedVisualization.destroy();
+                    } catch (ex) {
+                        if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
+                            console.log(ex);
+                        }
+                    }
                 }
+                libraryInstance = new CubeViz_Visualization_HighCharts();
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+                break;
+
+            }
+            case 'D3js': {
+                this.app._.generatedVisualization = null;
+                $("#cubeviz-index-visualization").html("");
+                libraryInstance = new CubeViz_Visualization_D3js();
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+                break;
+
+            }
+            default: {
+                break;
+
             }
         }
-        var hC = new CubeViz_Visualization_HighCharts();
-        var chart = hC.load(this.app._.ui.visualization.className);
         chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure, selectedAttributeUri);
         try  {
-            this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
-            if(0 == _.size(chart.getRenderResult().series)) {
-                this.handleException("CubeViz error no elements to visualize");
-                return this;
+            switch(type) {
+                case 'HighCharts': {
+                    this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
+                    if(0 == _.size(chart.getRenderResult().series)) {
+                        this.handleException("CubeViz error no elements to visualize");
+                        return this;
+                    }
+                    break;
+
+                }
             }
-            this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
+            this.app._.generatedVisualization = libraryInstance.render(chart);
         } catch (ex) {
             this.handleException(ex);
         }

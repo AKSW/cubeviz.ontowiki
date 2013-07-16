@@ -16,4 +16,14 @@ class CubeViz_Visualization_D3js extends CubeViz_Visualization
             "CubeViz_Visualization_D3js_CirclePacking"
         ];
     }
+
+    /**
+     * Renders a chart.
+     * @param chart any Instance of a library chart
+     * @return any Initialized chart
+     */
+    public render(chart:any) : any 
+    {
+        chart.getRenderResult();
+    }
 }

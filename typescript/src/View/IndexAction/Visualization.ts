@@ -1,4 +1,3 @@
-/// <reference path="..\..\..\declaration\libraries\Highcharts.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
@@ -240,6 +239,10 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
              */
             case 'D3js':
             
+                this.app._.generatedVisualization = null;
+                
+                $("#cubeviz-index-visualization").html ("");
+            
                 // initialize library instance, which "controls" the chart instance
                 libraryInstance = new CubeViz_Visualization_D3js();
                 
@@ -269,15 +272,24 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
                 
         try {
             
-            // set visualization height, which depends on the number of categories
-            this.setVisualizationHeight(_.size(
-                chart.getRenderResult().xAxis.categories
-            ));
-            
-            // check if at least one element to visualize
-            if ( 0 == _.size(chart.getRenderResult().series) ) {
-                this.handleException("CubeViz error no elements to visualize");
-                return this;
+            // TODO find a solution to adapt visz height or handle empty elements list
+            switch (type)
+            {
+                /**
+                 * HighCharts library
+                 */
+                case 'HighCharts':
+                    // set visualization height, which depends on the number of categories
+                    this.setVisualizationHeight(_.size(
+                        chart.getRenderResult().xAxis.categories
+                    ));
+                    
+                    // check if at least one element to visualize
+                    if ( 0 == _.size(chart.getRenderResult().series) ) {
+                        this.handleException("CubeViz error no elements to visualize");
+                        return this;
+                    }
+                    break;
             }
             
             // render computed results

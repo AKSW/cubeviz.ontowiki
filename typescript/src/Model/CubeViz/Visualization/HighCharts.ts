@@ -1,3 +1,5 @@
+/// <reference path="..\..\..\..\declaration\libraries\Highcharts.d.ts" />
+
 /**
  * Head of a collection of classes which wrapps function of HighCharts library.
  */

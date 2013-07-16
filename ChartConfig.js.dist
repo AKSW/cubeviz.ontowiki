@@ -570,7 +570,26 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     }
                 ]
-            }
+            },
+            
+            {
+                label: "Circle Packing",
+                className: "CubeViz_Visualization_D3js_CirclePacking",
+                icon: "circlePacking.png",
+                
+                defaultConfig: {
+                    style: {
+                        circle: {
+                            "fill": "#FFFFFF",
+                            "font-size": "9px",
+                            "font-weight": "bold",
+                            "text-anchor": "middle"
+                        }
+                    }
+                },
+                
+                options: []
+            },
         ]
     }
 };
