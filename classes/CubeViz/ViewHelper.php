@@ -114,11 +114,11 @@ class CubeViz_ViewHelper
                 'imagesPath'            => $baseImagesPath,
                 'modelInformation'      => $modelInformation,
                 'modelUrl'              => $modelIri,
-                'serviceUrl'              => $serviceUrl,
+                'serviceUrl'            => $serviceUrl,
                 'uiHash'                => $generatedUiHash,
                 'uiParts'               => array(
-                    'dataselectionModule' => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),
-                    'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
+                    'dataselectionModule' => array('isLoaded' => CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),
+                    'index'               => array('isLoaded' => CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
                 'uiSettings'            => array (),
                 'url'                   => $staticUrlBase . 'cubeviz/'

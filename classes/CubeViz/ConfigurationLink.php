@@ -388,17 +388,6 @@ class CubeViz_ConfigurationLink
      */
     public function write($content, $type) 
     {
-        $filename = '';
-        
-        if('data' == $type) {
-            $filename = CubeViz_ConfigurationLink::$filePrefForDataHash;
-        } elseif('ui' == $type) {
-            $filename = CubeViz_ConfigurationLink::$filePrefForUiHash;
-        } else {
-            // in this case something went wrong!
-            return;
-        }
-        
         // adapt content
         $content = trim($content);
         $content = str_replace(array("\r\n", "\\r", "\\n"), ' ', $content);
