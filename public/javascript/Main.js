@@ -1118,8 +1118,8 @@ var DataCube_DataCubeMerger = (function () {
     DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measure1, measure2) {
         return {
             0: {
-                __cv_niceLabel: "Artifical Measure",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
+                __cv_niceLabel: "Artifical Measure of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
                 __cv_description: "This is an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
