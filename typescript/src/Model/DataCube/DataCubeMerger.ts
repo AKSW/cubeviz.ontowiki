@@ -44,7 +44,7 @@ class DataCube_DataCubeMerger
             // update dimension element uri
             element.__cv_uri = mergedDataCubeUri 
                 + "dimension" + i
-                + "dimensionElement" + j;
+                + "DimensionElement" + j;
             
             element.__cv_hashedUri = CryptoJS.MD5(element.__cv_uri) + "";
                                
@@ -157,12 +157,6 @@ class DataCube_DataCubeMerger
         var componentSpecification:any = {},
             i:number = 0,
             virtualDimensions:any = {};
-            
-        console.log("");
-        console.log("buildDimensionsAndTheirComponentSpecifications");
-        console.log("");
-        console.log("equalDimensions");
-        console.log(equalDimensions);
         
         // go through all equal dimensions and add their uri
         _.each (equalDimensions, function(dimensionPair){
@@ -228,10 +222,6 @@ class DataCube_DataCubeMerger
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements (
                 mergedDataCubeUri, componentSpecification.__cv_elements, i
             );
-            
-            console.log("");
-            console.log("new component specification:");
-            console.log(componentSpecification);
             
             // save adapted
             virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
@@ -305,30 +295,25 @@ class DataCube_DataCubeMerger
     {        
         var adaptedObservations:any = {},
             adaptedDimensionElementUri:string = null,
-            i:number = _.size(observations1),
-            mergedObservations:any = {},
-            tmp:any = {};
+            observationCounter:number = 0,
+            tmp:any = {},
+            tmpObservations:any = {},
+            urisToIgnore:any[] = [],
+            usedUri:string = null;
             
-        console.log("");
-        
-        
-        check http://data.lod2.eu/scoreboard/items/i_iuse/RF_GE1/_ind/EuropeanUnion-27countries/2011/ind
-        
-        
-        
-        console.log("buildObservationsAccordingToEqualDimensionPair");
-        
         // create a real clone of retrieved observations lists
-        mergedObservations = $.parseJSON(JSON.stringify(observations1));
+        observations1 = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         
-        _.each(observations2, function(observation){
-            mergedObservations [i++] = observation;
+        _.each(observations1, function(observation){
+            tmpObservations [observation.__cv_uri] = observation;
         });
         
-        i = 0;
+        _.each(observations2, function(observation){
+            tmpObservations [observation.__cv_uri] = observation;
+        });
         
-        _.each(mergedObservations, function(observation){
+        _.each(tmpObservations, function(observation){
             
             // remember old uri using a sameAs and dct:source relation
             observation ["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
@@ -336,8 +321,8 @@ class DataCube_DataCubeMerger
             
             
             // update uri
-            observation.__cv_uri = mergedDataCubeUri + "observation" + i;
-            observation.__cv_hashedUri = CryptoJS.MD5 (mergedDataCubeUri + "observation" + i) + "";
+            observation.__cv_uri = mergedDataCubeUri + "observation" + observationCounter;
+            observation.__cv_hashedUri = CryptoJS.MD5 (observation.__cv_uri) + "";
             
             
             // update relation to dataset
@@ -346,36 +331,160 @@ class DataCube_DataCubeMerger
             
             
             // update relation to measure
-            observation [mergedDataCubeUri + "measure"] = observation [measure.__cv_oldCubeMeasure[0]];
-            delete observation [measure.__cv_oldCubeMeasure[0]];
+            usedUri = null;
             
+            _.each(measure.__cv_oldCubeMeasure, function(oldMeasureUri){
+                if (false === _.isUndefined(observation [oldMeasureUri])) {
+                    usedUri = oldMeasureUri;
+                }
+            });
             
-            // update observation
-            adaptedObservations [i++] = observation;
+            if (false === _.isNull(usedUri)) {                
+                // update observation
+                observation [mergedDataCubeUri + "measure"] = observation[usedUri];
+                delete observation[usedUri];
+                
+                adaptedObservations [observation.__cv_uri] = observation;
+                ++observationCounter;
+            } else {
+                // In this case the current observation has no valid value.
+            }
         });
         
         /**
          * for each merged dimension go through all observations
          */
+        tmpObservations = {};
         _.each(dimensions, function(dimension){
-            i = 0;            
+            
+            // i = 0;            
             _.each(adaptedObservations, function(observation){
                 
                 // replace relation to dimension
                 adaptedDimensionElementUri = null;
                 _.each (dimension.__cv_elements, function(element){
                     
-                    if (element["http://www.w3.org/2002/07/owl#sameAs"] == observation [dimension.__cv_oldCubeDimension[0]]) {
-                        adaptedDimensionElementUri = element.__cv_uri;
-                        observation [mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;                    
-                        delete observation [dimension.__cv_oldCubeDimension[0]];
+                    if (true === _.isArray(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                        
+                        /**
+                         * Find the origin uri of the current element by using
+                         * sameAs array containing all origin uris of element.
+                         * To do so, you go through each observation and check,
+                         * if there is a non-undefined field with current observation
+                         * and the current dimension. This field points to a 
+                         * certain dimension element. But this dimension element 
+                         * was changed before by DataCubeMerger.adaptedDimensionElements.
+                         * So you have to replace this reference with the updated
+                         * one.
+                           
+                           Example observation (not updated):
+                           **********************************
+                         
+                            __cv_description: ""
+                            __cv_hashedUri: "be9cff7063b05973c289b367c93a779d"
+                            __cv_niceLabel: 
+                                "Availability of eGovernment services - enterprises for Finland in 2001"
+                            __cv_uri: 
+                                "http://data.lod2.eu/scoreboard/items/FOA_ent/Country/_of_pub_serv_for_ent/Finland/2001/ind"
+                            http://data.lod2.eu/scoreboard/properties/country:  
+                                "http://data.lod2.eu/scoreboard/country/Finland"
+                            http://data.lod2.eu/scoreboard/properties/unit:  
+                                "%_of_pub_serv_for_ent"
+                            http://data.lod2.eu/scoreboard/properties/value:  
+                                "0.625"
+                            http://data.lod2.eu/scoreboard/properties/year:  
+                                "http://data.lod2.eu/scoreboard/year/2001"
+                            http://purl.org/linked-data/cube#dataSet:  
+                                "http://data.lod2.eu/scoreboard/ds/indicator/FOA_ent_Country__of_pub_serv_for_ent"
+                            http://www.w3.org/1999/02/22-rdf-syntax-ns#type:  
+                                "http://purl.org/linked-data/cube#Observation"
+                            http://www.w3.org/2000/01/rdf-schema#label:  
+                                "Availability of eGovernment services - enterprises for Finland in 2001"
+                         
+                           This example observation is an original one, which means
+                           that there are no modifications yet. As you can see,
+                           its used dimensions are:
+                                http://data.lod2.eu/scoreboard/properties/country and
+                                http://data.lod2.eu/scoreboard/properties/year
+                                
+                           The uris of these two dimensions were updated by 
+                           DataCubeMerger.buildDimensionsAndTheirComponentSpecifications
+                           before. So we have to adapted this property. The
+                           same goes for the dimension element on which the relation
+                           points to.
+                           
+                           Example Dimension Element:
+                           **************************
+                             __cv_description: ""
+                             __cv_hashedUri: "2c432b80c03e04181cbbdf1fe9bf1837"
+                             __cv_niceLabel: "Hungary"
+                             __cv_uri: 
+                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0DimensionElement2"
+                             http://ns.aksw.org/spatialHierarchy/isLocatedIn: 
+                                "http://data.lod2.eu/scoreboard/country/European+Union+-+27+countries"
+                             http://purl.org/dc/terms/source: "http://data.lod2.eu/scoreboard/country/Hungary"
+                             http://www.w3.org/1999/02/22-rdf-syntax-ns#type: 
+                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0"
+                             http://www.w3.org/2000/01/rdf-schema#label: "Hungary"
+                             http://www.w3.org/2002/07/owl#sameAs: 
+                                "http://data.lod2.eu/scoreboard/country/Hungary"
+                           
+                           As you can see, it has the property owl:sameAs which 
+                           refers to the country Hungary. Thats the origin uri
+                           of this dimension element. After we found a match for
+                           the dimension, we use new __cv_uri of dimension element which
+                           was previously generated by DataCubeMerger.adaptedDimensionElements.
+                           
+                           Usally this generated uri ends with something like:
+                           
+                             .../mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0:
+                                .../mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0DimensionElement2
+                         */
+                         _.each(element["http://www.w3.org/2002/07/owl#sameAs"], function(sameAsObject){
+                            _.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){                                
+                                if (sameAsObject == observation [oldDimensionUri]) {
+                                    adaptedDimensionElementUri = element.__cv_uri;
+                                }
+                            });
+                        });
+                    } else {
+                        _.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){
+                            if (element["http://www.w3.org/2002/07/owl#sameAs"] == observation [oldDimensionUri]) {
+                                adaptedDimensionElementUri = element.__cv_uri;
+                            }
+                        });
                     }
                 });
+                
+                if (false === _.isNull(adaptedDimensionElementUri)) {
+                    observation [mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;                    
                     
-                adaptedObservations[i++] = observation;
+                    _.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){
+                        delete observation [oldDimensionUri];
+                    });
+                    
+                    tmpObservations[observation.__cv_uri] = observation;
+                } else {
+                    // In this case, there is an observation which points to a dimension
+                    // element which does not exist. That usally means, that this
+                    // observation is invalid but there could be another explanation. 
+                    // But CubeViz is not able to handle this yet, so it will igonre 
+                    // such observations
+                    urisToIgnore.push(observation.__cv_uri);
+                }
             });
             
             ++dimensionIndex;
+        });
+        
+        adaptedObservations = {};
+        
+        // go through all tempary observations and collect all, which are not 
+        // on the black list (urisToIgnore)
+        _.each(tmpObservations, function(observation){
+            if (-1 === $.inArray(observation.__cv_uri, urisToIgnore)) {
+                adaptedObservations [observation.__cv_uri] = observation;
+            }
         });
         
         return adaptedObservations;
@@ -418,50 +527,6 @@ class DataCube_DataCubeMerger
             selectedSlice: {},
             slices: {}
         };
-    }
-    
-    /**
-     * Returns an adapted dimensions list but each has only a couple of dimension
-     * elements in it, these are the selected dimension elements.
-     * @param dimensions any Object with numeric keys containing dimensions
-     * @return any Same object structure as dimensions, but with adapted dimensionElements
-     *             list
-     */
-    static getSelectedDimensionElements(dimensions:any) : any
-    {
-        var numberOfDimensionElementsToUse:number = Math.floor((Math.random()*5)+1),
-            selectedComponentDimensions:any = {};
-        
-        dimensions = $.parseJSON(JSON.stringify(dimensions));
-        
-        // go through all dimensions
-        _.each (dimensions, function(dimension){
-            
-            // if there are less than the random number of dimension elements
-            // to use, use only one dimension element
-            if (numberOfDimensionElementsToUse > dimension.__cv_elements) {
-                dimension.__cv_elements = dimension.__cv_elements[0];
-            
-            // otherwise use as much elements as random number
-            } else {
-                var i:number = 0,
-                    selectedDimensionElements:any = {};
-                
-                _.each(dimension.__cv_elements, function(element){
-                    if (i <= numberOfDimensionElementsToUse) {
-                        selectedDimensionElements[i] = element;
-                        ++i;
-                    }
-                });
-                
-                dimension.__cv_elements = selectedDimensionElements
-            }
-            
-            // save dimension
-            selectedComponentDimensions [dimension.__cv_uri] = dimension;
-        });
-        
-        return selectedComponentDimensions;
     }
     
     /**
