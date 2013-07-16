@@ -547,52 +547,7 @@ class DataCube_Query
      */
     public function getNumberOfObservations ($dsUri) 
     {        
-        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
-            SELECT DISTINCT ?observation
-            WHERE { 
-                ?observation a qb:Observation . 
-                ?observation qb:dataSet ?dataset . 
-                ?observation ?dimension ?dimelement . 
-                ?observation ?measure ?value . 
-                ?dataset a qb:DataSet . 
-                ?dataset qb:structure ?datastructuredefintion . 
-                ?dimensionspecification a qb:ComponentSpecification . 
-                ?dimensionpecification qb:dimension ?dimension . 
-                ?measurespecification a qb:ComponentSpecification . 
-                ?measurespecification qb:measure ?measure . 
-            }
-            LIMIT 1000;';
-        
-        // generate unique hash using given result and model uri
-        $objectId = md5($this->_model->getModelIri() . $sparql);
-
-        // check there is already a cached object for this hash
-        $result = $this->_objectCache->load($objectId);
-
-        if (false === $result) {
-
-            $this->_queryCache->startTransaction($objectId);
-            
-            
-            $result = $this->_model->sparqlQuery($sparql);
-            
-            $list = array();
-        
-            foreach ($result as $entry) {
-                $list [$entry ['observation']] = 0;
-            }
-            
-            $result = count (array_keys ($list));
-            
-            
-            // close the object cache transaction
-            $this->_queryCache->endTransaction($objectId);
-            
-            // save the result value in the object cache
-            $this->_objectCache->save($result, $objectId);
-        }
-        
-        return $result;
+        return count ($this->getObservations($dsUri));
     }
     
     /**
@@ -730,6 +685,8 @@ class DataCube_Query
             $where .= '}';    
             
             $queryObject->setWherePart($where);
+            
+            $queryObject->setLimit(250);
             
             $result = $this->_model->sparqlQuery((string) $queryObject);
             
