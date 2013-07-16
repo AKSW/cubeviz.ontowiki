@@ -23,4 +23,14 @@ class CubeViz_Visualization_HighCharts extends CubeViz_Visualization
             "CubeViz_Visualization_HighCharts_Spline"
         ];
     }
+    
+    /**
+     * Renders a chart.
+     * @param chart any Instance of a library chart
+     * @return any Initialized chart
+     */
+    public render(chart:any) : any 
+    {
+        return new Highcharts.Chart (chart.getRenderResult());
+    }
 }

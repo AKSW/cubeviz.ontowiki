@@ -32,14 +32,14 @@ class CubeViz_Visualization_Controller
      * Returns chart config object by given class name.
      * @param className Name of the class(chart)
      * @param charts List of chart objects (must have class property)
-     * @return any|undefined Chart object if found, undefined otherwise.
+     * @return any|null Chart object if found, null otherwise.
      */
     static getFromChartConfigByClass(className:string, charts:any[]) : any 
     {
-        var result = undefined;
+        var result = null;
         
         _.each(charts, function(chart){
-            if(true === _.isUndefined(result)){
+            if(true === _.isNull(result)){
                 if(className == chart.className) {
                     result = chart;
                 }
@@ -118,12 +118,21 @@ class CubeViz_Visualization_Controller
      */
     static getVisualizationType (className:string) : string 
     {
-        var hC = new CubeViz_Visualization_HighCharts();
-        
-        if(true === hC.isResponsibleFor(className)) {
+        var hC = new CubeViz_Visualization_HighCharts(),
+            d3js = new CubeViz_Visualization_D3js();
+
+        // check for HighCharts
+        if (true === hC.isResponsibleFor(className)) {
             return hC.getName();
+        
+        // check for D3js
+        } else if (true === d3js.isResponsibleFor(className)) {
+            return d3js.getName();
+        
+        // In this case no responsible library was found, so throw an error.
+        } else {
+            throw new Error("Unknown className " + className);
         }
-        throw new Error("Unknown className " + className);
     }
     
     /**
@@ -146,6 +155,23 @@ class CubeViz_Visualization_Controller
             .replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
             .replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>')
             .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');        
+    }
+    
+    /**
+     * @param chartConfig any
+     * @param numberOfMultipleDimensions number      * 
+     * @return Object any containing 2 elements: className and chartConfig
+     */
+    static getDefaultChartConfig(chartConfig:any, numberOfMultipleDimensions:number) : any
+    {
+        return {
+            
+            // set default class name: first class of according list of multiple 
+            // dimensions
+            className: chartConfig[numberOfMultipleDimensions].charts[0].className,
+            
+            chartConfig: chartConfig[numberOfMultipleDimensions].charts[0]
+        };
     }
     
     /**
