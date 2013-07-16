@@ -100,6 +100,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
         
+        /**
+         * Set number of multiple and one element dimensions
+         */
+        mergedDataCube.numberOfMultipleDimensions = 
+            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
+        mergedDataCube.numberOfOneElementDimensions = 
+            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
+        
         
         /**
          * set measure
