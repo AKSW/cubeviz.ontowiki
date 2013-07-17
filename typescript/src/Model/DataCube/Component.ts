@@ -6,6 +6,105 @@
 class DataCube_Component 
 {    
     /**
+     * Creates for each dimension a random set of pre-selected elements.
+     * @param componentDimensions Object contain all component dimensions.
+     * @return any Object containing for each dimension a random set of elements.
+     */
+    static getDefaultSelectedDimensions (componentDimensions:any) : any 
+    {        
+        var alreadyUsedIndexes:number[] = [],
+            // because we change the __cv_elements field for each dimension later on,
+            // we have to create a real clone to avoid changing the un-selected
+            // components field in app._.data!
+            componentDimensions = JSON.parse(JSON.stringify(componentDimensions)),
+            i:number = 0,
+            infinityBackup:number = 0,
+            maxNumberOfElements:number = 0,
+            numberOfElements:number = 0,
+            randomElementIndex:number = 0,
+            result:any = {},
+            selectedElements:any = {};
+    
+        // go through all component dimensions
+        _.each(componentDimensions, function(componentDimension, dimensionHashedUrl){            
+            
+            alreadyUsedIndexes = [];
+            infinityBackup = 0;
+            
+            numberOfElements = _.keys(componentDimension.__cv_elements).length;
+            
+            // get one third of the component element number (but maximum of 10)
+            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
+            maxNumberOfElements = 10 < maxNumberOfElements 
+                ? 10 : 1 > maxNumberOfElements
+                       ? 1 : maxNumberOfElements;
+            
+            /**
+             * Find a couple of random indexes
+             */
+            do {
+                // compute index for the next random element which is
+                // between i and max number of elements
+                randomElementIndex = Math.floor((Math.random()*numberOfElements));
+                
+                // if computed index is not use ...
+                if (-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
+                    
+                    // ... save it
+                    if ((alreadyUsedIndexes.length+1) <= maxNumberOfElements) {
+                        alreadyUsedIndexes.push(randomElementIndex);
+                    }
+                    
+                    // break after a couple of rounds
+                    if (maxNumberOfElements == alreadyUsedIndexes.length) {
+                        break;
+                    }
+                }
+                
+                infinityBackup++;
+            } while ( (2 * maxNumberOfElements) > infinityBackup );
+            
+            /**
+             * go through all dimension elements and save elements by random index
+             */
+            selectedElements = {};
+            i = 0;
+            
+            _.each(componentDimension.__cv_elements, function(element, elementUri){
+                if(-1 < $.inArray(i, alreadyUsedIndexes)) {
+                    selectedElements[i] = element;
+                }
+                
+                i++;
+            });
+            
+            // save adapted component dimension + elements
+            componentDimension.__cv_elements = selectedElements;
+            result[dimensionHashedUrl] = componentDimension;
+        });
+        
+        return result;
+    }
+    
+    /**
+     * @param dimensionElements any
+     * @param uri string
+     * @return any
+     */
+    static findDimensionElement(dimensionElements:any, uri:string) : any
+    {
+        var elementToFind:any = null;
+        
+        _.each (dimensionElements, function(element){
+            if (element.__cv_uri == uri) {
+                elementToFind = element;
+            }
+        });
+        
+        return elementToFind;
+    }
+    
+    /**
      * Loads all attributes for a given dataset.
      * @param url 
      * @param modelIri
@@ -89,86 +188,5 @@ class DataCube_Component
                 callback(entries.content);
             }
         });
-    }
-    
-    /**
-     * Creates for each dimension a random set of pre-selected elements.
-     * @param componentDimensions Object contain all component dimensions.
-     * @return any Object containing for each dimension a random set of elements.
-     */
-    static getDefaultSelectedDimensions (componentDimensions:any) : any 
-    {        
-        var alreadyUsedIndexes:number[] = [],
-            // because we change the __cv_elements field for each dimension later on,
-            // we have to create a real clone to avoid changing the un-selected
-            // components field in app._.data!
-            componentDimensions = JSON.parse(JSON.stringify(componentDimensions)),
-            i:number = 0,
-            infinityBackup:number = 0,
-            maxNumberOfElements:number = 0,
-            numberOfElements:number = 0,
-            randomElementIndex:number = 0,
-            result:any = {},
-            selectedElements:any = {};
-    
-        // go through all component dimensions
-        _.each(componentDimensions, function(componentDimension, dimensionHashedUrl){            
-            
-            alreadyUsedIndexes = [];
-            infinityBackup = 0;
-            
-            numberOfElements = _.keys(componentDimension.__cv_elements).length;
-            
-            // get one third of the component element number (but maximum of 10)
-            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
-            maxNumberOfElements = 10 < maxNumberOfElements 
-                ? 10 : 1 > maxNumberOfElements
-                       ? 1 : maxNumberOfElements;
-            
-            /**
-             * Find a couple of random indexes
-             */
-            do {
-                // compute index for the next random element which is
-                // between i and max number of elements
-                randomElementIndex = Math.floor((Math.random()*numberOfElements));
-                
-                // if computed index is not use ...
-                if (-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
-                    
-                    // ... save it
-                    if ((alreadyUsedIndexes.length+1) <= maxNumberOfElements) {
-                        alreadyUsedIndexes.push(randomElementIndex);
-                    }
-                    
-                    // break after a couple of rounds
-                    if (maxNumberOfElements == alreadyUsedIndexes.length) {
-                        break;
-                    }
-                }
-                
-                infinityBackup++;
-            } while ( (2 * maxNumberOfElements) > infinityBackup );
-            
-            /**
-             * go through all dimension elements and save elements by random index
-             */
-            selectedElements = {};
-            i = 0;
-            
-            _.each(componentDimension.__cv_elements, function(element, elementUri){
-                if(-1 < $.inArray(i, alreadyUsedIndexes)) {
-                    selectedElements[i] = element;
-                }
-                
-                i++;
-            });
-            
-            // save adapted component dimension + elements
-            componentDimension.__cv_elements = selectedElements;
-            result[dimensionHashedUrl] = componentDimension;
-        });
-        
-        return result;
     }
 }
