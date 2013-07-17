@@ -11,15 +11,17 @@ Vcs-Browser: https://github.com/AKSW/cubeviz.ontowiki/
 Package: ontowiki-cubeviz
 Architecture: all
 Depends: ontowiki-virtuoso, ${misc:Depends}
-Description: CubeViz is a RDF DataCube Browser
- CubeViz is a facetted browser for statistical data utilizing the RDF Data
- Cube vocabulary which is the state-of-the-art in representing statistical
- data in RDF. This vocabulary is compatible with SDMX and increasingly being
- adopted. Based on the vocabulary and the encoded Data Cube, CubeViz is
- generating a facetted browsing widget that can be used to filter
- interactively observations to be visualized in charts. Based on the selected
- structure, CubeViz offer beneficiary chart types and options which can be
- selected by users.
+Description: RDF DataCube Browser
+ CubeViz is an OntoWiki component providing faceted browsing in statistical
+ data in the Linked Data Web. It was set up and adopted to be part of the
+ Data Portal of the European Union. CubeViz utilizing the RDF DataCube
+ vocabulary which is the state-of-the-art in representing statistical data
+ in Resource Description Framework (RDF). This vocabulary is compatible with
+ SDMX and increasingly being adopted. Based on the vocabulary and the encoded
+ Data Cube, CubeViz is generating a facetted browsing widget that can be used
+ to filter interactively observations to be visualized in charts. Based on the
+ selected structure, CubeViz offer beneficiary chart types and options which
+ can be selected by users.
  .
  CubeViz is part of the LOD2 Technology Stack.
 

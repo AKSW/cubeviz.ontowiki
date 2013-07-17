@@ -1,61 +1,132 @@
-This work was packaged for Debian by:
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: cubeviz.ontowiki
+Source: https://github.com/AKSW/cubeviz.ontowiki
 
-    Sebastian Tramp <tramp@informatik.uni-leipzig.de> on Tue, 13 Jul 2012 15:37:27 +0100
-
-It was downloaded from:
-
-    <https://github.com/AKSW/cubeviz.ontowiki/tags>
-
-Upstream Author(s):
-
-    Ivan Ermilov
-    Konrad Abicht
-    Michael Martin
-    Christian Würker
-
+Files: *
 Copyright:
+ 2013 Ivan Ermilov
+ 2013 Konrad Abicht
+ 2013 Christian Würker
+ 2013 Michael Martin
+License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
 
-    <Copyright (C) 2012 Ivan Ermilov>
-    <Copyright (C) 2012 Konrad Abicht>
-    <Copyright (C) 2012 Michael Martin>
-    <Copyright (C) 2012 Christian Würker>
+Files: public/images/semicon/*
+Copyright:
+ 2013 Rob Vesse
+ 2013 Konrad Abicht
+License: CC-BY-SA-3.0
+ http://creativecommons.org/licenses/by-sa/3.0/legalcode
 
-License:
+Files: public/javascript/libraries/highcharts*
+Copyright: 2009-2011 Torstein Hønsi
+License: CC-BY-NC-SA-3.0
+ http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode
 
-   This package is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License version 2 as
-   published by the Free Software Foundation.
+Files: public/javascript/libraries/CryptoJS_Md5.js
+Copyright: 2009-2012 Jeff Mott
+License: MIT2
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+ .
+ Redistributions of source code must retain the above copyright notice, this list
+ of conditions, and the following disclaimer.
+ Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions, and the following disclaimer in the documentation or other
+ materials provided with the distribution.
+ Neither the name CryptoJS nor the names of its contributors may be used to
+ endorse or promote products derived from this software without specific prior
+ written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS,"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE,
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
 
-   On Debian systems, the complete text of the GNU General
-   Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+Files: public/javascript/libraries/underscore*
+Copyright: 2009-2012 Jeremy Ashkenas
+License: MIT
+ Unspecified MIT style license.
 
-   HighCharts JS: For the given context this HighCharts JS is free to use
-   under the terms of Creative Commons Attribution-NonCommercial 3.0. 
-   ( http://shop.highsoft.com/highcharts.html#non-commercial )
+Files: public/javascript/libraries/json2.js
+Copyright: none
+License: public-domain
+ The License short name public-domain does not refer to a set of license terms.
 
-   If you would like to use HighCharts in a commercial or governmental context,
-   please check the site http://shop.highsoft.com/highcharts.html#commercial
-   by yourself. We, creators of CubeViz, are not be responsible for any illegal
-   or unauthorized usage of HighCharts JS.
+Files: classes/foreign/EasyRdf/*
+Copyright: 2009-2011 Nicholas J Humfrey
+License: MIT2
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ * Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * The name of the author 'Nicholas J Humfrey" may be used to endorse or
+   promote products derived from this software without specific prior written
+   permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
 
-   TypeScript: TypeScript is licensed under the terms of Apache License 2.0
-   (http://www.apache.org/licenses/LICENSE-2.0.txt).
-
-   CubeViz uses Javascript files which are generated by the TypeScript compiler
-   tsc. For information see http://www.typescriptlang.org/
-
-   json-template: json-template is licensed under the terms of Apache License 2.0
-   (http://www.apache.org/licenses/LICENSE-2.0.txt). For more information see
-   http://json-template.googlecode.com/svn/trunk/doc/Introducing-JSON-Template.html
-
-   JSON2: JSON 2 is public domain. For more information see http://www.JSON.org/js.html.
-
-The Debian packaging is:
-
-    Copyright (C) 2012 Sebastian Tramp <tramp@informatik.uni-leipzig.de>
-
-you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+Files: debian/*
+Copyright: 2013 Sebastian Tramp
+License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
 

@@ -98,6 +98,8 @@ rsync -av --exclude='.git' \
           --exclude='logs/*' \
           $ontowikiRoot/* .
           
+chmod 0777 cache
+          
 echo ""
 echo " Copy additional files and extensions "
 echo ""
@@ -138,15 +140,15 @@ echo "Generate lightweight CubeViz version (make tar)"
 echo ""
 
 cd ../../..
-make tar # generates a lightweight cubeviz tar.gz
+make cubeviz # generates a lightweight cubeviz tar.gz
 cd deployment/generated-packages 
-tar -zxvf $cubevizPackage.tar.gz # Unzip this tar.gz
+tar -pxvzf $cubevizPackage.tar.gz
 mv $cubevizPackage $packageName/extensions
 
 echo ""
 echo "Tar folder $packageName to $packageName.tar.gz"
 echo ""
 
-rm -f $packageName.7z
-7z a -mx=8 -mfb=64 -md=64m $packageName.7z $packageName
+rm -f $packageName.tar.gz
+tar -pcvzf $packageName.tar.gz $packageName
 rm -rf $packageName

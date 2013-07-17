@@ -1,11 +1,13 @@
-assets                usr/share/ontowiki-cubeviz
-classes               usr/share/ontowiki-cubeviz
-CubevizController.php usr/share/ontowiki-cubeviz
-CubevizModule.php     usr/share/ontowiki-cubeviz
-public                usr/share/ontowiki-cubeviz
+assets                  usr/share/ontowiki-cubeviz
+classes                 usr/share/ontowiki-cubeviz
+CubevizController.php   usr/share/ontowiki-cubeviz
+CubevizHelper.php       usr/share/ontowiki-cubeviz
+DataselectionModule.php usr/share/ontowiki-cubeviz
+languages               usr/share/ontowiki-cubeviz
+public                  usr/share/ontowiki-cubeviz
 
-doap.n3               etc/ontowiki-cubeviz
-ChartConfig.js        etc/ontowiki-cubeviz
+doap.n3-dist            etc/ontowiki-cubeviz
+ChartConfig.js          etc/ontowiki-cubeviz
 
-README.md             usr/share/doc/ontowiki-cubeviz
+README.md               usr/share/doc/ontowiki-cubeviz
 
