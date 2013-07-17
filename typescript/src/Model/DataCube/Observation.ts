@@ -48,6 +48,24 @@ class DataCube_Observation
     }
     
     /**
+     * @param observations any
+     * @param dimensionUri string
+     * @param dimensionElements any
+     */
+    static getUsedDimensionElementUris(observations:any, dimensionUri:string) : string[] 
+    {
+        var usedDimensionElementUris:string[] = [];
+        
+        _.each(observations, function(observation){
+            if (-1 === $.inArray(observation[dimensionUri], usedDimensionElementUris)){
+                usedDimensionElementUris.push(observation[dimensionUri]);
+            }
+        });
+        
+        return usedDimensionElementUris;
+    }
+    
+    /**
      * Returns a list containing values of the given observations
      * @param 
      * @param 
