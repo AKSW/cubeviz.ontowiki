@@ -42,8 +42,8 @@ mv $cubevizRoot/deployment/generated-packages/$packageName/doap.n3-dist        $
 echo ""
 echo "- Generate archive"
 cd deployment/generated-packages
-rm -f $packageName.7z
-7z a -mx=8 -mfb=64 -md=64m $packageName.7z $packageName
+rm -f $packageName.tar.gz
+tar -pcvzf $packageName.tar.gz $packageName
 
 echo ""
 echo "- Remove folder cubeviz"
