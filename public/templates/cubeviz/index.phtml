@@ -30,6 +30,27 @@
 
     <!-- Visualization -->
     <div id="cubeviz-index-visualization"></div>
+    
+    <!-- Export area -->
+    <?php if (true === $this->useExport) { ?>
+    <div id="cubeviz-index-exportArea">
+        <strong><?php echo $this->translate->_('IndexAction_ExportAs'); ?></strong>
+        
+        &nbsp;
+        
+        <a id="cubeviz-index-exportArea-btnTurtle"
+           title="<?php echo $this->translate->_('IndexAction_ExportAsTurtle'); ?>">
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/turtle.png"
+                 style="width: 20px;"/></a>
+        
+        &nbsp; 
+        
+        <a id="cubeviz-index-exportArea-btnCsv"
+           title="<?php echo $this->translate->_('IndexAction_ExportAsCsv'); ?>">
+            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/csv2.png"
+                 style="width: 17px;"/></a>
+    </div>
+    <?php } ?>
 
     <!-- Legend part -->
     <div id="cubeviz-index-legend">
@@ -64,38 +85,18 @@
             <br/>
             <h2><?php echo $this->translate->_('IndexAction_InformationAboutRetrievedData'); ?></h2>
             
-            <ul id="cubeviz-legend-observations"></ul>
-            <div style="float: right; margin-right: 10px;">
+            <table class="table table-bordered table-striped responsive-utilities" 
+                   id="cubeviz-legend-observations"></table>
+            <!--<div style="float: right; margin-right: 10px;">
                 <p>
                     <a class="cubeviz-btn" id="cubeviz-legend-sortByTitle">
                         <?php echo $this->translate->_('IndexAction_SortByTitle'); ?></a>
                     <a class="cubeviz-btn" id="cubeviz-legend-sortByValue">
                         <?php echo $this->translate->_('IndexAction_SortByValue'); ?></a>
                 </p>
-            </div>
+            </div>-->
         </div>
     </div>
-
-    <!-- Export area -->
-    <?php if (true === $this->useExport) { ?>
-    <div id="cubeviz-index-exportArea">
-        <strong><?php echo $this->translate->_('IndexAction_ExportAs'); ?></strong>
-        
-        &nbsp;
-        
-        <a id="cubeviz-index-exportArea-btnTurtle"
-           title="<?php echo $this->translate->_('IndexAction_ExportAsTurtle'); ?>">
-            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/turtle.png"
-                 style="width: 20px;"/></a>
-        
-        &nbsp; 
-        
-        <a id="cubeviz-index-exportArea-btnCsv"
-           title="<?php echo $this->translate->_('IndexAction_ExportAsCsv'); ?>">
-            <img src="<?php echo $this->cubevizImagesPath; ?>semicon/csv2.png"
-                 style="width: 17px;"/></a>
-    </div>
-    <?php } ?>
     
     <div style="clear: both;"></div>
 
@@ -235,6 +236,16 @@
         <a href="[[dsdUrl]]" target="_blank">[[dsdLabel]]</a> -
         <a href="[[dsUrl]]" target="_blank">[[dsLabel]]</a>
     </h3>
+</div>
+
+<div id="cubeviz-legend-tpl-tableHeadEntry" style="display: none;">
+    <h4>
+        <a href="[[__cv_uri]]" target="_blank">[[__cv_niceLabel]]</a>
+        &nbsp;&nbsp;
+        <i class="icon-sort-by-attributes" title="sort ascending"></i>
+        &nbsp;
+        <i class="icon-sort-by-attributes-alt" title="sort descending"></i>
+    </h4>
 </div>
 
 <div id="cubeviz-legend-tpl-observation" style="display: none;">

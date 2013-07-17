@@ -65,40 +65,103 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     }
     
     /**
-     *
+     * observations any[] 
+     * selectedDimensions any
+     * selectedMeasure any
      */
-    public displayRetrievedObservations(list:any[]) : void
+    public displayRetrievedObservations(observations:any[], selectedDimensions:any,
+        selectedMeasure:any) : void
     {                
-        // variables
-        var infoList:any = null,
-            label = "";
+        var html:string = "",
+            label:string = "";
      
         $("#cubeviz-legend-observations").html("");
         
-        // go through all observations        
-        _.each(list, function(obs){
+        /**
+         * set table header
+         */
+        html = "<tr>";
+        _.each(selectedDimensions, function(dimension){
+            // head entry
+            html += "<td>"
+                    + CubeViz_View_Helper.tplReplace(
+                        $("#cubeviz-legend-tpl-tableHeadEntry").html(), dimension
+                    ) 
+                    + "</td>";
+        });
+        
+        // title of selected measure
+        html += "<td colspan=\"2\">" 
+                + CubeViz_View_Helper.tplReplace(
+                    $("#cubeviz-legend-tpl-tableHeadEntry").html(), selectedMeasure
+                  )
+                + "</td>";          
+             
+        // dummy cell
+        html += "<td></td></tr>";
+        
+        /**
+         * add line with additional information about the meta data
+         */
+        var observationValues = DataCube_Observation.getValues(
+                observations, selectedMeasure ["http://purl.org/linked-data/cube#measure"]
+            ),
+            // range of the values of observations
+            rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
+            rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10);
             
-            // fill observation template
-            $("#cubeviz-legend-observations").append(CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-legend-tpl-observation").html(),
-                obs
-            ));
+        html += "<tr class=\"info\">";
+        
+        _.each(selectedDimensions, function(dimension){ 
+            html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> different dimension elements</td>"; });
+        
+        html +=   "<td>" + rangeMin + "</td>"
+                + "<td>" + rangeMax + "</td>"
+                + "<td></td>"
+                "</tr>";
+        
+        $("#cubeviz-legend-observations").append(html);
+        
+        /**
+         * go through all observations        
+         */
+        _.each(observations, function(observation){
             
-            infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
+            html = "<tr>";
             
-            // fill template containing related dimension elements to this observation
-            _.each(obs.__cv_elements, function(dimensionElement){
+            _.each(selectedDimensions, function(dimension){
                 
-                infoList.append(CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-legend-tpl-observationInfoListEntry").html(),
-                    {
-                        dimensionLabel: dimensionElement.dimensionLabel,
-                        fullLabel: dimensionElement.__cv_niceLabel,
-                        __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
-                        __cv_uri: dimensionElement.__cv_uri
+                // get label of dimension element used in observation
+                _.each(dimension.__cv_elements, function(element){
+                    if (element.__cv_uri == observation[dimension ["http://purl.org/linked-data/cube#dimension"]]) {
+                        label = element.__cv_niceLabel;
                     }
-                ));
+                });
+                
+                // add label of according dimension element
+                html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" 
+                        + "<a href=\"" + observation[dimension ["http://purl.org/linked-data/cube#dimension"]] + "\" "
+                        +    "title=\"" + observation[dimension ["http://purl.org/linked-data/cube#dimension"]] + "\" "
+                        +    "target=\"_blank\">"
+                        + label
+                        + "</a>"
+                        + "</td>";
             });
+        
+            // observation value
+            html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" 
+                    + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]]
+                    + "</td>";
+            
+            // link to observation
+            html += "<td>" 
+                    + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>"
+                    + "</td>";
+            
+            // close line
+            html += "</tr>";       
+            
+            $("#cubeviz-legend-observations > tbody:last").append(html);
         });
     }
         
@@ -176,58 +239,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         .data("observationIcon", observationIcon);
                 });
         });
-    }
-    
-    /**
-     *
-     */
-    public generateList(observations:any[], selectedComponentDimensions:any[], 
-        selectedMeasureUri:string) : any[]
-    {
-        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension",
-            observationLabel = "",
-            dimensionElements:any = [],
-            label = "",
-            observationLabel:string = "",
-            rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label",
-            result:any[] = [];
-        
-        // go through all retrieved observations
-        _.each(observations, function(observation){
-            
-            /**
-             * set related dimension elements
-             * each observation is associated with a couple of dimension elements,
-             * but only one element per dimension. here we selected these elements
-             * and save their uri and label to show it later on.
-             */
-            dimensionElements = [];
-            _.each(selectedComponentDimensions, function(dimension){
-                _.each(dimension.__cv_elements, function(dimensionElement){
-                    // check the related dimension element uri set in observation
-                    // if it is equal to current dimension element, use it
-                    if (dimensionElement.__cv_uri == observation[dimension[cubeDimensionUri]]) {
-                        dimensionElements.push({
-                            dimensionLabel: dimension.__cv_niceLabel,
-                            __cv_niceLabel: dimensionElement.__cv_niceLabel,
-                            __cv_uri: dimensionElement.__cv_uri
-                        });
-                    }
-                });
-            });
-            
-            /**
-             * add observation entry to list
-             */
-            result.push ({
-                __cv_niceLabel: observation.__cv_niceLabel,
-                __cv_value: observation[selectedMeasureUri],
-                __cv_uri: observation.__cv_uri,
-                __cv_elements: dimensionElements
-            });
-        });
-        
-        return result;
     }
     
     /**
@@ -317,7 +328,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public onClick_sortByTitle() 
     {
         this.collection.sortAscendingBy ("__cv_niceLabel");
-        this.displayRetrievedObservations(this.collection._);
+        this.displayRetrievedObservations(
+            this.collection._,
+            this.app._.data.selectedComponents.dimensions,
+            this.app._.data.selectedComponents.measure
+        );
     }
     
     /**
@@ -326,7 +341,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public onClick_sortByValue() 
     {
         this.collection.sortAscendingBy ("__cv_value");
-        this.displayRetrievedObservations(this.collection._);
+        this.displayRetrievedObservations(
+            this.collection._,
+            this.app._.data.selectedComponents.dimensions,
+            this.app._.data.selectedComponents.measure
+        );
     }
     
     /**
@@ -376,17 +395,19 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          */
                      
         // read all observations and generates a list of it
-        this.collection.reset("__cv_niceLabel").addList(this.generateList(
-            this.app._.data.retrievedObservations,
-            this.app._.data.selectedComponents.dimensions,
-            selectedMeasureUri
-        ));
+        this.collection
+            .reset("__cv_niceLabel")
+            .addList(this.app._.data.retrievedObservations);
         
-        // sort generated list by title (observationLabel)
-        this.collection.sortAscendingBy ("__cv_niceLabel");
+        // sort generated list
+        this.collection.sortAscendingBy (selectedMeasureUri);
         
         // render list in HTML
-        this.displayRetrievedObservations(this.collection._);
+        this.displayRetrievedObservations(
+            this.collection._,
+            this.app._.data.selectedComponents.dimensions,
+            this.app._.data.selectedComponents.measure
+        );
         
         // attach dialog which contains model information
         CubeViz_View_Helper.attachDialogTo(

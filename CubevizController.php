@@ -859,6 +859,7 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         // Libraries
         $this->view->headScript()
+            ->appendFile($baseJavascriptPath.'libraries/javascriptStats-1.0.1.js', 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');  
     
