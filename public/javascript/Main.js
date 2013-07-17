@@ -1002,6 +1002,60 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
 })(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_Component = (function () {
     function DataCube_Component() { }
+    DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
+        var alreadyUsedIndexes = [];
+        var componentDimensions = JSON.parse(JSON.stringify(componentDimensions));
+        var i = 0;
+        var infinityBackup = 0;
+        var maxNumberOfElements = 0;
+        var numberOfElements = 0;
+        var randomElementIndex = 0;
+        var result = {
+        };
+        var selectedElements = {
+        };
+
+        _.each(componentDimensions, function (componentDimension, dimensionHashedUrl) {
+            alreadyUsedIndexes = [];
+            infinityBackup = 0;
+            numberOfElements = _.keys(componentDimension.__cv_elements).length;
+            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
+            maxNumberOfElements = 10 < maxNumberOfElements ? 10 : 1 > maxNumberOfElements ? 1 : maxNumberOfElements;
+            do {
+                randomElementIndex = Math.floor((Math.random() * numberOfElements));
+                if(-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
+                    if((alreadyUsedIndexes.length + 1) <= maxNumberOfElements) {
+                        alreadyUsedIndexes.push(randomElementIndex);
+                    }
+                    if(maxNumberOfElements == alreadyUsedIndexes.length) {
+                        break;
+                    }
+                }
+                infinityBackup++;
+            }while((2 * maxNumberOfElements) > infinityBackup)
+            selectedElements = {
+            };
+            i = 0;
+            _.each(componentDimension.__cv_elements, function (element, elementUri) {
+                if(-1 < $.inArray(i, alreadyUsedIndexes)) {
+                    selectedElements[i] = element;
+                }
+                i++;
+            });
+            componentDimension.__cv_elements = selectedElements;
+            result[dimensionHashedUrl] = componentDimension;
+        });
+        return result;
+    }
+    DataCube_Component.findDimensionElement = function findDimensionElement(dimensionElements, uri) {
+        var elementToFind = null;
+        _.each(dimensionElements, function (element) {
+            if(element.__cv_uri == uri) {
+                elementToFind = element;
+            }
+        });
+        return elementToFind;
+    }
     DataCube_Component.loadAllAttributes = function loadAllAttributes(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
         $.ajax({
             url: url + "getcomponents",
@@ -1055,51 +1109,6 @@ var DataCube_Component = (function () {
                 callback(entries.content);
             }
         });
-    }
-    DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
-        var alreadyUsedIndexes = [];
-        var componentDimensions = JSON.parse(JSON.stringify(componentDimensions));
-        var i = 0;
-        var infinityBackup = 0;
-        var maxNumberOfElements = 0;
-        var numberOfElements = 0;
-        var randomElementIndex = 0;
-        var result = {
-        };
-        var selectedElements = {
-        };
-
-        _.each(componentDimensions, function (componentDimension, dimensionHashedUrl) {
-            alreadyUsedIndexes = [];
-            infinityBackup = 0;
-            numberOfElements = _.keys(componentDimension.__cv_elements).length;
-            maxNumberOfElements = 1 + Math.floor(_.keys(componentDimension.__cv_elements).length * 0.3);
-            maxNumberOfElements = 10 < maxNumberOfElements ? 10 : 1 > maxNumberOfElements ? 1 : maxNumberOfElements;
-            do {
-                randomElementIndex = Math.floor((Math.random() * numberOfElements));
-                if(-1 === $.inArray(randomElementIndex, alreadyUsedIndexes)) {
-                    if((alreadyUsedIndexes.length + 1) <= maxNumberOfElements) {
-                        alreadyUsedIndexes.push(randomElementIndex);
-                    }
-                    if(maxNumberOfElements == alreadyUsedIndexes.length) {
-                        break;
-                    }
-                }
-                infinityBackup++;
-            }while((2 * maxNumberOfElements) > infinityBackup)
-            selectedElements = {
-            };
-            i = 0;
-            _.each(componentDimension.__cv_elements, function (element, elementUri) {
-                if(-1 < $.inArray(i, alreadyUsedIndexes)) {
-                    selectedElements[i] = element;
-                }
-                i++;
-            });
-            componentDimension.__cv_elements = selectedElements;
-            result[dimensionHashedUrl] = componentDimension;
-        });
-        return result;
     }
     return DataCube_Component;
 })();
@@ -3650,6 +3659,7 @@ var View_IndexAction_Legend = (function (_super) {
     };
     View_IndexAction_Legend.prototype.displayRetrievedObservations = function (observations, selectedDimensions, selectedMeasure) {
         var html = "";
+        var i = 0;
         var label = "";
 
         $("#cubeviz-legend-observations").html("");
@@ -3659,11 +3669,18 @@ var View_IndexAction_Legend = (function (_super) {
         });
         html += "<td colspan=\"2\">" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-tableHeadEntry").html(), selectedMeasure) + "</td>";
         html += "<td></td></tr>";
+        $("#cubeviz-legend-observations").append(html);
+        _.each(selectedDimensions, function (dimension) {
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("dimension", dimension);
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i++)).data("dimension", dimension);
+        });
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("measure", selectedMeasure);
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i)).data("measure", selectedMeasure);
         var observationValues = DataCube_Observation.getValues(observations, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
         var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);
 
-        html += "<tr class=\"info\">";
+        html = "<tr class=\"info\">";
         _.each(selectedDimensions, function (dimension) {
             html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> different dimension elements</td>";
         });
@@ -3684,6 +3701,10 @@ var View_IndexAction_Legend = (function (_super) {
             html += "<td>" + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>" + "</td>";
             html += "</tr>";
             $("#cubeviz-legend-observations > tbody:last").append(html);
+        });
+        this.bindUserInterfaceEvents({
+            "click .cubeviz-legend-sortAsc": this.onClick_sortAsc,
+            "click .cubeviz-legend-sortDesc": this.onClick_sortDesc
         });
     };
     View_IndexAction_Legend.prototype.displaySelectedConfiguration = function (selectedComponentDimensions) {
@@ -3746,13 +3767,29 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
         return false;
     };
-    View_IndexAction_Legend.prototype.onClick_sortByTitle = function () {
-        this.collection.sortAscendingBy("__cv_niceLabel");
-        this.displayRetrievedObservations(this.collection._, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+    View_IndexAction_Legend.prototype.onClick_sortAsc = function (e) {
+        if(false === _.isUndefined($(e.target).data("dimension"))) {
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc($(e.target).data("dimension"), this.app._.data.retrievedObservations, -1, 1);
+        } else {
+            if(false === _.isUndefined($(e.target).data("measure"))) {
+                this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc($(e.target).data("measure"), this.app._.data.retrievedObservations, -1, 1);
+            } else {
+                return;
+            }
+        }
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
     };
-    View_IndexAction_Legend.prototype.onClick_sortByValue = function () {
-        this.collection.sortAscendingBy("__cv_value");
-        this.displayRetrievedObservations(this.collection._, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+    View_IndexAction_Legend.prototype.onClick_sortDesc = function (e) {
+        if(false === _.isUndefined($(e.target).data("dimension"))) {
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc($(e.target).data("dimension"), this.app._.data.retrievedObservations, 1, -1);
+        } else {
+            if(false === _.isUndefined($(e.target).data("measure"))) {
+                this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc($(e.target).data("measure"), this.app._.data.retrievedObservations, 1, -1);
+            } else {
+                return;
+            }
+        }
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
     };
     View_IndexAction_Legend.prototype.onReRender_visualization = function () {
         this.destroy();
@@ -3784,11 +3821,33 @@ var View_IndexAction_Legend = (function (_super) {
         this.bindUserInterfaceEvents({
             "click #cubeviz-legend-btnShowSelectedConfiguration": this.onClick_btnShowSelectedConfiguration,
             "click #cubeviz-legend-btnShowRetrievedObservations": this.onClick_btnShowRetrievedObservations,
-            "click .cubeviz-legend-componentDimensionShowInfo": this.onClick_componentDimensionShowInfo,
-            "click #cubeviz-legend-sortByTitle": this.onClick_sortByTitle,
-            "click #cubeviz-legend-sortByValue": this.onClick_sortByValue
+            "click .cubeviz-legend-componentDimensionShowInfo": this.onClick_componentDimensionShowInfo
         });
         return this;
+    };
+    View_IndexAction_Legend.prototype.sortDimensionsAscOrDesc = function (selectedComponent, observations, ifLower, ifHigher) {
+        var accordingFieldLabel = "";
+        var anotherAccordingFieldLabel = "";
+        var observationList = new CubeViz_Collection("__cv_uri");
+        var selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#dimension"];
+
+        observationList.addList(observations);
+        observationList._.sort(function (observation, anotherObservation) {
+            accordingFieldLabel = DataCube_Component.findDimensionElement(selectedComponent.__cv_elements, observation[selectedComponentUri]).__cv_niceLabel;
+            anotherAccordingFieldLabel = DataCube_Component.findDimensionElement(selectedComponent.__cv_elements, anotherObservation[selectedComponentUri]).__cv_niceLabel;
+            return accordingFieldLabel < anotherAccordingFieldLabel ? ifLower : ifHigher;
+        });
+        return observationList.toObject();
+    };
+    View_IndexAction_Legend.prototype.sortMeasureValuesAscOrDesc = function (selectedComponent, observations, ifLower, ifHigher) {
+        var observationList = new CubeViz_Collection("__cv_uri");
+        var selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#measure"];
+
+        observationList.addList(observations);
+        observationList._.sort(function (observation, anotherObservation) {
+            return observation[selectedComponentUri] < anotherObservation[selectedComponentUri] ? ifLower : ifHigher;
+        });
+        return observationList.toObject();
     };
     return View_IndexAction_Legend;
 })(CubeViz_View_Abstract);

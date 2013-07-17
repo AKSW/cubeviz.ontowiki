@@ -73,6 +73,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         selectedMeasure:any) : void
     {                
         var html:string = "",
+            i:number = 0,
             label:string = "";
      
         $("#cubeviz-legend-observations").html("");
@@ -100,6 +101,27 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // dummy cell
         html += "<td></td></tr>";
         
+        // add generated HTML to DOM
+        $("#cubeviz-legend-observations").append(html);
+        
+        // attach dimension objects to sortAsc and sortDesc buttons
+        _.each(selectedDimensions, function(dimension){
+            // sortAsc button
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i))
+                .data ("dimension", dimension);
+            
+            // sortDesc button
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i++))
+                .data ("dimension", dimension);
+        });
+        
+        // attach measure object to value column
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i))
+                .data ("measure", selectedMeasure);
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i))
+                .data ("measure", selectedMeasure);
+                
+        
         /**
          * add line with additional information about the meta data
          */
@@ -110,7 +132,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
             rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10);
             
-        html += "<tr class=\"info\">";
+        html = "<tr class=\"info\">";
         
         _.each(selectedDimensions, function(dimension){ 
             html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> different dimension elements</td>"; });
@@ -163,6 +185,12 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             
             $("#cubeviz-legend-observations > tbody:last").append(html);
         });
+        
+        // re-bind event handler
+        this.bindUserInterfaceEvents({
+            "click .cubeviz-legend-sortAsc": this.onClick_sortAsc,
+            "click .cubeviz-legend-sortDesc": this.onClick_sortDesc
+        })
     }
         
     /**
@@ -325,11 +353,39 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_sortByTitle() 
+    public onClick_sortAsc(e) : void 
     {
-        this.collection.sortAscendingBy ("__cv_niceLabel");
+        /**
+         * click to a dimension
+         */
+        if (false === _.isUndefined($(e.target).data("dimension"))) {
+            
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc(
+                $(e.target).data("dimension"),
+                this.app._.data.retrievedObservations,
+                -1,
+                1
+            );
+            
+        /**
+         * click to a measure
+         */
+        } else if (false === _.isUndefined($(e.target).data("measure"))) {
+            
+            this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc(
+                $(e.target).data("measure"),
+                this.app._.data.retrievedObservations,
+                -1,
+                1
+            );            
+        } 
+        
+        // In this case, there was no valid data attached, so ignore this click
+        else { return; }        
+        
+        // reset legend table
         this.displayRetrievedObservations(
-            this.collection._,
+            this.app._.data.retrievedObservations, 
             this.app._.data.selectedComponents.dimensions,
             this.app._.data.selectedComponents.measure
         );
@@ -338,11 +394,39 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_sortByValue() 
+    public onClick_sortDesc(e) : void 
     {
-        this.collection.sortAscendingBy ("__cv_value");
+        /**
+         * click to a dimension
+         */
+        if (false === _.isUndefined($(e.target).data("dimension"))) {
+            
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc(
+                $(e.target).data("dimension"),
+                this.app._.data.retrievedObservations,
+                1,
+                -1
+            );
+            
+        /**
+         * click to a measure
+         */
+        } else if (false === _.isUndefined($(e.target).data("measure"))) {
+            
+            this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc(
+                $(e.target).data("measure"),
+                this.app._.data.retrievedObservations,
+                1,
+                -1
+            );            
+        } 
+        
+        // In this case, there was no valid data attached, so ignore this click
+        else { return; }        
+        
+        // reset legend table
         this.displayRetrievedObservations(
-            this.collection._,
+            this.app._.data.retrievedObservations, 
             this.app._.data.selectedComponents.dimensions,
             this.app._.data.selectedComponents.measure
         );
@@ -434,14 +518,65 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
             "click .cubeviz-legend-componentDimensionShowInfo": 
                 this.onClick_componentDimensionShowInfo,
-                
-            "click #cubeviz-legend-sortByTitle": 
-                this.onClick_sortByTitle,
-                
-            "click #cubeviz-legend-sortByValue": 
-                this.onClick_sortByValue
         });
         
         return this;
+    }
+    
+    /**
+     * @param selectedComponent any
+     * @param observations any
+     * @param ifLower number If the first value is lower than the second one
+     * @param ifHigher number If the first value is higher than the second one
+     */
+    public sortDimensionsAscOrDesc(selectedComponent:any, observations:any, ifLower:number, ifHigher:number) 
+    {
+        var accordingFieldLabel:string = "",
+            anotherAccordingFieldLabel:string = "",
+            observationList = new CubeViz_Collection("__cv_uri"),
+            selectedComponentUri:string = selectedComponent["http://purl.org/linked-data/cube#dimension"];
+            
+        observationList.addList(observations);
+        
+        // sort observations
+        observationList._.sort(function(observation, anotherObservation){
+            
+            // get dimension element label for a observation
+            accordingFieldLabel = DataCube_Component.findDimensionElement(
+                selectedComponent.__cv_elements, observation [selectedComponentUri]
+            ).__cv_niceLabel;
+            
+            // get dimension element label for the other observation
+            anotherAccordingFieldLabel = DataCube_Component.findDimensionElement(
+                selectedComponent.__cv_elements, anotherObservation[selectedComponentUri]
+            ).__cv_niceLabel;
+            
+            return accordingFieldLabel < anotherAccordingFieldLabel
+                ? ifLower : ifHigher;
+        });
+        
+        return observationList.toObject();
+    }
+    
+    /**
+     * @param selectedComponent any
+     * @param observations any
+     * @param ifLower number If the first value is lower than the second one
+     * @param ifHigher number If the first value is higher than the second one
+     */
+    public sortMeasureValuesAscOrDesc(selectedComponent:any, observations:any, ifLower:number, ifHigher:number) 
+    {
+        var observationList = new CubeViz_Collection ("__cv_uri"),
+            selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#measure"];
+        
+        observationList.addList(observations);
+        
+        // sort observations
+        observationList._.sort(function(observation, anotherObservation){                
+            return observation[selectedComponentUri] < anotherObservation[selectedComponentUri]
+                ? ifLower : ifHigher;
+        });
+        
+        return observationList.toObject();
     }
 }
