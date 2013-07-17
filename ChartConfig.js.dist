@@ -589,7 +589,7 @@ var CubeViz_ChartConfig = {
                 },
                 
                 options: []
-            },
+            }
         ]
     }
 };
