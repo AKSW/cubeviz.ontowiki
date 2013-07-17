@@ -128,6 +128,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         var observationValues = DataCube_Observation.getValues(
                 observations, selectedMeasure ["http://purl.org/linked-data/cube#measure"]
             ),
+            numberOfUsedDimensionElements:number = 0,
+            
             // range of the values of observations
             rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
             rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10);
@@ -135,7 +137,25 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         html = "<tr class=\"info\">";
         
         _.each(selectedDimensions, function(dimension){ 
-            html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> different dimension elements</td>"; });
+            
+            // get the number of used dimension elements in retrieved observation
+            numberOfUsedDimensionElements = _.size(DataCube_Observation.getUsedDimensionElementUris(
+                observations,
+                dimension["http://purl.org/linked-data/cube#dimension"]
+            ));
+                
+            // html entry for this particular dimension
+            if (numberOfUsedDimensionElements < _.size(dimension.__cv_elements)) {
+                html += "<td><strong>" 
+                        + _.size(dimension.__cv_elements) + "</strong> "
+                        + "different dimension elements available, "
+                        + "but only <strong>" + numberOfUsedDimensionElements + "</strong> are in use</td>"; 
+            } else {
+                html += "<td><strong>" 
+                        + _.size(dimension.__cv_elements) + "</strong> "
+                        + "different dimension elements are in use</td>";
+            }
+        });
         
         html +=   "<td>" + rangeMin + "</td>"
                 + "<td>" + rangeMax + "</td>"

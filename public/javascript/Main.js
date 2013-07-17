@@ -1439,6 +1439,15 @@ var DataCube_Observation = (function () {
             };
         }
     };
+    DataCube_Observation.getUsedDimensionElementUris = function getUsedDimensionElementUris(observations, dimensionUri) {
+        var usedDimensionElementUris = [];
+        _.each(observations, function (observation) {
+            if(-1 === $.inArray(observation[dimensionUri], usedDimensionElementUris)) {
+                usedDimensionElementUris.push(observation[dimensionUri]);
+            }
+        });
+        return usedDimensionElementUris;
+    }
     DataCube_Observation.getValues = function getValues(observations, measureUri) {
         var foundInvalidNumber = false;
         var value = null;
@@ -3677,12 +3686,18 @@ var View_IndexAction_Legend = (function (_super) {
         $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("measure", selectedMeasure);
         $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i)).data("measure", selectedMeasure);
         var observationValues = DataCube_Observation.getValues(observations, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        var numberOfUsedDimensionElements = 0;
         var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
         var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);
 
         html = "<tr class=\"info\">";
         _.each(selectedDimensions, function (dimension) {
-            html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> different dimension elements</td>";
+            numberOfUsedDimensionElements = _.size(DataCube_Observation.getUsedDimensionElementUris(observations, dimension["http://purl.org/linked-data/cube#dimension"]));
+            if(numberOfUsedDimensionElements < _.size(dimension.__cv_elements)) {
+                html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> " + "different dimension elements available, " + "but only <strong>" + numberOfUsedDimensionElements + "</strong> are in use</td>";
+            } else {
+                html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> " + "different dimension elements are in use</td>";
+            }
         });
         html += "<td>" + rangeMin + "</td>" + "<td>" + rangeMax + "</td>" + "<td></td>";
         "</tr>";
