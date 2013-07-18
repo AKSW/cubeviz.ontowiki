@@ -27,23 +27,32 @@ class CubeViz_Collection
      * @param element Element to add, usally an object
      * @param option Further configuration, e.g. merge=true means replace the element 
      *        if already exists.
+     * @param ignoreKey bool
      * @return CubeViz_Collection Itself, for chaining.
      */
-    public add(element:any, option?:any) : CubeViz_Collection
+    public add(element:any, option?:any, ignoreKey:bool = false) : CubeViz_Collection
     {
-        if(true === _.isUndefined(element[this.idKey])) {
-            throw new Error("Key " + this.idKey + " in element not set!");
-            return this;
-        }
-        
-        // if it does not exists in the list, add it
-        if(undefined === this.get(element[this.idKey])) {
-            this._.push(element);
+        // force using key
+        if (false === ignoreKey) {
+            if(true === _.isUndefined(element[this.idKey])) {
+                throw new Error("Key " + this.idKey + " in element not set!");
+                return this;
+            }
             
-        // if it does exists and option.merge is true, add it 
-        } else if ((undefined !== option && undefined !== option["merge"] 
-                     && option["merge"] == true)) {
-            this.remove(element[this.idKey]);
+            // if it does not exists in the list, add it
+            if(true === _.isUndefined(this.get(element[this.idKey]))) {
+                this._.push(element);
+                
+            // if it does exists and option.merge is true, add it 
+            } else if ((false === _.isUndefined(option) 
+                        && false === _.isUndefined(option["merge"])
+                        && option["merge"] == true)) {
+                this.remove(element[this.idKey]);
+                this._.push(element);
+            }
+            
+        // ignore key
+        } else {
             this._.push(element);
         }
         
@@ -63,7 +72,7 @@ class CubeViz_Collection
         // if list is an array
         if(true == _.isArray(list)){
             _.each(list, function(element){
-                self.add(element);
+                self.add(element, null, true);
             });
             
         // if list is an object, than this function recall itself with all the 
@@ -121,6 +130,23 @@ class CubeViz_Collection
     public getFirst() : any
     {
         return _.first(this._);
+    }
+    
+    /**
+     * @param property string
+     */
+    public getElementsValues(property:string) 
+    {
+        var list = new CubeViz_Collection();
+        
+        this.each(function(element){
+            if (false === _.isUndefined(element [property])
+                && false === _.isNull(element [property])) {
+                list.add (element [property], null, true);
+            }
+        });
+        
+        return list;
     }
     
     /**
