@@ -73,28 +73,87 @@
         
         <!-- Selected configuration -->
         <div id="cubeviz-legend-selectedConfiguration" style="display: none;">
+
             <br/>
-            <h2><?php echo $this->translate->_('IndexAction_InformationAboutConfiguration'); ?></h2>
+            <br/>
+
+            <div class="row">
+                
+                <!-- DSD -->
+                <div class="span10" id="cubeviz-legend-dsd">
+                    <small><strong>Data Structure Definition</strong></small>
+                    
+                    <br/>
+                    
+                    <small>A DataStructureDefinition defines the structure of one or more datasets. 
+                    In particular, it defines the dimensions, attributes and measures used in 
+                    the dataset along with qualifying information such as ordering of dimensions 
+                    and whether attributes are required or optional.
+                    <em>(Source: <a href="http://www.w3.org/TR/vocab-data-cube/#dsd" target="_blank">DataCube Vocabulary</a>)</em></small>
+                    
+                    
+                    <h3 id="cubeviz-legend-dsdLabel"></h3>
+                    
+                    <table class="table table-bordered table-striped responsive-utilities" 
+                           id="cubeviz-legend-dsdProperties"></table>
+                </div>
+                
+                <!-- DS -->
+                <div class="span10" id="cubeviz-legend-ds">
+                    <small><strong>Data Set</strong></small>
+                    
+                    <br/>
+                    
+                    <small>A DataSet is a collection of statistical data that corresponds to a defined structure.
+                    <em>(Source: <a href="http://www.w3.org/TR/vocab-data-cube/#cubes-model-datasets" target="_blank">DataCube Vocabulary</a>)</em></small>
+                    
+                    <br/>
+                    <br/>
+                    
+                    <h3 id="cubeviz-legend-dsLabel"></h3>
+                    
+                    <table class="table table-bordered table-striped responsive-utilities" 
+                           id="cubeviz-legend-dsProperties"></table>
+                </div>
             
-            <div id="cubeviz-legend-dsdAndDs"></div>
+            </div>
+            
+            <!-- Components: Dimensions -->
+            <br/>
+            
+            <small><strong>Component Specifications of selected Dimensions</strong></small>
+            
+            <br/>
+            
+            <small>The dimension components serve to identify the observations. A set of values for all 
+            the dimension components is sufficient to identify a single observation. Examples of 
+            dimensions include the time to which the observation applies, or a geographic region 
+            which the observation covers.</small>
+            
+            <em>(Source: <a href="http://www.w3.org/TR/vocab-data-cube/#cubes-model" target="_blank">DataCube Vocabulary</a>)</em></small>
+            
+            <div class="row" id="cubeviz-legend-componentDimensions"></div>
+            
+            <!-- Components: Measure -->
+            <div id="cubeviz-legend-components"></div>
+            
+            <!-- Components: Attribute -->
             <div id="cubeviz-legend-components"></div>
         </div>
         
         <!-- Retrieved observations -->
         <div id="cubeviz-legend-retrievedObservations" style="display: none; clear: both;">
+                
             <br/>
-            <h2><?php echo $this->translate->_('IndexAction_InformationAboutRetrievedData'); ?></h2>
+            <hr/>            
+            
+            <small><strong>Retrieved Observations</h2></strong></small>
+            
+            <br/>
+            <br/>
             
             <table class="table table-bordered table-striped responsive-utilities" 
                    id="cubeviz-legend-observations"></table>
-            <!--<div style="float: right; margin-right: 10px;">
-                <p>
-                    <a class="cubeviz-btn" id="cubeviz-legend-sortByTitle">
-                        <?php echo $this->translate->_('IndexAction_SortByTitle'); ?></a>
-                    <a class="cubeviz-btn" id="cubeviz-legend-sortByValue">
-                        <?php echo $this->translate->_('IndexAction_SortByValue'); ?></a>
-                </p>
-            </div>-->
         </div>
     </div>
     
@@ -231,14 +290,7 @@
 <!--
     Legend
 -->
-<div id="cubeviz-legend-tpl-dsdAndDs" style="display: none;">
-    <h3>
-        <a href="[[dsdUrl]]" target="_blank">[[dsdLabel]]</a> -
-        <a href="[[dsUrl]]" target="_blank">[[dsLabel]]</a>
-    </h3>
-</div>
-
-<div id="cubeviz-legend-tpl-tableHeadEntry" style="display: none;">
+<div id="cubeviz-legend-tpl-observationsTableHeadEntry" style="display: none;">
     <h4>
         <a href="[[__cv_uri]]" target="_blank">[[__cv_niceLabel]]</a>
         &nbsp;&nbsp;
@@ -250,68 +302,12 @@
     </h4>
 </div>
 
-<div id="cubeviz-legend-tpl-observation" style="display: none;">
-    <li>
-        <span class="cubeviz-legend-observationIcon">
-            <i class="icon-map-marker"></i>
-        </span>
-        <span>
-            <span class="cubeviz-legend-observationLabel">[[__cv_niceLabel]]</span>
-            
-            <span class="cubeviz-legend-observationValue">[[__cv_value]]</span>
-            
-            <div style="height: 5px;"></div>
-            
-            <a href="[[__cv_uri]]" target="_blank">
-                <?php echo $this->translate->_('IndexAction_GoToSource'); ?></a>
-            
-            <div style="height: 10px;"></div>
-            
-            <!-- Related dimension elements -->
-            <ul class="cubeviz-legend-observationInfoList"></ul>
-        </span>
-    </li>
-</div>
-
-
-<div id="cubeviz-legend-tpl-observationInfoListEntry" style="display: none;"> 
-    <li class="cubeviz-legend-observationInfoListEntry">
-        <strong>[[dimensionLabel]]:</strong>
-        <a href="[[__cv_uri]]" target="_blank" title="[[fullLabel]]">
-            [[__cv_shortLabel]]</a>
-    </li>
-</div>
-
-
-<div id="cubeviz-legend-tpl-componentList" style="display: none;"> 
-    <ul id="cubeviz-legend-componentList"></ul>
-</div>
-
-<div id="cubeviz-legend-tpl-componentDimension" style="display: none;"> 
-    <li class="cubeviz-legend-componentDimensionListEntry">
-        <h3>[[__cv_niceLabel]]</h3>
-        <ul class="cubeviz-legend-componentDimensionList"></ul>
-    </li>
-</div>
-
-<div id="cubeviz-legend-tpl-componentDimensionEntry" style="display: none;"> 
-    <li class="cubeviz-legend-componentDimensionEntry">        
-        <span class="cubeviz-legend-componentDimensionIcon">
-            <i class="icon-leaf" style="font-size: 11px;"></i>
-        </span>
-        <span>
-            <h4 title="[[fullLabel]]">
-                [[__cv_shortLabel]]</h4>
-            <div style="height: 8px;"></div>
-            <a class="cubeviz-legend-componentDimensionShowInfo">
-                <?php echo $this->translate->_('IndexAction_ShowMoreInformation'); ?></a>
-            <i class="icon-lightbulb cubeviz-clickable"></i>
-            &nbsp;
-            &nbsp;
-            <a href="[[__cv_uri]]" target="_blank">
-                <?php echo $this->translate->_('IndexAction_GoToSource'); ?></a>
-        </span>
-    </li>
+<div id="cubeviz-legend-tpl-dimensionBlock" style="display: none;">
+    <div class="span10">
+        <h3><a href="[[dimensionUri]]" target="_blank">[[dimensionLabel]]</a></h3>
+                        
+        <table class="table table-bordered table-striped responsive-utilities"></table>
+    </div>
 </div>
 
 <!-- 

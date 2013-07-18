@@ -54,14 +54,159 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     }
     
     /**
-     *
+     * @param dataset any
      */
-    public displayDsdAndDs(dsdLabel, dsdUrl, dsLabel, dsUrl) 
+    public displayDataset(dataset:any, dataStructureDefinition:any) : void 
     {
-        $("#cubeviz-legend-dsdAndDs").html(CubeViz_View_Helper.tplReplace(
-            $("#cubeviz-legend-tpl-dsdAndDs").html(),
-            { dsdLabel: dsdLabel, dsdUrl: dsdUrl, dsLabel: dsLabel, dsUrl: dsUrl }
-        ));
+        var self = this,
+            tmp:any = null;
+        
+        // label
+        $("#cubeviz-legend-dsLabel").html (
+            "<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" 
+            + dataset.__cv_niceLabel + "</a>"
+        );
+        
+        // rest of properties
+        $("#cubeviz-legend-dsProperties").html(
+            "<tr class=\"info\">"
+            + "<td><strong>Property</strong></td>"
+            + "<td><strong>Value</strong></td>" +
+            "</tr>"
+        );
+        
+        _.each (dataset, function(value, property){
+            
+            // only show property with really uris (exclude __cv_* uri's)
+            if (false === _.str.include(property, "__cv_")) {
+                
+                // relation to data structure definition
+                if ("http://purl.org/linked-data/cube#structure" == property) {
+                    
+                    value = "<a href=\"" + dataStructureDefinition.__cv_uri + "\""
+                               + " target=\"_blank\">" 
+                               + dataStructureDefinition.__cv_niceLabel + "</a>";
+                    
+                // if value is list (object or array)
+                } else if (true === _.isObject(value) || true === _.isArray(value)){
+                    
+                    var list = new CubeViz_Collection();
+                    value = CubeViz_Visualization_Controller.linkify (
+                        list.addList (value)._.join (", ")
+                    );
+                
+                // simple property-value-pair    
+                } else {
+                    if (true === self.isValidUrl(value)) {
+                        value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                    + _.str.prune (value, 60) +
+                                "</a>";
+                    } else {
+                        value = _.str.prune (value, 60);
+                    }
+                }
+                
+                // add pair to list
+                $("#cubeviz-legend-dsProperties").append(
+                    "<tr>"
+                    + "<td>"
+                        + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                    + "<td>" + value + "</td>" +
+                    "</tr>"
+                );
+            }
+        });
+    }
+    
+    /**
+     * @param dataStructureDefinition any
+     */
+    public displayDataStructureDefinition(dataStructureDefinition:any) : void
+    {
+        var self = this,
+            tmp:any = null;
+        
+        // label
+        $("#cubeviz-legend-dsdLabel").html (
+            "<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" 
+            + dataStructureDefinition.__cv_niceLabel + "</a>"
+        );
+        
+        // rest of properties
+        $("#cubeviz-legend-dsdProperties").html(
+            "<tr class=\"info\">"
+            + "<td><strong>Property</strong></td>"
+            + "<td><strong>Value</strong></td>" +
+            "</tr>"
+        );
+        
+        _.each (dataStructureDefinition, function(value, property){
+            
+            // only show values with really properties (exclude __cv_* uri's)
+            if (false === _.str.include(property, "__cv_")) {
+                
+                // component relations
+                if ("http://purl.org/linked-data/cube#component" == property) {
+                    
+                    var labels:string[] = [],
+                        list:CubeViz_Collection = new CubeViz_Collection();
+                    
+                    // get list of value labels
+                    list.addList(value)
+                        .each(function(element){                            
+                            // dimensions
+                            _.each(self.app._.data.selectedComponents.dimensions, function(dimension){
+                                if (element === dimension.__cv_uri) {
+                                    labels.push(dimension.__cv_niceLabel);
+                                }
+                            });
+                        });
+                        
+                    // measure
+                    labels.push (
+                        self.app._.data.selectedComponents.measure.__cv_niceLabel
+                    );
+                    
+                    // attribute (optional)
+                    if (false === _.isNull(self.app._.data.selectedComponents.attribute)
+                        && false === _.isUndefined(self.app._.data.selectedComponents.attribute)) {
+                        labels.push (
+                            self.app._.data.selectedComponents.attribute.__cv_niceLabel
+                        );
+                    }
+                        
+                    // build label list
+                    value = labels.join(", ");
+                    
+                // if value is list (object or array)
+                } else if (true === _.isObject(value) || true === _.isArray(value)){
+                    
+                    var list = new CubeViz_Collection();
+                    value = CubeViz_Visualization_Controller.linkify (
+                        list.addList (value)._.join (", ")
+                    );
+                
+                // simple property-value-pair    
+                } else {
+                    if (true === self.isValidUrl(value)) {
+                        value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                    + _.str.prune (value, 60) +
+                                "</a>";
+                    } else {
+                        value = _.str.prune (value, 60);
+                    }
+                }
+                
+                // add pair to list
+                $("#cubeviz-legend-dsdProperties").append(
+                    "<tr>"
+                    + "<td>"
+                        + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                    + "<td>" + value + "</td>" +
+                    "</tr>"
+                );
+            }
+        });
     }
     
     /**
@@ -86,7 +231,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             // head entry
             html += "<td>"
                     + CubeViz_View_Helper.tplReplace(
-                        $("#cubeviz-legend-tpl-tableHeadEntry").html(), dimension
+                        $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), dimension
                     ) 
                     + "</td>";
         });
@@ -94,7 +239,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // title of selected measure
         html += "<td colspan=\"2\">" 
                 + CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-legend-tpl-tableHeadEntry").html(), selectedMeasure
+                    $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), selectedMeasure
                   )
                 + "</td>";          
              
@@ -214,78 +359,92 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     }
         
     /**
-     *
+     * @param selectedComponentDimensions any
      */
-    public displaySelectedConfiguration(selectedComponentDimensions:Object) : void
+    public displaySelectedDimensions(selectedComponentDimensions:any) : void
     {
-        // variables
-        var componentDimensionInfoArea = null,
-            observationIcon = null,
-            dimensionElementList:any = null,
-            dimensionElementsCopy = new CubeViz_Collection ("__cv_uri"),
-            html:string = "",
-            label:string = "";
-                
-        $("#cubeviz-legend-components").html($("#cubeviz-legend-tpl-componentList").html());
+        var elementList:CubeViz_Collection = new CubeViz_Collection(),
+            self = this,
+            tmpList:CubeViz_Collection = new CubeViz_Collection(),
+            $html:any = null,
+            $table:any = null;
+        
+        $("#cubeviz-legend-componentDimensions").html("");
         
         // go through each dimension
         _.each(selectedComponentDimensions, function(dimension){
             
-            // set dimension information (label)
-            $("#cubeviz-legend-componentList").append(CubeViz_View_Helper.tplReplace(
-                $("#cubeviz-legend-tpl-componentDimension").html(),
-                { __cv_niceLabel: dimension.__cv_niceLabel }
+            // setup tpl
+            $html = $(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-legend-tpl-dimensionBlock").html(),
+                { 
+                    dimensionLabel: dimension.__cv_niceLabel,
+                    dimensionUri: dimension.__cv_uri
+                }
             ));
             
-            dimensionElementList = $($("#cubeviz-legend-componentList")
-                .find(".cubeviz-legend-componentDimensionList").last());
+            $table = $($html.find(".table").last());
             
-            html = "";
+            // table header
+            $table.append(
+                "<tr class=\"info\">"
+                + "<td><strong>Property</strong></td>"
+                + "<td><strong>Value</strong></td>" +
+                "</tr>"
+            );
             
-            // working with copy of dimension elements ...
-            dimensionElementsCopy
+            // go through all properties
+            _.each (dimension, function(value, property){
+                                
+                // only show property with really uris (exclude __cv_* uri's)
+                if (false === _.str.include(property, "__cv_")) {
                 
-                // clean it from old elements
-                .reset()
-                
-                // create a copy, avoids changing the source element list
-                .addList(JSON.parse(JSON.stringify(dimension.__cv_elements)))
-                
-                // sort label by idKey
-                .sortAscendingBy()
-                            
-                // go through each dimension element
-                .each(function(dimensionElement){
+                    // if value is list (object or array)
+                    if (true === _.isObject(value) || true === _.isArray(value)){
+                        
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify (
+                            list.addList (value)._.join (", ")
+                        );
                     
-                    // add li entry
-                    dimensionElementList.append(CubeViz_View_Helper.tplReplace(
-                        $("#cubeviz-legend-tpl-componentDimensionEntry").html(),
-                        {
-                            fullLabel: dimensionElement.__cv_niceLabel,
-                            __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
-                            __cv_uri: dimensionElement.__cv_uri
+                    // simple property-value-pair    
+                    } else {
+                        if (true == self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                        + _.str.prune (value, 60) +
+                                    "</a>";
+                        } else {
+                            value = _.str.prune (value, 60);
                         }
-                    ));
-                    
-                    // save reference of info area
-                    observationIcon = $(dimensionElementList
-                        .find(".cubeviz-legend-observationIcon")
-                        .last());
-                    
-                    // save reference of info area
-                    componentDimensionInfoArea = $(dimensionElementList
-                        .find(".cubeviz-legend-componentDimensionInfoArea")
-                        .last());
-                    
-                    // select latest show more information button and attach data
-                    $(dimensionElementList
-                        .find(".cubeviz-legend-componentDimensionShowInfo")
-                        .last())
-                        .data("componentDimensionInfoArea", componentDimensionInfoArea)
-                        .data("dimension", dimension)
-                        .data("dimensionElement", dimensionElement)
-                        .data("observationIcon", observationIcon);
-                });
+                    }
+                
+                    $table.append(
+                        "<tr>"
+                        + "<td><a href=\"" + property + "\">" + property + "</a></td>"
+                        + "<td>" + value + "</td>" +
+                        "</tr>"
+                    );
+                }
+            });
+            
+            // add dimension elements
+            elementList
+                .reset()
+                .addList(dimension.__cv_elements)
+                .each(function(element){$table.append(tmpList.add(
+                    "<a href=\""+ element.__cv_uri  +"\" target=\"_blank\">" +
+                        element.__cv_niceLabel + "</a>",
+                null, true));});
+                
+            $table.append(
+                "<tr class=\"info\"><td colspan=\"2\">Dimension Elements</td></tr>" +
+                "<tr>"
+                    + "<td colspan=\"2\">" + tmpList._.join (", ") + "</td>" + 
+                "</tr>"
+            );
+            
+            // output html
+            $("#cubeviz-legend-componentDimensions").append($html);
         });
     }
     
@@ -295,6 +454,24 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     public initialize() : void
     {
         this.render();
+    }
+    
+    /**
+     * copied from http://stackoverflow.com/a/14582229
+     * Checks if given string is a valid url
+     * @param str string String to check
+     * @return bool True if given string is a valid url, false otherwise.
+     */
+    public isValidUrl(str:string) : bool
+    {
+        return (new RegExp(
+            '^(https?:\\/\\/)?'+                                // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+                      // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+                  // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+                         // query string
+            '(\\#[-a-z\\d_]*)?$','i'                            // fragment locator
+        )).test(str);
     }
     
     /**
@@ -480,19 +657,15 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         /**
          * Show Data Structure Definition and Data set
          */
-        this.displayDsdAndDs( 
-            // DSD
-            this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri,
-            // DS
-            this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri
-        );
+        this.displayDataStructureDefinition(this.app._.data.selectedDSD);
+        this.displayDataset(this.app._.data.selectedDS, this.app._.data.selectedDSD);
         
         /**
          * Selected configuration
          */
-        this.displaySelectedConfiguration( 
-            this.app._.data.selectedComponents.dimensions
-        );
+        this.displaySelectedDimensions(this.app._.data.selectedComponents.dimensions);
+        // this.displaySelectedMeasure(this.app._.data.selectedComponents.dimensions);
+        // this.displaySelectedAttribute(this.app._.data.selectedComponents.dimensions);
         
         /**
          * Observation list 
