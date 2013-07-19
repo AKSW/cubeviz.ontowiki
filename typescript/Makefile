@@ -9,7 +9,7 @@ default:
 build-javascript:
 	@echo "Build Javascript files, out of TypeScript files ..."
 	tsc --out ../public/javascript/Main.js @tsc/Main.txt
-	tsc --out ../public/javascript/Test.js @tsc/Test.txt
+	#tsc --out ../public/javascript/Test.js @tsc/Test.txt
 
 build-and-minimize-javascript:
 	make build-javascript

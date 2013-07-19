@@ -511,9 +511,58 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         /**
          * display attribute (if available)
          */
+        // if attribute is not available
         if (true === _.isNull(selectedAttribute) 
             || true === _.isUndefined(selectedAttribute)) {
             $("#cubeviz-legend-componentAttribute").hide();
+        
+        // attribute is available
+        } else {
+            $("#cubeviz-legend-componentAttributeLabel").html(
+                "<a href=\"" + selectedMeasure.__cv_uri + "\">" 
+                + selectedMeasure.__cv_niceLabel + "</a>"
+            );
+            
+            // table header
+            $("#cubeviz-legend-componentAttributeProperties")
+                .append(
+                    "<tr class=\"info\">"
+                    + "<td><strong>Property</strong></td>"
+                    + "<td><strong>Value</strong></td>" +
+                    "</tr>"
+                );
+            
+            // go through all properties
+            _.each (selectedAttribute, function(value, property){
+            
+                // only show property with really uris (exclude __cv_* uri's)
+                if (false === _.str.include(property, "__cv_")) {
+                    
+                    // if value is list (object or array)
+                    if (true === _.isObject(value) || true === _.isArray(value)){
+                        
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify (
+                            list.addList (value)._.join (", ")
+                        );
+                    
+                    // simple property-value-pair    
+                    } else {
+                        if (true == self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                        + _.str.prune (value, 60) +
+                                    "</a>";
+                        }
+                    }
+                
+                    $("#cubeviz-legend-componentAttributeProperties").append(
+                        "<tr>"
+                        + "<td><a href=\"" + property + "\">" + property + "</a></td>"
+                        + "<td>" + value + "</td>" +
+                        "</tr>"
+                    );              
+                }
+            });
         }
     }
     

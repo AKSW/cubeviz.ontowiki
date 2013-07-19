@@ -3846,6 +3846,22 @@ var View_IndexAction_Legend = (function (_super) {
         });
         if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
             $("#cubeviz-legend-componentAttribute").hide();
+        } else {
+            $("#cubeviz-legend-componentAttributeLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>");
+            $("#cubeviz-legend-componentAttributeProperties").append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+            _.each(selectedAttribute, function (value, property) {
+                if(false === _.str.include(property, "__cv_")) {
+                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                    } else {
+                        if(true == self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                        }
+                    }
+                    $("#cubeviz-legend-componentAttributeProperties").append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                }
+            });
         }
     };
     View_IndexAction_Legend.prototype.initialize = function () {
