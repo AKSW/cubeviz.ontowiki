@@ -134,11 +134,51 @@
             
             <div class="row" id="cubeviz-legend-componentDimensions"></div>
             
-            <!-- Components: Measure -->
-            <div id="cubeviz-legend-components"></div>
+            <br/>
             
-            <!-- Components: Attribute -->
-            <div id="cubeviz-legend-components"></div>
+            <!-- Components: Measure and Attribute (if available) -->
+            <div class="row" id="cubeviz-legend-componentMeasureAndAttribute">
+                
+                <!-- Measure -->
+                <div class="span10" id="cubeviz-legend-componentMeasure">
+                    <small><strong>Measure</strong></small>
+                    
+                    <br/>
+                    
+                    <small>
+                        The measure components represent the phenomenon being observed.
+                        <em>(Source: <a href="http://www.w3.org/TR/vocab-data-cube/#cubes-model" target="_blank">DataCube Vocabulary</a>)</em>
+                    </small>
+                    
+                    <br/>
+                    
+                    <h3 id="cubeviz-legend-componentMeasureLabel"></h3>
+                    
+                    <table class="table table-bordered table-striped responsive-utilities" 
+                           id="cubeviz-legend-componentMeasureProperties"></table>
+                </div>
+                
+                <!-- Attribute -->
+                <div class="span10" id="cubeviz-legend-componentAttribute">
+                    <small><strong>Attribute</strong></small>
+                    
+                    <br/>
+                    
+                    <small>
+                        The attribute components allow us to qualify and interpret the observed value(s). 
+                        They enable specification of the units of measure, any scaling factors and metadata 
+                        such as the status of the observation (e.g. estimated, provisional).
+                        <em>(Source: <a href="http://www.w3.org/TR/vocab-data-cube/#cubes-model" target="_blank">DataCube Vocabulary</a>)</em>
+                    </small>
+                    
+                    <br/>
+                    
+                    <h3 id="cubeviz-legend-componentAttributeLabel"></h3>
+                    
+                    <table class="table table-bordered table-striped responsive-utilities" 
+                           id="cubeviz-legend-componentAttributeProperties"></table>
+                </div>
+            </div>
         </div>
         
         <!-- Retrieved observations -->
