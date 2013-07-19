@@ -140,6 +140,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         // the dimension pair
         mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(
             mergedDataCubeUri, 
+            self.app._.compareAction.datasets[1],
+            self.app._.compareAction.datasets[2],
             self.app._.compareAction.retrievedObservations[1],
             self.app._.compareAction.retrievedObservations[2],
             mergedDataCube.selectedComponents.measure,

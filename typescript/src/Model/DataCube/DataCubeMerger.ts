@@ -15,6 +15,8 @@ class DataCube_DataCubeMerger
     {
         var j:number = 0;
         
+        dimensionElements = $.parseJSON(JSON.stringify(dimensionElements));
+        
         _.each(dimensionElements, function(element){
             
             // update rdf:type and set it to dimension+i
@@ -319,8 +321,9 @@ class DataCube_DataCubeMerger
      * @param i number
      * @return any
      */
-    static buildObservations(mergedDataCubeUri:string, observations1:any, 
-        observations2:any, measure:any, dimensions:any, dimensionIndex:number) : any
+    static buildObservations(mergedDataCubeUri:string, dataset1:any, dataset2:any,
+        observations1:any, observations2:any, measure:any, dimensions:any, 
+        dimensionIndex:number) : any
     {        
         var adaptedObservations:any = {},
             adaptedDimensionElementUri:string = null,
@@ -342,22 +345,32 @@ class DataCube_DataCubeMerger
             tmpObservations [observation.__cv_uri] = observation;
         });
         
-        _.each(tmpObservations, function(observation){
+        _.each(tmpObservations, function(observation){            
+                        
+            // save source observation
+            observation.__cv_sourceObservation = $.parseJSON(JSON.stringify(observation));
+            
+            // save source dataset
+            if (observation ["http://purl.org/linked-data/cube#dataSet"] == dataset1.__cv_uri) {
+                observation.__cv_sourceDataset = dataset1;
+            } else {
+                observation.__cv_sourceDataset = dataset2;
+            }
             
             // remember old uri using a sameAs and dct:source relation
             observation ["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
             observation ["http://purl.org/dc/terms/source"] = observation.__cv_uri;
             
-            
             // update uri
             observation.__cv_uri = mergedDataCubeUri + "observation" + observationCounter;
             observation.__cv_hashedUri = CryptoJS.MD5 (observation.__cv_uri) + "";
             
-            
             // update relation to dataset
             observation ["http://purl.org/linked-data/cube#dataSet"] =
                 mergedDataCubeUri + "dataset";
-            
+                        
+            // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+            observation ["http://purl.org/dc/terms/created"] = (new Date()).toString();
             
             // update relation to measure
             usedUri = null;

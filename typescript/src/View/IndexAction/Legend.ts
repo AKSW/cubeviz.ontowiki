@@ -139,7 +139,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
                 // source dataset label
                 $("#cubeviz-legend-dsProperties").append (
-                    "<tr><td colspan=\"2\"></td></tr>" + 
+                    "<tr><td colspan=\"2\">" +
+                        "<a name=\"" + (CryptoJS.MD5(sourceDataset.__cv_uri)+"").substring(0,6) + "\"></a>" + 
+                    "</td></tr>" + 
                     
                     "<tr class=\"warning\">" + 
                         "<td colspan=\"2\">" + 
@@ -311,14 +313,17 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     {                
         var html:string = "",
             i:number = 0,
-            label:string = "";
+            label:string = "",
+            self = this;
      
         $("#cubeviz-legend-observations").html("");
         
         /**
          * set table header
          */
-        html = "<tr>";
+        html = "<tr>" + 
+                    "<td></td>";
+        
         _.each(selectedDimensions, function(dimension){
             // head entry
             html += "<td>"
@@ -371,7 +376,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
             rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10);
             
-        html = "<tr class=\"info\">";
+        html = "<tr class=\"info\">" +
+                    "<td></td>";
         
         _.each(selectedDimensions, function(dimension){ 
             
@@ -404,9 +410,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         /**
          * go through all observations        
          */
+         var i:number = 0;
         _.each(observations, function(observation){
             
-            html = "<tr>";
+            html = "<tr>" +
+                        "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
             
             _.each(selectedDimensions, function(dimension){
                 
@@ -419,12 +427,15 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
                 // add label of according dimension element
                 html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" 
-                        + "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" "
-                        +    "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">"
-                        +   label
-                        + "</a> "
-                        + "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>"
-                        + "</td>";
+                            + "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i>"
+                            + " <a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" "
+                            +    "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">"
+                            +   label
+                            + "</a>";
+                
+                // if (
+                
+                html += "</td>";
             });
         
             // observation value
@@ -437,10 +448,81 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>"
                     + "</td>";
             
-            // close line
-            html += "</tr>";       
+            // happy ending
+            html += "</tr>";
+            
+            if (false === _.isNull(observation.__cv_sourceDataset)
+                && false === _.isUndefined(observation.__cv_sourceDataset)) {
+                html += "<tr>" +
+                            "<td colspan=\"" + (3 + _.size(selectedDimensions)) + "\" style=\"padding-top: 2px; padding-bottom: 10px;\">" +
+                                "<small>Source Dataset: <strong>" +
+                                    "<a href=\"#" + (CryptoJS.MD5(observation.__cv_sourceDataset.__cv_uri) + "").substring(0, 6) + "\">" + 
+                                        observation.__cv_sourceDataset.__cv_niceLabel + 
+                                    "</a>" +
+                                "</strong></small><br/>" +
+                                "<small>" +
+                                    "<div class=\"cubeviz-clickable cubeviz-legend-sourceObservationOpener\">" + 
+                                        "Show more information about Observation " +
+                                        "<i class=\"icon-chevron-down\"></i>" +
+                                    "</div>" +
+                                "</small><br/>" +
+                                "<table class=\"cubeviz-legend-sourceObservation table table-bordered table-striped responsive-utilities\"></table>" +
+                            "</td>" +
+                        "</tr>";
+            }
             
             $("#cubeviz-legend-observations > tbody:last").append(html);
+            
+            /**
+             * if available, show source observation
+             */
+            if (false === _.isNull(observation.__cv_sourceObservation)
+                && false === _.isUndefined(observation.__cv_sourceObservation)) {
+                
+                var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation").last());
+                
+                // go through all properties of a source component specification
+                _.each (observation.__cv_sourceObservation, function(value, property){
+                    
+                    // only show property with really uris (exclude __cv_* uri's)
+                    if (false === _.str.include(property, "__cv_")) {
+                            
+                        // if value is list (object or array)
+                        if (true === _.isObject(value) || true === _.isArray(value)){
+                            
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify (
+                                list.addList (value)._.join (", ")
+                            );
+                        
+                        // simple property-value-pair    
+                        } else {
+                            if (true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                            + _.str.prune (value, 60) +
+                                        "</a>";
+                            }
+                        }
+                        
+                        // add pair to list
+                        $table.append(
+                            "<tr>"
+                            + "<td>"
+                                + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                            + "<td style=\"word-break:break-all;\">" + value + "</td>" +
+                            "</tr>"
+                        );
+                    }
+                });
+                
+                $table.hide();
+                
+                // setup opener for information about source observation
+                $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last())
+                    .click (function(){
+                        $table.fadeToggle(200);
+                    });
+            }
         });
         
         // re-bind event handler
