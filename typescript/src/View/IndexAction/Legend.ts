@@ -67,11 +67,24 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             + dataset.__cv_niceLabel + "</a>"
         );
         
-        // rest of properties
+        /**
+         * rest of properties
+         */
         $("#cubeviz-legend-dsProperties").html(
             "<tr class=\"info\">"
             + "<td><strong>Property</strong></td>"
             + "<td><strong>Value</strong></td>" +
+            "</tr>"
+        );
+        
+        // URI
+        $("#cubeviz-legend-dsProperties").append(
+            "<tr>"
+            + "<td>URI</td>"
+            + "<td style=\"word-break:break-all;\">" +
+                "<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" +
+                    dataset.__cv_uri + 
+                "</a></td>" +
             "</tr>"
         );
         
@@ -109,11 +122,79 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     "<tr>"
                     + "<td>"
                         + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
-                    + "<td>" + value + "</td>" +
+                    + "<td style=\"word-break:break-all;\">" + value + "</td>" +
                     "</tr>"
                 );
             }
         });
+        
+        /**
+         * if available, show source datasets
+         */
+        if (false === _.isNull(dataset.__cv_sourceDataset)
+            && false === _.isUndefined(dataset.__cv_sourceDataset)) {
+            
+            // go through each source dataset
+            _.each (dataset.__cv_sourceDataset, function(sourceDataset){
+                
+                // source dataset label
+                $("#cubeviz-legend-dsProperties").append (
+                    "<tr><td colspan=\"2\"></td></tr>" + 
+                    
+                    "<tr class=\"warning\">" + 
+                        "<td colspan=\"2\">" + 
+                            "<strong>Source Dataset: " + 
+                            "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + 
+                            sourceDataset.__cv_niceLabel + "</a></strong>" + 
+                        "</td>" +
+                    "</tr>"
+                );
+                
+                // URI
+                $("#cubeviz-legend-dsProperties").append(
+                    "<tr>"
+                    + "<td>URI</td>"
+                    + "<td style=\"word-break:break-all;\">" + 
+                        "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + 
+                            sourceDataset.__cv_uri + "</a></td>" +
+                    "</tr>"
+                );
+                
+                // go through all properties of a source dataset
+                _.each (sourceDataset, function(value, property){
+                    
+                    // only show property with really uris (exclude __cv_* uri's)
+                    if (false === _.str.include(property, "__cv_")) {
+                            
+                        // if value is list (object or array)
+                        if (true === _.isObject(value) || true === _.isArray(value)){
+                            
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify (
+                                list.addList (value)._.join (", ")
+                            );
+                        
+                        // simple property-value-pair    
+                        } else {
+                            if (true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                            + _.str.prune (value, 60) +
+                                        "</a>";
+                            }
+                        }
+                        
+                        // add pair to list
+                        $("#cubeviz-legend-dsProperties").append(
+                            "<tr>"
+                            + "<td>"
+                                + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                            + "<td>" + value + "</td>" +
+                            "</tr>"
+                        );
+                    }
+                });
+            });
+        }
     }
     
     /**
@@ -135,6 +216,17 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             "<tr class=\"info\">"
             + "<td><strong>Property</strong></td>"
             + "<td><strong>Value</strong></td>" +
+            "</tr>"
+        );
+        
+        // URI
+        $("#cubeviz-legend-dsdProperties").append(
+            "<tr>"
+            + "<td>URI</td>"
+            + "<td style=\"word-break:break-all;\">" +
+                "<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" +
+                    dataStructureDefinition.__cv_uri +
+                "</a></td>" +
             "</tr>"
         );
         
@@ -202,7 +294,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     "<tr>"
                     + "<td>"
                         + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
-                    + "<td>" + value + "</td>" +
+                    + "<td style=\"word-break:break-all;\">" + value + "</td>" +
                     "</tr>"
                 );
             }
@@ -366,7 +458,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         var elementList:CubeViz_Collection = new CubeViz_Collection(),
             self = this,
             tmpList:CubeViz_Collection = new CubeViz_Collection(),
-            $html:any = null,
             $table:any = null;
         
         $("#cubeviz-legend-componentDimensions").html("");
@@ -375,22 +466,32 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         _.each(selectedComponentDimensions, function(dimension){
             
             // setup tpl
-            $html = $(CubeViz_View_Helper.tplReplace(
+            $("#cubeviz-legend-componentDimensions").append($(CubeViz_View_Helper.tplReplace(
                 $("#cubeviz-legend-tpl-dimensionBlock").html(),
                 { 
                     dimensionLabel: dimension.__cv_niceLabel,
                     dimensionUri: dimension.__cv_uri,
                     dimensionUriHash: (CryptoJS.MD5(dimension.__cv_uri)+"").substring (0, 6)
                 }
-            ));
+            )));
             
-            $table = $($html.find(".table").last());
+            $table = $($("#cubeviz-legend-componentDimensions").find(".table").last());
             
             // table header
             $table.append(
                 "<tr class=\"info\">"
                 + "<td><strong>Property</strong></td>"
                 + "<td><strong>Value</strong></td>" +
+                "</tr>"
+            );
+            
+            $table.append(
+                "<tr>"
+                + "<td>URI</td>"
+                + "<td style=\"word-break:break-all;\">" +
+                    "<a href=\"" + dimension.__cv_uri + "\" target=\"_blank\">" +
+                        dimension.__cv_uri +
+                    "</a></td>" +
                 "</tr>"
             );
             
@@ -433,12 +534,16 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             
             elementList
                 .reset()
+                // add all dimension elements to a list
                 .addList(dimension.__cv_elements)
+                
+                // add each element to another list, but before attach some html
                 .each(function(element){$table.append(tmpList.add(
                     "<a href=\""+ element.__cv_uri  +"\" target=\"_blank\">" +
                         element.__cv_niceLabel + "</a>",
                 null, true));});
                 
+            // add HTML of the other list
             $table.append(
                 "<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" +
                 "<tr>"
@@ -446,8 +551,98 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 "</tr>"
             );
             
-            // output html
-            $("#cubeviz-legend-componentDimensions").append($html);
+            /**
+             * if available, show source component specification
+             */
+            if (false === _.isNull(dimension.__cv_sourceComponentSpecification)
+                && false === _.isUndefined(dimension.__cv_sourceComponentSpecification)) {
+                
+                // go through each source component specification
+                _.each (dimension.__cv_sourceComponentSpecification, function(sourceCS){
+                    
+                    // source component specification label
+                    $table.append (
+                        "<tr><td colspan=\"2\"></td></tr>" + 
+                        
+                        "<tr class=\"warning\">" + 
+                            "<td colspan=\"2\">" + 
+                                "<strong>Source Component Specification: " + 
+                                "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + 
+                                sourceCS.__cv_niceLabel + "</a></strong>" + 
+                            "</td>" +
+                        "</tr>"
+                    );
+
+                    // URI
+                    $table.append(
+                        "<tr>"
+                        + "<td>URI</td>"
+                        + "<td style=\"word-break:break-all;\">" +
+                            "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" +
+                            sourceCS.__cv_uri +
+                            "</a></td>" +
+                        "</tr>"
+                    );
+                    
+                    // go through all properties of a source component specification
+                    _.each (sourceCS, function(value, property){
+                        
+                        // only show property with really uris (exclude __cv_* uri's)
+                        if (false === _.str.include(property, "__cv_")) {
+                                
+                            // if value is list (object or array)
+                            if (true === _.isObject(value) || true === _.isArray(value)){
+                                
+                                var list = new CubeViz_Collection();
+                                value = CubeViz_Visualization_Controller.linkify (
+                                    list.addList (value)._.join (", ")
+                                );
+                            
+                            // simple property-value-pair    
+                            } else {
+                                if (true === self.isValidUrl(value)) {
+                                    value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                                + _.str.prune (value, 60) +
+                                            "</a>";
+                                }
+                            }
+                            
+                            // add pair to list
+                            $table.append(
+                                "<tr>"
+                                + "<td>"
+                                    + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                                + "<td style=\"word-break:break-all;\">" + value + "</td>" +
+                                "</tr>"
+                            );
+                        }
+                    });                    
+                    
+                    /**
+                     * add dimension elements
+                     */
+                    tmpList.reset();
+                    
+                    elementList
+                        .reset()
+                        // add all dimension elements to a list
+                        .addList(sourceCS.__cv_elements)
+                        
+                        // add each element to another list, but before attach some html
+                        .each(function(element){$table.append(tmpList.add(
+                            "<a href=\""+ element.__cv_uri  +"\" target=\"_blank\">" +
+                                element.__cv_niceLabel + "</a>",
+                        null, true));});
+                        
+                    // add HTML of the other list
+                    $table.append(
+                        "<tr><td colspan=\"2\"><em>Dimension Elements</em></td></tr>" +
+                        "<tr>"
+                            + "<td colspan=\"2\">" + tmpList._.join (", ") + "</td>" + 
+                        "</tr>"
+                    );
+                });
+            }
         });
     }
         
@@ -457,7 +652,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public displaySelectedMeasureAndAttribute(selectedMeasure:any, selectedAttribute:any) : void
     {     
-        var self = this;
+        var self = this,
+            $table = $("#cubeviz-legend-componentMeasureProperties");
            
         /**
          * display measure
@@ -468,14 +664,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         );
         
         // table header
-        $("#cubeviz-legend-componentMeasureProperties")
-            .append(
-                "<tr class=\"info\">"
-                + "<td><strong>Property</strong></td>"
-                + "<td><strong>Value</strong></td>" +
-                "</tr>"
-            );
-        
+        $table.append(
+            "<tr class=\"info\">"
+            + "<td><strong>Property</strong></td>"
+            + "<td><strong>Value</strong></td>" +
+            "</tr>"
+        );
+    
         // go through all properties
         _.each (selectedMeasure, function(value, property){
         
@@ -499,7 +694,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                     }
                 }
             
-                $("#cubeviz-legend-componentMeasureProperties").append(
+                $table.append(
                     "<tr>"
                     + "<td><a href=\"" + property + "\">" + property + "</a></td>"
                     + "<td>" + value + "</td>" +
@@ -507,6 +702,76 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 );              
             }
         });
+        
+        /**
+         * if available, show source measures
+         */
+        if (false === _.isNull(selectedMeasure.__cv_sourceMeasure)
+            && false === _.isUndefined(selectedMeasure.__cv_sourceMeasure)) {
+            
+            // go through each source component specification
+            _.each (selectedMeasure.__cv_sourceMeasure, function(sourceMeasure){
+                
+                // source component specification label
+                $table.append (
+                    "<tr><td colspan=\"2\"></td></tr>" + 
+                    
+                    "<tr class=\"warning\">" + 
+                        "<td colspan=\"2\">" + 
+                            "<strong>Source Measure: " + 
+                            "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + 
+                                sourceMeasure.__cv_niceLabel + "</a></strong>" + 
+                        "</td>" +
+                    "</tr>"
+                );
+
+                // URI
+                $table.append(
+                    "<tr>"
+                    + "<td>URI</td>"
+                    + "<td style=\"word-break:break-all;\">" +
+                        "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" +
+                        sourceMeasure.__cv_uri +
+                        "</a></td>" +
+                    "</tr>"
+                );
+                
+                // go through all properties of a source component specification
+                _.each (sourceMeasure, function(value, property){
+                    
+                    // only show property with really uris (exclude __cv_* uri's)
+                    if (false === _.str.include(property, "__cv_")) {
+                            
+                        // if value is list (object or array)
+                        if (true === _.isObject(value) || true === _.isArray(value)){
+                            
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify (
+                                list.addList (value)._.join (", ")
+                            );
+                        
+                        // simple property-value-pair    
+                        } else {
+                            if (true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">"
+                                            + _.str.prune (value, 60) +
+                                        "</a>";
+                            }
+                        }
+                        
+                        // add pair to list
+                        $table.append(
+                            "<tr>"
+                            + "<td>"
+                                + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>"
+                            + "<td style=\"word-break:break-all;\">" + value + "</td>" +
+                            "</tr>"
+                        );
+                    }
+                });
+            });
+        }
+        
         
         /**
          * display attribute (if available)
@@ -582,14 +847,17 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public isValidUrl(str:string) : bool
     {
-        return (new RegExp(
-            '^(https?:\\/\\/)?'+                                // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|'+ // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))'+                      // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+                  // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?'+                         // query string
-            '(\\#[-a-z\\d_]*)?$','i'                            // fragment locator
-        )).test(str);
+        return ((new RegExp(
+                '^(https?:\\/\\/)?'+                                // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+                      // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+                  // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+                         // query string
+                '(\\#[-a-z\\d_]*)?$','i'                            // fragment locator
+            )).test(str)) 
+            
+            // additional check for . or /
+            && (true === _.str.include(str, ".") || true === _.str.include(str, "/"));
     }
     
     /**

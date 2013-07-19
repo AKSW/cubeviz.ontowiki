@@ -1147,20 +1147,25 @@ var DataCube_DataCubeMerger = (function () {
         });
         return dimensionElements;
     }
-    DataCube_DataCubeMerger.buildDataSets = function buildDataSets(mergedDataCubeUri, datasetLabel1, datasetLabel2, datasetUri1, datasetUri2) {
+    DataCube_DataCubeMerger.buildDataSets = function buildDataSets(mergedDataCubeUri, dataset1, dataset2) {
         return {
             0: {
                 __cv_niceLabel: "Artifical Dataset",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Merged DataSet",
-                __cv_description: "This is an artifical data set and it consists of '" + datasetLabel1 + "' and '" + datasetLabel2 + "'",
+                __cv_description: "This is an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "dataset",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataset") + "",
                 "http://purl.org/dc/terms/source": [
-                    datasetUri1, 
-                    datasetUri2
+                    dataset1.__cv_uri, 
+                    dataset2.__cv_uri
                 ],
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
                 "http://purl.org/linked-data/cube#structure": mergedDataCubeUri + "dataStructureDefinition",
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet"
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+                __cv_sourceDataset: [
+                    dataset1, 
+                    dataset2
+                ]
             }
         };
     }
@@ -1175,7 +1180,8 @@ var DataCube_DataCubeMerger = (function () {
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
                 "http://purl.org/linked-data/cube#component": {
                     0: mergedDataCubeUri + "measure"
-                }
+                },
+                "http://purl.org/dc/terms/created": (new Date()).toString()
             }
         };
         var i = 1;
@@ -1215,7 +1221,12 @@ var DataCube_DataCubeMerger = (function () {
                     dimensionPair[1]["http://purl.org/linked-data/cube#dimension"]
                 ],
                 "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                __cv_sourceComponentSpecification: [
+                    dimensionPair[0], 
+                    dimensionPair[1]
+                ]
             };
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements);
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements(mergedDataCubeUri, componentSpecification.__cv_elements, i);
@@ -1241,7 +1252,12 @@ var DataCube_DataCubeMerger = (function () {
                     measure1.__cv_uri, 
                     measure2.__cv_uri
                 ],
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification"
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                __cv_sourceMeasure: [
+                    measure1, 
+                    measure2
+                ]
             }
         };
     }
@@ -2336,7 +2352,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
 
         mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
         mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(this.app._.backend.url, JSON.stringify(this.app._.compareAction));
-        mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, this.app._.compareAction.datasets[1].__cv_niceLabel, this.app._.compareAction.datasets[2].__cv_niceLabel, this.app._.compareAction.datasets[1].__cv_uri, this.app._.compareAction.datasets[2].__cv_uri);
+        mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2]);
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
         mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, this.app._.compareAction.equalDimensions);
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
@@ -3678,6 +3694,7 @@ var View_IndexAction_Legend = (function (_super) {
 
         $("#cubeviz-legend-dsLabel").html("<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" + dataset.__cv_niceLabel + "</a>");
         $("#cubeviz-legend-dsProperties").html("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" + dataset.__cv_uri + "</a></td>" + "</tr>");
         _.each(dataset, function (value, property) {
             if(false === _.str.include(property, "__cv_")) {
                 if("http://purl.org/linked-data/cube#structure" == property) {
@@ -3692,9 +3709,28 @@ var View_IndexAction_Legend = (function (_super) {
                         }
                     }
                 }
-                $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
             }
         });
+        if(false === _.isNull(dataset.__cv_sourceDataset) && false === _.isUndefined(dataset.__cv_sourceDataset)) {
+            _.each(dataset.__cv_sourceDataset, function (sourceDataset) {
+                $("#cubeviz-legend-dsProperties").append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Dataset: " + "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + sourceDataset.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + sourceDataset.__cv_uri + "</a></td>" + "</tr>");
+                _.each(sourceDataset, function (value, property) {
+                    if(false === _.str.include(property, "__cv_")) {
+                        if(true === _.isObject(value) || true === _.isArray(value)) {
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                        } else {
+                            if(true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                            }
+                        }
+                        $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                    }
+                });
+            });
+        }
     };
     View_IndexAction_Legend.prototype.displayDataStructureDefinition = function (dataStructureDefinition) {
         var self = this;
@@ -3702,6 +3738,7 @@ var View_IndexAction_Legend = (function (_super) {
 
         $("#cubeviz-legend-dsdLabel").html("<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" + dataStructureDefinition.__cv_niceLabel + "</a>");
         $("#cubeviz-legend-dsdProperties").html("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        $("#cubeviz-legend-dsdProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" + dataStructureDefinition.__cv_uri + "</a></td>" + "</tr>");
         _.each(dataStructureDefinition, function (value, property) {
             if(false === _.str.include(property, "__cv_")) {
                 if("http://purl.org/linked-data/cube#component" == property) {
@@ -3730,7 +3767,7 @@ var View_IndexAction_Legend = (function (_super) {
                         }
                     }
                 }
-                $("#cubeviz-legend-dsdProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                $("#cubeviz-legend-dsdProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
             }
         });
     };
@@ -3794,18 +3831,18 @@ var View_IndexAction_Legend = (function (_super) {
         var elementList = new CubeViz_Collection();
         var self = this;
         var tmpList = new CubeViz_Collection();
-        var $html = null;
         var $table = null;
 
         $("#cubeviz-legend-componentDimensions").html("");
         _.each(selectedComponentDimensions, function (dimension) {
-            $html = $(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-dimensionBlock").html(), {
+            $("#cubeviz-legend-componentDimensions").append($(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-dimensionBlock").html(), {
                 dimensionLabel: dimension.__cv_niceLabel,
                 dimensionUri: dimension.__cv_uri,
                 dimensionUriHash: (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
-            }));
-            $table = $($html.find(".table").last());
+            })));
+            $table = $($("#cubeviz-legend-componentDimensions").find(".table").last());
             $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+            $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dimension.__cv_uri + "\" target=\"_blank\">" + dimension.__cv_uri + "</a></td>" + "</tr>");
             _.each(dimension, function (value, property) {
                 if(false === _.str.include(property, "__cv_")) {
                     if(true === _.isObject(value) || true === _.isArray(value)) {
@@ -3824,13 +3861,38 @@ var View_IndexAction_Legend = (function (_super) {
                 $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
             });
             $table.append("<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
-            $("#cubeviz-legend-componentDimensions").append($html);
+            if(false === _.isNull(dimension.__cv_sourceComponentSpecification) && false === _.isUndefined(dimension.__cv_sourceComponentSpecification)) {
+                _.each(dimension.__cv_sourceComponentSpecification, function (sourceCS) {
+                    $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Component Specification: " + "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + sourceCS.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                    $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + sourceCS.__cv_uri + "</a></td>" + "</tr>");
+                    _.each(sourceCS, function (value, property) {
+                        if(false === _.str.include(property, "__cv_")) {
+                            if(true === _.isObject(value) || true === _.isArray(value)) {
+                                var list = new CubeViz_Collection();
+                                value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                            } else {
+                                if(true === self.isValidUrl(value)) {
+                                    value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                                }
+                            }
+                            $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                        }
+                    });
+                    tmpList.reset();
+                    elementList.reset().addList(sourceCS.__cv_elements).each(function (element) {
+                        $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
+                    });
+                    $table.append("<tr><td colspan=\"2\"><em>Dimension Elements</em></td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+                });
+            }
         });
     };
     View_IndexAction_Legend.prototype.displaySelectedMeasureAndAttribute = function (selectedMeasure, selectedAttribute) {
         var self = this;
+        var $table = $("#cubeviz-legend-componentMeasureProperties");
+
         $("#cubeviz-legend-componentMeasureLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>");
-        $("#cubeviz-legend-componentMeasureProperties").append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
         _.each(selectedMeasure, function (value, property) {
             if(false === _.str.include(property, "__cv_")) {
                 if(true === _.isObject(value) || true === _.isArray(value)) {
@@ -3841,9 +3903,28 @@ var View_IndexAction_Legend = (function (_super) {
                         value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
                     }
                 }
-                $("#cubeviz-legend-componentMeasureProperties").append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                $table.append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
             }
         });
+        if(false === _.isNull(selectedMeasure.__cv_sourceMeasure) && false === _.isUndefined(selectedMeasure.__cv_sourceMeasure)) {
+            _.each(selectedMeasure.__cv_sourceMeasure, function (sourceMeasure) {
+                $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Measure: " + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_uri + "</a></td>" + "</tr>");
+                _.each(sourceMeasure, function (value, property) {
+                    if(false === _.str.include(property, "__cv_")) {
+                        if(true === _.isObject(value) || true === _.isArray(value)) {
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                        } else {
+                            if(true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                            }
+                        }
+                        $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                    }
+                });
+            });
+        }
         if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
             $("#cubeviz-legend-componentAttribute").hide();
         } else {
@@ -3868,7 +3949,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.render();
     };
     View_IndexAction_Legend.prototype.isValidUrl = function (str) {
-        return (new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i')).test(str);
+        return ((new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i')).test(str)) && (true === _.str.include(str, ".") || true === _.str.include(str, "/"));
     };
     View_IndexAction_Legend.prototype.onClick_btnShowSelectedConfiguration = function (event) {
         event.preventDefault();

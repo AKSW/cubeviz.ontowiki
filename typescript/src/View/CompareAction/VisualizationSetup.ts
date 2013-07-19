@@ -81,10 +81,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
          */
         mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(
             mergedDataCubeUri,
-            this.app._.compareAction.datasets[1].__cv_niceLabel,
-            this.app._.compareAction.datasets[2].__cv_niceLabel,
-            this.app._.compareAction.datasets[1].__cv_uri,
-            this.app._.compareAction.datasets[2].__cv_uri
+            this.app._.compareAction.datasets[1],
+            this.app._.compareAction.datasets[2]
         );
         
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];

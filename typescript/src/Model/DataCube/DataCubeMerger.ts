@@ -58,14 +58,11 @@ class DataCube_DataCubeMerger
      * Build a new dataset out of two others. The new one has its own uri's, but
      * will have relations (dct:source) to its origin.
      * @param mergedDataCubeUri string Generated uri of the merged data cube
-     * @param datasetLabel1 string Label of dataset 1
-     * @param datasetLabel2 string Label of dataset 2
-     * @param datasetUri1 string Uri of dataset 1
-     * @param datasetUri2 string Uri of dataset 2
+     * @param dataset1 any Dataset 1
+     * @param dataset2 any Dataset 2
      * @return any Object containing another one with dataset information
      */
-    static buildDataSets(mergedDataCubeUri:string, datasetLabel1:string, 
-        datasetLabel2:string, datasetUri1:string, datasetUri2:string) : any 
+    static buildDataSets(mergedDataCubeUri:string, dataset1:any, dataset2:any) : any 
     {
         return { 0: {
             
@@ -75,9 +72,9 @@ class DataCube_DataCubeMerger
             
             // describe
             __cv_description: "This is an artifical data set and it consists of '"
-                + datasetLabel1
+                + dataset1.__cv_niceLabel
                 + "' and '"
-                + datasetLabel2
+                + dataset2.__cv_niceLabel
                 + "'",                              
             
             // uri and hashed uri
@@ -86,15 +83,22 @@ class DataCube_DataCubeMerger
             
             // add relation to the two origin datasets
             "http://purl.org/dc/terms/source": [ 
-                datasetUri1,
-                datasetUri2
+                dataset1.__cv_uri, dataset2.__cv_uri
             ],
+            
+            // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+            "http://purl.org/dc/terms/created": (new Date()).toString(),
             
             // add relation to data structure definition
             "http://purl.org/linked-data/cube#structure": mergedDataCubeUri + "dataStructureDefinition",
             
             // type
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet"
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+            
+            /**
+             * attach source datasets 
+             */
+            __cv_sourceDataset: [dataset1, dataset2]
         }};
     }
     
@@ -128,7 +132,11 @@ class DataCube_DataCubeMerger
                 // components
                 "http://purl.org/linked-data/cube#component": {
                     0: mergedDataCubeUri + "measure"
-                }
+                },                
+                
+                // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+                
             }},
             i:number = 1;
         
@@ -211,7 +219,15 @@ class DataCube_DataCubeMerger
                 
                 // type
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
-                    "http://purl.org/linked-data/cube#ComponentSpecification"
+                    "http://purl.org/linked-data/cube#ComponentSpecification",
+                                    
+                // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                
+                // add source component speficiations
+                __cv_sourceComponentSpecification: [
+                    dimensionPair[0], dimensionPair[1]
+                ]
             };
             
             // set dimension elements
@@ -277,13 +293,18 @@ class DataCube_DataCubeMerger
             
             // relation to origin measures
             "http://purl.org/dc/terms/source": [
-                measure1.__cv_uri, 
-                measure2.__cv_uri
+                measure1.__cv_uri, measure2.__cv_uri
             ],
             
             // type
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
                 "http://purl.org/linked-data/cube#ComponentSpecification",
+
+            // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+            "http://purl.org/dc/terms/created": (new Date()).toString(),
+            
+            // add source measures
+            __cv_sourceMeasure: [measure1, measure2]
         }};
     }
     
