@@ -508,7 +508,7 @@ class DataCube_DataCubeMerger
     {
         return url 
                + "go/mergeddatacube/" 
-               + CryptoJS.MD5(stringifiedObject)
+               + (CryptoJS.MD5(stringifiedObject)+"").substring (0,6)
                + "#";
     }
     
