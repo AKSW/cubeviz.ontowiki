@@ -1329,7 +1329,7 @@ var DataCube_DataCubeMerger = (function () {
         return adaptedObservations;
     }
     DataCube_DataCubeMerger.generateMergedDataCubeUri = function generateMergedDataCubeUri(url, stringifiedObject) {
-        return url + "go/mergeddatacube/" + CryptoJS.MD5(stringifiedObject) + "#";
+        return url + "go/mergeddatacube/" + (CryptoJS.MD5(stringifiedObject) + "").substring(0, 6) + "#";
     }
     DataCube_DataCubeMerger.getDefaultDataCubeObject = function getDefaultDataCubeObject() {
         return {
@@ -3689,8 +3689,6 @@ var View_IndexAction_Legend = (function (_super) {
                     } else {
                         if(true === self.isValidUrl(value)) {
                             value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
-                        } else {
-                            value = _.str.prune(value, 60);
                         }
                     }
                 }
@@ -3713,7 +3711,7 @@ var View_IndexAction_Legend = (function (_super) {
                     list.addList(value).each(function (element) {
                         _.each(self.app._.data.selectedComponents.dimensions, function (dimension) {
                             if(element === dimension.__cv_uri) {
-                                labels.push(dimension.__cv_niceLabel);
+                                labels.push("<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\">" + dimension.__cv_niceLabel + "</a> " + "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>");
                             }
                         });
                     });
@@ -3729,8 +3727,6 @@ var View_IndexAction_Legend = (function (_super) {
                     } else {
                         if(true === self.isValidUrl(value)) {
                             value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
-                        } else {
-                            value = _.str.prune(value, 60);
                         }
                     }
                 }
@@ -3782,7 +3778,7 @@ var View_IndexAction_Legend = (function (_super) {
                         label = element.__cv_niceLabel;
                     }
                 });
-                html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" + "<a href=\"" + observation[dimension["http://purl.org/linked-data/cube#dimension"]] + "\" " + "title=\"" + observation[dimension["http://purl.org/linked-data/cube#dimension"]] + "\" " + "target=\"_blank\">" + label + "</a>" + "</td>";
+                html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" + "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" " + "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">" + label + "</a> " + "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>" + "</td>";
             });
             html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + "</td>";
             html += "<td>" + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>" + "</td>";
@@ -3805,7 +3801,8 @@ var View_IndexAction_Legend = (function (_super) {
         _.each(selectedComponentDimensions, function (dimension) {
             $html = $(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-dimensionBlock").html(), {
                 dimensionLabel: dimension.__cv_niceLabel,
-                dimensionUri: dimension.__cv_uri
+                dimensionUri: dimension.__cv_uri,
+                dimensionUriHash: (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
             }));
             $table = $($html.find(".table").last());
             $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
@@ -3817,17 +3814,16 @@ var View_IndexAction_Legend = (function (_super) {
                     } else {
                         if(true == self.isValidUrl(value)) {
                             value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
-                        } else {
-                            value = _.str.prune(value, 60);
                         }
                     }
                     $table.append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
                 }
             });
+            tmpList.reset();
             elementList.reset().addList(dimension.__cv_elements).each(function (element) {
                 $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
             });
-            $table.append("<tr class=\"info\"><td colspan=\"2\">Dimension Elements</td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+            $table.append("<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
             $("#cubeviz-legend-componentDimensions").append($html);
         });
     };

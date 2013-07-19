@@ -101,8 +101,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         value = "<a href=\"" + value + "\" target=\"_blank\">"
                                     + _.str.prune (value, 60) +
                                 "</a>";
-                    } else {
-                        value = _.str.prune (value, 60);
                     }
                 }
                 
@@ -157,7 +155,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                             // dimensions
                             _.each(self.app._.data.selectedComponents.dimensions, function(dimension){
                                 if (element === dimension.__cv_uri) {
-                                    labels.push(dimension.__cv_niceLabel);
+                                    labels.push(
+                                        "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring (0, 6) + "\">" 
+                                        + dimension.__cv_niceLabel + "</a> " +
+                                        "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>"
+                                    );
                                 }
                             });
                         });
@@ -192,8 +194,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         value = "<a href=\"" + value + "\" target=\"_blank\">"
                                     + _.str.prune (value, 60) +
                                 "</a>";
-                    } else {
-                        value = _.str.prune (value, 60);
                     }
                 }
                 
@@ -327,11 +327,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
                 // add label of according dimension element
                 html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" 
-                        + "<a href=\"" + observation[dimension ["http://purl.org/linked-data/cube#dimension"]] + "\" "
-                        +    "title=\"" + observation[dimension ["http://purl.org/linked-data/cube#dimension"]] + "\" "
-                        +    "target=\"_blank\">"
-                        + label
-                        + "</a>"
+                        + "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" "
+                        +    "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">"
+                        +   label
+                        + "</a> "
+                        + "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>"
                         + "</td>";
             });
         
@@ -379,7 +379,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 $("#cubeviz-legend-tpl-dimensionBlock").html(),
                 { 
                     dimensionLabel: dimension.__cv_niceLabel,
-                    dimensionUri: dimension.__cv_uri
+                    dimensionUri: dimension.__cv_uri,
+                    dimensionUriHash: (CryptoJS.MD5(dimension.__cv_uri)+"").substring (0, 6)
                 }
             ));
             
@@ -413,8 +414,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                             value = "<a href=\"" + value + "\" target=\"_blank\">"
                                         + _.str.prune (value, 60) +
                                     "</a>";
-                        } else {
-                            value = _.str.prune (value, 60);
                         }
                     }
                 
@@ -427,7 +426,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 }
             });
             
-            // add dimension elements
+            /**
+             * add dimension elements
+             */
+            tmpList.reset();
+            
             elementList
                 .reset()
                 .addList(dimension.__cv_elements)
@@ -437,7 +440,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 null, true));});
                 
             $table.append(
-                "<tr class=\"info\"><td colspan=\"2\">Dimension Elements</td></tr>" +
+                "<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" +
                 "<tr>"
                     + "<td colspan=\"2\">" + tmpList._.join (", ") + "</td>" + 
                 "</tr>"
