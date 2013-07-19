@@ -191,7 +191,8 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     public displayUnequalDimensions() : void
     {       
         var $container:any = null,
-            description:string = "";
+            description:string = "",
+            minWidth:number = 0;
         
         $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
         
@@ -225,8 +226,11 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
             
             // add container
             $("#cubeviz-compare-unequalDimensionsTableContainer1").append($container);
+            
+            minWidth += 220;
         });
         
+        $(".cubeviz-compare-unequalDimensions").css ("min-width", minWidth);
         
         /**
          * go through all unequal dimensions of dataset2
