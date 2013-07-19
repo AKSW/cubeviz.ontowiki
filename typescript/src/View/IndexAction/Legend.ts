@@ -520,7 +520,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         } else {
             $("#cubeviz-legend-componentAttributeLabel").html(
                 "<a href=\"" + selectedMeasure.__cv_uri + "\">" 
-                + selectedMeasure.__cv_niceLabel + "</a>"
+                + selectedAttribute.__cv_niceLabel + "</a>"
             );
             
             // table header

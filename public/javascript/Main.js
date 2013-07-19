@@ -3847,7 +3847,7 @@ var View_IndexAction_Legend = (function (_super) {
         if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
             $("#cubeviz-legend-componentAttribute").hide();
         } else {
-            $("#cubeviz-legend-componentAttributeLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>");
+            $("#cubeviz-legend-componentAttributeLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedAttribute.__cv_niceLabel + "</a>");
             $("#cubeviz-legend-componentAttributeProperties").append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
             _.each(selectedAttribute, function (value, property) {
                 if(false === _.str.include(property, "__cv_")) {
