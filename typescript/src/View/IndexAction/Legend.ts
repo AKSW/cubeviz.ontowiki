@@ -316,6 +316,12 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             label:string = "",
             self = this;
      
+        // set title containing number of retrieved observations
+        $("#cubeviz-legend-retrievedObservationsTitle").html (
+            _.size(observations) + " Retrieved Observations"
+        );
+        
+        
         $("#cubeviz-legend-observations").html("");
         
         /**

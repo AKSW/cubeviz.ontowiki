@@ -3788,6 +3788,7 @@ var View_IndexAction_Legend = (function (_super) {
         var label = "";
         var self = this;
 
+        $("#cubeviz-legend-retrievedObservationsTitle").html(_.size(observations) + " Retrieved Observations");
         $("#cubeviz-legend-observations").html("");
         html = "<tr>" + "<td></td>";
         _.each(selectedDimensions, function (dimension) {
