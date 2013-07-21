@@ -40,7 +40,8 @@ class CubeViz_Visualization_HighCharts_Chart
         var obj:any = {},
             seriesElements:any = observation.getAxesElements(forSeries),
             uriCombination:string = "",
-            usedDimensionElementCombinations:any = {};
+            usedDimensionElementCombinations:any = {},
+            valueToUse:string = null;
             
         self.chartConfig.series = [];
 
@@ -98,13 +99,21 @@ class CubeViz_Visualization_HighCharts_Chart
                     // if this combination is already in use, stop execution immediatly
                     return;
                 }
+                
+                // set observation value, distinguish between original and user-set
+                // one: prefer the user-set one over the original
+                if (false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
+                    valueToUse = seriesObservation.__cv_temporaryNewValue;
+                } else {
+                    valueToUse = seriesObservation[selectedMeasureUri];
+                }
                     
                 /**
                  * check if measure value is set, if not add null
                  */
                 if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {                        
                     obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(
-                        seriesObservation[selectedMeasureUri]
+                        valueToUse
                     );
                 } else {
                     obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = null;
@@ -127,10 +136,10 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedMeasureUri:string, observation:DataCube_Observation ) : void
     {
         var self = this,
-            seriesObservation:Object = null,
+            seriesObservation:any = null,
             seriesDataList:number[] = [],
             seriesElements:any = observation.getAxesElements(forSeries),
-            value:number = 0;
+            valueToUse:string = null;
             
         // set xAxis categories
         this.chartConfig.xAxis.categories = ["."];
@@ -151,10 +160,18 @@ class CubeViz_Visualization_HighCharts_Chart
                 return;
             }
             
+            // set observation value, distinguish between original and user-set
+            // one: prefer the user-set one over the original
+            if (false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
+                valueToUse = seriesObservation.__cv_temporaryNewValue;
+            } else {
+                valueToUse = seriesObservation[selectedMeasureUri];
+            }
+            
             // add entry on the y axis
             self.chartConfig.series.push({
                 name: seriesElement.self.__cv_niceLabel,
-                data: [seriesObservation[selectedMeasureUri]]
+                data: [valueToUse]
             });
         });
     }
@@ -177,19 +194,27 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedMeasureUri:string, observation:DataCube_Observation ) : void
     {
         var self = this,
-            seriesObservation:Object = null,
+            seriesObservation:any = null,
             seriesDataList:number[] = [],
             xAxisElements:any = observation.sortAxis(forXAxis, "ascending")
                                            .getAxesElements(forXAxis),
-            value:any = 0;
+            valueToUse:any = null;
             
         _.each(xAxisElements, function(xAxisElement){
             
             seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
             
-            value = DataCube_Observation.parseValue (seriesObservation [selectedMeasureUri]);
+            // set observation value, distinguish between original and user-set
+            // one: prefer the user-set one over the original
+            if (false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
+                valueToUse = seriesObservation.__cv_temporaryNewValue;
+            } else {
+                valueToUse = seriesObservation[selectedMeasureUri];
+            }
             
-            if (false === value)
+            valueToUse = DataCube_Observation.parseValue (valueToUse);
+            
+            if (false === valueToUse)
                 return;
             
             // check if the current observation has to be ignored
@@ -209,7 +234,7 @@ class CubeViz_Visualization_HighCharts_Chart
             );
             
             // save related value
-            seriesDataList.push(value);
+            seriesDataList.push(valueToUse);
         });
         
         // set series element

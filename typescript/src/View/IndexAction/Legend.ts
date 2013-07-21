@@ -480,6 +480,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             $("#cubeviz-legend-observations > tbody:last").append(html);
             
             /**
+             * 
+             */
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-measureTd").last())
+                .data ("observation", observation);
+            
+            
+            /**
              * if available, show source observation
              */
             if (false === _.isNull(observation.__cv_sourceObservation)
@@ -543,8 +550,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         
         // re-bind event handler
         this.bindUserInterfaceEvents({
-            "click .cubeviz-legend-sortAsc": this.onClick_sortAsc,
-            "click .cubeviz-legend-sortDesc": this.onClick_sortDesc
+            "dblclick .cubeviz-legend-measureTd":   this.onDblClick_measureTd,
+            "click .cubeviz-legend-sortAsc":        this.onClick_sortAsc,
+            "click .cubeviz-legend-sortDesc":       this.onClick_sortDesc
         })
     }
         
@@ -961,14 +969,31 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public onClick_btnShowSelectedConfiguration(event) : bool 
+    public onClick_adaptedMeasureValueSaveBtn(e) : void 
     {
-        event.preventDefault();
+        var accordingObservation = $(e.target).data("observation"),
+            self = this,
+            
+            $inputField = $(e.target).data("inputField"),
+            $measureTd = $(e.target).data("measureTd"),
+            $saveBtn = $(e.target);
         
-        // show overview
-        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
+        // set temporary new value, which means, that it will used as long as
+        // neccessary, but the original one will persists
+        accordingObservation.__cv_temporaryNewValue = $inputField.val();
         
-        return false;
+        // replace adapted observation
+        _.each (this.app._.data.retrievedObservations, function(observation, key){
+            if (observation.__cv_uri === accordingObservation.__cv_uri) {
+                self.app._.data.retrievedObservations [key] = accordingObservation;
+            }
+        });
+        
+        // restore measure td as it was before the change
+        this.restoreMeasureTd($measureTd);
+        
+        // force CubeViz to update the visualization
+        this.triggerGlobalEvent ("onReRender_visualization");
     }
     
     /**
@@ -980,6 +1005,19 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         
         // show overview
         $("#cubeviz-legend-retrievedObservations").slideToggle("slow");
+        
+        return false;
+    }
+    
+    /**
+     *
+     */
+    public onClick_btnShowSelectedConfiguration(event) : bool 
+    {
+        event.preventDefault();
+        
+        // show overview
+        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
         
         return false;
     }
@@ -1116,10 +1154,55 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
+    public onDblClick_measureTd(e) : void 
+    {
+        // stop proceeding in case, that the td was not dblclicked;
+        // this happens, if only some text inside the td was dblclicked
+        if (true === _.isUndefined($(e.target).data("observation"))
+            || true === _.isNull($(e.target).data("observation"))) {
+            return;
+        }
+        
+        // setup variables
+        var accordingObservation:any = $(e.target).data("observation"),
+            inputValue:string = null,
+            selectedMeasureUri:string = this.app._.data.selectedComponents.measure ["http://purl.org/linked-data/cube#measure"];
+            
+        // check if there was an adaption of the value before, if yes, than
+        // use this adapted value as default value for the input field
+        if (false === _.isUndefined(accordingObservation.__cv_temporaryNewValue)) {
+            inputValue = accordingObservation.__cv_temporaryNewValue;
+        } else {
+            inputValue = accordingObservation [selectedMeasureUri];
+        }
+            
+        // setup HTML elements
+        var $inputField = $("<input type=\"text\" value=\"" + inputValue + "\">"),
+            $saveBtn = $("<div class=\"btn btn-primary\" style=\"vertical-align: top;\">Save</div>");
+        
+        // replace td content with textfield and save button
+        $(e.target).html ("")
+            .append ($inputField)
+            .append ($saveBtn);
+        
+        // setup save button
+        $saveBtn
+            .data ("inputField", $inputField)
+            .data ("measureTd", $(e.target))
+            .data ("observation", accordingObservation)
+            .on ("click", $.proxy(this.onClick_adaptedMeasureValueSaveBtn, this));
+            
+        // set focus to input field
+        $inputField.focus();
+    }
+    
+    /**
+     *
+     */
     public onReRender_visualization() 
     {
-        this.destroy();
-        this.initialize();
+        // this.destroy();
+        // this.initialize();
     }
     
     /**
@@ -1200,6 +1283,22 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         });
         
         return this;
+    }
+    
+    /**
+     * $measureTd any
+     */
+    public restoreMeasureTd($measureTd:any) : void 
+    {
+        var accordingObservation = $measureTd.data("observation"),
+            selectedMeasureUri:string = this.app._.data.selectedComponents.measure ["http://purl.org/linked-data/cube#measure"];
+        
+        // update td
+        $measureTd
+            .html (
+                accordingObservation.__cv_temporaryNewValue +
+                " &nbsp; <small>(Original: " + accordingObservation[selectedMeasureUri] + ")"
+            );
     }
     
     /**
