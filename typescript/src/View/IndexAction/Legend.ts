@@ -468,11 +468,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                                 "</strong></small><br/>" +
                                 "<small>" +
                                     "<div class=\"cubeviz-clickable cubeviz-legend-sourceObservationOpener\">" + 
-                                        "Show more information about Observation " +
+                                        "Show more information about source Observation " +
                                         "<i class=\"icon-chevron-down\"></i>" +
                                     "</div>" +
                                 "</small><br/>" +
-                                "<table class=\"cubeviz-legend-sourceObservation table table-bordered table-striped responsive-utilities\"></table>" +
+                                "<table class=\"cubeviz-legend-sourceObservation table table-bordered table-condensed table-striped responsive-utilities\"></table>" +
                             "</td>" +
                         "</tr>";
             }
@@ -486,6 +486,16 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 && false === _.isUndefined(observation.__cv_sourceObservation)) {
                 
                 var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation").last());
+                
+                // URI
+                $table.append(
+                    "<tr>"
+                    + "<td>URI</td>"
+                    + "<td style=\"word-break:break-all;\">" + 
+                        "<a href=\"" + observation.__cv_sourceObservation.__cv_uri + "\" target=\"_blank\">" +
+                            observation.__cv_sourceObservation.__cv_uri + "</a></td>" +
+                    "</tr>"
+                );
                 
                 // go through all properties of a source component specification
                 _.each (observation.__cv_sourceObservation, function(value, property){
