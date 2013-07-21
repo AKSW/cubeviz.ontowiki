@@ -304,11 +304,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     }
     
     /**
-     * observations any[] 
+     * observations any 
      * selectedDimensions any
      * selectedMeasure any
      */
-    public displayRetrievedObservations(observations:any[], selectedDimensions:any,
+    public displayRetrievedObservations(observations:any, selectedDimensions:any,
         selectedMeasure:any) : void
     {                
         var html:string = "",
@@ -1249,20 +1249,17 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         );
         
         /**
-         * Observation list 
+         * Sort and render observation list 
          */
-                     
-        // read all observations and generates a list of it
-        this.collection
-            .reset("__cv_niceLabel")
-            .addList(this.app._.data.retrievedObservations);
-        
-        // sort generated list
-        this.collection.sortAscendingBy (selectedMeasureUri);
-        
-        // render list in HTML
         this.displayRetrievedObservations(
-            this.collection._,
+        
+            // sort list ascending
+            this.sortMeasureValuesAscOrDesc(
+                this.app._.data.selectedComponents.measure,
+                this.app._.data.retrievedObservations,
+                -1,
+                1
+            ),
             this.app._.data.selectedComponents.dimensions,
             this.app._.data.selectedComponents.measure
         );
@@ -1356,14 +1353,31 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public sortMeasureValuesAscOrDesc(selectedComponent:any, observations:any, ifLower:number, ifHigher:number) 
     {
-        var observationList = new CubeViz_Collection ("__cv_uri"),
+        var anotherObservationValue:string = null,
+            observationList:CubeViz_Collection = new CubeViz_Collection ("__cv_uri"),
+            observationValue:string = null,
             selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#measure"];
         
         observationList.addList(observations);
         
         // sort observations
-        observationList._.sort(function(observation, anotherObservation){                
-            return observation[selectedComponentUri] < anotherObservation[selectedComponentUri]
+        observationList._.sort(function(observation, anotherObservation){
+            
+            // get observation value, distinguish between original and user-set
+            // one: prefer the user-set one over the original
+            if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                observationValue = observation.__cv_temporaryNewValue;
+            } else {
+                observationValue = observation[selectedComponentUri];
+            }
+            
+            if (false === _.isUndefined(anotherObservation.__cv_temporaryNewValue)) {
+                anotherObservationValue = anotherObservation.__cv_temporaryNewValue;
+            } else {
+                anotherObservationValue = anotherObservation[selectedComponentUri];
+            }
+                         
+            return observationValue < anotherObservationValue
                 ? ifLower : ifHigher;
         });
         

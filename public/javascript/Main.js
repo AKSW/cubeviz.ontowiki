@@ -4127,9 +4127,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.displayDataset(this.app._.data.selectedDS, this.app._.data.selectedDSD);
         this.displaySelectedDimensions(this.app._.data.selectedComponents.dimensions);
         this.displaySelectedMeasureAndAttribute(this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
-        this.collection.reset("__cv_niceLabel").addList(this.app._.data.retrievedObservations);
-        this.collection.sortAscendingBy(selectedMeasureUri);
-        this.displayRetrievedObservations(this.collection._, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+        this.displayRetrievedObservations(this.sortMeasureValuesAscOrDesc(this.app._.data.selectedComponents.measure, this.app._.data.retrievedObservations, -1, 1), this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-legend-componentDimensionInfoDialog"), {
             closeOnEscape: true,
             showCross: true,
@@ -4169,12 +4167,24 @@ var View_IndexAction_Legend = (function (_super) {
         return observationList.toObject();
     };
     View_IndexAction_Legend.prototype.sortMeasureValuesAscOrDesc = function (selectedComponent, observations, ifLower, ifHigher) {
+        var anotherObservationValue = null;
         var observationList = new CubeViz_Collection("__cv_uri");
+        var observationValue = null;
         var selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#measure"];
 
         observationList.addList(observations);
         observationList._.sort(function (observation, anotherObservation) {
-            return observation[selectedComponentUri] < anotherObservation[selectedComponentUri] ? ifLower : ifHigher;
+            if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                observationValue = observation.__cv_temporaryNewValue;
+            } else {
+                observationValue = observation[selectedComponentUri];
+            }
+            if(false === _.isUndefined(anotherObservation.__cv_temporaryNewValue)) {
+                anotherObservationValue = anotherObservation.__cv_temporaryNewValue;
+            } else {
+                anotherObservationValue = anotherObservation[selectedComponentUri];
+            }
+            return observationValue < anotherObservationValue ? ifLower : ifHigher;
         });
         return observationList.toObject();
     };
