@@ -8,7 +8,19 @@
         .add("View_CompareAction_VisualizationSetup", "");
 </script>
 
+<br/>
+
+<div style="padding-left: 15px;">
+    <span style="padding-right: 30px; font-size: 20px; font-weight: bold;">
+        Compare Datasets</span>
+        
+    <small>Here you have the possibility to compare two different datasets. The line on top represents the first dataset, the line below the second one.</small>
+</div>
+
+<hr style="margin-top: 10px;"/>
+
 <div class="" id="cubeviz-compare-container" style="" title="">
+    
     <table class="cubeviz-compare-table" style="width: auto;">
                 
         <!-- 
@@ -20,6 +32,8 @@
             <td class="cubeviz-compare-modelSelection">
                 <strong>Model selection</strong>
                 
+                <br/>
+                <small>Please choose a model and than one of its datasets.</small>
                 <br/>
                 <br/>
                 
@@ -54,6 +68,10 @@
             <td class="cubeviz-compare-generalDatasetInformation" id="cubeviz-compare-generalDatasetInformation1">
                 
                 <strong>Overall numbers:</strong>
+                
+                <br/>
+                
+                <small>A short summary of numbers counting important elements.</small>
                 
                 <br/>
                 <br/>
@@ -138,16 +156,11 @@
             <td class="cubeviz-compare-measuresAndAttributesInformation" id="cubeviz-compare-measuresAndAttributesInformation1">
                 
                 <strong>Measure information</strong>
-                <br/>
-                <br/>
                 
+                <br/>
+                <br/>
+                                
                 <table class="table table-bordered responsive-utilities">
-
-                    <tr id="cubeviz-compare-mAAInvalidNumbersFound1">
-                        <td colspan="5">
-                            Invalid numbers occour in the observations, so computed
-                            values are not exactly!</td>
-                    </tr>
 
                     <tr>
                         
@@ -237,6 +250,10 @@
                     
                 </table>
                 
+                <div id="cubeviz-compare-mAAInvalidNumbersFound1"><small>
+                    Invalid numbers occour in the observations, so computed
+                    values are not exact!</small></div>
+                
             </td>
                   
             <!-- UNequal Dimensions -->
@@ -270,10 +287,15 @@
         <!-- 
             bottom 
         -->
-        <tr style="height: 200px;">
+        <tr style="height: 180px;">
         
             <!-- Model selection -->
             <td class="cubeviz-compare-modelSelection">
+            
+                <small>For comparision you have to choose another model and one of its datasets.</small>
+            
+                <br/>
+                <br/>
                 
                 <select id="cubeviz-compare-modelSelector2">
                     <option value="">- please select -</option>
@@ -382,12 +404,6 @@
                 
                 <table class="table table-bordered responsive-utilities">
 
-                    <tr id="cubeviz-compare-mAAInvalidNumbersFound2">
-                        <td colspan="5">
-                            Invalid numbers occour in the observations, so computed
-                            values are not exact!</td>
-                    </tr>
-
                     <tr>
                         
                         <td class="cubeviz-compare-mAATableHeader">
@@ -443,6 +459,10 @@
                     
                 </table>
                 
+                <div id="cubeviz-compare-mAAInvalidNumbersFound2"><small>
+                    Invalid numbers occour in the observations, so computed
+                    values are not exact!</small></div>
+                
             </td>
                         
             <!-- UNequal Dimensions -->
@@ -483,7 +503,7 @@
 -->
 <div id="cubeviz-compare-tpl-equalDimension" style="display:none;">
     <div class="cubeviz-compare-equalDimension">
-        <table class="table table-bordered responsive-utilities">
+        <table class="table table-bordered responsive-utilities" style="height: 190px;">
 
             <tr class="cubeviz-compare-dimensionTitleAndElements">
                 <td colspan="2" style="text-align: center;">

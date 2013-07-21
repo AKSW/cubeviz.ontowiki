@@ -205,15 +205,16 @@
 #cubeviz-compare-mAAInvalidNumbersFound1
 {
     display: none;
-    color: #B40000;
-    font-weight: bold;
+    color: #FFABAB;
+    margin-top: -20px;
+    padding-bottom: 10px;
 }
 
 #cubeviz-compare-mAAInvalidNumbersFound2
 {
     display: none;
-    color: #B40000;
-    font-weight: bold;
+    color: #FFABAB;
+    margin-top: -15px;
 }
 
 .cubeviz-compare-mAATableHeader
