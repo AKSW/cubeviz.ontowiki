@@ -3833,6 +3833,7 @@ var View_IndexAction_Legend = (function (_super) {
         var numberOfUsedDimensionElements = 0;
         var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
         var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);
+        var valueToUse = null;
 
         html = "<tr class=\"info\">" + "<td></td>";
         _.each(selectedDimensions, function (dimension) {
@@ -3858,7 +3859,12 @@ var View_IndexAction_Legend = (function (_super) {
                 html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" + "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i>" + " <a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" " + "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">" + label + "</a>";
                 html += "</td>";
             });
-            html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + "</td>";
+            if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                valueToUse = observation.__cv_temporaryNewValue + " &nbsp; <small>(Original: " + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + ")";
+            } else {
+                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
+            }
+            html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + valueToUse + "</td>";
             html += "<td>" + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>" + "</td>";
             html += "</tr>";
             if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {

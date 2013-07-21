@@ -380,11 +380,13 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             
             // range of the values of observations
             rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
-            rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10);
+            rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10),
+            valueToUse:string = null;
             
         html = "<tr class=\"info\">" +
                     "<td></td>";
         
+        // go through all dimensions and show their label 
         _.each(selectedDimensions, function(dimension){ 
             
             // get the number of used dimension elements in retrieved observation
@@ -426,7 +428,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
                 // get label of dimension element used in observation
                 _.each(dimension.__cv_elements, function(element){
-                    if (element.__cv_uri == observation[dimension ["http://purl.org/linked-data/cube#dimension"]]) {
+                    if (element.__cv_uri == observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
                         label = element.__cv_niceLabel;
                     }
                 });
@@ -442,11 +444,21 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 // if (
                 
                 html += "</td>";
-            });
+            });        
+            
+            // set observation value, distinguish between original and user-set
+            // one: prefer the user-set one over the original
+            if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                valueToUse = observation.__cv_temporaryNewValue 
+                             + " &nbsp; <small>(Original: " 
+                             + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + ")";
+            } else {
+                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
+            }
         
             // observation value
             html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" 
-                    + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]]
+                        + valueToUse
                     + "</td>";
             
             // link to observation
