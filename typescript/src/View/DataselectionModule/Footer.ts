@@ -242,35 +242,44 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
      */
     public showLink() 
     {
-        var link = this.app._.backend.url + "?";
-                   
-        // only set serviceUrl if it was set by server
-        if (false == _.str.isBlank(this.app._.backend.serviceUrl)) {
-            link += "serviceUrl=" + encodeURIComponent (this.app._.backend.serviceUrl) + "&";
-        }
+        var self = this;
         
-        // add selected model url      
-        link += "m=" + encodeURIComponent (this.app._.backend.modelUrl)
-        
-        // add both hashes to the url
-              + "&cv_dataHash=" + this.app._.backend.dataHash
-              + "&cv_uiHash=" + this.app._.backend.uiHash;
-
-        // create url object
-        var url = $("<a></a>")
-            .attr ("href", link)
-            .attr ("target", "_self")
-            .html (this.collection.get("cubeviz-footer-permaLink").html);
-        
-        $("#cubeviz-footer-permaLink").html(url);
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.backend.modelUrl, 
+            this.app._.data, "data", 
             
-        // show menu
-        var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
-        
-        $("#cubeviz-footer-permaLinkMenu")
-            .css ("top", (positionLinkBtn.top + 30))
-            .css ("left", (positionLinkBtn.left))
-            .fadeIn("slow");
-        
+            // callback
+            function(updatedDataHash) {
+                var link = self.app._.backend.url + "?";
+                           
+                // only set serviceUrl if it was set by server
+                if (false == _.str.isBlank(self.app._.backend.serviceUrl)) {
+                    link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl) + "&";
+                }
+                
+                // add selected model url      
+                link += "m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                
+                // add both hashes to the url
+                      + "&cv_dataHash=" + updatedDataHash
+                      + "&cv_uiHash=" + self.app._.backend.uiHash;
+
+                // create url object
+                var url = $("<a></a>")
+                    .attr ("href", link)
+                    .attr ("target", "_self")
+                    .html (self.collection.get("cubeviz-footer-permaLink").html);
+                
+                $("#cubeviz-footer-permaLink").html(url);
+                    
+                // show menu
+                var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+                
+                $("#cubeviz-footer-permaLinkMenu")
+                    .css ("top", (positionLinkBtn.top + 30))
+                    .css ("left", (positionLinkBtn.left))
+                    .fadeIn("slow");
+            }, 
+        true);
     }
 }

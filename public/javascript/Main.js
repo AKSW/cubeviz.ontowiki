@@ -3541,15 +3541,18 @@ var View_DataselectionModule_Footer = (function (_super) {
         return this;
     };
     View_DataselectionModule_Footer.prototype.showLink = function () {
-        var link = this.app._.backend.url + "?";
-        if(false == _.str.isBlank(this.app._.backend.serviceUrl)) {
-            link += "serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl) + "&";
-        }
-        link += "m=" + encodeURIComponent(this.app._.backend.modelUrl) + "&cv_dataHash=" + this.app._.backend.dataHash + "&cv_uiHash=" + this.app._.backend.uiHash;
-        var url = $("<a></a>").attr("href", link).attr("target", "_self").html(this.collection.get("cubeviz-footer-permaLink").html);
-        $("#cubeviz-footer-permaLink").html(url);
-        var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
-        $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+        var self = this;
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
+            var link = self.app._.backend.url + "?";
+            if(false == _.str.isBlank(self.app._.backend.serviceUrl)) {
+                link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+            }
+            link += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+            var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
+            $("#cubeviz-footer-permaLink").html(url);
+            var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+            $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+        }, true);
     };
     return View_DataselectionModule_Footer;
 })(CubeViz_View_Abstract);
