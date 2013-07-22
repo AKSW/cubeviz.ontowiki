@@ -33,7 +33,7 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             observation = new DataCube_Observation (),
             self = this,
             usedXAxisElements:string[] = [],
-            valueToUse:string = null;
+            value:string = null;
         
         // save given (default) chart config
         this.chartConfig = chartConfig;
@@ -79,21 +79,15 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             
             // go through all observations
             _.each(xAxisElement.observations, function(observation){
-            
-                // set observation value, distinguish between original and user-set
-                // one: prefer the user-set one over the original
-                if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                    valueToUse = observation.__cv_temporaryNewValue;
-                } else {
-                    valueToUse = observation[selectedMeasureUri];
-                }
                 
-                valueToUse = DataCube_Observation.parseValue(valueToUse);
+                value = DataCube_Observation.parseValue(
+                    observation, selectedMeasureUri
+                );
                 
                 // if x axis element label is not in use yet
                 if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
                     self.chartConfig.series[0].data.push([
-                        xAxisElement.self.__cv_niceLabel, valueToUse
+                        xAxisElement.self.__cv_niceLabel, value
                     ]);
                
                     // set color based on the URI

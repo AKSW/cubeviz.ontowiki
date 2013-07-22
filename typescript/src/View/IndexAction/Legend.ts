@@ -310,7 +310,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public displayRetrievedObservations(observations:any, selectedDimensions:any,
         selectedMeasure:any) : void
-    {                
+    {
         var html:string = "",
             i:number = 0,
             label:string = "",
@@ -381,7 +381,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             // range of the values of observations
             rangeMin = "<strong>min:</strong> " + String(jsStats.min (observationValues[0])).substring(0, 10),
             rangeMax = "<strong>max:</strong> " + String(jsStats.max (observationValues[0])).substring(0, 10),
-            valueToUse:string = null;
+            value:string = null;
             
         html = "<tr class=\"info\">" +
                     "<td></td>";
@@ -421,8 +421,14 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          var i:number = 0;
         _.each(observations, function(observation){
             
-            html = "<tr>" +
-                        "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
+            if (false === _.isNull(observation.__cv_sourceDataset)
+                && false === _.isUndefined(observation.__cv_sourceDataset)) {
+                html = "<tr>" +
+                            "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
+            } else {
+                html = "<tr>" +
+                            "<td><strong>" + i++ + "</strong></td>";
+            }
             
             _.each(selectedDimensions, function(dimension){
                 
@@ -446,20 +452,20 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 html += "</td>";
             });        
             
-            // set observation value, distinguish between original and user-set
-            // one: prefer the user-set one over the original
-            if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                valueToUse = observation.__cv_temporaryNewValue 
-                             + " &nbsp; <small>(Original: " 
-                             + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + ")";
-            } else {
-                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
-            }
-        
+            value = DataCube_Observation.parseValue(
+                observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
+            );
+            
             // observation value
-            html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" 
-                        + valueToUse
-                    + "</td>";
+            if (true === _.isNull(value)) {    
+                html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" +
+                            "<em><small>no value found or type is not float</small></em>" +
+                        "</td>";
+            } else {
+                html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" +
+                            value +
+                        "</td>";
+            }
             
             // link to observation
             html += "<td>" 
@@ -1363,19 +1369,15 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // sort observations
         observationList._.sort(function(observation, anotherObservation){
             
-            // get observation value, distinguish between original and user-set
-            // one: prefer the user-set one over the original
-            if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                observationValue = observation.__cv_temporaryNewValue;
-            } else {
-                observationValue = observation[selectedComponentUri];
-            }
+            // get value of one observation
+            observationValue = DataCube_Observation.parseValue (
+                observation, selectedComponentUri
+            );
             
-            if (false === _.isUndefined(anotherObservation.__cv_temporaryNewValue)) {
-                anotherObservationValue = anotherObservation.__cv_temporaryNewValue;
-            } else {
-                anotherObservationValue = anotherObservation[selectedComponentUri];
-            }
+            // get value of another observation
+            anotherObservationValue = DataCube_Observation.parseValue (
+                anotherObservation, selectedComponentUri
+            );
                          
             return observationValue < anotherObservationValue
                 ? ifLower : ifHigher;

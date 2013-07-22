@@ -38,14 +38,9 @@ class CubeViz_Visualization_D3js_CirclePacking
             
             children[0].name = circleLabel.join (" - ");
             
-            // set observation value, distinguish between original and user-set
-            // one: prefer the user-set one over the original
-            if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                valueToUse = observation.__cv_temporaryNewValue;
-            } else {
-                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
-            }            
-            children[0].size = DataCube_Observation.parseValue(valueToUse);
+            children[0].size = DataCube_Observation.parseValue(
+                observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
+            );
             
             // save
             self.generatedData.children.push({

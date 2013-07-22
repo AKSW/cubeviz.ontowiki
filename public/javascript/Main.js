@@ -638,12 +638,7 @@ var CubeViz_Visualization_D3js_CirclePacking = (function () {
                 });
             });
             children[0].name = circleLabel.join(" - ");
-            if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                valueToUse = observation.__cv_temporaryNewValue;
-            } else {
-                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
-            }
-            children[0].size = DataCube_Observation.parseValue(valueToUse);
+            children[0].size = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
             self.generatedData.children.push({
                 name: observation.__cv_niceLabel,
                 children: children
@@ -801,27 +796,22 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observation) {
         var self = this;
-        var seriesObservation = null;
+        var observation = null;
         var seriesDataList = [];
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
-        var valueToUse = null;
+        var value = null;
 
         _.each(xAxisElements, function (xAxisElement) {
-            seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
-            if(false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
-                valueToUse = seriesObservation.__cv_temporaryNewValue;
-            } else {
-                valueToUse = seriesObservation[selectedMeasureUri];
-            }
-            valueToUse = DataCube_Observation.parseValue(valueToUse);
-            if(false === valueToUse) {
+            observation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+            value = DataCube_Observation.parseValue(observation, selectedMeasureUri);
+            if(true === _.isNull(value)) {
                 return;
             }
-            if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
+            if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(observation[selectedAttributeUri]) || true === _.isUndefined(observation[selectedAttributeUri]))) {
                 return;
             }
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-            seriesDataList.push(valueToUse);
+            seriesDataList.push(value);
         });
         this.chartConfig.series = [
             {
@@ -970,7 +960,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         var observation = new DataCube_Observation();
         var self = this;
         var usedXAxisElements = [];
-        var valueToUse = null;
+        var value = null;
 
         this.chartConfig = chartConfig;
         this.chartConfig.colors = [];
@@ -999,16 +989,11 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         });
         _.each(xAxisElements, function (xAxisElement) {
             _.each(xAxisElement.observations, function (observation) {
-                if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                    valueToUse = observation.__cv_temporaryNewValue;
-                } else {
-                    valueToUse = observation[selectedMeasureUri];
-                }
-                valueToUse = DataCube_Observation.parseValue(valueToUse);
+                value = DataCube_Observation.parseValue(observation, selectedMeasureUri);
                 if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
                     self.chartConfig.series[0].data.push([
                         xAxisElement.self.__cv_niceLabel, 
-                        valueToUse
+                        value
                     ]);
                     self.chartConfig.colors.push(CubeViz_Visualization_Controller.getColor(xAxisElement.self.__cv_uri));
                     usedXAxisElements.push(xAxisElement.self.__cv_niceLabel);
@@ -1515,8 +1500,8 @@ var DataCube_Observation = (function () {
         var values = [];
 
         _.each(observations, function (observation) {
-            value = DataCube_Observation.parseValue(observation[measureUri]);
-            if(false === value) {
+            value = DataCube_Observation.parseValue(observation, measureUri);
+            if(true === _.isNull(value)) {
                 foundInvalidNumber = true;
                 return;
             } else {
@@ -1540,8 +1525,8 @@ var DataCube_Observation = (function () {
         this._axes = {
         };
         _.each(retrievedObservations, function (observation) {
-            value = DataCube_Observation.parseValue(observation[measureUri]);
-            if(false === value) {
+            value = DataCube_Observation.parseValue(observation, measureUri);
+            if(true === _.isNull(value)) {
                 return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
@@ -1601,21 +1586,27 @@ var DataCube_Observation = (function () {
             callback(entries.content);
         });
     }
-    DataCube_Observation.parseValue = function parseValue(value) {
+    DataCube_Observation.parseValue = function parseValue(observation, measureUri) {
         var parsedValue = null;
+        var value = null;
+
+        if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            value = observation.__cv_temporaryNewValue;
+        } else {
+            value = observation[measureUri];
+        }
         try  {
             if(true === _.str.include(value, " ")) {
                 parsedValue = parseFloat(value.replace(/ /gi, ""));
             } else {
                 parsedValue = parseFloat(value);
             }
-            if(false === _.isNaN(parsedValue) && _.isFinite(parsedValue)) {
+            if(false === _.isNaN(parsedValue) && _.isFinite(parsedValue) && (0 < parsedValue || 0 > parsedValue || 0 === parsedValue)) {
                 return parsedValue;
             }
         } catch (ex) {
-            return false;
         }
-        return false;
+        return null;
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         var axesEntries = this._axes[axisUri];
@@ -3833,7 +3824,7 @@ var View_IndexAction_Legend = (function (_super) {
         var numberOfUsedDimensionElements = 0;
         var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
         var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);
-        var valueToUse = null;
+        var value = null;
 
         html = "<tr class=\"info\">" + "<td></td>";
         _.each(selectedDimensions, function (dimension) {
@@ -3849,7 +3840,11 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-observations").append(html);
         var i = 0;
         _.each(observations, function (observation) {
-            html = "<tr>" + "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
+            if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
+                html = "<tr>" + "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
+            } else {
+                html = "<tr>" + "<td><strong>" + i++ + "</strong></td>";
+            }
             _.each(selectedDimensions, function (dimension) {
                 _.each(dimension.__cv_elements, function (element) {
                     if(element.__cv_uri == observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
@@ -3859,12 +3854,12 @@ var View_IndexAction_Legend = (function (_super) {
                 html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" + "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i>" + " <a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" " + "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">" + label + "</a>";
                 html += "</td>";
             });
-            if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                valueToUse = observation.__cv_temporaryNewValue + " &nbsp; <small>(Original: " + observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]] + ")";
+            value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+            if(true === _.isNull(value)) {
+                html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" + "<em><small>no value found or type is not float</small></em>" + "</td>";
             } else {
-                valueToUse = observation[selectedMeasure["http://purl.org/linked-data/cube#measure"]];
+                html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + value + "</td>";
             }
-            html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + valueToUse + "</td>";
             html += "<td>" + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>" + "</td>";
             html += "</tr>";
             if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
@@ -4174,16 +4169,8 @@ var View_IndexAction_Legend = (function (_super) {
 
         observationList.addList(observations);
         observationList._.sort(function (observation, anotherObservation) {
-            if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
-                observationValue = observation.__cv_temporaryNewValue;
-            } else {
-                observationValue = observation[selectedComponentUri];
-            }
-            if(false === _.isUndefined(anotherObservation.__cv_temporaryNewValue)) {
-                anotherObservationValue = anotherObservation.__cv_temporaryNewValue;
-            } else {
-                anotherObservationValue = anotherObservation[selectedComponentUri];
-            }
+            observationValue = DataCube_Observation.parseValue(observation, selectedComponentUri);
+            anotherObservationValue = DataCube_Observation.parseValue(anotherObservation, selectedComponentUri);
             return observationValue < anotherObservationValue ? ifLower : ifHigher;
         });
         return observationList.toObject();

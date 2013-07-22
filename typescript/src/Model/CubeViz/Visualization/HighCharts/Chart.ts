@@ -194,36 +194,31 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedMeasureUri:string, observation:DataCube_Observation ) : void
     {
         var self = this,
-            seriesObservation:any = null,
+            observation:any = null,
             seriesDataList:number[] = [],
             xAxisElements:any = observation.sortAxis(forXAxis, "ascending")
                                            .getAxesElements(forXAxis),
-            valueToUse:any = null;
+            value:any = null;
             
         _.each(xAxisElements, function(xAxisElement){
             
-            seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+            observation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
             
-            // set observation value, distinguish between original and user-set
-            // one: prefer the user-set one over the original
-            if (false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
-                valueToUse = seriesObservation.__cv_temporaryNewValue;
-            } else {
-                valueToUse = seriesObservation[selectedMeasureUri];
+            value = DataCube_Observation.parseValue(
+                observation, selectedMeasureUri
+            );
+            
+            if (true === _.isNull(value)) {
+                return
             }
-            
-            valueToUse = DataCube_Observation.parseValue (valueToUse);
-            
-            if (false === valueToUse)
-                return;
             
             // check if the current observation has to be ignored
             // it will ignored, if attribute uri is set, but the observation
             // has no value of it
             if (false === _.isNull(selectedAttributeUri)
                 && 
-                ( true === _.isNull(seriesObservation [selectedAttributeUri])
-                  || true === _.isUndefined(seriesObservation [selectedAttributeUri]))) {
+                ( true === _.isNull(observation [selectedAttributeUri])
+                  || true === _.isUndefined(observation [selectedAttributeUri]))) {
                 // TODO implement a way to handle ignored observations
                 return;
             }
@@ -234,7 +229,7 @@ class CubeViz_Visualization_HighCharts_Chart
             );
             
             // save related value
-            seriesDataList.push(valueToUse);
+            seriesDataList.push(value);
         });
         
         // set series element

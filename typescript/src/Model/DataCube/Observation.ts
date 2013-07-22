@@ -79,10 +79,12 @@ class DataCube_Observation
             values:any[] = [];
         
         _.each(observations, function(observation){
-            value = DataCube_Observation.parseValue(observation [measureUri]);
+            value = DataCube_Observation.parseValue(
+                observation, measureUri
+            );
             
             // something was wrong with the given observation value
-            if (false === value) {
+            if (true === _.isNull(value)) {
                 foundInvalidNumber = true;
                 return;
             
@@ -116,11 +118,13 @@ class DataCube_Observation
         
         _.each(retrievedObservations, function(observation){
             
-            // try to parse the value
-            value = DataCube_Observation.parseValue(observation[measureUri]);
+            value = DataCube_Observation.parseValue(
+                observation, measureUri
+            );
             
-            if (false === value) 
+            if (true === _.isNull(value)) {
                 return;
+            }
             
             _.each(selectedComponentDimensions, function(dimension){
                 
@@ -223,17 +227,26 @@ class DataCube_Observation
     }
     
     /**
-     * @param value string|float The observation value to parse
-     * @return float|false False if value is not a float, otherwise returns the parsed one
+     * @param observation any The observation to parse
+     * @param measureUri string 
+     * @return float|null Null if value is not a float, otherwise returns the parsed value
      */
-    static parseValue(value:string) : any 
+    static parseValue(observation:any, measureUri:string) : any 
     {
-        var parsedValue:number = null;
+        var parsedValue:number = null,
+            value:string = null;
         
-        // Parse observation value, if it is not a number, ignore it.
+        // set observation value, distinguish between original and user-set
+        // one: prefer the user-set one over the original
+        if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            value = observation.__cv_temporaryNewValue;
+        } else {
+            value = observation[measureUri];
+        }
+        
+        // Parse observation value, if it is not a number, return null
         try {
-            // If value contains whitespaces and it was able to parse
-            // it was float, remove whitespaces and parse it again
+            // If value contains whitespaces, remove whitespaces and parse it
             if(true === _.str.include(value, " ")) {
                 parsedValue = parseFloat(value.replace(/ /gi, ""));
             } else {
@@ -241,14 +254,15 @@ class DataCube_Observation
             }
             
             // check if its a valid number
-            if (false === _.isNaN(parsedValue) && _.isFinite(parsedValue)) {
+            if (false === _.isNaN(parsedValue) && _.isFinite(parsedValue)
+                && (0 < parsedValue || 0 > parsedValue || 0 === parsedValue)) {
                 return parsedValue;
             }
             
         // its not a number
-        } catch (ex) { return false; }
+        } catch (ex) {}
         
-        return false;
+        return null;
     }
 
     /**
