@@ -418,7 +418,7 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         /**
          * go through all observations        
          */
-         var i:number = 0;
+         var i:number = 1;
         _.each(observations, function(observation){
             
             if (false === _.isNull(observation.__cv_sourceDataset)

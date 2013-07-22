@@ -3838,7 +3838,7 @@ var View_IndexAction_Legend = (function (_super) {
         html += "<td>" + rangeMin + "</td>" + "<td>" + rangeMax + "</td>" + "<td></td>";
         "</tr>";
         $("#cubeviz-legend-observations").append(html);
-        var i = 0;
+        var i = 1;
         _.each(observations, function (observation) {
             if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
                 html = "<tr>" + "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
