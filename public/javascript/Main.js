@@ -1515,12 +1515,16 @@ var DataCube_Observation = (function () {
         });
         return usedDimensionElementUris;
     }
-    DataCube_Observation.getValues = function getValues(observations, measureUri) {
+    DataCube_Observation.getValues = function getValues(observations, measureUri, areActive) {
+        if (typeof areActive === "undefined") { areActive = false; }
         var foundInvalidNumber = false;
         var value = null;
         var values = [];
 
         _.each(observations, function (observation) {
+            if(true === areActive && false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             value = DataCube_Observation.parseValue(observation, measureUri);
             if(true === _.isNull(value)) {
                 foundInvalidNumber = true;
@@ -3873,7 +3877,7 @@ var View_IndexAction_Legend = (function (_super) {
         });
         $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("measure", selectedMeasure);
         $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i)).data("measure", selectedMeasure);
-        var observationValues = DataCube_Observation.getValues(observations, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        var observationValues = DataCube_Observation.getValues(observations, selectedMeasure["http://purl.org/linked-data/cube#measure"], true);
         var numberOfUsedDimensionElements = 0;
         var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
         var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);

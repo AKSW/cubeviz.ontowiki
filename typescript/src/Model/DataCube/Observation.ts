@@ -83,18 +83,25 @@ class DataCube_Observation
     
     /**
      * Returns a list containing values of the given observations
-     * @param 
-     * @param 
+     * @param observations any
+     * @param measureUri string
+     * @param areActive bool optional
      * @return any[] 2-element array: first element are the values, 
      *               second if invalid numbers were found 
      */
-    static getValues(observations:any, measureUri:string) : any[] 
+    static getValues(observations:any, measureUri:string, areActive:bool = false) : any[] 
     {
         var foundInvalidNumber:bool = false,
             value:any = null,
             values:any[] = [];
         
         _.each(observations, function(observation){
+            
+            if (true === areActive 
+                && false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            
             value = DataCube_Observation.parseValue(
                 observation, measureUri
             );

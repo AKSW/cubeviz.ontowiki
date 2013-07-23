@@ -369,7 +369,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          * add line with additional information about the meta data
          */
         var observationValues = DataCube_Observation.getValues(
-                observations, selectedMeasure ["http://purl.org/linked-data/cube#measure"]
+                observations, 
+                selectedMeasure ["http://purl.org/linked-data/cube#measure"],
+                true
             ),
             numberOfUsedDimensionElements:number = 0,
             
