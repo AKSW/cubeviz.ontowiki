@@ -4,7 +4,7 @@ CubeViz is an [OntoWiki](http://aksw.org/Projects/OntoWiki.html) component provi
 data in the Linked Data Web. It was set up and adopted to be part of the 
 [Data Portal](https://ec.europa.eu/digital-agenda/en/scoreboard) of the European Union. 
 CubeViz utilizing the  [RDF DataCube vocabulary](http://www.w3.org/TR/vocab-data-cube/) 
-which is the state-of-the-art in representing statistical data in [Resource Description Format (RDF)](http://www.w3.org/RDF/). 
+which is the state-of-the-art in representing statistical data in [Resource Description Framework (RDF)](http://www.w3.org/RDF/). 
 This vocabulary is compatible with [SDMX](http://en.wikipedia.org/wiki/SDMX) 
 ([User Guide](http://sdmx.org/wp-content/uploads/2012/11/SDMX_2-1_User_Guide_draft_0-1.pdf)) and increasingly being adopted. 
 Based on the vocabulary and the encoded Data Cube, CubeViz is generating a facetted browsing widget that 
