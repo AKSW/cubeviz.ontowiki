@@ -195,7 +195,8 @@ class CubeViz_Visualization_HighCharts_Chart
      *  }]
      */
     public handleOnlyOneMultipleDimension(forXAxis:string, selectedAttributeUri:string, 
-        selectedMeasureUri:string, observationObj:DataCube_Observation ) : void
+        selectedMeasureUri:string, observationObj:DataCube_Observation,
+        oneElementDimensions:any[] ) : void
     {
         var self = this,
             observation:any = null,
@@ -203,42 +204,59 @@ class CubeViz_Visualization_HighCharts_Chart
             xAxisElements:any = observationObj.sortAxis(forXAxis, "ascending")
                                               .getAxesElements(forXAxis),
             value:any = null;
-            
+        
         _.each(xAxisElements, function(xAxisElement){
             
-            observation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
+            _.each (xAxisElement.observations, function(observation){
             
-            value = DataCube_Observation.parseValue(
-                observation, selectedMeasureUri
-            );
-            
-            if (true === _.isNull(value)) {
-                return
-            }
-            
-            // check if the current observation has to be ignored
-            // it will ignored, if attribute uri is set, but the observation
-            // has no value of it
-            if (false === _.isNull(selectedAttributeUri)
-                && 
-                ( true === _.isNull(observation [selectedAttributeUri])
-                  || true === _.isUndefined(observation [selectedAttributeUri]))) {
-                // TODO implement a way to handle ignored observations
-                return;
-            }
-            
-            // add entry on the y axis
-            self.chartConfig.xAxis.categories.push(
-                xAxisElement.self.__cv_niceLabel
-            );
-            
-            // save related value
-            seriesDataList.push(value);
+                if (false === DataCube_Observation.isActive(observation)) {
+                    return;
+                }
+                
+                value = DataCube_Observation.parseValue(
+                    observation, selectedMeasureUri
+                );
+                
+                if (true === _.isNull(value)) {
+                    return
+                }
+                
+                // check if the current observation has to be ignored
+                // it will ignored, if attribute uri is set, but the observation
+                // has no value of it
+                if (false === _.isNull(selectedAttributeUri)
+                    && 
+                    ( true === _.isNull(observation [selectedAttributeUri])
+                      || true === _.isUndefined(observation [selectedAttributeUri]))) {
+                    // TODO implement a way to handle ignored observations
+                    return;
+                }
+                
+                // add entry on the y axis
+                self.chartConfig.xAxis.categories.push(
+                    xAxisElement.self.__cv_niceLabel
+                );
+                
+                // save related value
+                seriesDataList.push(value);
+            });
         });
         
         // set series element
+        var seriesName = ".";
+        
+        if (0 < _.size(oneElementDimensions)) {
+            var dimensionElementLabels:string[] = [];
+        
+            _.each (oneElementDimensions, function(dimension){
+                dimensionElementLabels.push (dimension.__cv_elements[0].__cv_niceLabel);
+            });
+            
+            seriesName = dimensionElementLabels.join (" - ");
+        } 
+        
         this.chartConfig.series = [{
-            name: ".",
+            name: seriesName,
             data: seriesDataList
         }];
     }
@@ -348,11 +366,12 @@ class CubeViz_Visualization_HighCharts_Chart
         );
 
         /**
-         * Check if there are two dimensions with at least one dimension element.
+         * Check if there are two dimensions with at least two dimension elements.
          * If both forXAxis and forSeries strings are not blank, than you have 
          * two multiple dimensions
          */
-        if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
+        if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)
+            && 1 < _.size(multipleDimensions)) {
                 
             this.handleTwoDimensionsWithAtLeastOneDimensionElement(
                 selectedComponentDimensions, 
@@ -386,7 +405,8 @@ class CubeViz_Visualization_HighCharts_Chart
                     forXAxis, 
                     selectedAttributeUri, 
                     selectedMeasure["http://purl.org/linked-data/cube#measure"], 
-                    observation
+                    observation,
+                    oneElementDimensions
                 );
                
             /**
