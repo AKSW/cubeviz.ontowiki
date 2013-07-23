@@ -3845,11 +3845,11 @@ var View_IndexAction_Legend = (function (_super) {
                     list.addList(value).each(function (element) {
                         _.each(self.app._.data.selectedComponents.dimensions, function (dimension) {
                             if(element === dimension.__cv_uri) {
-                                labels.push("<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\">" + dimension.__cv_niceLabel + "</a> " + "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>");
+                                labels.push("<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " + "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\">" + dimension.__cv_niceLabel + "</a> ");
                             }
                         });
                     });
-                    labels.push(self.app._.data.selectedComponents.measure.__cv_niceLabel);
+                    labels.push("<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " + "<a href=\"#" + (CryptoJS.MD5(self.app._.data.selectedComponents.measure.__cv_uri) + "").substring(0, 6) + "\">" + self.app._.data.selectedComponents.measure.__cv_niceLabel + "</a>");
                     if(false === _.isNull(self.app._.data.selectedComponents.attribute) && false === _.isUndefined(self.app._.data.selectedComponents.attribute)) {
                         labels.push(self.app._.data.selectedComponents.attribute.__cv_niceLabel);
                     }
@@ -3878,9 +3878,15 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-observations").html("");
         html = "<tr>" + "<td></td>";
         _.each(selectedDimensions, function (dimension) {
-            html += "<td>" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), dimension) + "</td>";
+            html += "<td>" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+                label: dimension.__cv_niceLabel,
+                uriHash: (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
+            }) + "</td>";
         });
-        html += "<td colspan=\"2\">" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), selectedMeasure) + "</td>";
+        html += "<td colspan=\"2\">" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+            label: selectedMeasure.__cv_niceLabel,
+            uriHash: (CryptoJS.MD5(selectedMeasure.__cv_uri) + "").substring(0, 6)
+        }) + "</td>";
         html += "<td></td></tr>";
         $("#cubeviz-legend-observations").append(html);
         _.each(selectedDimensions, function (dimension) {
@@ -4000,7 +4006,7 @@ var View_IndexAction_Legend = (function (_super) {
             elementList.reset().addList(dimension.__cv_elements).each(function (element) {
                 $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
             });
-            $table.append("<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+            $table.append("<tr><td colspan=\"2\">" + "<strong><em>" + tmpList.size() + " Dimension Elements</em></strong>" + "</td>" + "</tr><tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
             if(false === _.isNull(dimension.__cv_sourceComponentSpecification) && false === _.isUndefined(dimension.__cv_sourceComponentSpecification)) {
                 _.each(dimension.__cv_sourceComponentSpecification, function (sourceCS) {
                     $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Component Specification: " + "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + sourceCS.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
@@ -4022,7 +4028,7 @@ var View_IndexAction_Legend = (function (_super) {
                     elementList.reset().addList(sourceCS.__cv_elements).each(function (element) {
                         $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
                     });
-                    $table.append("<tr><td colspan=\"2\"><em>Dimension Elements</em></td></tr>" + "<tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+                    $table.append("<tr><td colspan=\"2\">" + "<em>" + tmpList.size() + " Dimension Elements</em>" + "</td>" + "</tr><tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
                 });
             }
         });
@@ -4031,7 +4037,7 @@ var View_IndexAction_Legend = (function (_super) {
         var self = this;
         var $table = $("#cubeviz-legend-componentMeasureProperties");
 
-        $("#cubeviz-legend-componentMeasureLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>");
+        $("#cubeviz-legend-componentMeasureLabel").html("<a name=\"" + (CryptoJS.MD5(selectedMeasure.__cv_uri) + "").substring(0, 6) + "\">" + "<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>" + "</a>");
         $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
         _.each(selectedMeasure, function (value, property) {
             if(false === _.str.include(property, "__cv_")) {

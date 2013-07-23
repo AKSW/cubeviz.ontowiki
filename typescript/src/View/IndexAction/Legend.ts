@@ -244,9 +244,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                             _.each(self.app._.data.selectedComponents.dimensions, function(dimension){
                                 if (element === dimension.__cv_uri) {
                                     labels.push(
+                                        "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " +                                        
                                         "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring (0, 6) + "\">" 
-                                        + dimension.__cv_niceLabel + "</a> " +
-                                        "<i class=\"icon-anchor\" style=\"font-size: 10px;\"></i>"
+                                        + dimension.__cv_niceLabel + "</a> "
                                     );
                                 }
                             });
@@ -254,7 +254,9 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         
                     // measure
                     labels.push (
-                        self.app._.data.selectedComponents.measure.__cv_niceLabel
+                        "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " +
+                        "<a href=\"#" + (CryptoJS.MD5(self.app._.data.selectedComponents.measure.__cv_uri) + "").substring (0, 6) + "\">" 
+                            + self.app._.data.selectedComponents.measure.__cv_niceLabel + "</a>"
                     );
                     
                     // attribute (optional)
@@ -329,7 +331,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             // head entry
             html += "<td>"
                     + CubeViz_View_Helper.tplReplace(
-                        $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), dimension
+                        $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+                            label:     dimension.__cv_niceLabel,
+                            uriHash:   (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
+                        }
                     ) 
                     + "</td>";
         });
@@ -337,7 +342,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // title of selected measure
         html += "<td colspan=\"2\">" 
                 + CubeViz_View_Helper.tplReplace(
-                    $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), selectedMeasure
+                    $("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+                        label:     selectedMeasure.__cv_niceLabel,
+                        uriHash:   (CryptoJS.MD5(selectedMeasure.__cv_uri) + "").substring(0, 6)
+                    }
                   )
                 + "</td>";          
              
@@ -670,8 +678,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                 
             // add HTML of the other list
             $table.append(
-                "<tr><td colspan=\"2\"><strong><em>Dimension Elements</em></strong></td></tr>" +
-                "<tr>"
+                "<tr><td colspan=\"2\">" +
+                    "<strong><em>" + tmpList.size() + " Dimension Elements</em></strong>" + 
+                    "</td>" + 
+                "</tr><tr>"
                     + "<td colspan=\"2\">" + tmpList._.join (", ") + "</td>" + 
                 "</tr>"
             );
@@ -761,8 +771,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                         
                     // add HTML of the other list
                     $table.append(
-                        "<tr><td colspan=\"2\"><em>Dimension Elements</em></td></tr>" +
-                        "<tr>"
+                        "<tr><td colspan=\"2\">" +
+                            "<em>" + tmpList.size() + " Dimension Elements</em>" + 
+                            "</td>" + 
+                        "</tr><tr>"
                             + "<td colspan=\"2\">" + tmpList._.join (", ") + "</td>" + 
                         "</tr>"
                     );
@@ -784,8 +796,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          * display measure
          */
         $("#cubeviz-legend-componentMeasureLabel").html(
-            "<a href=\"" + selectedMeasure.__cv_uri + "\">" 
-            + selectedMeasure.__cv_niceLabel + "</a>"
+            "<a name=\"" + (CryptoJS.MD5(selectedMeasure.__cv_uri)+"").substring (0, 6) + "\">" +
+                "<a href=\"" + selectedMeasure.__cv_uri + "\">" 
+                + selectedMeasure.__cv_niceLabel + "</a>" +
+            "</a>"
         );
         
         // table header
