@@ -548,11 +548,14 @@ class DataCube_DataCubeMerger
     
     /**
      * Returns the basic structure of a data cube.
-     * @return any Object with basic data cube structure
+     * @return any Object with basic data cube structure and some settings
      */
     static getDefaultDataCubeObject() : any
     {
-        return {
+        return {            
+            /**
+             * DataCube relevant information
+             */
             components: {
                 attributes: null,
                 dimensions: {},
@@ -567,7 +570,14 @@ class DataCube_DataCubeMerger
             selectedDS: {},
             selectedDSD: {},
             selectedSlice: {},
-            slices: {}
+            slices: {},
+            
+            /**
+             * settings to tell CubeViz in some situations how to act
+             */
+            settings: {
+                synchronizeWithStore: false
+            }
         };
     }
     

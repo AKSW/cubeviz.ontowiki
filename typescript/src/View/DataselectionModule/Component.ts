@@ -664,8 +664,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             self = this;
         
         // if some items next to the close button was clicked, this event could
-        // be executed, so prevent invalid component data
-        if(undefined === component) {
+        // be triggered, to avoid invalid component data stop execution here
+        if(true === _.isUndefined(component)) {
             return;
         }
         
@@ -702,28 +702,58 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
             getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
-        // update link code        
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
-            
-            // based on updatedLinkCode, load new observations
-            function(updatedDataHash){
-                        
-                DataCube_Observation.loadAll(
-                    self.app._.backend.url, self.app._.backend.serviceUrl, 
-                    self.app._.backend.modelUrl, updatedDataHash, "",
-                    function(newEntities){
-                        
-                        // save new observations
-                        self.app._.data.retrievedObservations = newEntities;
-                        
-                        callback();
-                    }
-                );
+        // syn with backend and update observations
+        if (true === _.isUndefined(this.app._.data.settings)) {
+        
+            // update link code        
+            CubeViz_ConfigurationLink.save(
+                this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
                 
-                self.app._.backend.dataHash = updatedDataHash;
-            }
-        );
+                // based on updatedLinkCode, load new observations
+                function(updatedDataHash){
+                            
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl, 
+                        self.app._.backend.modelUrl, updatedDataHash, "",
+                        function(newEntities){
+                            
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            callback();
+                        }
+                    );
+                    
+                    self.app._.backend.dataHash = updatedDataHash;
+                }
+            );
+            
+        // DON'T sync with backend
+        } else if (false === _.isUndefined(this.app._.data.settings)
+                   && false === _.isUndefined(this.app._.data.settings.synchronizeWithStore)
+                   && false === this.app._.data.settings.synchronizeWithStore) {
+            
+            // adapt observations
+            self.app._.data.retrievedObservations = DataCube_Observation.markActiveObservations(
+                self.app._.data.retrievedObservations,
+                this.app._.data.selectedComponents.dimensions,
+                this.app._.data.selectedComponents.measure,
+                this.app._.data.selectedComponents.attribute
+            );
+            
+            // update link code        
+            CubeViz_ConfigurationLink.save(
+                this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
+                
+                // based on updatedLinkCode
+                function(updatedDataHash){
+                    
+                    self.app._.backend.dataHash = updatedDataHash;
+                    
+                    callback();  
+                }
+            , true);
+        }
     }
     
     /**

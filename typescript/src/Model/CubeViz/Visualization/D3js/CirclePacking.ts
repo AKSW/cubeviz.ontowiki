@@ -22,6 +22,10 @@ class CubeViz_Visualization_D3js_CirclePacking
         
         _.each(observations, function(observation){
             
+            if (false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            
             circleLabel = [];
             
             // set children

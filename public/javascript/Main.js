@@ -623,6 +623,9 @@ var CubeViz_Visualization_D3js_CirclePacking = (function () {
         var valueToUse = null;
 
         _.each(observations, function (observation) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             circleLabel = [];
             children = [
                 {
@@ -737,6 +740,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 obj.data.push(null);
             }
             _.each(seriesElement.observations, function (seriesObservation) {
+                if(false === DataCube_Observation.isActive(seriesObservation)) {
+                    return;
+                }
                 if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
                     return;
                 }
@@ -794,11 +800,11 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             });
         });
     };
-    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observation) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observationObj) {
         var self = this;
         var observation = null;
         var seriesDataList = [];
-        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
+        var xAxisElements = observationObj.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         var value = null;
 
         _.each(xAxisElements, function (xAxisElement) {
@@ -950,7 +956,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         _super.apply(this, arguments);
 
     }
-    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri) {
+    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         if(1 < _.size(multipleDimensions)) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
@@ -980,7 +986,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
                 }
             };
         }
-        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
         var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         this.chartConfig.series.push({
             type: "pie",
@@ -989,7 +995,10 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         });
         _.each(xAxisElements, function (xAxisElement) {
             _.each(xAxisElement.observations, function (observation) {
-                value = DataCube_Observation.parseValue(observation, selectedMeasureUri);
+                if(false === DataCube_Observation.isActive(observation)) {
+                    return;
+                }
+                value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
                 if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
                     self.chartConfig.series[0].data.push([
                         xAxisElement.self.__cv_niceLabel, 
@@ -1389,6 +1398,9 @@ var DataCube_DataCubeMerger = (function () {
             selectedSlice: {
             },
             slices: {
+            },
+            settings: {
+                synchronizeWithStore: false
             }
         };
     }
@@ -1485,6 +1497,15 @@ var DataCube_Observation = (function () {
             };
         }
     };
+    DataCube_Observation.getNumberOfActiveObservations = function getNumberOfActiveObservations(observations) {
+        var activeOnes = 0;
+        _.each(observations, function (observation) {
+            if(true === DataCube_Observation.isActive(observation)) {
+                ++activeOnes;
+            }
+        });
+        return activeOnes;
+    }
     DataCube_Observation.getUsedDimensionElementUris = function getUsedDimensionElementUris(observations, dimensionUri) {
         var usedDimensionElementUris = [];
         _.each(observations, function (observation) {
@@ -1525,6 +1546,9 @@ var DataCube_Observation = (function () {
         this._axes = {
         };
         _.each(retrievedObservations, function (observation) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             value = DataCube_Observation.parseValue(observation, measureUri);
             if(true === _.isNull(value)) {
                 return;
@@ -1557,6 +1581,12 @@ var DataCube_Observation = (function () {
         });
         return this;
     };
+    DataCube_Observation.isActive = function isActive(observation) {
+        if(false === _.isUndefined(observation.__cv_active) && false === observation.__cv_active) {
+            return false;
+        }
+        return true;
+    }
     DataCube_Observation.loadAll = function loadAll(url, serviceUrl, modelIri, dataHash, datasetUri, callback) {
         $.ajax({
             url: url + "getobservations/",
@@ -1585,6 +1615,23 @@ var DataCube_Observation = (function () {
         }).done(function (entries) {
             callback(entries.content);
         });
+    }
+    DataCube_Observation.markActiveObservations = function markActiveObservations(observations, selectedDimensions, selectedMeasure, selectedAttribute) {
+        observations = $.parseJSON(JSON.stringify(observations));
+        _.each(observations, function (observation, key) {
+            observation.__cv_active = false;
+            observations[key] = observation;
+        });
+        var dimensionUri = null;
+        _.each(observations, function (observation, key) {
+            _.each(selectedDimensions, function (dimension) {
+                dimensionUri = dimension["http://purl.org/linked-data/cube#dimension"];
+                if(false === _.isNull(DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimensionUri]))) {
+                    observation.__cv_active = true;
+                }
+            });
+        });
+        return observations;
     }
     DataCube_Observation.parseValue = function parseValue(observation, measureUri) {
         var parsedValue = null;
@@ -3346,7 +3393,7 @@ var View_DataselectionModule_Component = (function (_super) {
         var selectedElements = new CubeViz_Collection("__cv_uri");
         var self = this;
 
-        if(undefined === component) {
+        if(true === _.isUndefined(component)) {
             return;
         }
         _.each(elementList, function (element) {
@@ -3361,13 +3408,23 @@ var View_DataselectionModule_Component = (function (_super) {
         dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
-                self.app._.data.retrievedObservations = newEntities;
-                callback();
+        if(true === _.isUndefined(this.app._.data.settings)) {
+            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
+                    self.app._.data.retrievedObservations = newEntities;
+                    callback();
+                });
+                self.app._.backend.dataHash = updatedDataHash;
             });
-            self.app._.backend.dataHash = updatedDataHash;
-        });
+        } else {
+            if(false === _.isUndefined(this.app._.data.settings) && false === _.isUndefined(this.app._.data.settings.synchronizeWithStore) && false === this.app._.data.settings.synchronizeWithStore) {
+                self.app._.data.retrievedObservations = DataCube_Observation.markActiveObservations(self.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
+                CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
+                    self.app._.backend.dataHash = updatedDataHash;
+                    callback();
+                }, true);
+            }
+        }
     };
     View_DataselectionModule_Component.prototype.onComplete_loadDS = function (event, data) {
         this.onChange_selectedDS(event, data);
@@ -3694,8 +3751,8 @@ var View_IndexAction_Legend = (function (_super) {
         _super.call(this, "View_IndexAction_Legend", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onReRender_visualization",
-                handler: this.onReRender_visualization
+                name: "onUpdate_componentDimensions",
+                handler: this.onUpdate_componentDimensions
             }, 
             {
                 name: "onStart_application",
@@ -3705,10 +3762,6 @@ var View_IndexAction_Legend = (function (_super) {
     }
     View_IndexAction_Legend.prototype.destroy = function () {
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
-        $("#cubeviz-legend-sortByTitle").off();
-        $("#cubeviz-legend-sortByValue").off();
-        $("#cubeviz-legend-retrievedObservations").slideUp("slow");
-        $("#cubeviz-legend-selectedConfiguration").slideUp("slow");
         $("#cubeviz-legend-dataSet").html("");
         $("#cubeviz-legend-observations").html("");
         $("#cubeviz-legend-configurationList").html("");
@@ -3805,7 +3858,7 @@ var View_IndexAction_Legend = (function (_super) {
         var label = "";
         var self = this;
 
-        $("#cubeviz-legend-retrievedObservationsTitle").html(_.size(observations) + " Retrieved Observations");
+        $("#cubeviz-legend-retrievedObservationsTitle").html(DataCube_Observation.getNumberOfActiveObservations(observations) + " Retrieved Observations");
         $("#cubeviz-legend-observations").html("");
         html = "<tr>" + "<td></td>";
         _.each(selectedDimensions, function (dimension) {
@@ -3840,6 +3893,9 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-observations").append(html);
         var i = 1;
         _.each(observations, function (observation) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
                 html = "<tr>" + "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
             } else {
@@ -4109,7 +4165,9 @@ var View_IndexAction_Legend = (function (_super) {
         $saveBtn.data("inputField", $inputField).data("measureTd", $(e.target)).data("observation", accordingObservation).on("click", $.proxy(this.onClick_adaptedMeasureValueSaveBtn, this));
         $inputField.focus();
     };
-    View_IndexAction_Legend.prototype.onReRender_visualization = function () {
+    View_IndexAction_Legend.prototype.onUpdate_componentDimensions = function () {
+        this.destroy();
+        this.initialize();
     };
     View_IndexAction_Legend.prototype.onStart_application = function () {
         this.initialize();

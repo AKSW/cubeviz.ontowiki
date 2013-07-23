@@ -15,8 +15,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onReRender_visualization",
-                handler: this.onReRender_visualization
+                name:    "onUpdate_componentDimensions",
+                handler: this.onUpdate_componentDimensions
             },
             {
                 name:    "onStart_application",
@@ -32,12 +32,6 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     {
         // remove event handler
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
-        $("#cubeviz-legend-sortByTitle").off();                
-        $("#cubeviz-legend-sortByValue").off();
-        
-        // slide up boxes
-        $("#cubeviz-legend-retrievedObservations").slideUp("slow");
-        $("#cubeviz-legend-selectedConfiguration").slideUp("slow");
         
         // empty lists
         $("#cubeviz-legend-dataSet").html("");
@@ -318,7 +312,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      
         // set title containing number of retrieved observations
         $("#cubeviz-legend-retrievedObservationsTitle").html (
-            _.size(observations) + " Retrieved Observations"
+            DataCube_Observation.getNumberOfActiveObservations(observations) + 
+            " Retrieved Observations"
         );
         
         
@@ -420,6 +415,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          */
          var i:number = 1;
         _.each(observations, function(observation){
+            
+            if (false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             
             if (false === _.isNull(observation.__cv_sourceDataset)
                 && false === _.isUndefined(observation.__cv_sourceDataset)) {
@@ -1217,10 +1216,10 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     /**
      *
      */
-    public onReRender_visualization() 
+    public onUpdate_componentDimensions() 
     {
-        // this.destroy();
-        // this.initialize();
+        this.destroy();
+        this.initialize();
     }
     
     /**

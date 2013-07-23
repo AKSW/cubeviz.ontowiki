@@ -89,7 +89,7 @@ class DataCube_Component
     /**
      * @param dimensionElements any
      * @param uri string
-     * @return any
+     * @return any|null The found element or null
      */
     static findDimensionElement(dimensionElements:any, uri:string) : any
     {

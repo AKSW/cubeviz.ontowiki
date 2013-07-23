@@ -48,9 +48,25 @@ class DataCube_Observation
     }
     
     /**
+     *
+     */
+    static getNumberOfActiveObservations(observations:any) : number 
+    {
+        var activeOnes:number = 0;
+        
+        _.each(observations, function(observation){
+            if (true === DataCube_Observation.isActive(observation)){
+                ++activeOnes;
+            }
+        });
+        
+        return activeOnes;
+    }
+    
+    /**
      * @param observations any
      * @param dimensionUri string
-     * @param dimensionElements any
+     * @return string[] List of used dimension element uris
      */
     static getUsedDimensionElementUris(observations:any, dimensionUri:string) : string[] 
     {
@@ -105,8 +121,8 @@ class DataCube_Observation
      * @param measureUri Uri of the selected measure
      * @return DataCube_Observation Itself
      */
-    public initialize ( retrievedObservations:any, selectedComponentDimensions:any,
-        measureUri:string ) : DataCube_Observation 
+    public initialize (retrievedObservations:any, selectedComponentDimensions:any,
+        measureUri:string) : DataCube_Observation 
     {
         var dimensionElementInfoObject:any = {},
             dimensionPropertyUri:string = "",
@@ -117,6 +133,10 @@ class DataCube_Observation
         this._axes = {};
         
         _.each(retrievedObservations, function(observation){
+            
+            if (false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
             
             value = DataCube_Observation.parseValue(
                 observation, measureUri
@@ -182,6 +202,19 @@ class DataCube_Observation
     }
     
     /**
+     * @param observation any
+     */
+    static isActive(observation:any) : bool
+    {
+        if (false === _.isUndefined (observation.__cv_active) 
+            && false === observation.__cv_active) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Loads observation based on datahash or dataset uri.
      * @return void
      */
@@ -224,6 +257,48 @@ class DataCube_Observation
         .done( function (entries) {
             callback(entries.content);
         });
+    }
+    
+    /**
+     * @param observations any 
+     * @param selectedDimensions any
+     * @param selectedMeasure any
+     * @param selectedAttribute any
+     * @return any Adapted observations container
+     */
+    static markActiveObservations(observations:any, selectedDimensions:any,
+        selectedMeasure:any, selectedAttribute:any) : any
+    {
+        // real clone of given observations list
+        observations = $.parseJSON(JSON.stringify(observations));
+        
+        // reset all observations
+        _.each(observations, function(observation, key){
+            observation.__cv_active = false;            
+            observations[key] = observation;
+        });
+        
+        // based on (probably) new set selected dimensions, deactive all observations
+        // whose DE's does not fit with selected ones
+        var dimensionUri:string = null;
+        
+        _.each(observations, function(observation, key){
+            
+            // go through all dimensions
+            _.each(selectedDimensions, function(dimension){
+                
+                dimensionUri = dimension["http://purl.org/linked-data/cube#dimension"];
+                
+                // if observations related dimension element was found
+                if (false === _.isNull (DataCube_Component.findDimensionElement(
+                    dimension.__cv_elements, observation [dimensionUri]
+                    ))) {
+                    observation.__cv_active = true;
+                }
+            });
+        });
+        
+        return observations;
     }
     
     /**

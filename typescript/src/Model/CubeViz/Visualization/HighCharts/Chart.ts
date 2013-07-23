@@ -66,6 +66,10 @@ class CubeViz_Visualization_HighCharts_Chart
             // and add their values (measure) if set
             _.each(seriesElement.observations, function(seriesObservation){
                 
+                if (false === DataCube_Observation.isActive(seriesObservation)){
+                    return;
+                }
+                
                 // check if the current observation has to be ignored:
                 // it will ignored, 
                 //      if attribute uri is set, but the observation
@@ -191,13 +195,13 @@ class CubeViz_Visualization_HighCharts_Chart
      *  }]
      */
     public handleOnlyOneMultipleDimension(forXAxis:string, selectedAttributeUri:string, 
-        selectedMeasureUri:string, observation:DataCube_Observation ) : void
+        selectedMeasureUri:string, observationObj:DataCube_Observation ) : void
     {
         var self = this,
             observation:any = null,
             seriesDataList:number[] = [],
-            xAxisElements:any = observation.sortAxis(forXAxis, "ascending")
-                                           .getAxesElements(forXAxis),
+            xAxisElements:any = observationObj.sortAxis(forXAxis, "ascending")
+                                              .getAxesElements(forXAxis),
             value:any = null;
             
         _.each(xAxisElements, function(xAxisElement){
@@ -263,7 +267,7 @@ class CubeViz_Visualization_HighCharts_Chart
             forXAxis = null,
             forSeries = null,
             i:number = 0,
-            observation = new DataCube_Observation (),
+            observation:DataCube_Observation = new DataCube_Observation (),
             self = this; 
         
         // save given chart config
