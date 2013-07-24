@@ -485,15 +485,128 @@
     </table>
 </div>
 
-<hr/>
+<div id="cubeviz-compare-jumpToVisualizations">
+    <p>
+        Now i provide you a couple of different ways to explore and compare the data
+        you selected before.
+    </p> 
+    
+    <br/>
+    
+    <div id="cubeviz-compare-configureVisualization">
+        
+        <h2>Configure data for further exploration</h2>
+        
+        + Adapt values by formula
+        <br/>
+        + Choose between use all obs, obs with equal dimensions and dimension elements or obs with equal dimensions but unequal dimension elements
+        
+    </div>
+     
+    <br/>
+    <br/>  
+    
+    <strong>About values</strong>
+    
+    <br/>
+    <br/>
+    
+    <div class="row-fluid">
 
-<h3>Visualize the difference</h3>
-
-<ul>
-    <li><a href="" id="cubeviz-compare-visualizeLink" target="_blank">
+        <div class="span10 cubeviz-compare-possibleVisualization cubeviz-clickable">
+            <div class="row-fluid">
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>circlePacking.svg"/>
+                </div>
+                
+                <div class="span9">
+                    <div class="cubeviz-compare-possibleVisualizationLabel">
+                        Cluster values by yourself</div>
+                        
+                    <br/>
+                    
+                    Wanna explore clusters in the data? Set the number of clusters and 
+                    you will get a Circle Packing visualization containing grouped 
+                    observations by according cluster.
+                </div>
+            </div>
+        </div>
+        
+        <div class="span10 cubeviz-compare-possibleVisualization cubeviz-clickable">
+            <div class="row-fluid">
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>pie.svg"/>
+                </div>
+                
+                <div class="span9">
+                    <div class="cubeviz-compare-possibleVisualizationLabel">
+                        Get an overview</div>
+                    <br/>
+                    There are fewer than 10 observations and exactly one multiple 
+                    dimension (Country(CS)), so a Pie chart provides 
+                    a good overview about them.
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    
+    <br/>
+    <br/>
+    
+    <strong>About observations</strong>
+    
+    <br/>
+    <br/>
+    
+    <div class="row-fluid">
+        
+        <div class="span10 cubeviz-compare-possibleVisualization cubeviz-clickable">
+            <div class="row-fluid">
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>circlePacking.svg"/>
+                </div>
+                
+                <div class="span9">
+                    <div class="cubeviz-compare-possibleVisualizationLabel">
+                        Visualize: Circle Packing</div>
+                    
+                    <br/>
+                    
+                    You selected a multidimensional dataset with more than 2 dimensions.
+                    To visualize it properly a circle packing would be prefered.                        
+                </div>
+            </div>
+        </div>
+        
+        <div class="span10 cubeviz-compare-possibleVisualization cubeviz-clickable"
+             style="border: 1px solid #B3B3B3;">
+            <div class="row-fluid">
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>column.svg"/>
+                </div>
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>bar.svg"/>
+                </div>
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>area.svg"/>
+                </div>
+                <div class="span3">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>polar.svg"/>
+                </div>
+            </div>
+            
+            <br/>
+            
+            This further visualization types are available. 
+        </div>
+    
+    </div>
+    
+    <a href="" id="cubeviz-compare-visualizeLink" target="_blank">
         Go to the visualization</a></li>
-</ul>
-
+</div>
 
 
 
