@@ -1,3 +1,13 @@
+#cubeviz-compare-availableVisualizations
+{
+    
+}
+
+#cubeviz-compare-availableVisualizations img
+{
+    width: 80px;
+}
+
 #cubeviz-compare-configureVisualization
 {
     width: 800px;
@@ -199,6 +209,10 @@
 {
     padding-left: 20px;
     padding-bottom: 10px;
+    
+        width: 800px;
+    min-width: 800px;
+    max-width: 800px;
 }
 
 
@@ -288,13 +302,11 @@
 
 .cubeviz-compare-possibleVisualization
 {
-        width: 400px;
     min-width: 400px;
     max-width: 400px;
     
-    height: 160px;
-    min-height: 160px;
-    max-height: 160px;
+    height: auto;
+    min-height: 200px;
     
     padding-left: 20px;
     padding-right: 10px;
