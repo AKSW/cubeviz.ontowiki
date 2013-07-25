@@ -2569,6 +2569,21 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         }, true);
     };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn2 = function () {
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0]["http://purl.org/linked-data/cube#measure"];
+        var mergedDataCube = null;
+        var self = this;
+
+        this.app._.compareAction.retrievedObservations[2] = this.adaptObservationValues(2, $("#cubeviz-compare-confViz-datasetFormula2").val(), this.app._.compareAction.originalObservations[2], measureUri);
+        if(false === this.app._.compareAction.retrievedObservations[2]) {
+            return;
+        }
+        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+            self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                dataHash: dataHash,
+                mergedDataCube: mergedDataCube
+            });
+        }, true);
     };
     View_CompareAction_VisualizationSetup.prototype.onCreated_mergedDataCube = function (event, data) {
         this.displayAvailableVisualizations(this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts, data.mergedDataCube);

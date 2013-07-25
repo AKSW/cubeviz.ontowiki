@@ -265,7 +265,46 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
      */
     public onClick_useBtn2() 
     {
+        // TODO adapt for multiple measures
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])
+            [0]["http://purl.org/linked-data/cube#measure"],
+            mergedDataCube:any = null,
+            self = this;
         
+        this.app._.compareAction.retrievedObservations[2] = this.adaptObservationValues(
+            2, 
+            $("#cubeviz-compare-confViz-datasetFormula2").val(),
+            this.app._.compareAction.originalObservations[2],
+            measureUri
+        );
+        
+        if (false === this.app._.compareAction.retrievedObservations[2]) {
+            // something went wrong
+            return;
+        }
+
+        // based on all the data, create a merged data cube
+        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+            this.app._.backend.url, JSON.stringify(this.app._.compareAction),
+            this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
+            this.app._.compareAction.equalDimensions, 
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
+            this.app._.compareAction.retrievedObservations[1],
+            this.app._.compareAction.retrievedObservations[2]
+        );
+        
+        // save generated object and remember given hash
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
+            function(dataHash){                
+                // trigger event and attach new data hash and merged data cube
+                self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                    dataHash: dataHash,
+                    mergedDataCube: mergedDataCube
+                });
+            }, true
+        );
     }
     
     /**
