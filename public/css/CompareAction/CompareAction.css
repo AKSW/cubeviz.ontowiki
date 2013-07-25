@@ -1,11 +1,22 @@
 #cubeviz-compare-availableVisualizations
 {
-    
+    padding: 15px;
+        width: 800px;
+    min-width: 800px;
+
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
-#cubeviz-compare-availableVisualizations img
+.cubeviz-compare-specificVisz
 {
     width: 80px;
+    cursor: pointer;
 }
 
 #cubeviz-compare-configureVisualization
@@ -205,17 +216,6 @@
 }
 
 
-#cubeviz-compare-jumpToVisualizations
-{
-    padding-left: 20px;
-    padding-bottom: 10px;
-    
-        width: 800px;
-    min-width: 800px;
-    max-width: 800px;
-}
-
-
 /**
  * Model selection
  */
@@ -334,6 +334,19 @@
 {
     font-size: 18px;
     font-weight: bold;
+}
+
+
+#cubeviz-compare-prepareAndGoToVisualizations
+{
+    display: none;
+
+    padding-left: 20px;
+    padding-bottom: 10px;
+    
+        width: 800px;
+    min-width: 800px;
+    max-width: 800px;
 }
 
 

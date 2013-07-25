@@ -1,4 +1,5 @@
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\formulaParser.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
 class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract 
@@ -19,8 +20,16 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onCreated_mergedDataCube",
+                handler: this.onCreated_mergedDataCube
+            },
+            {
                 name:    "onFound_equalDimensions",
                 handler: this.onFound_equalDimensions
+            },
+            {
+                name:    "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
             },
             {
                 name:    "onReceived_measures1AndMeasures2",
@@ -40,7 +49,46 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     /**
      *
      */
-    public checkAndCreateMergedDataCube() 
+    public adaptObservationValues(datasetNr:number, formula:string, observations:any,
+        measureUri:string) : any
+    {        
+        try {
+            
+            var adaptedObservations:any = {},
+                observationValue:string = "",
+                parser = new formulaParser(),
+                specificFormula:string = "";
+            
+            adaptedObservations = $.parseJSON(JSON.stringify(observations));
+            
+            _.each (adaptedObservations, function(observation, key){
+                
+                observationValue = DataCube_Observation.parseValue (observation, measureUri);
+                
+                // replace all $value$ with real value
+                specificFormula = formula.split("$value$").join(observationValue);
+            
+                // replace with new value
+                DataCube_Observation.setOriginalValue (
+                    observation,
+                    measureUri,
+                    parser.parse(specificFormula).evaluate()
+                );
+                
+                adaptedObservations[key] = observation;
+            });
+            
+            return adaptedObservations;
+                
+        } catch (ex) {}
+        
+        return false;
+    }
+    
+    /**
+     *
+     */
+    public checkAndShowVisualizationSetup() 
     {
         // check if everthing important was loaded
         if (false === this._equalDimensionsFound
@@ -50,117 +98,127 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             return;
         }
         
-        // object representing the data part of configuration
-        var dimensionUri:string = "",
-            dimensionIndex:number = 0,
-            observationIndex:number = 0,
-            measure1:any = null,
-            measure2:any = null,
-            mergedDataCube:any = {},
-            mergedDataCubeUri:string = "",
-            newObservations = null,
-            self = this,
-            virtualDimensions:any[] = [];
+        // show adaption-interface
+        $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
+    }
+    
+    /**
+     *
+     */
+    public destroy () : CubeViz_View_Abstract
+    {
+        super.destroy();
+        return this;
+    }
+    
+    /**
+     *
+     */
+    public displayAvailableVisualizations() 
+    {
+        var availableVisualizations:string[] = ["area", "bar", "circlePacking", "column", "pie", "polar"],
+            newVisz:any = null,
+            self = this;
+        
+        $("#cubeviz-compare-availableVisualizations").html("");
+        
+        _.each (availableVisualizations, function(visualization){
+            newVisz = $("<div class=\"span2\">" + 
+                        "<img class=\"cubeviz-compare-specificVisz\" " +
+                             "src=\"" + self.app._.backend.imagesPath + visualization + ".svg\"/>" +
+                        "</div>");
             
-        // TODO check if there is already a merged data cube
+            // add click event
+            newVisz.on("click", $.proxy(self.onClick_specificVisz, self));
+            
+            $("#cubeviz-compare-availableVisualizations").append (newVisz);
+        });
+    }
+    
+    /**
+     * 
+     */
+    public initialize() : void 
+    {
+        this.render();
+    }
+    
+    /**
+     *
+     */
+    public onClick_specificVisz() 
+    {
+        console.log("Visualization Setup > onClick_specificVisz");
         
         
-        // set data cube object
-        mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
+    }
+    
+    /**
+     *
+     */
+    public onClick_useBtn1() 
+    {        
+        // TODO adapt for multiple measures
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])
+            [0]["http://purl.org/linked-data/cube#measure"],
+            mergedDataCube:any = null,
+            self = this;
         
-        
-        // generate new uri for merged data cube
-        mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(
-            this.app._.backend.url,
-            JSON.stringify(this.app._.compareAction)
+        this.app._.compareAction.retrievedObservations[1] = this.adaptObservationValues(
+            1, 
+            $("#cubeviz-compare-confViz-datasetFormula1").val(),
+            this.app._.compareAction.originalObservations[1],
+            measureUri
         );
         
-        
-        /**
-         * set dataset
-         */
-        mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(
-            mergedDataCubeUri,
-            this.app._.compareAction.datasets[1],
-            this.app._.compareAction.datasets[2]
+        if (false === this.app._.compareAction.retrievedObservations[1]) {
+            // something went wrong
+            return;
+        }
+
+        // based on all the data, create a merged data cube
+        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+            this.app._.backend.url, JSON.stringify(this.app._.compareAction),
+            this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
+            this.app._.compareAction.equalDimensions, 
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
+            this.app._.compareAction.retrievedObservations[1],
+            this.app._.compareAction.retrievedObservations[2]
         );
-        
-        mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
-        
-        
-        /**
-         * set equal dimension pair(s) as dimensions
-         */
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
-            mergedDataCubeUri, 
-            this.app._.compareAction.equalDimensions
-        );
-        
-        mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
-        
-        /**
-         * Set number of multiple and one element dimensions
-         */
-        mergedDataCube.numberOfMultipleDimensions = 
-            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
-        mergedDataCube.numberOfOneElementDimensions = 
-            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
-        
-        
-        /**
-         * set measure
-         */
-        measure1 = this.app._.compareAction.components.measures[1]
-            [Object.keys(this.app._.compareAction.components.measures[1])[0]];
-        measure2 = this.app._.compareAction.components.measures[2]
-            [Object.keys(this.app._.compareAction.components.measures[2])[0]];
-        
-        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(
-            mergedDataCubeUri, measure1, measure2
-        );
-                
-        mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures [0];
-        
-        
-        /**
-         * set data structure definition
-         */
-        mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(
-            mergedDataCubeUri,
-            mergedDataCube.components.dimensions
-        );
-        
-        mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
-        
-        
-        /**
-         * set observations
-         */
-        // adapt related information to the observations, which depends on 
-        // the dimension pair
-        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(
-            mergedDataCubeUri, 
-            self.app._.compareAction.datasets[1],
-            self.app._.compareAction.datasets[2],
-            self.app._.compareAction.retrievedObservations[1],
-            self.app._.compareAction.retrievedObservations[2],
-            mergedDataCube.selectedComponents.measure,
-            mergedDataCube.selectedComponents.dimensions,
-            dimensionIndex++
-        );
-        
-        console.log("");
-        console.log("mergedDataCube for " + _.size(this.app._.compareAction.equalDimensions) + " equal dimensions:");
-        console.log("");
-        console.log(mergedDataCube);
         
         // save generated object and remember given hash
         CubeViz_ConfigurationLink.save(
             this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
-            function(generatedHash){
-                console.log("");
-                console.log("generated hash: " + generatedHash);
-                
+            function(dataHash){                
+                // trigger event and attach new data hash and merged data cube
+                self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                    dataHash: dataHash,
+                    mergedDataCube: mergedDataCube
+                });
+            }, true
+        );
+    }
+    
+    /**
+     *
+     */
+    public onClick_useBtn2() 
+    {
+        
+    }
+    
+    /**
+     *
+     */
+    public onCreated_mergedDataCube(event, data) 
+    {
+        this.displayAvailableVisualizations();
+        
+        console.log("");
+        console.log("dataHash: " + data.dataHash);
+        console.log("mergedDataCube: " + data.mergedDataCube);
+                /*
                 var href = self.app._.backend.url + "?";
                 
                 if (false === _.isNull(self.app._.backend.serviceUrl)) {
@@ -179,28 +237,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 
                 $("#cubeviz-compare-visualizeLink")
                     .attr ("href", href)
-                    .show ();
-                    
-            }, true
-        ); 
-    }
-    
-    /**
-     *
-     */
-    public destroy () : CubeViz_View_Abstract
-    {
-        super.destroy();
-        return this;
-    }
-    
-    /**
-     * 
-     */
-    public initialize() : void 
-    {
-        this.collection.reset("__cv_uri");        
-        this.render();
+                    .show ();*/
     }
     
     /**
@@ -210,7 +247,22 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     {
         this._equalDimensionsFound = true;
         
-        this.checkAndCreateMergedDataCube();
+        this.checkAndShowVisualizationSetup();
+    }
+    
+    /**
+     *
+     */
+    public onReceived_dimensions1AndDimensions2() 
+    {
+        /**
+         * Show dataset labels
+         */
+        $("#cubeviz-compare-confViz-datasetLabel1").html (
+            _.str.prune (this.app._.compareAction.datasets[1].__cv_niceLabel, 55));
+        
+        $("#cubeviz-compare-confViz-datasetLabel2").html (
+            _.str.prune (this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
     }
     
     /**
@@ -220,7 +272,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     {
         this._measuresReceived = true;
         
-        this.checkAndCreateMergedDataCube();
+        this.checkAndShowVisualizationSetup();
     }
     
     /**
@@ -230,7 +282,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     {
         this._observationsReceived = true;
         
-        this.checkAndCreateMergedDataCube();
+        this.checkAndShowVisualizationSetup();
     }
 
     /**
@@ -247,6 +299,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     public render() : CubeViz_View_Abstract
     {
         this.bindUserInterfaceEvents({
+            "click #cubeviz-compare-confViz-useBtn1": this.onClick_useBtn1,
+            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2
         });
         
         return this;

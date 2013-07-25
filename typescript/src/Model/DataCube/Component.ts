@@ -87,6 +87,20 @@ class DataCube_Component
     }
     
     /**
+     *
+     */
+    static getMeasures(measureObject) : any[]
+    {
+        var measures:any [] = [];
+        
+        _.each (measureObject, function(measure){
+            measures.push (measure);
+        });
+        
+        return measures;
+    }
+    
+    /**
      * @param dimensionElements any
      * @param uri string
      * @return any|null The found element or null

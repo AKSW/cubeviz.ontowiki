@@ -235,6 +235,7 @@ class CubevizController extends OntoWiki_Controller_Component
             ->appendFile($baseJavascriptPath.'libraries/CryptoJS_Md5.js',          'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/json2.js',                 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/javascriptStats-1.0.1.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/formulaParser.js',         'text/javascript')
             
             ->appendFile($baseJavascriptPath.'libraries/underscore.js',            'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/underscore.string.js',     'text/javascript')
@@ -303,6 +304,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 'attributes'    => array (1 => null, 2 => null)
             ),
             'models'                        => array(1 => null, 2 => null),
+            'originalObservations'          => array(1 => null, 2 => null),
             'retrievedObservations'         => array(1 => null, 2 => null),
             'slices'                        => array(1 => null, 2 => null),
             

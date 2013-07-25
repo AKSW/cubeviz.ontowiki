@@ -346,6 +346,20 @@ class DataCube_Observation
         
         return null;
     }
+    
+    /**
+     * @param observation any The observation to parse
+     * @param measureUri string 
+     */
+    static setOriginalValue(observation:any, measureUri:string, newValue:string) : void 
+    {
+        if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            observation.__cv_temporaryNewValue = null;
+            delete observation.__cv_temporaryNewValue;
+        } 
+        
+        observation [measureUri] = newValue;
+    }
 
     /**
      * Sort axis elements

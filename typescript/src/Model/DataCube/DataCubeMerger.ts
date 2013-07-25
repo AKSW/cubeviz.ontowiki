@@ -533,6 +533,105 @@ class DataCube_DataCubeMerger
     }
     
     /**
+     *
+     */
+    static createMergedDataCube(backendUrl:string, stringifiedCompareAction:string,
+        dataset1:any, dataset2:any, equalDimensions:any, measure1:any, measure2:any,
+        retrievedObservations1:any, retrievedObservations2:any) : any
+    {
+        var mergedDataCube:any = {},
+            mergedDataCubeUri:string = "";
+            
+        // TODO check if there is already a merged data cube
+        
+        
+        // set data cube object
+        mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
+        
+        
+        // generate new uri for merged data cube
+        mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(
+            backendUrl, stringifiedCompareAction
+        );
+        
+        
+        /**
+         * set dataset
+         */
+        mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(
+            mergedDataCubeUri, dataset1, dataset2
+        );
+        
+        mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
+        
+        
+        /**
+         * set equal dimension pair(s) as dimensions
+         */
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
+            mergedDataCubeUri, equalDimensions
+        );
+        
+        mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
+        
+        /**
+         * Set number of multiple and one element dimensions
+         */
+        mergedDataCube.numberOfMultipleDimensions = 
+            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
+        mergedDataCube.numberOfOneElementDimensions = 
+            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
+        
+        
+        /**
+         * set measure
+         */        
+        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(
+            mergedDataCubeUri, measure1, measure2
+        );
+                
+        mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures [0];
+        
+        
+        /**
+         * set data structure definition
+         */
+        mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(
+            mergedDataCubeUri,
+            mergedDataCube.components.dimensions
+        );
+        
+        mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
+        
+        
+        /**
+         * set observations
+         */
+        // adapt related information to the observations, which depends on 
+        // the dimension pair
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(
+            mergedDataCubeUri, dataset1, dataset2, retrievedObservations1, 
+            retrievedObservations2, mergedDataCube.selectedComponents.measure,
+            mergedDataCube.selectedComponents.dimensions, 0
+        );
+        
+        // remember original loaded observations
+        mergedDataCube.originalObservations = {};
+        
+        _.each (retrievedObservations1, function(observation){
+            mergedDataCube.originalObservations [observation.__cv_uri] =
+                observation;
+        });
+        
+        _.each (retrievedObservations2, function(observation){
+            mergedDataCube.originalObservations [observation.__cv_uri] =
+                observation;
+        });
+        
+        return mergedDataCube;
+    }
+    
+    /**
      * Generates a new and dereferenceable uri of a data cube
      * @param url string URL this system is running on
      * @param stringifiedObject string Stringified compareAction object
@@ -565,6 +664,7 @@ class DataCube_DataCubeMerger
             dataStructureDefinitions: {},
             numberOfMultipleDimensions: 0,
             numberOfOneElementDimensions: 0,
+            originalObservations: {},
             retrievedObservations: {},
             selectedComponents: {},
             selectedDS: {},
@@ -573,7 +673,7 @@ class DataCube_DataCubeMerger
             slices: {},
             
             /**
-             * settings to tell CubeViz in some situations how to act
+             * settings to tell CubeViz in some situations how to react
              */
             settings: {
                 synchronizeWithStore: false

@@ -279,10 +279,9 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
      */
     public initialize() : void 
     {
-        this.collection.reset("__cv_uri");        
+
         this.render();
     }
-    
     
     /**
      *
@@ -428,13 +427,14 @@ class View_CompareAction_GeneralDatasetInformation extends CubeViz_View_Abstract
             function(result){
                 
                 // set observation for according dataset
+                self.app._.compareAction.originalObservations [datasetNr] = result;
                 self.app._.compareAction.retrievedObservations [datasetNr] = result;
                 
                 self.triggerGlobalEvent ("onReceived_observations" + datasetNr);                
             
                 // there are two observation groups received
-                if (false == _.isNull(self.app._.compareAction.retrievedObservations[1])
-                    && false == _.isNull(self.app._.compareAction.retrievedObservations[2])) {
+                if (false == _.isNull(self.app._.compareAction.originalObservations[1])
+                    && false == _.isNull(self.app._.compareAction.originalObservations[2])) {
                     self.triggerGlobalEvent ("onReceived_observations1AndObservations2");
                 }
             }
