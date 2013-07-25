@@ -2486,6 +2486,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             _.each(adaptedObservations, function (observation, key) {
                 observationValue = DataCube_Observation.parseValue(observation, measureUri);
                 specificFormula = formula.split("$value$").join(observationValue);
+                specificFormula = specificFormula.split("$pi$").join(Math.PI + "");
                 DataCube_Observation.setOriginalValue(observation, measureUri, parser.parse(specificFormula).evaluate());
                 adaptedObservations[key] = observation;
             });

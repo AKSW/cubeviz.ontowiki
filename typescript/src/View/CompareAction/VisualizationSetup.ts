@@ -67,6 +67,9 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 
                 // replace all $value$ with real value
                 specificFormula = formula.split("$value$").join(observationValue);
+                
+                // replace all $pi$ with Math.pi
+                specificFormula = specificFormula.split("$pi$").join(Math.PI+"");
             
                 // replace with new value
                 DataCube_Observation.setOriginalValue (
