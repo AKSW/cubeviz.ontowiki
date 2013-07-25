@@ -230,6 +230,7 @@ class CubevizController extends OntoWiki_Controller_Component
             
         // Libraries
         $this->view->headScript()
+            ->appendFile($basePath          .'ChartConfig.js',                     'text/javascript')            
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js',            'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js',       'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/CryptoJS_Md5.js',          'text/javascript')
@@ -291,7 +292,8 @@ class CubevizController extends OntoWiki_Controller_Component
             );
             
             $this->view->headScript()
-                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';');
+                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+                 ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
         }
             
         // each element will be an object (acting as an associative array)

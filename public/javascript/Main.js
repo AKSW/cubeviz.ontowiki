@@ -2499,35 +2499,57 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
+        var mergedDataCube = null;
+        var self = this;
+
+        mergedDataCube = mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+            self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                dataHash: dataHash,
+                mergedDataCube: mergedDataCube
+            });
+        }, true);
     };
     View_CompareAction_VisualizationSetup.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_CompareAction_VisualizationSetup.prototype.displayAvailableVisualizations = function () {
-        var availableVisualizations = [
-            "area", 
-            "bar", 
-            "circlePacking", 
-            "column", 
-            "pie", 
-            "polar"
-        ];
-        var newVisz = null;
+    View_CompareAction_VisualizationSetup.prototype.displayAvailableVisualizations = function (charts, mergedDataCube) {
+        var link = null;
         var self = this;
+        var uiObject = {
+            visualization: {
+                className: ""
+            },
+            visualizationSettings: {
+            }
+        };
+        var $newVisz = null;
 
         $("#cubeviz-compare-availableVisualizations").html("");
-        _.each(availableVisualizations, function (visualization) {
-            newVisz = $("<div class=\"span2\">" + "<img class=\"cubeviz-compare-specificVisz\" " + "src=\"" + self.app._.backend.imagesPath + visualization + ".svg\"/>" + "</div>");
-            newVisz.on("click", $.proxy(self.onClick_specificVisz, self));
-            $("#cubeviz-compare-availableVisualizations").append(newVisz);
+        _.each(charts, function (chart) {
+            uiObject.visualization.className = chart.className;
+            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, uiObject, "ui", function (uiHash) {
+                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+                    link = self.app._.backend.url + "?";
+                    $newVisz = $("<div class=\"span2\">" + "<a><img class=\"cubeviz-compare-specificVisz\" " + "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" + "</div>");
+                    if(false === _.isNull(self.app._.backend.serviceUrl)) {
+                        link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+                    }
+                    if(true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                        link += "m=" + encodeURIComponent(self.app._.compareAction.models[1].__cv_uri);
+                    } else {
+                        link += "m=" + encodeURIComponent(self.app._.backend.modelUrl);
+                    }
+                    link += "&cv_dataHash=" + dataHash + "&cv_uiHash=" + uiHash;
+                    $($newVisz.find("a").first()).attr("href", link).attr("target", "_blank");
+                    $("#cubeviz-compare-availableVisualizations").append($newVisz);
+                }, true);
+            });
         });
     };
     View_CompareAction_VisualizationSetup.prototype.initialize = function () {
         this.render();
-    };
-    View_CompareAction_VisualizationSetup.prototype.onClick_specificVisz = function () {
-        console.log("Visualization Setup > onClick_specificVisz");
     };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn1 = function () {
         var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0]["http://purl.org/linked-data/cube#measure"];
@@ -2549,10 +2571,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn2 = function () {
     };
     View_CompareAction_VisualizationSetup.prototype.onCreated_mergedDataCube = function (event, data) {
-        this.displayAvailableVisualizations();
-        console.log("");
-        console.log("dataHash: " + data.dataHash);
-        console.log("mergedDataCube: " + data.mergedDataCube);
+        this.displayAvailableVisualizations(this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts, data.mergedDataCube);
     };
     View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
         this._equalDimensionsFound = true;

@@ -100,6 +100,32 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         // show adaption-interface
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
+        
+        var mergedDataCube:any = null,
+            self = this;
+        
+        // based on all the data, create a merged data cube
+        mergedDataCube = mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+            this.app._.backend.url, JSON.stringify(this.app._.compareAction),
+            this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
+            this.app._.compareAction.equalDimensions, 
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
+            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
+            this.app._.compareAction.retrievedObservations[1],
+            this.app._.compareAction.retrievedObservations[2]
+        );
+        
+        // save generated object and remember given hash
+        CubeViz_ConfigurationLink.save(
+            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
+            function(dataHash){                
+                // trigger event and attach new data hash and merged data cube
+                self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                    dataHash: dataHash,
+                    mergedDataCube: mergedDataCube
+                });
+            }, true
+        );
     }
     
     /**
@@ -114,24 +140,68 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     /**
      *
      */
-    public displayAvailableVisualizations() 
-    {
-        var availableVisualizations:string[] = ["area", "bar", "circlePacking", "column", "pie", "polar"],
-            newVisz:any = null,
-            self = this;
+    public displayAvailableVisualizations(charts:any, mergedDataCube:any) : void
+    {        
+        var link:string = null,
+            self = this,
+            uiObject:any = {
+                visualization: {
+                    className: ""
+                },
+                visualizationSettings: {}
+            },
+            $newVisz:any = null;
         
         $("#cubeviz-compare-availableVisualizations").html("");
         
-        _.each (availableVisualizations, function(visualization){
-            newVisz = $("<div class=\"span2\">" + 
-                        "<img class=\"cubeviz-compare-specificVisz\" " +
-                             "src=\"" + self.app._.backend.imagesPath + visualization + ".svg\"/>" +
-                        "</div>");
+        _.each (charts, function(chart){
             
-            // add click event
-            newVisz.on("click", $.proxy(self.onClick_specificVisz, self));
-            
-            $("#cubeviz-compare-availableVisualizations").append (newVisz);
+            // set visualization class
+            uiObject.visualization.className = chart.className;
+               
+            // generate ui hash ...
+            CubeViz_ConfigurationLink.save(
+                self.app._.backend.url, self.app._.backend.modelUrl, uiObject, "ui",
+                function(uiHash){                
+                    
+                    // ... than generate data hash according to merged datacube
+                    // to set a click event handler afterwards
+                    CubeViz_ConfigurationLink.save(
+                        self.app._.backend.url, self.app._.backend.modelUrl, mergedDataCube, "data",
+                        function(dataHash){  
+                            
+                            link = self.app._.backend.url + "?";
+                            
+                            $newVisz = $("<div class=\"span2\">" + 
+                                                "<a><img class=\"cubeviz-compare-specificVisz\" " +
+                                                     "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" +
+                                            "</div>");
+                            
+                            if (false === _.isNull(self.app._.backend.serviceUrl)) {
+                                link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
+                                        + "&";
+                            }
+                                       
+                            if (true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                                link += "m=" + encodeURIComponent (self.app._.compareAction.models[1].__cv_uri);
+                            } else {
+                                link += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
+                            }
+                            
+                            link += "&cv_dataHash=" + dataHash
+                                  + "&cv_uiHash=" + uiHash;
+                            
+                            $($newVisz.find("a").first())
+                                .attr ("href", link)
+                                .attr ("target", "_blank");
+                                
+                            $("#cubeviz-compare-availableVisualizations").append ($newVisz);
+                        
+                        }, true
+                    );
+                    
+                }
+            );
         });
     }
     
@@ -141,16 +211,6 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     public initialize() : void 
     {
         this.render();
-    }
-    
-    /**
-     *
-     */
-    public onClick_specificVisz() 
-    {
-        console.log("Visualization Setup > onClick_specificVisz");
-        
-        
     }
     
     /**
@@ -213,31 +273,10 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
      */
     public onCreated_mergedDataCube(event, data) 
     {
-        this.displayAvailableVisualizations();
-        
-        console.log("");
-        console.log("dataHash: " + data.dataHash);
-        console.log("mergedDataCube: " + data.mergedDataCube);
-                /*
-                var href = self.app._.backend.url + "?";
-                
-                if (false === _.isNull(self.app._.backend.serviceUrl)) {
-                    href += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
-                            + "&";
-                }
-                           
-                if (true === _.str.isBlank(self.app._.backend.modelUrl)) {
-                    href += "m=" + encodeURIComponent (self.app._.compareAction.models[1].__cv_uri);
-                } else {
-                    href += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
-                               
-                }
-                
-                href += "&cv_dataHash=" + generatedHash;
-                
-                $("#cubeviz-compare-visualizeLink")
-                    .attr ("href", href)
-                    .show ();*/
+        this.displayAvailableVisualizations(
+            this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts,
+            data.mergedDataCube
+        );               
     }
     
     /**
