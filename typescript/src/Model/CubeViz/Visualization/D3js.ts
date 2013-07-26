@@ -13,7 +13,8 @@ class CubeViz_Visualization_D3js extends CubeViz_Visualization
         this.name = "D3js";
         
         this.supportedClassNames = [
-            "CubeViz_Visualization_D3js_CirclePacking"
+            "CubeViz_Visualization_D3js_CirclePacking",
+            "CubeViz_Visualization_D3js_CirclePackingForClusters"
         ];
     }
 
