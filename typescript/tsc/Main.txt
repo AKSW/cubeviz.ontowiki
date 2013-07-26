@@ -21,6 +21,8 @@ src/Model/CubeViz/Visualization/HighCharts/Pie.ts
 src/Model/CubeViz/Visualization/HighCharts/Polar.ts
 src/Model/CubeViz/Visualization/HighCharts/Spline.ts
 
+
+src/Model/DataCube/ClusteringDataCube.ts
 src/Model/DataCube/Component.ts
 src/Model/DataCube/DataCubeMerger.ts
 src/Model/DataCube/DataSet.ts
@@ -34,6 +36,7 @@ src/View/CompareAction/GeneralDatasetInformation.ts
 src/View/CompareAction/DimensionOverview.ts
 src/View/CompareAction/MeasureAndAttributeInformation.ts
 src/View/CompareAction/VisualizationSetup.ts
+src/View/CompareAction/ClusterVisualization.ts
 
 src/View/DataselectionModule/DataSet.ts
 src/View/DataselectionModule/Slice.ts

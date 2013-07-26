@@ -1043,6 +1043,269 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
     }
     return CubeViz_Visualization_HighCharts_Spline;
 })(CubeViz_Visualization_HighCharts_Chart);
+var DataCube_ClusteringDataCube = (function () {
+    function DataCube_ClusteringDataCube() { }
+    DataCube_ClusteringDataCube.buildDataSets = function buildDataSets(dataCubeUri, clusters, numberOfClusters) {
+        var lowestNumber = clusters[0][0];
+        var highestNumber = clusters[numberOfClusters - 1][_.size(clusters[numberOfClusters - 1]) - 1];
+
+        return {
+            0: {
+                __cv_niceLabel: "Dataset for " + numberOfClusters + " cluster with overall values between " + lowestNumber + " and " + highestNumber,
+                "http://www.w3.org/2000/01/rdf-schema#label": "Dataset for " + numberOfClusters + " cluster with overall values between " + lowestNumber + " and " + highestNumber,
+                __cv_uri: dataCubeUri + "dataset",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "dataset") + "",
+                "http://purl.org/linked-data/cube#structure": dataCubeUri + "datastructuredefinition",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+    }
+    DataCube_ClusteringDataCube.buildDataStructureDefinitions = function buildDataStructureDefinitions(dataCubeUri, dimensions) {
+        var dsd = {
+            0: {
+                __cv_niceLabel: "Artifical Data Structure Definition",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Data Structure Definition",
+                __cv_description: "",
+                __cv_uri: dataCubeUri + "dataStructureDefinition",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "dataStructureDefinition") + "",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
+                "http://purl.org/linked-data/cube#component": {
+                    0: dataCubeUri + "measure"
+                },
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+        var i = 1;
+
+        _.each(dimensions, function (dimension) {
+            dsd[0]["http://purl.org/linked-data/cube#component"][i] = dimension.__cv_uri;
+            ++i;
+        });
+        return dsd;
+    }
+    DataCube_ClusteringDataCube.buildDimensionElements = function buildDimensionElements(dataCubeUri, clusters, dimensionType) {
+        var dimensionElements = {
+        };
+        var j = 0;
+
+        if("cluster" == dimensionType) {
+            _.each(clusters, function (cluster) {
+                if(0 === _.size(cluster)) {
+                    return;
+                }
+                dimensionElements[j] = {
+                    __cv_niceLabel: "Cluster " + j,
+                    "http://www.w3.org/2000/01/rdf-schema#label": "Cluster " + j,
+                    __cv_uri: dataCubeUri + "cluster" + j,
+                    __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "cluster" + j) + "",
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "clusterDimension"
+                };
+                ++j;
+            });
+        } else {
+            if("position" == dimensionType) {
+                var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+                sortedClusters.sort(function (a, b) {
+                    return _.size(a) < _.size(b);
+                });
+                var label = "";
+                var usedPositions = [];
+
+                _.each(sortedClusters, function (cluster, clusterIndex) {
+                    if(0 == _.size(cluster)) {
+                        return;
+                    }
+                    _.each(cluster, function (number, position) {
+                        if(0 == position && -1 === $.inArray(position + " (first)", usedPositions)) {
+                            label = "0 (first)";
+                            usedPositions.push(label);
+                            dimensionElements[j] = {
+                                __cv_niceLabel: label,
+                                "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                __cv_uri: dataCubeUri + "position" + j,
+                                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                            };
+                            ++j;
+                        } else {
+                            if(_.size(cluster) == (position + 1) && -1 === $.inArray(position + " (last)", usedPositions)) {
+                                label = position + " (last)";
+                                usedPositions.push(label);
+                                dimensionElements[j] = {
+                                    __cv_niceLabel: label,
+                                    "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                    __cv_uri: dataCubeUri + "position" + j,
+                                    __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                                };
+                                ++j;
+                            } else {
+                                if(0 < position && -1 === $.inArray(position + "", usedPositions)) {
+                                    label = position + "";
+                                    usedPositions.push(label);
+                                    dimensionElements[j] = {
+                                        __cv_niceLabel: label,
+                                        "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                        __cv_uri: dataCubeUri + "position" + j,
+                                        __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                                    };
+                                    ++j;
+                                } else {
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        return dimensionElements;
+    }
+    DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(dataCubeUri, clusters) {
+        var clusterDimensionUri = dataCubeUri + "componentSpecificationClusterDimension";
+        var dimensions = {
+        };
+        var positionDimensionUri = dataCubeUri + "componentSpecificationPositionDimension";
+
+        dimensions[clusterDimensionUri] = {
+            __cv_niceLabel: "Cluster Dimension",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Cluster Dimension",
+            __cv_description: "",
+            __cv_uri: clusterDimensionUri,
+            __cv_hashedUri: CryptoJS.MD5(clusterDimensionUri) + "",
+            __cv_elements: DataCube_ClusteringDataCube.buildDimensionElements(dataCubeUri, clusters, "cluster"),
+            "http://purl.org/linked-data/cube#dimension": dataCubeUri + "clusterDimension",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        dimensions[positionDimensionUri] = {
+            __cv_niceLabel: "Position Dimension",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Position Dimension",
+            __cv_description: "",
+            __cv_uri: positionDimensionUri,
+            __cv_hashedUri: CryptoJS.MD5(positionDimensionUri) + "",
+            __cv_elements: DataCube_ClusteringDataCube.buildDimensionElements(dataCubeUri, clusters, "position"),
+            "http://purl.org/linked-data/cube#dimension": dataCubeUri + "positionDimension",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        return dimensions;
+    }
+    DataCube_ClusteringDataCube.buildMeasures = function buildMeasures(dataCubeUri) {
+        return {
+            0: {
+                __cv_niceLabel: "Artifical Measure",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
+                __cv_description: "",
+                __cv_uri: dataCubeUri + "componentSpecificationMeasure",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "componentSpecificationMeasure") + "",
+                "http://purl.org/linked-data/cube#measure": dataCubeUri + "measure",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+    }
+    DataCube_ClusteringDataCube.buildObservations = function buildObservations(dataCubeUri, clusters) {
+        var i = 0;
+        var j = 0;
+        var observations = {
+        };
+        var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+
+        sortedClusters.sort(function (a, b) {
+            return _.size(a) < _.size(b);
+        });
+        _.each(sortedClusters, function (cluster, clusterIndex) {
+            if(0 === _.size(cluster)) {
+                return;
+            }
+            _.each(cluster, function (number, position) {
+                observations[i] = {
+                    __cv_niceLabel: "Observation of cluster " + j,
+                    "http://www.w3.org/2000/01/rdf-schema#label": "Observation of cluster " + j,
+                    __cv_uri: dataCubeUri + "observation" + i,
+                    __cv_hashedUri: "c204871025866c6178c363948246c146",
+                    __cv_description: "",
+                    "http://purl.org/linked-data/cube#dataSet": dataCubeUri + "dataset",
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#Observation"
+                };
+                observations[i][dataCubeUri + "measure"] = number;
+                observations[i][dataCubeUri + "clusterDimension"] = dataCubeUri + "cluster" + j;
+                observations[i][dataCubeUri + "positionDimension"] = DataCube_ClusteringDataCube.getPositionDimensionElement(dataCubeUri, clusters, clusterIndex, position, number);
+                ++i;
+            });
+            ++j;
+        });
+        return observations;
+    }
+    DataCube_ClusteringDataCube.create = function create(clusters, backendUrl, numberOfClusters) {
+        var clusteringDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
+        var dataCubeUri = "";
+
+        dataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(backendUrl, JSON.stringify(clusters));
+        clusteringDataCube.dataSets = DataCube_ClusteringDataCube.buildDataSets(dataCubeUri, clusters, numberOfClusters);
+        clusteringDataCube.selectedDS = clusteringDataCube.dataSets[0];
+        clusteringDataCube.components.dimensions = DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications(dataCubeUri, clusters);
+        clusteringDataCube.selectedComponents.dimensions = clusteringDataCube.components.dimensions;
+        clusteringDataCube.components.measures = DataCube_ClusteringDataCube.buildMeasures(dataCubeUri);
+        clusteringDataCube.selectedComponents.measure = clusteringDataCube.components.measures[0];
+        clusteringDataCube.dataStructureDefinitions = DataCube_ClusteringDataCube.buildDataStructureDefinitions(dataCubeUri, clusteringDataCube.selectedComponents.dimensions);
+        clusteringDataCube.retrievedObservations = DataCube_ClusteringDataCube.buildObservations(dataCubeUri, clusters);
+        clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
+        return clusteringDataCube;
+    }
+    DataCube_ClusteringDataCube.getPositionDimensionElement = function getPositionDimensionElement(dataCubeUri, clusters, clusterIndexToUse, positionToUse, numberToCheck) {
+        var dimensionElementToSearch = "";
+        var j = 0;
+        var label = "";
+        var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+        var uri = "";
+        var usedPositions = [];
+
+        sortedClusters.sort(function (a, b) {
+            return _.size(a) < _.size(b);
+        });
+        if(0 == positionToUse) {
+            return dataCubeUri + "position0";
+        }
+        _.each(sortedClusters, function (cluster, clusterIndex) {
+            if(0 == _.size(cluster)) {
+                return;
+            }
+            _.each(cluster, function (number, position) {
+                uri = "";
+                if(0 == position && -1 === $.inArray(position + " (first)", usedPositions)) {
+                    usedPositions.push("0 (first)");
+                    uri = dataCubeUri + "position" + j;
+                    ++j;
+                } else {
+                    if(_.size(cluster) == (position + 1) && -1 === $.inArray(position + " (last)", usedPositions)) {
+                        usedPositions.push(position + " (last)");
+                        uri = dataCubeUri + "position" + j;
+                        ++j;
+                    } else {
+                        if(0 < position && -1 === $.inArray(position + "", usedPositions)) {
+                            usedPositions.push(position + "");
+                            uri = dataCubeUri + "position" + j;
+                            ++j;
+                        } else {
+                        }
+                    }
+                }
+                if(clusterIndexToUse == clusterIndex && number == numberToCheck) {
+                    if(true === _.str.isBlank(uri)) {
+                        dimensionElementToSearch = dataCubeUri + "position" + $.inArray(position + "", usedPositions);
+                    } else {
+                        dimensionElementToSearch = uri;
+                    }
+                }
+            });
+        });
+        return dimensionElementToSearch;
+    }
+    return DataCube_ClusteringDataCube;
+})();
 var DataCube_Component = (function () {
     function DataCube_Component() { }
     DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
@@ -2503,7 +2766,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         var mergedDataCube = null;
         var self = this;
 
-        mergedDataCube = mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: dataHash,
@@ -2578,7 +2841,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[2]) {
             return;
         }
-        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: dataHash,
@@ -2616,6 +2879,128 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         return this;
     };
     return View_CompareAction_VisualizationSetup;
+})(CubeViz_View_Abstract);
+var View_CompareAction_ClusterVisualization = (function (_super) {
+    __extends(View_CompareAction_ClusterVisualization, _super);
+    function View_CompareAction_ClusterVisualization(attachedTo, app) {
+        _super.call(this, "View_CompareAction_ClusterVisualization", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_ClusterVisualization.prototype.generateLink = function (numberOfClusters) {
+        console.log("");
+        console.log(numberOfClusters);
+        var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
+        var self = this;
+
+        var clusters = this.numberClustering(DataCube_Observation.getValues(this.app._.compareAction.mergedDataCube.retrievedObservations, selectedMeasureUri, true)[0], numberOfClusters);
+        var clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters);
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, clusteringDataCube, "data", function (dataHash) {
+            console.log("");
+            console.log("clusteringDataCube (" + dataHash + ")");
+            console.log(clusteringDataCube);
+            var $li = $("<li><a href=\"\">Visualization for maximum " + numberOfClusters + " cluster</a></li>");
+            var link = self.app._.backend.url + "?";
+            if(false === _.isNull(self.app._.backend.serviceUrl)) {
+                link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+            }
+            if(true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                link += "m=" + encodeURIComponent(self.app._.compareAction.models[1].__cv_uri);
+            } else {
+                link += "m=" + encodeURIComponent(self.app._.backend.modelUrl);
+            }
+            link += "&cv_dataHash=" + dataHash;
+            $($li.find("a")).attr("href", link).attr("target", "_blank");
+            $("#cubeviz-compare-clusterVisualizationLinks").append($li);
+        }, true);
+    };
+    View_CompareAction_ClusterVisualization.prototype.initialize = function () {
+        this.render();
+    };
+    View_CompareAction_ClusterVisualization.prototype.numberClustering = function (numberList, numberOfClusters) {
+        var betterClusterIndex = 0;
+        var changeHappened = true;
+        var clusterCenters = [];
+        var clusters = [];
+        var computedDistance = 0;
+        var iterations = 0;
+        var numberOfElements = numberList.length;
+        var maxClusterSize = Math.round(numberOfElements / numberOfClusters) + 1;
+        var nearestDistance = 0;
+        var sliceStart = 0;
+        var sliceEnd = maxClusterSize;
+        var tmpNumber = 0;
+
+        numberList.sort(function (a, b) {
+            return a - b;
+        });
+        for(var i = 0; i < numberOfClusters; ++i) {
+            clusters[i] = numberList.slice(sliceStart, sliceEnd);
+            sliceStart += maxClusterSize;
+            sliceEnd += maxClusterSize;
+        }
+        if(sliceStart < numberOfElements) {
+            var missingElements = numberList.slice(sliceStart, numberOfElements - sliceStart);
+            _.each(missingElements, function (number) {
+                clusters[numberOfClusters - 1].push(number);
+            });
+        }
+        for(i = 0; i < numberOfClusters; ++i) {
+            tmpNumber = 0;
+            _.each(clusters[i], function (number) {
+                tmpNumber += number;
+            });
+            clusterCenters[i] = tmpNumber / clusters[i].length;
+        }
+        do {
+            changeHappened = false;
+            for(i = 0; i < numberOfClusters; ++i) {
+                _.each(clusters[i], function (number, key) {
+                    nearestDistance = -1;
+                    computedDistance = 0;
+                    _.each(clusterCenters, function (center, clusterIndex) {
+                        if(center > number) {
+                            computedDistance = center - number;
+                        } else {
+                            computedDistance = number - center;
+                        }
+                        if(-1 == nearestDistance || computedDistance <= nearestDistance) {
+                            nearestDistance = computedDistance;
+                            betterClusterIndex = clusterIndex;
+                        }
+                    });
+                    if(betterClusterIndex != i) {
+                        clusters[betterClusterIndex].push(number);
+                        clusters[i].splice(key, 1);
+                        changeHappened = true;
+                    }
+                });
+            }
+        }while(true === changeHappened)
+        _.each(clusters, function (cluster) {
+            cluster.sort(function (a, b) {
+                return a - b;
+            });
+        });
+        return clusters;
+    };
+    View_CompareAction_ClusterVisualization.prototype.onClick_getLinkBtn = function () {
+        this.generateLink($("#cubeviz-compare-clusterVisualizationClusterNumber").val());
+    };
+    View_CompareAction_ClusterVisualization.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_ClusterVisualization.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-compare-clusterVisualizationGetLinkBtn": this.onClick_getLinkBtn
+        });
+        return this;
+    };
+    return View_CompareAction_ClusterVisualization;
 })(CubeViz_View_Abstract);
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);

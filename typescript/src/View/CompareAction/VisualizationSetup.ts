@@ -108,7 +108,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             self = this;
         
         // based on all the data, create a merged data cube
-        mergedDataCube = mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
             this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
             this.app._.compareAction.equalDimensions, 
@@ -287,7 +287,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         }
 
         // based on all the data, create a merged data cube
-        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
             this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
             this.app._.compareAction.equalDimensions, 

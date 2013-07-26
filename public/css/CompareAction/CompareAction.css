@@ -13,11 +13,21 @@
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
-.cubeviz-compare-specificVisz
+
+#cubeviz-compare-clusterVisualization
 {
-    width: 80px;
-    cursor: pointer;
+    padding: 15px;
+    margin-left: 0px;
+
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
+
 
 #cubeviz-compare-configureVisualization
 {
@@ -300,43 +310,6 @@
 }
 
 
-.cubeviz-compare-possibleVisualization
-{
-    min-width: 400px;
-    max-width: 400px;
-    
-    height: auto;
-    min-height: 200px;
-    
-    padding-left: 20px;
-    padding-right: 10px;
-    padding-top: 20px;
-    padding-bottom: 10px;
-    
-    margin-bottom: 10px;
-    
-    border: 1px solid #616161;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-    box-shadow: 0 1px 2px rgba(0,0,0,.05);
-}
-
-.cubeviz-compare-possibleVisualization img
-{   
-    width: 60px;
-    vertical-align: middle;
-}
-
-.cubeviz-compare-possibleVisualizationLabel
-{
-    font-size: 18px;
-    font-weight: bold;
-}
-
-
 #cubeviz-compare-prepareAndGoToVisualizations
 {
     display: none;
@@ -348,6 +321,14 @@
     min-width: 800px;
     max-width: 800px;
 }
+
+
+.cubeviz-compare-specificVisz
+{
+    width: 80px;
+    cursor: pointer;
+}
+
 
 
 /**

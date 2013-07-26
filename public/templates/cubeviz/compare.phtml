@@ -5,7 +5,8 @@
         .add("View_CompareAction_GeneralDatasetInformation", "")
         .add("View_CompareAction_DimensionOverview", "")
         .add("View_CompareAction_MeasureAndAttributeInformation", "")
-        .add("View_CompareAction_VisualizationSetup", "");
+        .add("View_CompareAction_VisualizationSetup", "")
+        .add("View_CompareAction_ClusterVisualization", "");
 </script>
 
 <br/>
@@ -683,15 +684,20 @@
     <br/>
     <br/>
     
-    <div class="row">
-        <div class="span9 cubeviz-compare-possibleVisualization">
-            <div class="cubeviz-compare-possibleVisualizationLabel">
-                Show clusters</div>
+    <div class="row" id="cubeviz-compare-clusterVisualization">
+        <div class="span9">
+            <h2>Show clusters</h2>
                 
             <br/>
             
-            Number of clusters: <input type="text" style="width: 50px; height: 16px;" value="5"/>
-            <div class="btn btn-primary btn-small" style="vertical-align: top;">Get Link</div>
+            Maximum Number of Clusters: 
+            <input id="cubeviz-compare-clusterVisualizationClusterNumber" 
+                   style="width: 50px; height: 16px;" 
+                   type="text"
+                   value="5"/>
+            <div class="btn btn-primary btn-small" 
+                 id="cubeviz-compare-clusterVisualizationGetLinkBtn"
+                 style="vertical-align: top;">Get Link</div>
             
             <br/>
             <br/>
@@ -704,9 +710,7 @@
             <br/>
             
             <strong>Links:</strong>
-            <ul>
-                <li><a href="">Circle Packing with 5 Clusters</a></li>
-            </ul>
+            <ul id="cubeviz-compare-clusterVisualizationLinks"></ul>
         </div>
     </div>
 </div>
