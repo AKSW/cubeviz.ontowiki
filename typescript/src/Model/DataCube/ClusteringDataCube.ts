@@ -454,6 +454,15 @@ class DataCube_ClusteringDataCube
         
         clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
         
+        /**
+         * Set number of multiple and one element dimensions
+         */
+        clusteringDataCube.numberOfMultipleDimensions = 
+            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(clusteringDataCube.components.dimensions));
+        clusteringDataCube.numberOfOneElementDimensions = 
+            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(clusteringDataCube.components.dimensions));
+        
+        
         return clusteringDataCube;
     }
     
