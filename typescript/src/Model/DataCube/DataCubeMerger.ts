@@ -323,7 +323,7 @@ class DataCube_DataCubeMerger
      */
     static buildObservations(mergedDataCubeUri:string, dataset1:any, dataset2:any,
         observations1:any, observations2:any, measure:any, dimensions:any, 
-        dimensionIndex:number) : any
+        dimensionIndex:number, originDimensions1:any, originDimensions2:any) : any
     {        
         var adaptedObservations:any = {},
             adaptedDimensionElementUri:string = null,
@@ -501,9 +501,9 @@ class DataCube_DataCubeMerger
                 if (false === _.isNull(adaptedDimensionElementUri)) {
                     observation [mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;                    
                     
-                    _.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){
+                    /*_.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){
                         delete observation [oldDimensionUri];
-                    });
+                    });*/
                     
                     tmpObservations[observation.__cv_uri] = observation;
                 } else {
@@ -525,6 +525,15 @@ class DataCube_DataCubeMerger
         // on the black list (urisToIgnore)
         _.each(tmpObservations, function(observation){
             if (-1 === $.inArray(observation.__cv_uri, urisToIgnore)) {
+                
+                _.each(originDimensions1, function(dimension){
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
+                
+                _.each(originDimensions2, function(dimension){
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
+                
                 adaptedObservations [observation.__cv_uri] = observation;
             }
         });
@@ -535,9 +544,10 @@ class DataCube_DataCubeMerger
     /**
      *
      */
-    static createMergedDataCube(backendUrl:string, stringifiedCompareAction:string,
+    static create(backendUrl:string, stringifiedCompareAction:string,
         dataset1:any, dataset2:any, equalDimensions:any, measure1:any, measure2:any,
-        retrievedObservations1:any, retrievedObservations2:any) : any
+        retrievedObservations1:any, retrievedObservations2:any, originDimensions1:any,
+        originDimensions2:any) : any
     {
         var mergedDataCube:any = {},
             mergedDataCubeUri:string = "";
@@ -550,7 +560,7 @@ class DataCube_DataCubeMerger
         
         
         // generate new uri for merged data cube
-        mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(
+        mergedDataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(
             backendUrl, stringifiedCompareAction
         );
         
@@ -612,7 +622,8 @@ class DataCube_DataCubeMerger
         mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(
             mergedDataCubeUri, dataset1, dataset2, retrievedObservations1, 
             retrievedObservations2, mergedDataCube.selectedComponents.measure,
-            mergedDataCube.selectedComponents.dimensions, 0
+            mergedDataCube.selectedComponents.dimensions, 0, originDimensions1,
+            originDimensions2
         );
         
         // remember original loaded observations
@@ -637,10 +648,10 @@ class DataCube_DataCubeMerger
      * @param stringifiedObject string Stringified compareAction object
      * @return string New merged data cube uri
      */
-    static generateMergedDataCubeUri(url:string, stringifiedObject:string) : string
+    static generateDataCubeUri(url:string, stringifiedObject:string) : string
     {
         return url 
-               + "go/mergeddatacube/" 
+               + "go/datacube/" 
                + (CryptoJS.MD5(stringifiedObject)+"").substring (0,6)
                + "#";
     }

@@ -3,6 +3,8 @@
  */
 class DataCube_ClusteringDataCube
 {    
+    static stillUsedObservationUris:string[] = [];
+    
     /**
      *
      */
@@ -333,11 +335,13 @@ class DataCube_ClusteringDataCube
     /**
      *
      */
-    static buildObservations(dataCubeUri:string, clusters:number[][]) : any
+    static buildObservations(dataCubeUri:string, clusters:number[][], mergedDatacubeObservations:any,
+        mergedDatacubeMeasureUri:string, mergedDatacubeDataset:any) : any
     {
         var i:number = 0,
             j:number = 0,
             observations:any = {},
+            self = this,
             sortedClusters:any = $.parseJSON(JSON.stringify(clusters));
             
         // sort clusters by their size descending
@@ -384,6 +388,14 @@ class DataCube_ClusteringDataCube
                     DataCube_ClusteringDataCube.getPositionDimensionElement(
                         dataCubeUri, clusters, clusterIndex, position, number
                     );
+                    
+                // save source dataset (from merged datacube)
+                observations[i].__cv_sourceDataset = mergedDatacubeDataset;
+                    
+                // save source observation
+                observations[i].__cv_sourceObservation = DataCube_ClusteringDataCube.getObservation(
+                    mergedDatacubeObservations, number, mergedDatacubeMeasureUri
+                );
                 
                 ++i;
             });     
@@ -397,13 +409,15 @@ class DataCube_ClusteringDataCube
     /**
      *
      */
-    static create(clusters:number[][], backendUrl:string, numberOfClusters:number) 
+    static create(clusters:number[][], backendUrl:string, numberOfClusters:number,
+        mergedDatacubeObservations:any, mergedDatacubeMeasureUri:string,
+        mergedDatacubeDataset:any) : any 
     {
         var clusteringDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject(),
             dataCubeUri:string = "";
         
         // uri
-        dataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(
+        dataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(
             backendUrl, JSON.stringify(clusters)
         );
         
@@ -423,7 +437,6 @@ class DataCube_ClusteringDataCube
         clusteringDataCube.components.dimensions = DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications(
             dataCubeUri, clusters
         );
-        
         clusteringDataCube.selectedComponents.dimensions = clusteringDataCube.components.dimensions;
         
         
@@ -433,7 +446,6 @@ class DataCube_ClusteringDataCube
         clusteringDataCube.components.measures = DataCube_ClusteringDataCube.buildMeasures(
             dataCubeUri
         );
-                
         clusteringDataCube.selectedComponents.measure = clusteringDataCube.components.measures [0];
         
         
@@ -443,16 +455,18 @@ class DataCube_ClusteringDataCube
         clusteringDataCube.dataStructureDefinitions = DataCube_ClusteringDataCube.buildDataStructureDefinitions(
             dataCubeUri, clusteringDataCube.selectedComponents.dimensions
         );
-        
+        clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
         
         /**
          * set observations
          */
+        DataCube_ClusteringDataCube.stillUsedObservationUris = [];
         clusteringDataCube.retrievedObservations = DataCube_ClusteringDataCube.buildObservations(
-            dataCubeUri, clusters
+            dataCubeUri, clusters, mergedDatacubeObservations, mergedDatacubeMeasureUri,
+            mergedDatacubeDataset
         );
-        
-        clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
+        clusteringDataCube.originalObservations = mergedDatacubeObservations;
+
         
         /**
          * Set number of multiple and one element dimensions
@@ -464,6 +478,39 @@ class DataCube_ClusteringDataCube
         
         
         return clusteringDataCube;
+    }
+    
+    /**
+     *
+     */
+    static getObservation(observations:any, observationValue:string, measureUri:string) : any
+    {
+        var observationToReturn:any = null,
+            self = this;
+        
+        observations = $.parseJSON(JSON.stringify(observations));
+        
+        _.each (observations, function(observation){
+            
+            observation[measureUri] = DataCube_Observation.parseValue (
+                observation, measureUri
+            );
+            
+            // if there is an observation with the same value and this observation
+            // was not used yet. This check is for the case that there are two or
+            // more observations with the same value.
+            if (-1 === $.inArray(observation.__cv_uri, DataCube_ClusteringDataCube.stillUsedObservationUris)
+                && observation[measureUri] === observationValue) {
+                
+                observationToReturn = observation;
+                
+                DataCube_ClusteringDataCube.stillUsedObservationUris.push(
+                    observation.__cv_uri
+                );
+            }
+        });
+        
+        return observationToReturn;
     }
     
     /**

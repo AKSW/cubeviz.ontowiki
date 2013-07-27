@@ -15,8 +15,8 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
-                name:    "onStart_application",
-                handler: this.onStart_application
+                name:    "onCreated_mergedDataCube",
+                handler: this.onCreated_mergedDataCube
             }
         ]);
     }
@@ -26,9 +26,6 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
      */
     public generateLink(numberOfClusters) 
     {
-        console.log("");
-        console.log(numberOfClusters);
-        
         var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents
                                  .measure["http://purl.org/linked-data/cube#measure"],
             self = this;
@@ -48,9 +45,13 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
          * build data set to visualize the clusters
          */
         var clusteringDataCube = DataCube_ClusteringDataCube.create(
-            clusters, this.app._.backend.url, numberOfClusters
+            clusters, this.app._.backend.url, numberOfClusters,
+            this.app._.compareAction.mergedDataCube.retrievedObservations, 
+            this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"],
+            this.app._.compareAction.mergedDataCube.selectedDS
         );
         
+        // generate hash for clustering data cube
         CubeViz_ConfigurationLink.save(
             this.app._.backend.url, this.app._.backend.modelUrl, clusteringDataCube, "data", 
             function(dataHash){
@@ -215,7 +216,7 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
     /**
      *
      */
-    public onStart_application() 
+    public onCreated_mergedDataCube() 
     {
         this.initialize();
     }

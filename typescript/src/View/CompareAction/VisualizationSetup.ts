@@ -28,10 +28,6 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 handler: this.onFound_equalDimensions
             },
             {
-                name:    "onReceived_dimensions1AndDimensions2",
-                handler: this.onReceived_dimensions1AndDimensions2
-            },
-            {
                 name:    "onReceived_measures1AndMeasures2",
                 handler: this.onReceived_measures1AndMeasures2
             },
@@ -104,28 +100,29 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         // show adaption-interface
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
         
-        var mergedDataCube:any = null,
-            self = this;
+        var self = this;
         
         // based on all the data, create a merged data cube
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
             this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
             this.app._.compareAction.equalDimensions, 
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
             this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2]
+            this.app._.compareAction.retrievedObservations[2],
+            this.app._.compareAction.components.dimensions[1],
+            this.app._.compareAction.components.dimensions[1]
         );
         
         // save generated object and remember given hash
         CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data",
-            function(dataHash){                
+            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.compareAction.mergedDataCube, 
+            "data", function(dataHash){                
                 // trigger event and attach new data hash and merged data cube
                 self.triggerGlobalEvent("onCreated_mergedDataCube", {
                     dataHash: dataHash,
-                    mergedDataCube: mergedDataCube
+                    mergedDataCube: self.app._.compareAction.mergedDataCube
                 });
             }, true
         );
@@ -240,14 +237,16 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         }
 
         // based on all the data, create a merged data cube
-        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+        mergedDataCube = DataCube_DataCubeMerger.create(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
             this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
             this.app._.compareAction.equalDimensions, 
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
             this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2]
+            this.app._.compareAction.retrievedObservations[2],
+            this.app._.compareAction.components.dimensions[1],
+            this.app._.compareAction.components.dimensions[1]
         );
         
         // save generated object and remember given hash
@@ -287,14 +286,16 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         }
 
         // based on all the data, create a merged data cube
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
             this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
             this.app._.compareAction.equalDimensions, 
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
             DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
             this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2]
+            this.app._.compareAction.retrievedObservations[2],
+            this.app._.compareAction.components.dimensions[1],
+            this.app._.compareAction.components.dimensions[1]
         );
         
         // save generated object and remember given hash
@@ -328,14 +329,6 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     {
         this._equalDimensionsFound = true;
         
-        this.checkAndShowVisualizationSetup();
-    }
-    
-    /**
-     *
-     */
-    public onReceived_dimensions1AndDimensions2() 
-    {
         /**
          * Show dataset labels
          */
@@ -344,6 +337,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         
         $("#cubeviz-compare-confViz-datasetLabel2").html (
             _.str.prune (this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
+        
+        this.checkAndShowVisualizationSetup();
     }
     
     /**

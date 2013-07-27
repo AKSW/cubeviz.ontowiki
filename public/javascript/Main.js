@@ -1112,6 +1112,7 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
 })(CubeViz_Visualization_HighCharts_Chart);
 var DataCube_ClusteringDataCube = (function () {
     function DataCube_ClusteringDataCube() { }
+    DataCube_ClusteringDataCube.stillUsedObservationUris = [];
     DataCube_ClusteringDataCube.buildDataSets = function buildDataSets(dataCubeUri, clusters, numberOfClusters) {
         var lowestNumber = clusters[0][0];
         var highestNumber = clusters[numberOfClusters - 1][_.size(clusters[numberOfClusters - 1]) - 1];
@@ -1273,11 +1274,12 @@ var DataCube_ClusteringDataCube = (function () {
             }
         };
     }
-    DataCube_ClusteringDataCube.buildObservations = function buildObservations(dataCubeUri, clusters) {
+    DataCube_ClusteringDataCube.buildObservations = function buildObservations(dataCubeUri, clusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset) {
         var i = 0;
         var j = 0;
         var observations = {
         };
+        var self = this;
         var sortedClusters = $.parseJSON(JSON.stringify(clusters));
 
         sortedClusters.sort(function (a, b) {
@@ -1300,17 +1302,19 @@ var DataCube_ClusteringDataCube = (function () {
                 observations[i][dataCubeUri + "measure"] = number;
                 observations[i][dataCubeUri + "clusterDimension"] = dataCubeUri + "cluster" + j;
                 observations[i][dataCubeUri + "positionDimension"] = DataCube_ClusteringDataCube.getPositionDimensionElement(dataCubeUri, clusters, clusterIndex, position, number);
+                observations[i].__cv_sourceDataset = mergedDatacubeDataset;
+                observations[i].__cv_sourceObservation = DataCube_ClusteringDataCube.getObservation(mergedDatacubeObservations, number, mergedDatacubeMeasureUri);
                 ++i;
             });
             ++j;
         });
         return observations;
     }
-    DataCube_ClusteringDataCube.create = function create(clusters, backendUrl, numberOfClusters) {
+    DataCube_ClusteringDataCube.create = function create(clusters, backendUrl, numberOfClusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset) {
         var clusteringDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
         var dataCubeUri = "";
 
-        dataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(backendUrl, JSON.stringify(clusters));
+        dataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, JSON.stringify(clusters));
         clusteringDataCube.dataSets = DataCube_ClusteringDataCube.buildDataSets(dataCubeUri, clusters, numberOfClusters);
         clusteringDataCube.selectedDS = clusteringDataCube.dataSets[0];
         clusteringDataCube.components.dimensions = DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications(dataCubeUri, clusters);
@@ -1318,11 +1322,27 @@ var DataCube_ClusteringDataCube = (function () {
         clusteringDataCube.components.measures = DataCube_ClusteringDataCube.buildMeasures(dataCubeUri);
         clusteringDataCube.selectedComponents.measure = clusteringDataCube.components.measures[0];
         clusteringDataCube.dataStructureDefinitions = DataCube_ClusteringDataCube.buildDataStructureDefinitions(dataCubeUri, clusteringDataCube.selectedComponents.dimensions);
-        clusteringDataCube.retrievedObservations = DataCube_ClusteringDataCube.buildObservations(dataCubeUri, clusters);
         clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
+        DataCube_ClusteringDataCube.stillUsedObservationUris = [];
+        clusteringDataCube.retrievedObservations = DataCube_ClusteringDataCube.buildObservations(dataCubeUri, clusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset);
+        clusteringDataCube.originalObservations = mergedDatacubeObservations;
         clusteringDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(clusteringDataCube.components.dimensions));
         clusteringDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(clusteringDataCube.components.dimensions));
         return clusteringDataCube;
+    }
+    DataCube_ClusteringDataCube.getObservation = function getObservation(observations, observationValue, measureUri) {
+        var observationToReturn = null;
+        var self = this;
+
+        observations = $.parseJSON(JSON.stringify(observations));
+        _.each(observations, function (observation) {
+            observation[measureUri] = DataCube_Observation.parseValue(observation, measureUri);
+            if(-1 === $.inArray(observation.__cv_uri, DataCube_ClusteringDataCube.stillUsedObservationUris) && observation[measureUri] === observationValue) {
+                observationToReturn = observation;
+                DataCube_ClusteringDataCube.stillUsedObservationUris.push(observation.__cv_uri);
+            }
+        });
+        return observationToReturn;
     }
     DataCube_ClusteringDataCube.getPositionDimensionElement = function getPositionDimensionElement(dataCubeUri, clusters, clusterIndexToUse, positionToUse, numberToCheck) {
         var dimensionElementToSearch = "";
@@ -1630,7 +1650,7 @@ var DataCube_DataCubeMerger = (function () {
             }
         };
     }
-    DataCube_DataCubeMerger.buildObservations = function buildObservations(mergedDataCubeUri, dataset1, dataset2, observations1, observations2, measure, dimensions, dimensionIndex) {
+    DataCube_DataCubeMerger.buildObservations = function buildObservations(mergedDataCubeUri, dataset1, dataset2, observations1, observations2, measure, dimensions, dimensionIndex, originDimensions1, originDimensions2) {
         var adaptedObservations = {
         };
         var adaptedDimensionElementUri = null;
@@ -1701,9 +1721,6 @@ var DataCube_DataCubeMerger = (function () {
                 });
                 if(false === _.isNull(adaptedDimensionElementUri)) {
                     observation[mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;
-                    _.each(dimension.__cv_oldCubeDimension, function (oldDimensionUri) {
-                        delete observation[oldDimensionUri];
-                    });
                     tmpObservations[observation.__cv_uri] = observation;
                 } else {
                     urisToIgnore.push(observation.__cv_uri);
@@ -1715,18 +1732,24 @@ var DataCube_DataCubeMerger = (function () {
         };
         _.each(tmpObservations, function (observation) {
             if(-1 === $.inArray(observation.__cv_uri, urisToIgnore)) {
+                _.each(originDimensions1, function (dimension) {
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
+                _.each(originDimensions2, function (dimension) {
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
                 adaptedObservations[observation.__cv_uri] = observation;
             }
         });
         return adaptedObservations;
     }
-    DataCube_DataCubeMerger.createMergedDataCube = function createMergedDataCube(backendUrl, stringifiedCompareAction, dataset1, dataset2, equalDimensions, measure1, measure2, retrievedObservations1, retrievedObservations2) {
+    DataCube_DataCubeMerger.create = function create(backendUrl, stringifiedCompareAction, dataset1, dataset2, equalDimensions, measure1, measure2, retrievedObservations1, retrievedObservations2, originDimensions1, originDimensions2) {
         var mergedDataCube = {
         };
         var mergedDataCubeUri = "";
 
         mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
-        mergedDataCubeUri = DataCube_DataCubeMerger.generateMergedDataCubeUri(backendUrl, stringifiedCompareAction);
+        mergedDataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, stringifiedCompareAction);
         mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, dataset1, dataset2);
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
         mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions);
@@ -1737,7 +1760,7 @@ var DataCube_DataCubeMerger = (function () {
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
         mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
-        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(mergedDataCubeUri, dataset1, dataset2, retrievedObservations1, retrievedObservations2, mergedDataCube.selectedComponents.measure, mergedDataCube.selectedComponents.dimensions, 0);
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(mergedDataCubeUri, dataset1, dataset2, retrievedObservations1, retrievedObservations2, mergedDataCube.selectedComponents.measure, mergedDataCube.selectedComponents.dimensions, 0, originDimensions1, originDimensions2);
         mergedDataCube.originalObservations = {
         };
         _.each(retrievedObservations1, function (observation) {
@@ -1748,8 +1771,8 @@ var DataCube_DataCubeMerger = (function () {
         });
         return mergedDataCube;
     }
-    DataCube_DataCubeMerger.generateMergedDataCubeUri = function generateMergedDataCubeUri(url, stringifiedObject) {
-        return url + "go/mergeddatacube/" + (CryptoJS.MD5(stringifiedObject) + "").substring(0, 6) + "#";
+    DataCube_DataCubeMerger.generateDataCubeUri = function generateDataCubeUri(url, stringifiedObject) {
+        return url + "go/datacube/" + (CryptoJS.MD5(stringifiedObject) + "").substring(0, 6) + "#";
     }
     DataCube_DataCubeMerger.getDefaultDataCubeObject = function getDefaultDataCubeObject() {
         return {
@@ -2789,10 +2812,6 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
                 handler: this.onFound_equalDimensions
             }, 
             {
-                name: "onReceived_dimensions1AndDimensions2",
-                handler: this.onReceived_dimensions1AndDimensions2
-            }, 
-            {
                 name: "onReceived_measures1AndMeasures2",
                 handler: this.onReceived_measures1AndMeasures2
             }, 
@@ -2832,14 +2851,12 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
-        var mergedDataCube = null;
         var self = this;
-
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
+        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.compareAction.mergedDataCube, "data", function (dataHash) {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: dataHash,
-                mergedDataCube: mergedDataCube
+                mergedDataCube: self.app._.compareAction.mergedDataCube
             });
         }, true);
     };
@@ -2893,7 +2910,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[1]) {
             return;
         }
-        mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: dataHash,
@@ -2910,7 +2927,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[2]) {
             return;
         }
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.createMergedDataCube(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: dataHash,
@@ -2923,11 +2940,9 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
     };
     View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
         this._equalDimensionsFound = true;
-        this.checkAndShowVisualizationSetup();
-    };
-    View_CompareAction_VisualizationSetup.prototype.onReceived_dimensions1AndDimensions2 = function () {
         $("#cubeviz-compare-confViz-datasetLabel1").html(_.str.prune(this.app._.compareAction.datasets[1].__cv_niceLabel, 55));
         $("#cubeviz-compare-confViz-datasetLabel2").html(_.str.prune(this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
+        this.checkAndShowVisualizationSetup();
     };
     View_CompareAction_VisualizationSetup.prototype.onReceived_measures1AndMeasures2 = function () {
         this._measuresReceived = true;
@@ -2955,19 +2970,17 @@ var View_CompareAction_ClusterVisualization = (function (_super) {
         _super.call(this, "View_CompareAction_ClusterVisualization", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onStart_application",
-                handler: this.onStart_application
+                name: "onCreated_mergedDataCube",
+                handler: this.onCreated_mergedDataCube
             }
         ]);
     }
     View_CompareAction_ClusterVisualization.prototype.generateLink = function (numberOfClusters) {
-        console.log("");
-        console.log(numberOfClusters);
         var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
         var clusters = this.numberClustering(DataCube_Observation.getValues(this.app._.compareAction.mergedDataCube.retrievedObservations, selectedMeasureUri, true)[0], numberOfClusters);
-        var clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters);
+        var clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters, this.app._.compareAction.mergedDataCube.retrievedObservations, this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.mergedDataCube.selectedDS);
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, clusteringDataCube, "data", function (dataHash) {
             console.log("");
             console.log("clusteringDataCube (" + dataHash + ")");
@@ -3060,7 +3073,7 @@ var View_CompareAction_ClusterVisualization = (function (_super) {
     View_CompareAction_ClusterVisualization.prototype.onClick_getLinkBtn = function () {
         this.generateLink($("#cubeviz-compare-clusterVisualizationClusterNumber").val());
     };
-    View_CompareAction_ClusterVisualization.prototype.onStart_application = function () {
+    View_CompareAction_ClusterVisualization.prototype.onCreated_mergedDataCube = function () {
         this.initialize();
     };
     View_CompareAction_ClusterVisualization.prototype.render = function () {
