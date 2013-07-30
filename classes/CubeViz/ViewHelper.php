@@ -84,12 +84,12 @@ class CubeViz_ViewHelper
              */
             // hash for data
             if(null == $dataHash) {
-                $dataHash = CubeViz_ConfigurationLink::$filePrefForDataHash;
+                $dataHash = null;
             }
             
             // hash for ui
             if(null == $uiHash) {
-                $uiHash = CubeViz_ConfigurationLink::$filePrefForUiHash;
+                $uiHash = null;
             }
                 
             $view->isCubeVizDataselectionModuleLoaded = false === isset($view->isCubeVizDataselectionModuleLoaded)
@@ -103,9 +103,9 @@ class CubeViz_ViewHelper
             $generatedDataHash = '';
             $generatedUiHash = '';
             
-            list($config['data'], $generatedDataHash) = $c->read ($dataHash);
+            list($config['data'], $generatedDataHash) = $c->read ($dataHash, 'data');
             
-            list($config['ui'], $generatedUiHash) = $c->read ($uiHash);
+            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, 'ui');
 
             $config['backend'] = array(
                 'context'               => $context, 

@@ -1,9 +1,10 @@
 var CubeViz_ConfigurationLink = (function () {
     function CubeViz_ConfigurationLink() { }
-    CubeViz_ConfigurationLink.save = function save(url, modelIri, content, type, callback, useObservations) {
+    CubeViz_ConfigurationLink.saveData = function saveData(url, serviceUrl, modelIri, hash, content, callback, useObservations) {
         if (typeof useObservations === "undefined") { useObservations = false; }
         var oldAjaxSetup = $.ajaxSetup();
         var oldSupportOrs = $.support.cors;
+        var stringifiedContent = JSON.stringify(content);
 
         $.ajaxSetup({
             async: true,
@@ -12,21 +13,52 @@ var CubeViz_ConfigurationLink = (function () {
         });
         $.support.cors = true;
         $.ajax({
-            "url": url + "savecontenttofile/",
-            "data": {
+            url: url + "savecontenttofile/",
+            data: {
+                hash: hash,
                 modelIri: modelIri,
-                stringifiedContent: JSON.stringify(content),
-                type: type,
+                serviceUrl: serviceUrl,
+                stringifiedContent: stringifiedContent,
+                type: "data",
                 useObservations: true === useObservations ? "true" : "false"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
             throw new Error("save error: " + xhr["responseText"]);
-        }).done(function (generatedHash) {
+        }).done(function (result) {
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
-            callback(generatedHash);
+            callback();
+        });
+    }
+    CubeViz_ConfigurationLink.saveUI = function saveUI(url, serviceUrl, modelIri, hash, content, callback) {
+        var oldAjaxSetup = $.ajaxSetup();
+        var oldSupportOrs = $.support.cors;
+        var stringifiedContent = JSON.stringify(content);
+
+        $.ajaxSetup({
+            async: true,
+            cache: false,
+            type: "POST"
+        });
+        $.support.cors = true;
+        $.ajax({
+            url: url + "savecontenttofile/",
+            data: {
+                hash: hash,
+                modelIri: modelIri,
+                stringifiedContent: JSON.stringify(content),
+                type: "ui"
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            $.ajaxSetup(oldAjaxSetup);
+            $.support.cors = oldSupportOrs;
+            throw new Error("save error: " + xhr["responseText"]);
+        }).done(function (result) {
+            $.ajaxSetup(oldAjaxSetup);
+            $.support.cors = oldSupportOrs;
+            callback();
         });
     }
     return CubeViz_ConfigurationLink;
@@ -1772,7 +1804,7 @@ var DataCube_DataCubeMerger = (function () {
         return mergedDataCube;
     }
     DataCube_DataCubeMerger.generateDataCubeUri = function generateDataCubeUri(url, stringifiedObject) {
-        return url + "go/datacube/" + (CryptoJS.MD5(stringifiedObject) + "").substring(0, 6) + "#";
+        return url + "go/datacube/" + (CryptoJS.MD5(stringifiedObject) + "") + "#";
     }
     DataCube_DataCubeMerger.getDefaultDataCubeObject = function getDefaultDataCubeObject() {
         return {
@@ -2851,11 +2883,13 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
-        var self = this;
         this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.compareAction.mergedDataCube, "data", function (dataHash) {
+        var hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube)) + "";
+        var self = this;
+
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.modelUrl, hash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                dataHash: dataHash,
+                dataHash: hash,
                 mergedDataCube: self.app._.compareAction.mergedDataCube
             });
         }, true);
@@ -2865,6 +2899,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         return this;
     };
     View_CompareAction_VisualizationSetup.prototype.displayAvailableVisualizations = function (charts, mergedDataCube) {
+        var dataHash = "";
         var link = null;
         var self = this;
         var uiObject = {
@@ -2874,13 +2909,16 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             visualizationSettings: {
             }
         };
+        var uiHash = "";
         var $newVisz = null;
 
         $("#cubeviz-compare-availableVisualizations").html("");
         _.each(charts, function (chart) {
             uiObject.visualization.className = chart.className;
-            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, uiObject, "ui", function (uiHash) {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+            uiHash = CryptoJS.MD5(JSON.stringify(uiObject)) + "";
+            CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, uiHash, uiObject, function () {
+                dataHash = CryptoJS.MD5(JSON.stringify(mergedDataCube)) + "";
+                CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, dataHash, mergedDataCube, function () {
                     link = self.app._.backend.url + "?";
                     $newVisz = $("<div class=\"span2\">" + "<a><img class=\"cubeviz-compare-specificVisz\" " + "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" + "</div>");
                     if(false === _.isNull(self.app._.backend.serviceUrl)) {
@@ -2902,25 +2940,26 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         this.render();
     };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn1 = function () {
+        var hash = "";
         var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0]["http://purl.org/linked-data/cube#measure"];
-        var mergedDataCube = null;
         var self = this;
 
         this.app._.compareAction.retrievedObservations[1] = this.adaptObservationValues(1, $("#cubeviz-compare-confViz-datasetFormula1").val(), this.app._.compareAction.originalObservations[1], measureUri);
         if(false === this.app._.compareAction.retrievedObservations[1]) {
             return;
         }
-        mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
+        hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, hash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                dataHash: dataHash,
-                mergedDataCube: mergedDataCube
+                dataHash: hash,
+                mergedDataCube: self.app._.compareAction.mergedDataCube
             });
         }, true);
     };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn2 = function () {
+        var hash = "";
         var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0]["http://purl.org/linked-data/cube#measure"];
-        var mergedDataCube = null;
         var self = this;
 
         this.app._.compareAction.retrievedObservations[2] = this.adaptObservationValues(2, $("#cubeviz-compare-confViz-datasetFormula2").val(), this.app._.compareAction.originalObservations[2], measureUri);
@@ -2928,10 +2967,11 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, mergedDataCube, "data", function (dataHash) {
+        hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, hash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                dataHash: dataHash,
-                mergedDataCube: mergedDataCube
+                dataHash: hash,
+                mergedDataCube: self.app._.compareAction.mergedDataCube
             });
         }, true);
     };
@@ -2976,14 +3016,18 @@ var View_CompareAction_ClusterVisualization = (function (_super) {
         ]);
     }
     View_CompareAction_ClusterVisualization.prototype.generateLink = function (numberOfClusters) {
+        var clusteringDataCube = null;
+        var clusters = [];
+        var hash = "";
         var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
-        var clusters = this.numberClustering(DataCube_Observation.getValues(this.app._.compareAction.mergedDataCube.retrievedObservations, selectedMeasureUri, true)[0], numberOfClusters);
-        var clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters, this.app._.compareAction.mergedDataCube.retrievedObservations, this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.mergedDataCube.selectedDS);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, clusteringDataCube, "data", function (dataHash) {
+        clusters = this.numberClustering(DataCube_Observation.getValues(this.app._.compareAction.mergedDataCube.retrievedObservations, selectedMeasureUri, true)[0], numberOfClusters);
+        clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters, this.app._.compareAction.mergedDataCube.retrievedObservations, this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.mergedDataCube.selectedDS);
+        hash = CryptoJS.MD5(JSON.stringify(clusteringDataCube)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.modelUrl, hash, clusteringDataCube, function () {
             console.log("");
-            console.log("clusteringDataCube (" + dataHash + ")");
+            console.log("clusteringDataCube (" + hash + ")");
             console.log(clusteringDataCube);
             var $li = $("<li><a href=\"\">Visualization for maximum " + numberOfClusters + " cluster</a></li>");
             var link = self.app._.backend.url + "?";
@@ -2995,7 +3039,7 @@ var View_CompareAction_ClusterVisualization = (function (_super) {
             } else {
                 link += "m=" + encodeURIComponent(self.app._.backend.modelUrl);
             }
-            link += "&cv_dataHash=" + dataHash;
+            link += "&cv_dataHash=" + hash;
             $($li.find("a")).attr("href", link).attr("target", "_blank");
             $("#cubeviz-compare-clusterVisualizationLinks").append($li);
         }, true);
@@ -3426,14 +3470,14 @@ var View_DataselectionModule_Measure = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                 self.app._.data.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedMeasure");
                 self.triggerGlobalEvent("onReRender_visualization");
                 CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
-            self.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
@@ -3565,14 +3609,14 @@ var View_DataselectionModule_Attribute = (function (_super) {
         }
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                 self.app._.data.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedAttribute");
                 self.triggerGlobalEvent("onReRender_visualization");
                 CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
-            self.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
@@ -3799,16 +3843,13 @@ var View_DataselectionModule_Component = (function (_super) {
         var self = this;
         this.destroy();
         this.loadComponentDimensions(function () {
-            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                self.app._.backend.dataHash = updatedDataHash;
-                self.render();
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
-                        self.app._.data.retrievedObservations = newEntities;
-                        CubeViz_View_Helper.hideLeftSidebarSpinner();
-                        data.callback();
-                    });
-                    self.app._.backend.dataHash = updatedDataHash;
+            self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, self.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
+                    self.app._.data.retrievedObservations = newEntities;
+                    CubeViz_View_Helper.hideLeftSidebarSpinner();
+                    self.render();
+                    data.callback();
                 });
             });
         });
@@ -3839,16 +3880,13 @@ var View_DataselectionModule_Component = (function (_super) {
             this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
             this.destroy().initialize();
             this.loadComponentDimensions(function () {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    self.app._.backend.dataHash = updatedDataHash;
-                    self.render();
-                    CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                        DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
-                            self.app._.data.retrievedObservations = newEntities;
-                            CubeViz_View_Helper.hideLeftSidebarSpinner();
-                            data.callback();
-                        });
-                        self.app._.backend.dataHash = updatedDataHash;
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data)) + "";
+                CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, self.app._.data, function () {
+                    DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
+                        self.app._.data.retrievedObservations = newEntities;
+                        CubeViz_View_Helper.hideLeftSidebarSpinner();
+                        self.render();
+                        data.callback();
                     });
                 });
             });
@@ -4006,18 +4044,18 @@ var View_DataselectionModule_Component = (function (_super) {
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         if(true === _.isUndefined(this.app._.data.settings)) {
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                     self.app._.data.retrievedObservations = newEntities;
                     callback();
                 });
-                self.app._.backend.dataHash = updatedDataHash;
             });
         } else {
             if(false === _.isUndefined(this.app._.data.settings) && false === _.isUndefined(this.app._.data.settings.synchronizeWithStore) && false === this.app._.data.settings.synchronizeWithStore) {
                 self.app._.data.retrievedObservations = DataCube_Observation.markActiveObservations(self.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
-                CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                    self.app._.backend.dataHash = updatedDataHash;
+                this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+                CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
                     callback();
                 }, true);
             }
@@ -4147,24 +4185,22 @@ var View_DataselectionModule_Footer = (function (_super) {
     };
     View_DataselectionModule_Footer.prototype.onClick_showVisualization = function (event) {
         var self = this;
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, "", function (newEntities) {
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                     self.app._.data.retrievedObservations = newEntities;
                     self.triggerGlobalEvent("onReRender_visualization");
                 });
-                self.app._.backend.dataHash = updatedDataHash;
             });
         } else {
-            if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui)) + "";
+                CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.uiHash, self.app._.ui, function () {
+                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
                 });
-            } else {
-                CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-                });
-            }
+            }, true);
         }
     };
     View_DataselectionModule_Footer.prototype.onStart_application = function () {
@@ -4187,16 +4223,20 @@ var View_DataselectionModule_Footer = (function (_super) {
     };
     View_DataselectionModule_Footer.prototype.showLink = function () {
         var self = this;
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            var link = self.app._.backend.url + "?";
-            if(false == _.str.isBlank(self.app._.backend.serviceUrl)) {
-                link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
-            }
-            link += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-            var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
-            $("#cubeviz-footer-permaLink").html(url);
-            var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
-            $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui)) + "";
+            CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.uiHash, self.app._.ui, function () {
+                var link = self.app._.backend.url + "?";
+                if(false == _.str.isBlank(self.app._.backend.serviceUrl)) {
+                    link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+                }
+                link += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+                var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
+                $("#cubeviz-footer-permaLink").html(url);
+                var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+                $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+            });
         }, true);
     };
     return View_DataselectionModule_Footer;
@@ -5062,21 +5102,21 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
             this.showMenuDongle(selectorItemDiv);
             this.triggerGlobalEvent("onChange_visualizationClass");
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.ui, "ui", function (updatedUiHash) {
-                self.app._.backend.uiHash = updatedUiHash;
+            this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
+            CubeViz_ConfigurationLink.saveUI(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.uiHash, this.app._.ui, function () {
+                self.triggerGlobalEvent("onAfterClick_selectorItem");
             });
         }
-        this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var self = this;
 
         this.app._.ui.visualizationSettings[this.app._.ui.visualization.className] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.ui, "ui", function (updatedUiHash) {
-            self.app._.backend.uiHash = updatedUiHash;
+        this.app._.backend.uiHash = JSON.stringify(this.app._.ui);
+        CubeViz_ConfigurationLink.saveUI(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.uiHash, this.app._.ui, function () {
+            self.triggerGlobalEvent("onReRender_visualization");
         });
-        this.triggerGlobalEvent("onReRender_visualization");
     };
     View_IndexAction_VisualizationSelector.prototype.onReceived_noData = function () {
         this.hideDongle();

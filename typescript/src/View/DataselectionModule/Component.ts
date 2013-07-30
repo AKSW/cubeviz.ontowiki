@@ -260,39 +260,26 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         // load dimensional data
         this.loadComponentDimensions(function(){
             
-            // update link code        
-            CubeViz_ConfigurationLink.save(
-                self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-            
-                // based on updatedLinkCode, load new observations
-                function(updatedDataHash){
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
-                    
-                    self.render();
-                    
-                    // update link code        
-                    CubeViz_ConfigurationLink.save(
-                        self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-                        
-                        // based on updatedLinkCode, load new observations
-                        function(updatedDataHash){
-                                    
-                            DataCube_Observation.loadAll(
-                                self.app._.backend.url, self.app._.backend.serviceUrl,
-                                self.app._.backend.modelUrl, updatedDataHash, "",
-                                function(newEntities){
-                                    
-                                    // save new observations
-                                    self.app._.data.retrievedObservations = newEntities;
-                                    
-                                    CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                    
-                                    data.callback();
-                                }
-                            );
+            self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.data))+"";
+              
+            CubeViz_ConfigurationLink.saveData(
+                self.app._.backend.url, self.app._.backend.serviceUrl, 
+                self.app._.backend.modelUrl, self.app._.backend.dataHash, 
+                self.app._.data, function(){
+                                
+                    //  load new observations
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl,
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                        function(newEntities){
                             
-                            self.app._.backend.dataHash = updatedDataHash;
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            CubeViz_View_Helper.hideLeftSidebarSpinner();
+                            
+                            self.render();
+                            data.callback();
                         }
                     );
                 }
@@ -356,40 +343,28 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             // load dimensional data
             this.loadComponentDimensions(function(){
                 
-                // update link code        
-                CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-                
-                    // based on updatedLinkCode, load new observations
-                    function(updatedDataHash){
-                        
-                        self.app._.backend.dataHash = updatedDataHash;
-                        
-                        self.render();
-                        
-                        // update link code        
-                        CubeViz_ConfigurationLink.save(
-                            self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-                            
-                            // based on updatedLinkCode, load new observations
-                            function(updatedDataHash){
-                                        
-                                DataCube_Observation.loadAll(
-                                    self.app._.backend.url, self.app._.backend.serviceUrl, 
-                                    self.app._.backend.modelUrl, updatedDataHash, "",
-                                    function(newEntities){
-                                        
-                                        // save new observations
-                                        self.app._.data.retrievedObservations = newEntities;
-                                        
-                                        CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                        
-                                        // call given callback function
-                                        data.callback();
-                                    }
-                                );
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data))+"";
+
+                CubeViz_ConfigurationLink.saveData(
+                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                    self.app._.backend.modelUrl, self.app._.backend.dataHash,
+                    self.app._.data, function(){
+                                    
+                        // load new observations
+                        DataCube_Observation.loadAll(
+                            self.app._.backend.url, self.app._.backend.serviceUrl, 
+                            self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                            function(newEntities){
                                 
-                                self.app._.backend.dataHash = updatedDataHash;
+                                // save new observations
+                                self.app._.data.retrievedObservations = newEntities;
+                                
+                                CubeViz_View_Helper.hideLeftSidebarSpinner();
+                                
+                                self.render();
+                                
+                                // call given callback function
+                                data.callback();
                             }
                         );
                     }
@@ -704,17 +679,18 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         
         // syn with backend and update observations
         if (true === _.isUndefined(this.app._.data.settings)) {
+            
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
         
-            // update link code        
-            CubeViz_ConfigurationLink.save(
-                this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
-                
-                // based on updatedLinkCode, load new observations
-                function(updatedDataHash){
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function(){
                             
+                    // load new observations
                     DataCube_Observation.loadAll(
                         self.app._.backend.url, self.app._.backend.serviceUrl, 
-                        self.app._.backend.modelUrl, updatedDataHash, "",
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
                         function(newEntities){
                             
                             // save new observations
@@ -723,8 +699,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                             callback();
                         }
                     );
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
                 }
             );
             
@@ -741,18 +715,14 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 this.app._.data.selectedComponents.attribute
             );
             
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+            
             // update link code        
-            CubeViz_ConfigurationLink.save(
-                this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
-                
-                // based on updatedLinkCode
-                function(updatedDataHash){
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
-                    
-                    callback();  
-                }
-            , true);
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function(){ callback(); }, true
+            );
         }
     }
     

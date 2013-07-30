@@ -26,12 +26,15 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
      */
     public generateLink(numberOfClusters) 
     {
-        var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents
+        var clusteringDataCube:any = null,
+            clusters:number[][] = [],
+            hash:string = "",
+            selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents
                                  .measure["http://purl.org/linked-data/cube#measure"],
             self = this;
         
         // compute clusters based on vlaues from merged data cube
-        var clusters = this.numberClustering (
+        clusters = this.numberClustering (
             // values of observations from merged data cube
             DataCube_Observation.getValues(
                 this.app._.compareAction.mergedDataCube.retrievedObservations,
@@ -44,17 +47,19 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
         /**
          * build data set to visualize the clusters
          */
-        var clusteringDataCube = DataCube_ClusteringDataCube.create(
+        clusteringDataCube = DataCube_ClusteringDataCube.create(
             clusters, this.app._.backend.url, numberOfClusters,
             this.app._.compareAction.mergedDataCube.retrievedObservations, 
             this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"],
             this.app._.compareAction.mergedDataCube.selectedDS
         );
+    
+        hash = CryptoJS.MD5(JSON.stringify(clusteringDataCube))+"";
         
         // generate hash for clustering data cube
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, clusteringDataCube, "data", 
-            function(dataHash){
+        CubeViz_ConfigurationLink.saveData(
+            this.app._.backend.url, this.app._.backend.modelUrl, hash, 
+            clusteringDataCube, function(){
                 /*
                 var uiObject:any = {
                     visualization: {
@@ -71,7 +76,7 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
                 
                 
                 console.log("");
-                console.log("clusteringDataCube (" + dataHash + ")");
+                console.log("clusteringDataCube (" + hash + ")");
                 console.log(clusteringDataCube);
                 
                 // build link
@@ -90,7 +95,7 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
                     link += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
                 }
                 
-                link += "&cv_dataHash=" + dataHash;
+                link += "&cv_dataHash=" + hash;
                 
                 $($li.find ("a"))
                     .attr ("href", link)

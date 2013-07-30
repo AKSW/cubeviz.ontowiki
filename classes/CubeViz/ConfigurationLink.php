@@ -17,16 +17,6 @@ class CubeViz_ConfigurationLink
      * model instance
      */
     protected $_model = null;    
-
-    /**
-     * filePrefix for cv_dataHash
-     */
-    public static $filePrefForDataHash = 'cv_dataHash__';
-    
-    /**
-     * filePrefix for cv_uiHash
-     */
-    public static $filePrefForUiHash = 'cv_uiHash__';
     
     /**
      * Constructor
@@ -294,121 +284,102 @@ class CubeViz_ConfigurationLink
     /**
      *
      */
-    public function read($hash) 
+    public function read($hash, $type) 
     {
-        /**
-         * load and return file content, if file exists
-         */
-        $content = $this->_objectCache->load($hash);
-         
-        if (false !== $content) {            
-            // contains stuff e.g. selectedDSD, ...
-            return array(json_decode($content, true), $hash);
-        }
-        
+        if (null != $hash) {
+            
+            /**
+             * load and return file content, if file exists
+             */
+            $content = $this->_objectCache->load($hash);
+             
+            if (false !== $content) {            
+                // contains stuff e.g. selectedDSD, ...
+                return array(json_decode($content, true), $hash);
+            }
+            
         /**
          * If you are here, either the file does not exists or there was nothing
          * to read in the file's first line.
          * 
          * ... so now set standard values.
          */
-        $config = array();
-        $type = '';
+        } else {
         
-        $filePrefData = CubeViz_ConfigurationLink::$filePrefForDataHash;
-        $filePrefUi= CubeViz_ConfigurationLink::$filePrefForUiHash;
-        
-        // determine which type the hash is:
-        if($filePrefData == substr($hash, 0, strlen($filePrefData))) {
-            $type = 'data';
-        } elseif($filePrefUi == substr($hash, 0, strlen($filePrefUi))){
-            $type = 'ui';
+            $config = array();
+            
+            switch($type) {
+                
+                /**
+                 * Information about the data cube itself and what was selected
+                 */
+                case 'data':
+                
+                    $config = $this->loadStandardConfigForData(array(
+                        'dataStructureDefinitions'      => array(),
+                        'dataSets'                      => array(),
+                        'components'                    => array(),
+                        'numberOfOneElementDimensions'  => 0,
+                        'numberOfMultipleDimensions'    => 0,
+                        'selectedDSD'                   => array(),
+                        'selectedDS'                    => array(),
+                        'selectedComponents'            => array(
+                            'attribute'                 => array(),
+                            'dimensions'                => array(),
+                            'measure'                   => array()
+                        ),
+                        'selectedSlice'                 => array(),
+                        'slices'                        => array()
+                    ));                
+                    
+                    $type = 'data';
+                    
+                    break;
+                
+                /**
+                 * Information about the user interface
+                 */
+                case 'ui':
+                
+                    $config = array(
+                        'visualization'                 => array(
+                            'className'                 => ''
+                        ),
+                        // will contain information/settings for each visualization class
+                        'visualizationSettings'         => array(
+                            // TODO: dirty hack, without it, jQuery does not transmit empty array
+                            0                           => null
+                        )
+                    );
+                    
+                    $type = 'ui';
+                      
+                    break;
+                    
+                // something went wrong, hash type unknown
+                default: return array (null, null);
+            }
+            
+            return array(
+                $config,
+                $this->write(json_encode($config, JSON_FORCE_OBJECT), $type) // = generated hash
+            );
         }
-        
-        switch($type) {
-            
-            /**
-             * Information about the data cube itself and what was selected
-             */
-            case 'data':
-            
-                $config = $this->loadStandardConfigForData(array(
-                    'dataStructureDefinitions'      => array(),
-                    'dataSets'                      => array(),
-                    'components'                    => array(),
-                    'numberOfOneElementDimensions'  => 0,
-                    'numberOfMultipleDimensions'    => 0,
-                    'selectedDSD'                   => array(),
-                    'selectedDS'                    => array(),
-                    'selectedComponents'            => array(
-                        'attribute'                 => array(),
-                        'dimensions'                => array(),
-                        'measure'                   => array()
-                    ),
-                    'selectedSlice'                 => array(),
-                    'slices'                        => array()
-                ));                
-                
-                $type = 'data';
-                
-                break;
-            
-            /**
-             * Information about the user interface
-             */
-            case 'ui':
-            
-                $config = array(
-                    'visualization'                 => array(
-                        'className'                 => ''
-                    ),
-                    // will contain information/settings for each visualization class
-                    'visualizationSettings'         => array(
-                        // TODO: dirty hack, without it, jQuery does not transmit empty array
-                        0                           => null
-                    )
-                );
-                
-                $type = 'ui';
-                  
-                break;
-                
-            // something went wrong, hash type unknown
-            default: return array (null, null);
-        }
-        
-        return array(
-            $config,
-            $this->write(json_encode($config, JSON_FORCE_OBJECT), $type) // = generated hash
-        );
     }
     
     /**
      *
      */
-    public function write($content, $type) 
+    public function write($content, $filename) 
     {
-        // adapt content
+        // adapt content (remove whitespaces)
         $content = trim($content);
         $content = str_replace(array("\r\n", "\\r", "\\n"), ' ', $content);
         $content = preg_replace('/\s\s+/', ' ', $content);
         $content = preg_replace('/\s+/', ' ', $content);
         $content = preg_replace('/\r\n|\r|\n/', ' ', $content);
         
-        // generate unique id which is based on the content
-        $filename = $this->generateHash ($content);
-        
         // save (override) content
         $this->_objectCache->save($content, $filename);
-        
-        return $filename;
-    }
-    
-    /**
-     * 
-     */	
-    private function generateHash ($content) 
-    {
-        return md5(json_encode($content));
     }
 }

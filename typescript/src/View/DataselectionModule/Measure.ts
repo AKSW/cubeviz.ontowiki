@@ -117,16 +117,17 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
             selectedMeasure.__cv_niceLabel, 24, ".."
         ));
         
-        // update link code        
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
-            
-            // based on updatedLinkCode, load new observations
-            function(updatedDataHash){
-                        
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+        
+        CubeViz_ConfigurationLink.saveData(
+            this.app._.backend.url, this.app._.backend.serviceUrl, 
+            this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, 
+            function(){
+                
+                // load new observations
                 DataCube_Observation.loadAll(
                     self.app._.backend.url, self.app._.backend.serviceUrl, 
-                    self.app._.backend.modelUrl, updatedDataHash, "",
+                    self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
                     function(newEntities){
                         
                         // save new observations
@@ -139,8 +140,6 @@ class View_DataselectionModule_Measure extends CubeViz_View_Abstract
                         CubeViz_View_Helper.hideLeftSidebarSpinner();
                     }
                 );
-                
-                self.app._.backend.dataHash = updatedDataHash;
             }
         );
     }

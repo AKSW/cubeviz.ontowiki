@@ -730,7 +730,7 @@ class CubevizController extends OntoWiki_Controller_Component
                 );
 
                 // load configuration which is associated with given linkCode
-                list($c, $hash) = $configuration->read ($dataHash, $model, $this->_titleHelperLimit);
+                list($c, $hash) = $configuration->read ($dataHash, 'data');
                 
                 $datasetUri = $c ['selectedDS']['__cv_uri'];
                 $dimensions = $c ['selectedComponents']['dimensions'];
@@ -1049,7 +1049,10 @@ class CubevizController extends OntoWiki_Controller_Component
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
         
-        // save parameter 
+        /**
+         * save parameter 
+         */
+        $hash = $this->_request->getParam('hash', '');
         $modelIri = $this->_request->getParam('modelIri', '');
         $stringifiedContent = $this->_request->getParam('stringifiedContent', '');
         $type = $this->_request->getParam('type', '');
@@ -1079,10 +1082,10 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_owApp->selectedModel, $this->_titleHelperLimit
         );
                 
-        $hash = $configuration->write($stringifiedContent, $type);
+        $configuration->write($stringifiedContent, $hash);
         
         // send back generated hash
-        $this->_sendJSONResponse($hash);
+        $this->_sendJSONResponse(null);
     }
     
     /**

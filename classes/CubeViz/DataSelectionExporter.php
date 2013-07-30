@@ -36,7 +36,7 @@ class CubeViz_DataSelectionExporter
         $data = array ();
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash);
+        list($data, $dh) = $c->read ($dataHash, 'data');
         
         $graph = new EasyRdf_Graph();
         
@@ -259,7 +259,7 @@ class CubeViz_DataSelectionExporter
         $data = $result = array (array());
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash);
+        list($data, $dh) = $c->read ($dataHash, 'data');
         
         /**
          * set the header of the CSV file

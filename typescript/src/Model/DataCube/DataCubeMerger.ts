@@ -461,12 +461,12 @@ class DataCube_DataCubeMerger
                              __cv_hashedUri: "2c432b80c03e04181cbbdf1fe9bf1837"
                              __cv_niceLabel: "Hungary"
                              __cv_uri: 
-                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0DimensionElement2"
+                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/datacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0DimensionElement2"
                              http://ns.aksw.org/spatialHierarchy/isLocatedIn: 
                                 "http://data.lod2.eu/scoreboard/country/European+Union+-+27+countries"
                              http://purl.org/dc/terms/source: "http://data.lod2.eu/scoreboard/country/Hungary"
                              http://www.w3.org/1999/02/22-rdf-syntax-ns#type: 
-                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/mergeddatacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0"
+                                "http://localhost/ow_cubeviz_comparing/cubeviz/go/datacube/ee8a5d9bd49388bb4454fd4bff52ee4d#dimension0"
                              http://www.w3.org/2000/01/rdf-schema#label: "Hungary"
                              http://www.w3.org/2002/07/owl#sameAs: 
                                 "http://data.lod2.eu/scoreboard/country/Hungary"
@@ -652,7 +652,7 @@ class DataCube_DataCubeMerger
     {
         return url 
                + "go/datacube/" 
-               + (CryptoJS.MD5(stringifiedObject)+"").substring (0,6)
+               + (CryptoJS.MD5(stringifiedObject)+"")
                + "#";
     }
     

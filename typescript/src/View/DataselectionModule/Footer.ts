@@ -133,19 +133,21 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
     {
         var self = this;
         
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+        
         // if module + indexAction stuff was loaded
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
             
             // update link code        
-            CubeViz_ConfigurationLink.save(
-                this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
-                
-                // based on updatedLinkCode, load new observations
-                function(updatedDataHash){
-                            
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function(){
+                    
+                    // load new observations
                     DataCube_Observation.loadAll(
                         self.app._.backend.url, self.app._.backend.serviceUrl, 
-                        self.app._.backend.modelUrl, updatedDataHash, "",
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
                         function(newEntities){
                             
                             // save new observations
@@ -155,47 +157,36 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
                             self.triggerGlobalEvent("onReRender_visualization");
                         }
                     );
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
                 }
             );
             
         // if you are only in the module
         } else {
             
-            if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
-                
-                // update link code
-                CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url,
-                    self.app._.backend.modelUrl, 
-                    self.app._.data,
-                    "data",
-                    function(updatedDataHash){
-                        // refresh page and show visualization for the latest linkCode
-                        window.location.href = self.app._.backend.url
-                            + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                            + "&cv_dataHash=" + updatedDataHash
-                            + "&cv_uiHash=" + self.app._.backend.uiHash;
-                    }
-                );
-            } else {
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+        
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function() {
             
-                // update link code
-                CubeViz_ConfigurationLink.save(
-                    this.app._.backend.url,
-                    this.app._.backend.modelUrl, 
-                    this.app._.data,
-                    "data",
-                    function(updatedDataHash){            
-                        // refresh page and show visualization for the latest linkCode
-                        window.location.href = self.app._.backend.url
-                            + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                            + "&cv_dataHash=" + updatedDataHash
-                            + "&cv_uiHash=" + self.app._.backend.uiHash;
-                    }
-                );
-            }
+                    self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui))+"";
+            
+                    CubeViz_ConfigurationLink.saveUI(
+                        self.app._.backend.url, self.app._.backend.serviceUrl, 
+                        self.app._.backend.modelUrl, self.app._.backend.uiHash, 
+                        self.app._.ui, function() {
+                        
+                            // refresh page and show visualization for the latest linkCode
+                            window.location.href = self.app._.backend.url
+                                + "?m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                                + "&cv_dataHash=" + self.app._.backend.dataHash
+                                + "&cv_uiHash=" + self.app._.backend.uiHash;
+                        }
+                    );
+                }, 
+                true
+            );
         }
     }
     
@@ -244,41 +235,51 @@ class View_DataselectionModule_Footer extends CubeViz_View_Abstract {
     {
         var self = this;
         
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, 
-            this.app._.data, "data", 
-            
-            // callback
-            function(updatedDataHash) {
-                var link = self.app._.backend.url + "?";
-                           
-                // only set serviceUrl if it was set by server
-                if (false == _.str.isBlank(self.app._.backend.serviceUrl)) {
-                    link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl) + "&";
-                }
-                
-                // add selected model url      
-                link += "m=" + encodeURIComponent (self.app._.backend.modelUrl)
-                
-                // add both hashes to the url
-                      + "&cv_dataHash=" + updatedDataHash
-                      + "&cv_uiHash=" + self.app._.backend.uiHash;
-
-                // create url object
-                var url = $("<a></a>")
-                    .attr ("href", link)
-                    .attr ("target", "_self")
-                    .html (self.collection.get("cubeviz-footer-permaLink").html);
-                
-                $("#cubeviz-footer-permaLink").html(url);
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+        
+        CubeViz_ConfigurationLink.saveData(
+            this.app._.backend.url, this.app._.backend.serviceUrl, 
+            this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+            this.app._.data, function() {
+        
+                self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui))+"";
+        
+                CubeViz_ConfigurationLink.saveUI(
+                    self.app._.backend.url, self.app._.backend.serviceUrl,
+                    self.app._.backend.modelUrl, self.app._.backend.uiHash, 
+                    self.app._.ui, function() {
                     
-                // show menu
-                var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
-                
-                $("#cubeviz-footer-permaLinkMenu")
-                    .css ("top", (positionLinkBtn.top + 30))
-                    .css ("left", (positionLinkBtn.left))
-                    .fadeIn("slow");
+                        var link = self.app._.backend.url + "?";
+                                   
+                        // only set serviceUrl if it was set by server
+                        if (false == _.str.isBlank(self.app._.backend.serviceUrl)) {
+                            link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl) + "&";
+                        }
+                        
+                        // add selected model url      
+                        link += "m=" + encodeURIComponent (self.app._.backend.modelUrl)
+                        
+                        // add both hashes to the url
+                              + "&cv_dataHash=" + self.app._.backend.dataHash
+                              + "&cv_uiHash=" + self.app._.backend.uiHash;
+
+                        // create url object
+                        var url = $("<a></a>")
+                            .attr ("href", link)
+                            .attr ("target", "_self")
+                            .html (self.collection.get("cubeviz-footer-permaLink").html);
+                        
+                        $("#cubeviz-footer-permaLink").html(url);
+                            
+                        // show menu
+                        var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+                        
+                        $("#cubeviz-footer-permaLinkMenu")
+                            .css ("top", (positionLinkBtn.top + 30))
+                            .css ("left", (positionLinkBtn.left))
+                            .fadeIn("slow");
+                    }
+                );
             }, 
         true);
     }
