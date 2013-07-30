@@ -224,6 +224,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     /**
      *
      */
+    public onChange_dimensionElementChoice(event) 
+    {
+        this.createMergedDataCube();
+    }
+    
+    /**
+     *
+     */
     public onClick_useBtn1() 
     {        
         // TODO adapt for multiple measures
@@ -336,7 +344,9 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     {
         this.bindUserInterfaceEvents({
             "click #cubeviz-compare-confViz-useBtn1": this.onClick_useBtn1,
-            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2
+            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2,
+            "change .cubeviz-compare-dimensionElementChoice":
+                this.onChange_dimensionElementChoice
         });
         
         return this;

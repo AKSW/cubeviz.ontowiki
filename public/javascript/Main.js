@@ -2972,6 +2972,9 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
     View_CompareAction_VisualizationSetup.prototype.initialize = function () {
         this.render();
     };
+    View_CompareAction_VisualizationSetup.prototype.onChange_dimensionElementChoice = function (event) {
+        this.createMergedDataCube();
+    };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn1 = function () {
         var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0]["http://purl.org/linked-data/cube#measure"];
         var self = this;
@@ -3015,7 +3018,8 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
     View_CompareAction_VisualizationSetup.prototype.render = function () {
         this.bindUserInterfaceEvents({
             "click #cubeviz-compare-confViz-useBtn1": this.onClick_useBtn1,
-            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2
+            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2,
+            "change .cubeviz-compare-dimensionElementChoice": this.onChange_dimensionElementChoice
         });
         return this;
     };
