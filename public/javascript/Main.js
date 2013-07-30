@@ -4267,8 +4267,8 @@ var View_IndexAction_ExportArea = (function (_super) {
         return this;
     };
     View_IndexAction_ExportArea.prototype.setUrlToDownload = function () {
-        var urlToDownload = this.app._.backend.url + "exportdataselection/" + "?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl) + "&dataHash=" + this.app._.backend.dataHash;
-        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload + "&type=turtle");
+        var urlToDownload = this.app._.backend.url + "export/dataselection/" + this.app._.backend.dataHash + "/?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl);
+        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload);
         $("#cubeviz-index-exportArea-btnCsv").attr("href", urlToDownload + "&type=csv");
     };
     return View_IndexAction_ExportArea;

@@ -373,7 +373,7 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      * Exports dataselection given by dataHash.
      */
-    public function exportdataselectionAction() 
+    public function exportAction() 
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
@@ -383,12 +383,26 @@ class CubevizController extends OntoWiki_Controller_Component
             return;
         }
         
-        // parameter
-        $dataHash = $this->_request->getParam ('dataHash', '');
-        $type = $this->_request->getParam ('type', '');
-        $filename = 'cubevizExport_'. $dataHash;
-        
         $model = $this->_owApp->selectedModel;
+        
+        /**
+         * all these parameter pointing to the same dataHash
+         */
+        $dataselection = $this->_request->getParam ('dataselection', '');
+        $datacube = $this->_request->getParam ('datacube', '');
+        
+        if ('' != $dataselection) {
+            $dataHash = $dataselection;
+        } elseif ('' != $datacube) {
+            $dataHash = $datacube;
+        } else {
+            return;
+        }
+        
+        // optional parameter
+        $type = $this->_request->getParam ('type', '');
+        
+        $filename = 'cubevizExport_'. $dataHash;
         
         switch ($type)
         {
@@ -404,19 +418,26 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         // setup response
-        $response = $this->getResponse();
-        $response->setHeader('Content-Type', $contentType, true);
-        $response->setHeader('Content-Disposition', 'filename="' . $filename . '"');
-        $response->setHeader('Pragma', 'no-cache');
-        $response->setHeader('Expires', '0');
-        
-        // output data itself (ouput directly to avoid caching the result)
-        echo CubeViz_DataSelectionExporter::_(
-            $type, 
-            $dataHash, 
-            $model,
-            $this->_titleHelperLimit
-        );
+        try {
+            $output = CubeViz_Exporter::_($type, $dataHash, $model, $this->_titleHelperLimit);
+            
+            $this->getResponse()
+                ->setHeader('Content-Type', $contentType, true)
+                ->setHeader('Content-Disposition', 'filename="' . $filename . '"')
+                ->setHeader('Pragma', 'no-cache')
+                ->setHeader('Expires', '0');
+            
+            echo $output;
+            
+        } catch (Exception $e) {
+            if('development' === $this->_privateConfig->get('context')) {
+                throw $e;
+            } else {
+                echo "Something went wrong with the Exporter, ".
+                     "please contact the side administrator if the problem persists. ".
+                     "Sorry.";
+            }
+        }
     }
     
     /**

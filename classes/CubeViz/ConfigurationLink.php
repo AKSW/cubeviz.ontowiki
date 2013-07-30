@@ -286,24 +286,15 @@ class CubeViz_ConfigurationLink
      */
     public function read($hash, $type) 
     {
+        // load and return content, if ObjectCache entry exists
         if (null != $hash) {
-            
-            /**
-             * load and return file content, if file exists
-             */
             $content = $this->_objectCache->load($hash);
              
             if (false !== $content) {            
-                // contains stuff e.g. selectedDSD, ...
                 return array(json_decode($content, true), $hash);
             }
             
-        /**
-         * If you are here, either the file does not exists or there was nothing
-         * to read in the file's first line.
-         * 
-         * ... so now set standard values.
-         */
+        // hash null means, that we have to load standard data
         } else {
         
             $config = array();
