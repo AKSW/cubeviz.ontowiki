@@ -2920,6 +2920,9 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
+        this.createMergedDataCube();
+    };
+    View_CompareAction_VisualizationSetup.prototype.createMergedDataCube = function () {
         this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
         var self = this;
         CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
@@ -2977,13 +2980,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[1]) {
             return;
         }
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
-        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
-            self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                dataHash: DataCube_DataCubeMerger.latestHash,
-                mergedDataCube: self.app._.compareAction.mergedDataCube
-            });
-        }, true);
+        this.createMergedDataCube();
     };
     View_CompareAction_VisualizationSetup.prototype.onClick_useBtn2 = function () {
         var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0]["http://purl.org/linked-data/cube#measure"];
@@ -2993,13 +2990,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[2]) {
             return;
         }
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
-        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
-            self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                dataHash: DataCube_DataCubeMerger.latestHash,
-                mergedDataCube: self.app._.compareAction.mergedDataCube
-            });
-        }, true);
+        this.createMergedDataCube();
     };
     View_CompareAction_VisualizationSetup.prototype.onCreated_mergedDataCube = function (event, data) {
         this.displayAvailableVisualizations(this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts, data.mergedDataCube);

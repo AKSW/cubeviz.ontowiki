@@ -100,6 +100,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         // show adaption-interface
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
         
+        this.createMergedDataCube();
+    }
+    
+    /**
+     *
+     */
+    public createMergedDataCube() 
+    {
         // based on all the data, create a merged data cube
         this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(
             this.app._.backend.url, JSON.stringify(this.app._.compareAction),
@@ -234,34 +242,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             // something went wrong
             return;
         }
-
-        // based on all the data, create a merged data cube
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(
-            this.app._.backend.url, JSON.stringify(this.app._.compareAction),
-            this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
-            this.app._.compareAction.equalDimensions, 
-            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
-            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
-            this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2],
-            this.app._.compareAction.components.dimensions[1],
-            this.app._.compareAction.components.dimensions[1],
-            $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val()
-        );
         
-        // save generated object and remember given hash
-        CubeViz_ConfigurationLink.saveData(
-            this.app._.backend.url, this.app._.backend.serviceUrl, 
-            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, 
-            this.app._.compareAction.mergedDataCube, 
-            function(){                
-                // trigger event and attach new data hash and merged data cube
-                self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                    dataHash: DataCube_DataCubeMerger.latestHash,
-                    mergedDataCube: self.app._.compareAction.mergedDataCube
-                });
-            }, true
-        );
+        this.createMergedDataCube();
     }
     
     /**
@@ -286,33 +268,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             return;
         }
 
-        // based on all the data, create a merged data cube
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(
-            this.app._.backend.url, JSON.stringify(this.app._.compareAction),
-            this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2],
-            this.app._.compareAction.equalDimensions, 
-            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0],
-            DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0],
-            this.app._.compareAction.retrievedObservations[1],
-            this.app._.compareAction.retrievedObservations[2],
-            this.app._.compareAction.components.dimensions[1],
-            this.app._.compareAction.components.dimensions[1],
-            $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val()
-        );
-        
-        // save generated object and remember given hash
-        CubeViz_ConfigurationLink.saveData(
-            this.app._.backend.url, this.app._.backend.serviceUrl, 
-            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, 
-            this.app._.compareAction.mergedDataCube, 
-            function(){                
-                // trigger event and attach new data hash and merged data cube
-                self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                    dataHash: DataCube_DataCubeMerger.latestHash,
-                    mergedDataCube: self.app._.compareAction.mergedDataCube
-                });
-            }, true
-        );
+        this.createMergedDataCube();
     }
     
     /**
