@@ -160,11 +160,13 @@ class DataCube_DataCubeMerger
      * Build component specifications and related dimension elements.
      * @param mergedDataCubeUri string Generated uri of the merged data cube
      * @param equalDimensions any[] List of equal dimension pairs
+     * @param dimensionElementChoice string Selection from user which type of dimension 
+     *                                      elements he wants to use
      * @return any Object with numeric keys which contains built component specifications 
      *             and dimension elements
      */
     static buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri:string, 
-        equalDimensions:any[]) : any
+        equalDimensions:any[], dimensionElementChoice:string) : any
     {
         var componentSpecification:any = {},
             i:number = 0,
@@ -236,7 +238,8 @@ class DataCube_DataCubeMerger
             
             // set dimension elements
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements (
-                dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements
+                dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements,
+                dimensionElementChoice
             );
                   
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements (
@@ -547,9 +550,9 @@ class DataCube_DataCubeMerger
      *
      */
     static create(backendUrl:string, stringifiedCompareAction:string,
-        dataset1:any, dataset2:any, equalDimensions:any, measure1:any, measure2:any,
-        retrievedObservations1:any, retrievedObservations2:any, originDimensions1:any,
-        originDimensions2:any) : any
+        dataset1:any, dataset2:any, equalDimensions:any, measure1:any, measure2:any, 
+        retrievedObservations1:any, retrievedObservations2:any, originDimensions1:any, 
+        originDimensions2:any, dimensionElementChoice:string) : any
     {
         var mergedDataCube:any = {},
             mergedDataCubeUri:string = "";
@@ -581,7 +584,7 @@ class DataCube_DataCubeMerger
          * set equal dimension pair(s) as dimensions
          */
         mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
-            mergedDataCubeUri, equalDimensions
+            mergedDataCubeUri, equalDimensions, dimensionElementChoice
         );
         
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
@@ -702,45 +705,110 @@ class DataCube_DataCubeMerger
      * same URI or share a sameAs-relation.
      * @param dimensionElements1 any Object containing a list of dimension elements of dataset1
      * @param dimensionElements2 any Object containing a list of dimension elements of dataset2
+     * @param dimensionElementsChoice string 
      * @return any Object containing only distinct dimension elements
      */
-    static mergeDimensionElements(dimensionElements1:any, dimensionElements2:any) : any
+    static mergeDimensionElements(dimensionElements1:any, dimensionElements2:any,
+        dimensionElementChoice:string) : any
     {
-        var i = 0,
-            mergedDimensionElements:any = {},
+        var mergedDimensionElements:any = {},
             usedElementUris:string[] = [];
         
-        // from dataset 1
-        _.each (dimensionElements1, function(element){
+        /**
+         * use all dimension elements (but still no doublings)
+         */
+        if ("all" === dimensionElementChoice) {
             
-            // simply add element
-            mergedDimensionElements[i++] = element;
-            
-            // CubeViz assumes that all elements are unique
-            usedElementUris.push (element.__cv_uri);
-            
-            if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
-                usedElementUris.push (element["http://www.w3.org/2002/07/owl#sameAs"]);
-            }
-        });        
-        
-        // from dataset 2
-        _.each (dimensionElements2, function (element){
-
-            // only add element of the other dataset's dimension, if its URI
-            // was not used before
-            if (-1 == $.inArray (element.__cv_uri, usedElementUris)) {
+            // from dataset 1
+            _.each (dimensionElements1, function(element){
                 
-                if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])
-                    && -1 < $.inArray (element["http://www.w3.org/2002/07/owl#sameAs"], usedElementUris)) {
-                    return;
-                }
+                // simply add element
+                mergedDimensionElements[element.__cv_uri] = element;
                 
-                mergedDimensionElements[i++] = element;
-                
+                // CubeViz assumes that all elements are unique
                 usedElementUris.push (element.__cv_uri);
+                
+                if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                    usedElementUris.push (element["http://www.w3.org/2002/07/owl#sameAs"]);
+                }
+            });        
+            
+            // from dataset 2
+            _.each (dimensionElements2, function (element){
+
+                // only add element of the other dataset's dimension, if its URI
+                // was not used before
+                if (-1 == $.inArray (element.__cv_uri, usedElementUris)) {
+                    
+                    if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])
+                        && -1 < $.inArray (element["http://www.w3.org/2002/07/owl#sameAs"], usedElementUris)) {
+                        return;
+                    }
+                    
+                    mergedDimensionElements[element.__cv_uri] = element;
+                    
+                    usedElementUris.push (element.__cv_uri);
+                }
+            });
+            
+        /**
+         * use only these which are EQUAL and in both sets 
+         * OR
+         * use only these which are UNEQUAL and only in one set
+         */
+        } else if ("equal" === dimensionElementChoice
+                   || "unequal" === dimensionElementChoice) {
+            
+            // from dataset 1
+            _.each (dimensionElements1, function(element){
+                
+                // simply add element
+                mergedDimensionElements[element.__cv_uri] = element;
+                
+                // CubeViz assumes that all elements are unique
+                usedElementUris.push (element.__cv_uri);
+                
+                if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                    usedElementUris.push (element["http://www.w3.org/2002/07/owl#sameAs"]);
+                }
+            });        
+            
+            // from dataset 2
+            _.each (dimensionElements2, function (element){
+
+                // if element uri is still in use ...
+                if (false === _.isUndefined(mergedDimensionElements[element.__cv_uri])) {
+                    mergedDimensionElements[element.__cv_uri]
+                        .__cv_double = element;
+
+                // ... or there is a sameAs relation to one element of dataset 1
+                } else if (false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) 
+                           && false === _.isUndefined(mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                    mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]]
+                        .__cv_double = element;
+                }
+            });
+            
+            if ("equal" === dimensionElementChoice) {
+                // throw out each dimension element which has NO double
+                _.each (mergedDimensionElements, function (element, key){
+                    if (true === _.isUndefined(element.__cv_double)){
+                        delete mergedDimensionElements[key];
+                    }
+                });            
+            } else { // "unequal"             
+                // throw out each dimension element which has A double
+                _.each (mergedDimensionElements, function (element, key){
+                    if (false === _.isUndefined(element.__cv_double)){
+                        delete mergedDimensionElements[key];
+                    }
+                });
             }
-        });
+            
+        // something weird is going on around this else ...
+        } else {
+            return;
+        }
         
         return mergedDimensionElements;
     }

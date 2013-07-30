@@ -110,7 +110,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             this.app._.compareAction.retrievedObservations[1],
             this.app._.compareAction.retrievedObservations[2],
             this.app._.compareAction.components.dimensions[1],
-            this.app._.compareAction.components.dimensions[1]
+            this.app._.compareAction.components.dimensions[1],
+            $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val()
         );
         
         // save generated object and remember generated hash
@@ -244,7 +245,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             this.app._.compareAction.retrievedObservations[1],
             this.app._.compareAction.retrievedObservations[2],
             this.app._.compareAction.components.dimensions[1],
-            this.app._.compareAction.components.dimensions[1]
+            this.app._.compareAction.components.dimensions[1],
+            $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val()
         );
         
         // save generated object and remember given hash
@@ -294,7 +296,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             this.app._.compareAction.retrievedObservations[1],
             this.app._.compareAction.retrievedObservations[2],
             this.app._.compareAction.components.dimensions[1],
-            this.app._.compareAction.components.dimensions[1]
+            this.app._.compareAction.components.dimensions[1],
+            $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val()
         );
         
         // save generated object and remember given hash

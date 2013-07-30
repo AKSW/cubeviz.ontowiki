@@ -1614,7 +1614,7 @@ var DataCube_DataCubeMerger = (function () {
         });
         return dsd;
     }
-    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions) {
+    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice) {
         var componentSpecification = {
         };
         var i = 0;
@@ -1650,7 +1650,7 @@ var DataCube_DataCubeMerger = (function () {
                     dimensionPair[1]
                 ]
             };
-            componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements);
+            componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements, dimensionElementChoice);
             componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements(mergedDataCubeUri, componentSpecification.__cv_elements, i);
             virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
             ++i;
@@ -1776,7 +1776,7 @@ var DataCube_DataCubeMerger = (function () {
         });
         return adaptedObservations;
     }
-    DataCube_DataCubeMerger.create = function create(backendUrl, stringifiedCompareAction, dataset1, dataset2, equalDimensions, measure1, measure2, retrievedObservations1, retrievedObservations2, originDimensions1, originDimensions2) {
+    DataCube_DataCubeMerger.create = function create(backendUrl, stringifiedCompareAction, dataset1, dataset2, equalDimensions, measure1, measure2, retrievedObservations1, retrievedObservations2, originDimensions1, originDimensions2, dimensionElementChoice) {
         var mergedDataCube = {
         };
         var mergedDataCubeUri = "";
@@ -1785,7 +1785,7 @@ var DataCube_DataCubeMerger = (function () {
         mergedDataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, stringifiedCompareAction);
         mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, dataset1, dataset2);
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions);
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice);
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
         mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
         mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
@@ -1842,28 +1842,63 @@ var DataCube_DataCubeMerger = (function () {
             }
         };
     }
-    DataCube_DataCubeMerger.mergeDimensionElements = function mergeDimensionElements(dimensionElements1, dimensionElements2) {
-        var i = 0;
+    DataCube_DataCubeMerger.mergeDimensionElements = function mergeDimensionElements(dimensionElements1, dimensionElements2, dimensionElementChoice) {
         var mergedDimensionElements = {
         };
         var usedElementUris = [];
 
-        _.each(dimensionElements1, function (element) {
-            mergedDimensionElements[i++] = element;
-            usedElementUris.push(element.__cv_uri);
-            if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
-                usedElementUris.push(element["http://www.w3.org/2002/07/owl#sameAs"]);
-            }
-        });
-        _.each(dimensionElements2, function (element) {
-            if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
-                if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) && -1 < $.inArray(element["http://www.w3.org/2002/07/owl#sameAs"], usedElementUris)) {
-                    return;
-                }
-                mergedDimensionElements[i++] = element;
+        if("all" === dimensionElementChoice) {
+            _.each(dimensionElements1, function (element) {
+                mergedDimensionElements[element.__cv_uri] = element;
                 usedElementUris.push(element.__cv_uri);
+                if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                    usedElementUris.push(element["http://www.w3.org/2002/07/owl#sameAs"]);
+                }
+            });
+            _.each(dimensionElements2, function (element) {
+                if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
+                    if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) && -1 < $.inArray(element["http://www.w3.org/2002/07/owl#sameAs"], usedElementUris)) {
+                        return;
+                    }
+                    mergedDimensionElements[element.__cv_uri] = element;
+                    usedElementUris.push(element.__cv_uri);
+                }
+            });
+        } else {
+            if("equal" === dimensionElementChoice || "unequal" === dimensionElementChoice) {
+                _.each(dimensionElements1, function (element) {
+                    mergedDimensionElements[element.__cv_uri] = element;
+                    usedElementUris.push(element.__cv_uri);
+                    if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                        usedElementUris.push(element["http://www.w3.org/2002/07/owl#sameAs"]);
+                    }
+                });
+                _.each(dimensionElements2, function (element) {
+                    if(false === _.isUndefined(mergedDimensionElements[element.__cv_uri])) {
+                        mergedDimensionElements[element.__cv_uri].__cv_double = element;
+                    } else {
+                        if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) && false === _.isUndefined(mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                            mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]].__cv_double = element;
+                        }
+                    }
+                });
+                if("equal" === dimensionElementChoice) {
+                    _.each(mergedDimensionElements, function (element, key) {
+                        if(true === _.isUndefined(element.__cv_double)) {
+                            delete mergedDimensionElements[key];
+                        }
+                    });
+                } else {
+                    _.each(mergedDimensionElements, function (element, key) {
+                        if(false === _.isUndefined(element.__cv_double)) {
+                            delete mergedDimensionElements[key];
+                        }
+                    });
+                }
+            } else {
+                return;
             }
-        });
+        }
         return mergedDimensionElements;
     }
     return DataCube_DataCubeMerger;
@@ -2885,7 +2920,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             return;
         }
         $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
         var self = this;
         CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
@@ -2942,7 +2977,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[1]) {
             return;
         }
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
         CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: DataCube_DataCubeMerger.latestHash,
@@ -2958,7 +2993,7 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         if(false === this.app._.compareAction.retrievedObservations[2]) {
             return;
         }
-        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1]);
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
         CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
             self.triggerGlobalEvent("onCreated_mergedDataCube", {
                 dataHash: DataCube_DataCubeMerger.latestHash,
