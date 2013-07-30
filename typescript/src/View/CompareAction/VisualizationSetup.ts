@@ -114,15 +114,15 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
         );
         
         // save generated object and remember generated hash
-        var hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube))+"",
-            self = this;
+        var self = this;
         
         CubeViz_ConfigurationLink.saveData(
-            this.app._.backend.url, this.app._.backend.modelUrl, hash,
+            this.app._.backend.url, this.app._.backend.serviceUrl, 
+            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash,
             this.app._.compareAction.mergedDataCube, function(){                
                 // trigger event and attach new data hash and merged data cube
                 self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                    dataHash: hash,
+                    dataHash: DataCube_DataCubeMerger.latestHash,
                     mergedDataCube: self.app._.compareAction.mergedDataCube
                 });
             }, true
@@ -143,8 +143,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
      */
     public displayAvailableVisualizations(charts:any, mergedDataCube:any) : void
     {        
-        var dataHash:string = "",
-            link:string = null,
+        var link:string = null,
             self = this,
             uiObject:any = {
                 visualization: {
@@ -152,7 +151,6 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 },
                 visualizationSettings: {}
             },
-            uiHash:string = "",
             $newVisz:any = null;
 
         
@@ -168,52 +166,39 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             uiObject.visualization.className = chart.className;
             
             // generate hash over given object
-            uiHash = CryptoJS.MD5(JSON.stringify(uiObject))+"";
+            var uiHash = CryptoJS.MD5(JSON.stringify(uiObject))+"";
                
             // generate ui hash ...
             CubeViz_ConfigurationLink.saveUI(
                 self.app._.backend.url, self.app._.backend.serviceUrl, 
                 self.app._.backend.modelUrl, uiHash, uiObject, function(){
-                                        
-                    // generate hash over given object
-                    dataHash = CryptoJS.MD5(JSON.stringify(mergedDataCube))+""; 
                     
-                    // ... than generate data hash according to merged datacube
-                    // to set a click event handler afterwards
-                    CubeViz_ConfigurationLink.saveData(
-                        self.app._.backend.url, self.app._.backend.serviceUrl, 
-                        self.app._.backend.modelUrl, dataHash, mergedDataCube, 
-                        function(){  
-                            
-                            link = self.app._.backend.url + "?";
-                            
-                            $newVisz = $("<div class=\"span2\">" + 
-                                                "<a><img class=\"cubeviz-compare-specificVisz\" " +
-                                                     "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" +
-                                            "</div>");
-                            
-                            if (false === _.isNull(self.app._.backend.serviceUrl)) {
-                                link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
-                                        + "&";
-                            }
-                                       
-                            if (true === _.str.isBlank(self.app._.backend.modelUrl)) {
-                                link += "m=" + encodeURIComponent (self.app._.compareAction.models[1].__cv_uri);
-                            } else {
-                                link += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
-                            }
-                            
-                            link += "&cv_dataHash=" + dataHash
-                                  + "&cv_uiHash=" + uiHash;
-                            
-                            $($newVisz.find("a").first())
-                                .attr ("href", link)
-                                .attr ("target", "_blank");
-                                
-                            $("#cubeviz-compare-availableVisualizations").append ($newVisz);  
+                    link = self.app._.backend.url + "?";
+                    
+                    $newVisz = $("<div class=\"span2\">" + 
+                                        "<a><img class=\"cubeviz-compare-specificVisz\" " +
+                                             "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" +
+                                    "</div>");
+                    
+                    if (false === _.isNull(self.app._.backend.serviceUrl)) {
+                        link += "serviceUrl=" + encodeURIComponent (self.app._.backend.serviceUrl)
+                                + "&";
+                    }
+                               
+                    if (true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                        link += "m=" + encodeURIComponent (self.app._.compareAction.models[1].__cv_uri);
+                    } else {
+                        link += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
+                    }
+                    
+                    link += "&cv_dataHash=" + DataCube_DataCubeMerger.latestHash
+                          + "&cv_uiHash=" + uiHash;
+                    
+                    $($newVisz.find("a").first())
+                        .attr ("href", link)
+                        .attr ("target", "_blank");
                         
-                        }, true
-                    );
+                    $("#cubeviz-compare-availableVisualizations").append ($newVisz);  
                 }
             );
         });
@@ -233,8 +218,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     public onClick_useBtn1() 
     {        
         // TODO adapt for multiple measures
-        var hash:string = "",
-            measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])
                          [0]["http://purl.org/linked-data/cube#measure"],
             self = this;
         
@@ -263,16 +247,15 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             this.app._.compareAction.components.dimensions[1]
         );
         
-        hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube))+"";
-        
         // save generated object and remember given hash
         CubeViz_ConfigurationLink.saveData(
             this.app._.backend.url, this.app._.backend.serviceUrl, 
-            this.app._.backend.modelUrl, hash, this.app._.compareAction.mergedDataCube, 
+            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, 
+            this.app._.compareAction.mergedDataCube, 
             function(){                
                 // trigger event and attach new data hash and merged data cube
                 self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                    dataHash: hash,
+                    dataHash: DataCube_DataCubeMerger.latestHash,
                     mergedDataCube: self.app._.compareAction.mergedDataCube
                 });
             }, true
@@ -285,8 +268,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
     public onClick_useBtn2() 
     {
         // TODO adapt for multiple measures
-        var hash:string = "",
-            measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])
             [0]["http://purl.org/linked-data/cube#measure"],
             self = this;
         
@@ -315,16 +297,15 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             this.app._.compareAction.components.dimensions[1]
         );
         
-        hash = CryptoJS.MD5(JSON.stringify(this.app._.compareAction.mergedDataCube))+"";
-        
         // save generated object and remember given hash
         CubeViz_ConfigurationLink.saveData(
             this.app._.backend.url, this.app._.backend.serviceUrl, 
-            this.app._.backend.modelUrl, hash, this.app._.compareAction.mergedDataCube, 
+            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, 
+            this.app._.compareAction.mergedDataCube, 
             function(){                
                 // trigger event and attach new data hash and merged data cube
                 self.triggerGlobalEvent("onCreated_mergedDataCube", {
-                    dataHash: hash,
+                    dataHash: DataCube_DataCubeMerger.latestHash,
                     mergedDataCube: self.app._.compareAction.mergedDataCube
                 });
             }, true
@@ -335,7 +316,7 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
      *
      */
     public onCreated_mergedDataCube(event, data) 
-    {
+    {    
         this.displayAvailableVisualizations(
             this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts,
             data.mergedDataCube

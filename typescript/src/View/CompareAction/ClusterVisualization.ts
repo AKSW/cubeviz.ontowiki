@@ -28,7 +28,6 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
     {
         var clusteringDataCube:any = null,
             clusters:number[][] = [],
-            hash:string = "",
             selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents
                                  .measure["http://purl.org/linked-data/cube#measure"],
             self = this;
@@ -53,33 +52,16 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
             this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"],
             this.app._.compareAction.mergedDataCube.selectedDS
         );
-    
-        hash = CryptoJS.MD5(JSON.stringify(clusteringDataCube))+"";
         
         // generate hash for clustering data cube
         CubeViz_ConfigurationLink.saveData(
-            this.app._.backend.url, this.app._.backend.modelUrl, hash, 
+            this.app._.backend.url, this.app._.backend.serviceUrl, 
+            this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, 
             clusteringDataCube, function(){
-                /*
-                var uiObject:any = {
-                    visualization: {
-                        className: ""
-                    },
-                    visualizationSettings: {}
-                };
                 
-                CubeViz_ConfigurationLink.save(
-                    this.app._.backend.url, this.app._.backend.modelUrl, 
-                    JSON.stringify(uiObject), "ui", 
-                    function(dataHash){
-                */
-                
-                
-                console.log("");
-                console.log("clusteringDataCube (" + hash + ")");
-                console.log(clusteringDataCube);
-                
-                // build link
+                /**
+                 * build link
+                 */
                 var $li = $("<li><a href=\"\">Visualization for maximum " + numberOfClusters + " cluster</a></li>");
                 
                 var link = self.app._.backend.url + "?";
@@ -95,14 +77,13 @@ class View_CompareAction_ClusterVisualization extends CubeViz_View_Abstract
                     link += "m=" + encodeURIComponent (self.app._.backend.modelUrl);
                 }
                 
-                link += "&cv_dataHash=" + hash;
+                link += "&cv_dataHash=" + DataCube_DataCubeMerger.latestHash;
                 
                 $($li.find ("a"))
                     .attr ("href", link)
                     .attr ("target", "_blank");
                 
                 $("#cubeviz-compare-clusterVisualizationLinks").append ($li);
-                
                 
             }, true
         );

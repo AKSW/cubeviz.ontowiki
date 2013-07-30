@@ -3,6 +3,8 @@
  */
 class DataCube_DataCubeMerger
 {    
+    static latestHash:string = "";
+    
     /**
      * Adapt given dimension elements and give them new uris.
      * @param mergedDataCubeUri string Generated uri of the merged data cube
@@ -643,17 +645,19 @@ class DataCube_DataCubeMerger
     }
     
     /**
-     * Generates a new and dereferenceable uri of a data cube
+     * Generates a new and dereferenceable uri using given stringified data cube
+     * object.
      * @param url string URL this system is running on
      * @param stringifiedObject string Stringified compareAction object
      * @return string New merged data cube uri
      */
     static generateDataCubeUri(url:string, stringifiedObject:string) : string
     {
-        return url 
-               + "go/datacube/" 
-               + (CryptoJS.MD5(stringifiedObject)+"")
-               + "#";
+        // generate hash
+        DataCube_DataCubeMerger.latestHash = CryptoJS.MD5(stringifiedObject)+"";
+        
+        // return url containing hash
+        return url + "export/datacube/" + DataCube_DataCubeMerger.latestHash + "#";
     }
     
     /**
