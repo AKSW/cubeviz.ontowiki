@@ -18,7 +18,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.png",
+                "icon": "bar.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -45,7 +45,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.png",
+                "icon": "column.svg",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -76,13 +76,33 @@ var CubeViz_ChartConfig = {
      */
     "1": {
         "charts": [
+        
+            {
+                label: "Circle Packing",
+                className: "CubeViz_Visualization_D3js_CirclePacking",
+                icon: "circlePacking.svg",
+                
+                defaultConfig: {
+                    style: {
+                        circle: {
+                            "fill": "#FFFFFF",
+                            "font-size": "9px",
+                            "font-weight": "bold",
+                            "text-anchor": "middle"
+                        }
+                    }
+                },
+                
+                options: []
+            },
+        
             /**
              * -----------------------------------------------------------------
              */
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.png",
+                "icon": "bar.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -128,7 +148,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.png",
+                "icon": "column.svg",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -187,7 +207,7 @@ var CubeViz_ChartConfig = {
            {
                 "label": "line",
                 "className": "CubeViz_Visualization_HighCharts_Line",
-                "icon": "line.png",
+                "icon": "line.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -258,7 +278,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "pie",
                 "className": "CubeViz_Visualization_HighCharts_Pie",
-                "icon": "pie.png",
+                "icon": "pie.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -296,13 +316,49 @@ var CubeViz_ChartConfig = {
      */
     "2": {
         "charts": [
-            /**
-             * -----------------------------------------------------------------
-             */
+            
+            {
+                label: "Circle Packing for Clusters",
+                className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
+                icon: "circlePackingForClusters.svg",
+                
+                defaultConfig: {
+                    style: {
+                        circle: {
+                            "fill": "#FFFFFF",
+                            "font-size": "9px",
+                            "font-weight": "bold",
+                            "text-anchor": "middle"
+                        }
+                    }
+                },
+                
+                options: []
+            },
+            
+            {
+                label: "Circle Packing",
+                className: "CubeViz_Visualization_D3js_CirclePacking",
+                icon: "circlePacking.svg",
+                
+                defaultConfig: {
+                    style: {
+                        circle: {
+                            "fill": "#FFFFFF",
+                            "font-size": "9px",
+                            "font-weight": "bold",
+                            "text-anchor": "middle"
+                        }
+                    }
+                },
+                
+                options: []
+            },
+            
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.png",
+                "icon": "bar.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -374,7 +430,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.png",
+                "icon": "column.svg",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -433,7 +489,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "polar",
                 "className": "CubeViz_Visualization_HighCharts_Polar",
-                "icon": "polar.png",
+                "icon": "polar.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -497,7 +553,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "line",
                 "className": "CubeViz_Visualization_HighCharts_Line",
-                "icon": "line.png",
+                "icon": "line.svg",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -570,25 +626,6 @@ var CubeViz_ChartConfig = {
                         "type": "array"
                     }
                 ]
-            },
-            
-            {
-                label: "Circle Packing",
-                className: "CubeViz_Visualization_D3js_CirclePacking",
-                icon: "circlePacking.png",
-                
-                defaultConfig: {
-                    style: {
-                        circle: {
-                            "fill": "#FFFFFF",
-                            "font-size": "9px",
-                            "font-weight": "bold",
-                            "text-anchor": "middle"
-                        }
-                    }
-                },
-                
-                options: []
             }
         ]
     }
