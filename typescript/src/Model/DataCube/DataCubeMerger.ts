@@ -71,14 +71,28 @@ class DataCube_DataCubeMerger
         return { 0: {
             
             // label
-            __cv_niceLabel: "Artifical Dataset",
-            "http://www.w3.org/2000/01/rdf-schema#label": "Merged DataSet",
-            
-            // describe
-            __cv_description: "This is an artifical data set and it consists of '"
+            __cv_niceLabel: "Artifical Dataset of '"
                 + dataset1.__cv_niceLabel
                 + "' and '"
                 + dataset2.__cv_niceLabel
+                + "'",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Dataset of '"
+                + dataset1.__cv_niceLabel
+                + "' and '"
+                + dataset2.__cv_niceLabel
+                + "'",
+            
+            // description
+            __cv_description: "Its an artifical data set and it consists of '"
+                + dataset1.__cv_niceLabel 
+                + "' and '"
+                + dataset2.__cv_niceLabel 
+                + "'",                  
+            "http://www.w3.org/2000/01/rdf-schema#comment": 
+                "Its an artifical data set and it consists of '"
+                + dataset1.__cv_niceLabel 
+                + "' and '"
+                + dataset2.__cv_niceLabel 
                 + "'",                              
             
             // uri and hashed uri
@@ -121,9 +135,12 @@ class DataCube_DataCubeMerger
                 __cv_niceLabel: "Artifical Data Structure Definition",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Data Structure Definition",
                 
-                // describe
+                // description
                 __cv_description: "This is an artifical data structure definition "
                     + "created during a data cube merge.",
+                "http://www.w3.org/2000/01/rdf-schema#comment": 
+                    "This is an artifical data structure definition created during " +
+                    "a data cube merge.",
                 
                 // uri and hashed uri
                 __cv_uri: mergedDataCubeUri + "dataStructureDefinition",
@@ -178,19 +195,25 @@ class DataCube_DataCubeMerger
             componentSpecification = {
                 
                 // label
-                __cv_niceLabel: "Merged Component Specification of '"
+                __cv_niceLabel: "Artifical Component Specification of '"
                     + dimensionPair[0].__cv_niceLabel
                     + "' and '"
                     + dimensionPair[1].__cv_niceLabel
                     + "'",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification of '"
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Component Specification of '"
                     + dimensionPair[0].__cv_niceLabel
                     + "' and '"
                     + dimensionPair[1].__cv_niceLabel
                     + "'",
                 
-                // describe
-                __cv_description: "This Component Specification was merged and consists of '"
+                // description
+                __cv_description: "Its an artifical Component Specification and it consists of '"
+                    + dimensionPair[0].__cv_niceLabel
+                    + "' and '"
+                    + dimensionPair[1].__cv_niceLabel
+                    + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": 
+                    "Its an artifical Component Specification and it consists of '"
                     + dimensionPair[0].__cv_niceLabel
                     + "' and '"
                     + dimensionPair[1].__cv_niceLabel
@@ -200,11 +223,6 @@ class DataCube_DataCubeMerger
                 __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
                 
-                // sameAs relations to both component specifications of dimension pair
-                "http://www.w3.org/2002/07/owl#sameAs": [
-                    dimensionPair[0].__cv_uri, dimensionPair[1].__cv_uri
-                ],
-                
                 // add relation to the two origin datasets
                 "http://purl.org/dc/terms/source": [ 
                     dimensionPair[0].__cv_uri, dimensionPair[1].__cv_uri
@@ -213,7 +231,7 @@ class DataCube_DataCubeMerger
                 // dimension elements
                 __cv_elements: {},
                 
-                // remember old qb:measure relation object
+                // remember old qb:dimension relation object
                 __cv_oldCubeDimension: [
                     dimensionPair[0]["http://purl.org/linked-data/cube#dimension"],
                     dimensionPair[1]["http://purl.org/linked-data/cube#dimension"]
@@ -278,8 +296,14 @@ class DataCube_DataCubeMerger
                 + measure2.__cv_niceLabel
                 + "'",
             
-            // describe
-            __cv_description: "This is an artifical measure and it consists of '"
+            // description
+            __cv_description: "Its an artifical measure and it consists of '"
+                + measure1.__cv_niceLabel
+                + "' and '"
+                + measure2.__cv_niceLabel
+                + "'",                              
+            "http://www.w3.org/2000/01/rdf-schema#comment": 
+                "Its an artifical measure and it consists of '"
                 + measure1.__cv_niceLabel
                 + "' and '"
                 + measure2.__cv_niceLabel
@@ -311,7 +335,7 @@ class DataCube_DataCubeMerger
             "http://purl.org/dc/terms/created": (new Date()).toString(),
             
             // add source measures
-            __cv_sourceMeasure: [measure1, measure2]
+            __cv_sourceComponentSpecification: [measure1, measure2]
         }};
     }
     

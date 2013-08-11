@@ -845,11 +845,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         /**
          * if available, show source measures
          */
-        if (false === _.isNull(selectedMeasure.__cv_sourceMeasure)
-            && false === _.isUndefined(selectedMeasure.__cv_sourceMeasure)) {
+        if (false === _.isNull(selectedMeasure.__cv_sourceComponentSpecification)
+            && false === _.isUndefined(selectedMeasure.__cv_sourceComponentSpecification)) {
             
             // go through each source component specification
-            _.each (selectedMeasure.__cv_sourceMeasure, function(sourceMeasure){
+            _.each (selectedMeasure.__cv_sourceComponentSpecification, function(sourceMeasure){
                 
                 // source component specification label
                 $table.append (

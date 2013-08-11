@@ -1572,9 +1572,10 @@ var DataCube_DataCubeMerger = (function () {
     DataCube_DataCubeMerger.buildDataSets = function buildDataSets(mergedDataCubeUri, dataset1, dataset2) {
         return {
             0: {
-                __cv_niceLabel: "Artifical Dataset",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged DataSet",
-                __cv_description: "This is an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                __cv_niceLabel: "Artifical Dataset of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Dataset of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                __cv_description: "Its an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "dataset",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataset") + "",
                 "http://purl.org/dc/terms/source": [
@@ -1597,6 +1598,7 @@ var DataCube_DataCubeMerger = (function () {
                 __cv_niceLabel: "Artifical Data Structure Definition",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Data Structure Definition",
                 __cv_description: "This is an artifical data structure definition " + "created during a data cube merge.",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "This is an artifical data structure definition created during " + "a data cube merge.",
                 __cv_uri: mergedDataCubeUri + "dataStructureDefinition",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataStructureDefinition") + "",
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
@@ -1623,15 +1625,12 @@ var DataCube_DataCubeMerger = (function () {
 
         _.each(equalDimensions, function (dimensionPair) {
             componentSpecification = {
-                __cv_niceLabel: "Merged Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Merged Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
-                __cv_description: "This Component Specification was merged and consists of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
+                __cv_niceLabel: "Artifical Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Component Specification of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
+                __cv_description: "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + "' and '" + dimensionPair[1].__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
-                "http://www.w3.org/2002/07/owl#sameAs": [
-                    dimensionPair[0].__cv_uri, 
-                    dimensionPair[1].__cv_uri
-                ],
                 "http://purl.org/dc/terms/source": [
                     dimensionPair[0].__cv_uri, 
                     dimensionPair[1].__cv_uri
@@ -1662,7 +1661,8 @@ var DataCube_DataCubeMerger = (function () {
             0: {
                 __cv_niceLabel: "Artifical Measure of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
                 "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
-                __cv_description: "This is an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
+                __cv_description: "Its an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
                 __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
                 __cv_oldCubeMeasure: [
@@ -1676,7 +1676,7 @@ var DataCube_DataCubeMerger = (function () {
                 ],
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
                 "http://purl.org/dc/terms/created": (new Date()).toString(),
-                __cv_sourceMeasure: [
+                __cv_sourceComponentSpecification: [
                     measure1, 
                     measure2
                 ]
@@ -4689,8 +4689,8 @@ var View_IndexAction_Legend = (function (_super) {
                 $table.append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
             }
         });
-        if(false === _.isNull(selectedMeasure.__cv_sourceMeasure) && false === _.isUndefined(selectedMeasure.__cv_sourceMeasure)) {
-            _.each(selectedMeasure.__cv_sourceMeasure, function (sourceMeasure) {
+        if(false === _.isNull(selectedMeasure.__cv_sourceComponentSpecification) && false === _.isUndefined(selectedMeasure.__cv_sourceComponentSpecification)) {
+            _.each(selectedMeasure.__cv_sourceComponentSpecification, function (sourceMeasure) {
                 $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Measure: " + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
                 $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_uri + "</a></td>" + "</tr>");
                 _.each(sourceMeasure, function (value, property) {
