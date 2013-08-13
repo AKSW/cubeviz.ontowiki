@@ -356,28 +356,30 @@ class DataCube_DataCubeMerger
     {        
         var adaptedObservations:any = {},
             adaptedDimensionElementUri:string = null,
+            i:number = 0,
             observationCounter:number = 0,
             tmp:any = {},
             tmpObservations:any = {},
             urisToIgnore:any[] = [],
-            usedUri:string = null;
+            usedUri:string = null,
+            usedUris:any = {};
             
         // create a real clone of retrieved observations lists
         observations1 = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         
         _.each(observations1, function(observation){
-            tmpObservations [observation.__cv_uri] = observation;
+            tmpObservations [i++] = observation;
         });
         
         _.each(observations2, function(observation){
-            tmpObservations [observation.__cv_uri] = observation;
+            tmpObservations [i++] = observation;
         });
         
         _.each(tmpObservations, function(observation){            
                         
             // save source observation
-            observation.__cv_sourceObservation = $.parseJSON(JSON.stringify(observation));
+            observation.__cv_sourceObservation = [$.parseJSON(JSON.stringify(observation))];
             
             // save source dataset
             if (observation ["http://purl.org/linked-data/cube#dataSet"] == dataset1.__cv_uri) {
@@ -552,6 +554,7 @@ class DataCube_DataCubeMerger
         
         // go through all tempary observations and collect all, which are not 
         // on the black list (urisToIgnore)
+        i = 0;
         _.each(tmpObservations, function(observation){
             if (-1 === $.inArray(observation.__cv_uri, urisToIgnore)) {
                 
@@ -563,7 +566,36 @@ class DataCube_DataCubeMerger
                     delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
                 });
                 
-                adaptedObservations [observation.__cv_uri] = observation;
+                adaptedObservations [i++] = observation;
+            }
+        });
+        
+        _.each(adaptedObservations, function(observation, i){
+            
+            // if observation is NOT in use
+            if (true === _.isUndefined(usedUris[observation.__cv_sourceObservation[0].__cv_uri])) {
+                usedUris[observation.__cv_sourceObservation[0].__cv_uri] = i;
+            
+            // observation is already in use
+            } else {
+                
+                // update source observation
+                adaptedObservations[i].__cv_sourceObservation = [
+                    adaptedObservations[i].__cv_sourceObservation[0],
+                    adaptedObservations[usedUris[adaptedObservations[i].__cv_sourceObservation[0].__cv_uri]].__cv_sourceObservation[0]
+                ];
+                
+                // update measure
+                adaptedObservations[i][mergedDataCubeUri + "measure"] = NaN;
+                
+                // update dc:source relation
+                adaptedObservations[i]["http://purl.org/dc/terms/source"] = [
+                    adaptedObservations[i].__cv_sourceObservation[0].__cv_uri,
+                    adaptedObservations[i].__cv_sourceObservation[1].__cv_uri
+                ];
+                
+                delete adaptedObservations[i]["http://www.w3.org/2002/07/owl#sameAs"];
+                delete adaptedObservations[usedUris[observation.__cv_uri]];
             }
         });
         

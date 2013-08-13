@@ -101,6 +101,13 @@ ex:obs4 a cube:Observation ;
     ex:unit "straight deaths" ;
     ex:value "855260"^^<http://www.w3.org/2001/XMLSchema#float> .
     
+<http://example.cubeviz.org/compare/populationEurope/obs4> a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight number of people" ;
+    ex:value "1337"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
 ex:obs5 a cube:Observation ;
     cube:dataSet ex:dataset ;
     ex:country ex:Germany ;
