@@ -28,6 +28,10 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
                 handler: this.onFound_equalDimensions
             },
             {
+                name:    "onFound_onlyUnequalDimensions",
+                handler: this.onFound_onlyUnequalDimensions
+            },
+            {
                 name:    "onReceived_measures1AndMeasures2",
                 handler: this.onReceived_measures1AndMeasures2
             },
@@ -295,6 +299,8 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
      */
     public onFound_equalDimensions() 
     {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").hide();
+        
         this._equalDimensionsFound = true;
         
         /**
@@ -307,6 +313,14 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             _.str.prune (this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
         
         this.checkAndShowVisualizationSetup();
+    }
+    
+    /**
+     *
+     */
+    public onFound_onlyUnequalDimensions() 
+    {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").fadeIn();
     }
     
     /**

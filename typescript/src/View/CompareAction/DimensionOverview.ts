@@ -261,10 +261,12 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
     
     /**
      * Find and save equal dimensions. Two dimensions are equal if they have the
-     * same URI or there is a sameAs-relation between them.
+     * same URI or there is a sameAs-relation between them. Triggers event
+     * onFound_equalDimensions in case equal dimensions where found, otherwise
+     * the event onFound_onlyUnequalDimensions.
      * @return void
      */
-    public findEqualDimensions() : void
+    public findEqualAndUnequalDimensions() : void
     {
         var equalDimensionElements:any = null,
             dimension1:any = null,
@@ -341,6 +343,8 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
         // check if there are equal dimensions and if so, trigger global event
         if (0 < _.size(this.app._.compareAction.equalDimensions)) {
             this.triggerGlobalEvent("onFound_equalDimensions");
+        } else {
+            this.triggerGlobalEvent("onFound_onlyUnequalDimensions");
         }
     }
     
@@ -400,7 +404,7 @@ class View_CompareAction_DimensionOverview extends CubeViz_View_Abstract
      */
     public onReceived_dimensions1AndDimensions2(event) 
     {
-        this.findEqualDimensions();        
+        this.findEqualAndUnequalDimensions();        
         
         // at this point, we know which dimension of dataset1 is equal or has
         // a sameAs-relation to which other dimension of dataset2
