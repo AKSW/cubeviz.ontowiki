@@ -388,9 +388,25 @@ class DataCube_DataCubeMerger
                 observation.__cv_sourceDataset = dataset2;
             }
             
-            // remember old uri using a sameAs and dct:source relation
-            observation ["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
-            observation ["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            // remember old uri using a sameAs and dct:source relation, but if 
+            // these relations are already have values, keep them
+            if (false === _.str.isBlank(observation ["http://www.w3.org/2002/07/owl#sameAs"])) {
+                observation ["http://www.w3.org/2002/07/owl#sameAs"] = [
+                    observation ["http://www.w3.org/2002/07/owl#sameAs"],
+                    observation.__cv_uri
+                ];
+            } else {
+                observation ["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
+            }
+            
+            if (false === _.str.isBlank(observation["http://purl.org/dc/terms/source"])) {
+                observation["http://purl.org/dc/terms/source"] = [
+                    observation["http://purl.org/dc/terms/source"],
+                    observation.__cv_uri
+                ];
+            } else {
+                observation ["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            }
             
             // update uri
             observation.__cv_uri = mergedDataCubeUri + "observation" + observationCounter;

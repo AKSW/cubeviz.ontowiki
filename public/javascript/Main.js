@@ -1715,8 +1715,22 @@ var DataCube_DataCubeMerger = (function () {
             } else {
                 observation.__cv_sourceDataset = dataset2;
             }
-            observation["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
-            observation["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            if(false === _.str.isBlank(observation["http://www.w3.org/2002/07/owl#sameAs"])) {
+                observation["http://www.w3.org/2002/07/owl#sameAs"] = [
+                    observation["http://www.w3.org/2002/07/owl#sameAs"], 
+                    observation.__cv_uri
+                ];
+            } else {
+                observation["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
+            }
+            if(false === _.str.isBlank(observation["http://purl.org/dc/terms/source"])) {
+                observation["http://purl.org/dc/terms/source"] = [
+                    observation["http://purl.org/dc/terms/source"], 
+                    observation.__cv_uri
+                ];
+            } else {
+                observation["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            }
             observation.__cv_uri = mergedDataCubeUri + "observation" + observationCounter;
             observation.__cv_hashedUri = CryptoJS.MD5(observation.__cv_uri) + "";
             observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
