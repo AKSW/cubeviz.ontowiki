@@ -2736,7 +2736,7 @@ var View_CompareAction_DimensionOverview = (function (_super) {
             $("#cubeviz-compare-unequalDimensionsTableContainer2").append($container);
         });
     };
-    View_CompareAction_DimensionOverview.prototype.findEqualDimensions = function () {
+    View_CompareAction_DimensionOverview.prototype.findEqualAndUnequalDimensions = function () {
         var equalDimensionElements = null;
         var dimension1 = null;
         var self = this;
@@ -2781,6 +2781,8 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         });
         if(0 < _.size(this.app._.compareAction.equalDimensions)) {
             this.triggerGlobalEvent("onFound_equalDimensions");
+        } else {
+            this.triggerGlobalEvent("onFound_onlyUnequalDimensions");
         }
     };
     View_CompareAction_DimensionOverview.prototype.findEqualDimensionElements = function (dimension1, dimension2) {
@@ -2813,7 +2815,7 @@ var View_CompareAction_DimensionOverview = (function (_super) {
         return result;
     };
     View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event) {
-        this.findEqualDimensions();
+        this.findEqualAndUnequalDimensions();
         this.displayUnequalDimensions();
         this.displayEqualDimensions();
     };
@@ -2916,6 +2918,10 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             {
                 name: "onFound_equalDimensions",
                 handler: this.onFound_equalDimensions
+            }, 
+            {
+                name: "onFound_onlyUnequalDimensions",
+                handler: this.onFound_onlyUnequalDimensions
             }, 
             {
                 name: "onReceived_measures1AndMeasures2",
@@ -3036,10 +3042,14 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
         this.displayAvailableVisualizations(this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts, data.mergedDataCube);
     };
     View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").hide();
         this._equalDimensionsFound = true;
         $("#cubeviz-compare-confViz-datasetLabel1").html(_.str.prune(this.app._.compareAction.datasets[1].__cv_niceLabel, 55));
         $("#cubeviz-compare-confViz-datasetLabel2").html(_.str.prune(this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
         this.checkAndShowVisualizationSetup();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onFound_onlyUnequalDimensions = function () {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").fadeIn();
     };
     View_CompareAction_VisualizationSetup.prototype.onReceived_measures1AndMeasures2 = function () {
         this._measuresReceived = true;

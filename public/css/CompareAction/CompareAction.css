@@ -310,6 +310,15 @@
 }
 
 
+#cubeviz-compare-noEqualDimensionsFoundNotification
+{
+    display: none;
+    
+    padding: 20px;
+    background-color: #FFEAEA;
+}
+
+
 #cubeviz-compare-prepareAndGoToVisualizations
 {
     display: none;
