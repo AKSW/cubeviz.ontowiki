@@ -686,7 +686,7 @@ class DataCube_Query
             
             $queryObject->setWherePart($where);
             
-            $queryObject->setLimit(250);
+            $queryObject->setLimit(500);
             
             $result = $this->_model->sparqlQuery((string) $queryObject);
             
