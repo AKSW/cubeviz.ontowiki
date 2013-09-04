@@ -21,12 +21,12 @@ class CubeViz_ConfigurationLink
     /**
      * filePrefix for cv_dataHash
      */
-    public static $filePrefForDataHash = 'cv_dataHash__';
+    public static $filePrefForDataHash = 'cubevizDataHash';
     
     /**
      * filePrefix for cv_uiHash
      */
-    public static $filePrefForUiHash = 'cv_uiHash__';
+    public static $filePrefForUiHash = 'cubevizUIHash';
     
     /**
      * Constructor
