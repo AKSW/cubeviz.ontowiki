@@ -15,6 +15,10 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
         // be executed to handle it
         this.bindGlobalEvents([
             {
+                name:    "onChange_selectedDS",
+                handler: this.onChange_selectedDS
+            },
+            {
                 name:    "onStart_application",
                 handler: this.onStart_application
             }
@@ -42,6 +46,25 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
     public initialize() 
     {
         this.render();
+    }
+
+    /**
+     *
+     */
+    public onChange_selectedDS() 
+    {
+        // update data set title
+        if (false === this.app._.backend.uiSettings.useDataSetInsteadOfModel) {            
+            $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-headerSubheadline").html(),
+                { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
+            ));
+        } else {
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-headerSubheadline").html(),
+                { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
+            ));
+        }
     }
 
     /**
@@ -133,7 +156,7 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
      */
     public renderHeader() 
     {
-        var modelLabel
+        var modelLabel;
         
         // if model label is set and not blank, use it!
         if(false === _.isUndefined(this.app._.backend.modelInformation ["http://www.w3.org/2000/01/rdf-schema#label"])
@@ -145,9 +168,34 @@ class View_IndexAction_Header extends CubeViz_View_Abstract
             modelLabel = this.app._.backend.modelUrl;
         }
         
-        $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
-            $("#cubeviz-index-tpl-header").html(),
-            { modelLabel: modelLabel }
-        ));
+        // decide if model or data set label is visualization headline
+        // model is headline, data set is subheadline
+        if (false === this.app._.backend.uiSettings.useDataSetInsteadOfModel) {
+            // set headline
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-header").html(),
+                { modelLabel: modelLabel }
+            ));
+            
+            // set sub headline
+            $("#cubeviz-index-headerSubheadline").html(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-headerSubheadline").html(),
+                { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
+            ) + $("#cubeviz-index-tpl-headerSubheadlineButtons").html());
+        
+        // dataset is headline
+        } else {
+            
+            // set headline
+            $("#cubeviz-index-header").html(CubeViz_View_Helper.tplReplace(
+                $("#cubeviz-index-tpl-headerSubheadline").html(),
+                { selectedDataSet: this.app._.data.selectedDS.__cv_niceLabel }
+            ));
+            
+            // set sub headline
+            $("#cubeviz-index-headerSubheadline").html(
+                $("#cubeviz-index-tpl-headerSubheadlineButtons").html()
+            );
+        }
     }
 }

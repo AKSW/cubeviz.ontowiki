@@ -21,11 +21,14 @@
 #
 ex:dsd a qb:DataStructureDefinition ;
     rdfs:label "A Data Structure Definition"@en ;
-    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." ;
+    rdfs:comment "Lorem ipsum dolor sit amet." ;
     qb:component    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/geo>, 
                     <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/time>,
                     <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/unit>, 
-                    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/value> .
+                    <http://example.cubeviz.org/cubeWithMaterializedSlices/cs/value> ;
+    
+    # data structure definition - slice - connection
+    qb:sliceKey ex:sliceKey .
 
 
 #
@@ -53,63 +56,34 @@ ex:dsd a qb:DataStructureDefinition ;
 #
 ex:dataset a qb:DataSet ;
     rdfs:label "A DataSet"^^<http://www.w3.org/2001/XMLSchema#string> ;
-    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." ;
-    qb:structure ex:dsd .
+    rdfs:comment "Lorem ipsum dolor sit amet." ;
+    qb:structure ex:dsd ;
+    
+    # dataset - slice - connection
+    qb:slice ex:slice .
     
 
-# 
-# Materialized Slices and their connections
-#
-
-
-# data structure definition - slice - connection
-ex:dsd qb:sliceKey ex:MatSliceKey1 ;
-       qb:sliceKey ex:MatSliceKey2 .
-
-
-# dataset - slice - connection
-ex:dataset qb:slice ex:MatSlice1 ; 
-           qb:slice ex:MatSlice2 ;
-           qb:slice ex:MatSlice3 .
-
-
 # slice keys
-ex:MatSliceKey1 a qb:SliceKey ; 
-    rdfs:label "Slice Key for materialized slices" ;
+ex:sliceKey a qb:SliceKey ; 
+    rdfs:label "slice key for dimension date" ;
     qb:componentProperty ex:date .
-
-ex:MatSliceKey2 a qb:SliceKey ; 
-    rdfs:label "Slice key 2" ;
-    qb:componentProperty ex:geo .
 
 
 # materialized slices
-ex:MatSlice1 rdfs:label "First Materialized Slice" ;
+ex:slice rdfs:label "only 2001 (Slice)" ;
              
-             qb:sliceStructure ex:MatSliceKey1 ;    # associated slice key
+         qb:sliceStructure ex:sliceKey ; # associated slice key
              
-             exProp:date ex:Y2001 ;                 # the fixed dimension element
-             
-             qb:observation ex:obs1 ;
-             qb:observation ex:obs2 ;
-             qb:observation ex:obs3 .
-
-ex:MatSlice2 rdfs:label "Another materialized Slice" ;
-             qb:sliceStructure ex:MatSliceKey1;
-             exProp:date ex:Y2001 ;                 # the fixed dimension element
-             qb:observation ex:obs4 ;
-             qb:observation ex:obs5 .
-
-
-ex:MatSlice3 rdfs:label "Materialized with fixed country and variable date" ;
-             qb:sliceStructure ex:MatSliceKey2;
-             exProp:geo ex:Helgoland ;              # the fixed dimension element
-             qb:observation ex:obs6 ;
-             qb:observation ex:obs7 .
+         exProp:date ex:Y2001 ;          # the fixed dimension element
+            
+         qb:observation ex:obs1 ;
+         qb:observation ex:obs2 ;
+         qb:observation ex:obs3 ;
+         qb:observation ex:obs4 .
 
 
 #
-# Attributes, Dimensions and Measure
+# Attribute, Dimensions and Measure
 #
 exProp:geo a qb:DimensionProperty ;
     rdfs:label "Region"@en .
@@ -119,18 +93,12 @@ exProp:date a qb:DimensionProperty ;
 
 exProp:unit a qb:AttributeProperty ;
     rdfs:label "Unit" ;
-    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." .
-
-exProp:anotherUnit a qb:AttributeProperty ;
-    rdfs:label "Another Unit" .
+    rdfs:comment "Lorem ipsum dolor sit amet, consetetur." .
 
 exProp:value a qb:MeasureProperty ;
     rdfs:label "Value"@en ;
     rdfs:label "Wert"@de ;
-    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." .
-
-exProp:anotherValue a qb:MeasureProperty ;
-    rdfs:label "Value"@en .
+    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr." .
 
 
 #
@@ -164,54 +132,17 @@ ex:obs3 a qb:Observation ;
 ex:obs4 a qb:Observation ;
     qb:dataSet ex:dataset ;
     exProp:date ex:Y2001 ;
-    exProp:anotherUnit "plain number" ;
-    exProp:geo ex:Germany ;
-    exProp:anotherValue "0.3"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Germany in 2001" .
+    exProp:unit "plain number" ;
+    exProp:geo ex:Helgoland ;
+    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    rdfs:label "Helgoland in 2001" .
 
 ex:obs5 a qb:Observation ;
     qb:dataSet ex:dataset ;
-    exProp:date ex:Y2001 ;
-    exProp:anotherUnit "plain number" ;
-    exProp:geo ex:England ;
-    exProp:anotherValue "0.3"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "England in 2001" .
-
-ex:obs6 a qb:Observation ;
-    qb:dataSet ex:dataset ;
-    exProp:date ex:Y2001 ;
-    exProp:unit "plain number" ;
-    exProp:geo ex:Helgoland ;
-    exProp:value "0.3"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Helgoland in 2001" .
-
-ex:obs7 a qb:Observation ;
-    qb:dataSet ex:dataset ;
     exProp:date ex:Y2002 ;
     exProp:unit "plain number" ;
     exProp:geo ex:Helgoland ;
-    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Helgoland in 2002" .
-
-ex:obs8 a qb:Observation ;
-    exProp:date ex:Y2002 ;
-    exProp:unit "plain number" ;
-    exProp:geo ex:Helgoland ;
-    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Helgoland in 2002" .
-
-ex:obs9 a qb:Observation ;
-    exProp:date ex:Y2002 ;
-    exProp:unit "plain number" ;
-    exProp:geo ex:Helgoland ;
-    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
-    rdfs:label "Helgoland in 2002" .
-
-ex:obs10 a qb:Observation ;
-    exProp:date ex:Y2002 ;
-    exProp:unit "plain number" ;
-    exProp:geo ex:Helgoland ;
-    exProp:value "0.99"^^<http://www.w3.org/2001/XMLSchema#float> ;
+    exProp:value "0.91"^^<http://www.w3.org/2001/XMLSchema#float> ;
     rdfs:label "Helgoland in 2002" .
 
 
@@ -232,8 +163,10 @@ ex:Helgoland a exProp:geo ;
        
 ex:Y2001 a ex:date ;
     rdfs:label "Year 2001"@en ;
-    rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet." .
+    rdfs:label "Jahr 2001"@de ;
+    rdfs:comment "Lorem ipsum dolor." .
        
 ex:Y2002 a ex:date ;
     rdfs:label "Year 2002"@en ;
+    rdfs:label "Jahr 2002"@de ;
     rdfs:comment "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." .

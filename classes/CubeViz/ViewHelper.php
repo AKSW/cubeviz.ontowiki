@@ -21,8 +21,7 @@ class CubeViz_ViewHelper
      * @param $modelStore Store of selected model
      * @param $model Model itself
      * @param $modelIri Iri of the selected model
-     * @return Array Array with fields about dc:creator, dc:description, 
-     *               rdfs:label, doap:license, doap:revision, doap:shortdesc
+     * @return Array Array with fields containing information about the model
      */
     public static function getModelInformation ($modelStore, $model, $modelIri) 
     {
@@ -64,9 +63,10 @@ class CubeViz_ViewHelper
     /**
      * 
      */
-    public static function initApp(&$view, &$model, $backend, $cacheDir, 
-        $context, $modelIri, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash) 
-    {
+    public static function initApp(&$view, &$model, $backend, $context, $modelIri,
+        $serviceUrl, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash, 
+        $titleHelperLimit) 
+    {        
         // if cubeVizApp was not loaded yet
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
             
@@ -98,14 +98,14 @@ class CubeViz_ViewHelper
             /**
              * Read information from files according to given hashes
              */
-            $c = new CubeViz_ConfigurationLink($cacheDir);
+            $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
             $config = array();
             $generatedDataHash = '';
             $generatedUiHash = '';
             
-            list($config['data'], $generatedDataHash) = $c->read ($dataHash, $model);
+            list($config['data'], $generatedDataHash) = $c->read ($dataHash);
             
-            list($config['ui'], $generatedUiHash) = $c->read ($uiHash, $model);
+            list($config['ui'], $generatedUiHash) = $c->read ($uiHash);
 
             $config['backend'] = array(
                 'context'               => $context, 
@@ -114,22 +114,15 @@ class CubeViz_ViewHelper
                 'imagesPath'            => $baseImagesPath,
                 'modelInformation'      => $modelInformation,
                 'modelUrl'              => $modelIri,
+                'serviceUrl'              => $serviceUrl,
                 'uiHash'                => $generatedUiHash,
                 'uiParts'               => array(
                     'dataselectionModule' => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizDataselectionModuleLoaded),
                     'index'             => array('isLoaded'=> CubeViz_ViewHelper::$isCubeVizIndexLoaded)
                 ),
-                'retrievedObservations' => array(),
+                'uiSettings'            => array (),
                 'sparqlEndpoint'        => 'local',
                 'url'                   => $staticUrlBase . 'cubeviz/'
-            );
-            
-            // load observations related to given data
-            $query = new DataCube_Query($model);
-            
-            $config['backend']['retrievedObservations'] = $query->getObservations(
-                $config['data']['selectedDS']['__cv_uri'],
-                $config['data']['selectedComponents']['dimensions']
             );
                 
             CubeViz_ViewHelper::$isCubeVizAppLoaded = true;

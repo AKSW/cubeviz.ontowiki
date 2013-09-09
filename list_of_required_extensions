@@ -1,0 +1,11 @@
+The following extensions are have to be installed in the OntoWiki instance:
+cubeviz (this extension)
+defaultmodel (default)
+jsonrpc (default)
+modellist (default)
+page (https://github.com/AKSW/page.ontowiki)
+sparqlservices (https://github.com/AKSW/sparqlservices.ontowiki)
+staticlinks (https://github.com/AKSW/staticlinks.ontowiki)
+themes (default)
+translations (default)
+

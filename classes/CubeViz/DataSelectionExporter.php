@@ -16,27 +16,27 @@ class CubeViz_DataSelectionExporter
     /**
      * 
      */
-    public static function _($type, $dataHash, &$model, $cacheDir) 
+    public static function _($type, $dataHash, $model, $titleHelperLimit) 
     {
         if ('csv' == $type) {
-            return CubeViz_DataSelectionExporter::exportAsCSV($dataHash, $model, $cacheDir);
+            return CubeViz_DataSelectionExporter::exportAsCSV($dataHash, $model, $titleHelperLimit);
         
         // 'turtle' == $type
         } else { 
-            return CubeViz_DataSelectionExporter::exportAsRdfTurtle($dataHash, $model, $cacheDir);
+            return CubeViz_DataSelectionExporter::exportAsRdfTurtle($dataHash, $model, $titleHelperLimit);
         }
     }    
     
     /**
      *
      */
-    public static function exportAsRdfTurtle($dataHash, &$model, $cacheDir)
+    public static function exportAsRdfTurtle($dataHash, $model, $titleHelperLimit)
     {
-        $c = new CubeViz_ConfigurationLink($cacheDir);
+        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
         $data = array ();
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash, $model);
+        list($data, $dh) = $c->read ($dataHash);
         
         $graph = new EasyRdf_Graph();
         
@@ -227,7 +227,7 @@ class CubeViz_DataSelectionExporter
         /**
          * Observations
          */
-        $query = new DataCube_Query($model);
+        $query = new DataCube_Query($model, $titleHelperLimit);
             
         $retrievedObservations = $query->getObservations(
             $data['selectedDS']['__cv_uri'],
@@ -256,14 +256,14 @@ class CubeViz_DataSelectionExporter
     /**
      * 
      */
-    public static function exportAsCSV($dataHash, &$model, $cacheDir)
+    public static function exportAsCSV($dataHash, $model, $titleHelperLimit)
     {
         $attributeSet = false;
-        $c = new CubeViz_ConfigurationLink($cacheDir);
+        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
         $data = $result = array (array());
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash, $model);
+        list($data, $dh) = $c->read ($dataHash);
         
         /**
          * set the header of the CSV file
@@ -284,7 +284,7 @@ class CubeViz_DataSelectionExporter
         /**
          * set the content of the CSV file
          */
-        $query = new DataCube_Query($model);
+        $query = new DataCube_Query($model, $titleHelperLimit);
         $selectedDimensions = $data ['selectedComponents']['dimensions'];
         $i = 1;
             

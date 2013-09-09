@@ -2,6 +2,9 @@
     
     cubeVizApp._.backend.uiParts.index.isLoaded = true;
     
+    // ui settings to adapt user interface
+    cubeVizApp._.backend.uiSettings.useDataSetInsteadOfModel = <?php echo $this->uiUseDataSetInsteadOfModel; ?>;
+    
     cubeVizApp
         .add("View_IndexAction_Header", "#cubeviz-index-headerDialogBox")
         .add("View_IndexAction_Visualization", "#cubeviz-index-visualization")
@@ -18,9 +21,12 @@
     </div>
     
     <!-- Header -->
-    <div style="float: left;">
+    <div id="cubeviz-index-headerContainer" style="float: left;">
         <h2 id="cubeviz-index-header"></h2>
+        <div id="cubeviz-index-headerSubheadline"></div>
     </div>
+    
+    <div style="clear: both;"></div>
 
     <!-- Visualization -->
     <div id="cubeviz-index-visualization"></div>
@@ -90,6 +96,8 @@
                  style="width: 17px;"/></a>
     </div>
     <?php } ?>
+    
+    <div style="clear: both;"></div>
 
     <!-- Visualization selector > menu + dongle -->    
     <div id="cubeviz-visualizationselector-menu">
@@ -131,11 +139,23 @@
     Header
 -->
 <div id="cubeviz-index-tpl-header" style="display: none;">
-    <?php echo $this->translate->_('IndexAction_VisualizationOf'); ?> [[modelLabel]]
+    [[modelLabel]]
+</div>
+<div id="cubeviz-index-tpl-headerSubheadline" style="display: none;">
+    [[selectedDataSet]]
+</div>
+<div id="cubeviz-index-tpl-headerSubheadlineButtons" style="display: none;">
     &nbsp;
-    <i class="icon-lightbulb cubeviz-clickable"
-       id="cubeviz-index-headerQuestionMarkHeadline" 
-       title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"></i>
+    &nbsp;
+    <i class="icon-table"></i>
+    <a href="#cubeviz-index-legend">
+        <?php echo $this->translate->_('IndexAction_JumpToLegend'); ?></a>
+    &nbsp;
+    &nbsp;
+    <i class="icon-lightbulb"></i>
+    <a class="cubeviz-clickable"
+       id="cubeviz-index-headerQuestionMarkHeadline"
+       title="<?php echo $this->translate->_('IndexAction_ClickMoreInformation'); ?>"><?php echo $this->translate->_('IndexAction_ShowMetaData'); ?></a>
 </div>
 
 <!-- 

@@ -325,6 +325,8 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).hide();
     }
     CubeViz_View_Helper.hideLeftSidebarSpinner = function hideLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinnerIcon").hide();
+        $("#cubeviz-dataSelectionModule-spinnerText").hide();
         $("#cubeviz-dataSelectionModule-spinner").fadeOut("slow", function () {
             $("#cubeviz-dataSelectionModule-dataSelection").fadeIn("slow");
         });
@@ -338,8 +340,10 @@ var CubeViz_View_Helper = (function () {
         $(dialogDiv.find(".cubeviz-dataSelectionModule-closeUpdateSpinner").first()).show();
     }
     CubeViz_View_Helper.showLeftSidebarSpinner = function showLeftSidebarSpinner() {
+        $("#cubeviz-dataSelectionModule-spinnerIcon").show();
+        $("#cubeviz-dataSelectionModule-spinnerText").show();
         $("#cubeviz-dataSelectionModule-dataSelection").fadeOut("slow", function () {
-            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow");
+            $("#cubeviz-dataSelectionModule-spinner").fadeIn("slow").show();
         });
     }
     CubeViz_View_Helper.sortLiItemsByAlphabet = function sortLiItemsByAlphabet(listItems) {

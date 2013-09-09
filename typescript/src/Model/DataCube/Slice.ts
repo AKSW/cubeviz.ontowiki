@@ -8,11 +8,12 @@ class DataCube_Slice
     /**
      * Loads all slices.
      */
-    static loadAll (url:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    static loadAll (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
     {
         $.ajax({
             url: url + "getslices",
             data: {
+                serviceUrl: serviceUrl, 
                 modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl

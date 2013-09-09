@@ -16,8 +16,11 @@
 -->
 
 <div id="cubeviz-dataSelectionModule-spinner" style="display: none;">
-    <i class="icon-spinner icon-spin" style="vertical-align: middle;"></i>
-    <?php echo $this->translate->_('DataSelectionModule_LoadingMessage'); ?>
+    <i class="icon-spinner icon-spin" 
+       id="cubeviz-dataSelectionModule-spinnerIcon"
+       style="vertical-align: middle;"></i>
+    <span id="cubeviz-dataSelectionModule-spinnerText">
+        <?php echo $this->translate->_('DataSelectionModule_LoadingMessage'); ?></span>
 </div>
 
 <div id="cubeviz-dataSelectionModule-dataSelection">
@@ -45,9 +48,9 @@
              id="cubeviz-dataSet-description"></div>
     </div>
     <div class="cubeviz-dataSelectionModule-rightBlock">
-        <i class="icon-cogs cubeviz-clickable"
-           id="cubeviz-dataSet-dialogOpener"
-           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+        <a id="cubeviz-dataSet-dialogOpener"
+           title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>">
+           <?php echo $this->translate->_('DataSelectionModule_ChangeSelection'); ?></a>
     </div>
     
     <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
@@ -79,9 +82,9 @@
                   id="cubeviz-slice-description"></span>
         </div>
         <div class="cubeviz-dataSelectionModule-rightBlock">
-            <i class="icon-cogs cubeviz-clickable"
-               id="cubeviz-slice-dialogOpener"
-               title="<?php echo $this->translate->_('DataSelectionModule_SelectSlice'); ?>"></i>
+            <a id="cubeviz-slice-dialogOpener"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectSlice'); ?>">
+               <?php echo $this->translate->_('DataSelectionModule_ChangeSelection'); ?></a>
         </div>
     </div>
     
@@ -119,9 +122,9 @@
                      id="cubeviz-attribute-description"></div>        
             </div>
             <div class="cubeviz-dataSelectionModule-rightBlock">
-                <i class="icon-cogs cubeviz-clickable"
-                   id="cubeviz-attribute-dialogOpener"
-                   title="<?php echo $this->translate->_('DataSelectionModule_AttributeDialogTitle'); ?>"></i>
+                <a id="cubeviz-attribute-dialogOpener"
+                   title="<?php echo $this->translate->_('DataSelectionModule_AttributeDialogTitle'); ?>">
+                   <?php echo $this->translate->_('DataSelectionModule_ChangeSelection'); ?></a>
             </div>
             
             <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
@@ -143,9 +146,9 @@
             </div>
             
             <div class="cubeviz-dataSelectionModule-rightBlock">
-                <i class="icon-cogs cubeviz-clickable"
-                   id="cubeviz-measure-dialogOpener"
-                   title="<?php echo $this->translate->_('DataSelectionModule_MeasureDialogTitle'); ?>"></i>
+                <a id="cubeviz-measure-dialogOpener"
+                   title="<?php echo $this->translate->_('DataSelectionModule_MeasureDialogTitle'); ?>">
+                   <?php echo $this->translate->_('DataSelectionModule_ChangeSelection'); ?></a>
             </div>
         </div>
     </div>
@@ -184,7 +187,8 @@
                 <i class="icon-pushpin" style="font-size: 11px;"></i>
                 <?php echo $this->translate->_('DataSelectionModule_Permalink'); ?></a>
             <span id="cubeviz-footer-permaLinkMenu">
-                <span id="cubeviz-footer-permaLink" style="display: none;">
+                <strong><?php echo $this->translate->_('DataSelectionModule_PermaLinkLabel'); ?></strong>:
+                <span id="cubeviz-footer-permaLink">
                     <?php echo $this->translate->_('DataSelectionModule_Link'); ?></span>
             </span>
         </div>
@@ -235,8 +239,9 @@
         </div>
         
         <div class="cubeviz-dataSelectionModule-rightBlock">
-            <i class="icon-cogs cubeviz-clickable cubeviz-component-setupComponentOpener"
-               title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>"></i>
+            <a class="cubeviz-component-setupComponentOpener"
+               title="<?php echo $this->translate->_('DataSelectionModule_SelectComponentElements'); ?>">
+               <?php echo $this->translate->_('DataSelectionModule_ChangeSelection'); ?></a>
         </div>
     </div>
     <div class="cubeviz-dataSelectionModule-blockSeparator"></div>
@@ -402,6 +407,17 @@
 </div>
 <div id="cubeviz-dataSelectionModule-tra-dataSetHelpDialogDescription" style="display: none;">
     <?php echo $this->translate->_('DataSelectionModule_DataSetHelpDialogDescription'); ?>
+</div>
+
+<!-- attribute dialog -->
+<div id="cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectionElement" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogNoAttributeSelectionElement'); ?>
+</div>
+<div id="cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedLabel" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogNoAttributeSelectedLabel'); ?>
+</div>
+<div id="cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectedDescription" style="display: none;">
+    <?php echo $this->translate->_('DataSelectionModule_AttributeDialogNoAttributeSelectedDescription'); ?>
 </div>
 
 <!-- measure dialog -->

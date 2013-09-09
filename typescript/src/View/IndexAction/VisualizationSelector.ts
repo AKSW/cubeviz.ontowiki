@@ -162,6 +162,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
             // update link code
             CubeViz_ConfigurationLink.save(
                 this.app._.backend.url,
+                this.app._.backend.modelUrl, 
                 this.app._.ui,
                 "ui",
                 function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
@@ -198,6 +199,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         // update link code
         CubeViz_ConfigurationLink.save(
             this.app._.backend.url,
+            this.app._.backend.modelUrl, 
             this.app._.ui,
             "ui",
             function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
@@ -221,7 +223,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
     {
         this.destroy();
         
-        if(0 < _.size(this.app._.backend.retrievedObservations)){
+        if(0 < _.size(this.app._.data.retrievedObservations)){
             this.initialize();
         }
     }
@@ -231,7 +233,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
      */
     public onStart_application() : void
     {
-        if(0 < _.size(this.app._.backend.retrievedObservations)){
+        if(0 < _.size(this.app._.data.retrievedObservations)){
             this.initialize();
         }
     }

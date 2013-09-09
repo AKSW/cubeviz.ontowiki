@@ -139,7 +139,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public render() : CubeViz_View_Abstract
     {
         // handle exception if no observation were retrieved
-        if ( 0 == _.size(this.app._.backend.retrievedObservations) ) {
+        if ( 0 == _.size(this.app._.data.retrievedObservations) ) {
             this.handleException("CubeViz error no observations retrieved");
             return this;
         }        
@@ -216,7 +216,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         // init chart instance
         chart.init(
             visualizationSetting,
-            this.app._.backend.retrievedObservations,
+            this.app._.data.retrievedObservations,
             this.app._.data.selectedComponents.dimensions,
             CubeViz_Visualization_Controller.getMultipleDimensions (
                 this.app._.data.selectedComponents.dimensions
@@ -261,7 +261,7 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
     public setVisualizationHeight (numberOfYAxisElements:number = 0) 
     {
         var offset:any = $(this.attachedTo).offset(),
-            minHeight:number = $(window).height() - offset.top - 95,
+            minHeight:number = $(window).height() - offset.top - 105,
             tmp:number = 0;
             
         if(0 < numberOfYAxisElements) {

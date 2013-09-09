@@ -5,13 +5,14 @@ class DataCube_DataSet
     /**
      * 
      */
-    static loadAll (url:string, modelIri:string, dsdUrl:string, callback) : void
+    static loadAll (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, callback) : void
     {
         $.ajax({
             url: url + "getdatasets/",
             data: { 
-                dsdUrl: dsdUrl,
-                modelIri: modelIri
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsdUrl: dsdUrl
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {

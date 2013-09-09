@@ -56,6 +56,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         
         DataCube_Slice.loadAll (
             this.app._.backend.url,
+            this.app._.backend.serviceUrl,
             this.app._.backend.modelUrl,
             this.app._.data.selectedDSD.__cv_uri,
             this.app._.data.selectedDS.__cv_uri,
@@ -98,6 +99,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                 24, ".."
             ));
             
+        // slice was selected
         } else {
                 
             // update selected slice
@@ -117,8 +119,14 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
         // if only module was loaded, move reloading stuff to footer.ts
         CubeViz_View_Helper.closeDialog(dialogDiv);
 
+        // prepare data element to attach on global event
+        // callback function will be called after the event was fully handled
+        var data:any = {callback: function(){
+            self.triggerGlobalEvent("onReRender_visualization");
+        }};
+
         // trigger event
-        this.triggerGlobalEvent("onChange_selectedSlice");
+        this.triggerGlobalEvent("onChange_selectedSlice", data);
     }
     
     /**
@@ -195,8 +203,8 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                 
             // slices are available and there is one selected
             } else {
-                label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
-                description = this.app._.data.selectedComponents.attribute.__cv_description; 
+                label = this.app._.data.selectedSlice.__cv_niceLabel;
+                description = this.app._.data.selectedSlice.__cv_description; 
             }
             
             // set dialog reference and template

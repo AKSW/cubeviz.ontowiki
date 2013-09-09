@@ -9,11 +9,12 @@ class DataCube_Component {
      * Loads all component dimensions, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllDimensions (url:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    static loadAllDimensions (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
     {
         $.ajax({
             url: url + "getcomponents",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,
@@ -36,11 +37,12 @@ class DataCube_Component {
      * Loads all component measures, specified by model uri, data structure definition, dataset
      * and component type.
      */
-    static loadAllMeasures (url, modelIri, dsdUrl:string, dsUrl:string, callback) {
+    static loadAllMeasures (url:string, serviceUrl: string, modelIri:string, dsdUrl:string, dsUrl:string, callback) {
         
         $.ajax({
             url: url + "getcomponents",
             data: {
+                serviceUrl: serviceUrl,
                 modelIri: modelIri, 
                 dsdUrl: dsdUrl,
                 dsUrl: dsUrl,

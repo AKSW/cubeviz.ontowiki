@@ -83,7 +83,7 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
         ));
         
         // nulling retrievedObservations
-        this.app._.backend.retrievedObservations = {};
+        this.app._.data.retrievedObservations = {};
         
         // update selectedDSD
         _.each(this.app._.data.dataStructureDefinitions, function(dsd){
@@ -91,9 +91,15 @@ class View_DataselectionModule_DataSet extends CubeViz_View_Abstract
                 self.app._.data.selectedDSD = dsd;
             }
         });
+        
+        // prepare data element to attach on global event
+        // callback function will be called after the event was fully handled
+        var data:any = {callback: function(){
+            self.triggerGlobalEvent("onReRender_visualization");
+        }};
 
         // trigger event
-        this.triggerGlobalEvent("onChange_selectedDS");
+        this.triggerGlobalEvent("onChange_selectedDS", data);
     }
     
     /**
