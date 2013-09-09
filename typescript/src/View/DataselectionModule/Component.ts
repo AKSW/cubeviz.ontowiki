@@ -189,10 +189,12 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .remove();
         });
         
-        super.destroy();
-        
         // Question mark dialog
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
+        
+        $("#cubviz-component-listBox").html("");
+
+        super.destroy();
         
         return this;
     }
@@ -306,56 +308,14 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onChange_selectedSlice(event, data) : void 
     {
+        var self = this;
+        
         // no slice was selected
         if (0 === _.size(this.app._.data.selectedSlice)) {
             
-        // slice selected
-        } else {
-            var componentBox = null,
-                dialogDiv = null,
-                dimensionRelation = "",
-                fixedDimensionElement = "",
-                self = this;
-            
-            // go through all component dimensions
-            _.each(this.app._.data.components.dimensions, function(dimension){
-                
-                /**
-                 * Check if current dimension has a relation to a dimension
-                 * which is part of the selected slice
-                 */
-                // e.g.: http://example.cubeviz.org/cubeWithMaterializedSlices/properties/geo
-                dimensionRelation = dimension ["http://purl.org/linked-data/cube#dimension"];
-                
-                fixedDimensionElement = self.app._.data.selectedSlice [dimensionRelation];
-                 
-                // if slice has that relation
-                if (false === _.str.isBlank(fixedDimensionElement)) {
-                    
-                    _.each(dimension.__cv_elements, function(element){
-                        
-                        if (element.__cv_uri == fixedDimensionElement) {
-                            // set fixed element as the only element of the selected dimension
-                            self.app._.data.selectedComponents.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
-                        }
-                    });
-                }
-            });
-                
-            // update number of X dimensions
-            this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
-                getMultipleDimensions (this.app._.data.selectedComponents.dimensions));
-            this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
-                getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
-            
-            // rebuild all dialogs based on the fixed set of dimension elements
-            this
-                .destroy()
-                .initialize();
-                
-            // load dimensional data
             this.loadComponentDimensions(function(){
-                
+                    
+                // TODO replace this in version 1.0!
                 // update link code        
                 CubeViz_ConfigurationLink.save(
                     self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
@@ -364,8 +324,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     function(updatedDataHash){
                         
                         self.app._.backend.dataHash = updatedDataHash;
-                        
-                        self.render();
                         
                         // update link code        
                         CubeViz_ConfigurationLink.save(
@@ -381,11 +339,15 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                                         
                                         // save new observations
                                         self.app._.data.retrievedObservations = newEntities;
+                                                                                
+                                        // reset left sidebar
+                                        self.destroy()
+                                            .initialize();
+                                        
+                                        // update visualization
+                                        self.triggerGlobalEvent("onReRender_visualization");
                                         
                                         CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                        
-                                        // call given callback function
-                                        data.callback();
                                     }
                                 );
                                 
@@ -395,6 +357,92 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                     }
                 );
             });
+            
+        // slice selected
+        } else {
+            
+            CubeViz_View_Helper.showLeftSidebarSpinner();
+            
+            var componentBox = null,
+                dialogDiv = null,
+                dimensionRelation = "",
+                fixedDimensionElement = "";
+            
+            // go through all component dimensions
+            _.each(this.app._.data.components.dimensions, function(dimension){
+                
+                /**
+                 * Check if current dimension has a relation to a dimension
+                 * which is part of the selected slice
+                 */
+                // e.g.: http://example.cubeviz.org/cubeWithMaterializedSlices/properties/geo
+                dimensionRelation = dimension ["http://purl.org/linked-data/cube#dimension"];
+                
+                fixedDimensionElement = self.app._.data.selectedSlice[dimensionRelation];
+                 
+                // if slice has that relation
+                if (false === _.str.isBlank(fixedDimensionElement)) {
+                        
+                    _.each(dimension.__cv_elements, function(element){
+                        
+                        if (element.__cv_uri == fixedDimensionElement) {
+                            
+                            // set fixed element as the only element of the selected dimension
+                            self.app._.data.components.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
+                            self.app._.data.selectedComponents.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
+                        }
+                    });
+                }
+            });
+     
+                
+            // update number of X dimensions
+            this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
+                getMultipleDimensions (this.app._.data.selectedComponents.dimensions));
+            this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
+                getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
+            
+            // rebuild all dialogs based on the fixed set of dimension elements
+            this.destroy();
+                
+            // update link code        
+            CubeViz_ConfigurationLink.save(
+                self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
+            
+                // based on updatedLinkCode, load new observations
+                function(updatedDataHash){
+                    
+                    self.app._.backend.dataHash = updatedDataHash;
+                    
+                    self.initialize();
+                    
+                    // update link code        
+                    CubeViz_ConfigurationLink.save(
+                        self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
+                        
+                        // based on updatedLinkCode, load new observations
+                        function(updatedDataHash){
+                                    
+                            DataCube_Observation.loadAll(
+                                self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
+                                updatedDataHash, self.app._.backend.url,
+                                function(newEntities){
+                                    
+                                    // save new observations
+                                    self.app._.data.retrievedObservations = newEntities;
+                                    
+                                    CubeViz_View_Helper.hideLeftSidebarSpinner();
+                                    
+                                    // call given callback function
+                                    data.callback();
+                                }
+                            );
+                            
+                            self.app._.backend.dataHash = updatedDataHash;
+                        }
+                    );
+                }
+            );
         }
     }
     

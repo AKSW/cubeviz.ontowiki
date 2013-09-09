@@ -99,6 +99,7 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                 24, ".."
             ));
             
+        // slice was selected
         } else {
                 
             // update selected slice
