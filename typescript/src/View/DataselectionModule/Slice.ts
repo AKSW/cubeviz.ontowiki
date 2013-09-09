@@ -203,8 +203,8 @@ class View_DataselectionModule_Slice extends CubeViz_View_Abstract
                 
             // slices are available and there is one selected
             } else {
-                label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
-                description = this.app._.data.selectedComponents.attribute.__cv_description; 
+                label = this.app._.data.selectedSlice.__cv_niceLabel;
+                description = this.app._.data.selectedSlice.__cv_description; 
             }
             
             // set dialog reference and template

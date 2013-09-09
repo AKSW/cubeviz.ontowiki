@@ -1354,8 +1354,8 @@ var View_DataselectionModule_Slice = (function (_super) {
             if(0 === _.keys(this.app._.data.selectedSlice).length) {
                 label = $("#cubeviz-dataSelectionModule-tra-sliceNoSelection").html();
             } else {
-                label = this.app._.data.selectedComponents.attribute.__cv_niceLabel;
-                description = this.app._.data.selectedComponents.attribute.__cv_description;
+                label = this.app._.data.selectedSlice.__cv_niceLabel;
+                description = this.app._.data.selectedSlice.__cv_description;
             }
             $("#cubeviz-dataSelectionModule-dialogContainer").append(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialog").html(), {
                 __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogTitle").html(),
