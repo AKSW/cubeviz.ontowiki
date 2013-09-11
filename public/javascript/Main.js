@@ -1335,7 +1335,11 @@ var DataCube_ClusteringDataCube = (function () {
                 observations[i][dataCubeUri + "clusterDimension"] = dataCubeUri + "cluster" + j;
                 observations[i][dataCubeUri + "positionDimension"] = DataCube_ClusteringDataCube.getPositionDimensionElement(dataCubeUri, clusters, clusterIndex, position, number);
                 observations[i].__cv_sourceDataset = mergedDatacubeDataset;
-                observations[i].__cv_sourceObservation = DataCube_ClusteringDataCube.getObservation(mergedDatacubeObservations, number, mergedDatacubeMeasureUri);
+                observations[i].__cv_sourceObservation = {
+                    0: {
+                    }
+                };
+                observations[i].__cv_sourceObservation[0] = DataCube_ClusteringDataCube.getObservation(mergedDatacubeObservations, number, mergedDatacubeMeasureUri);
                 ++i;
             });
             ++j;

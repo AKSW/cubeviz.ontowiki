@@ -393,7 +393,8 @@ class DataCube_ClusteringDataCube
                 observations[i].__cv_sourceDataset = mergedDatacubeDataset;
                     
                 // save source observation
-                observations[i].__cv_sourceObservation = DataCube_ClusteringDataCube.getObservation(
+                observations[i].__cv_sourceObservation = {0:{}};
+                observations[i].__cv_sourceObservation[0] = DataCube_ClusteringDataCube.getObservation(
                     mergedDatacubeObservations, number, mergedDatacubeMeasureUri
                 );
                 
