@@ -169,6 +169,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 // save element instance
                 elementInstance
                     .data("data", element)
+                    .data("dimension", component)
                     .data("dialogDiv", dialogDiv);
                 
                 // ... add new item to element list
@@ -450,64 +451,78 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     public onClick_dimensionElementCheckbox(event) : void 
     {
         var clickedCheckbox = $(event.target),
-            parentContainer = $($(event.target).parent()),
-            dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]"),
-            anythingChecked = false,
-            numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
+            dialogDiv = $($(event.target).parent()).data("dialogDiv"),
+            dialogCheckboxList = dialogDiv.find("[type=\"checkbox\"]"),
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed(dialogDiv),
+            dimensionUri:string = $(clickedCheckbox.parent()).data("dimension").__cv_uri,
+            dimensionElements:any[] = this.app._.data.selectedComponents.dimensions[dimensionUri].__cv_elements,
+            numberOfDimensionElements = _.size(dimensionElements);
             
-        if (1 < numberOfSelectedElements
-            || 1 == this.app._.data.numberOfMultipleDimensions) {
-            return;
-        }
-            
-        // check if anything was checked before
-        _.each(dialogCheckboxList, function(checkbox){
-            if($(checkbox).attr("checked")) {
-                anythingChecked = true;
-            }
-        });        
+        /**
+         * Nothing selected and less then two multiple dimensions
+         */
+        if (0 == numberOfSelectedElements
+            && 2 > this.app._.data.numberOfMultipleDimensions) {
+                
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "hide");
         
-        // enable all checkboxes, if no checkbox is checked
-        if (false == anythingChecked) {
-            _.each(dialogCheckboxList, function(checkbox){
-                $(checkbox).attr("disabled", false);
-            });
+        /**
+         * At least one element selected and less then two multple dimensions
+         */
+        } else if (1 <= numberOfSelectedElements
+                   && 2 > this.app._.data.numberOfMultipleDimensions) {
             
-            // activate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
-                .show();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
-                .show();
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "show");
             
-            // cancel button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
-                .hide();
-            // close and update button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
-                .hide();
-        }
-        
-        // disable all checkboxes, if there are already two multiple dimensions
-        // and this dialog is not one of these
-        else {
+        /**
+         * Nothing selected and at least two multiple dimensions
+         */
+        } else if (0 == numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
+                       
+            // enable all checkboxes
             _.each(dialogCheckboxList, function(checkbox){
                 if(!$(checkbox).attr("checked")) {
-                    $(checkbox).attr("disabled", true);
+                    $(checkbox).attr("disabled", false);
                 }
             });
             
-            // deactivate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
-                .hide();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
-                .hide();
+            if (1 == numberOfDimensionElements) {
+                this.showHideSelectButtons(dialogDiv, "hide");
+            }
+            
+            this.showHideBottomButtons(dialogDiv, "hide");
+            
+        /**
+         * At least one element selected and at least two multiple dimensions
+         */
+        } else if (1 == numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
                 
-            // cancel button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
-                .show();
-            // close and update button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
-                .show();
+            if (1 >= _.size(dimensionElements)) {
+                // disable all checkboxes
+                _.each(dialogCheckboxList, function(checkbox){
+                    if(!$(checkbox).attr("checked")) {
+                        $(checkbox).attr("disabled", true);
+                    }
+                });                
+                this.showHideSelectButtons(dialogDiv, "hide"); 
+            } else {
+                this.showHideSelectButtons(dialogDiv, "show"); 
+            }
+                       
+            this.showHideBottomButtons(dialogDiv, "show");
+            
+        /**
+         * At least two elements selected and at least two multiple dimensions
+         */
+        } else if (1 < numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
+            
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "show");
         }
     }
     
@@ -551,6 +566,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
             .attr("checked", false);
+            
+        // cancel button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+            .hide();
+        // close and update button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+            .hide();
     }
     
     /**
@@ -561,6 +583,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
             .attr("checked", true);
+            
+        // cancel button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+            .show();
+        // close and update button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+            .show();
     }
     
     /**
@@ -925,5 +954,37 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onAfterRender_component");
         
         return this;
+    }
+    
+    /**
+     * @param dialogDiv jQuery Instance of dialog
+     * @param mode string Show or hide
+     */
+    public showHideBottomButtons($dialogDiv:any, mode:string = "show") : void
+    {
+        if ("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
+        
+        } else { // hide
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
+        }
+    }
+    
+    /**
+     * @param dialogDiv string Instance of dialog
+     * @param mode string Show or hide
+     */
+    public showHideSelectButtons($dialogDiv:any, mode:string = "show") : void
+    {
+        if ("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).show();
+        
+        } else { // hide      
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+        }
     }
 }
