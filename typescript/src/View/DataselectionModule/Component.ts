@@ -189,12 +189,32 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .remove();
         });
         
-        super.destroy();
-        
         // Question mark dialog
         CubeViz_View_Helper.destroyDialog($("#cubeviz-component-dialog"));
         
+        $("#cubviz-component-listBox").html("");
+
+        super.destroy();
+        
         return this;
+    }
+    
+    /**
+     * @return number Number of checked checkboxes
+     */
+    public getNumberOfCheckedBoxed(dialogDiv:any) : number
+    {
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children(),
+            number:number = 0;        
+        
+        // count checked checkboxes
+        _.each(elementList, function(element){
+            if("checked" === $($(element).children().get(0)).attr("checked")) {
+                ++number;
+            }
+        });
+        
+        return number;
     }
     
     /**
@@ -293,16 +313,56 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
      */
     public onChange_selectedSlice(event, data) : void 
     {
+        var self = this;
+        
         // no slice was selected
         if (0 === _.size(this.app._.data.selectedSlice)) {
             
+            this.loadComponentDimensions(function(){
+                
+                // generate datahash
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data))+"";
+                
+                // save current data-object to server
+                CubeViz_ConfigurationLink.saveData(
+                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                    self.app._.backend.modelUrl, self.app._.backend.dataHash,
+                    self.app._.data, function(){
+                   
+                    // load new observations
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl, 
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                        function(newEntities){
+                            
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            self.destroy()
+                                .render();
+                                                                
+                            // update visualization
+                            self.triggerGlobalEvent("onReRender_visualization");
+                            
+                            CubeViz_View_Helper.hideLeftSidebarSpinner();
+                            
+                            // call given callback function
+                            data.callback();
+                        }
+                    );
+                        
+                });
+            });
+            
         // slice selected
         } else {
+            
+            CubeViz_View_Helper.showLeftSidebarSpinner();
+            
             var componentBox = null,
                 dialogDiv = null,
                 dimensionRelation = "",
-                fixedDimensionElement = "",
-                self = this;
+                fixedDimensionElement = "";
             
             // go through all component dimensions
             _.each(this.app._.data.components.dimensions, function(dimension){
@@ -314,20 +374,23 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 // e.g.: http://example.cubeviz.org/cubeWithMaterializedSlices/properties/geo
                 dimensionRelation = dimension ["http://purl.org/linked-data/cube#dimension"];
                 
-                fixedDimensionElement = self.app._.data.selectedSlice [dimensionRelation];
+                fixedDimensionElement = self.app._.data.selectedSlice[dimensionRelation];
                  
                 // if slice has that relation
                 if (false === _.str.isBlank(fixedDimensionElement)) {
-                    
+                        
                     _.each(dimension.__cv_elements, function(element){
                         
                         if (element.__cv_uri == fixedDimensionElement) {
+                            
                             // set fixed element as the only element of the selected dimension
+                            self.app._.data.components.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
                             self.app._.data.selectedComponents.dimensions[dimension.__cv_uri].__cv_elements = { 0: element };
                         }
                     });
                 }
             });
+     
                 
             // update number of X dimensions
             this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
@@ -336,9 +399,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
             
             // rebuild all dialogs based on the fixed set of dimension elements
-            this
-                .destroy()
-                .initialize();
+            this.destroy();
                 
             // load dimensional data
             this.loadComponentDimensions(function(){
@@ -392,9 +453,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             parentContainer = $($(event.target).parent()),
             dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]"),
             anythingChecked = false,
-            numberOfSelectedElements = $(parentContainer.data("dialogDiv"))
-                .data("component")
-                .__cv_selectedElementCount;
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
             
         if (1 < numberOfSelectedElements
             || 1 == this.app._.data.numberOfMultipleDimensions) {
@@ -419,6 +478,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .show();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .show();
+            
+            // cancel button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+                .hide();
+            // close and update button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+                .hide();
         }
         
         // disable all checkboxes, if there are already two multiple dimensions
@@ -435,6 +501,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .hide();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .hide();
+                
+            // cancel button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+                .show();
+            // close and update button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+                .show();
         }
     }
     
@@ -498,11 +571,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onClick_setupComponentOpener");
         
         // get number of selected elements in the associated dialog div
-        var numberOfSelectedElements = $($(event.target).data("dialogDiv"))
-            .data("component")
-            .__cv_selectedElementCount;
-        
-        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]"),
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed($(event.target).data("dialogDiv"));
         
         // if there are already two multiple dimensions and if the dialog is not
         // associated to one of the multiple dimensions, deactivate all unchecked 
@@ -667,9 +737,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
             selectedElements.size()
         );
-        
-        // save new number of selected elements
-        dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         
         // update number of X dimensions
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.

@@ -400,7 +400,7 @@ class CubeViz_Visualization_HighCharts_Chart
              *  }]
              */
             if (false === _.str.isBlank(forXAxis)) {
-               
+                
                 this.handleOnlyOneMultipleDimension(
                     forXAxis, 
                     selectedAttributeUri, 

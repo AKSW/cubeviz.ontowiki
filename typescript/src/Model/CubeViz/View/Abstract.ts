@@ -124,4 +124,9 @@ class CubeViz_View_Abstract
         this.app.triggerEvent(eventName, data);
         return this;
     }
+    
+    /**
+     * 
+     */
+    public render() {}
 }

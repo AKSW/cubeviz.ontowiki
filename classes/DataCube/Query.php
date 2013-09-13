@@ -730,10 +730,9 @@ class DataCube_Query
             $sparql = 'SELECT ?sliceKey ?p ?o
                 WHERE {
                     <'. $dsdUrl .'> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'. DataCube_UriOf::DataStructureDefinition .'> .
-
-                    <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
-
                     <'. $dsdUrl .'> <'. DataCube_UriOf::SliceKey .'> ?sliceKey .
+                    
+                    <'. $dsUrl .'> <'. DataCube_UriOf::Structure .'> <'. $dsdUrl .'> .
 
                     ?sliceKey ?p ?o.
                 }';
