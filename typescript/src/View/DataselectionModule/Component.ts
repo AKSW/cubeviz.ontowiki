@@ -200,6 +200,24 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     }
     
     /**
+     * @return number Number of checked checkboxes
+     */
+    public getNumberOfCheckedBoxed(dialogDiv:any) : number
+    {
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children(),
+            number:number = 0;        
+        
+        // count checked checkboxes
+        _.each(elementList, function(element){
+            if("checked" === $($(element).children().get(0)).attr("checked")) {
+                ++number;
+            }
+        });
+        
+        return number;
+    }
+    
+    /**
      *
      */
     public initialize() 
@@ -465,9 +483,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             parentContainer = $($(event.target).parent()),
             dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]"),
             anythingChecked = false,
-            numberOfSelectedElements = $(parentContainer.data("dialogDiv"))
-                .data("component")
-                .__cv_selectedElementCount;
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
             
         if (1 < numberOfSelectedElements
             || 1 == this.app._.data.numberOfMultipleDimensions) {
@@ -492,6 +508,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .show();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .show();
+            
+            // cancel button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+                .hide();
+            // close and update button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+                .hide();
         }
         
         // disable all checkboxes, if there are already two multiple dimensions
@@ -508,6 +531,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 .hide();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
                 .hide();
+                
+            // cancel button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+                .show();
+            // close and update button
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+                .show();
         }
     }
     
@@ -571,11 +601,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onClick_setupComponentOpener");
         
         // get number of selected elements in the associated dialog div
-        var numberOfSelectedElements = $($(event.target).data("dialogDiv"))
-            .data("component")
-            .__cv_selectedElementCount;
-        
-        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]"),
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed($(event.target).data("dialogDiv"));
         
         // if there are already two multiple dimensions and if the dialog is not
         // associated to one of the multiple dimensions, deactivate all unchecked 
@@ -740,9 +767,6 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(
             selectedElements.size()
         );
-        
-        // save new number of selected elements
-        dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         
         // update number of X dimensions
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.
