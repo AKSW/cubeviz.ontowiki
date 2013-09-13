@@ -113,6 +113,7 @@ class CubeViz_Visualization_HighCharts_Chart
          */
         if (false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
             var xAxisElements:any = observation
+                .sortAxis(forXAxis, "ascending")
                 .getAxesElements(forXAxis);
                 
             /**
@@ -236,7 +237,8 @@ class CubeViz_Visualization_HighCharts_Chart
                
                 var seriesObservation:Object = null,
                     seriesDataList:number[] = [],
-                    xAxisElements:any = observation.getAxesElements(forXAxis),
+                    xAxisElements:any = observation.sortAxis(forXAxis, "ascending")
+                                                   .getAxesElements(forXAxis),
                     value:number = 0;
                     
                 _.each(xAxisElements, function(xAxisElement){

@@ -79,10 +79,11 @@ class DataCube_Query
      * Add additional fields to each entry of the given array. These fields are
      * heavily used in the UI. Each field starts with __cv_ and could be ignored
      * usally.
-     * @param $assocSPOArray Usally the result of generateAssocSPOArrayFromSparqlResult
+     * @param $assocSPOArray array Usally the result of generateAssocSPOArrayFromSparqlResult
+     * @param $useTitleHelper bool optional Manually deactivate title helper
      * @return Array An enriched version of given $assocSPOArray
      */
-    public function enrichResult($assocSPOArray)
+    public function enrichResult($assocSPOArray, $useTitleHelper = true)
     {
         // generate unique hash using given SPO array and model uri
         $objectId = md5($this->_model->getModelIri() . json_encode($assocSPOArray));
@@ -98,15 +99,18 @@ class DataCube_Query
         
             $return = array();
             $spoArrayCount = count($assocSPOArray);
-            $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
+            
+            if (true === $useTitleHelper) {
+                $titleHelper = new OntoWiki_Model_TitleHelper ($this->_model);
 
-            /**
-             * go through all entries to add them to title helper
-             */
-            if ($this->_titleHelperLimit >= $spoArrayCount) {
-                foreach($assocSPOArray as $mainKey => $entry) {
-                    if (true === Erfurt_Uri::check($mainKey)) {
-                        $titleHelper->addResource($mainKey);
+                /**
+                 * go through all entries to add them to title helper
+                 */
+                if ($this->_titleHelperLimit >= $spoArrayCount) {
+                    foreach($assocSPOArray as $mainKey => $entry) {
+                        if (true === Erfurt_Uri::check($mainKey)) {
+                            $titleHelper->addResource($mainKey);
+                        }
                     }
                 }
             }
@@ -122,7 +126,7 @@ class DataCube_Query
                 // hashed URI of the element
                 $entry ['__cv_hashedUri'] = md5($mainKey);
 
-                if ($this->_titleHelperLimit >= $spoArrayCount) {
+                if (true === $useTitleHelper && $this->_titleHelperLimit >= $spoArrayCount) {
                     // Nice label using TitleHelper
                     $entry ['__cv_niceLabel'] = $titleHelper->getTitle($mainKey);
                 } else {
@@ -684,7 +688,7 @@ class DataCube_Query
             $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
             
             // enrich data with CubeViz sugar
-            $result = $this->enrichResult($result);
+            $result = $this->enrichResult($result, false);
             
             
             // close the object cache transaction

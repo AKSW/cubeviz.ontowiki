@@ -638,7 +638,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            var xAxisElements = observation.getAxesElements(forXAxis);
+            var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
             _.each(xAxisElements, function (xAxisElement) {
                 self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
                 categoriesElementAssign[xAxisElement.self.__cv_uri] = i++;
@@ -694,7 +694,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 if(false === _.str.isBlank(forXAxis)) {
                     var seriesObservation = null;
                     var seriesDataList = [];
-                    var xAxisElements = observation.getAxesElements(forXAxis);
+                    var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
                     var value = 0;
 
                     _.each(xAxisElements, function (xAxisElement) {
@@ -1104,6 +1104,43 @@ var DataCube_Observation = (function () {
         });
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
+        var axesEntries = this._axes[axisUri];
+        var mode = true === _.isUndefined(mode) ? "ascending" : mode;
+        var stuffToSort = [];
+        var sortedObj = {
+        };
+        var self = this;
+
+        _.each(axesEntries, function (entry, key) {
+            stuffToSort.push({
+                key: key,
+                label: entry.self.__cv_niceLabel
+            });
+        });
+        switch(mode) {
+            case "descending": {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+                });
+                break;
+
+            }
+            default: {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                break;
+
+            }
+        }
+        _.each(stuffToSort, function (entry) {
+            sortedObj[entry.key] = self._axes[axisUri][entry.key];
+        });
+        this._axes[axisUri] = sortedObj;
         return this;
     };
     return DataCube_Observation;
@@ -1703,7 +1740,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
                 var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
 
                 elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectionElement").html(),
                     __cv_uri: "__cv_noAttribute",
                     radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
                     radioName: "cubeviz-dataSelectionModule-attributeRadio",
@@ -1827,6 +1864,17 @@ var View_DataselectionModule_Component = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
+    View_DataselectionModule_Component.prototype.getNumberOfCheckedBoxed = function (dialogDiv) {
+        var elementList = dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements").children();
+        var number = 0;
+
+        _.each(elementList, function (element) {
+            if("checked" === $($(element).children().get(0)).attr("checked")) {
+                ++number;
+            }
+        });
+        return number;
+    };
     View_DataselectionModule_Component.prototype.initialize = function () {
         this.collection.reset("__cv_hashedUri");
         this.collection.addList(this.app._.data.components.dimensions);
@@ -1924,7 +1972,7 @@ var View_DataselectionModule_Component = (function (_super) {
         var parentContainer = $($(event.target).parent());
         var dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]");
         var anythingChecked = false;
-        var numberOfSelectedElements = $(parentContainer.data("dialogDiv")).data("component").__cv_selectedElementCount;
+        var numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
 
         if(1 < numberOfSelectedElements || 1 == this.app._.data.numberOfMultipleDimensions) {
             return;
@@ -1940,6 +1988,8 @@ var View_DataselectionModule_Component = (function (_super) {
             });
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).show();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).show();
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
         } else {
             _.each(dialogCheckboxList, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {
@@ -1948,6 +1998,8 @@ var View_DataselectionModule_Component = (function (_super) {
             });
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
             $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
+            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
         }
     };
     View_DataselectionModule_Component.prototype.onClick_closeAndUpdate = function (event) {
@@ -1972,8 +2024,9 @@ var View_DataselectionModule_Component = (function (_super) {
     };
     View_DataselectionModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
-        var numberOfSelectedElements = $($(event.target).data("dialogDiv")).data("component").__cv_selectedElementCount;
         var checkboxes = $(event.target).data("dialogDiv").find("[type=\"checkbox\"]");
+        var numberOfSelectedElements = this.getNumberOfCheckedBoxed($(event.target).data("dialogDiv"));
+
         if(1 == numberOfSelectedElements && 2 == this.app._.data.numberOfMultipleDimensions && 2 < _.size(this.app._.data.components.dimensions)) {
             _.each(checkboxes, function (checkbox) {
                 if(!$(checkbox).attr("checked")) {
@@ -2064,7 +2117,6 @@ var View_DataselectionModule_Component = (function (_super) {
         });
         this.app._.data.selectedComponents.dimensions[component.__cv_uri].__cv_elements = selectedElements.toObject();
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
-        dialogDiv.data("component").__cv_selectedElementCount = selectedElements.size();
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
         CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
