@@ -1703,7 +1703,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
                 var elementList = $(dialogDiv.find(".cubeviz-dataSelectionModule-dialogElements")[0]);
 
                 elementContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-dataSelectionModule-tpl-dialogRadioElement").html(), {
-                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-sliceDialogNoSliceSelectionElement").html(),
+                    __cv_niceLabel: $("#cubeviz-dataSelectionModule-tra-attributeDialogNoAttributeSelectionElement").html(),
                     __cv_uri: "__cv_noAttribute",
                     radioCSSClass: "cubeviz-dataSelectionModule-attributeRadio",
                     radioName: "cubeviz-dataSelectionModule-attributeRadio",
