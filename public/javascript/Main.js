@@ -4001,10 +4001,6 @@ var View_DataselectionModule_Component = (function (_super) {
         var dimensionElements = this.app._.data.selectedComponents.dimensions[dimensionUri].__cv_elements;
         var numberOfDimensionElements = _.size(dimensionElements);
 
-        console.log("");
-        console.log("");
-        console.log("numberOfSelectedElements: " + numberOfSelectedElements);
-        console.log("this.app._.data.numberOfMultipleDimensions: " + this.app._.data.numberOfMultipleDimensions);
         if(0 == numberOfSelectedElements && 2 > this.app._.data.numberOfMultipleDimensions) {
             this.showHideSelectButtons(dialogDiv, "show");
             this.showHideBottomButtons(dialogDiv, "hide");
@@ -5294,7 +5290,7 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
         var self = this;
 
         this.app._.ui.visualizationSettings[this.app._.ui.visualization.className] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
-        this.app._.backend.uiHash = JSON.stringify(this.app._.ui);
+        this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
         CubeViz_ConfigurationLink.saveUI(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.uiHash, this.app._.ui, function () {
             self.triggerGlobalEvent("onReRender_visualization");
         });

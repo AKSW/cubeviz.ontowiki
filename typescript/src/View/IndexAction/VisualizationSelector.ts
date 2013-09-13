@@ -197,7 +197,7 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
         );
         
         // save ui object
-        this.app._.backend.uiHash = JSON.stringify(this.app._.ui);
+        this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
         
         CubeViz_ConfigurationLink.saveUI(
             this.app._.backend.url, this.app._.backend.serviceUrl, 
