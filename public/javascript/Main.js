@@ -638,7 +638,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         }
         observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
         if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            var xAxisElements = observation.getAxesElements(forXAxis);
+            var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
             _.each(xAxisElements, function (xAxisElement) {
                 self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
                 categoriesElementAssign[xAxisElement.self.__cv_uri] = i++;
@@ -694,7 +694,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 if(false === _.str.isBlank(forXAxis)) {
                     var seriesObservation = null;
                     var seriesDataList = [];
-                    var xAxisElements = observation.getAxesElements(forXAxis);
+                    var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
                     var value = 0;
 
                     _.each(xAxisElements, function (xAxisElement) {
@@ -1104,6 +1104,43 @@ var DataCube_Observation = (function () {
         });
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
+        var axesEntries = this._axes[axisUri];
+        var mode = true === _.isUndefined(mode) ? "ascending" : mode;
+        var stuffToSort = [];
+        var sortedObj = {
+        };
+        var self = this;
+
+        _.each(axesEntries, function (entry, key) {
+            stuffToSort.push({
+                key: key,
+                label: entry.self.__cv_niceLabel
+            });
+        });
+        switch(mode) {
+            case "descending": {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+                });
+                break;
+
+            }
+            default: {
+                stuffToSort.sort(function (a, b) {
+                    a = String(a.label).toLowerCase();
+                    b = String(b.label).toLowerCase();
+                    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+                });
+                break;
+
+            }
+        }
+        _.each(stuffToSort, function (entry) {
+            sortedObj[entry.key] = self._axes[axisUri][entry.key];
+        });
+        this._axes[axisUri] = sortedObj;
         return this;
     };
     return DataCube_Observation;
