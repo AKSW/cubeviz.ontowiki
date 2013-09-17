@@ -21,8 +21,9 @@ Do you want to read further information about the project and its background, pl
 ## Getting started
 
 You will find various information in our [Wiki](https://github.com/AKSW/cubeviz.ontowiki/wiki/Home).
-For new users, please visit the [installation](https://github.com/AKSW/cubeviz.ontowiki/wiki/Installation-and-setup-main) - 
-or [introduction](https://github.com/AKSW/cubeviz.ontowiki/wiki/Introductions-for-first-steps) page. 
+For new users, please visit Page [installation](https://github.com/AKSW/cubeviz.ontowiki/wiki/Installation-and-setup-main) 
+to get an introduction about installation and setup of CubeViz.
+
 Further information about the repository structure or other internals can be also found in the Wiki.
 
 ## License
