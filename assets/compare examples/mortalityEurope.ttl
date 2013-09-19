@@ -43,7 +43,7 @@ ex:valueCS a cube:ComponentSpecification ;
 # Data Set
 #
 ex:dataset a cube:DataSet ;
-    rdfs:label "ds"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    rdfs:label "Mortality"^^<http://www.w3.org/2001/XMLSchema#string> ;
     cube:structure ex:dsd .
 
 #
