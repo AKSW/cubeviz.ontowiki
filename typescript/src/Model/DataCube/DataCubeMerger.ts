@@ -769,15 +769,54 @@ class DataCube_DataCubeMerger
             mergedDataCubeUri, equalDimensions, dimensionElementChoice, [dataset1, dataset2]
         );
         
-        mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
+        // let maximum two multiple dimension happen
+        var dimensionElement:any = {},
+            existingMultipleDimensions:number = 0,
+            oneElementDimension:any = {};
+        
+        mergedDataCube.selectedComponents = {dimensions: {}};
+            
+        _.each(mergedDataCube.components.dimensions, function(dimension){
+            
+            if (1 < _.size(dimension.__cv_elements)) {
+                ++existingMultipleDimensions;
+                console.log("");
+                console.log(existingMultipleDimensions);
+                console.log(_.size(dimension.__cv_elements));
+            }
+            
+            // one more multiple dimension is possible
+            if (existingMultipleDimensions <= 2) {
+                mergedDataCube.selectedComponents.dimensions [dimension.__cv_uri]
+                    = dimension;
+            
+            // NO more multiple dimensions!
+            // means, that each dimension has just one dimension element
+            } else {
+                
+                // create a real copy of the current dimension
+                oneElementDimension = $.parseJSON(JSON.stringify(dimension));
+                
+                // reduce dimension element list to one item
+                dimensionElement = _.first(_.values(dimension.__cv_elements));
+                
+                oneElementDimension.__cv_elements = {};
+                oneElementDimension.__cv_elements[dimensionElement.__cv_uri] =
+                    dimensionElement;
+                
+                // save
+                mergedDataCube.selectedComponents.dimensions [dimension.__cv_uri]
+                    = oneElementDimension;
+            }
+        });
         
         /**
          * Set number of multiple and one element dimensions
          */
         mergedDataCube.numberOfMultipleDimensions = 
-            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
+            _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.selectedComponents.dimensions));
         mergedDataCube.numberOfOneElementDimensions = 
-            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
+            _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.selectedComponents.dimensions));
         
         
         /**

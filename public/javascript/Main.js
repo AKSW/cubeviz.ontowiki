@@ -1875,9 +1875,36 @@ var DataCube_DataCubeMerger = (function () {
             dataset1, 
             dataset2
         ]);
-        mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
-        mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
-        mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
+        var dimensionElement = {
+        };
+        var existingMultipleDimensions = 0;
+        var oneElementDimension = {
+        };
+
+        mergedDataCube.selectedComponents = {
+            dimensions: {
+            }
+        };
+        _.each(mergedDataCube.components.dimensions, function (dimension) {
+            if(1 < _.size(dimension.__cv_elements)) {
+                ++existingMultipleDimensions;
+                console.log("");
+                console.log(existingMultipleDimensions);
+                console.log(_.size(dimension.__cv_elements));
+            }
+            if(existingMultipleDimensions <= 2) {
+                mergedDataCube.selectedComponents.dimensions[dimension.__cv_uri] = dimension;
+            } else {
+                oneElementDimension = $.parseJSON(JSON.stringify(dimension));
+                dimensionElement = _.first(_.values(dimension.__cv_elements));
+                oneElementDimension.__cv_elements = {
+                };
+                oneElementDimension.__cv_elements[dimensionElement.__cv_uri] = dimensionElement;
+                mergedDataCube.selectedComponents.dimensions[dimension.__cv_uri] = oneElementDimension;
+            }
+        });
+        mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.selectedComponents.dimensions));
+        mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.selectedComponents.dimensions));
         mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1, measure2);
         mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
         mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
