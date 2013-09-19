@@ -61,29 +61,37 @@ class View_CompareAction_VisualizationSetup extends CubeViz_View_Abstract
             
             adaptedObservations = $.parseJSON(JSON.stringify(observations));
             
+            // go through all observations and adapt their values, but only, if 
+            // they have a valid value
             _.each (adaptedObservations, function(observation, key){
                 
                 observationValue = DataCube_Observation.parseValue (observation, measureUri);
                 
-                // replace all $value$ with real value
-                specificFormula = formula.split("$value$").join(observationValue);
+                // only adapt value if a valid value exists
+                if (false === _.isNull(observationValue)) {
+    
+                    // replace all $value$ with real value
+                    specificFormula = formula.split("$value$").join(observationValue);
+                    
+                    // replace all $pi$ with Math.pi
+                    specificFormula = specificFormula.split("$pi$").join(Math.PI+"");
                 
-                // replace all $pi$ with Math.pi
-                specificFormula = specificFormula.split("$pi$").join(Math.PI+"");
-            
-                // replace with new value
-                DataCube_Observation.setOriginalValue (
-                    observation,
-                    measureUri,
-                    parser.parse(specificFormula).evaluate()
-                );
-                
-                adaptedObservations[key] = observation;
+                    // replace with new value
+                    DataCube_Observation.setOriginalValue (
+                        observation,
+                        measureUri,
+                        parser.parse(specificFormula).evaluate()
+                    );
+                    
+                    adaptedObservations[key] = observation;
+                }                
             });
             
             return adaptedObservations;
                 
-        } catch (ex) {}
+        } catch (ex) {
+            // something went wrong
+        }
         
         return false;
     }

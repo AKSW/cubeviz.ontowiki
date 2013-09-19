@@ -3024,10 +3024,12 @@ var View_CompareAction_VisualizationSetup = (function (_super) {
             adaptedObservations = $.parseJSON(JSON.stringify(observations));
             _.each(adaptedObservations, function (observation, key) {
                 observationValue = DataCube_Observation.parseValue(observation, measureUri);
-                specificFormula = formula.split("$value$").join(observationValue);
-                specificFormula = specificFormula.split("$pi$").join(Math.PI + "");
-                DataCube_Observation.setOriginalValue(observation, measureUri, parser.parse(specificFormula).evaluate());
-                adaptedObservations[key] = observation;
+                if(false === _.isNull(observationValue)) {
+                    specificFormula = formula.split("$value$").join(observationValue);
+                    specificFormula = specificFormula.split("$pi$").join(Math.PI + "");
+                    DataCube_Observation.setOriginalValue(observation, measureUri, parser.parse(specificFormula).evaluate());
+                    adaptedObservations[key] = observation;
+                }
             });
             return adaptedObservations;
         } catch (ex) {
