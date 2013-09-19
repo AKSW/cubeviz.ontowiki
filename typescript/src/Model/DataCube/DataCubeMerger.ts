@@ -195,29 +195,18 @@ class DataCube_DataCubeMerger
             componentSpecification = {
                 
                 // label
-                __cv_niceLabel: "Artifical Component Specification of '"
-                    + dimensionPair[0].__cv_niceLabel
-                    + "' and '"
-                    + dimensionPair[1].__cv_niceLabel
-                    + "'",
-                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Component Specification of '"
-                    + dimensionPair[0].__cv_niceLabel
-                    + "' and '"
-                    + dimensionPair[1].__cv_niceLabel
-                    + "'",
+                __cv_niceLabel: dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
+                "http://www.w3.org/2000/01/rdf-schema#label": 
+                    dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
                 
                 // description
                 __cv_description: "Its an artifical Component Specification and it consists of '"
-                    + dimensionPair[0].__cv_niceLabel
-                    + "' and '"
-                    + dimensionPair[1].__cv_niceLabel
-                    + "'",
+                    + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel
+                    + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
                 "http://www.w3.org/2000/01/rdf-schema#comment": 
                     "Its an artifical Component Specification and it consists of '"
-                    + dimensionPair[0].__cv_niceLabel
-                    + "' and '"
-                    + dimensionPair[1].__cv_niceLabel
-                    + "'",
+                    + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel
+                    + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
                 
                 // uri
                 __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
@@ -284,17 +273,11 @@ class DataCube_DataCubeMerger
                 dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
             
             // description
-            __cv_description: "Its an artifical Component Specification and it consists of '"
-                + dataSets[0].__cv_niceLabel
-                + "' and '"
-                + dataSets[1].__cv_niceLabel
-                + "'",
+            __cv_description: "Component Specification which represents the datasets "
+                + dataSets[0].__cv_niceLabel + " and " + dataSets[1].__cv_niceLabel,
             "http://www.w3.org/2000/01/rdf-schema#comment": 
-                "Its an artifical Component Specification and it consists of '"
-                + dataSets[0].__cv_niceLabel
-                + "' and '"
-                + dataSets[1].__cv_niceLabel
-                + "'",
+               "Component Specification which represents the datasets "
+                + dataSets[0].__cv_niceLabel + " and " + dataSets[1].__cv_niceLabel,
             
             // uri
             __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
@@ -780,9 +763,6 @@ class DataCube_DataCubeMerger
             
             if (1 < _.size(dimension.__cv_elements)) {
                 ++existingMultipleDimensions;
-                console.log("");
-                console.log(existingMultipleDimensions);
-                console.log(_.size(dimension.__cv_elements));
             }
             
             // one more multiple dimension is possible
