@@ -183,7 +183,7 @@ class DataCube_DataCubeMerger
      *             and dimension elements
      */
     static buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri:string, 
-        equalDimensions:any[], dimensionElementChoice:string) : any
+        equalDimensions:any[], dimensionElementChoice:string, dataSets:any[]) : any
     {
         var componentSpecification:any = {},
             i:number = 0,
@@ -269,6 +269,100 @@ class DataCube_DataCubeMerger
             
             ++i;
         });
+        
+        
+        /**
+         * both datasets will be put into an artificial dimension as dimension elements
+         */
+        // set component specification
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i] = {
+                
+            // label
+            __cv_niceLabel: dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            
+            "http://www.w3.org/2000/01/rdf-schema#label": 
+                dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            
+            // description
+            __cv_description: "Its an artifical Component Specification and it consists of '"
+                + dataSets[0].__cv_niceLabel
+                + "' and '"
+                + dataSets[1].__cv_niceLabel
+                + "'",
+            "http://www.w3.org/2000/01/rdf-schema#comment": 
+                "Its an artifical Component Specification and it consists of '"
+                + dataSets[0].__cv_niceLabel
+                + "' and '"
+                + dataSets[1].__cv_niceLabel
+                + "'",
+            
+            // uri
+            __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
+            __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
+            
+            // add relation to the two origin datasets
+            "http://purl.org/dc/terms/source": [ 
+                dataSets[0].__cv_uri, dataSets[1].__cv_uri
+            ],
+            
+            // let dimension elements empty, but set it later on
+            __cv_elements: {},
+            
+            // set a flag so that CubeViz can handle this dimension different
+            __cv_datasetDimension: true,
+            
+            // set relation to dimension itself
+            "http://purl.org/linked-data/cube#dimension": 
+                mergedDataCubeUri + "dimension" + i,
+            
+            // type
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
+                "http://purl.org/linked-data/cube#ComponentSpecification",
+                                
+            // set create time and date (example: Fri Jul 19 2013 14:00:38 GMT+0200 (CEST))
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        }
+        
+        // set dimension elements
+        var dimensionElementUri:string = mergedDataCubeUri + "dimension" + i + "DimensionElement";
+        
+        // #1
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i]
+            .__cv_elements[dimensionElementUri + "0"] = {
+            
+            // label
+            __cv_niceLabel: dataSets[0].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[0].__cv_niceLabel,
+            
+            // uri
+            __cv_uri: dimensionElementUri + "0",
+            
+            // hashedUri
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "0") + "",
+            
+            // type
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
+                mergedDataCubeUri + "dimension" + i
+        }
+        
+        // #2
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i]
+            .__cv_elements[dimensionElementUri + "1"] = {
+            
+            // label
+            __cv_niceLabel: dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[1].__cv_niceLabel,
+            
+            // uri
+            __cv_uri: dimensionElementUri + "1",
+            
+            // hashedUri
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "1") + "",
+            
+            // type
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 
+                mergedDataCubeUri + "dimension" + i
+        }
         
         return virtualDimensions;
     }
@@ -369,10 +463,12 @@ class DataCube_DataCubeMerger
         observations2 = $.parseJSON(JSON.stringify(observations2));
         
         _.each(observations1, function(observation){
+            observation.__cv_fromDataset = 0;
             tmpObservations [i++] = observation;
         });
         
         _.each(observations2, function(observation){
+            observation.__cv_fromDataset = 1;
             tmpObservations [i++] = observation;
         });
         
@@ -444,10 +540,28 @@ class DataCube_DataCubeMerger
          * for each merged dimension go through all observations
          */
         tmpObservations = {};
+        
         _.each(dimensions, function(dimension){
             
-            // i = 0;            
+            // go through all observations        
             _.each(adaptedObservations, function(observation){
+                
+                if (false === _.isUndefined(dimension.__cv_datasetDimension)
+                    && true === dimension.__cv_datasetDimension) {
+                    
+                    // from dataset 1
+                    if (0 === observation.__cv_fromDataset) {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = 
+                            mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement0";
+                    
+                    // from dataset 2
+                    } else {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = 
+                            mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement1";
+                    }
+                    
+                    return;
+                }
                 
                 // replace relation to dimension
                 adaptedDimensionElementUri = null;
@@ -547,10 +661,6 @@ class DataCube_DataCubeMerger
                 
                 if (false === _.isNull(adaptedDimensionElementUri)) {
                     observation [mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;                    
-                    
-                    /*_.each(dimension.__cv_oldCubeDimension, function(oldDimensionUri){
-                        delete observation [oldDimensionUri];
-                    });*/
                     
                     tmpObservations[observation.__cv_uri] = observation;
                 } else {
@@ -656,7 +766,7 @@ class DataCube_DataCubeMerger
          * set equal dimension pair(s) as dimensions
          */
         mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(
-            mergedDataCubeUri, equalDimensions, dimensionElementChoice
+            mergedDataCubeUri, equalDimensions, dimensionElementChoice, [dataset1, dataset2]
         );
         
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
@@ -774,7 +884,7 @@ class DataCube_DataCubeMerger
     /**
      * Merges two objects containing dimension elements. It throws away doubled
      * dimension elements. The dimension elements are the same, if they have the
-     * same URI or share a sameAs-relation.
+     * same URI.
      * @param dimensionElements1 any Object containing a list of dimension elements of dataset1
      * @param dimensionElements2 any Object containing a list of dimension elements of dataset2
      * @param dimensionElementsChoice string 

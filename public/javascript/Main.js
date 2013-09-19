@@ -1622,7 +1622,7 @@ var DataCube_DataCubeMerger = (function () {
         });
         return dsd;
     }
-    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice) {
+    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice, dataSets) {
         var componentSpecification = {
         };
         var i = 0;
@@ -1660,6 +1660,39 @@ var DataCube_DataCubeMerger = (function () {
             virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
             ++i;
         });
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i] = {
+            __cv_niceLabel: dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            __cv_description: "Its an artifical Component Specification and it consists of '" + dataSets[0].__cv_niceLabel + "' and '" + dataSets[1].__cv_niceLabel + "'",
+            "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical Component Specification and it consists of '" + dataSets[0].__cv_niceLabel + "' and '" + dataSets[1].__cv_niceLabel + "'",
+            __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
+            __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
+            "http://purl.org/dc/terms/source": [
+                dataSets[0].__cv_uri, 
+                dataSets[1].__cv_uri
+            ],
+            __cv_elements: {
+            },
+            __cv_datasetDimension: true,
+            "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        var dimensionElementUri = mergedDataCubeUri + "dimension" + i + "DimensionElement";
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i].__cv_elements[dimensionElementUri + "0"] = {
+            __cv_niceLabel: dataSets[0].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[0].__cv_niceLabel,
+            __cv_uri: dimensionElementUri + "0",
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "0") + "",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": mergedDataCubeUri + "dimension" + i
+        };
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i].__cv_elements[dimensionElementUri + "1"] = {
+            __cv_niceLabel: dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[1].__cv_niceLabel,
+            __cv_uri: dimensionElementUri + "1",
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "1") + "",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": mergedDataCubeUri + "dimension" + i
+        };
         return virtualDimensions;
     }
     DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measure1, measure2) {
@@ -1707,9 +1740,11 @@ var DataCube_DataCubeMerger = (function () {
         observations1 = $.parseJSON(JSON.stringify(observations1));
         observations2 = $.parseJSON(JSON.stringify(observations2));
         _.each(observations1, function (observation) {
+            observation.__cv_fromDataset = 0;
             tmpObservations[i++] = observation;
         });
         _.each(observations2, function (observation) {
+            observation.__cv_fromDataset = 1;
             tmpObservations[i++] = observation;
         });
         _.each(tmpObservations, function (observation) {
@@ -1759,6 +1794,14 @@ var DataCube_DataCubeMerger = (function () {
         };
         _.each(dimensions, function (dimension) {
             _.each(adaptedObservations, function (observation) {
+                if(false === _.isUndefined(dimension.__cv_datasetDimension) && true === dimension.__cv_datasetDimension) {
+                    if(0 === observation.__cv_fromDataset) {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement0";
+                    } else {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement1";
+                    }
+                    return;
+                }
                 adaptedDimensionElementUri = null;
                 _.each(dimension.__cv_elements, function (element) {
                     if(true === _.isArray(element["http://www.w3.org/2002/07/owl#sameAs"])) {
@@ -1828,7 +1871,10 @@ var DataCube_DataCubeMerger = (function () {
         mergedDataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, stringifiedCompareAction);
         mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, dataset1, dataset2);
         mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
-        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice);
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice, [
+            dataset1, 
+            dataset2
+        ]);
         mergedDataCube.selectedComponents.dimensions = mergedDataCube.components.dimensions;
         mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.components.dimensions));
         mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.components.dimensions));
