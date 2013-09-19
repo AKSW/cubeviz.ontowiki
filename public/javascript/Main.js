@@ -2223,11 +2223,12 @@ var DataCube_Observation = (function () {
         });
         return observations;
     }
-    DataCube_Observation.parseValue = function parseValue(observation, measureUri) {
+    DataCube_Observation.parseValue = function parseValue(observation, measureUri, ignoreTemporaryValue) {
+        if (typeof ignoreTemporaryValue === "undefined") { ignoreTemporaryValue = false; }
         var parsedValue = null;
         var value = null;
 
-        if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+        if(false === ignoreTemporaryValue && false === _.isUndefined(observation.__cv_temporaryNewValue)) {
             value = observation.__cv_temporaryNewValue;
         } else {
             value = observation[measureUri];
@@ -4766,11 +4767,15 @@ var View_IndexAction_Legend = (function (_super) {
                 html += "</td>";
             });
             if(true === _.isUndefined(observation.__cv_sourceObservation) || 1 == _.size(observation.__cv_sourceObservation)) {
-                value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
-                if(true === _.isNull(value)) {
-                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" + "<em><small>no value found or type is not float</small></em>" + "</td>";
+                value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"], true);
+                if(true === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                    if(true === _.isNull(value)) {
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" + "<em><small>no value found or type is not float</small></em>" + "</td>";
+                    } else {
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + value + "</td>";
+                    }
                 } else {
-                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + value + "</td>";
+                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + observation.__cv_temporaryNewValue + " &nbsp; <small>(Original: " + value + ")</small>" + "</td>";
                 }
             } else {
                 if(2 == _.size(observation.__cv_sourceObservation)) {

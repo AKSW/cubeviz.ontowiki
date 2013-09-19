@@ -464,18 +464,31 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             // if there is no source observation or only one 
             if (true === _.isUndefined(observation.__cv_sourceObservation)
                 || 1 == _.size(observation.__cv_sourceObservation)) {
+                    
                 value = DataCube_Observation.parseValue(
-                    observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
+                    observation, selectedMeasure["http://purl.org/linked-data/cube#measure"],
+                    true
                 );
+                    
+                // check for a temporary value
+                if (true === _.isUndefined(observation.__cv_temporaryNewValue)) {               
                 
-                // observation value
-                if (true === _.isNull(value)) {    
-                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" +
-                                "<em><small>no value found or type is not float</small></em>" +
-                            "</td>";
+                    // observation value
+                    if (true === _.isNull(value)) {    
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" +
+                                    "<em><small>no value found or type is not float</small></em>" +
+                                "</td>";
+                    } else {
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" +
+                                    value +
+                                "</td>";
+                    }
+                
+                // in case there is a temporary value
                 } else {
                     html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" +
-                                value +
+                                observation.__cv_temporaryNewValue 
+                                + " &nbsp; <small>(Original: " + value + ")</small>" +
                             "</td>";
                 }
                 

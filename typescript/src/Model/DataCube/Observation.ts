@@ -309,18 +309,21 @@ class DataCube_Observation
     }
     
     /**
+     * Parse the value of a given observation.
      * @param observation any The observation to parse
-     * @param measureUri string 
+     * @param measureUri string Uri of selected measure
+     * @param ignoreTemporaryValue bool Force function to ignore temporary value 
      * @return float|null Null if value is not a float, otherwise returns the parsed value
      */
-    static parseValue(observation:any, measureUri:string) : any 
+    static parseValue(observation:any, measureUri:string, ignoreTemporaryValue:bool = false) : any 
     {
         var parsedValue:number = null,
             value:string = null;
         
         // set observation value, distinguish between original and user-set
         // one: prefer the user-set one over the original
-        if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+        if (false === ignoreTemporaryValue
+            && false === _.isUndefined(observation.__cv_temporaryNewValue)) {
             value = observation.__cv_temporaryNewValue;
         } else {
             value = observation[measureUri];
