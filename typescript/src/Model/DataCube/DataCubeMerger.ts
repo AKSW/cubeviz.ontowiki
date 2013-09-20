@@ -362,16 +362,9 @@ class DataCube_DataCubeMerger
         return { 0: {
             
             // label
-            __cv_niceLabel: "Artifical Measure of '"
-                + measure1.__cv_niceLabel
-                + "' and '"
-                + measure2.__cv_niceLabel
-                + "'",
-            "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure of '"
-                + measure1.__cv_niceLabel
-                + "' and '"
-                + measure2.__cv_niceLabel
-                + "'",
+            __cv_niceLabel: measure1.__cv_niceLabel + " / " + measure2.__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": 
+                measure1.__cv_niceLabel + " / " + measure2.__cv_niceLabel,
             
             // description
             __cv_description: "Its an artifical measure and it consists of '"
