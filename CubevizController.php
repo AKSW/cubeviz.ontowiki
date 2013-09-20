@@ -108,33 +108,39 @@ class CubevizController extends OntoWiki_Controller_Component
         {
             if (true === isset($entry ['query'])) {
                 
-                $entry ['result'] = $model->sparqlQuery ($entry ['query']);
-                
-                // no template was set
-                if (false == isset ($entry ['template']) 
-                    || ( true == isset ($entry ['template']) && '' == $entry ['template'] )) {
-                    if (true == isset($entry ['result'][0])) {
-                        $entry ['result'] = $entry ['result'][0]['__ask_retval'];
+                try {
+                    $entry ['result'] = $model->sparqlQuery ($entry ['query']);
+                    
+                    // no template was set
+                    if (false == isset ($entry ['template']) 
+                        || ( true == isset ($entry ['template']) && '' == $entry ['template'] )) {
+                        if (true == isset($entry ['result'][0])) {
+                            $entry ['result'] = $entry ['result'][0]['__ask_retval'];
+                        } else {
+                            $entry ['result'] = 0;
+                        }
+                        
+                    // if there was a template defined
                     } else {
                         $entry ['result'] = 0;
-                    }
-                    
-                // if there was a template defined
-                } else {
-                    $entry ['result'] = 0;
-                    
-                    // check for each entry got by query above if the filled
-                    // template query return something
-                    if (0 != $entry ['result']) {
-                        foreach ($entry ['result'] as $resEle) {
-                            $sparql = str_replace ('$P', $resEle ['element'], $entry ['template']);
-                            $result = $model->sparqlQuery ($sparql);
-                            if (true == isset($result[0])) {
-                                $entry ['result'] = $result[0]['__ask_retval'];
-                                break;
+                        
+                        // check for each entry got by query above if the filled
+                        // template query return something
+                        if (0 != $entry ['result']) {
+                            foreach ($entry ['result'] as $resEle) {
+                                $sparql = str_replace ('$P', $resEle ['element'], $entry ['template']);
+                                $result = $model->sparqlQuery ($sparql);
+                                if (true == isset($result[0])) {
+                                    $entry ['result'] = $result[0]['__ask_retval'];
+                                    break;
+                                }
                             }
                         }
                     }
+                    
+                } catch (Exception $e) {
+                    // something went wrong with Erfurt
+                    $entry ['result'] = 1;
                 }
                 
                 $entry ['hasError'] = '1' == $entry ['result'];
