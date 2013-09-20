@@ -133,6 +133,7 @@ class DataCube_Observation
     {
         var dimensionElementInfoObject:any = {},
             dimensionPropertyUri:string = "",
+            foundIt:any = null,
             observationDimensionProperty:any = {},
             self = this,
             value:any = 0;
@@ -160,6 +161,17 @@ class DataCube_Observation
                 
                 // e.g. http://lod2.eu/score/ind/bb_dsl_TOTAL_FBB__lines
                 observationDimensionProperty = observation[dimensionPropertyUri];
+                
+                // check, if observationDimensionProperty is related to a selected
+                // dimension element; in case its not, stop this stage and go further
+                foundIt = DataCube_Component.findDimensionElement(
+                    dimension.__cv_elements,
+                    observationDimensionProperty
+                );
+                
+                if (true === _.isNull(foundIt)) {
+                    return;
+                }
                 
                 // set still undefined areas
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {

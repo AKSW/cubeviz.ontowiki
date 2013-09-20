@@ -2128,6 +2128,7 @@ var DataCube_Observation = (function () {
         var dimensionElementInfoObject = {
         };
         var dimensionPropertyUri = "";
+        var foundIt = null;
         var observationDimensionProperty = {
         };
         var self = this;
@@ -2146,6 +2147,10 @@ var DataCube_Observation = (function () {
             _.each(selectedComponentDimensions, function (dimension) {
                 dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 observationDimensionProperty = observation[dimensionPropertyUri];
+                foundIt = DataCube_Component.findDimensionElement(dimension.__cv_elements, observationDimensionProperty);
+                if(true === _.isNull(foundIt)) {
+                    return;
+                }
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
                     self._axes[dimensionPropertyUri] = {
                     };
