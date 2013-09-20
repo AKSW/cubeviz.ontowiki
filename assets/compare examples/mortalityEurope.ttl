@@ -16,14 +16,15 @@
 #
 ex:dsd a cube:DataStructureDefinition ;
     rdfs:label "dsd"@en ;
-    cube:component  ex:countryCS, ex:yearCS, ex:unitCS, ex:valueCS .
+    cube:component ex:countryCS, ex:yearCS, ex:unitCS, ex:valueCS .
 
 #
 # Component Specifications
 #
 ex:countryCS a cube:ComponentSpecification ;
     rdfs:label "country (CS)" ;
-    cube:dimension ex:country .
+    cube:dimension ex:country ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/countryCS> .
 
 ex:yearCS a cube:ComponentSpecification ;
     rdfs:label "year (CS)" ;
