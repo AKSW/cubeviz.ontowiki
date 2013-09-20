@@ -15,7 +15,8 @@ class CubeViz_Visualization_HighCharts_Chart
         var categoriesElementAssign = {},
             i:number = 0,
             self = this,
-            xAxisElements:any = observation.getAxesElements(forXAxis);
+            xAxisElements:any = observation.sortAxis(forXAxis)
+                                           .getAxesElements(forXAxis);
         
         /**
          * put labels for properties to the axis (categories)

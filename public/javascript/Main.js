@@ -811,7 +811,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         };
         var i = 0;
         var self = this;
-        var xAxisElements = observation.getAxesElements(forXAxis);
+        var xAxisElements = observation.sortAxis(forXAxis).getAxesElements(forXAxis);
 
         _.each(xAxisElements, function (xAxisElement) {
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
