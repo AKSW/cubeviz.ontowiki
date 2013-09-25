@@ -1,4 +1,3 @@
-/// <reference path="..\..\..\declaration\libraries\Highcharts.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 /// <reference path="..\..\..\declaration\libraries\Underscore.d.ts" />
 
@@ -138,47 +137,17 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
-        // handle exception if no observation were retrieved
+        /**
+         * handle exception if no observation were retrieved
+         */
         if ( 0 == _.size(this.app._.data.retrievedObservations) ) {
             this.handleException("CubeViz error no observations retrieved");
             return this;
         }        
         
-        // Dynamiclly set visualization container height
-        // get chart config
-        var fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.className,
-                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
-            ),
-            selectedMeasure:any = this.app._.data.selectedComponents.measure,
-            type:string = null, 
-            visualizationSetting:any = null;
-        
-        // set default className
-        if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.className = this.app._.backend.chartConfig[
-                this.app._.data.numberOfMultipleDimensions
-            ].charts[0].className;
-            
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass (
-                this.app._.ui.visualization.className,
-                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
-            );
-        }
-        
-        // extract visualization settings
-        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings(
-            [],
-            this.app._.ui.visualizationSettings[this.app._.ui.visualization.className],
-            fromChartConfig.defaultConfig
-        );
-        
-        // determine if using HighCharts or CubeViz
-        type = CubeViz_Visualization_Controller.getVisualizationType(
-            this.app._.ui.visualization.className
-        );
-        
-        // set attribute uri, if available
+        /**
+         * set attribute uri, if available
+         */
         var selectedAttributeUri = null;
         
         if ((false === _.isNull(this.app._.data.selectedComponents.attribute)
@@ -193,25 +162,98 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
         }
         
         /**
-         * Render chart with the given data
+         * Initialize variables
          */
-        // if chart was created before, first destroy this instance
-        if(false === _.isUndefined(this.app._.generatedVisualization)){
-            try {
-                this.app._.generatedVisualization.destroy();
-            } catch (ex) {
-                // show exception if console.log is available, check because 
-                // some browsers, especially IE, did not have console defined
-                if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) { 
-                    console.log(ex);
-                }
-            }
+        var chart:any = null,
+            fromChartConfig:any = CubeViz_Visualization_Controller.getFromChartConfigByClass (
+                this.app._.ui.visualization.className,
+                this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts
+            ),
+            libraryInstance:any = null,
+            selectedMeasure:any = this.app._.data.selectedComponents.measure,
+            type:string = null, 
+            visualizationSetting:any = null;
+        
+        /**
+         * set default className
+         */
+        if(true === _.isNull(fromChartConfig)) {
+            var defaultChartConfig = CubeViz_Visualization_Controller.getDefaultChartConfig(
+                this.app._.backend.chartConfig,
+                this.app._.data.numberOfMultipleDimensions
+            );
+            
+            this.app._.ui.visualization.className = defaultChartConfig.className;
+            fromChartConfig = defaultChartConfig.chartConfig;
         }
         
-        var hC = new CubeViz_Visualization_HighCharts();
+        /** 
+         * extract visualization settings
+         */ 
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings(
+            [],
+            this.app._.ui.visualizationSettings[this.app._.ui.visualization.className],
+            fromChartConfig.defaultConfig
+        );
         
-        // load specific chart instance
-        var chart = hC.load(this.app._.ui.visualization.className);
+        /**
+         * determine if using HighCharts or CubeViz
+         */
+        type = CubeViz_Visualization_Controller.getVisualizationType(
+            this.app._.ui.visualization.className
+        );
+        
+        switch (type)
+        {
+            /**
+             * HighCharts library
+             */
+            case 'HighCharts':
+            
+                /**
+                 * Render chart with the given data
+                 */
+                // if chart was created before, first destroy this instance
+                if(false === _.isUndefined(this.app._.generatedVisualization)){
+                    try {
+                        this.app._.generatedVisualization.destroy();
+                    } catch (ex) {
+                        // show exception if console.log is available, check because 
+                        // some browsers, especially IE, did not have console defined
+                        if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) { 
+                            console.log(ex);
+                        }
+                    }
+                }
+            
+                // initialize library instance, which "controls" the chart instance
+                libraryInstance = new CubeViz_Visualization_HighCharts();
+                
+                // setup the chart instance, which handles the visualization
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+            
+                break;
+            
+            /**
+             * D3js library
+             */
+            case 'D3js':
+            
+                this.app._.generatedVisualization = null;
+                
+                $("#cubeviz-index-visualization").html ("");
+            
+                // initialize library instance, which "controls" the chart instance
+                libraryInstance = new CubeViz_Visualization_D3js();
+                
+                // setup the chart instance, which handles the visualization
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+            
+                break;
+                
+            default:
+                break;
+        }
         
         // init chart instance
         chart.init(
@@ -224,26 +266,35 @@ class View_IndexAction_Visualization extends CubeViz_View_Abstract
             CubeViz_Visualization_Controller.getOneElementDimensions (
                 this.app._.data.selectedComponents.dimensions
             ),
-            selectedMeasure["http://purl.org/linked-data/cube#measure"],
+            selectedMeasure,
             selectedAttributeUri
         );
                 
-        try {            
-            // set visualization height
-            this.setVisualizationHeight(_.size(
-                chart.getRenderResult().xAxis.categories
-            ));
+        try {
             
-            // check if at least one element to visualize
-            if ( 0 == _.size(chart.getRenderResult().series) ) {
-                this.handleException("CubeViz error no elements to visualize");
-                return this;
+            // TODO find a solution to adapt visz height or handle empty elements list
+            switch (type)
+            {
+                /**
+                 * HighCharts library
+                 */
+                case 'HighCharts':
+                    // set visualization height, which depends on the number of categories
+                    this.setVisualizationHeight(_.size(
+                        chart.getRenderResult().xAxis.categories
+                    ));
+                    
+                    // check if at least one element to visualize
+                    if ( 0 == _.size(chart.getRenderResult().series) ) {
+                        this.handleException("CubeViz error no elements to visualize");
+                        return this;
+                    }
+                    break;
             }
             
-            // show chart
-            this.app._.generatedVisualization = new Highcharts.Chart(
-                chart.getRenderResult()
-            );
+            // render computed results
+            this.app._.generatedVisualization = libraryInstance.render(chart);
+            
         } catch (ex) { 
             this.handleException(ex);
         }

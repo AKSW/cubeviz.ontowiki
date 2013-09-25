@@ -547,6 +547,14 @@ class DataCube_Query
     }
     
     /**
+     * Get number of all observations
+     */
+    public function getNumberOfObservations ($dsUri) 
+    {        
+        return count ($this->getObservations($dsUri));
+    }
+    
+    /**
      * Get number of used observations (related to a dataset) and
      * valid observations (have measure and at least one dimension element).
      */
@@ -605,7 +613,7 @@ class DataCube_Query
      * @param $dataSetUrl URL of a data set
      * @param $selectedComponentDimensions 
      */
-    public function getObservations ($dataSetUrl, $selectedComponentDimensions) 
+    public function getObservations ($dataSetUrl, $selectedComponentDimensions = array()) 
     {
         // generate unique hash using given result and model uri
         $objectId = md5(
@@ -627,7 +635,7 @@ class DataCube_Query
              */
             $queryObject = new Erfurt_Sparql_SimpleQuery();
             
-            // CONSTRUCT
+            // SELECT
             $queryObject->setProloguePart('SELECT ?s ?p ?o');
         
             // FROM
@@ -681,6 +689,8 @@ class DataCube_Query
             $where .= '}';    
             
             $queryObject->setWherePart($where);
+            
+            $queryObject->setLimit(500);
             
             $result = $this->_model->sparqlQuery((string) $queryObject);
             

@@ -66,6 +66,7 @@ AnalyzeAction_UsedQuery;Used Query
 AnalyzeAction_ValidObservations;Valid Observations
 
 ApplicationExtrasMenu_Label;CubeViz: Analyze DataCube
+ApplicationExtrasMenu_ComparingLabel;CubeViz: Compare DataSets
 
 DataSelectionModule_Alphabet;Alphabet
 DataSelectionModule_AttributeDialogTitle;Unit Selection
@@ -129,8 +130,6 @@ IndexAction_ExportAs;Export as
 IndexAction_ExportAsTurtle;Export as RDF/Turtle
 IndexAction_ExportAsCsv;Export as CSV
 IndexAction_GoToSource;Go To Source
-IndexAction_InformationAboutConfiguration;Information About Selected Configuration
-IndexAction_InformationAboutRetrievedData;Information About Retrieved Data
 IndexAction_JumpToLegend;Jump to Legend
 IndexAction_MetaDataAboutDimensionElement;Metadata about the dimension element
 IndexAction_NotificationHighChartsException10;That chart can not be created due to the fact that selected data contains zero or subzero values. Please change the configuration in the left sidebar or use another Scale value but not Logarithmic.
@@ -140,8 +139,6 @@ IndexAction_RetrievedData;Retrieved Data
 IndexAction_SelectedConfiguration;Selected Configuration
 IndexAction_ShowInformationAbout;Show Information About
 IndexAction_ShowMoreInformation;Show More Information
-IndexAction_SortByTitle;Sort By Title
-IndexAction_SortByValue;Sort By Value
 IndexAction_Update;Update
 IndexAction_UpdateVisualizationBasedSettings;Update Visualization Based On New Settings
 IndexAction_VisualizationOf;Visualization Of

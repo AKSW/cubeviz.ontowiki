@@ -1,0 +1,313 @@
+@base <http://example.cubeviz.org/compare/mortalityEurope/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix cube: <http://purl.org/linked-data/cube#> .
+@prefix ex: <http://example.cubeviz.org/compare/mortalityEurope/> .
+
+<> a owl:Ontology ;
+   rdfs:label "DataCube: Estimated Mortality in Europe" ;
+   dc:description "Its purpose is to participate as an example use case for comparision. Source: http://www.indexmundi.com" .
+
+# 
+# Data Structure Definition
+#
+ex:dsd a cube:DataStructureDefinition ;
+    rdfs:label "dsd"@en ;
+    cube:component ex:countryCS, ex:yearCS, ex:unitCS, ex:valueCS .
+
+#
+# Component Specifications
+#
+ex:countryCS a cube:ComponentSpecification ;
+    rdfs:label "country (CS)" ;
+    cube:dimension ex:country ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/countryCS> .
+
+ex:yearCS a cube:ComponentSpecification ;
+    rdfs:label "year (CS)" ;
+    cube:dimension ex:year ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/yearCS> .
+
+ex:unitCS a cube:ComponentSpecification ;
+    rdfs:label "straight deaths" ;
+    cube:attribute ex:unit .
+
+ex:valueCS a cube:ComponentSpecification ;
+    rdfs:label "deaths (CS)" ;
+    cube:measure ex:value .
+
+
+#
+# Data Set
+#
+ex:dataset a cube:DataSet ;
+    rdfs:label "Mortality"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    cube:structure ex:dsd .
+
+#
+# Dimensions, Units and Measures
+#
+ex:country a cube:DimensionProperty ;
+    rdfs:label "Country"@en .
+        
+ex:year a cube:DimensionProperty ;
+    rdfs:label "Year"@en .
+
+ex:unit a cube:AttributeProperty ;
+    rdfs:label "straight deaths" .
+
+ex:value a cube:MeasureProperty ;
+    rdfs:label "deaths (CS)"@en .
+    
+#
+# Observation #################################################################
+#
+
+# GERMANY
+ex:obs0 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2000 ;
+    ex:unit "straight deaths" ;
+    ex:value "861000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs1 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2001 ;
+    ex:unit "straight deaths" ;
+    ex:value "856000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs2 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2002 ;
+    ex:unit "straight deaths" ;
+    ex:value "848700"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs3 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2003 ;
+    ex:unit "straight deaths" ;
+    ex:value "847880"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs4 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight deaths" ;
+    ex:value "855260"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+<http://example.cubeviz.org/compare/populationEurope/obs4> a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight number of people" ;
+    ex:value "1337"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs5 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2005 ;
+    ex:unit "straight deaths" ;
+    ex:value "865100"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs6 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2006 ;
+    ex:unit "straight deaths" ;
+    ex:value "870020"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs7 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2007 ;
+    ex:unit "straight deaths" ;
+    ex:value "878220"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs8 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2008 ;
+    ex:unit "straight deaths" ;
+    ex:value "885600"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs9 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2009 ;
+    ex:unit "straight deaths" ;
+    ex:value "892980"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs10 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2010 ;
+    ex:unit "straight deaths" ;
+    ex:value "902000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs11 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2011 ;
+    ex:unit "straight deaths" ;
+    ex:value "895440"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+ex:obs12 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2012 ;
+    ex:unit "straight deaths" ;
+    ex:value "905280"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+
+# UNITED KINGDOM
+ex:obs13 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2000 ;
+    ex:unit "straight deaths" ;
+    ex:value "617713"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs14 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2001 ;
+    ex:unit "straight deaths" ;
+    ex:value "617377"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs15 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2002 ;
+    ex:unit "straight deaths" ;
+    ex:value "615734"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs16 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2003 ;
+    ex:unit "straight deaths" ;
+    ex:value "613518"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs17 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight deaths" ;
+    ex:value "614151"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs18 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2005 ;
+    ex:unit "straight deaths" ;
+    ex:value "615279"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs19 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2006 ;
+    ex:unit "straight deaths" ;
+    ex:value "613969"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs20 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2007 ;
+    ex:unit "straight deaths" ;
+    ex:value "613229"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs21 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2008 ;
+    ex:unit "straight deaths" ;
+    ex:value "612477"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs22 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2009 ;
+    ex:unit "straight deaths" ;
+    ex:value "612352"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs23 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2010 ;
+    ex:unit "straight deaths" ;
+    ex:value "581706"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs24 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2011 ;
+    ex:unit "straight deaths" ;
+    ex:value "584972"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+ex:obs25 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2012 ;
+    ex:unit "straight deaths" ;
+    ex:value "588228"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+#
+# Additional Stuff #############################################################
+#
+# countries
+ex:Germany a ex:country ;
+    rdfs:label "Germany"@en .
+    
+ex:UnitedKingdom a ex:country ;
+    rdfs:label "United Kingdom"@en .
+    
+# years
+ex:Y2000 a ex:year ;
+    rdfs:label "2000"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2000> .
+    
+ex:Y2001 a ex:year ;
+    rdfs:label "2001"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2001> .
+    
+ex:Y2002 a ex:year ;
+    rdfs:label "2002"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2002> .
+    
+ex:Y2003 a ex:year ;
+    rdfs:label "2003"@en .
+    
+ex:Y2004 a ex:year ;
+    rdfs:label "2004"@en .
+    
+ex:Y2005 a ex:year ;
+    rdfs:label "2005"@en .
+    
+ex:Y2006 a ex:year ;
+    rdfs:label "2006"@en .
+    
+ex:Y2007 a ex:year ;
+    rdfs:label "2007"@en .
+    
+ex:Y2008 a ex:year ;
+    rdfs:label "2008"@en .
+    
+ex:Y2009 a ex:year ;
+    rdfs:label "2009"@en .
+    
+ex:Y2010 a ex:year ;
+    rdfs:label "2010"@en .
+    
+ex:Y2011 a ex:year ;
+    rdfs:label "2011"@en .
+    
+ex:Y2012 a ex:year ;
+    rdfs:label "2012"@en ;
+    owl:sameAs <http://example.cubeviz.org/compare/populationEurope/Y2012> .

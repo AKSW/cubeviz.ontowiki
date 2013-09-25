@@ -169,6 +169,7 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
                 // save element instance
                 elementInstance
                     .data("data", element)
+                    .data("dimension", component)
                     .data("dialogDiv", dialogDiv);
                 
                 // ... add new item to element list
@@ -280,39 +281,26 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         // load dimensional data
         this.loadComponentDimensions(function(){
             
-            // update link code        
-            CubeViz_ConfigurationLink.save(
-                self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-            
-                // based on updatedLinkCode, load new observations
-                function(updatedDataHash){
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
-                    
-                    self.render();
-                    
-                    // update link code        
-                    CubeViz_ConfigurationLink.save(
-                        self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-                        
-                        // based on updatedLinkCode, load new observations
-                        function(updatedDataHash){
-                                    
-                            DataCube_Observation.loadAll(
-                                self.app._.backend.serviceUrl,self.app._.backend.modelUrl, 
-                                updatedDataHash, self.app._.backend.url,
-                                function(newEntities){
-                                    
-                                    // save new observations
-                                    self.app._.data.retrievedObservations = newEntities;
-                                    
-                                    CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                    
-                                    data.callback();
-                                }
-                            );
+            self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.data))+"";
+              
+            CubeViz_ConfigurationLink.saveData(
+                self.app._.backend.url, self.app._.backend.serviceUrl, 
+                self.app._.backend.modelUrl, self.app._.backend.dataHash, 
+                self.app._.data, function(){
+                                
+                    //  load new observations
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl,
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                        function(newEntities){
                             
-                            self.app._.backend.dataHash = updatedDataHash;
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            CubeViz_View_Helper.hideLeftSidebarSpinner();
+                            
+                            self.render();
+                            data.callback();
                         }
                     );
                 }
@@ -332,48 +320,39 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         if (0 === _.size(this.app._.data.selectedSlice)) {
             
             this.loadComponentDimensions(function(){
-                    
-                // TODO replace this in version 1.0!
-                // update link code        
-                CubeViz_ConfigurationLink.save(
-                    self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
                 
-                    // based on updatedLinkCode, load new observations
-                    function(updatedDataHash){
-                        
-                        self.app._.backend.dataHash = updatedDataHash;
-                        
-                        // update link code        
-                        CubeViz_ConfigurationLink.save(
-                            self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
+                // generate datahash
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data))+"";
+                
+                // save current data-object to server
+                CubeViz_ConfigurationLink.saveData(
+                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                    self.app._.backend.modelUrl, self.app._.backend.dataHash,
+                    self.app._.data, function(){
+                   
+                    // load new observations
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl, 
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                        function(newEntities){
                             
-                            // based on updatedLinkCode, load new observations
-                            function(updatedDataHash){
-                                        
-                                DataCube_Observation.loadAll(
-                                    self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
-                                    updatedDataHash, self.app._.backend.url,
-                                    function(newEntities){
-                                        
-                                        // save new observations
-                                        self.app._.data.retrievedObservations = newEntities;
-                                                                                
-                                        // reset left sidebar
-                                        self.destroy()
-                                            .initialize();
-                                        
-                                        // update visualization
-                                        self.triggerGlobalEvent("onReRender_visualization");
-                                        
-                                        CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                    }
-                                );
-                                
-                                self.app._.backend.dataHash = updatedDataHash;
-                            }
-                        );
-                    }
-                );
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            self.destroy()
+                                .render();
+                                                                
+                            // update visualization
+                            self.triggerGlobalEvent("onReRender_visualization");
+                            
+                            CubeViz_View_Helper.hideLeftSidebarSpinner();
+                            
+                            // call given callback function
+                            data.callback();
+                        }
+                    );
+                        
+                });
             });
             
         // slice selected
@@ -423,44 +402,36 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             // rebuild all dialogs based on the fixed set of dimension elements
             this.destroy();
                 
-            // update link code        
-            CubeViz_ConfigurationLink.save(
-                self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-            
-                // based on updatedLinkCode, load new observations
-                function(updatedDataHash){
-                    
-                    self.app._.backend.dataHash = updatedDataHash;
-                    
-                    self.initialize();
-                    
-                    // update link code        
-                    CubeViz_ConfigurationLink.save(
-                        self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data",
-                        
-                        // based on updatedLinkCode, load new observations
-                        function(updatedDataHash){
+            // load dimensional data
+            this.loadComponentDimensions(function(){
+                
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data))+"";
+
+                CubeViz_ConfigurationLink.saveData(
+                    self.app._.backend.url, self.app._.backend.serviceUrl, 
+                    self.app._.backend.modelUrl, self.app._.backend.dataHash,
+                    self.app._.data, function(){
                                     
-                            DataCube_Observation.loadAll(
-                                self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
-                                updatedDataHash, self.app._.backend.url,
-                                function(newEntities){
-                                    
-                                    // save new observations
-                                    self.app._.data.retrievedObservations = newEntities;
-                                    
-                                    CubeViz_View_Helper.hideLeftSidebarSpinner();
-                                    
-                                    // call given callback function
-                                    data.callback();
-                                }
-                            );
-                            
-                            self.app._.backend.dataHash = updatedDataHash;
-                        }
-                    );
-                }
-            );
+                        // load new observations
+                        DataCube_Observation.loadAll(
+                            self.app._.backend.url, self.app._.backend.serviceUrl, 
+                            self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                            function(newEntities){
+                                
+                                // save new observations
+                                self.app._.data.retrievedObservations = newEntities;
+                                
+                                CubeViz_View_Helper.hideLeftSidebarSpinner();
+                                
+                                self.render();
+                                
+                                // call given callback function
+                                data.callback();
+                            }
+                        );
+                    }
+                );
+            });
         }
     }
     
@@ -480,64 +451,78 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
     public onClick_dimensionElementCheckbox(event) : void 
     {
         var clickedCheckbox = $(event.target),
-            parentContainer = $($(event.target).parent()),
-            dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]"),
-            anythingChecked = false,
-            numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
+            dialogDiv = $($(event.target).parent()).data("dialogDiv"),
+            dialogCheckboxList = dialogDiv.find("[type=\"checkbox\"]"),
+            numberOfSelectedElements = this.getNumberOfCheckedBoxed(dialogDiv),
+            dimensionUri:string = $(clickedCheckbox.parent()).data("dimension").__cv_uri,
+            dimensionElements:any[] = this.app._.data.selectedComponents.dimensions[dimensionUri].__cv_elements,
+            numberOfDimensionElements = _.size(dimensionElements);
             
-        if (1 < numberOfSelectedElements
-            || 1 == this.app._.data.numberOfMultipleDimensions) {
-            return;
-        }
-            
-        // check if anything was checked before
-        _.each(dialogCheckboxList, function(checkbox){
-            if($(checkbox).attr("checked")) {
-                anythingChecked = true;
-            }
-        });        
+        /**
+         * Nothing selected and less then two multiple dimensions
+         */
+        if (0 == numberOfSelectedElements
+            && 2 > this.app._.data.numberOfMultipleDimensions) {
+                
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "hide");
         
-        // enable all checkboxes, if no checkbox is checked
-        if (false == anythingChecked) {
-            _.each(dialogCheckboxList, function(checkbox){
-                $(checkbox).attr("disabled", false);
-            });
+        /**
+         * At least one element selected and less then two multple dimensions
+         */
+        } else if (1 <= numberOfSelectedElements
+                   && 2 > this.app._.data.numberOfMultipleDimensions) {
             
-            // activate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
-                .show();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
-                .show();
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "show");
             
-            // cancel button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
-                .hide();
-            // close and update button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
-                .hide();
-        }
-        
-        // disable all checkboxes, if there are already two multiple dimensions
-        // and this dialog is not one of these
-        else {
+        /**
+         * Nothing selected and at least two multiple dimensions
+         */
+        } else if (0 == numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
+                       
+            // enable all checkboxes
             _.each(dialogCheckboxList, function(checkbox){
                 if(!$(checkbox).attr("checked")) {
-                    $(checkbox).attr("disabled", true);
+                    $(checkbox).attr("disabled", false);
                 }
             });
             
-            // deactivate both select buttons
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0))
-                .hide();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0))
-                .hide();
+            if (1 == numberOfDimensionElements) {
+                this.showHideSelectButtons(dialogDiv, "hide");
+            }
+            
+            this.showHideBottomButtons(dialogDiv, "hide");
+            
+        /**
+         * At least one element selected and at least two multiple dimensions
+         */
+        } else if (1 == numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
                 
-            // cancel button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
-                .show();
-            // close and update button
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
-                .show();
+            if (1 >= _.size(dimensionElements)) {
+                // disable all checkboxes
+                _.each(dialogCheckboxList, function(checkbox){
+                    if(!$(checkbox).attr("checked")) {
+                        $(checkbox).attr("disabled", true);
+                    }
+                });                
+                this.showHideSelectButtons(dialogDiv, "hide"); 
+            } else {
+                this.showHideSelectButtons(dialogDiv, "show"); 
+            }
+                       
+            this.showHideBottomButtons(dialogDiv, "show");
+            
+        /**
+         * At least two elements selected and at least two multiple dimensions
+         */
+        } else if (1 < numberOfSelectedElements
+                   && 2 <= this.app._.data.numberOfMultipleDimensions) {
+            
+            this.showHideSelectButtons(dialogDiv, "show");            
+            this.showHideBottomButtons(dialogDiv, "show");
         }
     }
     
@@ -581,6 +566,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
             .attr("checked", false);
+            
+        // cancel button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+            .hide();
+        // close and update button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+            .hide();
     }
     
     /**
@@ -591,6 +583,13 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         $(event.target).data("dialogDiv")
             .find("[type=\"checkbox\"]")
             .attr("checked", true);
+            
+        // cancel button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0))
+            .show();
+        // close and update button
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0))
+            .show();
     }
     
     /**
@@ -739,8 +738,8 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
             self = this;
         
         // if some items next to the close button was clicked, this event could
-        // be executed, so prevent invalid component data
-        if(undefined === component) {
+        // be triggered, to avoid invalid component data stop execution here
+        if(true === _.isUndefined(component)) {
             return;
         }
         
@@ -774,28 +773,53 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.
             getOneElementDimensions (this.app._.data.selectedComponents.dimensions));
         
-        // update link code        
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data",
+        // syn with backend and update observations
+        if (true === _.isUndefined(this.app._.data.settings)) {
             
-            // based on updatedLinkCode, load new observations
-            function(updatedDataHash){
-                        
-                DataCube_Observation.loadAll(
-                    self.app._.backend.serviceUrl, self.app._.backend.modelUrl, 
-                    updatedDataHash, self.app._.backend.url,
-                    function(newEntities){
-                        
-                        // save new observations
-                        self.app._.data.retrievedObservations = newEntities;
-                        
-                        callback();
-                    }
-                );
-                
-                self.app._.backend.dataHash = updatedDataHash;
-            }
-        );
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+        
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function(){
+                            
+                    // load new observations
+                    DataCube_Observation.loadAll(
+                        self.app._.backend.url, self.app._.backend.serviceUrl, 
+                        self.app._.backend.modelUrl, self.app._.backend.dataHash, "",
+                        function(newEntities){
+                            
+                            // save new observations
+                            self.app._.data.retrievedObservations = newEntities;
+                            
+                            callback();
+                        }
+                    );
+                }
+            );
+            
+        // DON'T sync with backend
+        } else if (false === _.isUndefined(this.app._.data.settings)
+                   && false === _.isUndefined(this.app._.data.settings.synchronizeWithStore)
+                   && false === this.app._.data.settings.synchronizeWithStore) {
+            
+            // adapt observations
+            self.app._.data.retrievedObservations = DataCube_Observation.markActiveObservations(
+                self.app._.data.retrievedObservations,
+                this.app._.data.selectedComponents.dimensions,
+                this.app._.data.selectedComponents.measure,
+                this.app._.data.selectedComponents.attribute
+            );
+            
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data))+"";
+            
+            // update link code        
+            CubeViz_ConfigurationLink.saveData(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.dataHash, 
+                this.app._.data, function(){ callback(); }, true
+            );
+        }
     }
     
     /**
@@ -930,5 +954,37 @@ class View_DataselectionModule_Component extends CubeViz_View_Abstract
         this.triggerGlobalEvent("onAfterRender_component");
         
         return this;
+    }
+    
+    /**
+     * @param dialogDiv jQuery Instance of dialog
+     * @param mode string Show or hide
+     */
+    public showHideBottomButtons($dialogDiv:any, mode:string = "show") : void
+    {
+        if ("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
+        
+        } else { // hide
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
+        }
+    }
+    
+    /**
+     * @param dialogDiv string Instance of dialog
+     * @param mode string Show or hide
+     */
+    public showHideSelectButtons($dialogDiv:any, mode:string = "show") : void
+    {
+        if ("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).show();
+        
+        } else { // hide      
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+        }
     }
 }

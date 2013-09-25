@@ -1,7 +1,7 @@
 /// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
 
-class DataCube_Observation {
-        
+class DataCube_Observation 
+{        
     /**
      * 
      */
@@ -46,6 +46,79 @@ class DataCube_Observation {
             return {};
         }
     }
+    
+    /**
+     *
+     */
+    static getNumberOfActiveObservations(observations:any) : number 
+    {
+        var activeOnes:number = 0;
+        
+        _.each(observations, function(observation){
+            if (true === DataCube_Observation.isActive(observation)){
+                ++activeOnes;
+            }
+        });
+        
+        return activeOnes;
+    }
+    
+    /**
+     * @param observations any
+     * @param dimensionUri string
+     * @return string[] List of used dimension element uris
+     */
+    static getUsedDimensionElementUris(observations:any, dimensionUri:string) : string[] 
+    {
+        var usedDimensionElementUris:string[] = [];
+        
+        _.each(observations, function(observation){
+            if (-1 === $.inArray(observation[dimensionUri], usedDimensionElementUris)){
+                usedDimensionElementUris.push(observation[dimensionUri]);
+            }
+        });
+        
+        return usedDimensionElementUris;
+    }
+    
+    /**
+     * Returns a list containing values of the given observations
+     * @param observations any
+     * @param measureUri string
+     * @param areActive bool optional
+     * @return any[] 2-element array: first element are the values, 
+     *               second if invalid numbers were found 
+     */
+    static getValues(observations:any, measureUri:string, areActive:bool = false) : any[] 
+    {
+        var foundInvalidNumber:bool = false,
+            value:any = null,
+            values:any[] = [];
+        
+        _.each(observations, function(observation){
+            
+            if (true === areActive 
+                && false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            
+            value = DataCube_Observation.parseValue(
+                observation, measureUri
+            );
+            
+            // something was wrong with the given observation value
+            if (true === _.isNull(value)) {
+                foundInvalidNumber = true;
+                return;
+            
+            // everything is fine, use this value!
+            } else {
+                values.push(value);
+            }
+        });
+        
+        return [values, foundInvalidNumber];
+    }
 
     /**
      * Initializing with given observations, selected component dimensions and
@@ -55,39 +128,31 @@ class DataCube_Observation {
      * @param measureUri Uri of the selected measure
      * @return DataCube_Observation Itself
      */
-    public initialize ( retrievedObservations:any, selectedComponentDimensions:any,
-        measureUri:string ) : DataCube_Observation 
+    public initialize (retrievedObservations:any, selectedComponentDimensions:any,
+        measureUri:string) : DataCube_Observation 
     {
         var dimensionElementInfoObject:any = {},
             dimensionPropertyUri:string = "",
+            foundIt:any = null,
             observationDimensionProperty:any = {},
             self = this,
-            value = 0;
+            value:any = 0;
         
         this._axes = {};
         
         _.each(retrievedObservations, function(observation){
             
-            // Parse observation value, if it is not a number, ignore it.
-            try {
-                value = parseFloat(observation[measureUri]);
-                
-                // If value contains whitespaces and it was able to parse
-                // it was float, remove whitespaces and parse it again
-                if(true === _.str.include(observation[measureUri], " ")) {
-                    value = parseFloat(
-                        observation[measureUri].replace(/ /gi, "")
-                    );
-                }
-                
-                if (true === _.isNaN(value)) {
-                    return;
-                }
-                
-                observation[measureUri] = value;
-                
-            // its not a number, ignore it!
-            } catch (ex) { return; }
+            if (false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            
+            value = DataCube_Observation.parseValue(
+                observation, measureUri
+            );
+            
+            if (true === _.isNull(value)) {
+                return;
+            }
             
             _.each(selectedComponentDimensions, function(dimension){
                 
@@ -96,6 +161,17 @@ class DataCube_Observation {
                 
                 // e.g. http://lod2.eu/score/ind/bb_dsl_TOTAL_FBB__lines
                 observationDimensionProperty = observation[dimensionPropertyUri];
+                
+                // check, if observationDimensionProperty is related to a selected
+                // dimension element; in case its not, stop this stage and go further
+                foundIt = DataCube_Component.findDimensionElement(
+                    dimension.__cv_elements,
+                    observationDimensionProperty
+                );
+                
+                if (true === _.isNull(foundIt)) {
+                    return;
+                }
                 
                 // set still undefined areas
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
@@ -145,16 +221,32 @@ class DataCube_Observation {
     }
     
     /**
-     * 
+     * @param observation any
      */
-    static loadAll (serviceUrl:string, modelIri:string, dataHash:string, url:string, callback) 
+    static isActive(observation:any) : bool
+    {
+        if (false === _.isUndefined (observation.__cv_active) 
+            && false === observation.__cv_active) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Loads observation based on datahash or dataset uri.
+     * @return void
+     */
+    static loadAll (url:string, serviceUrl:string, modelIri:string, dataHash:string, 
+        datasetUri:string, callback) : void
     {        
         $.ajax({
             url: url + "getobservations/",
             data: {
                 serviceUrl: serviceUrl,
                 modelIri: modelIri,
-                cv_dataHash: dataHash
+                cv_dataHash: dataHash,
+                datasetUri: datasetUri
             }
         })
         .error( function (xhr, ajaxOptions, thrownError) {
@@ -164,11 +256,131 @@ class DataCube_Observation {
             callback(entries.content);
         });
     }
+    
+    /**
+     * 
+     */
+    static loadNumberOfObservations (url:string, serviceUrl:string, modelIri:string, dsUri:string, callback) 
+    {        
+        $.ajax({
+            url: url + "getnumberofobservations/",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsUri: dsUri
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("Observation loadNumberOfObservations error: " + xhr.responseText);
+        })
+        .done( function (entries) {
+            callback(entries.content);
+        });
+    }
+    
+    /**
+     * @param observations any 
+     * @param selectedDimensions any
+     * @param selectedMeasure any
+     * @param selectedAttribute any
+     * @return any Adapted observations container
+     */
+    static markActiveObservations(observations:any, selectedDimensions:any,
+        selectedMeasure:any, selectedAttribute:any) : any
+    {
+        // real clone of given observations list
+        observations = $.parseJSON(JSON.stringify(observations));
+        
+        // reset all observations
+        _.each(observations, function(observation, key){
+            observation.__cv_active = false;            
+            observations[key] = observation;
+        });
+        
+        // based on (probably) new set selected dimensions, deactive all observations
+        // whose DE's does not fit with selected ones
+        var dimensionUri:string = null;
+        
+        _.each(observations, function(observation, key){
+            
+            // go through all dimensions
+            _.each(selectedDimensions, function(dimension){
+                
+                dimensionUri = dimension["http://purl.org/linked-data/cube#dimension"];
+                
+                // if observations related dimension element was found
+                if (false === _.isNull (DataCube_Component.findDimensionElement(
+                    dimension.__cv_elements, observation [dimensionUri]
+                    ))) {
+                    observation.__cv_active = true;
+                }
+            });
+        });
+        
+        return observations;
+    }
+    
+    /**
+     * Parse the value of a given observation.
+     * @param observation any The observation to parse
+     * @param measureUri string Uri of selected measure
+     * @param ignoreTemporaryValue bool Force function to ignore temporary value 
+     * @return float|null Null if value is not a float, otherwise returns the parsed value
+     */
+    static parseValue(observation:any, measureUri:string, ignoreTemporaryValue:bool = false) : any 
+    {
+        var parsedValue:number = null,
+            value:string = null;
+        
+        // set observation value, distinguish between original and user-set
+        // one: prefer the user-set one over the original
+        if (false === ignoreTemporaryValue
+            && false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            value = observation.__cv_temporaryNewValue;
+        } else {
+            value = observation[measureUri];
+        }
+        
+        // Parse observation value, if it is not a number, return null
+        try {
+            // If value contains whitespaces, remove whitespaces and parse it
+            if(true === _.str.include(value, " ")) {
+                parsedValue = parseFloat(value.replace(/ /gi, ""));
+            } else {
+                parsedValue = parseFloat(value);
+            }
+            
+            // check if its a valid number
+            if (false === _.isNaN(parsedValue) && _.isFinite(parsedValue)
+                && (0 < parsedValue || 0 > parsedValue || 0 === parsedValue)) {
+                return parsedValue;
+            }
+            
+        // its not a number
+        } catch (ex) {}
+        
+        return null;
+    }
+    
+    /**
+     * @param observation any The observation to parse
+     * @param measureUri string 
+     */
+    static setOriginalValue(observation:any, measureUri:string, newValue:string) : void 
+    {
+        if (false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            observation.__cv_temporaryNewValue = null;
+            delete observation.__cv_temporaryNewValue;
+        } 
+        
+        observation [measureUri] = newValue;
+    }
 
     /**
      * Sort axis elements
      * @param axisUri Key string of the axis to sort
      * @param mode Possible values: ascending (default), descending
+     * @return DataCube_Observation
      */
     public sortAxis(axisUri:string, mode?:string) : DataCube_Observation 
     {

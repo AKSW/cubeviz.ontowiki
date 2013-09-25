@@ -108,33 +108,39 @@ class CubevizController extends OntoWiki_Controller_Component
         {
             if (true === isset($entry ['query'])) {
                 
-                $entry ['result'] = $model->sparqlQuery ($entry ['query']);
-                
-                // no template was set
-                if (false == isset ($entry ['template']) 
-                    || ( true == isset ($entry ['template']) && '' == $entry ['template'] )) {
-                    if (true == isset($entry ['result'][0])) {
-                        $entry ['result'] = $entry ['result'][0]['__ask_retval'];
+                try {
+                    $entry ['result'] = $model->sparqlQuery ($entry ['query']);
+                    
+                    // no template was set
+                    if (false == isset ($entry ['template']) 
+                        || ( true == isset ($entry ['template']) && '' == $entry ['template'] )) {
+                        if (true == isset($entry ['result'][0])) {
+                            $entry ['result'] = $entry ['result'][0]['__ask_retval'];
+                        } else {
+                            $entry ['result'] = 0;
+                        }
+                        
+                    // if there was a template defined
                     } else {
                         $entry ['result'] = 0;
-                    }
-                    
-                // if there was a template defined
-                } else {
-                    $entry ['result'] = 0;
-                    
-                    // check for each entry got by query above if the filled
-                    // template query return something
-                    if (0 != $entry ['result']) {
-                        foreach ($entry ['result'] as $resEle) {
-                            $sparql = str_replace ('$P', $resEle ['element'], $entry ['template']);
-                            $result = $model->sparqlQuery ($sparql);
-                            if (true == isset($result[0])) {
-                                $entry ['result'] = $result[0]['__ask_retval'];
-                                break;
+                        
+                        // check for each entry got by query above if the filled
+                        // template query return something
+                        if (0 != $entry ['result']) {
+                            foreach ($entry ['result'] as $resEle) {
+                                $sparql = str_replace ('$P', $resEle ['element'], $entry ['template']);
+                                $result = $model->sparqlQuery ($sparql);
+                                if (true == isset($result[0])) {
+                                    $entry ['result'] = $result[0]['__ask_retval'];
+                                    break;
+                                }
                             }
                         }
                     }
+                    
+                } catch (Exception $e) {
+                    // something went wrong with Erfurt
+                    $entry ['result'] = 1;
                 }
                 
                 $entry ['hasError'] = '1' == $entry ['result'];
@@ -207,6 +213,129 @@ class CubevizController extends OntoWiki_Controller_Component
     }
     
     /**
+     * 
+     * @param void
+     * @return void
+     */
+    public function compareAction()
+    {       
+        // set paths
+        $basePath = $this->view->basePath = $this->_config->staticUrlBase . 'extensions/cubeviz/';
+        $baseCssPath = $basePath .'public/css/';
+        $baseJavascriptPath = $basePath .'public/javascript/';
+        $baseImagesPath = $basePath .'public/images/';
+        
+        /**
+         * Including css files for this action
+         */
+        $this->view->headLink()
+            ->appendStylesheet($baseCssPath.'foreign/Bootstrap/bootstrap.min.css')
+            ->appendStylesheet($baseCssPath.'foreign/FontAwesome/css/font-awesome.min.css')
+            ->appendStylesheet($baseCssPath.'/CompareAction/CompareAction.css')
+            ->appendStylesheet($baseCssPath.'/main.css');
+            
+        // Libraries
+        $this->view->headScript()
+            ->appendFile($basePath          .'ChartConfig.js',                     'text/javascript')            
+            ->appendFile($baseJavascriptPath.'libraries/highcharts.js',            'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js',       'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/CryptoJS_Md5.js',          'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/json2.js',                 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/javascriptStats-1.0.1.js', 'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/formulaParser.js',         'text/javascript')
+            
+            ->appendFile($baseJavascriptPath.'libraries/underscore.js',            'text/javascript')
+            ->appendFile($baseJavascriptPath.'libraries/underscore.string.js',     'text/javascript')
+            ->appendScript ('_.mixin(_.str.exports());'); // for underscore.string
+            
+        // If this module is in the "development" context
+        if('development' === $this->_privateConfig->get('context')) {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'libraries/munit.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Test.js', 'text/javascript')
+                ->appendFile ($baseJavascriptPath. 'Main.js', 'text/javascript');
+        
+        // otherwise it is in "production" context
+        } else {
+            $this->view->headScript()
+                ->appendFile ($baseJavascriptPath. 'Main-production.js', 'text/javascript');
+        }
+        
+        $this->view->translate = $this->_owApp->translate;
+        $this->view->staticUrlBase = $this->_config->staticUrlBase;
+        $this->view->cubevizImagesPath = $basePath .'public/images/';
+        
+        $on = $this->_owApp->getNavigation();
+        $on->disableNavigation (); // disable OntoWiki's Navigation 
+        
+        /**
+         * load data and setup view
+         */
+        $store = $this->_erfurt->getStore();
+        $th = new OntoWiki_Model_TitleHelper (null, $store);
+        
+        $models = $store->getAvailableModels();
+        $this->view->models = array ();    
+                
+        // config for frontend
+        if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
+            
+            $config['backend'] = array(
+                'context'               => $this->_privateConfig->get('context'), 
+                'database'              => $this->_owApp->getConfig()->store->backend,
+                'dataHash'              => '',
+                'imagesPath'            => $baseImagesPath,
+                'modelInformation'      => array(),
+                'modelUrl'              => '',
+                'serviceUrl'            => '',
+                'uiHash'                => '',
+                'uiParts'               => array(
+                    'dataselectionModule' => array ()
+                ),
+                'uiSettings'            => array (),
+                'retrievedObservations' => array(),
+                'url'                   => $this->_config->staticUrlBase . 'cubeviz/'
+            );
+            
+            $this->view->headScript()
+                 ->appendScript('cubeVizApp._ = '. json_encode($config, JSON_FORCE_OBJECT) .';')
+                 ->appendScript('cubeVizApp._.backend.chartConfig = CubeViz_ChartConfig;');
+        }
+            
+        // each element will be an object (acting as an associative array)
+        // with "1" or "2" as key (index)
+        $config['compareAction'] = array(
+            'datasets'                      => array(1 => null, 2 => null),
+            'components'                    => array(
+                'dimensions'    => array (1 => null, 2 => null),
+                'measures'      => array (1 => null, 2 => null),
+                'attributes'    => array (1 => null, 2 => null)
+            ),
+            'models'                        => array(1 => null, 2 => null),
+            'originalObservations'          => array(1 => null, 2 => null),
+            'retrievedObservations'         => array(1 => null, 2 => null),
+            'slices'                        => array(1 => null, 2 => null),
+            
+            'equalDimensions'               => array(),
+            'unequalDimensions'             => array(1 => null, 2 => null),
+            
+            'numberOfObservations'          => array(1 => -1, 2 => -1)
+        );
+        
+        $this->view->headScript()
+             ->appendScript('cubeVizApp._.compareAction = '. json_encode($config['compareAction'], JSON_FORCE_OBJECT) .';');
+        
+        // modellist
+        foreach ($models as $modelUri => $entry) { $th->addResource ($modelUri); }
+        foreach ($models as $modelUri => $entry) { 
+            $this->view->models [] = array (
+                'label' => $th->getTitle ($modelUri),
+                'uri' => $modelUri
+            );
+        }
+    }    
+    
+    /**
      *
      */
     public function createexamplecubeAction() 
@@ -250,7 +379,7 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      * Exports dataselection given by dataHash.
      */
-    public function exportdataselectionAction() 
+    public function exportAction() 
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
@@ -260,12 +389,26 @@ class CubevizController extends OntoWiki_Controller_Component
             return;
         }
         
-        // parameter
-        $dataHash = $this->_request->getParam ('dataHash', '');
-        $type = $this->_request->getParam ('type', '');
-        $filename = 'cubevizExport_'. $dataHash;
-        
         $model = $this->_owApp->selectedModel;
+        
+        /**
+         * all these parameter pointing to the same dataHash
+         */
+        $dataselection = $this->_request->getParam ('dataselection', '');
+        $datacube = $this->_request->getParam ('datacube', '');
+        
+        if ('' != $dataselection) {
+            $dataHash = $dataselection;
+        } elseif ('' != $datacube) {
+            $dataHash = $datacube;
+        } else {
+            return;
+        }
+        
+        // optional parameter
+        $type = $this->_request->getParam ('type', '');
+        
+        $filename = 'cubevizExport_'. $dataHash;
         
         switch ($type)
         {
@@ -281,100 +424,26 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         // setup response
-        $response = $this->getResponse();
-        $response->setHeader('Content-Type', $contentType, true);
-        $response->setHeader('Content-Disposition', 'filename="' . $filename . '"');
-        $response->setHeader('Pragma', 'no-cache');
-        $response->setHeader('Expires', '0');
-        
-        // output data itself (ouput directly to avoid caching the result)
-        echo CubeViz_DataSelectionExporter::_(
-            $type, 
-            $dataHash, 
-            $model,
-            $this->_titleHelperLimit
-        );
-    }
-    
-    /**
-     *
-     */
-    public function getattributesAction() 
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $this->_helper->layout->disableLayout();
-        
-        // parameter
-        $modelIri = $this->_request->getParam ('modelIri', '');
-        $dsdUrl = $this->_request->getParam('dsdUrl', '');
-        $dsUrl = $this->_request->getParam('dsUrl', '');
-        
-        // check if model there
-        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
-            $code = 404;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '', 
-                    'message' => 'Model not available'
-                ),
-                $code
-            );
-            return;
-        }
-        
-        // check if dsdUrl is valid
-        if(false === Erfurt_Uri::check($dsdUrl)) {
-            $code = 400;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '', 
-                    'message' => 'dsdUrl is not valid'
-                ),
-                $code
-            );
-            return;
-        }
-        
-        // check if dsUrl is valid
-        if(false === Erfurt_Uri::check($dsUrl)) {
-            $code = 400;
-            $this->_sendJSONResponse(
-                array(
-                    'code' => $code, 
-                    'content' => '', 
-                    'message' => 'dsUrl is not valid'
-                ),
-                $code
-            );
-            return;
-        }
-        
         try {
-            $model = new Erfurt_Rdf_Model($modelIri);
-            $query = new DataCube_Query($model, $this->_titleHelperLimit);
+            $output = CubeViz_Exporter::_($type, $dataHash, $model, $this->_titleHelperLimit);
             
-            $code = 200;
-            $content = array(
-                'code' => $code,
-                'content' => $query->getComponents(
-                    $dsdUrl,
-                    $dsUrl,
-                    DataCube_UriOf::Attribute
-                ),
-                'message' => ''
-            );
-        } catch(CubeViz_Exception $e) {
-            $code = 400;
-            $content = array(
-                'code' => $code, 
-                'content' => '', 
-                'message' => $e->getMessage()
-            );
+            $this->getResponse()
+                ->setHeader('Content-Type', $contentType, true)
+                ->setHeader('Content-Disposition', 'filename="' . $filename . '"')
+                ->setHeader('Pragma', 'no-cache')
+                ->setHeader('Expires', '0');
+            
+            echo $output;
+            
+        } catch (Exception $e) {
+            if('development' === $this->_privateConfig->get('context')) {
+                throw $e;
+            } else {
+                echo "Something went wrong with the Exporter, ".
+                     "please contact the side administrator if the problem persists. ".
+                     "Sorry.";
+            }
         }
-        
-        $this->_sendJSONResponse($content, $code);
     }
     
     /**
@@ -433,10 +502,12 @@ class CubevizController extends OntoWiki_Controller_Component
             return;
         }
                 
-        if($componentType == 'measure') {
-            $componentType = DataCube_UriOf::Measure;
-        } else if($componentType == 'dimension') {
+        if($componentType == 'attribute') {
+            $componentType = DataCube_UriOf::Attribute;
+        } elseif($componentType == 'dimension') {
             $componentType = DataCube_UriOf::Dimension;
+        } elseif($componentType == 'measure') {
+            $componentType = DataCube_UriOf::Measure;
         } else {
             // stop execution, because it is not a $componentType that i understand
             $code = 400;
@@ -500,7 +571,7 @@ class CubevizController extends OntoWiki_Controller_Component
         }
     
         // check if dsdUrl is valid
-        if(false === Erfurt_Uri::check($dsdUrl)) {
+        if('' != $dsdUrl && false === Erfurt_Uri::check($dsdUrl)) {
             $code = 400;
             $this->_sendJSONResponse(
                 array(
@@ -582,14 +653,14 @@ class CubevizController extends OntoWiki_Controller_Component
     /**
      *
      */
-    public function getobservationsAction() 
+    public function getnumberofobservationsAction() 
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();   
              
         // parameter
         $modelIri = $this->_request->getParam ('modelIri', '');
-        $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
+        $dsUri = trim($this->_request->getParam ('dsUri', ''));
         
         // check if model there
         if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
@@ -602,10 +673,10 @@ class CubevizController extends OntoWiki_Controller_Component
         }
         
         // check if model there
-        if('' == $dataHash) {
+        if(false === Erfurt_Uri::check($dsUri)) {
             $code = 404;
             $this->_sendJSONResponse(
-                array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
+                array('code' => $code, 'content' => '', 'message' => 'Dataset URI is not valid: '. $dsUri),
                 $code
             );
             return;
@@ -615,21 +686,94 @@ class CubevizController extends OntoWiki_Controller_Component
             $model = new Erfurt_Rdf_Model ($modelIri);
             $query = new DataCube_Query ($model, $this->_titleHelperLimit);
 
-            $configuration = new CubeViz_ConfigurationLink(
-                $this->_owApp->selectedModel,
-                $this->_titleHelperLimit
-            );
+            $code = 200;
 
-            // load configuration which is associated with given linkCode
-            list($c, $hash) = $configuration->read ($dataHash, $model, $this->_titleHelperLimit);
+            $content = array(
+                'code' => $code, 
+                'content' => $query->getNumberOfObservations($dsUri),
+                'message' => ''
+            );
+            
+        } catch (Exception $e) {
+            $code = 400;
+            $content = array('code' => $code, 'content' => '', 'message' => $e->getMessage());
+        }
+        
+        $this->_sendJSONResponse($content, $code);
+    }
+    
+    /**
+     *
+     */
+    public function getobservationsAction() 
+    {
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();   
+             
+        // parameter
+        $modelIri = $this->_request->getParam ('modelIri', '');
+        $dataHash = trim($this->_request->getParam ('cv_dataHash', ''));
+        $datasetUri = trim($this->_request->getParam ('datasetUri', ''));
+        
+        // check if model there
+        if(false === $this->_erfurt->getStore()->isModelAvailable($modelIri)) {
+            $code = 404;
+            $this->_sendJSONResponse(
+                array('code' => $code, 'content' => '', 'message' => 'Model not available'),
+                $code
+            );
+            return;
+        }
+        
+        // check if datahash or dataset uri set
+        if('' == $dataHash && false === Erfurt_Uri::check($datasetUri)) {
+            if('' == $dataHash) {
+                $code = 404;
+                $this->_sendJSONResponse(
+                    array('code' => $code, 'content' => '', 'message' => 'Data hash is not valid'),
+                    $code
+                );
+                return;
+            }
+            // false === Erfurt_Uri::check($datasetUri)
+            else {
+                $code = 404;
+                $this->_sendJSONResponse(
+                    array('code' => $code, 'content' => '', 'message' => 'Dataset Uri is not valid'),
+                    $code
+                );
+                return;
+            }
+        }
+            
+        try {
+            $model = new Erfurt_Rdf_Model ($modelIri);
+            $query = new DataCube_Query ($model, $this->_titleHelperLimit);
+            
+            if('' != $dataHash) {
+                $configuration = new CubeViz_ConfigurationLink(
+                    $this->_owApp->selectedModel,
+                    $this->_titleHelperLimit
+                );
+
+                // load configuration which is associated with given linkCode
+                list($c, $hash) = $configuration->read ($dataHash, 'data');
+                
+                $datasetUri = $c ['selectedDS']['__cv_uri'];
+                $dimensions = $c ['selectedComponents']['dimensions'];
+            
+            // datasetUri set
+            } else {
+                $dimensions = array();
+            }
             
             $code = 200;
 
             $content = array(
                 'code' => $code, 
                 'content' => $query->getObservations(
-                    $c ['selectedDS']['__cv_uri'],
-                    $c ['selectedComponents']['dimensions']
+                    $datasetUri,
+                    $dimensions
                 ),
                 'message' => ''
             );
@@ -746,6 +890,7 @@ class CubevizController extends OntoWiki_Controller_Component
          */
         // Libraries
         $this->view->headScript()
+            ->appendFile($baseJavascriptPath.'libraries/javascriptStats-1.0.1.js', 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts.js', 'text/javascript')
             ->appendFile($baseJavascriptPath.'libraries/highcharts-more.js', 'text/javascript');  
     
@@ -938,14 +1083,18 @@ class CubevizController extends OntoWiki_Controller_Component
     {
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-
-        // save parameter 
+        
+        /**
+         * save parameter 
+         */
+        $hash = $this->_request->getParam('hash', '');
         $modelIri = $this->_request->getParam('modelIri', '');
         $stringifiedContent = $this->_request->getParam('stringifiedContent', '');
         $type = $this->_request->getParam('type', '');
+        $useObservations = $this->_request->getParam('useObservations', '');
         
         // if type is data, than load observations before save content
-        if ('data' == $type) {
+        if ('data' == $type && 'false' == $useObservations) {
             
             // setup 
             $model = new Erfurt_Rdf_Model ($modelIri);
@@ -968,10 +1117,10 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_owApp->selectedModel, $this->_titleHelperLimit
         );
                 
-        $hash = $configuration->write($stringifiedContent, $type);
+        $configuration->write($stringifiedContent, $hash);
         
         // send back generated hash
-        $this->_sendJSONResponse($hash);
+        $this->_sendJSONResponse(null);
     }
     
     /**

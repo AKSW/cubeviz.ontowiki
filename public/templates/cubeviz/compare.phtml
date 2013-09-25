@@ -1,0 +1,811 @@
+<script type="text/javascript">
+    cubeVizApp
+        .add("View_CompareAction_ModelSelection", "")
+        .add("View_CompareAction_DatasetSelection", "")
+        .add("View_CompareAction_GeneralDatasetInformation", "")
+        .add("View_CompareAction_DimensionOverview", "")
+        .add("View_CompareAction_MeasureAndAttributeInformation", "")
+        .add("View_CompareAction_VisualizationSetup", "")
+        .add("View_CompareAction_ClusterVisualization", "");
+</script>
+
+<br/>
+
+<div style="padding-left: 15px;">
+    <span style="padding-right: 30px; font-size: 20px; font-weight: bold;">
+        Compare Datasets</span>
+        
+    <small>Here you have the possibility to compare two different datasets. The line on top represents the first dataset, the line below the second one.</small>
+</div>
+
+<hr style="margin-top: 10px;"/>
+
+<div class="" id="cubeviz-compare-container" style="" title="">
+    
+    <table class="cubeviz-compare-table" style="width: auto;">
+                
+        <!-- 
+            top 
+        -->
+        <tr style="height: 260px;">
+            
+            <!-- Model selection -->
+            <td class="cubeviz-compare-modelSelection">
+                <strong>Model selection</strong>
+                
+                <br/>
+                <small>Please choose a model and than one of its datasets.</small>
+                <br/>
+                <br/>
+                
+                <select id="cubeviz-compare-modelSelector1">
+                    <option value="">- please select -</option>
+                    
+                    <?php foreach ($this->models as $model): ?>
+                        <option value="<?php echo $model ['uri']; ?>">
+                            <?php echo $model ['label']; ?></option>
+                    <?php endforeach;?>
+                </select>
+                
+                <br/>
+                <br/>
+                
+                <!-- DataSet selection -->
+                <div class="cubeviz-compare-datasetSelection" id="cubeviz-compare-datasetSelectionDiv1">                    
+                    <strong>Dataset selection</strong>
+                    
+                    <br/>
+                    <br/>
+                    
+                    <select id="cubeviz-compare-datasetSelector1"></select>
+                    
+                    <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox1" style="display: none;" title="">
+                        Selected model contains no datasets!
+                    </div>                    
+                </div>
+            </td>
+            
+            <!-- General information about the dataset -->
+            <td class="cubeviz-compare-generalDatasetInformation" id="cubeviz-compare-generalDatasetInformation1">
+                
+                <strong>Overall numbers:</strong>
+                
+                <br/>
+                
+                <small>A short summary of numbers counting important elements.</small>
+                
+                <br/>
+                <br/>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Dimensions -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">                        
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Dimensions<br/>&nbsp;
+                    </div>
+                    
+                    <!-- Dimension elements -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">                        
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Dimension- <br/>elements
+                    </div>
+                    
+                    <!-- Measures -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Measures<br/>&nbsp;
+                    </div>
+                    
+                </div>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Attributes -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Attributes<br/>&nbsp;
+                    </div>
+                    
+                    <!-- Slices -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Slices<br/>&nbsp;
+                    </div>
+                    
+                    <!-- Observations -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Observations<br/>&nbsp;
+                    </div>
+                    
+                </div>
+                
+            </td> 
+            
+            <!-- Measure and attributeInformation information -->
+            <td class="cubeviz-compare-measuresAndAttributesInformation" id="cubeviz-compare-measuresAndAttributesInformation1">
+                
+                <strong>Measure information</strong>
+                
+                <br/>
+                <br/>
+                                
+                <table class="table table-bordered responsive-utilities">
+
+                    <tr>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Range_(statistics)" target="blank">
+                                Range</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Median" target="blank">
+                                Median</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Mean" target="blank">
+                                Mean</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Variance" target="blank">
+                                Variance</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Standard_deviation" target="blank">
+                                Standard Deviation</a></strong>
+                        </td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        
+                        <!-- Range -->
+                        <td class="cubeviz-compare-mAATableCell">
+                            It describes the lowest and highest values 
+                            of all observated values.
+                        </td>
+                        
+                        <!-- Median -->
+                        <td class="cubeviz-compare-mAATableCell">
+                            The numerical value separating the higher 
+                            half from the lower half.
+                        </td>
+                        
+                        <!-- Mean -->
+                        <td class="cubeviz-compare-mAATableCell">
+                            It is the average value.
+                        </td>
+                        
+                        <!-- Variance -->
+                        <td class="cubeviz-compare-mAATableCell">
+                            The variance is a measure of how far a list of observated
+                            values is spread out.
+                        </td>
+                        
+                        <!-- Standard deviation -->
+                        <td class="cubeviz-compare-mAATableCell">
+                            It shows how much variation exists from the average (mean), 
+                            or expected value.
+                        </td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        <td class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAARangeMin">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAMedian">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAMean">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAVariance">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAStandardDeviation">0</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAARangeMax">0</span>
+                        </td>
+                    </tr>
+                    
+                </table>
+                
+                <div id="cubeviz-compare-mAAInvalidNumbersFound1"><small>
+                    Invalid numbers occour in the observations, so computed
+                    values are not exact!</small></div>
+                
+            </td>
+                  
+            <!-- UNequal Dimensions -->
+            <td class="cubeviz-compare-unequalDimensions" id="cubeviz-compare-unequalDimensions1">
+                
+                <strong>Unequal dimensions</strong>
+                
+                <br/>
+                <br/>
+                
+                <div id="cubeviz-compare-unequalDimensionsTableContainer1" 
+                     style="clear: both;"></div>
+                
+            </td>
+            
+            <!-- equal Dimensions -->
+            <td class="cubeviz-compare-equalDimensions" id="cubeviz-compare-equalDimensions1">
+                
+                <strong>Equal dimensions</strong>
+                
+                <br/>
+                <br/>
+                
+                <div id="cubeviz-compare-equalDimensionsTableContainer1" style="clear: both;" title=""></div>
+                
+            </td>
+            
+        </tr>        
+
+
+        <!-- 
+            bottom 
+        -->
+        <tr style="height: 180px;">
+        
+            <!-- Model selection -->
+            <td class="cubeviz-compare-modelSelection">
+            
+                <small>For comparision you have to choose another model and one of its datasets.</small>
+            
+                <br/>
+                <br/>
+                
+                <select id="cubeviz-compare-modelSelector2">
+                    <option value="">- please select -</option>
+                    
+                    <?php foreach ($this->models as $model): ?>
+                        <option value="<?php echo $model ['uri']; ?>">
+                            <?php echo $model ['label']; ?></option>
+                    <?php endforeach;?>
+                </select>
+                
+                <br/>
+                <br/>
+                
+                <!-- DataSet selection -->
+                <div class="cubeviz-compare-datasetSelection" id="cubeviz-compare-datasetSelectionDiv2">
+                    
+                    <select id="cubeviz-compare-datasetSelector2"></select>
+                    
+                    <div class="cubeviz-compare-warningBox" id="cubeviz-compare-datasetSelectorWarningBox2" style="display: none;" title="">
+                        Selected model contains no datasets!
+                    </div>
+                    
+                </div>                
+            </td>
+            
+            <!-- General information about the dataset -->
+            <td class="cubeviz-compare-generalDatasetInformation" id="cubeviz-compare-generalDatasetInformation2">
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+                    
+                    <!-- Dimensions -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">                        
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/dimension.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Dimensions<br/>&nbsp;
+                    </div>                        
+                    
+                    <!-- Dimension elements -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">                        
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Dimension- <br/>elements
+                    </div>
+                    
+                    <!-- Measures -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/measure2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Measures<br/>&nbsp;
+                    </div>
+                    
+                </div>
+                
+                <div class="cubeviz-compare-generalInformationSeparator">
+
+                    <!-- Attributes -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/attribute2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Attributes<br/>&nbsp;
+                    </div>
+                                    
+                    <!-- Slices -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/slice2.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Slices<br/>&nbsp;
+                    </div>
+                    
+                    <!-- Observations -->
+                    <div class="cubeviz-compare-informationPieceBox">
+                        <div class="cubeviz-compare-informationPieceBoxImageContainer">
+                            <img class="cubeviz-compare-informationPieceBoxImage"
+                                 src="<?php echo $this->cubevizImagesPath; ?>semicon/observation.png"/>
+                            
+                            <span class="cubeviz-compare-informationPieceBoxValue">0</span>
+                        </div>
+                        Observations<br/>&nbsp;
+                    </div>
+                    
+                </div>
+                
+            </td>
+            <!-- Measure and attributeInformation information -->
+            <td class="cubeviz-compare-measuresAndAttributesInformation" id="cubeviz-compare-measuresAndAttributesInformation2">
+                
+                <table class="table table-bordered responsive-utilities">
+
+                    <tr>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Range_(statistics)" target="blank">
+                                Range</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Median" target="blank">
+                                Median</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Mean" target="blank">
+                                Mean</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Variance" target="blank">
+                                Variance</a></strong>
+                        </td>
+                        
+                        <td class="cubeviz-compare-mAATableHeader">
+                            <strong><a href="https://en.wikipedia.org/wiki/Standard_deviation" target="blank">
+                                Standard Deviation</a></strong>
+                        </td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        <td class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAARangeMin">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAMedian">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAMean">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAVariance">0</span>
+                        </td>
+                        <td rowspan="2" class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAAStandardDeviation">0</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td class="cubeviz-compare-mAAValues">
+                            <span class="cubeviz-compare-mAARangeMax">0</span>
+                        </td>
+                    </tr>
+                    
+                </table>
+                
+                <div id="cubeviz-compare-mAAInvalidNumbersFound2"><small>
+                    Invalid numbers occour in the observations, so computed
+                    values are not exact!</small></div>
+                
+            </td>
+                        
+            <!-- UNequal Dimensions -->
+            <td class="cubeviz-compare-unequalDimensions" id="cubeviz-compare-unequalDimensions2">
+                
+                <div id="cubeviz-compare-unequalDimensionsTableContainer2" 
+                     style="clear: both;"></div>
+                
+            </td>
+                        
+            <!-- equal Dimensions -->
+            <td class="cubeviz-compare-equalDimensions" id="cubeviz-compare-equalDimensions2">
+                
+                <div id="cubeviz-compare-equalDimensionsTableContainer2" 
+                     style="clear: both;"></div>
+                
+            </td>
+            
+        </tr>
+    </table>
+</div>
+
+<!-- Will be shown, if there are no equal dimensions. -->
+<div id="cubeviz-compare-noEqualDimensionsFoundNotification">
+    <strong>No equal dimensions found!</strong>
+    Please selected another dataset or enrich datasets with relations to each other.
+</div>
+
+<!-- Will be shown, if there is at least one pair of equal dimensions -->
+<div id="cubeviz-compare-prepareAndGoToVisualizations">
+    
+    <br/>
+    
+    <div style="width: 100%; text-align: center;">
+        <i class="icon-double-angle-down" style="font-size: 75px; opacity:0.5;"></i>
+    </div>
+     
+    <br/>
+    <br/>
+    <br/>
+    
+    <p>
+        Now i provide you a couple of different ways to explore and compare the data
+        you selected before.
+    </p> 
+    
+    <br/>
+    
+    <div id="cubeviz-compare-configureVisualization">
+        
+        <h2>Configure data for further exploration</h2>
+        
+        In this area you can adapt the observations or their meta-data.
+        
+        <br/>
+        
+        <hr/>
+        
+        <h3>Normalization of observation values</h3>
+        
+        <div class="row">
+            
+            <!-- Dataset1 -->
+            <div class="span5">
+                <small id="cubeviz-compare-confViz-datasetLabel1">Dataset 1</small>
+                <br/>
+                <input id="cubeviz-compare-confViz-datasetFormula1"
+                       style="min-width:80%; border: 1px solid #000000;"
+                       type="text" 
+                       value="$value$"/>
+                <br/>
+                <div class="btn btn-small btn-primary"
+                     id="cubeviz-compare-confViz-useBtn1">use</div>
+            </div>
+            
+            <!-- Dataset2 -->
+            <div class="span5">
+                <small id="cubeviz-compare-confViz-datasetLabel2">Dataset 2</small>
+                <br/>
+                <input id="cubeviz-compare-confViz-datasetFormula2"
+                       style="min-width:80%; border: 1px solid #000000;"
+                       type="text" 
+                       value="$value$"/>
+                <br/>
+                <div class="btn btn-small btn-primary"
+                     id="cubeviz-compare-confViz-useBtn2">use</div>
+            </div>
+        </div>
+        
+        <br/>
+        
+        <!-- Placeholders -->
+        <table class="table table-condensed table-striped table-bordered">
+            <tr><td colspan="2"><strong>Placeholders</strong></td></tr>
+            <tr>
+                <td style="text-align: center;">
+                    <strong>$value$</strong> represents the value of a observation
+                </td>
+                <td style="text-align: center;">
+                   <strong> $pi$</strong> conforms to &pi;
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Basic operators -->
+        <table class="table table-condensed table-striped table-bordered">
+            <tr><td colspan="4"><strong>Basic operators</strong></td></tr>
+            <tr>
+                <td style="text-align: center;"><strong>+</strong></td>
+                <td style="text-align: center;"><strong>-</strong></td>
+                <td style="text-align: center;"><strong>*</strong></td>
+                <td style="text-align: center;"><strong>/</strong></td>
+            </tr>
+        </table>
+        
+        <!-- Functions -->
+        <table class="table table-condensed table-striped table-bordered">
+            <tr><td colspan="4"><strong>Functions</strong></td></tr>
+            <tr>
+                <td>
+                    <strong>log (x)</strong>
+                    <br/>
+                    The natural logarithm <br/>for x
+                </td>
+                <td>
+                    <strong>sqrt(x)</strong>
+                    <br/>
+                    It will returns the<br/> square root of x
+                </td>
+                <td>
+                    <strong>sin(x)</strong>
+                    <br/>
+                    Sine of x
+                </td>
+                <td>
+                    <strong>cos(x)</strong>
+                    <br/>
+                    Cosine of x
+                </td>
+                <td>
+                    <strong>tan(x)</strong>
+                    <br/>
+                    Tangent of x
+                </td>
+                <td>
+                    <strong>asin(x)</strong>
+                    <br/>
+                    Arcsine of x
+                </td>
+                <td>
+                    <strong>acos(x)</strong>
+                    <br/>
+                    Arccosine of x
+                </td>
+                <td>
+                    <strong>atan(x)</strong>
+                    <br/>
+                    Arctangent of x
+                </td>
+            </tr>
+        </table>
+        
+        <br/>
+        
+        <hr/>
+        
+        <h3>Set Dimension Elements</h3>
+        
+        
+        <table class="table table-condensed table-bordered">
+            <tr>
+                <td>
+                    <strong>Use all</strong> Observations, no matter if they are according to equal 
+                    or unequal Dimensions and Dimension Elements.
+                    
+                    <br/>
+                    <br/>
+                    
+                    <div style="width: 100%; text-align: center;">
+                        <input checked="checked" 
+                               class="cubeviz-compare-dimensionElementChoice" 
+                               name="cubeviz-compare-dimensionElementChoice" 
+                               type="radio" 
+                               value="all"/>
+                    </div>
+                    <br/>
+                </td>
+                <td>
+                    <strong>Only</strong> use Observations which are according to <strong>equal</strong> Dimensions with
+                    <strong>equal</strong> Dimension Elements.
+                    
+                    <br/>
+                    <br/>
+                    
+                    <div style="width: 100%; text-align: center;">
+                        <input class="cubeviz-compare-dimensionElementChoice" 
+                               name="cubeviz-compare-dimensionElementChoice" 
+                               type="radio" 
+                               value="equal"/>
+                    </div>
+                    <br/>
+                </td>
+                <td>
+                    <strong>Only</strong> use Observations which are according to <strong>equal</strong> Dimensions with
+                    <strong>unequal</strong> Dimension Elements.
+                    
+                    <br/>
+                    <br/>
+                    
+                    <div style="width: 100%; text-align: center;">
+                        <input class="cubeviz-compare-dimensionElementChoice" 
+                               name="cubeviz-compare-dimensionElementChoice" 
+                               type="radio" 
+                               value="unequal"/>
+                    </div>
+                    <br/>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+    
+    <br/>
+    
+    <div style="width: 100%; text-align: center;">
+        <i class="icon-double-angle-down" style="font-size: 75px; opacity:0.5;"></i>
+    </div>
+     
+    <br/>
+    <br/>
+    <br/>
+    
+    <div class="row-fluid" id="cubeviz-compare-availableVisualizations"></div>
+    
+    <br/>
+    
+    <hr/>
+    <br/>
+    <br/>
+    
+    <div class="row" id="cubeviz-compare-clusterVisualization">
+        <div class="span9">
+            <h2>Show clusters</h2>
+                
+            <br/>
+            
+            Maximum Number of Clusters: 
+            <input id="cubeviz-compare-clusterVisualizationClusterNumber" 
+                   style="width: 50px; height: 16px;" 
+                   type="text"
+                   value="5"/>
+            <div class="btn btn-primary btn-small" 
+                 id="cubeviz-compare-clusterVisualizationGetLinkBtn"
+                 style="vertical-align: top;">Get Link</div>
+            
+            <br/>
+            <br/>
+            
+            <small>Wanna explore clusters in the data? Set the number of clusters and 
+            you will get a Circle Packing visualization containing grouped 
+            observations by according cluster.</small>
+            
+            <br/>
+            <br/>
+            
+            <strong>Links:</strong>
+            <ul id="cubeviz-compare-clusterVisualizationLinks"></ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- 
+    Templates
+-->
+<div id="cubeviz-compare-tpl-equalDimension" style="display:none;">
+    <div class="cubeviz-compare-equalDimension">
+        <table class="table table-bordered responsive-utilities" style="height: 190px;">
+
+            <tr class="cubeviz-compare-dimensionTitleAndElements">
+                <td colspan="2" style="text-align: center;">
+                    <strong>[[dimensionLabel]]</strong>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="2" style="width: 200px; max-width: 200px;">
+                    <div class="cubeviz-compare-noDescription">
+                        [[dimensionDescription]]</div>
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="text-align: center;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/unequalDimensionElements5.png" 
+                         style="width: 18px; vertical-align: middle;"
+                         title="Unequal dimension elements"/>
+                    &nbsp; 
+                    <span class="cubeviz-compare-dimensionNumberOfUnequalDimensionElements" style="font-size: 20px;">0</span>
+                </td>
+                <td style="text-align: center;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/equalDimensionElements5.png" 
+                         style="width: 18px; vertical-align: middle;"
+                         title="Equal dimension elements"/>
+                    &nbsp;
+                    <span class="cubeviz-compare-dimensionNumberOfEqualDimensionElements" style="font-size: 20px;">0</span>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+</div>
+
+<div id="cubeviz-compare-tpl-unequalDimension" style="display:none;">
+    <div class="cubeviz-compare-unequalDimension">
+        <table class="table table-bordered responsive-utilities">
+
+            <tr class="cubeviz-compare-dimensionTitleAndElements">
+                <td colspan="2" style="text-align: center;">
+                    <strong>[[dimensionLabel]]</strong>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="2" style="width: 180px; max-width: 180px;">
+                    <div class="cubeviz-compare-noDescription">
+                        [[dimensionDescription]]</div>
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="text-align: center;">
+                    <img src="<?php echo $this->cubevizImagesPath; ?>semicon/dimensionElement2.png" 
+                         style="width: 18px; vertical-align: middle;"
+                         title="Dimension elements"/>
+                    &nbsp;
+                    <span class="cubeviz-compare-numberOfDimensionElements" style="font-size: 20px;">0</span>
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+</div>

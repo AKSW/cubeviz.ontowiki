@@ -11,7 +11,7 @@ require_once 'EasyRdf.php';
 /**
  * 
  */
-class CubeViz_DataSelectionExporter
+class CubeViz_Exporter
 {   
     /**
      * 
@@ -19,13 +19,43 @@ class CubeViz_DataSelectionExporter
     public static function _($type, $dataHash, $model, $titleHelperLimit) 
     {
         if ('csv' == $type) {
-            return CubeViz_DataSelectionExporter::exportAsCSV($dataHash, $model, $titleHelperLimit);
+            return CubeViz_Exporter::exportAsCSV($dataHash, $model, $titleHelperLimit);
         
         // 'turtle' == $type
         } else { 
-            return CubeViz_DataSelectionExporter::exportAsRdfTurtle($dataHash, $model, $titleHelperLimit);
+            return CubeViz_Exporter::exportAsRdfTurtle($dataHash, $model, $titleHelperLimit);
         }
-    }    
+    }
+    
+    /**
+     * Handle objects by checking different cases and than decide how to react.
+     * @param $s string URI of subject
+     * @param $p string URI of predicate
+     * @param $o mixed Can be string, array or an object of the object
+     * @param $graph Call by reference of $graph instance
+     * @return void
+     */
+    public static function handleNonCVObjects ($s, $p, $o, &$graph) 
+    {
+        // is object an URI
+        if(true === Erfurt_Uri::check($o)) {
+            $graph->addResource($s, $p, $o);
+        
+        // is object NOT an array
+        } else if (false === is_array($o)) {
+            $graph->add($s, $p, $o);
+        
+        // assuming, object is an array
+        } else {
+            foreach ($o as $entry) {
+                if(true === Erfurt_Uri::check($entry)) {
+                    $graph->addResource($s, $p, $entry);
+                } else {
+                    $graph->add($s, $p, $entry);
+                }
+            }
+        }
+    }  
     
     /**
      *
@@ -36,7 +66,7 @@ class CubeViz_DataSelectionExporter
         $data = array ();
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash);
+        list($data, $dh) = $c->read ($dataHash, 'data');
         
         $graph = new EasyRdf_Graph();
         
@@ -54,28 +84,11 @@ class CubeViz_DataSelectionExporter
                 foreach ($element as $predicateUri => $object) {                
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
-                        
-                        // assuming, object is an array
-                        if(true === is_array($object)) {
-                            foreach ($object as $entry) {
-                                if(true === Erfurt_Uri::check($entry)) {
-                                    $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
-                                } else {
-                                    $graph->add($element ['__cv_uri'], $predicateUri, $entry);
-                                }
-                            }
-                                                    
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object an URI
-                        } elseif(true === Erfurt_Uri::check($entry)) {                            
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        } else {
-                            
-                        }
+
+                        CubeViz_Exporter::handleNonCVObjects (
+                            $element ['__cv_uri'], $predicateUri, $object,
+                            $graph
+                        );
                     }
                 }
             }
@@ -91,28 +104,13 @@ class CubeViz_DataSelectionExporter
             
                 // go through all non-cubeviz element values
                 foreach ($element as $predicateUri => $object) {                
+                    
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
-                        
-                        // assuming, object is an array
-                        if(true === is_array($object)) {
-                            foreach ($object as $entry) {
-                                if(true === Erfurt_Uri::check($entry)) {
-                                    $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
-                                } else {
-                                    $graph->add($element ['__cv_uri'], $predicateUri, $entry);
-                                }
-                            }
-                        
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object an URI
-                        } elseif(true === Erfurt_Uri::check($object)) {
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                            
-                        }
+                        CubeViz_Exporter::handleNonCVObjects (
+                            $element ['__cv_uri'], $predicateUri, $object,
+                            $graph
+                        );
                     }
                 }
             }
@@ -127,25 +125,11 @@ class CubeViz_DataSelectionExporter
             foreach ($element as $predicateUri => $object) {                
                 // no cubeviz internal information, its plain from the store
                 if (false === strstr ($predicateUri, '__cv_')) {
-                    
-                    // assuming, object is an array
-                    if(true === is_array($object)) {
-                        foreach ($object as $entry) {
-                            if(true === Erfurt_Uri::check($entry)) {
-                                $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
-                            } else {
-                                $graph->add($element ['__cv_uri'], $predicateUri, $entry);
-                            }
-                        }
-                    
-                    // is object NOT an array
-                    } else if (false === is_array($object)) {
-                        $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                    
-                    // is object an URI
-                    } elseif(true === Erfurt_Uri::check($object)) {
-                        $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                    }
+
+                    CubeViz_Exporter::handleNonCVObjects (
+                        $element ['__cv_uri'], $predicateUri, $object,
+                        $graph
+                    );
                 }
             }
             
@@ -160,25 +144,11 @@ class CubeViz_DataSelectionExporter
                 foreach ($dimension as $predicateUri => $object) {                
                     // no cubeviz internal information, its plain from the store
                     if (false === strstr ($predicateUri, '__cv_')) {
-                        
-                        // assuming, object is an array
-                        if(true === is_array($object)) {
-                            foreach ($object as $entry) {
-                                if(true === Erfurt_Uri::check($entry)) {
-                                    $graph->addResource($element ['__cv_uri'], $predicateUri, $entry);
-                                } else {
-                                    $graph->add($element ['__cv_uri'], $predicateUri, $entry);
-                                }
-                            }
-                            
-                        // is object NOT an array
-                        } else if (false === is_array($object)) {
-                            $graph->add($element ['__cv_uri'], $predicateUri, $object);
-                        
-                        // is object an URI
-                        } elseif(true === Erfurt_Uri::check($object)) {
-                            $graph->addResource($element ['__cv_uri'], $predicateUri, $object);
-                        }
+
+                        CubeViz_Exporter::handleNonCVObjects (
+                            $element ['__cv_uri'], $predicateUri, $object,
+                            $graph
+                        );
                     }
                 }
             }
@@ -188,16 +158,17 @@ class CubeViz_DataSelectionExporter
         /**
          * selected components: component specifications of the selected attribute
          */
-        if (true === is_array ($data ['selectedComponents']['attribute'])
+        if (true === isset($data ['selectedComponents']['attribute'])
+            && true === is_array ($data ['selectedComponents']['attribute'])
             && 0 < count ($data ['selectedComponents']['attribute'])) {
             foreach ($data ['selectedComponents']['attribute'] as $predicateUri => $object) {                
                 // no cubeviz internal information, its plain from the store
                 if (false === strstr ($predicateUri, '__cv_')) {
-                    if(true === Erfurt_Uri::check($object)) {
-                        $graph->addResource($data ['selectedComponents']['attribute']['__cv_uri'], $predicateUri, $object);
-                    } else {
-                        $graph->add($data ['selectedComponents']['attribute']['__cv_uri'], $predicateUri, $object);
-                    }
+                    
+                    CubeViz_Exporter::handleNonCVObjects (
+                        $data ['selectedComponents']['attribute']['__cv_uri'], 
+                        $predicateUri, $object, $graph
+                    );
                 }
             }
             
@@ -209,14 +180,15 @@ class CubeViz_DataSelectionExporter
         /**
          * selected components: component specifications of the selected measure
          */
-        foreach ($data ['selectedComponents']['measure'] as $predicateUri => $object) {                
+        foreach ($data ['selectedComponents']['measure'] as $predicateUri => $object) {  
+                
             // no cubeviz internal information, its plain from the store
             if (false === strstr ($predicateUri, '__cv_')) {
-                if(true === Erfurt_Uri::check($object)) {
-                    $graph->addResource($data ['selectedComponents']['measure']['__cv_uri'], $predicateUri, $object);
-                } else {
-                    $graph->add($data ['selectedComponents']['measure']['__cv_uri'], $predicateUri, $object);
-                }
+                
+                CubeViz_Exporter::handleNonCVObjects (
+                    $data ['selectedComponents']['measure']['__cv_uri'], 
+                    $predicateUri, $object, $graph
+                );
             }
         }        
         
@@ -226,23 +198,15 @@ class CubeViz_DataSelectionExporter
         
         /**
          * Observations
-         */
-        $query = new DataCube_Query($model, $titleHelperLimit);
-            
-        $retrievedObservations = $query->getObservations(
-            $data['selectedDS']['__cv_uri'],
-            $data['selectedComponents']['dimensions']
-        );
-        
-        foreach ($retrievedObservations as $element) {                
+         */        
+        foreach ($data ['retrievedObservations'] as $element) {                
             foreach ($element as $predicateUri => $object) {                
                 // no cubeviz internal information, its plain from the store
                 if (false === strstr ($predicateUri, '__cv_')) {
-                    if(true === Erfurt_Uri::check($object)) {
-                        $graph->addResource($element['__cv_uri'], $predicateUri, $object);
-                    } else {
-                        $graph->add($element['__cv_uri'], $predicateUri, $object);
-                    }
+                    
+                    CubeViz_Exporter::handleNonCVObjects (
+                        $element['__cv_uri'], $predicateUri, $object, $graph
+                    );
                 }
             }
         } 
@@ -263,7 +227,7 @@ class CubeViz_DataSelectionExporter
         $data = $result = array (array());
 
         // get all information to export
-        list($data, $dh) = $c->read ($dataHash);
+        list($data, $dh) = $c->read ($dataHash, 'data');
         
         /**
          * set the header of the CSV file

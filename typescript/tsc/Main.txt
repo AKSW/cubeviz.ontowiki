@@ -7,6 +7,10 @@ src/Model/CubeViz/View/Helper.ts
 
 src/Model/CubeViz/Visualization/Controller.ts
 
+src/Model/CubeViz/Visualization/D3js.ts
+src/Model/CubeViz/Visualization/D3js/CirclePacking.ts
+src/Model/CubeViz/Visualization/D3js/CirclePackingForClusters.ts
+
 src/Model/CubeViz/Visualization/HighCharts.ts
 src/Model/CubeViz/Visualization/HighCharts/Chart.ts
 src/Model/CubeViz/Visualization/HighCharts/Area.ts
@@ -18,12 +22,22 @@ src/Model/CubeViz/Visualization/HighCharts/Pie.ts
 src/Model/CubeViz/Visualization/HighCharts/Polar.ts
 src/Model/CubeViz/Visualization/HighCharts/Spline.ts
 
-src/Model/DataCube/Attribute.ts
+
+src/Model/DataCube/ClusteringDataCube.ts
 src/Model/DataCube/Component.ts
+src/Model/DataCube/DataCubeMerger.ts
 src/Model/DataCube/DataSet.ts
 src/Model/DataCube/DataStructureDefinition.ts
 src/Model/DataCube/Observation.ts
 src/Model/DataCube/Slice.ts
+
+src/View/CompareAction/ModelSelection.ts
+src/View/CompareAction/DatasetSelection.ts
+src/View/CompareAction/GeneralDatasetInformation.ts
+src/View/CompareAction/DimensionOverview.ts
+src/View/CompareAction/MeasureAndAttributeInformation.ts
+src/View/CompareAction/VisualizationSetup.ts
+src/View/CompareAction/ClusterVisualization.ts
 
 src/View/DataselectionModule/DataSet.ts
 src/View/DataselectionModule/Slice.ts

@@ -3,64 +3,8 @@
 /**
  * Represents a component which can be a dimension or a measure.
  */
-class DataCube_Component {
-    
-    /**
-     * Loads all component dimensions, specified by model uri, data structure definition, dataset
-     * and component type.
-     */
-    static loadAllDimensions (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
-    {
-        $.ajax({
-            url: url + "getcomponents",
-            data: {
-                serviceUrl: serviceUrl,
-                modelIri: modelIri, 
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                componentType: "dimension" // possible: dimension, measure
-            }
-        })
-        .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error ("loadAllDimensions: " + xhr.responseText);
-        })
-        .success( function (entries) {
-            // check if everything is set
-            if(false === _.isUndefined(entries) 
-               && false === _.isUndefined(entries.content)) {
-               callback(entries.content);
-            }
-        });
-    }
-
-    /**
-     * Loads all component measures, specified by model uri, data structure definition, dataset
-     * and component type.
-     */
-    static loadAllMeasures (url:string, serviceUrl: string, modelIri:string, dsdUrl:string, dsUrl:string, callback) {
-        
-        $.ajax({
-            url: url + "getcomponents",
-            data: {
-                serviceUrl: serviceUrl,
-                modelIri: modelIri, 
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                componentType: "measure" // possible: dimension, measure
-            }
-        })
-        .error( function (xhr, ajaxOptions, thrownError) {
-            throw new Error ("loadAllMeasures: " + xhr.responseText);
-        })
-        .done( function (entries) { 
-            // check if everything is set
-            if(false === _.isUndefined(entries) 
-               && false === _.isUndefined(entries.content)) {
-                callback(entries.content);
-            }
-        });
-    }
-    
+class DataCube_Component 
+{    
     /**
      * Creates for each dimension a random set of pre-selected elements.
      * @param componentDimensions Object contain all component dimensions.
@@ -140,5 +84,123 @@ class DataCube_Component {
         });
         
         return result;
+    }
+    
+    /**
+     *
+     */
+    static getMeasures(measureObject) : any[]
+    {
+        var measures:any [] = [];
+        
+        _.each (measureObject, function(measure){
+            measures.push (measure);
+        });
+        
+        return measures;
+    }
+    
+    /**
+     * @param dimensionElements any
+     * @param uri string
+     * @return any|null The found element or null
+     */
+    static findDimensionElement(dimensionElements:any, uri:string) : any
+    {
+        var elementToFind:any = null;
+        
+        _.each (dimensionElements, function(element){
+            if (element.__cv_uri == uri) {
+                elementToFind = element;
+            }
+        });
+        
+        return elementToFind;
+    }
+    
+    /**
+     * Loads all attributes for a given dataset.
+     * @param url 
+     * @param modelIri
+     * @param dsdUrl
+     */
+    static loadAllAttributes (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri, 
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "attribute"
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("Attribute loadAll: " + xhr.responseText);
+        })
+        .success( function (entries) {
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+               callback(entries.content);
+            }
+        });
+    }
+    
+    /**
+     * Loads all component dimensions, specified by model uri, data structure definition, dataset
+     * and component type.
+     */
+    static loadAllDimensions (url:string, serviceUrl:string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri, 
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "dimension"
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("loadAllDimensions: " + xhr.responseText);
+        })
+        .success( function (entries) {
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+               callback(entries.content);
+            }
+        });
+    }
+
+    /**
+     * Loads all component measures, specified by model uri, data structure definition, dataset
+     * and component type.
+     */
+    static loadAllMeasures (url:string, serviceUrl: string, modelIri:string, dsdUrl:string, dsUrl:string, callback) 
+    {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri, 
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "measure"
+            }
+        })
+        .error( function (xhr, ajaxOptions, thrownError) {
+            throw new Error ("loadAllMeasures: " + xhr.responseText);
+        })
+        .done( function (entries) { 
+            // check if everything is set
+            if(false === _.isUndefined(entries) 
+               && false === _.isUndefined(entries.content)) {
+                callback(entries.content);
+            }
+        });
     }
 }

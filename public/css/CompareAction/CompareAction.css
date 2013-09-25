@@ -1,0 +1,428 @@
+#cubeviz-compare-availableVisualizations
+{
+    padding: 15px;
+        width: 800px;
+    min-width: 800px;
+
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+
+#cubeviz-compare-clusterVisualization
+{
+    padding: 15px;
+    margin-left: 0px;
+
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+
+#cubeviz-compare-configureVisualization
+{
+    width: 800px;
+    min-width: 800px;
+    max-width: 800px;
+    
+    padding-top: 1px;
+    padding-left: 20px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+/**
+ * Main container
+ */
+#cubeviz-compare-container
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+    padding-top: 0px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    
+    width: 98%;
+    min-width: 98%;
+    max-width: 98%;
+    
+    height: 530px;
+    min-height: 530px;
+    max-height: 530px;
+    
+    overflow-x: auto;
+    overflow-y: visible;
+    
+    clear: both;
+}
+
+
+/**
+ * Data selection
+ */
+.cubeviz-compare-datasetSelection
+{
+    width: 260px;
+    max-width: 260px;
+}
+
+#cubeviz-compare-datasetSelector1
+{
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#cubeviz-compare-datasetSelector2
+{
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+.cubeviz-compare-dataSelection-colorBox
+{
+    width: 35px; 
+    min-width: 35px; 
+    height: 35px; 
+    min-height: 35px;
+    
+    margin-right: 10px;
+    
+    float: left;
+}
+
+#cubeviz-compare-datasetSelectionDiv1
+{
+    display: none;
+}
+
+#cubeviz-compare-datasetSelectionDiv2
+{
+    display: none;
+}
+
+
+/**
+ * 
+ */
+.cubeviz-compare-equalDimension
+{
+    float: left;
+    margin-right: 50px;
+}
+
+.cubeviz-compare-equalDimension table
+{
+    height: 140px;
+    min-height: 140px;
+}
+
+.cubeviz-compare-equalDimensions
+{
+    width: auto;
+}
+
+#cubeviz-compare-equalDimensions1
+{
+    display: none;
+    width: auto;
+}
+
+#cubeviz-compare-equalDimensions2
+{
+    display: none;
+    width: auto;
+}
+
+
+/**
+ * General dataset information
+ */
+.cubeviz-compare-generalDatasetInformation
+{
+    display: none;
+    width: 260px;
+    min-width: 260px;
+}
+
+.cubeviz-compare-generalInformationSeparator
+{
+    clear: both;
+    padding-bottom: 5px;
+}
+
+
+/**
+ * 
+ */ 
+.cubeviz-compare-informationPieceBox
+{
+    float: left;
+    text-align: center;
+
+        width: 66px;
+    min-width: 66px;
+    max-width: 66px;
+    
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    
+    font-size: 10px;
+    
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    
+    background-color: #fff;
+    border: 1px solid #909090;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+.cubeviz-compare-informationPieceBoxImageContainer
+{
+    width: 100%; 
+    text-align: center;
+    margin-top: 2px;
+}
+
+.cubeviz-compare-informationPieceBoxImage
+{
+    padding-top: 5px;
+    padding-right: 2px;
+    width: 18px;
+}
+
+.cubeviz-compare-informationPieceBoxValue
+{
+    font-size: 21px;
+}
+
+
+/**
+ * Model selection
+ */
+.cubeviz-compare-modelSelection
+{
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+}
+
+#cubeviz-compare-modelSelector1
+{
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+#cubeviz-compare-modelSelector2
+{
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+/**
+ * 
+ */
+#cubeviz-compare-mAAInvalidNumbersFound1
+{
+    display: none;
+    color: #FFABAB;
+    margin-top: -20px;
+    padding-bottom: 10px;
+}
+
+#cubeviz-compare-mAAInvalidNumbersFound2
+{
+    display: none;
+    color: #FFABAB;
+    margin-top: -15px;
+}
+
+.cubeviz-compare-mAATableHeader
+{
+    font-size: 12px;
+    text-align: center !important;
+        width: 100px; 
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.cubeviz-compare-mAATableCell
+{
+    font-size: 10px;
+}
+
+.cubeviz-compare-mAAValues
+{
+    font-size: 15px;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+#cubeviz-compare-measuresAndAttributesInformation1
+{
+    display: none;
+}
+
+#cubeviz-compare-measuresAndAttributesInformation2
+{
+    display: none;
+}
+
+
+.cubeviz-compare-noDescription
+{
+    width: 100%; 
+    font-style: italic;
+    font-size: 9px;
+    font-weight: normal;
+    text-align: center;
+}
+
+
+#cubeviz-compare-noEqualDimensionsFoundNotification
+{
+    display: none;
+    
+    padding: 20px;
+    background-color: #FFEAEA;
+}
+
+
+#cubeviz-compare-prepareAndGoToVisualizations
+{
+    display: none;
+
+    padding-left: 20px;
+    padding-bottom: 10px;
+    
+        width: 800px;
+    min-width: 800px;
+    max-width: 800px;
+}
+
+
+.cubeviz-compare-specificVisz
+{
+    width: 80px;
+    cursor: pointer;
+}
+
+
+
+/**
+ * 
+ */
+.cubeviz-compare-table
+{
+    padding: 0px;
+    margin: 0px;
+}
+
+.cubeviz-compare-table td
+{
+
+}
+
+
+/**
+ * 
+ */
+.cubeviz-compare-unequalDimension
+{
+    float: left;
+    margin-right: 50px;
+}
+
+.cubeviz-compare-unequalDimension table
+{
+    height: 140px;
+    min-height: 140px;
+}
+ 
+.cubeviz-compare-unequalDimensions
+{
+    width: auto;
+    min-width: 1000px;
+}
+
+#cubeviz-compare-unequalDimensions1
+{
+    display: none;
+}
+
+#cubeviz-compare-unequalDimensions2
+{
+    display: none;
+}
+
+#unequalDimensionsTableContainer1
+{
+        width: 1000px;
+    min-width: 1000px;
+}
+
+#unequalDimensionsTableContainer2
+{
+        width: 1000px;
+    min-width: 1000px;
+}
+
+
+#cubeviz-compare-visualizeLink
+{
+    display: none;
+}
+
+ 
+/**
+ * 
+ */
+.cubeviz-compare-warningBox
+{
+    width: 240px;
+        
+    background-color: #f2dede;
+    
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 0px;
+    padding-bottom: 5px;
+
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border: 1px solid #FFFFFF;
+    
+    margin-left: 0px;
+}

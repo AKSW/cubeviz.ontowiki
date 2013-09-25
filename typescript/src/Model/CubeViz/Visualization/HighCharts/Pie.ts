@@ -18,7 +18,8 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
      */
     public init (chartConfig:any, retrievedObservations:any[], 
         selectedComponentDimensions:any, multipleDimensions:any[],
-        oneElementDimensions:any[], selectedMeasureUri:string) 
+        oneElementDimensions:any[], selectedMeasure:any,
+        selectedAttributeUri:string) 
         : CubeViz_Visualization_HighCharts_Chart 
     {                
         // stop execution, if it contains more than one entry
@@ -33,7 +34,7 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             observation = new DataCube_Observation (),
             self = this,
             usedXAxisElements:string[] = [],
-            value:number = 0;
+            value:string = null;
         
         // save given (default) chart config
         this.chartConfig = chartConfig;
@@ -61,9 +62,14 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             
         // initializing observation handling instance with given elements
         // after init, sorting the x axis elements ascending
-        observation.initialize ( retrievedObservations, selectedComponentDimensions, selectedMeasureUri );
+        observation.initialize (
+            retrievedObservations, 
+            selectedComponentDimensions, 
+            selectedMeasure["http://purl.org/linked-data/cube#measure"]
+        );
+        
         var xAxisElements:any = observation
-            // .sortAxis(forXAxis, "ascending")
+            .sortAxis(forXAxis, "ascending")
             .getAxesElements(forXAxis);
             
         this.chartConfig.series.push ({ 
@@ -79,14 +85,14 @@ class CubeViz_Visualization_HighCharts_Pie extends CubeViz_Visualization_HighCha
             
             // go through all observations
             _.each(xAxisElement.observations, function(observation){
-            
-                try {
-                    value = parseFloat(observation[selectedMeasureUri]);
-                } catch (ex) {
-                    // if it comes at this point, parsing to float was not possible
-                    // which means, its not a number and not usable for HighCharts
+                
+                if (false === DataCube_Observation.isActive(observation)){
                     return;
                 }
+                
+                value = DataCube_Observation.parseValue(
+                    observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
+                );
                 
                 // if x axis element label is not in use yet
                 if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {

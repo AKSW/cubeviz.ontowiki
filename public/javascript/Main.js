@@ -1,8 +1,10 @@
 var CubeViz_ConfigurationLink = (function () {
     function CubeViz_ConfigurationLink() { }
-    CubeViz_ConfigurationLink.save = function save(url, modelIri, content, type, callback) {
+    CubeViz_ConfigurationLink.saveData = function saveData(url, serviceUrl, modelIri, hash, content, callback, useObservations) {
+        if (typeof useObservations === "undefined") { useObservations = false; }
         var oldAjaxSetup = $.ajaxSetup();
         var oldSupportOrs = $.support.cors;
+        var stringifiedContent = JSON.stringify(content);
 
         $.ajaxSetup({
             async: true,
@@ -11,20 +13,52 @@ var CubeViz_ConfigurationLink = (function () {
         });
         $.support.cors = true;
         $.ajax({
-            "url": url + "savecontenttofile/",
-            "data": {
+            url: url + "savecontenttofile/",
+            data: {
+                hash: hash,
                 modelIri: modelIri,
-                stringifiedContent: JSON.stringify(content),
-                type: type
+                serviceUrl: serviceUrl,
+                stringifiedContent: stringifiedContent,
+                type: "data",
+                useObservations: true === useObservations ? "true" : "false"
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
             throw new Error("save error: " + xhr["responseText"]);
-        }).done(function (generatedHash) {
+        }).done(function (result) {
             $.ajaxSetup(oldAjaxSetup);
             $.support.cors = oldSupportOrs;
-            callback(generatedHash);
+            callback();
+        });
+    }
+    CubeViz_ConfigurationLink.saveUI = function saveUI(url, serviceUrl, modelIri, hash, content, callback) {
+        var oldAjaxSetup = $.ajaxSetup();
+        var oldSupportOrs = $.support.cors;
+        var stringifiedContent = JSON.stringify(content);
+
+        $.ajaxSetup({
+            async: true,
+            cache: false,
+            type: "POST"
+        });
+        $.support.cors = true;
+        $.ajax({
+            url: url + "savecontenttofile/",
+            data: {
+                hash: hash,
+                modelIri: modelIri,
+                stringifiedContent: JSON.stringify(content),
+                type: "ui"
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            $.ajaxSetup(oldAjaxSetup);
+            $.support.cors = oldSupportOrs;
+            throw new Error("save error: " + xhr["responseText"]);
+        }).done(function (result) {
+            $.ajaxSetup(oldAjaxSetup);
+            $.support.cors = oldSupportOrs;
+            callback();
         });
     }
     return CubeViz_ConfigurationLink;
@@ -33,18 +67,23 @@ var CubeViz_Collection = (function () {
     function CubeViz_Collection(idKey) {
         this.reset(idKey);
     }
-    CubeViz_Collection.prototype.add = function (element, option) {
-        if(true === _.isUndefined(element[this.idKey])) {
-            throw new Error("Key " + this.idKey + " in element not set!");
-            return this;
-        }
-        if(undefined === this.get(element[this.idKey])) {
-            this._.push(element);
-        } else {
-            if((undefined !== option && undefined !== option["merge"] && option["merge"] == true)) {
-                this.remove(element[this.idKey]);
-                this._.push(element);
+    CubeViz_Collection.prototype.add = function (element, option, ignoreKey) {
+        if (typeof ignoreKey === "undefined") { ignoreKey = false; }
+        if(false === ignoreKey) {
+            if(true === _.isUndefined(element[this.idKey])) {
+                throw new Error("Key " + this.idKey + " in element not set!");
+                return this;
             }
+            if(true === _.isUndefined(this.get(element[this.idKey]))) {
+                this._.push(element);
+            } else {
+                if((false === _.isUndefined(option) && false === _.isUndefined(option["merge"]) && option["merge"] == true)) {
+                    this.remove(element[this.idKey]);
+                    this._.push(element);
+                }
+            }
+        } else {
+            this._.push(element);
         }
         return this;
     };
@@ -52,7 +91,7 @@ var CubeViz_Collection = (function () {
         var self = this;
         if(true == _.isArray(list)) {
             _.each(list, function (element) {
-                self.add(element);
+                self.add(element, null, true);
             });
         } else {
             if(true == _.isObject(list)) {
@@ -81,6 +120,15 @@ var CubeViz_Collection = (function () {
     };
     CubeViz_Collection.prototype.getFirst = function () {
         return _.first(this._);
+    };
+    CubeViz_Collection.prototype.getElementsValues = function (property) {
+        var list = new CubeViz_Collection();
+        this.each(function (element) {
+            if(false === _.isUndefined(element[property]) && false === _.isNull(element[property])) {
+                list.add(element[property], null, true);
+            }
+        });
+        return list;
     };
     CubeViz_Collection.prototype.remove = function (id) {
         var self = this;
@@ -136,6 +184,8 @@ var CubeViz_Collection = (function () {
 })();
 var CubeViz_Visualization = (function () {
     function CubeViz_Visualization() {
+        this.name = "CubeViz_Visualization";
+        this.supportedClassNames = [];
     }
     CubeViz_Visualization.prototype.getName = function () {
         return this.name;
@@ -143,16 +193,20 @@ var CubeViz_Visualization = (function () {
     CubeViz_Visualization.prototype.getSupportedClassNames = function () {
         return this.supportedClassNames;
     };
-    CubeViz_Visualization.prototype.load = function (c) {
-        if(true === this.isResponsibleFor(c)) {
-            var chartInstance;
-            eval("chartInstance = new " + c + "();");
-            return chartInstance;
-        }
-        throw new Error("Invalid c (" + c + ") given!");
-    };
     CubeViz_Visualization.prototype.isResponsibleFor = function (className) {
         return _.contains(this.getSupportedClassNames(), className);
+    };
+    CubeViz_Visualization.prototype.load = function (c) {
+        if(true === this.isResponsibleFor(c)) {
+            var chart = null;
+            eval("chart = new " + c + "();");
+            return chart;
+        } else {
+            throw new Error("Invalid c (" + c + ") given!");
+        }
+    };
+    CubeViz_Visualization.prototype.render = function (chart) {
+        return null;
     };
     return CubeViz_Visualization;
 })();
@@ -206,6 +260,8 @@ var CubeViz_View_Abstract = (function () {
     CubeViz_View_Abstract.prototype.triggerGlobalEvent = function (eventName, data) {
         this.app.triggerEvent(eventName, data);
         return this;
+    };
+    CubeViz_View_Abstract.prototype.render = function () {
     };
     return CubeViz_View_Abstract;
 })();
@@ -463,9 +519,9 @@ var CubeViz_Visualization_Controller = (function () {
         return color;
     }
     CubeViz_Visualization_Controller.getFromChartConfigByClass = function getFromChartConfigByClass(className, charts) {
-        var result = undefined;
+        var result = null;
         _.each(charts, function (chart) {
-            if(true === _.isUndefined(result)) {
+            if(true === _.isNull(result)) {
                 if(className == chart.className) {
                     result = chart;
                 }
@@ -506,10 +562,17 @@ var CubeViz_Visualization_Controller = (function () {
     }
     CubeViz_Visualization_Controller.getVisualizationType = function getVisualizationType(className) {
         var hC = new CubeViz_Visualization_HighCharts();
+        var d3js = new CubeViz_Visualization_D3js();
+
         if(true === hC.isResponsibleFor(className)) {
             return hC.getName();
+        } else {
+            if(true === d3js.isResponsibleFor(className)) {
+                return d3js.getName();
+            } else {
+                throw new Error("Unknown className " + className);
+            }
         }
-        throw new Error("Unknown className " + className);
     }
     CubeViz_Visualization_Controller.linkify = function linkify(inputText) {
         var emailAddressPattern = /\w+@[a-zA-Z_]+?(?:\.[a-zA-Z]{2,6})+/gim;
@@ -517,6 +580,12 @@ var CubeViz_Visualization_Controller = (function () {
         var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
         return inputText.replace(urlPattern, '<a href="$&" target="_blank">$&</a>').replace(pseudoUrlPattern, '$1<a href="http://$2" target="_blank">$2</a>').replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+    }
+    CubeViz_Visualization_Controller.getDefaultChartConfig = function getDefaultChartConfig(chartConfig, numberOfMultipleDimensions) {
+        return {
+            className: chartConfig[numberOfMultipleDimensions].charts[0].className,
+            chartConfig: chartConfig[numberOfMultipleDimensions].charts[0]
+        };
     }
     CubeViz_Visualization_Controller.setChartConfigClassEntry = function setChartConfigClassEntry(className, charts, newValue) {
         for(var i in charts) {
@@ -558,6 +627,162 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 }
+var CubeViz_Visualization_D3js = (function (_super) {
+    __extends(CubeViz_Visualization_D3js, _super);
+    function CubeViz_Visualization_D3js() {
+        _super.call(this);
+        this.name = "D3js";
+        this.supportedClassNames = [
+            "CubeViz_Visualization_D3js_CirclePacking", 
+            "CubeViz_Visualization_D3js_CirclePackingForClusters"
+        ];
+    }
+    CubeViz_Visualization_D3js.prototype.render = function (chart) {
+        chart.getRenderResult();
+    };
+    return CubeViz_Visualization_D3js;
+})(CubeViz_Visualization);
+var CubeViz_Visualization_D3js_CirclePacking = (function () {
+    function CubeViz_Visualization_D3js_CirclePacking() {
+        this.chartConfig = {
+        };
+        this.generatedData = {
+            name: "",
+            children: []
+        };
+    }
+    CubeViz_Visualization_D3js_CirclePacking.prototype.computeData = function (observations, multipleDimensions, selectedMeasure) {
+        var children = [];
+        var circleLabel = [];
+        var self = this;
+        var valueToUse = null;
+
+        _.each(observations, function (observation) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            circleLabel = [];
+            children = [
+                {
+                    name: "",
+                    size: ""
+                }
+            ];
+            _.each(multipleDimensions, function (dimension) {
+                _.each(dimension.__cv_elements, function (element) {
+                    if(element.__cv_uri === observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
+                        circleLabel.push(element.__cv_niceLabel);
+                    }
+                });
+            });
+            children[0].name = circleLabel.join(" - ");
+            children[0].size = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+            self.generatedData.children.push({
+                name: observation.__cv_niceLabel,
+                children: children
+            });
+        });
+    };
+    CubeViz_Visualization_D3js_CirclePacking.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
+        this.chartConfig = chartConfig;
+        this.computeData(retrievedObservations, multipleDimensions, selectedMeasure);
+        return this;
+    };
+    CubeViz_Visualization_D3js_CirclePacking.prototype.getRenderResult = function () {
+        var diameter = 960;
+        var pack = d3.layout.pack().size([
+            diameter - 4, 
+            diameter - 4
+        ]).value(function (d) {
+            return d.size;
+        });
+        var svg = d3.select("#cubeviz-index-visualization").append("svg").attr("width", diameter).attr("height", diameter).append("g").attr("transform", "translate(2,2)");
+        var node = svg.datum(this.generatedData).selectAll(".node").data(pack.nodes).enter().append("g").attr("class", function (d) {
+            return d.children ? "node" : "cubeviz-visualization-d3js-circleLeaf node";
+        }).attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+        node.append("title").text(function (d) {
+            return d.name + (d.children ? "" : ": " + d.size);
+        });
+        node.append("circle").attr("r", function (d) {
+            return d.r;
+        });
+        node.filter(function (d) {
+            return !d.children;
+        }).append("text").attr("dy", ".3em").style("fill", this.chartConfig.style.circle["fill"]).style("font-size", this.chartConfig.style.circle["font-size"]).style("font-weight", this.chartConfig.style.circle["font-weight"]).style("text-anchor", this.chartConfig.style.circle["text-anchor"]).text(function (d) {
+            return d.name.substring(0, d.r * 0.3);
+        });
+        return svg;
+    };
+    return CubeViz_Visualization_D3js_CirclePacking;
+})();
+var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
+    function CubeViz_Visualization_D3js_CirclePackingForClusters() {
+        this.chartConfig = {
+        };
+        this.generatedData = {
+            name: "",
+            children: []
+        };
+    }
+    CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.computeData = function (observations, multipleDimensions, selectedMeasure) {
+        var cluster = {
+        };
+        var self = this;
+        var value = null;
+
+        _.each(multipleDimensions[0].__cv_elements, function (element) {
+            cluster = {
+                name: element.__cv_niceLabel,
+                children: []
+            };
+            _.each(observations, function (observation) {
+                if(observation[multipleDimensions[0]["http://purl.org/linked-data/cube#dimension"]] == element.__cv_uri) {
+                    value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+                    cluster.children.push({
+                        name: _.str.numberFormat(value, 4, ',', '.'),
+                        size: value
+                    });
+                }
+            });
+            self.generatedData.children.push(cluster);
+        });
+    };
+    CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
+        this.chartConfig = chartConfig;
+        this.computeData(retrievedObservations, multipleDimensions, selectedMeasure);
+        return this;
+    };
+    CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.getRenderResult = function () {
+        var diameter = 960;
+        var pack = d3.layout.pack().size([
+            diameter - 4, 
+            diameter - 4
+        ]).value(function (d) {
+            return d.size;
+        });
+        var svg = d3.select("#cubeviz-index-visualization").append("svg").attr("width", diameter).attr("height", diameter).append("g").attr("transform", "translate(2,2)");
+        var node = svg.datum(this.generatedData).selectAll(".node").data(pack.nodes).enter().append("g").attr("class", function (d) {
+            return d.children ? "node" : "cubeviz-visualization-d3js-circleLeaf node";
+        }).attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+        node.append("title").text(function (d) {
+            return _.str.numberFormat(d.size, 4, ',', '.');
+        });
+        node.append("circle").attr("r", function (d) {
+            return d.r;
+        });
+        node.filter(function (d) {
+            return !d.children;
+        }).append("text").attr("dy", ".3em").style("fill", this.chartConfig.style.circle["fill"]).style("font-size", this.chartConfig.style.circle["font-size"]).style("font-weight", this.chartConfig.style.circle["font-weight"]).style("text-anchor", this.chartConfig.style.circle["text-anchor"]).text(function (d) {
+            return d.name.substring(0, d.r * 0.3);
+        });
+        return svg;
+    };
+    return CubeViz_Visualization_D3js_CirclePackingForClusters;
+})();
 var CubeViz_Visualization_HighCharts = (function (_super) {
     __extends(CubeViz_Visualization_HighCharts, _super);
     function CubeViz_Visualization_HighCharts() {
@@ -574,13 +799,147 @@ var CubeViz_Visualization_HighCharts = (function (_super) {
             "CubeViz_Visualization_HighCharts_Spline"
         ];
     }
+    CubeViz_Visualization_HighCharts.prototype.render = function (chart) {
+        return new Highcharts.Chart(chart.getRenderResult());
+    };
     return CubeViz_Visualization_HighCharts;
 })(CubeViz_Visualization);
 var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
-    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri, selectedAttributeUri) {
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleTwoDimensionsWithAtLeastOneDimensionElement = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
         var categoriesElementAssign = {
         };
+        var i = 0;
+        var self = this;
+        var xAxisElements = observation.sortAxis(forXAxis).getAxesElements(forXAxis);
+
+        _.each(xAxisElements, function (xAxisElement) {
+            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+            categoriesElementAssign[xAxisElement.self.__cv_uri] = i++;
+        });
+        var selectedDimensionPropertyUris = [];
+        _.each(selectedComponentDimensions, function (dimension) {
+            selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
+        });
+        var obj = {
+        };
+        var seriesElements = observation.getAxesElements(forSeries);
+        var uriCombination = "";
+        var usedDimensionElementCombinations = {
+        };
+        var valueToUse = null;
+
+        self.chartConfig.series = [];
+        _.each(seriesElements, function (seriesElement) {
+            obj = {
+                color: CubeViz_Visualization_Controller.getColor(seriesElement.self.__cv_uri),
+                data: [],
+                name: seriesElement.self.__cv_niceLabel,
+                __cv_uri: seriesElement.self.__cv_uri
+            };
+            for(i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
+                obj.data.push(null);
+            }
+            _.each(seriesElement.observations, function (seriesObservation) {
+                if(false === DataCube_Observation.isActive(seriesObservation)) {
+                    return;
+                }
+                if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
+                    return;
+                }
+                uriCombination = "";
+                _.each(selectedDimensionPropertyUris, function (dimensionUri) {
+                    uriCombination += seriesObservation[dimensionUri];
+                });
+                if(true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
+                    usedDimensionElementCombinations[uriCombination] = true;
+                } else {
+                    return;
+                }
+                if(false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
+                    valueToUse = seriesObservation.__cv_temporaryNewValue;
+                } else {
+                    valueToUse = seriesObservation[selectedMeasureUri];
+                }
+                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
+                    obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(valueToUse);
+                } else {
+                    obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = null;
+                }
+            });
+            if(0 == _.size(obj.data)) {
+            } else {
+                self.chartConfig.series.push(obj);
+            }
+        });
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneElementDimension = function (forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
+        var self = this;
+        var seriesObservation = null;
+        var seriesDataList = [];
+        var seriesElements = observation.getAxesElements(forSeries);
+        var valueToUse = null;
+
+        this.chartConfig.xAxis.categories = [
+            "."
+        ];
+        _.each(seriesElements, function (seriesElement) {
+            seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
+            if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
+                return;
+            }
+            if(false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
+                valueToUse = seriesObservation.__cv_temporaryNewValue;
+            } else {
+                valueToUse = seriesObservation[selectedMeasureUri];
+            }
+            self.chartConfig.series.push({
+                name: seriesElement.self.__cv_niceLabel,
+                data: [
+                    valueToUse
+                ]
+            });
+        });
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observationObj, oneElementDimensions) {
+        var self = this;
+        var observation = null;
+        var seriesDataList = [];
+        var xAxisElements = observationObj.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
+        var value = null;
+
+        _.each(xAxisElements, function (xAxisElement) {
+            _.each(xAxisElement.observations, function (observation) {
+                if(false === DataCube_Observation.isActive(observation)) {
+                    return;
+                }
+                value = DataCube_Observation.parseValue(observation, selectedMeasureUri);
+                if(true === _.isNull(value)) {
+                    return;
+                }
+                if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(observation[selectedAttributeUri]) || true === _.isUndefined(observation[selectedAttributeUri]))) {
+                    return;
+                }
+                self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+                seriesDataList.push(value);
+            });
+        });
+        var seriesName = ".";
+        if(0 < _.size(oneElementDimensions)) {
+            var dimensionElementLabels = [];
+            _.each(oneElementDimensions, function (dimension) {
+                dimensionElementLabels.push(dimension.__cv_elements[0].__cv_niceLabel);
+            });
+            seriesName = dimensionElementLabels.join(" - ");
+        }
+        this.chartConfig.series = [
+            {
+                name: seriesName,
+                data: seriesDataList
+            }
+        ];
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         var diff = 0;
         var forXAxis = null;
         var forSeries = null;
@@ -636,109 +995,31 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             forXAxis = forSeries;
             forSeries = tmp;
         }
-        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries)) {
-            var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
-            _.each(xAxisElements, function (xAxisElement) {
-                self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-                categoriesElementAssign[xAxisElement.self.__cv_uri] = i++;
-            });
-            var selectedDimensionPropertyUris = [];
-            _.each(selectedComponentDimensions, function (dimension) {
-                selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
-            });
-            var obj = {
-            };
-            var seriesElements = observation.getAxesElements(forSeries);
-            var uriCombination = "";
-            var usedDimensionElementCombinations = {
-            };
-
-            self.chartConfig.series = [];
-            _.each(seriesElements, function (seriesElement) {
-                obj = {
-                    color: CubeViz_Visualization_Controller.getColor(seriesElement.self.__cv_uri),
-                    data: [],
-                    name: seriesElement.self.__cv_niceLabel,
-                    __cv_uri: seriesElement.self.__cv_uri
-                };
-                for(i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
-                    obj.data.push(null);
-                }
-                _.each(seriesElement.observations, function (seriesObservation) {
-                    if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
-                        return;
-                    }
-                    uriCombination = "";
-                    _.each(selectedDimensionPropertyUris, function (dimensionUri) {
-                        uriCombination += seriesObservation[dimensionUri];
-                    });
-                    if(true === _.isUndefined(usedDimensionElementCombinations[uriCombination])) {
-                        usedDimensionElementCombinations[uriCombination] = true;
-                    } else {
-                        return;
-                    }
-                    if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
-                        obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(seriesObservation[selectedMeasureUri]);
-                    } else {
-                        obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = null;
-                    }
-                });
-                if(0 == _.size(obj.data)) {
-                } else {
-                    self.chartConfig.series.push(obj);
-                }
-            });
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        if(false === _.str.isBlank(forXAxis) && false === _.str.isBlank(forSeries) && 1 < _.size(multipleDimensions)) {
+            this.handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
         } else {
             if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
                 if(false === _.str.isBlank(forXAxis)) {
-                    var seriesObservation = null;
-                    var seriesDataList = [];
-                    var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
-                    var value = 0;
-
-                    _.each(xAxisElements, function (xAxisElement) {
-                        seriesObservation = xAxisElement.observations[_.keys(xAxisElement.observations)[0]];
-                        if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            return;
-                        }
-                        self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-                        seriesDataList.push(seriesObservation[selectedMeasureUri]);
-                    });
-                    this.chartConfig.series = [
-                        {
-                            name: ".",
-                            data: seriesDataList
-                        }
-                    ];
+                    this.handleOnlyOneMultipleDimension(forXAxis, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation, oneElementDimensions);
                 } else {
-                    var seriesObservation = null;
-                    var seriesDataList = [];
-                    var seriesElements = observation.getAxesElements(forSeries);
-                    var value = 0;
-
-                    this.chartConfig.xAxis.categories = [
-                        "."
-                    ];
-                    _.each(seriesElements, function (seriesElement) {
-                        seriesObservation = seriesElement.observations[_.keys(seriesElement.observations)[0]];
-                        if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) {
-                            return;
-                        }
-                        self.chartConfig.series.push({
-                            name: seriesElement.self.__cv_niceLabel,
-                            data: [
-                                seriesObservation[selectedMeasureUri]
-                            ]
-                        });
-                    });
+                    this.handleOnlyOneElementDimension(forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
                 }
             }
         }
+        this.setTooltip(selectedComponentDimensions[Object.keys(selectedComponentDimensions)[0]], selectedMeasure);
         return this;
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {
         return this.chartConfig;
+    };
+    CubeViz_Visualization_HighCharts_Chart.prototype.setTooltip = function (xAxisDimension, selectedMeasure) {
+        var self = this;
+        this.chartConfig.tooltip = {
+            formatter: function () {
+                return xAxisDimension.__cv_niceLabel + ': <b>' + this.x + '</b> <br/> ' + selectedMeasure.__cv_niceLabel + ': ' + '<b>' + _.str.numberFormat(this.y, 4, ',', '.') + '</b>';
+            }
+        };
     };
     return CubeViz_Visualization_HighCharts_Chart;
 })();
@@ -788,7 +1069,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         _super.apply(this, arguments);
 
     }
-    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasureUri) {
+    CubeViz_Visualization_HighCharts_Pie.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         if(1 < _.size(multipleDimensions)) {
             throw new Error("Pie chart is only suitable for one dimension!");
             return;
@@ -798,7 +1079,7 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         var observation = new DataCube_Observation();
         var self = this;
         var usedXAxisElements = [];
-        var value = 0;
+        var value = null;
 
         this.chartConfig = chartConfig;
         this.chartConfig.colors = [];
@@ -818,8 +1099,8 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
                 }
             };
         }
-        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasureUri);
-        var xAxisElements = observation.getAxesElements(forXAxis);
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        var xAxisElements = observation.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
         this.chartConfig.series.push({
             type: "pie",
             name: this.chartConfig.title.text,
@@ -827,11 +1108,10 @@ var CubeViz_Visualization_HighCharts_Pie = (function (_super) {
         });
         _.each(xAxisElements, function (xAxisElement) {
             _.each(xAxisElement.observations, function (observation) {
-                try  {
-                    value = parseFloat(observation[selectedMeasureUri]);
-                } catch (ex) {
+                if(false === DataCube_Observation.isActive(observation)) {
                     return;
                 }
+                value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
                 if(-1 == $.inArray(xAxisElement.self.__cv_niceLabel, usedXAxisElements)) {
                     self.chartConfig.series[0].data.push([
                         xAxisElement.self.__cv_niceLabel, 
@@ -864,65 +1144,297 @@ var CubeViz_Visualization_HighCharts_Spline = (function (_super) {
     }
     return CubeViz_Visualization_HighCharts_Spline;
 })(CubeViz_Visualization_HighCharts_Chart);
-var DataCube_Attribute = (function () {
-    function DataCube_Attribute() { }
-    DataCube_Attribute.loadAll = function loadAll(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
-        $.ajax({
-            url: url + "getattributes",
-            data: {
-                serviceUrl: serviceUrl,
-                modelIri: modelIri,
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl
+var DataCube_ClusteringDataCube = (function () {
+    function DataCube_ClusteringDataCube() { }
+    DataCube_ClusteringDataCube.stillUsedObservationUris = [];
+    DataCube_ClusteringDataCube.buildDataSets = function buildDataSets(dataCubeUri, clusters, numberOfClusters) {
+        var lowestNumber = clusters[0][0];
+        var highestNumber = clusters[numberOfClusters - 1][_.size(clusters[numberOfClusters - 1]) - 1];
+
+        return {
+            0: {
+                __cv_niceLabel: "Dataset for " + numberOfClusters + " cluster with overall values between " + lowestNumber + " and " + highestNumber,
+                "http://www.w3.org/2000/01/rdf-schema#label": "Dataset for " + numberOfClusters + " cluster with overall values between " + lowestNumber + " and " + highestNumber,
+                __cv_uri: dataCubeUri + "dataset",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "dataset") + "",
+                "http://purl.org/linked-data/cube#structure": dataCubeUri + "datastructuredefinition",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+                "http://purl.org/dc/terms/created": (new Date()).toString()
             }
-        }).error(function (xhr, ajaxOptions, thrownError) {
-            throw new Error("Attribute loadAll: " + xhr.responseText);
-        }).success(function (entries) {
-            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
-                callback(entries.content);
+        };
+    }
+    DataCube_ClusteringDataCube.buildDataStructureDefinitions = function buildDataStructureDefinitions(dataCubeUri, dimensions) {
+        var dsd = {
+            0: {
+                __cv_niceLabel: "Artifical Data Structure Definition",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Data Structure Definition",
+                __cv_description: "",
+                __cv_uri: dataCubeUri + "dataStructureDefinition",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "dataStructureDefinition") + "",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
+                "http://purl.org/linked-data/cube#component": {
+                    0: dataCubeUri + "measure"
+                },
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+        var i = 1;
+
+        _.each(dimensions, function (dimension) {
+            dsd[0]["http://purl.org/linked-data/cube#component"][i] = dimension.__cv_uri;
+            ++i;
+        });
+        return dsd;
+    }
+    DataCube_ClusteringDataCube.buildDimensionElements = function buildDimensionElements(dataCubeUri, clusters, dimensionType) {
+        var dimensionElements = {
+        };
+        var j = 0;
+
+        if("cluster" == dimensionType) {
+            _.each(clusters, function (cluster) {
+                if(0 === _.size(cluster)) {
+                    return;
+                }
+                dimensionElements[j] = {
+                    __cv_niceLabel: "Cluster " + j,
+                    "http://www.w3.org/2000/01/rdf-schema#label": "Cluster " + j,
+                    __cv_uri: dataCubeUri + "cluster" + j,
+                    __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "cluster" + j) + "",
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "clusterDimension"
+                };
+                ++j;
+            });
+        } else {
+            if("position" == dimensionType) {
+                var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+                sortedClusters.sort(function (a, b) {
+                    return _.size(a) < _.size(b);
+                });
+                var label = "";
+                var usedPositions = [];
+
+                _.each(sortedClusters, function (cluster, clusterIndex) {
+                    if(0 == _.size(cluster)) {
+                        return;
+                    }
+                    _.each(cluster, function (number, position) {
+                        if(0 == position && -1 === $.inArray(position + " (first)", usedPositions)) {
+                            label = "0 (first)";
+                            usedPositions.push(label);
+                            dimensionElements[j] = {
+                                __cv_niceLabel: label,
+                                "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                __cv_uri: dataCubeUri + "position" + j,
+                                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                            };
+                            ++j;
+                        } else {
+                            if(_.size(cluster) == (position + 1) && -1 === $.inArray(position + " (last)", usedPositions)) {
+                                label = position + " (last)";
+                                usedPositions.push(label);
+                                dimensionElements[j] = {
+                                    __cv_niceLabel: label,
+                                    "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                    __cv_uri: dataCubeUri + "position" + j,
+                                    __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                                };
+                                ++j;
+                            } else {
+                                if(0 < position && -1 === $.inArray(position + "", usedPositions)) {
+                                    label = position + "";
+                                    usedPositions.push(label);
+                                    dimensionElements[j] = {
+                                        __cv_niceLabel: label,
+                                        "http://www.w3.org/2000/01/rdf-schema#label": label,
+                                        __cv_uri: dataCubeUri + "position" + j,
+                                        __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "position" + j) + "",
+                                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": dataCubeUri + "positionDimension"
+                                    };
+                                    ++j;
+                                } else {
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        return dimensionElements;
+    }
+    DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(dataCubeUri, clusters) {
+        var clusterDimensionUri = dataCubeUri + "componentSpecificationClusterDimension";
+        var dimensions = {
+        };
+        var positionDimensionUri = dataCubeUri + "componentSpecificationPositionDimension";
+
+        dimensions[clusterDimensionUri] = {
+            __cv_niceLabel: "Cluster Dimension",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Cluster Dimension",
+            __cv_description: "",
+            __cv_uri: clusterDimensionUri,
+            __cv_hashedUri: CryptoJS.MD5(clusterDimensionUri) + "",
+            __cv_elements: DataCube_ClusteringDataCube.buildDimensionElements(dataCubeUri, clusters, "cluster"),
+            "http://purl.org/linked-data/cube#dimension": dataCubeUri + "clusterDimension",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        dimensions[positionDimensionUri] = {
+            __cv_niceLabel: "Position Dimension",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Position Dimension",
+            __cv_description: "",
+            __cv_uri: positionDimensionUri,
+            __cv_hashedUri: CryptoJS.MD5(positionDimensionUri) + "",
+            __cv_elements: DataCube_ClusteringDataCube.buildDimensionElements(dataCubeUri, clusters, "position"),
+            "http://purl.org/linked-data/cube#dimension": dataCubeUri + "positionDimension",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        return dimensions;
+    }
+    DataCube_ClusteringDataCube.buildMeasures = function buildMeasures(dataCubeUri) {
+        return {
+            0: {
+                __cv_niceLabel: "Artifical Measure",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Measure",
+                __cv_description: "",
+                __cv_uri: dataCubeUri + "componentSpecificationMeasure",
+                __cv_hashedUri: CryptoJS.MD5(dataCubeUri + "componentSpecificationMeasure") + "",
+                "http://purl.org/linked-data/cube#measure": dataCubeUri + "measure",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+    }
+    DataCube_ClusteringDataCube.buildObservations = function buildObservations(dataCubeUri, clusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset) {
+        var i = 0;
+        var j = 0;
+        var observations = {
+        };
+        var self = this;
+        var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+
+        sortedClusters.sort(function (a, b) {
+            return _.size(a) < _.size(b);
+        });
+        _.each(sortedClusters, function (cluster, clusterIndex) {
+            if(0 === _.size(cluster)) {
+                return;
+            }
+            _.each(cluster, function (number, position) {
+                observations[i] = {
+                    __cv_niceLabel: "Observation of cluster " + j,
+                    "http://www.w3.org/2000/01/rdf-schema#label": "Observation of cluster " + j,
+                    __cv_uri: dataCubeUri + "observation" + i,
+                    __cv_hashedUri: "c204871025866c6178c363948246c146",
+                    __cv_description: "",
+                    "http://purl.org/linked-data/cube#dataSet": dataCubeUri + "dataset",
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#Observation"
+                };
+                observations[i][dataCubeUri + "measure"] = number;
+                observations[i][dataCubeUri + "clusterDimension"] = dataCubeUri + "cluster" + j;
+                observations[i][dataCubeUri + "positionDimension"] = DataCube_ClusteringDataCube.getPositionDimensionElement(dataCubeUri, clusters, clusterIndex, position, number);
+                observations[i].__cv_sourceDataset = mergedDatacubeDataset;
+                observations[i].__cv_sourceObservation = {
+                    0: {
+                    }
+                };
+                observations[i].__cv_sourceObservation[0] = DataCube_ClusteringDataCube.getObservation(mergedDatacubeObservations, number, mergedDatacubeMeasureUri);
+                ++i;
+            });
+            ++j;
+        });
+        return observations;
+    }
+    DataCube_ClusteringDataCube.create = function create(clusters, backendUrl, numberOfClusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset) {
+        var clusteringDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
+        var dataCubeUri = "";
+
+        dataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, JSON.stringify(clusters));
+        clusteringDataCube.dataSets = DataCube_ClusteringDataCube.buildDataSets(dataCubeUri, clusters, numberOfClusters);
+        clusteringDataCube.selectedDS = clusteringDataCube.dataSets[0];
+        clusteringDataCube.components.dimensions = DataCube_ClusteringDataCube.buildDimensionsAndTheirComponentSpecifications(dataCubeUri, clusters);
+        clusteringDataCube.selectedComponents.dimensions = clusteringDataCube.components.dimensions;
+        clusteringDataCube.components.measures = DataCube_ClusteringDataCube.buildMeasures(dataCubeUri);
+        clusteringDataCube.selectedComponents.measure = clusteringDataCube.components.measures[0];
+        clusteringDataCube.dataStructureDefinitions = DataCube_ClusteringDataCube.buildDataStructureDefinitions(dataCubeUri, clusteringDataCube.selectedComponents.dimensions);
+        clusteringDataCube.selectedDSD = clusteringDataCube.dataStructureDefinitions[0];
+        DataCube_ClusteringDataCube.stillUsedObservationUris = [];
+        clusteringDataCube.retrievedObservations = DataCube_ClusteringDataCube.buildObservations(dataCubeUri, clusters, mergedDatacubeObservations, mergedDatacubeMeasureUri, mergedDatacubeDataset);
+        clusteringDataCube.originalObservations = mergedDatacubeObservations;
+        clusteringDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(clusteringDataCube.components.dimensions));
+        clusteringDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(clusteringDataCube.components.dimensions));
+        return clusteringDataCube;
+    }
+    DataCube_ClusteringDataCube.getObservation = function getObservation(observations, observationValue, measureUri) {
+        var observationToReturn = null;
+        var self = this;
+
+        observations = $.parseJSON(JSON.stringify(observations));
+        _.each(observations, function (observation) {
+            observation[measureUri] = DataCube_Observation.parseValue(observation, measureUri);
+            if(-1 === $.inArray(observation.__cv_uri, DataCube_ClusteringDataCube.stillUsedObservationUris) && observation[measureUri] === observationValue) {
+                observationToReturn = observation;
+                DataCube_ClusteringDataCube.stillUsedObservationUris.push(observation.__cv_uri);
             }
         });
+        return observationToReturn;
     }
-    return DataCube_Attribute;
+    DataCube_ClusteringDataCube.getPositionDimensionElement = function getPositionDimensionElement(dataCubeUri, clusters, clusterIndexToUse, positionToUse, numberToCheck) {
+        var dimensionElementToSearch = "";
+        var j = 0;
+        var label = "";
+        var sortedClusters = $.parseJSON(JSON.stringify(clusters));
+        var uri = "";
+        var usedPositions = [];
+
+        sortedClusters.sort(function (a, b) {
+            return _.size(a) < _.size(b);
+        });
+        if(0 == positionToUse) {
+            return dataCubeUri + "position0";
+        }
+        _.each(sortedClusters, function (cluster, clusterIndex) {
+            if(0 == _.size(cluster)) {
+                return;
+            }
+            _.each(cluster, function (number, position) {
+                uri = "";
+                if(0 == position && -1 === $.inArray(position + " (first)", usedPositions)) {
+                    usedPositions.push("0 (first)");
+                    uri = dataCubeUri + "position" + j;
+                    ++j;
+                } else {
+                    if(_.size(cluster) == (position + 1) && -1 === $.inArray(position + " (last)", usedPositions)) {
+                        usedPositions.push(position + " (last)");
+                        uri = dataCubeUri + "position" + j;
+                        ++j;
+                    } else {
+                        if(0 < position && -1 === $.inArray(position + "", usedPositions)) {
+                            usedPositions.push(position + "");
+                            uri = dataCubeUri + "position" + j;
+                            ++j;
+                        } else {
+                        }
+                    }
+                }
+                if(clusterIndexToUse == clusterIndex && number == numberToCheck) {
+                    if(true === _.str.isBlank(uri)) {
+                        dimensionElementToSearch = dataCubeUri + "position" + $.inArray(position + "", usedPositions);
+                    } else {
+                        dimensionElementToSearch = uri;
+                    }
+                }
+            });
+        });
+        return dimensionElementToSearch;
+    }
+    return DataCube_ClusteringDataCube;
 })();
 var DataCube_Component = (function () {
     function DataCube_Component() { }
-    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
-        $.ajax({
-            url: url + "getcomponents",
-            data: {
-                serviceUrl: serviceUrl,
-                modelIri: modelIri,
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                componentType: "dimension"
-            }
-        }).error(function (xhr, ajaxOptions, thrownError) {
-            throw new Error("loadAllDimensions: " + xhr.responseText);
-        }).success(function (entries) {
-            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
-                callback(entries.content);
-            }
-        });
-    }
-    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
-        $.ajax({
-            url: url + "getcomponents",
-            data: {
-                serviceUrl: serviceUrl,
-                modelIri: modelIri,
-                dsdUrl: dsdUrl,
-                dsUrl: dsUrl,
-                componentType: "measure"
-            }
-        }).error(function (xhr, ajaxOptions, thrownError) {
-            throw new Error("loadAllMeasures: " + xhr.responseText);
-        }).done(function (entries) {
-            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
-                callback(entries.content);
-            }
-        });
-    }
     DataCube_Component.getDefaultSelectedDimensions = function getDefaultSelectedDimensions(componentDimensions) {
         var alreadyUsedIndexes = [];
         var componentDimensions = JSON.parse(JSON.stringify(componentDimensions));
@@ -968,7 +1480,541 @@ var DataCube_Component = (function () {
         });
         return result;
     }
+    DataCube_Component.getMeasures = function getMeasures(measureObject) {
+        var measures = [];
+        _.each(measureObject, function (measure) {
+            measures.push(measure);
+        });
+        return measures;
+    }
+    DataCube_Component.findDimensionElement = function findDimensionElement(dimensionElements, uri) {
+        var elementToFind = null;
+        _.each(dimensionElements, function (element) {
+            if(element.__cv_uri == uri) {
+                elementToFind = element;
+            }
+        });
+        return elementToFind;
+    }
+    DataCube_Component.loadAllAttributes = function loadAllAttributes(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "attribute"
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("Attribute loadAll: " + xhr.responseText);
+        }).success(function (entries) {
+            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
+                callback(entries.content);
+            }
+        });
+    }
+    DataCube_Component.loadAllDimensions = function loadAllDimensions(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "dimension"
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("loadAllDimensions: " + xhr.responseText);
+        }).success(function (entries) {
+            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
+                callback(entries.content);
+            }
+        });
+    }
+    DataCube_Component.loadAllMeasures = function loadAllMeasures(url, serviceUrl, modelIri, dsdUrl, dsUrl, callback) {
+        $.ajax({
+            url: url + "getcomponents",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsdUrl: dsdUrl,
+                dsUrl: dsUrl,
+                componentType: "measure"
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("loadAllMeasures: " + xhr.responseText);
+        }).done(function (entries) {
+            if(false === _.isUndefined(entries) && false === _.isUndefined(entries.content)) {
+                callback(entries.content);
+            }
+        });
+    }
     return DataCube_Component;
+})();
+var DataCube_DataCubeMerger = (function () {
+    function DataCube_DataCubeMerger() { }
+    DataCube_DataCubeMerger.latestHash = "";
+    DataCube_DataCubeMerger.adaptDimensionElements = function adaptDimensionElements(mergedDataCubeUri, dimensionElements, i) {
+        var j = 0;
+        dimensionElements = $.parseJSON(JSON.stringify(dimensionElements));
+        _.each(dimensionElements, function (element) {
+            element["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"] = mergedDataCubeUri + "dimension" + i;
+            element["http://purl.org/dc/terms/source"] = element.__cv_uri;
+            if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                element["http://www.w3.org/2002/07/owl#sameAs"] = [
+                    element["http://www.w3.org/2002/07/owl#sameAs"], 
+                    element.__cv_uri
+                ];
+            } else {
+                element["http://www.w3.org/2002/07/owl#sameAs"] = element.__cv_uri;
+            }
+            element.__cv_uri = mergedDataCubeUri + "dimension" + i + "DimensionElement" + j;
+            element.__cv_hashedUri = CryptoJS.MD5(element.__cv_uri) + "";
+            ++j;
+        });
+        return dimensionElements;
+    }
+    DataCube_DataCubeMerger.buildDataSets = function buildDataSets(mergedDataCubeUri, dataset1, dataset2) {
+        return {
+            0: {
+                __cv_niceLabel: "Artifical Dataset of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Dataset of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                __cv_description: "Its an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical data set and it consists of '" + dataset1.__cv_niceLabel + "' and '" + dataset2.__cv_niceLabel + "'",
+                __cv_uri: mergedDataCubeUri + "dataset",
+                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataset") + "",
+                "http://purl.org/dc/terms/source": [
+                    dataset1.__cv_uri, 
+                    dataset2.__cv_uri
+                ],
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                "http://purl.org/linked-data/cube#structure": mergedDataCubeUri + "dataStructureDefinition",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataSet",
+                __cv_sourceDataset: [
+                    dataset1, 
+                    dataset2
+                ]
+            }
+        };
+    }
+    DataCube_DataCubeMerger.buildDataStructureDefinitions = function buildDataStructureDefinitions(mergedDataCubeUri, dimensions) {
+        var dsd = {
+            0: {
+                __cv_niceLabel: "Artifical Data Structure Definition",
+                "http://www.w3.org/2000/01/rdf-schema#label": "Artifical Data Structure Definition",
+                __cv_description: "This is an artifical data structure definition " + "created during a data cube merge.",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "This is an artifical data structure definition created during " + "a data cube merge.",
+                __cv_uri: mergedDataCubeUri + "dataStructureDefinition",
+                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "dataStructureDefinition") + "",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#DataStructureDefinition",
+                "http://purl.org/linked-data/cube#component": {
+                    0: mergedDataCubeUri + "measure"
+                },
+                "http://purl.org/dc/terms/created": (new Date()).toString()
+            }
+        };
+        var i = 1;
+
+        _.each(dimensions, function (dimension) {
+            dsd[0]["http://purl.org/linked-data/cube#component"][i] = dimension.__cv_uri;
+            ++i;
+        });
+        return dsd;
+    }
+    DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications = function buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice, dataSets) {
+        var componentSpecification = {
+        };
+        var i = 0;
+        var virtualDimensions = {
+        };
+
+        _.each(equalDimensions, function (dimensionPair) {
+            componentSpecification = {
+                __cv_niceLabel: dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
+                "http://www.w3.org/2000/01/rdf-schema#label": dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
+                __cv_description: "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
+                __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
+                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
+                "http://purl.org/dc/terms/source": [
+                    dimensionPair[0].__cv_uri, 
+                    dimensionPair[1].__cv_uri
+                ],
+                __cv_elements: {
+                },
+                __cv_oldCubeDimension: [
+                    dimensionPair[0]["http://purl.org/linked-data/cube#dimension"], 
+                    dimensionPair[1]["http://purl.org/linked-data/cube#dimension"]
+                ],
+                "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                __cv_sourceComponentSpecification: [
+                    dimensionPair[0], 
+                    dimensionPair[1]
+                ]
+            };
+            componentSpecification.__cv_elements = DataCube_DataCubeMerger.mergeDimensionElements(dimensionPair[0].__cv_elements, dimensionPair[1].__cv_elements, dimensionElementChoice);
+            componentSpecification.__cv_elements = DataCube_DataCubeMerger.adaptDimensionElements(mergedDataCubeUri, componentSpecification.__cv_elements, i);
+            virtualDimensions[componentSpecification.__cv_uri] = componentSpecification;
+            ++i;
+        });
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i] = {
+            __cv_niceLabel: dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[0].__cv_niceLabel + " / " + dataSets[1].__cv_niceLabel,
+            __cv_description: "Component Specification which represents the datasets " + dataSets[0].__cv_niceLabel + " and " + dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#comment": "Component Specification which represents the datasets " + dataSets[0].__cv_niceLabel + " and " + dataSets[1].__cv_niceLabel,
+            __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
+            __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
+            "http://purl.org/dc/terms/source": [
+                dataSets[0].__cv_uri, 
+                dataSets[1].__cv_uri
+            ],
+            __cv_elements: {
+            },
+            __cv_datasetDimension: true,
+            "http://purl.org/linked-data/cube#dimension": mergedDataCubeUri + "dimension" + i,
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+            "http://purl.org/dc/terms/created": (new Date()).toString()
+        };
+        var dimensionElementUri = mergedDataCubeUri + "dimension" + i + "DimensionElement";
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i].__cv_elements[dimensionElementUri + "0"] = {
+            __cv_niceLabel: dataSets[0].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[0].__cv_niceLabel,
+            __cv_uri: dimensionElementUri + "0",
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "0") + "",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": mergedDataCubeUri + "dimension" + i
+        };
+        virtualDimensions[mergedDataCubeUri + "componentSpecificationDimension" + i].__cv_elements[dimensionElementUri + "1"] = {
+            __cv_niceLabel: dataSets[1].__cv_niceLabel,
+            "http://www.w3.org/2000/01/rdf-schema#label": dataSets[1].__cv_niceLabel,
+            __cv_uri: dimensionElementUri + "1",
+            __cv_hashedUri: CryptoJS.MD5(dimensionElementUri + "1") + "",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": mergedDataCubeUri + "dimension" + i
+        };
+        return virtualDimensions;
+    }
+    DataCube_DataCubeMerger.buildMeasure = function buildMeasure(mergedDataCubeUri, measure1, measure2) {
+        return {
+            0: {
+                __cv_niceLabel: measure1.__cv_niceLabel + " / " + measure2.__cv_niceLabel,
+                "http://www.w3.org/2000/01/rdf-schema#label": measure1.__cv_niceLabel + " / " + measure2.__cv_niceLabel,
+                __cv_description: "Its an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical measure and it consists of '" + measure1.__cv_niceLabel + "' and '" + measure2.__cv_niceLabel + "'",
+                __cv_uri: mergedDataCubeUri + "componentSpecificationMeasure",
+                __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationMeasure") + "",
+                __cv_oldCubeMeasure: [
+                    measure1["http://purl.org/linked-data/cube#measure"], 
+                    measure2["http://purl.org/linked-data/cube#measure"]
+                ],
+                "http://purl.org/linked-data/cube#measure": mergedDataCubeUri + "measure",
+                "http://purl.org/dc/terms/source": [
+                    measure1.__cv_uri, 
+                    measure2.__cv_uri
+                ],
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/linked-data/cube#ComponentSpecification",
+                "http://purl.org/dc/terms/created": (new Date()).toString(),
+                __cv_sourceComponentSpecification: [
+                    measure1, 
+                    measure2
+                ]
+            }
+        };
+    }
+    DataCube_DataCubeMerger.buildObservations = function buildObservations(mergedDataCubeUri, dataset1, dataset2, observations1, observations2, measure, dimensions, dimensionIndex, originDimensions1, originDimensions2) {
+        var adaptedObservations = {
+        };
+        var adaptedDimensionElementUri = null;
+        var i = 0;
+        var observationCounter = 0;
+        var tmp = {
+        };
+        var tmpObservations = {
+        };
+        var urisToIgnore = [];
+        var usedUri = null;
+        var usedUris = {
+        };
+
+        observations1 = $.parseJSON(JSON.stringify(observations1));
+        observations2 = $.parseJSON(JSON.stringify(observations2));
+        _.each(observations1, function (observation) {
+            observation.__cv_fromDataset = 0;
+            tmpObservations[i++] = observation;
+        });
+        _.each(observations2, function (observation) {
+            observation.__cv_fromDataset = 1;
+            tmpObservations[i++] = observation;
+        });
+        _.each(tmpObservations, function (observation) {
+            observation.__cv_sourceObservation = [
+                $.parseJSON(JSON.stringify(observation))
+            ];
+            if(observation["http://purl.org/linked-data/cube#dataSet"] == dataset1.__cv_uri) {
+                observation.__cv_sourceDataset = dataset1;
+            } else {
+                observation.__cv_sourceDataset = dataset2;
+            }
+            if(false === _.str.isBlank(observation["http://www.w3.org/2002/07/owl#sameAs"])) {
+                observation["http://www.w3.org/2002/07/owl#sameAs"] = [
+                    observation["http://www.w3.org/2002/07/owl#sameAs"], 
+                    observation.__cv_uri
+                ];
+            } else {
+                observation["http://www.w3.org/2002/07/owl#sameAs"] = observation.__cv_uri;
+            }
+            if(false === _.str.isBlank(observation["http://purl.org/dc/terms/source"])) {
+                observation["http://purl.org/dc/terms/source"] = [
+                    observation["http://purl.org/dc/terms/source"], 
+                    observation.__cv_uri
+                ];
+            } else {
+                observation["http://purl.org/dc/terms/source"] = observation.__cv_uri;
+            }
+            observation.__cv_uri = mergedDataCubeUri + "observation" + observationCounter;
+            observation.__cv_hashedUri = CryptoJS.MD5(observation.__cv_uri) + "";
+            observation["http://purl.org/linked-data/cube#dataSet"] = mergedDataCubeUri + "dataset";
+            observation["http://purl.org/dc/terms/created"] = (new Date()).toString();
+            usedUri = null;
+            _.each(measure.__cv_oldCubeMeasure, function (oldMeasureUri) {
+                if(false === _.isUndefined(observation[oldMeasureUri])) {
+                    usedUri = oldMeasureUri;
+                }
+            });
+            if(false === _.isNull(usedUri)) {
+                observation[mergedDataCubeUri + "measure"] = observation[usedUri];
+                delete observation[usedUri];
+                adaptedObservations[observation.__cv_uri] = observation;
+                ++observationCounter;
+            } else {
+            }
+        });
+        tmpObservations = {
+        };
+        _.each(dimensions, function (dimension) {
+            _.each(adaptedObservations, function (observation) {
+                if(false === _.isUndefined(dimension.__cv_datasetDimension) && true === dimension.__cv_datasetDimension) {
+                    if(0 === observation.__cv_fromDataset) {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement0";
+                    } else {
+                        observation[mergedDataCubeUri + "dimension" + dimensionIndex] = mergedDataCubeUri + "dimension" + dimensionIndex + "DimensionElement1";
+                    }
+                    return;
+                }
+                adaptedDimensionElementUri = null;
+                _.each(dimension.__cv_elements, function (element) {
+                    if(true === _.isArray(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                        _.each(element["http://www.w3.org/2002/07/owl#sameAs"], function (sameAsObject) {
+                            _.each(dimension.__cv_oldCubeDimension, function (oldDimensionUri) {
+                                if(sameAsObject == observation[oldDimensionUri]) {
+                                    adaptedDimensionElementUri = element.__cv_uri;
+                                }
+                            });
+                        });
+                    } else {
+                        _.each(dimension.__cv_oldCubeDimension, function (oldDimensionUri) {
+                            if(element["http://www.w3.org/2002/07/owl#sameAs"] == observation[oldDimensionUri]) {
+                                adaptedDimensionElementUri = element.__cv_uri;
+                            }
+                        });
+                    }
+                });
+                if(false === _.isNull(adaptedDimensionElementUri)) {
+                    observation[mergedDataCubeUri + "dimension" + dimensionIndex] = adaptedDimensionElementUri;
+                    tmpObservations[observation.__cv_uri] = observation;
+                } else {
+                    urisToIgnore.push(observation.__cv_uri);
+                }
+            });
+            ++dimensionIndex;
+        });
+        adaptedObservations = {
+        };
+        i = 0;
+        _.each(tmpObservations, function (observation) {
+            if(-1 === $.inArray(observation.__cv_uri, urisToIgnore)) {
+                _.each(originDimensions1, function (dimension) {
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
+                _.each(originDimensions2, function (dimension) {
+                    delete observation[dimension["http://purl.org/linked-data/cube#dimension"]];
+                });
+                adaptedObservations[i++] = observation;
+            }
+        });
+        _.each(adaptedObservations, function (observation, i) {
+            if(true === _.isUndefined(usedUris[observation.__cv_sourceObservation[0].__cv_uri])) {
+                usedUris[observation.__cv_sourceObservation[0].__cv_uri] = i;
+            } else {
+                adaptedObservations[i].__cv_sourceObservation = [
+                    adaptedObservations[i].__cv_sourceObservation[0], 
+                    adaptedObservations[usedUris[adaptedObservations[i].__cv_sourceObservation[0].__cv_uri]].__cv_sourceObservation[0]
+                ];
+                adaptedObservations[i][mergedDataCubeUri + "measure"] = NaN;
+                adaptedObservations[i]["http://purl.org/dc/terms/source"] = [
+                    adaptedObservations[i].__cv_sourceObservation[0].__cv_uri, 
+                    adaptedObservations[i].__cv_sourceObservation[1].__cv_uri
+                ];
+                delete adaptedObservations[i]["http://www.w3.org/2002/07/owl#sameAs"];
+                delete adaptedObservations[usedUris[observation.__cv_uri]];
+            }
+        });
+        return adaptedObservations;
+    }
+    DataCube_DataCubeMerger.create = function create(backendUrl, stringifiedCompareAction, dataset1, dataset2, equalDimensions, measure1, measure2, retrievedObservations1, retrievedObservations2, originDimensions1, originDimensions2, dimensionElementChoice) {
+        var mergedDataCube = {
+        };
+        var mergedDataCubeUri = "";
+
+        mergedDataCube = DataCube_DataCubeMerger.getDefaultDataCubeObject();
+        mergedDataCubeUri = DataCube_DataCubeMerger.generateDataCubeUri(backendUrl, stringifiedCompareAction);
+        mergedDataCube.dataSets = DataCube_DataCubeMerger.buildDataSets(mergedDataCubeUri, dataset1, dataset2);
+        mergedDataCube.selectedDS = mergedDataCube.dataSets[0];
+        mergedDataCube.components.dimensions = DataCube_DataCubeMerger.buildDimensionsAndTheirComponentSpecifications(mergedDataCubeUri, equalDimensions, dimensionElementChoice, [
+            dataset1, 
+            dataset2
+        ]);
+        var dimensionElement = {
+        };
+        var existingMultipleDimensions = 0;
+        var oneElementDimension = {
+        };
+
+        mergedDataCube.selectedComponents = {
+            dimensions: {
+            }
+        };
+        _.each(mergedDataCube.components.dimensions, function (dimension) {
+            if(1 < _.size(dimension.__cv_elements)) {
+                ++existingMultipleDimensions;
+            }
+            if(existingMultipleDimensions <= 2) {
+                mergedDataCube.selectedComponents.dimensions[dimension.__cv_uri] = dimension;
+            } else {
+                oneElementDimension = $.parseJSON(JSON.stringify(dimension));
+                dimensionElement = _.first(_.values(dimension.__cv_elements));
+                oneElementDimension.__cv_elements = {
+                };
+                oneElementDimension.__cv_elements[dimensionElement.__cv_uri] = dimensionElement;
+                mergedDataCube.selectedComponents.dimensions[dimension.__cv_uri] = oneElementDimension;
+            }
+        });
+        mergedDataCube.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(mergedDataCube.selectedComponents.dimensions));
+        mergedDataCube.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(mergedDataCube.selectedComponents.dimensions));
+        mergedDataCube.components.measures = DataCube_DataCubeMerger.buildMeasure(mergedDataCubeUri, measure1, measure2);
+        mergedDataCube.selectedComponents.measure = mergedDataCube.components.measures[0];
+        mergedDataCube.dataStructureDefinitions = DataCube_DataCubeMerger.buildDataStructureDefinitions(mergedDataCubeUri, mergedDataCube.components.dimensions);
+        mergedDataCube.selectedDSD = mergedDataCube.dataStructureDefinitions[0];
+        mergedDataCube.retrievedObservations = DataCube_DataCubeMerger.buildObservations(mergedDataCubeUri, dataset1, dataset2, retrievedObservations1, retrievedObservations2, mergedDataCube.selectedComponents.measure, mergedDataCube.selectedComponents.dimensions, 0, originDimensions1, originDimensions2);
+        mergedDataCube.originalObservations = {
+        };
+        _.each(retrievedObservations1, function (observation) {
+            mergedDataCube.originalObservations[observation.__cv_uri] = observation;
+        });
+        _.each(retrievedObservations2, function (observation) {
+            mergedDataCube.originalObservations[observation.__cv_uri] = observation;
+        });
+        return mergedDataCube;
+    }
+    DataCube_DataCubeMerger.generateDataCubeUri = function generateDataCubeUri(url, stringifiedObject) {
+        DataCube_DataCubeMerger.latestHash = CryptoJS.MD5(stringifiedObject) + "";
+        return url + "export/datacube/" + DataCube_DataCubeMerger.latestHash + "#";
+    }
+    DataCube_DataCubeMerger.getDefaultDataCubeObject = function getDefaultDataCubeObject() {
+        return {
+            components: {
+                attributes: null,
+                dimensions: {
+                },
+                measures: {
+                }
+            },
+            dataSets: {
+            },
+            dataStructureDefinitions: {
+            },
+            numberOfMultipleDimensions: 0,
+            numberOfOneElementDimensions: 0,
+            originalObservations: {
+            },
+            retrievedObservations: {
+            },
+            selectedComponents: {
+            },
+            selectedDS: {
+            },
+            selectedDSD: {
+            },
+            selectedSlice: {
+            },
+            slices: {
+            },
+            settings: {
+                synchronizeWithStore: false
+            }
+        };
+    }
+    DataCube_DataCubeMerger.mergeDimensionElements = function mergeDimensionElements(dimensionElements1, dimensionElements2, dimensionElementChoice) {
+        var mergedDimensionElements = {
+        };
+        var usedElementUris = [];
+
+        if("all" === dimensionElementChoice) {
+            _.each(dimensionElements1, function (element) {
+                mergedDimensionElements[element.__cv_uri] = element;
+                usedElementUris.push(element.__cv_uri);
+                if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                    usedElementUris.push(element["http://www.w3.org/2002/07/owl#sameAs"]);
+                }
+            });
+            _.each(dimensionElements2, function (element) {
+                if(-1 == $.inArray(element.__cv_uri, usedElementUris)) {
+                    if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) && -1 < $.inArray(element["http://www.w3.org/2002/07/owl#sameAs"], usedElementUris)) {
+                        return;
+                    }
+                    mergedDimensionElements[element.__cv_uri] = element;
+                    usedElementUris.push(element.__cv_uri);
+                }
+            });
+        } else {
+            if("equal" === dimensionElementChoice || "unequal" === dimensionElementChoice) {
+                _.each(dimensionElements1, function (element) {
+                    mergedDimensionElements[element.__cv_uri] = element;
+                    usedElementUris.push(element.__cv_uri);
+                    if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"])) {
+                        usedElementUris.push(element["http://www.w3.org/2002/07/owl#sameAs"]);
+                    }
+                });
+                _.each(dimensionElements2, function (element) {
+                    if(false === _.isUndefined(mergedDimensionElements[element.__cv_uri])) {
+                        mergedDimensionElements[element.__cv_uri].__cv_double = element;
+                    } else {
+                        if(false === _.isUndefined(element["http://www.w3.org/2002/07/owl#sameAs"]) && false === _.isUndefined(mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                            mergedDimensionElements[element["http://www.w3.org/2002/07/owl#sameAs"]].__cv_double = element;
+                        }
+                    }
+                });
+                if("equal" === dimensionElementChoice) {
+                    _.each(mergedDimensionElements, function (element, key) {
+                        if(true === _.isUndefined(element.__cv_double)) {
+                            delete mergedDimensionElements[key];
+                        }
+                    });
+                } else {
+                    _.each(mergedDimensionElements, function (element, key) {
+                        if(false === _.isUndefined(element.__cv_double)) {
+                            delete mergedDimensionElements[key];
+                        }
+                    });
+                }
+            } else {
+                return;
+            }
+        }
+        return mergedDimensionElements;
+    }
+    return DataCube_DataCubeMerger;
 })();
 var DataCube_DataSet = (function () {
     function DataCube_DataSet() { }
@@ -1037,10 +2083,52 @@ var DataCube_Observation = (function () {
             };
         }
     };
+    DataCube_Observation.getNumberOfActiveObservations = function getNumberOfActiveObservations(observations) {
+        var activeOnes = 0;
+        _.each(observations, function (observation) {
+            if(true === DataCube_Observation.isActive(observation)) {
+                ++activeOnes;
+            }
+        });
+        return activeOnes;
+    }
+    DataCube_Observation.getUsedDimensionElementUris = function getUsedDimensionElementUris(observations, dimensionUri) {
+        var usedDimensionElementUris = [];
+        _.each(observations, function (observation) {
+            if(-1 === $.inArray(observation[dimensionUri], usedDimensionElementUris)) {
+                usedDimensionElementUris.push(observation[dimensionUri]);
+            }
+        });
+        return usedDimensionElementUris;
+    }
+    DataCube_Observation.getValues = function getValues(observations, measureUri, areActive) {
+        if (typeof areActive === "undefined") { areActive = false; }
+        var foundInvalidNumber = false;
+        var value = null;
+        var values = [];
+
+        _.each(observations, function (observation) {
+            if(true === areActive && false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            value = DataCube_Observation.parseValue(observation, measureUri);
+            if(true === _.isNull(value)) {
+                foundInvalidNumber = true;
+                return;
+            } else {
+                values.push(value);
+            }
+        });
+        return [
+            values, 
+            foundInvalidNumber
+        ];
+    }
     DataCube_Observation.prototype.initialize = function (retrievedObservations, selectedComponentDimensions, measureUri) {
         var dimensionElementInfoObject = {
         };
         var dimensionPropertyUri = "";
+        var foundIt = null;
         var observationDimensionProperty = {
         };
         var self = this;
@@ -1049,21 +2137,20 @@ var DataCube_Observation = (function () {
         this._axes = {
         };
         _.each(retrievedObservations, function (observation) {
-            try  {
-                value = parseFloat(observation[measureUri]);
-                if(true === _.str.include(observation[measureUri], " ")) {
-                    value = parseFloat(observation[measureUri].replace(/ /gi, ""));
-                }
-                if(true === _.isNaN(value)) {
-                    return;
-                }
-                observation[measureUri] = value;
-            } catch (ex) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            value = DataCube_Observation.parseValue(observation, measureUri);
+            if(true === _.isNull(value)) {
                 return;
             }
             _.each(selectedComponentDimensions, function (dimension) {
                 dimensionPropertyUri = dimension["http://purl.org/linked-data/cube#dimension"];
                 observationDimensionProperty = observation[dimensionPropertyUri];
+                foundIt = DataCube_Component.findDimensionElement(dimension.__cv_elements, observationDimensionProperty);
+                if(true === _.isNull(foundIt)) {
+                    return;
+                }
                 if(true === _.isUndefined(self._axes[dimensionPropertyUri])) {
                     self._axes[dimensionPropertyUri] = {
                     };
@@ -1089,19 +2176,87 @@ var DataCube_Observation = (function () {
         });
         return this;
     };
-    DataCube_Observation.loadAll = function loadAll(serviceUrl, modelIri, dataHash, url, callback) {
+    DataCube_Observation.isActive = function isActive(observation) {
+        if(false === _.isUndefined(observation.__cv_active) && false === observation.__cv_active) {
+            return false;
+        }
+        return true;
+    }
+    DataCube_Observation.loadAll = function loadAll(url, serviceUrl, modelIri, dataHash, datasetUri, callback) {
         $.ajax({
             url: url + "getobservations/",
             data: {
                 serviceUrl: serviceUrl,
                 modelIri: modelIri,
-                cv_dataHash: dataHash
+                cv_dataHash: dataHash,
+                datasetUri: datasetUri
             }
         }).error(function (xhr, ajaxOptions, thrownError) {
             throw new Error("Observation loadAll error: " + xhr.responseText);
         }).done(function (entries) {
             callback(entries.content);
         });
+    }
+    DataCube_Observation.loadNumberOfObservations = function loadNumberOfObservations(url, serviceUrl, modelIri, dsUri, callback) {
+        $.ajax({
+            url: url + "getnumberofobservations/",
+            data: {
+                serviceUrl: serviceUrl,
+                modelIri: modelIri,
+                dsUri: dsUri
+            }
+        }).error(function (xhr, ajaxOptions, thrownError) {
+            throw new Error("Observation loadNumberOfObservations error: " + xhr.responseText);
+        }).done(function (entries) {
+            callback(entries.content);
+        });
+    }
+    DataCube_Observation.markActiveObservations = function markActiveObservations(observations, selectedDimensions, selectedMeasure, selectedAttribute) {
+        observations = $.parseJSON(JSON.stringify(observations));
+        _.each(observations, function (observation, key) {
+            observation.__cv_active = false;
+            observations[key] = observation;
+        });
+        var dimensionUri = null;
+        _.each(observations, function (observation, key) {
+            _.each(selectedDimensions, function (dimension) {
+                dimensionUri = dimension["http://purl.org/linked-data/cube#dimension"];
+                if(false === _.isNull(DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimensionUri]))) {
+                    observation.__cv_active = true;
+                }
+            });
+        });
+        return observations;
+    }
+    DataCube_Observation.parseValue = function parseValue(observation, measureUri, ignoreTemporaryValue) {
+        if (typeof ignoreTemporaryValue === "undefined") { ignoreTemporaryValue = false; }
+        var parsedValue = null;
+        var value = null;
+
+        if(false === ignoreTemporaryValue && false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            value = observation.__cv_temporaryNewValue;
+        } else {
+            value = observation[measureUri];
+        }
+        try  {
+            if(true === _.str.include(value, " ")) {
+                parsedValue = parseFloat(value.replace(/ /gi, ""));
+            } else {
+                parsedValue = parseFloat(value);
+            }
+            if(false === _.isNaN(parsedValue) && _.isFinite(parsedValue) && (0 < parsedValue || 0 > parsedValue || 0 === parsedValue)) {
+                return parsedValue;
+            }
+        } catch (ex) {
+        }
+        return null;
+    }
+    DataCube_Observation.setOriginalValue = function setOriginalValue(observation, measureUri, newValue) {
+        if(false === _.isUndefined(observation.__cv_temporaryNewValue)) {
+            observation.__cv_temporaryNewValue = null;
+            delete observation.__cv_temporaryNewValue;
+        }
+        observation[measureUri] = newValue;
     }
     DataCube_Observation.prototype.sortAxis = function (axisUri, mode) {
         var axesEntries = this._axes[axisUri];
@@ -1166,6 +2321,960 @@ var DataCube_Slice = (function () {
     }
     return DataCube_Slice;
 })();
+var View_CompareAction_ModelSelection = (function (_super) {
+    __extends(View_CompareAction_ModelSelection, _super);
+    function View_CompareAction_ModelSelection(attachedTo, app) {
+        _super.call(this, "View_CompareAction_ModelSelection", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_ModelSelection.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_ModelSelection.prototype.handleModelSelectorChanges = function (modelNr) {
+        var selectedModelLabel = _.str.trim($("#cubeviz-compare-modelSelector" + modelNr + " option:selected").text());
+        var selectedModelUri = $("#cubeviz-compare-modelSelector" + modelNr).val();
+
+        if('' != selectedModelUri) {
+            this.app._.compareAction.models[modelNr] = {
+                __cv_compareNr: modelNr,
+                __cv_uri: selectedModelUri,
+                __cv_niceLabel: selectedModelLabel
+            };
+            this.triggerGlobalEvent("onSelect_model" + modelNr);
+            if('' != this.app._.compareAction.models[1] && '' != this.app._.compareAction.models[2]) {
+                this.triggerGlobalEvent("onSelect_model1AndModel2");
+            }
+        } else {
+            this.app._.compareAction.models[modelNr] = null;
+            this.triggerGlobalEvent("onSelect_noModel" + modelNr);
+        }
+    };
+    View_CompareAction_ModelSelection.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_ModelSelection.prototype.onChange_modelSelector1 = function () {
+        this.handleModelSelectorChanges("1");
+    };
+    View_CompareAction_ModelSelection.prototype.onChange_modelSelector2 = function () {
+        this.handleModelSelectorChanges("2");
+    };
+    View_CompareAction_ModelSelection.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_ModelSelection.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "change #cubeviz-compare-modelSelector1": this.onChange_modelSelector1,
+            "change #cubeviz-compare-modelSelector2": this.onChange_modelSelector2
+        });
+        return this;
+    };
+    return View_CompareAction_ModelSelection;
+})(CubeViz_View_Abstract);
+var View_CompareAction_DatasetSelection = (function (_super) {
+    __extends(View_CompareAction_DatasetSelection, _super);
+    function View_CompareAction_DatasetSelection(attachedTo, app) {
+        _super.call(this, "View_CompareAction_DatasetSelection", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReceive_datasets",
+                handler: this.onReceive_datasets
+            }, 
+            {
+                name: "onReceive_noDatasets",
+                handler: this.onReceive_noDatasets
+            }, 
+            {
+                name: "onSelect_model1",
+                handler: this.onSelect_model1
+            }, 
+            {
+                name: "onSelect_model2",
+                handler: this.onSelect_model2
+            }, 
+            {
+                name: "onSelect_noModel1",
+                handler: this.onSelect_noModel1
+            }, 
+            {
+                name: "onSelect_noModel2",
+                handler: this.onSelect_noModel2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_DatasetSelection.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_DatasetSelection.prototype.fillSelectBox = function (selectId, elements) {
+        var newOption = {
+        };
+        $(selectId).html("<option value=\"\">- please select -</option>");
+        _.each(elements, function (element) {
+            newOption = $('<option/>');
+            newOption.attr("value", element.__cv_uri).data("self", element).text(element.__cv_niceLabel);
+            $(selectId).append(newOption);
+        });
+    };
+    View_CompareAction_DatasetSelection.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_DatasetSelection.prototype.handleDatasetSelectorChanges = function (datasetNr, element) {
+        var selectedDatasetUri = $("#cubeviz-compare-datasetSelector" + datasetNr).val();
+        if(true === _.str.isBlank(selectedDatasetUri)) {
+            this.app._.compareAction.datasets[datasetNr] = null;
+            this.triggerGlobalEvent("onSelected_noDataset" + datasetNr);
+        } else {
+            element.__cv_compareNr = datasetNr;
+            this.app._.compareAction.datasets[datasetNr] = element;
+            this.triggerGlobalEvent("onSelected_dataset" + datasetNr);
+        }
+        if(false === _.isNull(this.app._.compareAction.datasets[1]) && false === _.isNull(this.app._.compareAction.datasets[2])) {
+            this.triggerGlobalEvent("onSelected_dataset1AndDataset2");
+        }
+    };
+    View_CompareAction_DatasetSelection.prototype.handleModelSelectorChanges = function (modelNr) {
+        var self = this;
+        $("#cubeviz-compare-datasetSelectionDiv" + modelNr).show();
+        $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">please wait ... </option>");
+        DataCube_DataSet.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[modelNr].__cv_uri, "", function (result) {
+            self.onReceive_datasets(result, modelNr);
+        });
+    };
+    View_CompareAction_DatasetSelection.prototype.onReceive_datasets = function (result, modelNr) {
+        var self = this;
+        $("#cubeviz-compare-datasetSelectorWarningBox" + modelNr).hide();
+        if(0 < _.size(result)) {
+            self.fillSelectBox("#cubeviz-compare-datasetSelector" + modelNr, result);
+        } else {
+            $("#cubeviz-compare-datasetSelector" + modelNr).html("<option value=\"\">Choose another model ... </option>");
+            self.triggerGlobalEvent("onReceive_noDatasets", {
+                modelNr: modelNr,
+                modelUri: self.app._.compareAction.models[modelNr].__cv_uri
+            });
+        }
+    };
+    View_CompareAction_DatasetSelection.prototype.onReceive_noDatasets = function (event, data) {
+        $("#cubeviz-compare-datasetSelectorWarningBox" + data.modelNr).show();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_dataset1 = function (event) {
+        this.handleDatasetSelectorChanges("1", $(event.target).find("option:selected").data("self"));
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_dataset2 = function (event) {
+        this.handleDatasetSelectorChanges("2", $(event.target).find("option:selected").data("self"));
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_model1 = function (event, data) {
+        this.handleModelSelectorChanges("1");
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_model2 = function (event, data) {
+        this.handleModelSelectorChanges("2");
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_noModel1 = function () {
+        $("#cubeviz-compare-datasetSelectionDiv1").hide();
+    };
+    View_CompareAction_DatasetSelection.prototype.onSelect_noModel2 = function () {
+        $("#cubeviz-compare-datasetSelectionDiv2").hide();
+    };
+    View_CompareAction_DatasetSelection.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_DatasetSelection.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "change #cubeviz-compare-datasetSelector1": this.onSelect_dataset1,
+            "change #cubeviz-compare-datasetSelector2": this.onSelect_dataset2
+        });
+        return this;
+    };
+    return View_CompareAction_DatasetSelection;
+})(CubeViz_View_Abstract);
+var View_CompareAction_GeneralDatasetInformation = (function (_super) {
+    __extends(View_CompareAction_GeneralDatasetInformation, _super);
+    function View_CompareAction_GeneralDatasetInformation(attachedTo, app) {
+        _super.call(this, "View_CompareAction_GeneralDatasetInformation", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReceived_attributes1AndAttributes2",
+                handler: this.onReceived_attributes1AndAttributes2
+            }, 
+            {
+                name: "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
+            }, 
+            {
+                name: "onReceived_measures1AndMeasures2",
+                handler: this.onReceived_measures1AndMeasures2
+            }, 
+            {
+                name: "onReceived_numbersOfObservations1AndNumbersOfObservations2",
+                handler: this.onReceived_numbersOfObservations1AndNumbersOfObservations2
+            }, 
+            {
+                name: "onReceived_slices1AndSlices2",
+                handler: this.onReceived_slices1AndSlices2
+            }, 
+            {
+                name: "onSelected_dataset1",
+                handler: this.onSelected_dataset1
+            }, 
+            {
+                name: "onSelected_dataset2",
+                handler: this.onSelected_dataset2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_GeneralDatasetInformation.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayAttributesInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(3)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.attributes[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionsInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionsInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(0)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.dimensions[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionElementsInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        var numberOfDimensionElements = 0;
+        var self = this;
+
+        _.each(this.app._.compareAction.components.dimensions[1], function (dimension) {
+            numberOfDimensionElements += _.size(dimension.__cv_elements);
+        });
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(numberOfDimensionElements);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayDimensionElementsInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        var numberOfDimensionElements = 0;
+        var self = this;
+
+        _.each(this.app._.compareAction.components.dimensions[2], function (dimension) {
+            _.each(dimension.__cv_elements, function (dimensionElement) {
+                ++numberOfDimensionElements;
+            });
+        });
+        $($(informationPieceBoxes.get(1)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(numberOfDimensionElements);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayMeasuresInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(2)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.components.measures[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(5)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[1]);
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displayNumberOfObservations2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(5)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(this.app._.compareAction.numberOfObservations[2]);
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation1 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation1").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[1]));
+        $("#cubeviz-compare-generalDatasetInformation1").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.displaySlicesInformation2 = function () {
+        var informationPieceBoxes = $("#cubeviz-compare-generalDatasetInformation2").find(".cubeviz-compare-informationPieceBox");
+        $($(informationPieceBoxes.get(4)).find(".cubeviz-compare-informationPieceBoxValue").first()).html(_.size(this.app._.compareAction.slices[2]));
+        $("#cubeviz-compare-generalDatasetInformation2").show();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.initialize = function () {
+        this.render();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.handleDatasetSelectorChanges = function (datasetNr) {
+        var self = this;
+        this.app._.compareAction.components.dimensions[datasetNr] = null;
+        this.app._.compareAction.components.measures[datasetNr] = null;
+        this.app._.compareAction.components.attributes[datasetNr] = null;
+        DataCube_Component.loadAllDimensions(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.components.dimensions[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_dimensions" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.components.dimensions[1]) && false === _.isNull(self.app._.compareAction.components.dimensions[2])) {
+                self.triggerGlobalEvent("onReceived_dimensions1AndDimensions2");
+            }
+        });
+        DataCube_Component.loadAllMeasures(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.components.measures[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_measures" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.components.measures[1]) && false === _.isNull(self.app._.compareAction.components.measures[2])) {
+                self.triggerGlobalEvent("onReceived_measures1AndMeasures2");
+            }
+        });
+        DataCube_Component.loadAllAttributes(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.components.attributes[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_attributes" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.components.measures[1]) && false === _.isNull(self.app._.compareAction.components.measures[2])) {
+                self.triggerGlobalEvent("onReceived_attributes1AndAttributes2");
+            }
+        });
+        DataCube_Slice.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr]["http://purl.org/linked-data/cube#structure"], this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.slices[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_slices" + datasetNr);
+            if(false === _.isNull(self.app._.compareAction.slices[1]) && false === _.isNull(self.app._.compareAction.slices[2])) {
+                self.triggerGlobalEvent("onReceived_slices1AndSlices2");
+            }
+        });
+        DataCube_Observation.loadNumberOfObservations(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.numberOfObservations[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_observationNumber" + datasetNr);
+            if(-1 < self.app._.compareAction.numberOfObservations[1] && -1 < self.app._.compareAction.numberOfObservations[2]) {
+                self.triggerGlobalEvent("onReceived_numbersOfObservations1AndNumbersOfObservations2");
+            }
+        });
+        DataCube_Observation.loadAll(this.app._.backend.url, "", this.app._.compareAction.models[datasetNr].__cv_uri, "", this.app._.compareAction.datasets[datasetNr].__cv_uri, function (result) {
+            self.app._.compareAction.originalObservations[datasetNr] = result;
+            self.app._.compareAction.retrievedObservations[datasetNr] = result;
+            self.triggerGlobalEvent("onReceived_observations" + datasetNr);
+            if(false == _.isNull(self.app._.compareAction.originalObservations[1]) && false == _.isNull(self.app._.compareAction.originalObservations[2])) {
+                self.triggerGlobalEvent("onReceived_observations1AndObservations2");
+            }
+        });
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset1 = function (event) {
+        this.handleDatasetSelectorChanges("1");
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onSelected_dataset2 = function (event) {
+        this.handleDatasetSelectorChanges("2");
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_attributes1AndAttributes2 = function () {
+        this.displayAttributesInformation1();
+        this.displayAttributesInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_dimensions1AndDimensions2 = function () {
+        this.displayDimensionsInformation1();
+        this.displayDimensionsInformation2();
+        this.displayDimensionElementsInformation1();
+        this.displayDimensionElementsInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_measures1AndMeasures2 = function () {
+        this.displayMeasuresInformation1();
+        this.displayMeasuresInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_numbersOfObservations1AndNumbersOfObservations2 = function () {
+        this.displayNumberOfObservations1();
+        this.displayNumberOfObservations2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onReceived_slices1AndSlices2 = function () {
+        this.displaySlicesInformation1();
+        this.displaySlicesInformation2();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_GeneralDatasetInformation.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_GeneralDatasetInformation;
+})(CubeViz_View_Abstract);
+var View_CompareAction_DimensionOverview = (function (_super) {
+    __extends(View_CompareAction_DimensionOverview, _super);
+    function View_CompareAction_DimensionOverview(attachedTo, app) {
+        _super.call(this, "View_CompareAction_DimensionOverview", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onReceived_dimensions1AndDimensions2",
+                handler: this.onReceived_dimensions1AndDimensions2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_DimensionOverview.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_DimensionOverview.prototype.displayEqualDimensions = function () {
+        var description = "";
+        var dimensionContainer = null;
+        var dimensionElementContainer = null;
+        var dimensionIndex = 0;
+        var i = 0;
+        var newWidth = 2000;
+        var self = this;
+
+        if(0 < _.size(this.app._.compareAction.equalDimensions)) {
+            $("#cubeviz-compare-equalDimensions1").show();
+            $("#cubeviz-compare-equalDimensions2").show();
+            $("#cubeviz-compare-equalDimensionsTableContainer1").html("");
+            $("#cubeviz-compare-equalDimensionsTableContainer2").html("");
+            _.each(this.app._.compareAction.equalDimensions, function (dimensions) {
+                description = dimensions[0].__cv_description;
+                if(true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
+                dimensionContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-equalDimension").html(), {
+                    dimensionLabel: dimensions[0].__cv_niceLabel,
+                    dimensionDescription: description
+                }));
+                if(false === _.isUndefined(dimensions[0].__cv_equalElements) && 0 < _.size(dimensions[0].__cv_equalElements)) {
+                    dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
+                    dimensionElementContainer.append($("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + "<div style=\"-webkit-transform:rotate(-90deg);\">Dimension Elements</div></td>"));
+                    _.each(dimensions[0].__cv_equalElements, function (element) {
+                        dimensionElementContainer.append($("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + "<div style=\"-webkit-transform:rotate(-90deg);\">" + element.__cv_niceLabel + "</div></td>"));
+                    });
+                    $($(dimensionContainer).find(".cubeviz-compare-dimensionNumberOfUnequalDimensionElements").first()).html(_.size(dimensions[0].__cv_elements) - _.size(dimensions[0].__cv_equalElements));
+                    $($(dimensionContainer).find(".cubeviz-compare-dimensionNumberOfEqualDimensionElements").first()).html(_.size(dimensions[0].__cv_equalElements));
+                }
+                $("#cubeviz-compare-equalDimensionsTableContainer1").append(dimensionContainer);
+                description = dimensions[1].__cv_description;
+                if(true === _.str.isBlank(description)) {
+                    description = "no description found";
+                }
+                dimensionContainer = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-equalDimension").html(), {
+                    dimensionLabel: dimensions[1].__cv_niceLabel,
+                    dimensionDescription: description
+                }));
+                if(false === _.isUndefined(dimensions[1].__cv_equalElements) && 0 < _.size(dimensions[1].__cv_equalElements)) {
+                    dimensionElementContainer = $($(dimensionContainer).find(".cubeviz-compare-dimensionTitleAndElements").first());
+                    dimensionElementContainer.append($("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + "<div style=\"-webkit-transform:rotate(-90deg);\">Dimension Elements</div></td>"));
+                    _.each(dimensions[1].__cv_equalElements, function (element) {
+                        dimensionElementContainer.append($("<td rowspan=\"3\" style=\"vertical-align: middle;\">" + "<div style=\"-webkit-transform:rotate(-90deg);\">" + element.__cv_niceLabel + "</div></td>"));
+                    });
+                    $($(dimensionContainer).find(".cubeviz-compare-dimensionNumberOfUnequalDimensionElements").first()).html(_.size(dimensions[1].__cv_elements) - _.size(dimensions[1].__cv_equalElements));
+                    $($(dimensionContainer).find(".cubeviz-compare-dimensionNumberOfEqualDimensionElements").first()).html(_.size(dimensions[1].__cv_equalElements));
+                }
+                $("#cubeviz-compare-equalDimensionsTableContainer2").append(dimensionContainer);
+                newWidth += 1000;
+            });
+            $("#cubeviz-compare-equalDimensionsTableContainer1").width(newWidth);
+            $("#cubeviz-compare-equalDimensionsTableContainer2").width(newWidth);
+        }
+    };
+    View_CompareAction_DimensionOverview.prototype.displayUnequalDimensions = function () {
+        var $container = null;
+        var description = "";
+        var minWidth = 0;
+
+        $("#cubeviz-compare-unequalDimensionsTableContainer1").html("");
+        if(0 < _.size(this.app._.compareAction.unequalDimensions[1]) || 0 < _.size(this.app._.compareAction.unequalDimensions[2])) {
+            $("#cubeviz-compare-unequalDimensions1").show();
+            $("#cubeviz-compare-unequalDimensions2").show();
+        }
+        _.each(this.app._.compareAction.unequalDimensions[1], function (dimension) {
+            description = dimension.__cv_description;
+            if(true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
+            $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
+            }));
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
+            $("#cubeviz-compare-unequalDimensionsTableContainer1").append($container);
+            minWidth += 220;
+        });
+        $(".cubeviz-compare-unequalDimensions").css("min-width", minWidth);
+        _.each(this.app._.compareAction.unequalDimensions[2], function (dimension) {
+            description = dimension.__cv_description;
+            if(true === _.str.isBlank(description)) {
+                description = "no description found";
+            }
+            $container = $(CubeViz_View_Helper.tplReplace($("#cubeviz-compare-tpl-unequalDimension").html(), {
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionDescription: description
+            }));
+            $($container.find(".cubeviz-compare-numberOfDimensionElements").first()).html(_.size(dimension.__cv_elements));
+            $("#cubeviz-compare-unequalDimensionsTableContainer2").append($container);
+        });
+    };
+    View_CompareAction_DimensionOverview.prototype.findEqualAndUnequalDimensions = function () {
+        var equalDimensionElements = null;
+        var dimension1 = null;
+        var self = this;
+        var urisToCheck = {
+        };
+        var usedDatasetDimensions = [];
+
+        self.app._.compareAction.equalDimensions = [];
+        self.app._.compareAction.unequalDimensions = {
+            1: [],
+            2: []
+        };
+        _.each(this.app._.compareAction.components.dimensions[1], function (dimension) {
+            urisToCheck[dimension.__cv_uri] = dimension.__cv_uri;
+            if(false === _.str.isBlank(dimension["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck[dimension["http://www.w3.org/2002/07/owl#sameAs"]] = dimension.__cv_uri;
+            }
+        });
+        _.each(this.app._.compareAction.components.dimensions[2], function (dimension2) {
+            if(false === _.isUndefined(urisToCheck[dimension2.__cv_uri]) || false === _.isUndefined(urisToCheck[dimension2["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                if(false === _.isUndefined(urisToCheck[dimension2.__cv_uri])) {
+                    dimension1 = self.app._.compareAction.components.dimensions[1][urisToCheck[dimension2.__cv_uri]];
+                } else {
+                    dimension1 = self.app._.compareAction.components.dimensions[1][urisToCheck[dimension2["http://www.w3.org/2002/07/owl#sameAs"]]];
+                }
+                equalDimensionElements = self.findEqualDimensionElements(dimension1, dimension2);
+                dimension1.__cv_equalElements = equalDimensionElements[1];
+                dimension2.__cv_equalElements = equalDimensionElements[2];
+                self.app._.compareAction.equalDimensions.push([
+                    dimension1, 
+                    dimension2
+                ]);
+                usedDatasetDimensions.push(dimension1.__cv_uri);
+            } else {
+                self.app._.compareAction.unequalDimensions[2].push(dimension2);
+            }
+        });
+        _.each(this.app._.compareAction.components.dimensions[1], function (dimension) {
+            if(-1 === $.inArray(dimension.__cv_uri, usedDatasetDimensions)) {
+                self.app._.compareAction.unequalDimensions[1].push(dimension);
+            }
+        });
+        if(0 < _.size(this.app._.compareAction.equalDimensions)) {
+            this.triggerGlobalEvent("onFound_equalDimensions");
+        } else {
+            this.triggerGlobalEvent("onFound_onlyUnequalDimensions");
+        }
+    };
+    View_CompareAction_DimensionOverview.prototype.findEqualDimensionElements = function (dimension1, dimension2) {
+        var result = {
+            1: [],
+            2: []
+        };
+        var urisToCheck = {
+        };
+
+        if(0 == _.size(dimension1.__cv_elements) || 0 == _.size(dimension2.__cv_elements)) {
+            return result;
+        }
+        _.each(dimension1.__cv_elements, function (dimensionElement) {
+            urisToCheck[dimensionElement.__cv_uri] = dimensionElement;
+            if(false === _.str.isBlank(dimensionElement["http://www.w3.org/2002/07/owl#sameAs"])) {
+                urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]] = dimensionElement;
+            }
+        });
+        _.each(dimension2.__cv_elements, function (dimensionElement) {
+            if(false === _.isUndefined(urisToCheck[dimensionElement.__cv_uri])) {
+                result[1].push(urisToCheck[dimensionElement.__cv_uri]);
+                result[2].push(dimensionElement);
+            }
+            if(false === _.isUndefined(urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]])) {
+                result[1].push(urisToCheck[dimensionElement["http://www.w3.org/2002/07/owl#sameAs"]]);
+                result[2].push(dimensionElement);
+            }
+        });
+        return result;
+    };
+    View_CompareAction_DimensionOverview.prototype.onReceived_dimensions1AndDimensions2 = function (event) {
+        this.findEqualAndUnequalDimensions();
+        this.displayUnequalDimensions();
+        this.displayEqualDimensions();
+    };
+    View_CompareAction_DimensionOverview.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_DimensionOverview.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_DimensionOverview;
+})(CubeViz_View_Abstract);
+var View_CompareAction_MeasureAndAttributeInformation = (function (_super) {
+    __extends(View_CompareAction_MeasureAndAttributeInformation, _super);
+    function View_CompareAction_MeasureAndAttributeInformation(attachedTo, app) {
+        _super.call(this, "View_CompareAction_MeasureAndAttributeInformation", attachedTo, app);
+        this._measures1And2Recveived = false;
+        this._observations1And2Received = false;
+        this.bindGlobalEvents([
+            {
+                name: "onReceived_measures1AndMeasures2",
+                handler: this.onReceived_measures1AndMeasures2
+            }, 
+            {
+                name: "onReceived_observations1AndObservations2",
+                handler: this.onReceived_observations1AndObservations2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_MeasureAndAttributeInformation.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.displayMeasuresAndAttributesInformation = function (datasetNr) {
+        var $container = $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr);
+        var foundInvalidNumbers = false;
+        var measure = this.app._.compareAction.components.measures[datasetNr][Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]];
+        var observationValues = null;
+        var valuesResult = null;
+
+        valuesResult = DataCube_Observation.getValues(this.app._.compareAction.retrievedObservations[datasetNr], measure["http://purl.org/linked-data/cube#measure"]);
+        observationValues = valuesResult[0];
+        foundInvalidNumbers = valuesResult[1];
+        if(true === foundInvalidNumbers) {
+            $("#cubeviz-compare-mAAInvalidNumbersFound" + datasetNr).show();
+        }
+        $($container.find(".cubeviz-compare-mAARangeMin").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.min(observationValues)).substring(0, 10) : String(jsStats.min(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAARangeMax").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.max(observationValues)).substring(0, 10) : String(jsStats.max(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAMedian").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.median(observationValues)).substring(0, 10) : String(jsStats.median(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAMean").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.mean(observationValues)).substring(0, 10) : String(jsStats.mean(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAVariance").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.variance(observationValues)).substring(0, 10) : String(jsStats.variance(observationValues)).substring(0, 10));
+        $($container.find(".cubeviz-compare-mAAStandardDeviation").first()).html(true === foundInvalidNumbers ? "~ " + String(jsStats.standardDeviation(observationValues)).substring(0, 10) : String(jsStats.standardDeviation(observationValues)).substring(0, 10));
+        $("#cubeviz-compare-measuresAndAttributesInformation" + datasetNr).show();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.initialize = function () {
+        this.collection.reset("__cv_uri");
+        this.render();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onReceived_measures1AndMeasures2 = function () {
+        this._measures1And2Recveived = true;
+        if(true === this._measures1And2Recveived && true === this._observations1And2Received) {
+            this.displayMeasuresAndAttributesInformation(1);
+            this.displayMeasuresAndAttributesInformation(2);
+        }
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onReceived_observations1AndObservations2 = function () {
+        this._observations1And2Received = true;
+        if(true === this._measures1And2Recveived && true === this._observations1And2Received) {
+            this.displayMeasuresAndAttributesInformation(1);
+            this.displayMeasuresAndAttributesInformation(2);
+        }
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_MeasureAndAttributeInformation.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+        });
+        return this;
+    };
+    return View_CompareAction_MeasureAndAttributeInformation;
+})(CubeViz_View_Abstract);
+var View_CompareAction_VisualizationSetup = (function (_super) {
+    __extends(View_CompareAction_VisualizationSetup, _super);
+    function View_CompareAction_VisualizationSetup(attachedTo, app) {
+        _super.call(this, "View_CompareAction_VisualizationSetup", attachedTo, app);
+        this._equalDimensionsFound = false;
+        this._measuresReceived = false;
+        this._observationsReceived = false;
+        this.bindGlobalEvents([
+            {
+                name: "onCreated_mergedDataCube",
+                handler: this.onCreated_mergedDataCube
+            }, 
+            {
+                name: "onFound_equalDimensions",
+                handler: this.onFound_equalDimensions
+            }, 
+            {
+                name: "onFound_onlyUnequalDimensions",
+                handler: this.onFound_onlyUnequalDimensions
+            }, 
+            {
+                name: "onReceived_measures1AndMeasures2",
+                handler: this.onReceived_measures1AndMeasures2
+            }, 
+            {
+                name: "onReceived_observations1AndObservations2",
+                handler: this.onReceived_observations1AndObservations2
+            }, 
+            {
+                name: "onStart_application",
+                handler: this.onStart_application
+            }
+        ]);
+    }
+    View_CompareAction_VisualizationSetup.prototype.adaptObservationValues = function (datasetNr, formula, observations, measureUri) {
+        try  {
+            var adaptedObservations = {
+            };
+            var observationValue = "";
+            var parser = new formulaParser();
+            var specificFormula = "";
+
+            adaptedObservations = $.parseJSON(JSON.stringify(observations));
+            _.each(adaptedObservations, function (observation, key) {
+                observationValue = DataCube_Observation.parseValue(observation, measureUri);
+                if(false === _.isNull(observationValue)) {
+                    specificFormula = formula.split("$value$").join(observationValue);
+                    specificFormula = specificFormula.split("$pi$").join(Math.PI + "");
+                    DataCube_Observation.setOriginalValue(observation, measureUri, parser.parse(specificFormula).evaluate());
+                    adaptedObservations[key] = observation;
+                }
+            });
+            return adaptedObservations;
+        } catch (ex) {
+        }
+        return false;
+    };
+    View_CompareAction_VisualizationSetup.prototype.checkAndShowVisualizationSetup = function () {
+        if(false === this._equalDimensionsFound || false === this._measuresReceived || false === this._observationsReceived) {
+            return;
+        }
+        $("#cubeviz-compare-prepareAndGoToVisualizations").fadeIn();
+        this.createMergedDataCube();
+    };
+    View_CompareAction_VisualizationSetup.prototype.createMergedDataCube = function () {
+        this.app._.compareAction.mergedDataCube = DataCube_DataCubeMerger.create(this.app._.backend.url, JSON.stringify(this.app._.compareAction), this.app._.compareAction.datasets[1], this.app._.compareAction.datasets[2], this.app._.compareAction.equalDimensions, DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0], DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0], this.app._.compareAction.retrievedObservations[1], this.app._.compareAction.retrievedObservations[2], this.app._.compareAction.components.dimensions[1], this.app._.compareAction.components.dimensions[1], $("input[name=cubeviz-compare-dimensionElementChoice]:checked").val());
+        var self = this;
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, this.app._.compareAction.mergedDataCube, function () {
+            self.triggerGlobalEvent("onCreated_mergedDataCube", {
+                dataHash: DataCube_DataCubeMerger.latestHash,
+                mergedDataCube: self.app._.compareAction.mergedDataCube
+            });
+        }, true);
+    };
+    View_CompareAction_VisualizationSetup.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        return this;
+    };
+    View_CompareAction_VisualizationSetup.prototype.displayAvailableVisualizations = function (charts, mergedDataCube) {
+        var link = null;
+        var self = this;
+        var uiObject = {
+            visualization: {
+                className: ""
+            },
+            visualizationSettings: {
+            }
+        };
+        var $newVisz = null;
+
+        $("#cubeviz-compare-availableVisualizations").html("");
+        _.each(charts, function (chart) {
+            uiObject.visualization.className = chart.className;
+            var uiHash = CryptoJS.MD5(JSON.stringify(uiObject)) + "";
+            CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, uiHash, uiObject, function () {
+                link = self.app._.backend.url + "?";
+                $newVisz = $("<div class=\"span2\">" + "<a><img class=\"cubeviz-compare-specificVisz\" " + "src=\"" + self.app._.backend.imagesPath + chart.icon + "\"/></a>" + "</div>");
+                if(false === _.isNull(self.app._.backend.serviceUrl)) {
+                    link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+                }
+                if(true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                    link += "m=" + encodeURIComponent(self.app._.compareAction.models[1].__cv_uri);
+                } else {
+                    link += "m=" + encodeURIComponent(self.app._.backend.modelUrl);
+                }
+                link += "&cv_dataHash=" + DataCube_DataCubeMerger.latestHash + "&cv_uiHash=" + uiHash;
+                $($newVisz.find("a").first()).attr("href", link).attr("target", "_blank");
+                $("#cubeviz-compare-availableVisualizations").append($newVisz);
+            });
+        });
+    };
+    View_CompareAction_VisualizationSetup.prototype.initialize = function () {
+        this.render();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onChange_dimensionElementChoice = function (event) {
+        this.createMergedDataCube();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onClick_useBtn1 = function () {
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[1])[0]["http://purl.org/linked-data/cube#measure"];
+        var self = this;
+
+        this.app._.compareAction.retrievedObservations[1] = this.adaptObservationValues(1, $("#cubeviz-compare-confViz-datasetFormula1").val(), this.app._.compareAction.originalObservations[1], measureUri);
+        if(false === this.app._.compareAction.retrievedObservations[1]) {
+            return;
+        }
+        this.createMergedDataCube();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onClick_useBtn2 = function () {
+        var measureUri = DataCube_Component.getMeasures(this.app._.compareAction.components.measures[2])[0]["http://purl.org/linked-data/cube#measure"];
+        var self = this;
+
+        this.app._.compareAction.retrievedObservations[2] = this.adaptObservationValues(2, $("#cubeviz-compare-confViz-datasetFormula2").val(), this.app._.compareAction.originalObservations[2], measureUri);
+        if(false === this.app._.compareAction.retrievedObservations[2]) {
+            return;
+        }
+        this.createMergedDataCube();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onCreated_mergedDataCube = function (event, data) {
+        this.displayAvailableVisualizations(this.app._.backend.chartConfig[_.size(this.app._.compareAction.equalDimensions)].charts, data.mergedDataCube);
+    };
+    View_CompareAction_VisualizationSetup.prototype.onFound_equalDimensions = function () {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").hide();
+        this._equalDimensionsFound = true;
+        $("#cubeviz-compare-confViz-datasetLabel1").html(_.str.prune(this.app._.compareAction.datasets[1].__cv_niceLabel, 55));
+        $("#cubeviz-compare-confViz-datasetLabel2").html(_.str.prune(this.app._.compareAction.datasets[2].__cv_niceLabel, 55));
+        this.checkAndShowVisualizationSetup();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onFound_onlyUnequalDimensions = function () {
+        $("#cubeviz-compare-noEqualDimensionsFoundNotification").fadeIn();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onReceived_measures1AndMeasures2 = function () {
+        this._measuresReceived = true;
+        this.checkAndShowVisualizationSetup();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onReceived_observations1AndObservations2 = function () {
+        this._observationsReceived = true;
+        this.checkAndShowVisualizationSetup();
+    };
+    View_CompareAction_VisualizationSetup.prototype.onStart_application = function () {
+        this.initialize();
+    };
+    View_CompareAction_VisualizationSetup.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-compare-confViz-useBtn1": this.onClick_useBtn1,
+            "click #cubeviz-compare-confViz-useBtn2": this.onClick_useBtn2,
+            "change .cubeviz-compare-dimensionElementChoice": this.onChange_dimensionElementChoice
+        });
+        return this;
+    };
+    return View_CompareAction_VisualizationSetup;
+})(CubeViz_View_Abstract);
+var View_CompareAction_ClusterVisualization = (function (_super) {
+    __extends(View_CompareAction_ClusterVisualization, _super);
+    function View_CompareAction_ClusterVisualization(attachedTo, app) {
+        _super.call(this, "View_CompareAction_ClusterVisualization", attachedTo, app);
+        this.bindGlobalEvents([
+            {
+                name: "onCreated_mergedDataCube",
+                handler: this.onCreated_mergedDataCube
+            }
+        ]);
+    }
+    View_CompareAction_ClusterVisualization.prototype.generateLink = function (numberOfClusters) {
+        var clusteringDataCube = null;
+        var clusters = [];
+        var selectedMeasureUri = this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
+        var self = this;
+
+        clusters = this.numberClustering(DataCube_Observation.getValues(this.app._.compareAction.mergedDataCube.retrievedObservations, selectedMeasureUri, true)[0], numberOfClusters);
+        clusteringDataCube = DataCube_ClusteringDataCube.create(clusters, this.app._.backend.url, numberOfClusters, this.app._.compareAction.mergedDataCube.retrievedObservations, this.app._.compareAction.mergedDataCube.selectedComponents.measure["http://purl.org/linked-data/cube#measure"], this.app._.compareAction.mergedDataCube.selectedDS);
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, DataCube_DataCubeMerger.latestHash, clusteringDataCube, function () {
+            var $li = $("<li><a href=\"\">Visualization for maximum " + numberOfClusters + " cluster</a></li>");
+            var link = self.app._.backend.url + "?";
+            if(false === _.isNull(self.app._.backend.serviceUrl)) {
+                link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+            }
+            if(true === _.str.isBlank(self.app._.backend.modelUrl)) {
+                link += "m=" + encodeURIComponent(self.app._.compareAction.models[1].__cv_uri);
+            } else {
+                link += "m=" + encodeURIComponent(self.app._.backend.modelUrl);
+            }
+            link += "&cv_dataHash=" + DataCube_DataCubeMerger.latestHash;
+            $($li.find("a")).attr("href", link).attr("target", "_blank");
+            $("#cubeviz-compare-clusterVisualizationLinks").append($li);
+        }, true);
+    };
+    View_CompareAction_ClusterVisualization.prototype.initialize = function () {
+        this.render();
+    };
+    View_CompareAction_ClusterVisualization.prototype.numberClustering = function (numberList, numberOfClusters) {
+        var betterClusterIndex = 0;
+        var changeHappened = true;
+        var clusterCenters = [];
+        var clusters = [];
+        var computedDistance = 0;
+        var iterations = 0;
+        var numberOfElements = numberList.length;
+        var maxClusterSize = Math.round(numberOfElements / numberOfClusters) + 1;
+        var nearestDistance = 0;
+        var sliceStart = 0;
+        var sliceEnd = maxClusterSize;
+        var tmpNumber = 0;
+
+        numberList.sort(function (a, b) {
+            return a - b;
+        });
+        for(var i = 0; i < numberOfClusters; ++i) {
+            clusters[i] = numberList.slice(sliceStart, sliceEnd);
+            sliceStart += maxClusterSize;
+            sliceEnd += maxClusterSize;
+        }
+        if(sliceStart < numberOfElements) {
+            var missingElements = numberList.slice(sliceStart, numberOfElements - sliceStart);
+            _.each(missingElements, function (number) {
+                clusters[numberOfClusters - 1].push(number);
+            });
+        }
+        for(i = 0; i < numberOfClusters; ++i) {
+            tmpNumber = 0;
+            _.each(clusters[i], function (number) {
+                tmpNumber += number;
+            });
+            clusterCenters[i] = tmpNumber / clusters[i].length;
+        }
+        do {
+            changeHappened = false;
+            for(i = 0; i < numberOfClusters; ++i) {
+                _.each(clusters[i], function (number, key) {
+                    nearestDistance = -1;
+                    computedDistance = 0;
+                    _.each(clusterCenters, function (center, clusterIndex) {
+                        if(center > number) {
+                            computedDistance = center - number;
+                        } else {
+                            computedDistance = number - center;
+                        }
+                        if(-1 == nearestDistance || computedDistance <= nearestDistance) {
+                            nearestDistance = computedDistance;
+                            betterClusterIndex = clusterIndex;
+                        }
+                    });
+                    if(betterClusterIndex != i) {
+                        clusters[betterClusterIndex].push(number);
+                        clusters[i].splice(key, 1);
+                        changeHappened = true;
+                    }
+                });
+            }
+        }while(true === changeHappened)
+        _.each(clusters, function (cluster) {
+            cluster.sort(function (a, b) {
+                return a - b;
+            });
+        });
+        return clusters;
+    };
+    View_CompareAction_ClusterVisualization.prototype.onClick_getLinkBtn = function () {
+        this.generateLink($("#cubeviz-compare-clusterVisualizationClusterNumber").val());
+    };
+    View_CompareAction_ClusterVisualization.prototype.onCreated_mergedDataCube = function () {
+        this.initialize();
+    };
+    View_CompareAction_ClusterVisualization.prototype.render = function () {
+        this.bindUserInterfaceEvents({
+            "click #cubeviz-compare-clusterVisualizationGetLinkBtn": this.onClick_getLinkBtn
+        });
+        return this;
+    };
+    return View_CompareAction_ClusterVisualization;
+})(CubeViz_View_Abstract);
 var View_DataselectionModule_DataSet = (function (_super) {
     __extends(View_DataselectionModule_DataSet, _super);
     function View_DataselectionModule_DataSet(attachedTo, app) {
@@ -1508,14 +3617,14 @@ var View_DataselectionModule_Measure = (function (_super) {
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
         $("#cubeviz-measure-label").html(_.str.prune(selectedMeasure.__cv_niceLabel, 24, ".."));
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                 self.app._.data.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedMeasure");
                 self.triggerGlobalEvent("onReRender_visualization");
                 CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
-            self.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_DataselectionModule_Measure.prototype.onClick_dialogOpener = function (event) {
@@ -1618,7 +3727,7 @@ var View_DataselectionModule_Attribute = (function (_super) {
     };
     View_DataselectionModule_Attribute.prototype.onChange_selectedDS = function (event) {
         var self = this;
-        DataCube_Attribute.loadAll(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
+        DataCube_Component.loadAllAttributes(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_uri, function (entries) {
             self.app._.data.components.attributes = entries;
             if(0 === _.keys(entries).length) {
             } else {
@@ -1647,14 +3756,14 @@ var View_DataselectionModule_Attribute = (function (_super) {
         }
         CubeViz_View_Helper.hideCloseAndUpdateSpinner(dialogDiv);
         CubeViz_View_Helper.closeDialog(dialogDiv);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                 self.app._.data.retrievedObservations = newEntities;
                 self.triggerGlobalEvent("onChange_selectedAttribute");
                 self.triggerGlobalEvent("onReRender_visualization");
                 CubeViz_View_Helper.hideLeftSidebarSpinner();
             });
-            self.app._.backend.dataHash = updatedDataHash;
         });
     };
     View_DataselectionModule_Attribute.prototype.onClick_dialogOpener = function (event) {
@@ -1850,7 +3959,7 @@ var View_DataselectionModule_Component = (function (_super) {
                 checkbox.attr("checked", true);
             }
             $(checkbox).on("click", $.proxy(self.onClick_dimensionElementCheckbox, self));
-            elementInstance.data("data", element).data("dialogDiv", dialogDiv);
+            elementInstance.data("data", element).data("dimension", component).data("dialogDiv", dialogDiv);
             elementList.append(elementInstance);
         });
     };
@@ -1893,16 +4002,13 @@ var View_DataselectionModule_Component = (function (_super) {
         var self = this;
         this.destroy();
         this.loadComponentDimensions(function () {
-            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                self.app._.backend.dataHash = updatedDataHash;
-                self.render();
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
-                        self.app._.data.retrievedObservations = newEntities;
-                        CubeViz_View_Helper.hideLeftSidebarSpinner();
-                        data.callback();
-                    });
-                    self.app._.backend.dataHash = updatedDataHash;
+            self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, self.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
+                    self.app._.data.retrievedObservations = newEntities;
+                    CubeViz_View_Helper.hideLeftSidebarSpinner();
+                    self.render();
+                    data.callback();
                 });
             });
         });
@@ -1911,16 +4017,14 @@ var View_DataselectionModule_Component = (function (_super) {
         var self = this;
         if(0 === _.size(this.app._.data.selectedSlice)) {
             this.loadComponentDimensions(function () {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    self.app._.backend.dataHash = updatedDataHash;
-                    CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                        DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
-                            self.app._.data.retrievedObservations = newEntities;
-                            self.destroy().initialize();
-                            self.triggerGlobalEvent("onReRender_visualization");
-                            CubeViz_View_Helper.hideLeftSidebarSpinner();
-                        });
-                        self.app._.backend.dataHash = updatedDataHash;
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data)) + "";
+                CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, self.app._.data, function () {
+                    DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
+                        self.app._.data.retrievedObservations = newEntities;
+                        self.destroy().render();
+                        self.triggerGlobalEvent("onReRender_visualization");
+                        CubeViz_View_Helper.hideLeftSidebarSpinner();
+                        data.callback();
                     });
                 });
             });
@@ -1950,16 +4054,15 @@ var View_DataselectionModule_Component = (function (_super) {
             this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
             this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
             this.destroy();
-            CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                self.app._.backend.dataHash = updatedDataHash;
-                self.initialize();
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            this.loadComponentDimensions(function () {
+                self.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(self.app._.backend.data)) + "";
+                CubeViz_ConfigurationLink.saveData(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, self.app._.data, function () {
+                    DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                         self.app._.data.retrievedObservations = newEntities;
                         CubeViz_View_Helper.hideLeftSidebarSpinner();
+                        self.render();
                         data.callback();
                     });
-                    self.app._.backend.dataHash = updatedDataHash;
                 });
             });
         }
@@ -1969,37 +4072,52 @@ var View_DataselectionModule_Component = (function (_super) {
     };
     View_DataselectionModule_Component.prototype.onClick_dimensionElementCheckbox = function (event) {
         var clickedCheckbox = $(event.target);
-        var parentContainer = $($(event.target).parent());
-        var dialogCheckboxList = parentContainer.data("dialogDiv").find("[type=\"checkbox\"]");
-        var anythingChecked = false;
-        var numberOfSelectedElements = this.getNumberOfCheckedBoxed(parentContainer.data("dialogDiv"));
+        var dialogDiv = $($(event.target).parent()).data("dialogDiv");
+        var dialogCheckboxList = dialogDiv.find("[type=\"checkbox\"]");
+        var numberOfSelectedElements = this.getNumberOfCheckedBoxed(dialogDiv);
+        var dimensionUri = $(clickedCheckbox.parent()).data("dimension").__cv_uri;
+        var dimensionElements = this.app._.data.selectedComponents.dimensions[dimensionUri].__cv_elements;
+        var numberOfDimensionElements = _.size(dimensionElements);
 
-        if(1 < numberOfSelectedElements || 1 == this.app._.data.numberOfMultipleDimensions) {
-            return;
-        }
-        _.each(dialogCheckboxList, function (checkbox) {
-            if($(checkbox).attr("checked")) {
-                anythingChecked = true;
-            }
-        });
-        if(false == anythingChecked) {
-            _.each(dialogCheckboxList, function (checkbox) {
-                $(checkbox).attr("disabled", false);
-            });
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).show();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).show();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
+        if(0 == numberOfSelectedElements && 2 > this.app._.data.numberOfMultipleDimensions) {
+            this.showHideSelectButtons(dialogDiv, "show");
+            this.showHideBottomButtons(dialogDiv, "hide");
         } else {
-            _.each(dialogCheckboxList, function (checkbox) {
-                if(!$(checkbox).attr("checked")) {
-                    $(checkbox).attr("disabled", true);
+            if(1 <= numberOfSelectedElements && 2 > this.app._.data.numberOfMultipleDimensions) {
+                this.showHideSelectButtons(dialogDiv, "show");
+                this.showHideBottomButtons(dialogDiv, "show");
+            } else {
+                if(0 == numberOfSelectedElements && 2 <= this.app._.data.numberOfMultipleDimensions) {
+                    _.each(dialogCheckboxList, function (checkbox) {
+                        if(!$(checkbox).attr("checked")) {
+                            $(checkbox).attr("disabled", false);
+                        }
+                    });
+                    if(1 == numberOfDimensionElements) {
+                        this.showHideSelectButtons(dialogDiv, "hide");
+                    }
+                    this.showHideBottomButtons(dialogDiv, "hide");
+                } else {
+                    if(1 == numberOfSelectedElements && 2 <= this.app._.data.numberOfMultipleDimensions) {
+                        if(1 >= _.size(dimensionElements)) {
+                            _.each(dialogCheckboxList, function (checkbox) {
+                                if(!$(checkbox).attr("checked")) {
+                                    $(checkbox).attr("disabled", true);
+                                }
+                            });
+                            this.showHideSelectButtons(dialogDiv, "hide");
+                        } else {
+                            this.showHideSelectButtons(dialogDiv, "show");
+                        }
+                        this.showHideBottomButtons(dialogDiv, "show");
+                    } else {
+                        if(1 < numberOfSelectedElements && 2 <= this.app._.data.numberOfMultipleDimensions) {
+                            this.showHideSelectButtons(dialogDiv, "show");
+                            this.showHideBottomButtons(dialogDiv, "show");
+                        }
+                    }
                 }
-            });
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
-            $(parentContainer.data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
+            }
         }
     };
     View_DataselectionModule_Component.prototype.onClick_closeAndUpdate = function (event) {
@@ -2018,9 +4136,13 @@ var View_DataselectionModule_Component = (function (_super) {
     };
     View_DataselectionModule_Component.prototype.onClick_deselectButton = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", false);
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
     };
     View_DataselectionModule_Component.prototype.onClick_selectAllButton = function (event) {
         $(event.target).data("dialogDiv").find("[type=\"checkbox\"]").attr("checked", true);
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
+        $($(event.target).data("dialogDiv").find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
     };
     View_DataselectionModule_Component.prototype.onClick_setupComponentOpener = function (event) {
         this.triggerGlobalEvent("onClick_setupComponentOpener");
@@ -2105,7 +4227,7 @@ var View_DataselectionModule_Component = (function (_super) {
         var selectedElements = new CubeViz_Collection("__cv_uri");
         var self = this;
 
-        if(undefined === component) {
+        if(true === _.isUndefined(component)) {
             return;
         }
         _.each(elementList, function (element) {
@@ -2119,13 +4241,23 @@ var View_DataselectionModule_Component = (function (_super) {
         $(componentBox.find(".cubeviz-component-selectedCount").get(0)).html(selectedElements.size());
         this.app._.data.numberOfMultipleDimensions = _.size(CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions));
         this.app._.data.numberOfOneElementDimensions = _.size(CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions));
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-            DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
-                self.app._.data.retrievedObservations = newEntities;
-                callback();
+        if(true === _.isUndefined(this.app._.data.settings)) {
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
+                    self.app._.data.retrievedObservations = newEntities;
+                    callback();
+                });
             });
-            self.app._.backend.dataHash = updatedDataHash;
-        });
+        } else {
+            if(false === _.isUndefined(this.app._.data.settings) && false === _.isUndefined(this.app._.data.settings.synchronizeWithStore) && false === this.app._.data.settings.synchronizeWithStore) {
+                self.app._.data.retrievedObservations = DataCube_Observation.markActiveObservations(self.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
+                this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+                CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                    callback();
+                }, true);
+            }
+        }
     };
     View_DataselectionModule_Component.prototype.onComplete_loadDS = function (event, data) {
         this.onChange_selectedDS(event, data);
@@ -2178,6 +4310,26 @@ var View_DataselectionModule_Component = (function (_super) {
         });
         this.triggerGlobalEvent("onAfterRender_component");
         return this;
+    };
+    View_DataselectionModule_Component.prototype.showHideBottomButtons = function ($dialogDiv, mode) {
+        if (typeof mode === "undefined") { mode = "show"; }
+        if("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).show();
+        } else {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-cancelBtn").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-closeAndUpdateBtn").get(0)).hide();
+        }
+    };
+    View_DataselectionModule_Component.prototype.showHideSelectButtons = function ($dialogDiv, mode) {
+        if (typeof mode === "undefined") { mode = "show"; }
+        if("show" == mode) {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).show();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).show();
+        } else {
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-selectAllButton").get(0)).hide();
+            $($dialogDiv.find(".cubeviz-dataSelectionModule-deselectButton").get(0)).hide();
+        }
     };
     return View_DataselectionModule_Component;
 })(CubeViz_View_Abstract);
@@ -2251,24 +4403,22 @@ var View_DataselectionModule_Footer = (function (_super) {
     };
     View_DataselectionModule_Footer.prototype.onClick_showVisualization = function (event) {
         var self = this;
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
         if(true === cubeVizApp._.backend.uiParts.index.isLoaded) {
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                DataCube_Observation.loadAll(self.app._.backend.serviceUrl, self.app._.backend.modelUrl, updatedDataHash, self.app._.backend.url, function (newEntities) {
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                DataCube_Observation.loadAll(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.dataHash, "", function (newEntities) {
                     self.app._.data.retrievedObservations = newEntities;
                     self.triggerGlobalEvent("onReRender_visualization");
                 });
-                self.app._.backend.dataHash = updatedDataHash;
             });
         } else {
-            if(false === cubeVizApp._.backend.uiParts.index.isLoaded) {
-                CubeViz_ConfigurationLink.save(self.app._.backend.url, self.app._.backend.modelUrl, self.app._.data, "data", function (updatedDataHash) {
-                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+            this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+            CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+                self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui)) + "";
+                CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.uiHash, self.app._.ui, function () {
+                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
                 });
-            } else {
-                CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.data, "data", function (updatedDataHash) {
-                    window.location.href = self.app._.backend.url + "?m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + updatedDataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
-                });
-            }
+            }, true);
         }
     };
     View_DataselectionModule_Footer.prototype.onStart_application = function () {
@@ -2290,15 +4440,22 @@ var View_DataselectionModule_Footer = (function (_super) {
         return this;
     };
     View_DataselectionModule_Footer.prototype.showLink = function () {
-        var link = this.app._.backend.url + "?";
-        if(false == _.str.isBlank(this.app._.backend.serviceUrl)) {
-            link += "serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl) + "&";
-        }
-        link += "m=" + encodeURIComponent(this.app._.backend.modelUrl) + "&cv_dataHash=" + this.app._.backend.dataHash + "&cv_uiHash=" + this.app._.backend.uiHash;
-        var url = $("<a></a>").attr("href", link).attr("target", "_self").html(this.collection.get("cubeviz-footer-permaLink").html);
-        $("#cubeviz-footer-permaLink").html(url);
-        var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
-        $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+        var self = this;
+        this.app._.backend.dataHash = CryptoJS.MD5(JSON.stringify(this.app._.data)) + "";
+        CubeViz_ConfigurationLink.saveData(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.dataHash, this.app._.data, function () {
+            self.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(self.app._.ui)) + "";
+            CubeViz_ConfigurationLink.saveUI(self.app._.backend.url, self.app._.backend.serviceUrl, self.app._.backend.modelUrl, self.app._.backend.uiHash, self.app._.ui, function () {
+                var link = self.app._.backend.url + "?";
+                if(false == _.str.isBlank(self.app._.backend.serviceUrl)) {
+                    link += "serviceUrl=" + encodeURIComponent(self.app._.backend.serviceUrl) + "&";
+                }
+                link += "m=" + encodeURIComponent(self.app._.backend.modelUrl) + "&cv_dataHash=" + self.app._.backend.dataHash + "&cv_uiHash=" + self.app._.backend.uiHash;
+                var url = $("<a></a>").attr("href", link).attr("target", "_self").html(self.collection.get("cubeviz-footer-permaLink").html);
+                $("#cubeviz-footer-permaLink").html(url);
+                var positionLinkBtn = $("#cubeviz-footer-permaLinkButton").position();
+                $("#cubeviz-footer-permaLinkMenu").css("top", (positionLinkBtn.top + 30)).css("left", (positionLinkBtn.left)).fadeIn("slow");
+            });
+        }, true);
     };
     return View_DataselectionModule_Footer;
 })(CubeViz_View_Abstract);
@@ -2342,8 +4499,8 @@ var View_IndexAction_ExportArea = (function (_super) {
         return this;
     };
     View_IndexAction_ExportArea.prototype.setUrlToDownload = function () {
-        var urlToDownload = this.app._.backend.url + "exportdataselection/" + "?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl) + "&dataHash=" + this.app._.backend.dataHash;
-        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload + "&type=turtle");
+        var urlToDownload = this.app._.backend.url + "export/dataselection/" + this.app._.backend.dataHash + "/?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl);
+        $("#cubeviz-index-exportArea-btnTurtle").attr("href", urlToDownload);
         $("#cubeviz-index-exportArea-btnCsv").attr("href", urlToDownload + "&type=csv");
     };
     return View_IndexAction_ExportArea;
@@ -2449,8 +4606,8 @@ var View_IndexAction_Legend = (function (_super) {
         _super.call(this, "View_IndexAction_Legend", attachedTo, app);
         this.bindGlobalEvents([
             {
-                name: "onReRender_visualization",
-                handler: this.onReRender_visualization
+                name: "onUpdate_componentDimensions",
+                handler: this.onUpdate_componentDimensions
             }, 
             {
                 name: "onStart_application",
@@ -2460,10 +4617,6 @@ var View_IndexAction_Legend = (function (_super) {
     }
     View_IndexAction_Legend.prototype.destroy = function () {
         $("#cubeviz-legend-btnShowRetrievedObservations").off();
-        $("#cubeviz-legend-sortByTitle").off();
-        $("#cubeviz-legend-sortByValue").off();
-        $("#cubeviz-legend-retrievedObservations").slideUp("slow");
-        $("#cubeviz-legend-selectedConfiguration").slideUp("slow");
         $("#cubeviz-legend-dataSet").html("");
         $("#cubeviz-legend-observations").html("");
         $("#cubeviz-legend-configurationList").html("");
@@ -2471,101 +4624,383 @@ var View_IndexAction_Legend = (function (_super) {
         _super.prototype.destroy.call(this);
         return this;
     };
-    View_IndexAction_Legend.prototype.displayDsdAndDs = function (dsdLabel, dsdUrl, dsLabel, dsUrl) {
-        $("#cubeviz-legend-dsdAndDs").html(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-dsdAndDs").html(), {
-            dsdLabel: dsdLabel,
-            dsdUrl: dsdUrl,
-            dsLabel: dsLabel,
-            dsUrl: dsUrl
-        }));
-    };
-    View_IndexAction_Legend.prototype.displayRetrievedObservations = function (list) {
-        var infoList = null;
-        var label = "";
+    View_IndexAction_Legend.prototype.displayDataset = function (dataset, dataStructureDefinition) {
+        var self = this;
+        var tmp = null;
 
-        $("#cubeviz-legend-observations").html("");
-        _.each(list, function (obs) {
-            $("#cubeviz-legend-observations").append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observation").html(), obs));
-            infoList = $($("#cubeviz-legend-observations").find(".cubeviz-legend-observationInfoList").last());
-            _.each(obs.__cv_elements, function (dimensionElement) {
-                infoList.append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationInfoListEntry").html(), {
-                    dimensionLabel: dimensionElement.dimensionLabel,
-                    fullLabel: dimensionElement.__cv_niceLabel,
-                    __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 65, "..."),
-                    __cv_uri: dimensionElement.__cv_uri
-                }));
-            });
+        $("#cubeviz-legend-dsLabel").html("<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" + dataset.__cv_niceLabel + "</a>");
+        $("#cubeviz-legend-dsProperties").html("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dataset.__cv_uri + "\" target=\"_blank\">" + dataset.__cv_uri + "</a></td>" + "</tr>");
+        _.each(dataset, function (value, property) {
+            if(false === _.str.include(property, "__cv_")) {
+                if("http://purl.org/linked-data/cube#structure" == property) {
+                    value = "<a href=\"" + dataStructureDefinition.__cv_uri + "\"" + " target=\"_blank\">" + dataStructureDefinition.__cv_niceLabel + "</a>";
+                } else {
+                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                    } else {
+                        if(true === self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                        }
+                    }
+                }
+                $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+            }
         });
-    };
-    View_IndexAction_Legend.prototype.displaySelectedConfiguration = function (selectedComponentDimensions) {
-        var componentDimensionInfoArea = null;
-        var observationIcon = null;
-        var dimensionElementList = null;
-        var dimensionElementsCopy = new CubeViz_Collection("__cv_uri");
-        var html = "";
-        var label = "";
-
-        $("#cubeviz-legend-components").html($("#cubeviz-legend-tpl-componentList").html());
-        _.each(selectedComponentDimensions, function (dimension) {
-            $("#cubeviz-legend-componentList").append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-componentDimension").html(), {
-                __cv_niceLabel: dimension.__cv_niceLabel
-            }));
-            dimensionElementList = $($("#cubeviz-legend-componentList").find(".cubeviz-legend-componentDimensionList").last());
-            html = "";
-            dimensionElementsCopy.reset().addList(JSON.parse(JSON.stringify(dimension.__cv_elements))).sortAscendingBy().each(function (dimensionElement) {
-                dimensionElementList.append(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-componentDimensionEntry").html(), {
-                    fullLabel: dimensionElement.__cv_niceLabel,
-                    __cv_shortLabel: _.str.prune(dimensionElement.__cv_niceLabel, 75, " ..."),
-                    __cv_uri: dimensionElement.__cv_uri
-                }));
-                observationIcon = $(dimensionElementList.find(".cubeviz-legend-observationIcon").last());
-                componentDimensionInfoArea = $(dimensionElementList.find(".cubeviz-legend-componentDimensionInfoArea").last());
-                $(dimensionElementList.find(".cubeviz-legend-componentDimensionShowInfo").last()).data("componentDimensionInfoArea", componentDimensionInfoArea).data("dimension", dimension).data("dimensionElement", dimensionElement).data("observationIcon", observationIcon);
-            });
-        });
-    };
-    View_IndexAction_Legend.prototype.generateList = function (observations, selectedComponentDimensions, selectedMeasureUri) {
-        var cubeDimensionUri = "http://purl.org/linked-data/cube#dimension";
-        var observationLabel = "";
-        var dimensionElements = [];
-        var label = "";
-        var observationLabel = "";
-        var rdfsLabelUri = "http://www.w3.org/2000/01/rdf-schema#label";
-        var result = [];
-
-        _.each(observations, function (observation) {
-            dimensionElements = [];
-            _.each(selectedComponentDimensions, function (dimension) {
-                _.each(dimension.__cv_elements, function (dimensionElement) {
-                    if(dimensionElement.__cv_uri == observation[dimension[cubeDimensionUri]]) {
-                        dimensionElements.push({
-                            dimensionLabel: dimension.__cv_niceLabel,
-                            __cv_niceLabel: dimensionElement.__cv_niceLabel,
-                            __cv_uri: dimensionElement.__cv_uri
-                        });
+        if(false === _.isNull(dataset.__cv_sourceDataset) && false === _.isUndefined(dataset.__cv_sourceDataset)) {
+            _.each(dataset.__cv_sourceDataset, function (sourceDataset) {
+                $("#cubeviz-legend-dsProperties").append("<tr><td colspan=\"2\">" + "<a name=\"" + (CryptoJS.MD5(sourceDataset.__cv_uri) + "").substring(0, 6) + "\"></a>" + "</td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Dataset: " + "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + sourceDataset.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceDataset.__cv_uri + "\" target=\"_blank\">" + sourceDataset.__cv_uri + "</a></td>" + "</tr>");
+                _.each(sourceDataset, function (value, property) {
+                    if(false === _.str.include(property, "__cv_")) {
+                        if(true === _.isObject(value) || true === _.isArray(value)) {
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                        } else {
+                            if(true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                            }
+                        }
+                        $("#cubeviz-legend-dsProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
                     }
                 });
             });
-            result.push({
-                __cv_niceLabel: observation.__cv_niceLabel,
-                __cv_value: observation[selectedMeasureUri],
-                __cv_uri: observation.__cv_uri,
-                __cv_elements: dimensionElements
-            });
+        }
+    };
+    View_IndexAction_Legend.prototype.displayDataStructureDefinition = function (dataStructureDefinition) {
+        var self = this;
+        var tmp = null;
+
+        $("#cubeviz-legend-dsdLabel").html("<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" + dataStructureDefinition.__cv_niceLabel + "</a>");
+        $("#cubeviz-legend-dsdProperties").html("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        $("#cubeviz-legend-dsdProperties").append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dataStructureDefinition.__cv_uri + "\" target=\"_blank\">" + dataStructureDefinition.__cv_uri + "</a></td>" + "</tr>");
+        _.each(dataStructureDefinition, function (value, property) {
+            if(false === _.str.include(property, "__cv_")) {
+                if("http://purl.org/linked-data/cube#component" == property) {
+                    var labels = [];
+                    var list = new CubeViz_Collection();
+
+                    list.addList(value).each(function (element) {
+                        _.each(self.app._.data.selectedComponents.dimensions, function (dimension) {
+                            if(element === dimension.__cv_uri) {
+                                labels.push("<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " + "<a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\">" + dimension.__cv_niceLabel + "</a> ");
+                            }
+                        });
+                    });
+                    labels.push("<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i> " + "<a href=\"#" + (CryptoJS.MD5(self.app._.data.selectedComponents.measure.__cv_uri) + "").substring(0, 6) + "\">" + self.app._.data.selectedComponents.measure.__cv_niceLabel + "</a>");
+                    if(false === _.isNull(self.app._.data.selectedComponents.attribute) && false === _.isUndefined(self.app._.data.selectedComponents.attribute)) {
+                        labels.push(self.app._.data.selectedComponents.attribute.__cv_niceLabel);
+                    }
+                    value = labels.join(", ");
+                } else {
+                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                    } else {
+                        if(true === self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                        }
+                    }
+                }
+                $("#cubeviz-legend-dsdProperties").append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+            }
         });
-        return result;
+    };
+    View_IndexAction_Legend.prototype.displayRetrievedObservations = function (observations, selectedDimensions, selectedMeasure) {
+        var html = "";
+        var i = 0;
+        var label = "";
+        var self = this;
+
+        $("#cubeviz-legend-retrievedObservationsTitle").html(DataCube_Observation.getNumberOfActiveObservations(observations) + " Retrieved Observations");
+        $("#cubeviz-legend-observations").html("");
+        html = "<tr>" + "<td></td>";
+        _.each(selectedDimensions, function (dimension) {
+            html += "<td>" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+                label: dimension.__cv_niceLabel,
+                uriHash: (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
+            }) + "</td>";
+        });
+        html += "<td colspan=\"2\">" + CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-observationsTableHeadEntry").html(), {
+            label: selectedMeasure.__cv_niceLabel,
+            uriHash: (CryptoJS.MD5(selectedMeasure.__cv_uri) + "").substring(0, 6)
+        }) + "</td>";
+        html += "<td></td></tr>";
+        $("#cubeviz-legend-observations").append(html);
+        _.each(selectedDimensions, function (dimension) {
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("dimension", dimension);
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i++)).data("dimension", dimension);
+        });
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortAsc").get(i)).data("measure", selectedMeasure);
+        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sortDesc").get(i)).data("measure", selectedMeasure);
+        var observationValues = DataCube_Observation.getValues(observations, selectedMeasure["http://purl.org/linked-data/cube#measure"], true);
+        var numberOfUsedDimensionElements = 0;
+        var rangeMin = "<strong>min:</strong> " + String(jsStats.min(observationValues[0])).substring(0, 10);
+        var rangeMax = "<strong>max:</strong> " + String(jsStats.max(observationValues[0])).substring(0, 10);
+        var value = null;
+
+        html = "<tr class=\"info\">" + "<td></td>";
+        _.each(selectedDimensions, function (dimension) {
+            numberOfUsedDimensionElements = _.size(DataCube_Observation.getUsedDimensionElementUris(observations, dimension["http://purl.org/linked-data/cube#dimension"]));
+            if(numberOfUsedDimensionElements < _.size(dimension.__cv_elements)) {
+                html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> " + "different dimension elements available, " + "but only <strong>" + numberOfUsedDimensionElements + "</strong> are in use</td>";
+            } else {
+                html += "<td><strong>" + _.size(dimension.__cv_elements) + "</strong> " + "different dimension elements are in use</td>";
+            }
+        });
+        html += "<td>" + rangeMin + "</td>" + "<td>" + rangeMax + "</td>" + "<td></td>";
+        "</tr>";
+        $("#cubeviz-legend-observations").append(html);
+        var i = 1;
+        _.each(observations, function (observation) {
+            if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
+                html = "<tr>" + "<td rowspan=\"2\"><strong>" + i++ + "</strong></td>";
+            } else {
+                html = "<tr>" + "<td><strong>" + i++ + "</strong></td>";
+            }
+            _.each(selectedDimensions, function (dimension) {
+                _.each(dimension.__cv_elements, function (element) {
+                    if(element.__cv_uri == observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
+                        label = element.__cv_niceLabel;
+                    }
+                });
+                html += "<td class=\"cubeviz-legend-dimensionElementLabelTd\">" + "<i class=\"icon-anchor\" style=\"font-size: 8px;\"></i>" + " <a href=\"#" + (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6) + "\" " + "title=\"Anchor to dimension: " + dimension.__cv_niceLabel + "\">" + label + "</a>";
+                html += "</td>";
+            });
+            if(true === _.isUndefined(observation.__cv_sourceObservation) || 1 == _.size(observation.__cv_sourceObservation)) {
+                value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"], true);
+                if(true === _.isUndefined(observation.__cv_temporaryNewValue)) {
+                    if(true === _.isNull(value)) {
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\" style=\"background-color: #FFEAEA;\">" + "<em><small>no value found or type is not float</small></em>" + "</td>";
+                    } else {
+                        html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + value + "</td>";
+                    }
+                } else {
+                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + observation.__cv_temporaryNewValue + " &nbsp; <small>(Original: " + value + ")</small>" + "</td>";
+                }
+            } else {
+                if(2 == _.size(observation.__cv_sourceObservation)) {
+                    html += "<td class=\"cubeviz-legend-measureTd\" colspan=\"2\">" + "<small><strong>No distinct value</strong>, because of two source observations!</small>" + "</td>";
+                } else {
+                    return;
+                }
+            }
+            html += "<td>" + "<a href=\"" + observation.__cv_uri + "\" target=\"_blank\">Link</a>" + "</td>";
+            html += "</tr>";
+            if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
+                html += "<tr>" + "<td colspan=\"" + (3 + _.size(selectedDimensions)) + "\" style=\"padding-top: 2px; padding-bottom: 10px;\">" + "<small>Source Dataset: <strong>" + "<a href=\"#" + (CryptoJS.MD5(observation.__cv_sourceDataset.__cv_uri) + "").substring(0, 6) + "\">" + observation.__cv_sourceDataset.__cv_niceLabel + "</a>" + "</strong></small><br/>" + "<small>" + "<div class=\"cubeviz-clickable cubeviz-legend-sourceObservationOpener\">" + "Show more information about source Observation " + "<i class=\"icon-chevron-down\"></i>" + "</div>" + "</small><br/>" + "<table class=\"cubeviz-legend-sourceObservation0 table table-bordered table-condensed table-striped responsive-utilities\"></table>" + "<table class=\"cubeviz-legend-sourceObservation1 table table-bordered table-condensed table-striped responsive-utilities\"></table>" + "</td>" + "</tr>";
+            }
+            $("#cubeviz-legend-observations > tbody:last").append(html);
+            $($("#cubeviz-legend-observations").find(".cubeviz-legend-measureTd").last()).data("observation", observation);
+            if(false === _.isNull(observation.__cv_sourceObservation) && false === _.isUndefined(observation.__cv_sourceObservation)) {
+                if(1 == _.size(observation.__cv_sourceObservation)) {
+                    $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation1").last()).remove();
+                    var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation0").last());
+                    $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + observation.__cv_sourceObservation[0].__cv_uri + "\" target=\"_blank\">" + observation.__cv_sourceObservation[0].__cv_uri + "</a></td>" + "</tr>");
+                    _.each(observation.__cv_sourceObservation[0], function (value, property) {
+                        if(false === _.str.include(property, "__cv_")) {
+                            if(true === _.isObject(value) || true === _.isArray(value)) {
+                                var list = new CubeViz_Collection();
+                                value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                            } else {
+                                if(true === self.isValidUrl(value)) {
+                                    value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                                }
+                            }
+                            $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                        }
+                    });
+                    $table.hide();
+                    $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).click(function () {
+                        $table.fadeToggle(200);
+                    });
+                } else {
+                    $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).html("Show more information about <strong>both</strong> source Observations " + "<i class=\"icon-chevron-down\"></i>");
+                    _.each([
+                        0, 
+                        1
+                    ], function (position) {
+                        var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation" + position).last());
+                        $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + observation.__cv_sourceObservation[position].__cv_uri + "\" target=\"_blank\">" + observation.__cv_sourceObservation[position].__cv_uri + "</a></td>" + "</tr>");
+                        _.each(observation.__cv_sourceObservation[position], function (value, property) {
+                            if(false === _.str.include(property, "__cv_")) {
+                                if(true === _.isObject(value) || true === _.isArray(value)) {
+                                    var list = new CubeViz_Collection();
+                                    value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                                } else {
+                                    if(true === self.isValidUrl(value)) {
+                                        value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                                    }
+                                }
+                                $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                            }
+                        });
+                        $table.hide();
+                        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).click(function () {
+                            $table.fadeToggle(200);
+                        });
+                    });
+                }
+            }
+        });
+        this.bindUserInterfaceEvents({
+            "dblclick .cubeviz-legend-measureTd": this.onDblClick_measureTd,
+            "click .cubeviz-legend-sortAsc": this.onClick_sortAsc,
+            "click .cubeviz-legend-sortDesc": this.onClick_sortDesc
+        });
+    };
+    View_IndexAction_Legend.prototype.displaySelectedDimensions = function (selectedComponentDimensions) {
+        var elementList = new CubeViz_Collection();
+        var self = this;
+        var tmpList = new CubeViz_Collection();
+        var $table = null;
+
+        $("#cubeviz-legend-componentDimensions").html("");
+        _.each(selectedComponentDimensions, function (dimension) {
+            $("#cubeviz-legend-componentDimensions").append($(CubeViz_View_Helper.tplReplace($("#cubeviz-legend-tpl-dimensionBlock").html(), {
+                dimensionLabel: dimension.__cv_niceLabel,
+                dimensionUri: dimension.__cv_uri,
+                dimensionUriHash: (CryptoJS.MD5(dimension.__cv_uri) + "").substring(0, 6)
+            })));
+            $table = $($("#cubeviz-legend-componentDimensions").find(".table").last());
+            $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+            $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + dimension.__cv_uri + "\" target=\"_blank\">" + dimension.__cv_uri + "</a></td>" + "</tr>");
+            _.each(dimension, function (value, property) {
+                if(false === _.str.include(property, "__cv_")) {
+                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                    } else {
+                        if(true == self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                        }
+                    }
+                    $table.append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                }
+            });
+            tmpList.reset();
+            elementList.reset().addList(dimension.__cv_elements).each(function (element) {
+                $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
+            });
+            $table.append("<tr><td colspan=\"2\">" + "<strong><em>" + tmpList.size() + " Dimension Elements</em></strong>" + "</td>" + "</tr><tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+            if(false === _.isNull(dimension.__cv_sourceComponentSpecification) && false === _.isUndefined(dimension.__cv_sourceComponentSpecification)) {
+                _.each(dimension.__cv_sourceComponentSpecification, function (sourceCS) {
+                    $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Component Specification: " + "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + sourceCS.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                    $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceCS.__cv_uri + "\" target=\"_blank\">" + sourceCS.__cv_uri + "</a></td>" + "</tr>");
+                    _.each(sourceCS, function (value, property) {
+                        if(false === _.str.include(property, "__cv_")) {
+                            if(true === _.isObject(value) || true === _.isArray(value)) {
+                                var list = new CubeViz_Collection();
+                                value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                            } else {
+                                if(true === self.isValidUrl(value)) {
+                                    value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                                }
+                            }
+                            $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                        }
+                    });
+                    tmpList.reset();
+                    elementList.reset().addList(sourceCS.__cv_elements).each(function (element) {
+                        $table.append(tmpList.add("<a href=\"" + element.__cv_uri + "\" target=\"_blank\">" + element.__cv_niceLabel + "</a>", null, true));
+                    });
+                    $table.append("<tr><td colspan=\"2\">" + "<em>" + tmpList.size() + " Dimension Elements</em>" + "</td>" + "</tr><tr>" + "<td colspan=\"2\">" + tmpList._.join(", ") + "</td>" + "</tr>");
+                });
+            }
+        });
+    };
+    View_IndexAction_Legend.prototype.displaySelectedMeasureAndAttribute = function (selectedMeasure, selectedAttribute) {
+        var self = this;
+        var $table = $("#cubeviz-legend-componentMeasureProperties");
+
+        $("#cubeviz-legend-componentMeasureLabel").html("<a name=\"" + (CryptoJS.MD5(selectedMeasure.__cv_uri) + "").substring(0, 6) + "\">" + "<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedMeasure.__cv_niceLabel + "</a>" + "</a>");
+        $table.append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+        _.each(selectedMeasure, function (value, property) {
+            if(false === _.str.include(property, "__cv_")) {
+                if(true === _.isObject(value) || true === _.isArray(value)) {
+                    var list = new CubeViz_Collection();
+                    value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                } else {
+                    if(true == self.isValidUrl(value)) {
+                        value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                    }
+                }
+                $table.append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+            }
+        });
+        if(false === _.isNull(selectedMeasure.__cv_sourceComponentSpecification) && false === _.isUndefined(selectedMeasure.__cv_sourceComponentSpecification)) {
+            _.each(selectedMeasure.__cv_sourceComponentSpecification, function (sourceMeasure) {
+                $table.append("<tr><td colspan=\"2\"></td></tr>" + "<tr class=\"warning\">" + "<td colspan=\"2\">" + "<strong>Source Measure: " + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_niceLabel + "</a></strong>" + "</td>" + "</tr>");
+                $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + sourceMeasure.__cv_uri + "\" target=\"_blank\">" + sourceMeasure.__cv_uri + "</a></td>" + "</tr>");
+                _.each(sourceMeasure, function (value, property) {
+                    if(false === _.str.include(property, "__cv_")) {
+                        if(true === _.isObject(value) || true === _.isArray(value)) {
+                            var list = new CubeViz_Collection();
+                            value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                        } else {
+                            if(true === self.isValidUrl(value)) {
+                                value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                            }
+                        }
+                        $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
+                    }
+                });
+            });
+        }
+        if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
+            $("#cubeviz-legend-componentAttribute").hide();
+        } else {
+            $("#cubeviz-legend-componentAttributeLabel").html("<a href=\"" + selectedMeasure.__cv_uri + "\">" + selectedAttribute.__cv_niceLabel + "</a>");
+            $("#cubeviz-legend-componentAttributeProperties").append("<tr class=\"info\">" + "<td><strong>Property</strong></td>" + "<td><strong>Value</strong></td>" + "</tr>");
+            _.each(selectedAttribute, function (value, property) {
+                if(false === _.str.include(property, "__cv_")) {
+                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                        var list = new CubeViz_Collection();
+                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                    } else {
+                        if(true == self.isValidUrl(value)) {
+                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                        }
+                    }
+                    $("#cubeviz-legend-componentAttributeProperties").append("<tr>" + "<td><a href=\"" + property + "\">" + property + "</a></td>" + "<td>" + value + "</td>" + "</tr>");
+                }
+            });
+        }
     };
     View_IndexAction_Legend.prototype.initialize = function () {
         this.render();
     };
-    View_IndexAction_Legend.prototype.onClick_btnShowSelectedConfiguration = function (event) {
-        event.preventDefault();
-        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
-        return false;
+    View_IndexAction_Legend.prototype.isValidUrl = function (str) {
+        return ((new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)*[a-z]{2,}|' + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?' + '(\\#[-a-z\\d_]*)?$', 'i')).test(str)) && (true === _.str.include(str, ".") || true === _.str.include(str, "/"));
+    };
+    View_IndexAction_Legend.prototype.onClick_adaptedMeasureValueSaveBtn = function (e) {
+        var accordingObservation = $(e.target).data("observation");
+        var self = this;
+        var $inputField = $(e.target).data("inputField");
+        var $measureTd = $(e.target).data("measureTd");
+        var $saveBtn = $(e.target);
+
+        accordingObservation.__cv_temporaryNewValue = $inputField.val();
+        _.each(this.app._.data.retrievedObservations, function (observation, key) {
+            if(observation.__cv_uri === accordingObservation.__cv_uri) {
+                self.app._.data.retrievedObservations[key] = accordingObservation;
+            }
+        });
+        this.restoreMeasureTd($measureTd);
+        this.triggerGlobalEvent("onReRender_visualization");
     };
     View_IndexAction_Legend.prototype.onClick_btnShowRetrievedObservations = function (event) {
         event.preventDefault();
         $("#cubeviz-legend-retrievedObservations").slideToggle("slow");
+        return false;
+    };
+    View_IndexAction_Legend.prototype.onClick_btnShowSelectedConfiguration = function (event) {
+        event.preventDefault();
+        $("#cubeviz-legend-selectedConfiguration").slideToggle('slow');
         return false;
     };
     View_IndexAction_Legend.prototype.onClick_componentDimensionShowInfo = function (event) {
@@ -2588,15 +5023,51 @@ var View_IndexAction_Legend = (function (_super) {
         $("#cubeviz-legend-componentDimensionInfoDialog").dialog("open");
         return false;
     };
-    View_IndexAction_Legend.prototype.onClick_sortByTitle = function () {
-        this.collection.sortAscendingBy("__cv_niceLabel");
-        this.displayRetrievedObservations(this.collection._);
+    View_IndexAction_Legend.prototype.onClick_sortAsc = function (e) {
+        if(false === _.isUndefined($(e.target).data("dimension"))) {
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc($(e.target).data("dimension"), this.app._.data.retrievedObservations, -1, 1);
+        } else {
+            if(false === _.isUndefined($(e.target).data("measure"))) {
+                this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc($(e.target).data("measure"), this.app._.data.retrievedObservations, -1, 1);
+            } else {
+                return;
+            }
+        }
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
     };
-    View_IndexAction_Legend.prototype.onClick_sortByValue = function () {
-        this.collection.sortAscendingBy("__cv_value");
-        this.displayRetrievedObservations(this.collection._);
+    View_IndexAction_Legend.prototype.onClick_sortDesc = function (e) {
+        if(false === _.isUndefined($(e.target).data("dimension"))) {
+            this.app._.data.retrievedObservations = this.sortDimensionsAscOrDesc($(e.target).data("dimension"), this.app._.data.retrievedObservations, 1, -1);
+        } else {
+            if(false === _.isUndefined($(e.target).data("measure"))) {
+                this.app._.data.retrievedObservations = this.sortMeasureValuesAscOrDesc($(e.target).data("measure"), this.app._.data.retrievedObservations, 1, -1);
+            } else {
+                return;
+            }
+        }
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
     };
-    View_IndexAction_Legend.prototype.onReRender_visualization = function () {
+    View_IndexAction_Legend.prototype.onDblClick_measureTd = function (e) {
+        if(true === _.isUndefined($(e.target).data("observation")) || true === _.isNull($(e.target).data("observation"))) {
+            return;
+        }
+        var accordingObservation = $(e.target).data("observation");
+        var inputValue = null;
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
+
+        if(false === _.isUndefined(accordingObservation.__cv_temporaryNewValue)) {
+            inputValue = accordingObservation.__cv_temporaryNewValue;
+        } else {
+            inputValue = accordingObservation[selectedMeasureUri];
+        }
+        var $inputField = $("<input type=\"text\" value=\"" + inputValue + "\">");
+        var $saveBtn = $("<div class=\"btn btn-primary\" style=\"vertical-align: top;\">Save</div>");
+
+        $(e.target).html("").append($inputField).append($saveBtn);
+        $saveBtn.data("inputField", $inputField).data("measureTd", $(e.target)).data("observation", accordingObservation).on("click", $.proxy(this.onClick_adaptedMeasureValueSaveBtn, this));
+        $inputField.focus();
+    };
+    View_IndexAction_Legend.prototype.onUpdate_componentDimensions = function () {
         this.destroy();
         this.initialize();
     };
@@ -2607,11 +5078,11 @@ var View_IndexAction_Legend = (function (_super) {
         var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
-        this.displayDsdAndDs(this.app._.data.selectedDSD.__cv_niceLabel, this.app._.data.selectedDSD.__cv_uri, this.app._.data.selectedDS.__cv_niceLabel, this.app._.data.selectedDS.__cv_uri);
-        this.displaySelectedConfiguration(this.app._.data.selectedComponents.dimensions);
-        this.collection.reset("__cv_niceLabel").addList(this.generateList(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, selectedMeasureUri));
-        this.collection.sortAscendingBy("__cv_niceLabel");
-        this.displayRetrievedObservations(this.collection._);
+        this.displayDataStructureDefinition(this.app._.data.selectedDSD);
+        this.displayDataset(this.app._.data.selectedDS, this.app._.data.selectedDSD);
+        this.displaySelectedDimensions(this.app._.data.selectedComponents.dimensions);
+        this.displaySelectedMeasureAndAttribute(this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
+        this.displayRetrievedObservations(this.sortMeasureValuesAscOrDesc(this.app._.data.selectedComponents.measure, this.app._.data.retrievedObservations, -1, 1), this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-legend-componentDimensionInfoDialog"), {
             closeOnEscape: true,
             showCross: true,
@@ -2626,11 +5097,43 @@ var View_IndexAction_Legend = (function (_super) {
         this.bindUserInterfaceEvents({
             "click #cubeviz-legend-btnShowSelectedConfiguration": this.onClick_btnShowSelectedConfiguration,
             "click #cubeviz-legend-btnShowRetrievedObservations": this.onClick_btnShowRetrievedObservations,
-            "click .cubeviz-legend-componentDimensionShowInfo": this.onClick_componentDimensionShowInfo,
-            "click #cubeviz-legend-sortByTitle": this.onClick_sortByTitle,
-            "click #cubeviz-legend-sortByValue": this.onClick_sortByValue
+            "click .cubeviz-legend-componentDimensionShowInfo": this.onClick_componentDimensionShowInfo
         });
         return this;
+    };
+    View_IndexAction_Legend.prototype.restoreMeasureTd = function ($measureTd) {
+        var accordingObservation = $measureTd.data("observation");
+        var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
+
+        $measureTd.html(accordingObservation.__cv_temporaryNewValue + " &nbsp; <small>(Original: " + accordingObservation[selectedMeasureUri] + ")");
+    };
+    View_IndexAction_Legend.prototype.sortDimensionsAscOrDesc = function (selectedComponent, observations, ifLower, ifHigher) {
+        var accordingFieldLabel = "";
+        var anotherAccordingFieldLabel = "";
+        var observationList = new CubeViz_Collection("__cv_uri");
+        var selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#dimension"];
+
+        observationList.addList(observations);
+        observationList._.sort(function (observation, anotherObservation) {
+            accordingFieldLabel = DataCube_Component.findDimensionElement(selectedComponent.__cv_elements, observation[selectedComponentUri]).__cv_niceLabel;
+            anotherAccordingFieldLabel = DataCube_Component.findDimensionElement(selectedComponent.__cv_elements, anotherObservation[selectedComponentUri]).__cv_niceLabel;
+            return accordingFieldLabel < anotherAccordingFieldLabel ? ifLower : ifHigher;
+        });
+        return observationList.toObject();
+    };
+    View_IndexAction_Legend.prototype.sortMeasureValuesAscOrDesc = function (selectedComponent, observations, ifLower, ifHigher) {
+        var anotherObservationValue = null;
+        var observationList = new CubeViz_Collection("__cv_uri");
+        var observationValue = null;
+        var selectedComponentUri = selectedComponent["http://purl.org/linked-data/cube#measure"];
+
+        observationList.addList(observations);
+        observationList._.sort(function (observation, anotherObservation) {
+            observationValue = DataCube_Observation.parseValue(observation, selectedComponentUri);
+            anotherObservationValue = DataCube_Observation.parseValue(anotherObservation, selectedComponentUri);
+            return observationValue < anotherObservationValue ? ifLower : ifHigher;
+        });
+        return observationList.toObject();
     };
     return View_IndexAction_Legend;
 })(CubeViz_View_Abstract);
@@ -2696,17 +5199,6 @@ var View_IndexAction_Visualization = (function (_super) {
             this.handleException("CubeViz error no observations retrieved");
             return this;
         }
-        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        var selectedMeasure = this.app._.data.selectedComponents.measure;
-        var type = null;
-        var visualizationSetting = null;
-
-        if(true === _.isUndefined(fromChartConfig)) {
-            this.app._.ui.visualization.className = this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts[0].className;
-            fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
-        }
-        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
-        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
         var selectedAttributeUri = null;
         if((false === _.isNull(this.app._.data.selectedComponents.attribute) && false === _.isUndefined(this.app._.data.selectedComponents.attribute))) {
             if(false === this.app._.data.selectedComponents.attribute.__cv_inUse) {
@@ -2714,25 +5206,63 @@ var View_IndexAction_Visualization = (function (_super) {
                 selectedAttributeUri = this.app._.data.selectedComponents.attribute["http://purl.org/linked-data/cube#attribute"];
             }
         }
-        if(false === _.isUndefined(this.app._.generatedVisualization)) {
-            try  {
-                this.app._.generatedVisualization.destroy();
-            } catch (ex) {
-                if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
-                    console.log(ex);
+        var chart = null;
+        var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
+        var libraryInstance = null;
+        var selectedMeasure = this.app._.data.selectedComponents.measure;
+        var type = null;
+        var visualizationSetting = null;
+
+        if(true === _.isNull(fromChartConfig)) {
+            var defaultChartConfig = CubeViz_Visualization_Controller.getDefaultChartConfig(this.app._.backend.chartConfig, this.app._.data.numberOfMultipleDimensions);
+            this.app._.ui.visualization.className = defaultChartConfig.className;
+            fromChartConfig = defaultChartConfig.chartConfig;
+        }
+        visualizationSetting = CubeViz_Visualization_Controller.updateVisualizationSettings([], this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
+        type = CubeViz_Visualization_Controller.getVisualizationType(this.app._.ui.visualization.className);
+        switch(type) {
+            case 'HighCharts': {
+                if(false === _.isUndefined(this.app._.generatedVisualization)) {
+                    try  {
+                        this.app._.generatedVisualization.destroy();
+                    } catch (ex) {
+                        if(false === _.isUndefined(console) && false === _.isUndefined(console.log)) {
+                            console.log(ex);
+                        }
+                    }
                 }
+                libraryInstance = new CubeViz_Visualization_HighCharts();
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+                break;
+
+            }
+            case 'D3js': {
+                this.app._.generatedVisualization = null;
+                $("#cubeviz-index-visualization").html("");
+                libraryInstance = new CubeViz_Visualization_D3js();
+                chart = libraryInstance.load(this.app._.ui.visualization.className);
+                break;
+
+            }
+            default: {
+                break;
+
             }
         }
-        var hC = new CubeViz_Visualization_HighCharts();
-        var chart = hC.load(this.app._.ui.visualization.className);
-        chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure["http://purl.org/linked-data/cube#measure"], selectedAttributeUri);
+        chart.init(visualizationSetting, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, CubeViz_Visualization_Controller.getMultipleDimensions(this.app._.data.selectedComponents.dimensions), CubeViz_Visualization_Controller.getOneElementDimensions(this.app._.data.selectedComponents.dimensions), selectedMeasure, selectedAttributeUri);
         try  {
-            this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
-            if(0 == _.size(chart.getRenderResult().series)) {
-                this.handleException("CubeViz error no elements to visualize");
-                return this;
+            switch(type) {
+                case 'HighCharts': {
+                    this.setVisualizationHeight(_.size(chart.getRenderResult().xAxis.categories));
+                    if(0 == _.size(chart.getRenderResult().series)) {
+                        this.handleException("CubeViz error no elements to visualize");
+                        return this;
+                    }
+                    break;
+
+                }
             }
-            this.app._.generatedVisualization = new Highcharts.Chart(chart.getRenderResult());
+            this.app._.generatedVisualization = libraryInstance.render(chart);
         } catch (ex) {
             this.handleException(ex);
         }
@@ -2831,21 +5361,21 @@ var View_IndexAction_VisualizationSelector = (function (_super) {
             selectorItemDiv.removeClass("cubeviz-visualizationselector-selectorItem").addClass("cubeviz-visualizationselector-selectedSelectorItem");
             this.showMenuDongle(selectorItemDiv);
             this.triggerGlobalEvent("onChange_visualizationClass");
-            CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.ui, "ui", function (updatedUiHash) {
-                self.app._.backend.uiHash = updatedUiHash;
+            this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
+            CubeViz_ConfigurationLink.saveUI(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.uiHash, this.app._.ui, function () {
+                self.triggerGlobalEvent("onAfterClick_selectorItem");
             });
         }
-        this.triggerGlobalEvent("onAfterClick_selectorItem");
     };
     View_IndexAction_VisualizationSelector.prototype.onClick_updateVisz = function () {
         var fromChartConfig = CubeViz_Visualization_Controller.getFromChartConfigByClass(this.app._.ui.visualization.className, this.app._.backend.chartConfig[this.app._.data.numberOfMultipleDimensions].charts);
         var self = this;
 
         this.app._.ui.visualizationSettings[this.app._.ui.visualization.className] = CubeViz_Visualization_Controller.updateVisualizationSettings($(".cubeviz-visualizationselector-menuItemValue"), this.app._.ui.visualizationSettings[this.app._.ui.visualization.className], fromChartConfig.defaultConfig);
-        CubeViz_ConfigurationLink.save(this.app._.backend.url, this.app._.backend.modelUrl, this.app._.ui, "ui", function (updatedUiHash) {
-            self.app._.backend.uiHash = updatedUiHash;
+        this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
+        CubeViz_ConfigurationLink.saveUI(this.app._.backend.url, this.app._.backend.serviceUrl, this.app._.backend.modelUrl, this.app._.backend.uiHash, this.app._.ui, function () {
+            self.triggerGlobalEvent("onReRender_visualization");
         });
-        this.triggerGlobalEvent("onReRender_visualization");
     };
     View_IndexAction_VisualizationSelector.prototype.onReceived_noData = function () {
         this.hideDongle();
@@ -2989,8 +5519,8 @@ var View_ModelinfoAction_Footer = (function (_super) {
 })(CubeViz_View_Abstract);
 var cubeVizApp = new CubeViz_View_Application();
 $(document).ready(function () {
-    if("development" == cubeVizApp._.backend.context) {
-        console.log("cubeVizApp._:");
+    if(0 < _.size(cubeVizApp._) && "development" == cubeVizApp._.backend.context) {
+        console.log("CubeViz - Development Information:");
         console.log(cubeVizApp._);
     }
     cubeVizApp.triggerEvent("onStart_application");

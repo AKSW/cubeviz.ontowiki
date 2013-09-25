@@ -159,17 +159,17 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
              */
             this.triggerGlobalEvent("onChange_visualizationClass");
             
-            // update link code
-            CubeViz_ConfigurationLink.save(
-                this.app._.backend.url,
-                this.app._.backend.modelUrl, 
-                this.app._.ui,
-                "ui",
-                function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
+            // save ui object
+            this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui))+"";
+            
+            CubeViz_ConfigurationLink.saveUI(
+                this.app._.backend.url, this.app._.backend.serviceUrl, 
+                this.app._.backend.modelUrl, this.app._.backend.uiHash, 
+                this.app._.ui, function(){ 
+                    self.triggerGlobalEvent("onAfterClick_selectorItem");
+                }
             );
         }
-        
-        this.triggerGlobalEvent("onAfterClick_selectorItem");
     }
     
     /**
@@ -196,16 +196,16 @@ class View_IndexAction_VisualizationSelector extends CubeViz_View_Abstract
                 fromChartConfig.defaultConfig
         );
         
-        // update link code
-        CubeViz_ConfigurationLink.save(
-            this.app._.backend.url,
-            this.app._.backend.modelUrl, 
-            this.app._.ui,
-            "ui",
-            function(updatedUiHash){ self.app._.backend.uiHash = updatedUiHash; }
-        );
+        // save ui object
+        this.app._.backend.uiHash = CryptoJS.MD5(JSON.stringify(this.app._.ui)) + "";
         
-        this.triggerGlobalEvent("onReRender_visualization");
+        CubeViz_ConfigurationLink.saveUI(
+            this.app._.backend.url, this.app._.backend.serviceUrl, 
+            this.app._.backend.modelUrl, this.app._.backend.uiHash, 
+            this.app._.ui, function(){
+                self.triggerGlobalEvent("onReRender_visualization");
+            }
+        );
     }
     
     /**

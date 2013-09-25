@@ -86,12 +86,16 @@ class View_IndexAction_ExportArea extends CubeViz_View_Abstract
     public setUrlToDownload() : void
     {
         // set download path
-        var urlToDownload = this.app._.backend.url + "exportdataselection/"
-                          + "?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl)
-                          + "&dataHash=" + this.app._.backend.dataHash;
+        var urlToDownload = this.app._.backend.url + "export/dataselection/"
+                          + this.app._.backend.dataHash
+                          + "/?serviceUrl=" + encodeURIComponent(this.app._.backend.serviceUrl);
         
-        // update a-href's
-        $("#cubeviz-index-exportArea-btnTurtle").attr ("href", urlToDownload + "&type=turtle");
+        /**
+         * update a-href's
+         */
+        // type=turtle
+        $("#cubeviz-index-exportArea-btnTurtle").attr ("href", urlToDownload);
+        // type=csv
         $("#cubeviz-index-exportArea-btnCsv").attr ("href", urlToDownload + "&type=csv");
     }
 }

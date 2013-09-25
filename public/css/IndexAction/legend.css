@@ -57,9 +57,19 @@
     font-size: 16px;
 }
 
+.cubeviz-legend-dimensionElementLabelTd
+{
+
+}
+
 .cubeviz-legend-dimensionIcon
 {
     font-size: 11px;
+}
+
+.cubeviz-legend-measureTd
+{
+
 }
 
 .cubeviz-legend-observationIcon
@@ -86,11 +96,9 @@
 
 #cubeviz-legend-observations 
 {
-    list-style-type: none;
-    list-style-position: inside;
     margin-left: 0px;
-    float: left; 
-    width: 70%;
+        width: 100%;
+    min-width: 100%;
 }
 
 #cubeviz-legend-observations li

@@ -1,0 +1,300 @@
+@base <http://example.cubeviz.org/compare/populationEurope/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix cube: <http://purl.org/linked-data/cube#> .
+@prefix ex: <http://example.cubeviz.org/compare/populationEurope/> .
+
+<> a owl:Ontology ;
+   rdfs:label "DataCube: Estimated Population in Europe" ;
+   dc:description "Its purpose is to participate as an example use case for comparision. Source: http://www.indexmundi.com" .
+
+# 
+# Data Structure Definition
+#
+ex:dsd a cube:DataStructureDefinition ;
+    rdfs:label "dsd"@en ;
+    cube:component  ex:countryCS, ex:yearCS, ex:unitCS, ex:valueCS .
+
+#
+# Component Specifications
+#
+ex:countryCS a cube:ComponentSpecification ;
+    rdfs:label "country (CS)" ;
+    cube:dimension ex:country .
+
+ex:yearCS a cube:ComponentSpecification ;
+    rdfs:label "year (CS)" ;
+    cube:dimension ex:year .
+
+ex:unitCS a cube:ComponentSpecification ;
+    rdfs:label "straight number of people (CS)" ;
+    cube:attribute ex:unit .
+
+ex:valueCS a cube:ComponentSpecification ;
+    rdfs:label "population (CS)" ;
+    cube:measure ex:value .
+
+
+#
+# Data Set
+#
+ex:dataset a cube:DataSet ;
+    rdfs:label "Population"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    cube:structure ex:dsd .
+
+#
+# Dimensions, Units and Measures
+#
+ex:country a cube:DimensionProperty ;
+    rdfs:label "Country"@en .
+        
+ex:year a cube:DimensionProperty ;
+    rdfs:label "Year"@en .
+
+ex:unit a cube:AttributeProperty ;
+    rdfs:label "straight number of people (CS)" .
+
+ex:value a cube:MeasureProperty ;
+    rdfs:label "population (CS)"@en .
+    
+#
+# Observation #################################################################
+#
+
+# GERMANY
+ex:obs0 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2000 ;
+    ex:unit "straight number of people" ;
+    ex:value "82075000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs1 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2001 ;
+    ex:unit "straight number of people" ;
+    ex:value "82146000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs2 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2002 ;
+    ex:unit "straight number of people" ;
+    ex:value "82310000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs3 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2003 ;
+    ex:unit "straight number of people" ;
+    ex:value "82393000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs4 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight number of people" ;
+    ex:value "82383000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs5 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2005 ;
+    ex:unit "straight number of people" ;
+    ex:value "82342000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs6 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2006 ;
+    ex:unit "straight number of people" ;
+    ex:value "82259000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs7 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2007 ;
+    ex:unit "straight number of people" ;
+    ex:value "82177000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs8 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2008 ;
+    ex:unit "straight number of people" ;
+    ex:value "82013000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs9 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2009 ;
+    ex:unit "straight number of people" ;
+    ex:value "81767000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs10 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2010 ;
+    ex:unit "straight number of people" ;
+    ex:value "81603000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs11 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2011 ;
+    ex:unit "straight number of people" ;
+    ex:value "82200000"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+ex:obs12 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:Germany ;
+    ex:year ex:Y2012 ;
+    ex:unit "straight number of people" ;
+    ex:value "82000000"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+
+# UNITED KINGDOM
+ex:obs13 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2000 ;
+    ex:unit "straight number of people" ;
+    ex:value "59511460"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs14 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2001 ;
+    ex:unit "straight number of people" ;
+    ex:value "59647790"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs15 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2002 ;
+    ex:unit "straight number of people" ;
+    ex:value "59778000"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs16 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2003 ;
+    ex:unit "straight number of people" ;
+    ex:value "60094650"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs17 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2004 ;
+    ex:unit "straight number of people" ;
+    ex:value "60270710"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs18 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2005 ;
+    ex:unit "straight number of people" ;
+    ex:value "60441460"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs19 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2006 ;
+    ex:unit "straight number of people" ;
+    ex:value "60609150"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs20 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2007 ;
+    ex:unit "straight number of people" ;
+    ex:value "60776240"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs21 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2008 ;
+    ex:unit "straight number of people" ;
+    ex:value "60943910"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs22 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2009 ;
+    ex:unit "straight number of people" ;
+    ex:value "61113200"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs23 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2010 ;
+    ex:unit "straight number of people" ;
+    ex:value "62348450"^^<http://www.w3.org/2001/XMLSchema#float> .
+    
+ex:obs24 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2011 ;
+    ex:unit "straight number of people" ;
+    ex:value "62698360"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+ex:obs25 a cube:Observation ;
+    cube:dataSet ex:dataset ;
+    ex:country ex:UnitedKingdom ;
+    ex:year ex:Y2012 ;
+    ex:unit "straight number of people" ;
+    ex:value "63047160"^^<http://www.w3.org/2001/XMLSchema#float> .
+
+#
+# Additional Stuff #############################################################
+#
+# countries
+ex:Germany a ex:country ;
+    rdfs:label "Germany"@en .
+    
+ex:UnitedKingdom a ex:country ;
+    rdfs:label "United Kingdom"@en .
+    
+# years
+ex:Y2000 a ex:year ;
+    rdfs:label "2000"@en .
+    
+ex:Y2001 a ex:year ;
+    rdfs:label "2001"@en .
+    
+ex:Y2002 a ex:year ;
+    rdfs:label "2002"@en .
+    
+ex:Y2003 a ex:year ;
+    rdfs:label "2003"@en .
+    
+ex:Y2004 a ex:year ;
+    rdfs:label "2004"@en .
+    
+ex:Y2005 a ex:year ;
+    rdfs:label "2005"@en .
+    
+ex:Y2006 a ex:year ;
+    rdfs:label "2006"@en .
+    
+ex:Y2007 a ex:year ;
+    rdfs:label "2007"@en .
+    
+ex:Y2008 a ex:year ;
+    rdfs:label "2008"@en .
+    
+ex:Y2009 a ex:year ;
+    rdfs:label "2009"@en .
+    
+ex:Y2010 a ex:year ;
+    rdfs:label "2010"@en .
+    
+ex:Y2011 a ex:year ;
+    rdfs:label "2011"@en .
+    
+ex:Y2012 a ex:year ;
+    rdfs:label "2012"@en .
