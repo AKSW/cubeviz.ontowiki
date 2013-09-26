@@ -79,7 +79,7 @@ var CubeViz_ChartConfig = {
         
             {
                 label: "Circle Packing",
-                className: "CubeViz_Visualization_D3js_CirclePacking",
+                className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
                 icon: "circlePacking.svg",
                 
                 defaultConfig: {
