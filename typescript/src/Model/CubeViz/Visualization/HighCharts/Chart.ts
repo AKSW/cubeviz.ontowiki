@@ -195,71 +195,37 @@ class CubeViz_Visualization_HighCharts_Chart
      *      data: [10, 20]
      *  }]
      */
-    public handleOnlyOneMultipleDimension(forXAxis:string, selectedAttributeUri:string, 
-        selectedMeasureUri:string, observationObj:DataCube_Observation,
-        oneElementDimensions:any[] ) : void
+    public handleOnlyOneMultipleDimension(selectedComponentDimensions:any, forXAxis:string, 
+        forSeries:string, selectedAttributeUri:string, selectedMeasureUri:string, 
+        observationObj:DataCube_Observation, oneElementDimensions:any[] ) : void
     {
-        var self = this,
-            observation:any = null,
-            seriesDataList:number[] = [],
-            xAxisElements:any = observationObj.sortAxis(forXAxis, "ascending")
-                                              .getAxesElements(forXAxis),
-            value:any = null;
+        /**
+         * handle as there are 2 multiple dimensions
+         */
+        this.handleTwoDimensionsWithAtLeastOneDimensionElement(
+            selectedComponentDimensions, 
+            forXAxis,
+            forSeries,
+            selectedAttributeUri,
+            selectedMeasureUri,
+            observationObj
+        );        
         
-        _.each(xAxisElements, function(xAxisElement){
-            
-            _.each (xAxisElement.observations, function(observation){
-            
-                if (false === DataCube_Observation.isActive(observation)) {
-                    return;
-                }
-                
-                value = DataCube_Observation.parseValue(
-                    observation, selectedMeasureUri
-                );
-                
-                if (true === _.isNull(value)) {
-                    return
-                }
-                
-                // check if the current observation has to be ignored
-                // it will ignored, if attribute uri is set, but the observation
-                // has no value of it
-                if (false === _.isNull(selectedAttributeUri)
-                    && 
-                    ( true === _.isNull(observation [selectedAttributeUri])
-                      || true === _.isUndefined(observation [selectedAttributeUri]))) {
-                    // TODO implement a way to handle ignored observations
-                    return;
-                }
-                
-                // add entry on the y axis
-                self.chartConfig.xAxis.categories.push(
-                    xAxisElement.self.__cv_niceLabel
-                );
-                
-                // save related value
-                seriesDataList.push(value);
-            });
+        /**
+         * adapt the result a little bit (especially the title)
+         */
+        var dimensionElementLabels:string[] = [];
+        
+        _.each (oneElementDimensions, function(dimension){
+            // save the label of the first (and only) dimension element of the
+            // current one-element dimension
+            dimensionElementLabels.push(
+                _.first(_.values(dimension.__cv_elements)).__cv_niceLabel
+            );
         });
         
-        // set series element
-        var seriesName = ".";
-        
-        if (0 < _.size(oneElementDimensions)) {
-            var dimensionElementLabels:string[] = [];
-        
-            _.each (oneElementDimensions, function(dimension){
-                dimensionElementLabels.push (dimension.__cv_elements[0].__cv_niceLabel);
-            });
-            
-            seriesName = dimensionElementLabels.join (" - ");
-        } 
-        
-        this.chartConfig.series = [{
-            name: seriesName,
-            data: seriesDataList
-        }];
+        // override series title
+        this.chartConfig.series[0].name = dimensionElementLabels.join (" - ");
     }
     
     /**
@@ -403,7 +369,9 @@ class CubeViz_Visualization_HighCharts_Chart
             if (false === _.str.isBlank(forXAxis)) {
                 
                 this.handleOnlyOneMultipleDimension(
+                    selectedComponentDimensions,
                     forXAxis, 
+                    forSeries, 
                     selectedAttributeUri, 
                     selectedMeasure["http://purl.org/linked-data/cube#measure"], 
                     observation,

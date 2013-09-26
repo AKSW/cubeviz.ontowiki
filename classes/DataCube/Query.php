@@ -705,7 +705,7 @@ class DataCube_Query
             $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
             
             // limit the number of observations
-            $result = array_slice($result, 0, 500);
+            $result = array_slice($result, 0, 250);
             
             // enrich data with CubeViz sugar
             $result = $this->enrichResult($result, false);            

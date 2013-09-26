@@ -839,43 +839,13 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
             });
         });
     };
-    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (forXAxis, selectedAttributeUri, selectedMeasureUri, observationObj, oneElementDimensions) {
-        var self = this;
-        var observation = null;
-        var seriesDataList = [];
-        var xAxisElements = observationObj.sortAxis(forXAxis, "ascending").getAxesElements(forXAxis);
-        var value = null;
-
-        _.each(xAxisElements, function (xAxisElement) {
-            _.each(xAxisElement.observations, function (observation) {
-                if(false === DataCube_Observation.isActive(observation)) {
-                    return;
-                }
-                value = DataCube_Observation.parseValue(observation, selectedMeasureUri);
-                if(true === _.isNull(value)) {
-                    return;
-                }
-                if(false === _.isNull(selectedAttributeUri) && (true === _.isNull(observation[selectedAttributeUri]) || true === _.isUndefined(observation[selectedAttributeUri]))) {
-                    return;
-                }
-                self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-                seriesDataList.push(value);
-            });
+    CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observationObj, oneElementDimensions) {
+        this.handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observationObj);
+        var dimensionElementLabels = [];
+        _.each(oneElementDimensions, function (dimension) {
+            dimensionElementLabels.push(_.first(_.values(dimension.__cv_elements)).__cv_niceLabel);
         });
-        var seriesName = ".";
-        if(0 < _.size(oneElementDimensions)) {
-            var dimensionElementLabels = [];
-            _.each(oneElementDimensions, function (dimension) {
-                dimensionElementLabels.push(dimension.__cv_elements[0].__cv_niceLabel);
-            });
-            seriesName = dimensionElementLabels.join(" - ");
-        }
-        this.chartConfig.series = [
-            {
-                name: seriesName,
-                data: seriesDataList
-            }
-        ];
+        this.chartConfig.series[0].name = dimensionElementLabels.join(" - ");
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         var diff = 0;
@@ -939,7 +909,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         } else {
             if(false === _.str.isBlank(forXAxis) || false === _.str.isBlank(forSeries)) {
                 if(false === _.str.isBlank(forXAxis)) {
-                    this.handleOnlyOneMultipleDimension(forXAxis, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation, oneElementDimensions);
+                    this.handleOnlyOneMultipleDimension(selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation, oneElementDimensions);
                 } else {
                     this.handleOnlyOneElementDimension(forSeries, selectedAttributeUri, selectedMeasure["http://purl.org/linked-data/cube#measure"], observation);
                 }
