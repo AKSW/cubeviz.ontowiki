@@ -16,13 +16,18 @@ class CubeViz_ConfigurationLink
     /**
      * model instance
      */
+    protected $_dimensionElementLimit = -1;  
+      
     protected $_model = null;    
+    
+    protected $_titleHelperLimit = -1;    
     
     /**
      * Constructor
      */
-    public function __construct($model, $titleHelperLimit) 
+    public function __construct($model, $titleHelperLimit, $dimensionElementLimit) 
     {        
+        $this->_dimensionElementLimit = $dimensionElementLimit;
         $this->_model = $model;
         $this->_titleHelperLimit = $titleHelperLimit;
         
@@ -35,7 +40,11 @@ class CubeViz_ConfigurationLink
      */
     public function loadStandardConfigForData($config) 
     {
-        $query = new DataCube_Query($this->_model, $this->_titleHelperLimit);
+        $query = new DataCube_Query(
+            $this->_model, 
+            $this->_titleHelperLimit,
+            $this->_dimensionElementLimit
+        );
         
         // if no data structure definitions were selected
         if(0 === count($config['dataSets'])) {

@@ -65,7 +65,7 @@ class CubeViz_ViewHelper
      */
     public static function initApp(&$view, &$model, $backend, $context, $modelIri,
         $serviceUrl, $staticUrlBase, $baseImagesPath, $dataHash, $uiHash, 
-        $titleHelperLimit) 
+        $titleHelperLimit, $dimensionElementLimit) 
     {        
         // if cubeVizApp was not loaded yet
         if(false === CubeViz_ViewHelper::$isCubeVizAppLoaded) {  
@@ -98,7 +98,7 @@ class CubeViz_ViewHelper
             /**
              * Read information from files according to given hashes
              */
-            $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
+            $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit, $dimensionElementLimit);
             $config = array();
             $generatedDataHash = '';
             $generatedUiHash = '';

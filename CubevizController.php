@@ -21,6 +21,12 @@ class CubevizController extends OntoWiki_Controller_Component
             $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR
         );
         
+        // limit dimension element number
+        $this->_dimensionElementLimit = 0 < (int) $this->_privateConfig->get('dimensionElementLimit')
+            ? $this->_privateConfig->get('dimensionElementLimit')
+            : 100;
+        
+        // max number of result entries to use title helper
         $this->_titleHelperLimit = 0 < (int) $this->_privateConfig->get('titleHelperLimit')
             ? $this->_privateConfig->get('titleHelperLimit')
             : 400;
@@ -955,7 +961,8 @@ class CubevizController extends OntoWiki_Controller_Component
                 $this->_request->getParam ('cv_dataHash'),
                 $this->_request->getParam ('cv_uiHash'),
                 $modelInformation,
-                $this->_titleHelperLimit
+                $this->_titleHelperLimit,
+                $this->_dimensionElementLimit
             );
         } catch (Exception $e) {
             $this->_redirect(
@@ -1097,8 +1104,12 @@ class CubevizController extends OntoWiki_Controller_Component
         if ('data' == $type && 'false' == $useObservations) {
             
             // setup 
-            $model = new Erfurt_Rdf_Model ($modelIri);
-            $query = new DataCube_Query ($model, $this->_titleHelperLimit);
+            $model = new Erfurt_Rdf_Model($modelIri);
+            $query = new DataCube_Query(
+                $model, 
+                $this->_titleHelperLimit, 
+                $this->_dimensionElementLimit
+            );
             
             // decode content
             $content = json_decode($stringifiedContent, true);
@@ -1114,7 +1125,9 @@ class CubevizController extends OntoWiki_Controller_Component
         
         // write given content to file
         $configuration = new CubeViz_ConfigurationLink(
-            $this->_owApp->selectedModel, $this->_titleHelperLimit
+            $this->_owApp->selectedModel, 
+            $this->_titleHelperLimit,
+            $this->_dimensionElementLimit
         );
                 
         $configuration->write($stringifiedContent, $hash);

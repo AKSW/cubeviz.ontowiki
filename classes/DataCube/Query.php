@@ -12,6 +12,7 @@
  */
 class DataCube_Query 
 {    
+    protected $_dimensionElementLimit = -1;
     protected $_model = null;
     protected $_store = null;
     protected $_titleHelperLimit = -1;
@@ -19,8 +20,9 @@ class DataCube_Query
     /**
      * Constructor
      */
-    public function __construct ($model, $titleHelperLimit)
+    public function __construct ($model, $titleHelperLimit, $dimensionElementLimit)
     {
+        $this->_dimensionElementLimit = $dimensionElementLimit;
         $this->_model = $model;
         $this->_titleHelperLimit = $titleHelperLimit;
     
@@ -356,7 +358,8 @@ class DataCube_Query
             foreach ($tmp as $component) {
                 
                 // if not measure
-                if ($componentType != DataCube_UriOf::Measure) {
+                if ($componentType != DataCube_UriOf::Attribute 
+                    && $componentType != DataCube_UriOf::Measure ) {
                     $component ['__cv_elements'] = $this->getComponentElements(
                         $dsUri, $component[$componentType]
                     );
@@ -376,7 +379,7 @@ class DataCube_Query
     }
     
     /**
-     * Returns an array of Resources which has a certain relation ($componentProperty) to a dataset.
+     * Returns an array of resources which has a certain relation ($componentProperty) to a dataset.
      * @param $dataSetUri DataSet Uri
      * @param $componentProperty Uri of a certain dimension property
      * @return array
@@ -410,6 +413,9 @@ class DataCube_Query
             $result = $this->_model->sparqlQuery($sparql);
             
             $result = $this->generateAssocSPOArrayFromSparqlResult($result, 'componentUri', 'p', 'o');
+            
+            // limit the number of dimension elements
+            $result = array_slice($result, 0, $this->_dimensionElementLimit);
 
             $result = $this->enrichResult($result);
             

@@ -25,7 +25,12 @@
   
   :context "production"^^xsd:string ;
   
+  # If number of result entries is higher as this number, no TitleHelper will be used
   :titleHelperLimit "1000"^^xsd:integer ;
+  
+  # Limit the number of dimension elements to this number. Affects the number of 
+  # possible observation! The lower the better the performance.
+  :dimensionElementLimit "100"^^xsd:integer ;
   
   #
   # Activate / deactivate certain functionalities

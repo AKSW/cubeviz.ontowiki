@@ -30,7 +30,12 @@ class DataselectionModule extends OntoWiki_Module
             $path . DIRECTORY_SEPARATOR .'classes' . DIRECTORY_SEPARATOR . PATH_SEPARATOR
         );
         
-        // 
+        // limit dimension element number
+        $this->_dimensionElementLimit = 0 < (int) $this->_privateConfig->get('dimensionElementLimit')
+            ? $this->_privateConfig->get('dimensionElementLimit')
+            : 100;
+        
+        // max number of result entries to use title helper
         $this->_titleHelperLimit = 0 < $this->_privateConfig->get('titleHelperLimit')
             ? $this->_privateConfig->get('titleHelperLimit')
             : 400;
@@ -48,7 +53,11 @@ class DataselectionModule extends OntoWiki_Module
     public function shouldShow()
     {
         if (true == isset($this->_owApp->selectedModel)) {
-            $q = new DataCube_Query ($this->_owApp->selectedModel, $this->_titleHelperLimit);
+            $q = new DataCube_Query (
+                $this->_owApp->selectedModel, 
+                $this->_titleHelperLimit,
+                $this->_dimensionElementLimit
+            );
             return $q->containsDataCubeInformation();
         } 
         return false;
@@ -59,7 +68,11 @@ class DataselectionModule extends OntoWiki_Module
      */
     public function getContents() 
     {
-        $q = new DataCube_Query ($this->_owApp->selectedModel, $this->_titleHelperLimit);
+        $q = new DataCube_Query (
+            $this->_owApp->selectedModel, 
+            $this->_titleHelperLimit,
+            $this->_dimensionElementLimit
+        );
         if (false === $q->containsDataCubeInformation()) {
             return false;
         }
@@ -153,7 +166,8 @@ class DataselectionModule extends OntoWiki_Module
             $baseImagesPath,
             $this->_request->getParam ('cv_dataHash'),
             $this->_request->getParam ('cv_uiHash'),
-            $this->_titleHelperLimit
+            $this->_titleHelperLimit,
+            $this->_dimensionElementLimit
         );
         
         if(null !== $config) {
