@@ -699,16 +699,16 @@ class DataCube_Query
             
             $queryObject->setWherePart($where);
             
-            $queryObject->setLimit(500);
-            
             $result = $this->_model->sparqlQuery((string) $queryObject);
             
             // generate associative array out of given observation result
             $result = $this->generateAssocSPOArrayFromSparqlResult($result, 's', 'p', 'o');
             
-            // enrich data with CubeViz sugar
-            $result = $this->enrichResult($result, false);
+            // limit the number of observations
+            $result = array_slice($result, 0, 500);
             
+            // enrich data with CubeViz sugar
+            $result = $this->enrichResult($result, false);            
             
             // close the object cache transaction
             $this->_queryCache->endTransaction($objectId);
