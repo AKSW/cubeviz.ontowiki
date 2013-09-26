@@ -8,7 +8,6 @@ src/Model/CubeViz/View/Helper.ts
 src/Model/CubeViz/Visualization/Controller.ts
 
 src/Model/CubeViz/Visualization/D3js.ts
-src/Model/CubeViz/Visualization/D3js/CirclePacking.ts
 src/Model/CubeViz/Visualization/D3js/CirclePackingForClusters.ts
 
 src/Model/CubeViz/Visualization/HighCharts.ts

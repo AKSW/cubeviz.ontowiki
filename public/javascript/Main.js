@@ -655,6 +655,7 @@ var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
         };
         var dimensionElement = {
         };
+        var self = this;
         var title = "";
         var value = null;
 
@@ -662,21 +663,29 @@ var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
             name: ".",
             children: []
         };
-        _.each(observations, function (observation) {
+        _.each(multipleDimensions[0].__cv_elements, function (element) {
             title = "";
-            value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
-            _.each(multipleDimensions, function (dimension) {
-                dimensionElement = DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimension["http://purl.org/linked-data/cube#dimension"]]);
-                if(false === _.isNull(dimensionElement)) {
-                    title += dimensionElement.__cv_niceLabel + " ";
+            cluster = {
+                name: element.__cv_niceLabel,
+                children: []
+            };
+            _.each(observations, function (observation) {
+                if(observation[multipleDimensions[0]["http://purl.org/linked-data/cube#dimension"]] == element.__cv_uri) {
+                    _.each(multipleDimensions, function (dimension) {
+                        dimensionElement = DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimension["http://purl.org/linked-data/cube#dimension"]]);
+                        if(false === _.isNull(dimensionElement)) {
+                            title += dimensionElement.__cv_niceLabel + " ";
+                        }
+                    });
+                    value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+                    cluster.children.push({
+                        name: title + ": " + value,
+                        size: value
+                    });
                 }
             });
-            cluster.children.push({
-                name: title + ": " + value,
-                size: value
-            });
+            self.generatedData.children.push(cluster);
         });
-        this.generatedData.children.push(cluster);
     };
     CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         this.chartConfig = chartConfig;
@@ -4726,7 +4735,7 @@ var View_IndexAction_Legend = (function (_super) {
             $("#cubeviz-legend-observations > tbody:last").append(html);
             $($("#cubeviz-legend-observations").find(".cubeviz-legend-measureTd").last()).data("observation", observation);
             if(false === _.isNull(observation.__cv_sourceObservation) && false === _.isUndefined(observation.__cv_sourceObservation)) {
-                if(1 == _.size(observation.__cv_sourceObservation)) {
+                if(1 == _.size(observation.__cv_sourceObservation) && false === _.isNull(observation.__cv_sourceObservation[0])) {
                     $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation1").last()).remove();
                     var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation0").last());
                     $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + observation.__cv_sourceObservation[0].__cv_uri + "\" target=\"_blank\">" + observation.__cv_sourceObservation[0].__cv_uri + "</a></td>" + "</tr>");
@@ -4748,31 +4757,34 @@ var View_IndexAction_Legend = (function (_super) {
                         $table.fadeToggle(200);
                     });
                 } else {
-                    $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).html("Show more information about <strong>both</strong> source Observations " + "<i class=\"icon-chevron-down\"></i>");
-                    _.each([
-                        0, 
-                        1
-                    ], function (position) {
-                        var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation" + position).last());
-                        $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + observation.__cv_sourceObservation[position].__cv_uri + "\" target=\"_blank\">" + observation.__cv_sourceObservation[position].__cv_uri + "</a></td>" + "</tr>");
-                        _.each(observation.__cv_sourceObservation[position], function (value, property) {
-                            if(false === _.str.include(property, "__cv_")) {
-                                if(true === _.isObject(value) || true === _.isArray(value)) {
-                                    var list = new CubeViz_Collection();
-                                    value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
-                                } else {
-                                    if(true === self.isValidUrl(value)) {
-                                        value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                    if(true === _.isNull(observation.__cv_sourceObservation[0])) {
+                    } else {
+                        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).html("Show more information about <strong>both</strong> source Observations " + "<i class=\"icon-chevron-down\"></i>");
+                        _.each([
+                            0, 
+                            1
+                        ], function (position) {
+                            var $table = $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation" + position).last());
+                            $table.append("<tr>" + "<td>URI</td>" + "<td style=\"word-break:break-all;\">" + "<a href=\"" + observation.__cv_sourceObservation[position].__cv_uri + "\" target=\"_blank\">" + observation.__cv_sourceObservation[position].__cv_uri + "</a></td>" + "</tr>");
+                            _.each(observation.__cv_sourceObservation[position], function (value, property) {
+                                if(false === _.str.include(property, "__cv_")) {
+                                    if(true === _.isObject(value) || true === _.isArray(value)) {
+                                        var list = new CubeViz_Collection();
+                                        value = CubeViz_Visualization_Controller.linkify(list.addList(value)._.join(", "));
+                                    } else {
+                                        if(true === self.isValidUrl(value)) {
+                                            value = "<a href=\"" + value + "\" target=\"_blank\">" + _.str.prune(value, 60) + "</a>";
+                                        }
                                     }
+                                    $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
                                 }
-                                $table.append("<tr>" + "<td>" + "<a href=\"" + property + "\" target=\"_blank\">" + property + "</a></td>" + "<td style=\"word-break:break-all;\">" + value + "</td>" + "</tr>");
-                            }
+                            });
+                            $table.hide();
+                            $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).click(function () {
+                                $table.fadeToggle(200);
+                            });
                         });
-                        $table.hide();
-                        $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservationOpener").last()).click(function () {
-                            $table.fadeToggle(200);
-                        });
-                    });
+                    }
                 }
             }
         });
