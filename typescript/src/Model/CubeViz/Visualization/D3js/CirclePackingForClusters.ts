@@ -47,8 +47,10 @@ class CubeViz_Visualization_D3js_CirclePackingForClusters
                     observation[dimension["http://purl.org/linked-data/cube#dimension"]]
                 );
                 
-                // build title
-                title += dimensionElement.__cv_niceLabel + " ";
+                if (false === _.isNull(dimensionElement)) {
+                    // build title
+                    title += dimensionElement.__cv_niceLabel + " ";
+                }
             });
             
             // add observation to according cluster

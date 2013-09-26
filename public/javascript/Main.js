@@ -667,7 +667,9 @@ var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
             value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
             _.each(multipleDimensions, function (dimension) {
                 dimensionElement = DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimension["http://purl.org/linked-data/cube#dimension"]]);
-                title += dimensionElement.__cv_niceLabel + " ";
+                if(false === _.isNull(dimensionElement)) {
+                    title += dimensionElement.__cv_niceLabel + " ";
+                }
             });
             cluster.children.push({
                 name: title + ": " + value,
