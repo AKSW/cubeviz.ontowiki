@@ -545,7 +545,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
             if (false === _.isNull(observation.__cv_sourceObservation)
                 && false === _.isUndefined(observation.__cv_sourceObservation)) {
                 
-                if (1 == _.size(observation.__cv_sourceObservation)) {
+                if (1 == _.size(observation.__cv_sourceObservation)
+                    && false === _.isNull(observation.__cv_sourceObservation[0])) {
                 
                     $($("#cubeviz-legend-observations").find(".cubeviz-legend-sourceObservation1").last()).remove();
                 
@@ -603,8 +604,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
                             $table.fadeToggle(200);
                         });
                 
+                // no source observation
+                } else if (true === _.isNull(observation.__cv_sourceObservation[0])) {
+                    
+                    
                 // more than one source observation
-                
                 } else {
                     
                     // update notification text
