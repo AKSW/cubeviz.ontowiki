@@ -141,13 +141,6 @@ class DataselectionModule extends OntoWiki_Module
         $modelIri = $model->getModelIri();
         $modelStore = $model->getStore();        
         
-        // get cache dir
-        if (true === method_exists ($this->_owApp->erfurt, 'getCacheDir')) {
-            $cacheDir = $this->_owApp->erfurt->getCacheDir() . '/';
-        } else {
-            $cacheDir = $this->_owApp->erfurt->getTmpDir() . '/';
-        }
-        
         $serviceUrl = true === isset($_SESSION ['ONTOWIKI']['serviceUrl'])
             ? $_SESSION ['ONTOWIKI']['serviceUrl']
             : null;
