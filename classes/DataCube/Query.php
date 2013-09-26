@@ -275,7 +275,10 @@ class DataCube_Query
             if ('' != $dsdUri && '' != $dsUri) {
                 $sparql = 'SELECT ?comp ?p ?o 
                     WHERE {                    
-                        <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.                
+                    
+                        <'. $dsUri .'> <http://purl.org/linked-data/cube#structure> <'.$dsdUri.'>.
+                    
+                        <'.$dsdUri.'> <'.DataCube_UriOf::Component.'> ?comp.   
                     
                         ?comp <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <'.DataCube_UriOf::ComponentSpecification.'>.
                     
