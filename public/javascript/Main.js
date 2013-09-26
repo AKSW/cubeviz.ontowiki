@@ -633,7 +633,6 @@ var CubeViz_Visualization_D3js = (function (_super) {
         _super.call(this);
         this.name = "D3js";
         this.supportedClassNames = [
-            "CubeViz_Visualization_D3js_CirclePacking", 
             "CubeViz_Visualization_D3js_CirclePackingForClusters"
         ];
     }
@@ -642,81 +641,6 @@ var CubeViz_Visualization_D3js = (function (_super) {
     };
     return CubeViz_Visualization_D3js;
 })(CubeViz_Visualization);
-var CubeViz_Visualization_D3js_CirclePacking = (function () {
-    function CubeViz_Visualization_D3js_CirclePacking() {
-        this.chartConfig = {
-        };
-        this.generatedData = {
-            name: "",
-            children: []
-        };
-    }
-    CubeViz_Visualization_D3js_CirclePacking.prototype.computeData = function (observations, multipleDimensions, selectedMeasure) {
-        var children = [];
-        var circleLabel = [];
-        var self = this;
-        var valueToUse = null;
-
-        _.each(observations, function (observation) {
-            if(false === DataCube_Observation.isActive(observation)) {
-                return;
-            }
-            circleLabel = [];
-            children = [
-                {
-                    name: "",
-                    size: ""
-                }
-            ];
-            _.each(multipleDimensions, function (dimension) {
-                _.each(dimension.__cv_elements, function (element) {
-                    if(element.__cv_uri === observation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
-                        circleLabel.push(element.__cv_niceLabel);
-                    }
-                });
-            });
-            children[0].name = circleLabel.join(" - ");
-            children[0].size = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
-            self.generatedData.children.push({
-                name: observation.__cv_niceLabel,
-                children: children
-            });
-        });
-    };
-    CubeViz_Visualization_D3js_CirclePacking.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
-        this.chartConfig = chartConfig;
-        this.computeData(retrievedObservations, multipleDimensions, selectedMeasure);
-        return this;
-    };
-    CubeViz_Visualization_D3js_CirclePacking.prototype.getRenderResult = function () {
-        var diameter = 960;
-        var pack = d3.layout.pack().size([
-            diameter - 4, 
-            diameter - 4
-        ]).value(function (d) {
-            return d.size;
-        });
-        var svg = d3.select("#cubeviz-index-visualization").append("svg").attr("width", diameter).attr("height", diameter).append("g").attr("transform", "translate(2,2)");
-        var node = svg.datum(this.generatedData).selectAll(".node").data(pack.nodes).enter().append("g").attr("class", function (d) {
-            return d.children ? "node" : "cubeviz-visualization-d3js-circleLeaf node";
-        }).attr("transform", function (d) {
-            return "translate(" + d.x + "," + d.y + ")";
-        });
-        node.append("title").text(function (d) {
-            return d.name + (d.children ? "" : ": " + d.size);
-        });
-        node.append("circle").attr("r", function (d) {
-            return d.r;
-        });
-        node.filter(function (d) {
-            return !d.children;
-        }).append("text").attr("dy", ".3em").style("fill", this.chartConfig.style.circle["fill"]).style("font-size", this.chartConfig.style.circle["font-size"]).style("font-weight", this.chartConfig.style.circle["font-weight"]).style("text-anchor", this.chartConfig.style.circle["text-anchor"]).text(function (d) {
-            return d.name.substring(0, d.r * 0.3);
-        });
-        return svg;
-    };
-    return CubeViz_Visualization_D3js_CirclePacking;
-})();
 var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
     function CubeViz_Visualization_D3js_CirclePackingForClusters() {
         this.chartConfig = {
@@ -729,25 +653,28 @@ var CubeViz_Visualization_D3js_CirclePackingForClusters = (function () {
     CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.computeData = function (observations, multipleDimensions, selectedMeasure) {
         var cluster = {
         };
-        var self = this;
+        var dimensionElement = {
+        };
+        var title = "";
         var value = null;
 
-        _.each(multipleDimensions[0].__cv_elements, function (element) {
-            cluster = {
-                name: element.__cv_niceLabel,
-                children: []
-            };
-            _.each(observations, function (observation) {
-                if(observation[multipleDimensions[0]["http://purl.org/linked-data/cube#dimension"]] == element.__cv_uri) {
-                    value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
-                    cluster.children.push({
-                        name: _.str.numberFormat(value, 4, ',', '.'),
-                        size: value
-                    });
-                }
+        cluster = {
+            name: ".",
+            children: []
+        };
+        _.each(observations, function (observation) {
+            title = "";
+            value = DataCube_Observation.parseValue(observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+            _.each(multipleDimensions, function (dimension) {
+                dimensionElement = DataCube_Component.findDimensionElement(dimension.__cv_elements, observation[dimension["http://purl.org/linked-data/cube#dimension"]]);
+                title += dimensionElement.__cv_niceLabel + " ";
             });
-            self.generatedData.children.push(cluster);
+            cluster.children.push({
+                name: title + ": " + value,
+                size: value
+            });
         });
+        this.generatedData.children.push(cluster);
     };
     CubeViz_Visualization_D3js_CirclePackingForClusters.prototype.init = function (chartConfig, retrievedObservations, selectedComponentDimensions, multipleDimensions, oneElementDimensions, selectedMeasure, selectedAttributeUri) {
         this.chartConfig = chartConfig;
@@ -1633,8 +1560,8 @@ var DataCube_DataCubeMerger = (function () {
             componentSpecification = {
                 __cv_niceLabel: dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
                 "http://www.w3.org/2000/01/rdf-schema#label": dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
-                __cv_description: "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
-                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical Component Specification and it consists of '" + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
+                __cv_description: "Its an artifical Component Specification and it consists of " + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
+                "http://www.w3.org/2000/01/rdf-schema#comment": "Its an artifical Component Specification and it consists of " + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
                 __cv_uri: mergedDataCubeUri + "componentSpecificationDimension" + i,
                 __cv_hashedUri: CryptoJS.MD5(mergedDataCubeUri + "componentSpecificationDimension" + i) + "",
                 "http://purl.org/dc/terms/source": [

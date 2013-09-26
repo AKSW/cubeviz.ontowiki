@@ -9,6 +9,7 @@ class CubeViz_Visualization_D3js_CirclePackingForClusters
     public generatedData:any = {name: "", children: []};
     
     /**
+     * Go through all observations and add them to the cluster.
      * @param observations any
      * @param multipleDimensions any[]
      * @param selectedMeasure any
@@ -16,37 +17,46 @@ class CubeViz_Visualization_D3js_CirclePackingForClusters
     public computeData(observations:any, multipleDimensions:any[], selectedMeasure:any) : void 
     {
         var cluster:any = {},
-            self = this,
+            dimensionElement:any = {},
+            title:string = "",
             value:any = null;
-        
-        // each "cluster" represents one of this dimension's dimension elements
-        _.each (multipleDimensions[0].__cv_elements, function(element){
-                
-            cluster = {
-                // cluster title
-                name: element.__cv_niceLabel,
-                children: []
-            }
+           
+        cluster = {
+            // cluster title
+            name: ".",
             
-            _.each (observations, function(observation){
+            // contains the observations later on
+            children: []
+        }
+        
+        // add observations to cluster
+        _.each (observations, function(observation){
+            
+            title = "";
+            
+            // parse observation value
+            value = DataCube_Observation.parseValue(
+                observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
+            );
+            
+            _.each(multipleDimensions, function(dimension){
                 
-                // if current observation had a relation to one the dimension
-                // elements, add it to the cluster
-                if (observation[multipleDimensions[0]["http://purl.org/linked-data/cube#dimension"]] == element.__cv_uri) {
-                    
-                    // parse observation value
-                    value = DataCube_Observation.parseValue(
-                        observation, selectedMeasure["http://purl.org/linked-data/cube#measure"]
-                    );
-                    
-                    // add observation to according cluster
-                    cluster.children.push ({ name: _.str.numberFormat(value, 4, ',', '.'), size: value });
-                }
+                // search according dimension element
+                dimensionElement = DataCube_Component.findDimensionElement(
+                    dimension.__cv_elements,
+                    observation[dimension["http://purl.org/linked-data/cube#dimension"]]
+                );
+                
+                // build title
+                title += dimensionElement.__cv_niceLabel + " ";
             });
             
-            // after cluster was built, add it to big giantic ball
-            self.generatedData.children.push (cluster);
+            // add observation to according cluster
+            cluster.children.push ({ name: title + ": " + value, size: value });
         });
+        
+        // after cluster was built, add it to big giantic ball
+        this.generatedData.children.push (cluster);
     }
     
     /**

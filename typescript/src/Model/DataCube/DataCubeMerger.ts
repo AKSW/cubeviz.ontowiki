@@ -200,11 +200,11 @@ class DataCube_DataCubeMerger
                     dimensionPair[0].__cv_niceLabel + " / " + dimensionPair[1].__cv_niceLabel,
                 
                 // description
-                __cv_description: "Its an artifical Component Specification and it consists of '"
+                __cv_description: "Its an artifical Component Specification and it consists of "
                     + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel
                     + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
                 "http://www.w3.org/2000/01/rdf-schema#comment": 
-                    "Its an artifical Component Specification and it consists of '"
+                    "Its an artifical Component Specification and it consists of "
                     + dimensionPair[0].__cv_niceLabel + " from dataset " + dataSets[0].__cv_niceLabel
                     + " and " + dimensionPair[1].__cv_niceLabel + " from dataset " + dataSets[1].__cv_niceLabel,
                 
