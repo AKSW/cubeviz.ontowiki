@@ -786,7 +786,8 @@ class CubevizController extends OntoWiki_Controller_Component
             if('' != $dataHash) {
                 $configuration = new CubeViz_ConfigurationLink(
                     $this->_owApp->selectedModel,
-                    $this->_titleHelperLimit
+                    $this->_titleHelperLimit,
+                    $this->_dimensionElementLimit
                 );
 
                 // load configuration which is associated with given linkCode
