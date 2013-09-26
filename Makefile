@@ -9,15 +9,11 @@ default:
 	@echo ""
 	@echo " Package Generation"
 	@echo "    make cubeviz > Generate tar.gz archive in generated-packages folder"
-	@echo "    make ontowiki > Generate an stand-alone ready-to-use OntoWiki archive"
 	@echo ""
 	
 install:
 	cp ChartConfig.js.dist ChartConfig.js
 	cp doap.n3.dist doap.n3
-
-ontowiki:
-	sh deployment/scripts/createOntoWiki.sh
 	
 cubeviz:
 	sh deployment/scripts/createCubeViz.sh
