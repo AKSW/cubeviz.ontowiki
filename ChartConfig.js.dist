@@ -337,25 +337,6 @@ var CubeViz_ChartConfig = {
             },
             
             {
-                label: "Circle Packing",
-                className: "CubeViz_Visualization_D3js_CirclePacking",
-                icon: "circlePacking.svg",
-                
-                defaultConfig: {
-                    style: {
-                        circle: {
-                            "fill": "#FFFFFF",
-                            "font-size": "9px",
-                            "font-weight": "bold",
-                            "text-anchor": "middle"
-                        }
-                    }
-                },
-                
-                options: []
-            },
-            
-            {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
                 "icon": "bar.svg",
