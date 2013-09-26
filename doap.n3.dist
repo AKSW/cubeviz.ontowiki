@@ -14,7 +14,8 @@
   doap:name "CubeViz" ;
   rdfs:label "CubeViz" ;
 
-  owconfig:authorLabel "" ;
+  owconfig:authorLabel "Michael Martin" ;
+  owconfig:authorLabel "Konrad Abicht" ;
   owconfig:enabled "true"^^xsd:boolean ;
   owconfig:hasModule :Default ;
   owconfig:privateNamespace <https://github.com/AKSW/cubeviz/raw/master/doap.n3#> ;
@@ -57,8 +58,6 @@
   owconfig:caching "true"^^xsd:boolean ;
   owconfig:priority "1" ;
   owconfig:context "main.sidewindows" .
-
-:cubeviz doap:release :v1-0 .
 
 :v1-0 a doap:Version ;
   doap:revision "1.0" .
