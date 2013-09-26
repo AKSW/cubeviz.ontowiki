@@ -1061,7 +1061,7 @@ class CubevizController extends OntoWiki_Controller_Component
             $this->_titleHelperLimit, 
             $this->_dimensionElementLimit
         );
-        $this->view->containsDataCubeInformation = $q->containsDataCubeInformation();
+        $this->view->containsDataCubeInformation = $query->containsDataCubeInformation();
     }
     
     /**
