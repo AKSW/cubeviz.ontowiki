@@ -14,7 +14,7 @@ default:
 	
 install:
 	cp ChartConfig.js.dist ChartConfig.js
-	cp doap.n3-dist doap.n3
+	cp doap.n3.dist doap.n3
 
 ontowiki:
 	sh deployment/scripts/createOntoWiki.sh
