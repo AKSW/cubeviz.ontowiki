@@ -794,16 +794,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 } else {
                     return;
                 }
-                if(false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
-                    valueToUse = seriesObservation.__cv_temporaryNewValue;
-                } else {
-                    valueToUse = seriesObservation[selectedMeasureUri];
-                }
-                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {
-                    obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(valueToUse);
-                } else {
-                    obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = null;
-                }
+                obj.data[categoriesElementAssign[seriesObservation[forXAxis]]] = DataCube_Observation.parseValue(seriesObservation, selectedMeasureUri);
             });
             if(0 == _.size(obj.data)) {
             } else {

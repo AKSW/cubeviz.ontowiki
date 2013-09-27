@@ -105,24 +105,9 @@ class CubeViz_Visualization_HighCharts_Chart
                     return;
                 }
                 
-                // set observation value, distinguish between original and user-set
-                // one: prefer the user-set one over the original
-                if (false === _.isUndefined(seriesObservation.__cv_temporaryNewValue)) {
-                    valueToUse = seriesObservation.__cv_temporaryNewValue;
-                } else {
-                    valueToUse = seriesObservation[selectedMeasureUri];
-                }
-                    
-                /**
-                 * check if measure value is set, if not add null
-                 */
-                if(false === _.isUndefined(seriesObservation[selectedMeasureUri])) {                        
-                    obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = parseFloat(
-                        valueToUse
-                    );
-                } else {
-                    obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = null;
-                }
+                // set observation value
+                obj.data [categoriesElementAssign[seriesObservation[forXAxis]]] = 
+                    DataCube_Observation.parseValue(seriesObservation, selectedMeasureUri);
             });
             
             // if nothing was added, ignore obj
