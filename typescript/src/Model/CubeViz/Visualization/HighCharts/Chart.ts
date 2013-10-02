@@ -6,11 +6,16 @@ class CubeViz_Visualization_HighCharts_Chart
     public chartConfig:any;
     
     /**
-     *
+     * @param selectedComponentDimensions any
+     * @param forXAxis string
+     * @param forSeries string
+     * @param selectedAttributeUri string
+     * @param selectedMeasureUri string
+     * @param observation DataCube_Observation
      */
     public handleTwoDimensionsWithAtLeastOneDimensionElement(selectedComponentDimensions:any,
         forXAxis:string, forSeries:string, selectedAttributeUri:string, 
-        selectedMeasureUri:string, observation:DataCube_Observation ) : void 
+        selectedMeasureUri:string, observation:DataCube_Observation) : void 
     {
         var categoriesElementAssign = {},
             i:number = 0,

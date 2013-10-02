@@ -4606,12 +4606,18 @@ var View_IndexAction_Legend = (function (_super) {
             }
         });
     };
-    View_IndexAction_Legend.prototype.displayRetrievedObservations = function (observations, selectedDimensions, selectedMeasure) {
+    View_IndexAction_Legend.prototype.displayRetrievedObservations = function (observations, selectedDimensions, selectedMeasure, selectedAttribute) {
         var html = "";
         var i = 0;
         var label = "";
+        var selectedAttributeUri = "";
         var self = this;
 
+        if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
+            selectedAttributeUri = null;
+        } else {
+            selectedAttributeUri = selectedAttribute.__cv_uri;
+        }
         $("#cubeviz-legend-retrievedObservationsTitle").html(DataCube_Observation.getNumberOfActiveObservations(observations) + " Retrieved Observations");
         $("#cubeviz-legend-observations").html("");
         html = "<tr>" + "<td></td>";
@@ -4654,6 +4660,9 @@ var View_IndexAction_Legend = (function (_super) {
         var i = 1;
         _.each(observations, function (observation) {
             if(false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(observation[selectedAttributeUri]) || true === _.isUndefined(observation[selectedAttributeUri]))) && selectedAttributeUri !== observation["http://purl.org/linked-data/cube#attribute"]) {
                 return;
             }
             if(false === _.isNull(observation.__cv_sourceDataset) && false === _.isUndefined(observation.__cv_sourceDataset)) {
@@ -4873,6 +4882,65 @@ var View_IndexAction_Legend = (function (_super) {
             });
         }
     };
+    View_IndexAction_Legend.prototype.getSelectedObservations = function (selectedComponentDimensions, retrievedObservations, selectedAttribute, selectedMeasure) {
+        var forXAxis = "";
+        var forSeries = "";
+        var observation = new DataCube_Observation();
+
+        observation.initialize(retrievedObservations, selectedComponentDimensions, selectedMeasure["http://purl.org/linked-data/cube#measure"]);
+        var selectedAttributeUri = "";
+        if(true === _.isNull(selectedAttribute) || true === _.isUndefined(selectedAttribute)) {
+            selectedAttributeUri = null;
+        } else {
+            selectedAttributeUri = selectedAttribute.__cv_uri;
+        }
+        _.each(selectedComponentDimensions, function (selectedDimension) {
+            if(2 > _.keys(selectedDimension.__cv_elements).length) {
+                return;
+            }
+            if(null == forXAxis) {
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+            } else {
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+            }
+        });
+        var observationsToReturn = [];
+        var seriesElements = observation.getAxesElements(forSeries);
+        var useObservation = 0;
+
+        _.each(seriesElements, function (seriesElement) {
+            _.each(seriesElement.observations, function (seriesObservation) {
+                useObservation = 0;
+                if(false === DataCube_Observation.isActive(seriesObservation)) {
+                    return;
+                }
+                if((false === _.isNull(selectedAttributeUri) && (true === _.isNull(seriesObservation[selectedAttributeUri]) || true === _.isUndefined(seriesObservation[selectedAttributeUri]))) && selectedAttributeUri !== seriesObservation["http://purl.org/linked-data/cube#attribute"]) {
+                    return;
+                }
+                _.each(selectedComponentDimensions, function (dimension) {
+                    if(2 == useObservation) {
+                        return;
+                    } else {
+                        if(2 > useObservation) {
+                            useObservation = 0;
+                        }
+                    }
+                    _.each(dimension.__cv_elements, function (dimensionElement) {
+                        if(dimensionElement.__cv_uri == seriesObservation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
+                            useObservation = 1;
+                        }
+                    });
+                    if(0 == useObservation) {
+                        useObservation = 2;
+                    }
+                });
+                if(1 === useObservation) {
+                    observationsToReturn.push(seriesObservation);
+                }
+            });
+        });
+        return observationsToReturn;
+    };
     View_IndexAction_Legend.prototype.initialize = function () {
         this.render();
     };
@@ -4935,7 +5003,7 @@ var View_IndexAction_Legend = (function (_super) {
                 return;
             }
         }
-        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
     };
     View_IndexAction_Legend.prototype.onClick_sortDesc = function (e) {
         if(false === _.isUndefined($(e.target).data("dimension"))) {
@@ -4947,7 +5015,7 @@ var View_IndexAction_Legend = (function (_super) {
                 return;
             }
         }
-        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+        this.displayRetrievedObservations(this.app._.data.retrievedObservations, this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
     };
     View_IndexAction_Legend.prototype.onDblClick_measureTd = function (e) {
         if(true === _.isUndefined($(e.target).data("observation")) || true === _.isNull($(e.target).data("observation"))) {
@@ -4977,6 +5045,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.initialize();
     };
     View_IndexAction_Legend.prototype.render = function () {
+        var selectedObservations = this.getSelectedObservations(this.app._.data.selectedComponents.dimensions, this.app._.data.retrievedObservations, this.app._.data.selectedComponents.attribute, this.app._.data.selectedComponents.measure);
         var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"];
         var self = this;
 
@@ -4984,7 +5053,7 @@ var View_IndexAction_Legend = (function (_super) {
         this.displayDataset(this.app._.data.selectedDS, this.app._.data.selectedDSD);
         this.displaySelectedDimensions(this.app._.data.selectedComponents.dimensions);
         this.displaySelectedMeasureAndAttribute(this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
-        this.displayRetrievedObservations(this.sortMeasureValuesAscOrDesc(this.app._.data.selectedComponents.measure, this.app._.data.retrievedObservations, -1, 1), this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure);
+        this.displayRetrievedObservations(this.sortMeasureValuesAscOrDesc(this.app._.data.selectedComponents.measure, selectedObservations, -1, 1), this.app._.data.selectedComponents.dimensions, this.app._.data.selectedComponents.measure, this.app._.data.selectedComponents.attribute);
         CubeViz_View_Helper.attachDialogTo($("#cubeviz-legend-componentDimensionInfoDialog"), {
             closeOnEscape: true,
             showCross: true,

@@ -305,12 +305,20 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      * selectedMeasure any
      */
     public displayRetrievedObservations(observations:any, selectedDimensions:any,
-        selectedMeasure:any) : void
+        selectedMeasure:any, selectedAttribute:any) : void
     {
         var html:string = "",
             i:number = 0,
             label:string = "",
+            selectedAttributeUri:string = "",
             self = this;
+            
+        if (true === _.isNull(selectedAttribute) 
+            || true === _.isUndefined(selectedAttribute)) {
+            selectedAttributeUri = null;
+        } else {
+            selectedAttributeUri = selectedAttribute.__cv_uri;
+        }
      
         // set title containing number of retrieved observations
         $("#cubeviz-legend-retrievedObservationsTitle").html (
@@ -426,7 +434,25 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
          var i:number = 1;
         _.each(observations, function(observation){
             
+            // if observatin is not active, ignore it
             if (false === DataCube_Observation.isActive(observation)) {
+                return;
+            }
+            
+            // check if the current observation has to be ignored:
+            // it will ignored, 
+            //      if attribute uri is set, but the observation
+            //      has no value of it
+            // and
+            //      if the predicate which is labeled with DataCube's 
+            //      attribute is not equal to the given selected attribute uri
+            if ((false === _.isNull(selectedAttributeUri)
+                && 
+                (true === _.isNull(observation[selectedAttributeUri])
+                 || true === _.isUndefined(observation[selectedAttributeUri])))
+                && 
+                selectedAttributeUri !== observation["http://purl.org/linked-data/cube#attribute"]) {
+                // TODO implement a way to handle ignored observations
                 return;
             }
             
@@ -1073,6 +1099,120 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
     }
     
     /**
+     * @param selectedComponentDimensions any
+     * @param forSeries string
+     * @param selectedAttribute any
+     * @param selectedMeasure any
+     */
+    public getSelectedObservations(selectedComponentDimensions:any,
+        retrievedObservations:any, selectedAttribute:any, selectedMeasure:any) : any
+    {
+        /**
+         * init observation instance which handles the observations later on
+         */
+        var forXAxis:string = "", forSeries:string = "",
+            observation:DataCube_Observation = new DataCube_Observation ();
+        
+        observation.initialize(
+            retrievedObservations,
+            selectedComponentDimensions,
+            selectedMeasure["http://purl.org/linked-data/cube#measure"]
+        );
+                
+        
+        /**
+         * set attribute uri, if available
+         */
+        var selectedAttributeUri:string = "";
+        if (true === _.isNull(selectedAttribute) 
+            || true === _.isUndefined(selectedAttribute)) {
+            selectedAttributeUri = null;
+        } else {
+            selectedAttributeUri = selectedAttribute.__cv_uri;
+        }        
+        
+        // assign selected dimensions to xAxis and series (yAxis)
+        _.each(selectedComponentDimensions, function(selectedDimension){
+            // ignore dimensions which have no elements
+            if ( 2 > _.keys(selectedDimension.__cv_elements).length) {
+                return;
+            }
+            if ( null == forXAxis ) {
+                forXAxis = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+            } else {
+                forSeries = selectedDimension["http://purl.org/linked-data/cube#dimension"];
+            }
+        });        
+        
+        var observationsToReturn:any[] = [],
+            seriesElements:any = observation.getAxesElements(forSeries),
+            useObservation:number = 0;
+        
+        /**
+         * now we take care about the series
+         */         
+        _.each(seriesElements, function(seriesElement){
+            
+            // go through all observations associated with this seriesElement
+            // and add their values (measure) if set
+            _.each(seriesElement.observations, function(seriesObservation){
+                
+                useObservation = 0;
+                
+                if (false === DataCube_Observation.isActive(seriesObservation)){
+                    return;
+                }
+                
+                // check if the current observation has to be ignored:
+                // it will ignored, 
+                //      if attribute uri is set, but the observation
+                //      has no value of it
+                // and
+                //      if the predicate which is labeled with DataCube's 
+                //      attribute is not equal to the given selected attribute uri
+                if ((   false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation[selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation[selectedAttributeUri])))
+                    && 
+                        selectedAttributeUri !== seriesObservation ["http://purl.org/linked-data/cube#attribute"]) {
+                    // TODO implement a way to handle ignored observations
+                    return;
+                }
+                
+                // throw out observation, which does not have all selected dimension elements
+                _.each(selectedComponentDimensions, function(dimension){
+                    
+                    if (2 == useObservation) {
+                        return;
+                    } else if (2 > useObservation) {
+                        useObservation = 0;
+                    }
+                    
+                    _.each(dimension.__cv_elements, function(dimensionElement){                        
+                        if (dimensionElement.__cv_uri 
+                            == seriesObservation[dimension["http://purl.org/linked-data/cube#dimension"]]) {
+                            useObservation = 1;
+                        }
+                    });
+                    
+                    // if nothing equal was found, set observation to ignore
+                    if (0 == useObservation) {
+                        useObservation = 2;
+                    }
+                });
+                
+                // use observation
+                if (1 === useObservation) {
+                    observationsToReturn.push(seriesObservation);
+                }
+            });
+        });
+        
+        return observationsToReturn;
+    }
+    
+    /**
      * 
      */
     public initialize() : void
@@ -1241,7 +1381,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         this.displayRetrievedObservations(
             this.app._.data.retrievedObservations, 
             this.app._.data.selectedComponents.dimensions,
-            this.app._.data.selectedComponents.measure
+            this.app._.data.selectedComponents.measure,
+            this.app._.data.selectedComponents.attribute
         );
     }
     
@@ -1282,7 +1423,8 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         this.displayRetrievedObservations(
             this.app._.data.retrievedObservations, 
             this.app._.data.selectedComponents.dimensions,
-            this.app._.data.selectedComponents.measure
+            this.app._.data.selectedComponents.measure,
+            this.app._.data.selectedComponents.attribute
         );
     }
     
@@ -1353,6 +1495,14 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
      */
     public render() : CubeViz_View_Abstract
     {
+        // get these observations which fits with the given data selection
+        var selectedObservations = this.getSelectedObservations(
+            this.app._.data.selectedComponents.dimensions,
+            this.app._.data.retrievedObservations,
+            this.app._.data.selectedComponents.attribute,
+            this.app._.data.selectedComponents.measure
+        );
+        
         var selectedMeasureUri = this.app._.data.selectedComponents.measure["http://purl.org/linked-data/cube#measure"],
             self = this;
         
@@ -1378,13 +1528,11 @@ class View_IndexAction_Legend extends CubeViz_View_Abstract
         
             // sort list ascending
             this.sortMeasureValuesAscOrDesc(
-                this.app._.data.selectedComponents.measure,
-                this.app._.data.retrievedObservations,
-                -1,
-                1
+                this.app._.data.selectedComponents.measure, selectedObservations, -1, 1
             ),
             this.app._.data.selectedComponents.dimensions,
-            this.app._.data.selectedComponents.measure
+            this.app._.data.selectedComponents.measure,
+            this.app._.data.selectedComponents.attribute
         );
         
         // attach dialog which contains model information
