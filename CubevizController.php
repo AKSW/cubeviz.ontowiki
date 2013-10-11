@@ -435,7 +435,13 @@ class CubevizController extends OntoWiki_Controller_Component
         
         // setup response
         try {
-            $output = CubeViz_Exporter::_($type, $dataHash, $model, $this->_titleHelperLimit);
+            $output = CubeViz_Exporter::_(
+                $type, 
+                $dataHash, 
+                $model, 
+                $this->_titleHelperLimit,
+                $this->_dimensionElementLimit
+            );
             
             $this->getResponse()
                 ->setHeader('Content-Type', $contentType, true)

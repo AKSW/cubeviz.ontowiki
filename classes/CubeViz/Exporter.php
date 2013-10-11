@@ -16,14 +16,24 @@ class CubeViz_Exporter
     /**
      * 
      */
-    public static function _($type, $dataHash, $model, $titleHelperLimit) 
+    public static function _($type, $dataHash, $model, $titleHelperLimit, $dimensionElementLimit) 
     {
         if ('csv' == $type) {
-            return CubeViz_Exporter::exportAsCSV($dataHash, $model, $titleHelperLimit);
+            return CubeViz_Exporter::exportAsCSV(
+                $dataHash, 
+                $model, 
+                $titleHelperLimit, 
+                $dimensionElementLimit
+            );
         
         // 'turtle' == $type
         } else { 
-            return CubeViz_Exporter::exportAsRdfTurtle($dataHash, $model, $titleHelperLimit);
+            return CubeViz_Exporter::exportAsRdfTurtle(
+                $dataHash, 
+                $model, 
+                $titleHelperLimit, 
+                $dimensionElementLimit
+            );
         }
     }
     
@@ -38,7 +48,7 @@ class CubeViz_Exporter
     public static function handleNonCVObjects ($s, $p, $o, &$graph) 
     {
         // is object an URI
-        if(true === Erfurt_Uri::check($o)) {
+        if(true === is_string ($o) && true === Erfurt_Uri::check($o)) {
             $graph->addResource($s, $p, $o);
         
         // is object NOT an array
@@ -60,9 +70,10 @@ class CubeViz_Exporter
     /**
      *
      */
-    public static function exportAsRdfTurtle($dataHash, $model, $titleHelperLimit)
+    public static function exportAsRdfTurtle($dataHash, $model, $titleHelperLimit, 
+        $dimensionElementLimit)
     {
-        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
+        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit, $dimensionElementLimit);
         $data = array ();
 
         // get all information to export
@@ -220,10 +231,10 @@ class CubeViz_Exporter
     /**
      * 
      */
-    public static function exportAsCSV($dataHash, $model, $titleHelperLimit)
+    public static function exportAsCSV($dataHash, $model, $titleHelperLimit, $dimensionElementLimit)
     {
         $attributeSet = false;
-        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit);
+        $c = new CubeViz_ConfigurationLink($model, $titleHelperLimit, $dimensionElementLimit);
         $data = $result = array (array());
 
         // get all information to export
@@ -248,7 +259,7 @@ class CubeViz_Exporter
         /**
          * set the content of the CSV file
          */
-        $query = new DataCube_Query($model, $titleHelperLimit);
+        $query = new DataCube_Query($model, $titleHelperLimit, $dimensionElementLimit);
         $selectedDimensions = $data ['selectedComponents']['dimensions'];
         $i = 1;
             
@@ -290,7 +301,7 @@ class CubeViz_Exporter
             ++$i;
         } 
         
-        return CubeViz_DataSelectionExporter::arrayToCsv (
+        return CubeViz_Exporter::arrayToCsv (
             $result,    // array containing all the data
             ';',        // delimiter
             '"'         // enclose all field values with that
