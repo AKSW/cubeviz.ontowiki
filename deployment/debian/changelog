@@ -1,3 +1,9 @@
+ontowiki-cubeviz (1.0-1) lod2; urgency=low
+
+  * initial cubeviz 1.0 package
+
+ -- Sebastian Tramp <tramp@informatik.uni-leipzig.de>  Wed, 16 Oct 2013 10:48:30 +0200
+
 ontowiki-cubeviz (0.8.1) lod2; urgency=low
 
   * Exporter: use is_array before uri check
