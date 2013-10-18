@@ -683,11 +683,11 @@ class DataCube_Query
                         // If __cv_uri is set and an URL
                         if(true ==  Erfurt_Uri::check($element ['__cv_uri'])) {
                             $value = '<'. $element ['__cv_uri'] .'>';
+                            $filter [] = ' ?d'. $i .' = '. $value .' ';
                         } else {
                             $value = '"'. $element ['__cv_niceLabel'] .'"';
+                            $filter [] = ' xsd:string(?d'. $i .') = xsd:string('. $value .') ';
                         }
-                        
-                        $filter [] = ' ?d'. $i .' = '. $value .' ';
                     }
                     
                     $i++;
