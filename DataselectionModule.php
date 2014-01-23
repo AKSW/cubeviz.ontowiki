@@ -93,7 +93,7 @@ class DataselectionModule extends OntoWiki_Module
             ->appendFile ($baseJavascriptPath. 'libraries/CryptoJS_Md5.js',        'text/javascript')
             ->appendFile ($baseJavascriptPath. 'libraries/json2.js',               'text/javascript')
             
-            ->appendFile ($baseJavascriptPath. 'libraries/d3js.min.js',            'text/javascript')
+      #      ->appendFile ($baseJavascriptPath. 'libraries/d3js.min.js',            'text/javascript')
             
             ->appendFile ($baseJavascriptPath. 'libraries/underscore.js',          'text/javascript')
             ->appendFile ($baseJavascriptPath. 'libraries/underscore.string.js',   'text/javascript')

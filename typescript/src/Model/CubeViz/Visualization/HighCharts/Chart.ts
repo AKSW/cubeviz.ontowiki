@@ -398,7 +398,7 @@ class CubeViz_Visualization_HighCharts_Chart
         this.setTooltip(
             // first selected dimension
             selectedComponentDimensions[
-                Object.keys(selectedComponentDimensions)[0]
+                _.keys(selectedComponentDimensions)[0]
             ],
             // selected measure object
             selectedMeasure

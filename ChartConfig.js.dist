@@ -18,7 +18,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.svg",
+                "icon": "bar.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -45,7 +45,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.svg",
+                "icon": "column.png",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -76,33 +76,33 @@ var CubeViz_ChartConfig = {
      */
     "1": {
         "charts": [
-        
-            {
-                label: "Circle Packing",
-                className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
-                icon: "circlePacking.svg",
-                
-                defaultConfig: {
-                    style: {
-                        circle: {
-                            "fill": "#FFFFFF",
-                            "font-size": "9px",
-                            "font-weight": "bold",
-                            "text-anchor": "middle"
-                        }
-                    }
-                },
-                
-                options: []
-            },
-        
+     /**       
+     *       {
+     *           label: "Circle Packing",
+     *           className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
+     *           icon: "circlePacking.png",
+     *           
+     *           defaultConfig: {
+     *               style: {
+     *                   circle: {
+     *                       "fill": "#FFFFFF",
+     *                       "font-size": "9px",
+     *                       "font-weight": "bold",
+     *                       "text-anchor": "middle"
+     *                   }
+     *               }
+     *           },
+     *           
+     *           options: []
+     *       },
+     */       
             /**
              * -----------------------------------------------------------------
              */
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.svg",
+                "icon": "bar.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -148,7 +148,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.svg",
+                "icon": "column.png",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -207,7 +207,7 @@ var CubeViz_ChartConfig = {
            {
                 "label": "line",
                 "className": "CubeViz_Visualization_HighCharts_Line",
-                "icon": "line.svg",
+                "icon": "line.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -278,7 +278,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "pie",
                 "className": "CubeViz_Visualization_HighCharts_Pie",
-                "icon": "pie.svg",
+                "icon": "pie.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -316,30 +316,30 @@ var CubeViz_ChartConfig = {
      */
     "2": {
         "charts": [
-            
-            {
-                label: "Circle Packing for Clusters",
-                className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
-                icon: "circlePackingForClusters.svg",
-                
-                defaultConfig: {
-                    style: {
-                        circle: {
-                            "fill": "#FFFFFF",
-                            "font-size": "9px",
-                            "font-weight": "bold",
-                            "text-anchor": "middle"
-                        }
-                    }
-                },
-                
-                options: []
-            },
-            
+     /**           
+     *       {
+     *           label: "Circle Packing for Clusters",
+     *           className: "CubeViz_Visualization_D3js_CirclePackingForClusters",
+     *           icon: "circlePackingForClusters.png",
+     *           
+     *           defaultConfig: {
+     *               style: {
+     *                   circle: {
+     *                       "fill": "#FFFFFF",
+     *                       "font-size": "9px",
+     *                       "font-weight": "bold",
+     *                       "text-anchor": "middle"
+     *                   }
+     *               }
+     *           },
+     *           
+     *           options: []
+     *       },
+     */            
             {
                 "label": "bar",
                 "className": "CubeViz_Visualization_HighCharts_Bar",
-                "icon": "bar.svg",
+                "icon": "bar.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -411,7 +411,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "column",
                 "className": "CubeViz_Visualization_HighCharts_Column",
-                "icon": "column.svg",
+                "icon": "column.png",
                 "defaultConfig": {
                     "chart": { 
                         "renderTo": "cubeviz-index-visualization",
@@ -470,7 +470,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "polar",
                 "className": "CubeViz_Visualization_HighCharts_Polar",
-                "icon": "polar.svg",
+                "icon": "polar.png",
                 
                 "defaultConfig": {
                     "chart": { 
@@ -534,7 +534,7 @@ var CubeViz_ChartConfig = {
             {
                 "label": "line",
                 "className": "CubeViz_Visualization_HighCharts_Line",
-                "icon": "line.svg",
+                "icon": "line.png",
                 
                 "defaultConfig": {
                     "chart": { 

@@ -906,7 +906,7 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 }
             }
         }
-        this.setTooltip(selectedComponentDimensions[Object.keys(selectedComponentDimensions)[0]], selectedMeasure);
+        this.setTooltip(selectedComponentDimensions[_.keys(selectedComponentDimensions)[0]], selectedMeasure);
         return this;
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.getRenderResult = function () {

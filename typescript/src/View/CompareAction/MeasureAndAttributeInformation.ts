@@ -53,7 +53,7 @@ class View_CompareAction_MeasureAndAttributeInformation extends CubeViz_View_Abs
         
             // get the measure
             measure = this.app._.compareAction.components.measures[datasetNr]
-                [Object.keys(this.app._.compareAction.components.measures[datasetNr])[0]],
+                [_.keys(this.app._.compareAction.components.measures[datasetNr])[0]],
             
             observationValues:any[] = null,
             valuesResult:any[] = null;
