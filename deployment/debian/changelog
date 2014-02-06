@@ -1,3 +1,13 @@
+ontowiki-cubeviz (1.0-2) lod2; urgency=low
+
+  * New legend (Observations and selections)
+  * User Interface to create mashups of qb Datasets (prototypical)
+  * reactivate IE8 compatibility
+  * prototypical D3.js chart integration (cluster visualization)
+  * BugFixes (removal of unselected dimension elements from legend, reactivation of introspection, configurable amount of selectable dimension elements, reactivation of sort axis functionality)
+
+-- Michael Martin <martin@informatik.uni-leipzig.de>  Thu, 06 Feb 2014 17:48:30 +0200
+
 ontowiki-cubeviz (1.0-1) lod2; urgency=low
 
   * initial cubeviz 1.0 package
