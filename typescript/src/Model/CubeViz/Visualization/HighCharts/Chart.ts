@@ -26,9 +26,9 @@ class CubeViz_Visualization_HighCharts_Chart
         /**
          * put labels for properties to the axis (categories)
          */
-        _.each(xAxisElements, function(xAxisElement){
+        _.each(xAxisElements, function(xAxisElement, elementIndex){
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-            categoriesElementAssign [xAxisElement.self.__cv_uri] = i++;
+            categoriesElementAssign [xAxisElement.self.__cv_uri] = elementIndex;
         });
         
         /**
@@ -43,14 +43,15 @@ class CubeViz_Visualization_HighCharts_Chart
         /**
          * now we take care about the series
          */
-        var obj:any = {},
-            seriesElements:any = observation.getAxesElements(forSeries),
+        var numberOfCategories:number = _.size(self.chartConfig.xAxis.categories),
+            obj:any = {},
+            seriesElements:any = null,
             uriCombination:string = "",
             usedDimensionElementCombinations:any = {},
             valueToUse:string = null;
             
         self.chartConfig.series = [];
-
+        
         _.each(seriesElements, function(seriesElement){
             
             // this represents one item of the series array (of highcharts)
@@ -64,7 +65,7 @@ class CubeViz_Visualization_HighCharts_Chart
             };
             
             // fill data properties with as many null values as categories are
-            for (i = 0; i < _.size(self.chartConfig.xAxis.categories); ++i) {
+            for (i = 0; i < numberOfCategories; ++i) {
                 obj.data.push (null);
             }
             
@@ -189,17 +190,93 @@ class CubeViz_Visualization_HighCharts_Chart
         forSeries:string, selectedAttributeUri:string, selectedMeasureUri:string, 
         observationObj:DataCube_Observation, oneElementDimensions:any[] ) : void
     {
+        var categoriesElementAssign : any = {},
+            elementIndex : number = 0,
+            selectedDimensionProperty : any = {},
+            self : any = this,
+            xAxisElements : any = observationObj.sortAxis(forXAxis)
+                                                .getAxesElements(forXAxis);
+         
         /**
-         * handle as there are 2 multiple dimensions
+         * put labels for properties to the axis (categories)
          */
-        this.handleTwoDimensionsWithAtLeastOneDimensionElement(
-            selectedComponentDimensions, 
-            forXAxis,
-            forSeries,
-            selectedAttributeUri,
-            selectedMeasureUri,
-            observationObj
-        );        
+        _.each(xAxisElements, function(xAxisElement){
+            // add label to axis categories
+            self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
+            
+            categoriesElementAssign[xAxisElement.self.__cv_uri] = elementIndex++;
+        });
+        
+        /**
+         * set URI of selected dimension
+         * notice: the object selectedComponentDimensions does contain only ONE item!
+         */
+        _.each(selectedComponentDimensions, function(dimension){
+            selectedDimensionProperty = dimension; 
+        });
+        
+        /**
+         * now we take care about the series
+         */
+        var finalSeriesElement : any = {},
+            i : number = 0,
+            numberOfCategories : number = _.size(self.chartConfig.xAxis.categories),
+            obj:any = {},
+            seriesElements:any = observationObj.getAxesElements(forXAxis),
+            uriCombination:string = "",
+            usedDimensionElementCombinations:any = {},
+            valueToUse:string = null;
+            
+        this.chartConfig.series = [];
+        
+        // init final element of the series
+        finalSeriesElement = { 
+            color: CubeViz_Visualization_Controller.getColor(forXAxis),
+            data: [],
+            name: selectedDimensionProperty.__cv_niceLabel,
+            __cv_uri: selectedDimensionProperty.__cv_uri
+        };
+        
+        // fill data properties with as many null values as categories are
+        for (i = 0; i < numberOfCategories; ++i) {
+            finalSeriesElement.data.push (null);
+        }
+            
+        _.each(seriesElements, function(seriesElement){
+            
+            // go through all observations associated with this seriesElement
+            // and add their values (measure) if set
+            _.each(seriesElement.observations, function(seriesObservation){
+                
+                // ignore inactive observations
+                if (false === DataCube_Observation.isActive(seriesObservation)){
+                    return;
+                }
+                
+                // check if the current observation has to be ignored:
+                // it will ignored, 
+                //      if attribute uri is set, but the observation
+                //      has no value of it
+                // and
+                //      if the predicate which is labeled with DataCube's 
+                //      attribute is not equal to the given selected attribute uri
+                if ((   false === _.isNull(selectedAttributeUri)
+                        && 
+                        ( true === _.isNull(seriesObservation [selectedAttributeUri])
+                          || true === _.isUndefined(seriesObservation [selectedAttributeUri])))
+                    && 
+                        selectedAttributeUri !== seriesObservation ["http://purl.org/linked-data/cube#attribute"]) {
+                    // TODO implement a way to handle ignored observations
+                    return;
+                }
+                
+                // set observation value
+                finalSeriesElement.data[categoriesElementAssign[seriesObservation[forXAxis]]] = 
+                    DataCube_Observation.parseValue(seriesObservation, selectedMeasureUri);
+            });
+        });
+        
+        this.chartConfig.series.push(finalSeriesElement);
         
         /**
          * adapt the result a little bit (especially the title)
@@ -214,8 +291,13 @@ class CubeViz_Visualization_HighCharts_Chart
             );
         });
         
+        // check if series has elements, if not, add a dummy one
+        if (0 == _.size(this.chartConfig.series)) {
+            this.chartConfig.series.push({name: ""});
+        }
+        
         // override series title
-        this.chartConfig.series[0].name = dimensionElementLabels.join (" - ");
+        this.chartConfig.series[0]["name"] = dimensionElementLabels.join (" - ");
     }
     
     /**
