@@ -195,9 +195,6 @@ class CubeViz_Visualization_HighCharts_Chart
         forSeries:string, selectedAttributeUri:string, selectedMeasureUri:string, 
         observationObj:DataCube_Observation, oneElementDimensions:any[] ) : void
     {
-        console.log("");
-        console.log("handleOnlyOneMultipleDimension");
-        
         var categoriesElementAssign : any = {},
             elementIndex : number = 0,
             selectedDimensionProperty : any = {},
