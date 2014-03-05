@@ -1,4 +1,4 @@
-/// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
+/// <reference path="..\..\..\..\declaration\libraries\jquery.d.ts" />
 
 /**
  * 

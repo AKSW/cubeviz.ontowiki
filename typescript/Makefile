@@ -25,7 +25,7 @@ install-typescript:
 	sudo apt-get update
 	
 	# install node.js and TypeScript
-	sudo apt-get install nodejs npm && sudo npm install -g typescript
+	sudo apt-get install nodejs npm && sudo npm install -g typescript@0.8.3
 
 install-all-build-tools:
 	

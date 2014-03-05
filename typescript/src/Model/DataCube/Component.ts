@@ -1,4 +1,4 @@
-/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
 /**
  * Represents a component which can be a dimension or a measure.

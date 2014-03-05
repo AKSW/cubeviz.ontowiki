@@ -1,4 +1,4 @@
-/// <reference path="..\DeclarationSourceFiles\jquery.d.ts" />
+/// <reference path="..\..\..\declaration\libraries\jquery.d.ts" />
 
 class DataCube_Observation 
 {        
