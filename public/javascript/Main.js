@@ -688,17 +688,17 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
     function CubeViz_Visualization_HighCharts_Chart() { }
     CubeViz_Visualization_HighCharts_Chart.prototype.handleTwoDimensionsWithAtLeastOneDimensionElement = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
         var categoriesElementAssign = {
-        }, i = 0, self = this, xAxisElements = observation.sortAxis(forXAxis).getAxesElements(forXAxis);
-        _.each(xAxisElements, function (xAxisElement, elementIndex) {
+        }, elementIndex = 0, i = 0, self = this, xAxisElements = observation.sortAxis(forXAxis).getAxesElements(forXAxis);
+        _.each(xAxisElements, function (xAxisElement) {
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-            categoriesElementAssign[xAxisElement.self.__cv_uri] = elementIndex;
+            categoriesElementAssign[xAxisElement.self.__cv_uri] = elementIndex++;
         });
         var selectedDimensionPropertyUris = [];
         _.each(selectedComponentDimensions, function (dimension) {
             selectedDimensionPropertyUris.push(dimension["http://purl.org/linked-data/cube#dimension"]);
         });
         var numberOfCategories = _.size(self.chartConfig.xAxis.categories), obj = {
-        }, seriesElements = null, uriCombination = "", usedDimensionElementCombinations = {
+        }, seriesElements = observation.getAxesElements(forSeries), uriCombination = "", usedDimensionElementCombinations = {
         }, valueToUse = null;
         self.chartConfig.series = [];
         _.each(seriesElements, function (seriesElement) {
@@ -734,6 +734,9 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
                 self.chartConfig.series.push(obj);
             }
         });
+        console.log("");
+        console.log("self.chartConfig:");
+        console.log(self.chartConfig);
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneElementDimension = function (forSeries, selectedAttributeUri, selectedMeasureUri, observation) {
         var self = this, seriesObservation = null, seriesDataList = [], seriesElements = observation.getAxesElements(forSeries), valueToUse = null;
@@ -759,6 +762,8 @@ var CubeViz_Visualization_HighCharts_Chart = (function () {
         });
     };
     CubeViz_Visualization_HighCharts_Chart.prototype.handleOnlyOneMultipleDimension = function (selectedComponentDimensions, forXAxis, forSeries, selectedAttributeUri, selectedMeasureUri, observationObj, oneElementDimensions) {
+        console.log("");
+        console.log("handleOnlyOneMultipleDimension");
         var categoriesElementAssign = {
         }, elementIndex = 0, selectedDimensionProperty = {
         }, self = this, xAxisElements = observationObj.sortAxis(forXAxis).getAxesElements(forXAxis);

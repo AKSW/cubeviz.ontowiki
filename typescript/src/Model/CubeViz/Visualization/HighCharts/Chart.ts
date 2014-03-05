@@ -18,6 +18,7 @@ class CubeViz_Visualization_HighCharts_Chart
         selectedMeasureUri:string, observation:DataCube_Observation) : void 
     {
         var categoriesElementAssign = {},
+            elementIndex:number = 0,
             i:number = 0,
             self = this,
             xAxisElements:any = observation.sortAxis(forXAxis)
@@ -26,9 +27,9 @@ class CubeViz_Visualization_HighCharts_Chart
         /**
          * put labels for properties to the axis (categories)
          */
-        _.each(xAxisElements, function(xAxisElement, elementIndex){
+        _.each(xAxisElements, function(xAxisElement){
             self.chartConfig.xAxis.categories.push(xAxisElement.self.__cv_niceLabel);
-            categoriesElementAssign [xAxisElement.self.__cv_uri] = elementIndex;
+            categoriesElementAssign [xAxisElement.self.__cv_uri] = elementIndex++;
         });
         
         /**
@@ -45,7 +46,7 @@ class CubeViz_Visualization_HighCharts_Chart
          */
         var numberOfCategories:number = _.size(self.chartConfig.xAxis.categories),
             obj:any = {},
-            seriesElements:any = null,
+            seriesElements:any = observation.getAxesElements(forSeries),
             uriCombination:string = "",
             usedDimensionElementCombinations:any = {},
             valueToUse:string = null;
@@ -123,6 +124,10 @@ class CubeViz_Visualization_HighCharts_Chart
                 self.chartConfig.series.push (obj);
             }
         });
+        
+        console.log("");
+        console.log("self.chartConfig:");
+        console.log(self.chartConfig);
     }
     
     /**
@@ -190,6 +195,9 @@ class CubeViz_Visualization_HighCharts_Chart
         forSeries:string, selectedAttributeUri:string, selectedMeasureUri:string, 
         observationObj:DataCube_Observation, oneElementDimensions:any[] ) : void
     {
+        console.log("");
+        console.log("handleOnlyOneMultipleDimension");
+        
         var categoriesElementAssign : any = {},
             elementIndex : number = 0,
             selectedDimensionProperty : any = {},
