@@ -36,7 +36,7 @@ class DataCube_Query
      */
     public function containsDataCubeInformation ()
     {
-        $sparql = 'PREFIX qb:<http://purl.org/linked-data/cube#>
+        $sparql = 'PREFIX qb: <http://purl.org/linked-data/cube#>
             ASK
             {
                 ?observation a qb:Observation .
