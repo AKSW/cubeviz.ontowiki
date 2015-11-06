@@ -28,7 +28,7 @@ Further information about the repository structure or other internals can be als
 
 ### Docker container available
 
-We providing a Docker container for everybody, who want to bother about getting OntoWiki running or struggles with Virtuoso. That container only needs a Docker and can be used with `docker pull` + `docker run`. How easy is that?! 
+We providing a Docker container for everybody, who don't want to bother about getting OntoWiki running or struggles with Virtuoso. That container only needs a Docker and can be used with `docker pull` + `docker run`. How easy is that?! 
 
 Basically it ships with a fully fledged OntoWiki, pre-filled Virtuoso store and up and running CubeViz. After you started the container, you can use your browser and directly use CubeViz.
 
