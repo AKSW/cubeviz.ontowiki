@@ -46,9 +46,11 @@ For further information, please look in following the project page.
 
 ## CubeViz compared to other tools
 
-(Last updated 2015-11-30)
+*(Last updated 2015-11-30)*
 
-We created a comparison of CubeViz and other tools, which are supporting DataCube vocabulary. It is based on the support of elements which are mentioned in the vocabulary. *If you encounter erros or wanna mention something, please make a pull request, create an issue or send us an email.*
+We created a comparison of CubeViz and other tools, which are supporting DataCube vocabulary. It is based on the support of elements which are mentioned in the vocabulary. The purpose of that overview is to provide users, who are interested in using CubeViz, further information of its DataCube vocabulary supportin comparison to other tools.
+
+*If you encounter erros or wanna mention something, please make a pull request, create an issue or send us an email.*
 
 `(✓)` - Similar like CubeViz but not equivalent
 
