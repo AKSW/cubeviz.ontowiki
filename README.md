@@ -87,6 +87,22 @@ We created a comparison of CubeViz and other tools, which are supporting DataCub
 -	[LDCX](http://km.aifb.kit.edu/projects/ldcx/)  
 -	[LSD Analysis](http://stats.270a.info/analysis/worldbank:SP.DYN.IMRT.IN/transparency:CPI2011/year:2011.html)
 
+## Missing support of the Data Cube vocabulary
+
+The following list contains all elements of the DataCube vocabulary which are not supported by CubeViz (yet):
+
+-	**qb:ObservationGroup**: Indicates a group of observations. The domain of this property is left open so that a group may be attached to different resources and need not be restricted to a single DataSet.  
+-	**qb:CodedProperty**: Superclass of all coded component properties.  
+-	**qb:HierarchicalCodeList**: Represents a generalized hierarchy of concepts which can be used for coding. The hierarchy is defined by one or more roots together with a property which relates concepts in the hierarchy to their child concept . The same concepts may be members of multiple hierarchies provided that different qb:parentChildProperty values are used for each hierarchy.
+-	**qb:hierarchyRoot**: Specifies a root of the hierarchy. A hierarchy may have multiple roots but must have at least one.
+-	**qb:parentChildProperty**: Specifies a property which relates a parent concept in the hierarchy to a child concept. Note that a child may have more than one parent.
+-	**qb:componentAttachment**: Indicates the level at which the component property should be attached, this might be an qb:DataSet, qb:Slice or qb:Observation, or a qb:MeasureProperty.
+-	**qb:componentRequired:** Indicates whether a component property is required (true) or optional (false) in the context of a DSD. Only applicable to components corresponding to an attribute. Defaults to false (optional).  
+-	**qb:order**: Indicates a priority order for the components of sets with this structure, used to guide presentations - lower order numbers come before higher numbers, un-numbered components come last.  
+-	**qb:concept**: Gives the concept which is being measured or indicated by a ComponentProperty.
+
+-	SKOS or SDMX related entities.
+
 ## License
 
 CubeViz is licensed under the terms of GNU General Public License 2 and it uses foreign libraries. 
