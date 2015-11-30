@@ -44,6 +44,47 @@ For further information, please look in following the project page.
 
 **Project page:** [Dockerizing/CubeViz](https://github.com/Dockerizing/CubeViz)
 
+## CubeViz compared to other tools
+
+(Last updated 2015-11-30)
+
+We created a comparison of CubeViz and other tools, which are supporting DataCube vocabulary. It is based on the support of elements which are mentioned in the vocabulary. *If you encounter erros or wanna mention something, please make a pull request, create an issue or send us an email.*
+
+`(✓)` - Similar like CubeViz but not equivalent
+
+| Supported Features                | CubeViz | OpenCube | LDCX | LSD Analysis    |
+|-----------------------------------|:-------:|:--------:|:----:|:---------------:|
+| **Explore RDF Data**              |         |          |      |                 |
+| Select parts of the Dataset       |    ✓    |    ✓     |  ✓   |       (✓)       |
+| Select Units and Measurements     |    ✓    |    ✓     |  ✓   |       (✓)       |
+| Multiple Chart Visualization      |    ✓    |   (✓)    |  \-  |       \-        |
+| Configure Dimensions              |    ✓    |    \-    |  ✓   |       \-        |
+|                                   |         |          |      |                 |
+| Collaborative Exploration/Edit    |    ✓    |    \-    |  \-  |   ✓ (Explore)   |
+|                                   |         |          |      |                 |
+| **Compare Datasets**              |         |          |      |       (✓)       |
+| Compare Meta Information          |    ✓    |    \-    |  \-  |       \-        |
+| Observation Values Normalization  |    ✓    |    \-    |  \-  |       \-        |
+| Set Dimension Elements            |    ✓    |    \-    |  \-  |       \-        |
+| Show Cluster                      |    ✓    |    \-    |  \-  |       \-        |
+|                                   |         |          |      |                 |
+| **Data Download**                 |         |          |      |                 |
+| Download as CSV                   |    ✓    |    ✓     |  \-  |        ✓        |
+| Download as Turtle                |    ✓    |    \-    |  \-  |       \-        |
+|                                   |         |          |      |                 |
+| Hierarchy Slices                  |   \-    |    \-    |  \-  |       \-        |
+| OLAP Operations (Sum, Avg, Pivot) |   \-    |    ✓     |  \-  |       \-        |
+| Mobile UI                         |   \-    |    \-    |  \-  |       \-        |
+| Analysis Task (R Script)          |   \-    |    ✓     |  \-  | ✓ (Server-Side) |
+| Geospatial Data Visualization     |   \-    |    ✓     |  \-  |       \-        |
+| Visualizations with dimensions >2 |   \-    |    \-    |  \-  |       \-        |
+
+#### Links to the mentioned tools
+
+-	[OpenCube](http://opencube-toolkit.eu)  
+-	[LDCX](http://km.aifb.kit.edu/projects/ldcx/)  
+-	[LSD Analysis](http://stats.270a.info/analysis/worldbank:SP.DYN.IMRT.IN/transparency:CPI2011/year:2011.html)
+
 ## License
 
 CubeViz is licensed under the terms of GNU General Public License 2 and it uses foreign libraries. 
