@@ -38,7 +38,7 @@ To pull the container just run:
 
 To run it, please use:
 
-`docker run -d -p 8080:80 -p 8890:8890 cubeviz`
+`docker run -d -p 8080:80 -p 8890:8890 aksw/dld-present-cubeviz`
 
 For further information, please look in following the project page.
 
