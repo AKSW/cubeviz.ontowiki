@@ -1,0 +1,578 @@
+#
+# CubeViz Export of data hash 6864de34a62ac360654c5553cba6ff60
+#
+
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ns0: <http://ns.aksw.org/spatialHierarchy/> .
+@prefix ns1: <http://data.lod2.eu/scoreboard/properties/> .
+
+<http://data.lod2.eu/scoreboard/dsd/indicator>
+  a qb:DataStructureDefinition ;
+  rdfs:label "per Indicator" ;
+  qb:component <http://data.lod2.eu/scoreboard/cs/year>, <http://data.lod2.eu/scoreboard/cs/country>, <http://data.lod2.eu/scoreboard/cs/value> .
+
+<http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent>
+  a qb:DataSet ;
+  rdfs:label "% of enterprises interacting online with public authorities" ;
+  qb:structure <http://data.lod2.eu/scoreboard/dsd/indicator> .
+
+<http://data.lod2.eu/scoreboard/cs/country>
+  a qb:ComponentSpecification, <http://ns.aksw.org/spatialHierarchy/Country> ;
+  rdfs:label "Country", "Croatia", "Czech Republic", "Finland", "Germany", "Hungary", "Iceland", "Italy", "United Kingdom" ;
+  rdfs:comment "Observations are tagged with the location, where the measurement is made" ;
+  qb:dimension <http://data.lod2.eu/scoreboard/properties/country> ;
+  ns0:isLocatedIn <http://data.lod2.eu/scoreboard/country/European+Union+-+27+countries> .
+
+<http://data.lod2.eu/scoreboard/properties/country> a qb:DimensionProperty ;
+  rdfs:label "Country" .
+
+<http://data.lod2.eu/scoreboard/cs/year>
+  a qb:ComponentSpecification, <http://data.lod2.eu/scoreboard/classes/Year> ;
+  rdfs:label "Year", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011" ;
+  rdfs:comment "Observations are tagged with the year of measurement" ;
+  qb:dimension <http://data.lod2.eu/scoreboard/properties/year> .
+
+<http://data.lod2.eu/scoreboard/properties/year> a qb:DimensionProperty ;
+  rdfs:label "Year" .
+
+<http://data.lod2.eu/scoreboard/cs/value>
+  a qb:ComponentSpecification ;
+  rdfs:label "Value" ;
+  qb:measure <http://data.lod2.eu/scoreboard/properties/value> .
+
+<http://data.lod2.eu/scoreboard/properties/value> a qb:MeasureProperty .
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Croatia/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Croatia in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Croatia> ;
+  ns1:value "0.513616028" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Croatia/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Croatia in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Croatia> ;
+  ns1:value "0.5723928781" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Croatia/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Croatia in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <ahttp://data.lod2.eu/scoreboard/country/Croatia> ;
+  ns1:value "0.6101318341" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Croatia/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Croatia in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Croatia> ;
+  ns1:value "0.6291583012" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Croatia/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Croatia in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Croatia> ;
+  ns1:value "0.8639" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.7466909759" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2005/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2005" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2005> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.7888200339" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.7557140821" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.7328979604" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.7264765917" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.6546322294" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.8921857493" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/CzechRepublic/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Czech Republic in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Czech+Republic> ;
+  ns1:value "0.8744" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2003/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2003" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2003> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.8890599147" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9084585159" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2005/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2005" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2005> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9128022461" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9275538721" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9378079392" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9473678851" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9535556222" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.9585438576" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Finland/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Finland in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Finland> ;
+  ns1:value "0.958" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2003/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2003" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2003> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.3543220751" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.3626434582" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2005/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2005" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2005> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.4364238916" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.4904148682" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.5560409678" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.5607079439" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.6329507378" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.6670143382" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Germany/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Germany in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Germany> ;
+  ns1:value "0.7852" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.3466565137" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.4488571892" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.5545620323" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.6014644748" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.6600253177" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.7146929891" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Hungary/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Hungary in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Hungary> ;
+  ns1:value "0.8328" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Iceland/2003/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Iceland in 2003" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2003> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Iceland> ;
+  ns1:value "0.9735258724" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Iceland/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Iceland in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Iceland> ;
+  ns1:value "0.9463087248" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Iceland/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Iceland in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Iceland> ;
+  ns1:value "0.9078123226" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Iceland/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Iceland in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Iceland> ;
+  ns1:value "0.8972801308" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.6502332692" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2005/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2005" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2005> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.7260168852" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.8650654647" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.8358457732" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.8177153327" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.8089260551" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.8368515836" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/Italy/2011/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for Italy in 2011" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2011> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/Italy> ;
+  ns1:value "0.7583" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2004/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2004" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2004> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.3447953362" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2005/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2005" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2005> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.3875322965" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2006/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2006" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2006> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.5245437183" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2007/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2007" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2007> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.5370992576" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2008/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2008" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2008> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.6393019028" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2009/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2009" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2009> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.6541900925" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+<http://data.lod2.eu/scoreboard/items/e_igov/ENT_ALL_XFIN/_ent/UnitedKingdom/2010/ind>
+  a qb:Observation ;
+  rdfs:label "Use of eGovernment services (% ent) for United Kingdom in 2010" ;
+  ns1:year <http://data.lod2.eu/scoreboard/year/2010> ;
+  ns1:country <http://data.lod2.eu/scoreboard/country/United+Kingdom> ;
+  ns1:value "0.6664913586" ;
+  ns1:unit "%_ent" ;
+  qb:dataSet <http://data.lod2.eu/scoreboard/ds/indicator/e_igov_ENT_ALL_XFIN__ent> .
+
+
+<http://data.lod2.eu/scoreboard/year/2003> rdfs:label "2003" .
+<http://data.lod2.eu/scoreboard/year/2004> rdfs:label "2004" .
+<http://data.lod2.eu/scoreboard/year/2005> rdfs:label "2005" .
+<http://data.lod2.eu/scoreboard/year/2006> rdfs:label "2006" .
+<http://data.lod2.eu/scoreboard/year/2005> rdfs:label "2005" .
+<http://data.lod2.eu/scoreboard/year/2006> rdfs:label "2006" .
+<http://data.lod2.eu/scoreboard/year/2007> rdfs:label "2007" .
+<http://data.lod2.eu/scoreboard/year/2008> rdfs:label "2008" .
+<http://data.lod2.eu/scoreboard/year/2009> rdfs:label "2009" .
+<http://data.lod2.eu/scoreboard/year/2010> rdfs:label "2010" .
+<http://data.lod2.eu/scoreboard/year/2011> rdfs:label "2011" .
+
+<http://data.lod2.eu/scoreboard/country/Croatia> rdfs:label "Croatia" .
+<http://data.lod2.eu/scoreboard/country/Czech+Republic> rdfs:label "Czech Republic" .
+<http://data.lod2.eu/scoreboard/country/Finland> rdfs:label "Finland" .
+<http://data.lod2.eu/scoreboard/country/Germany> rdfs:label "Germany" .
+<http://data.lod2.eu/scoreboard/country/Hungary> rdfs:label "Hungary" .
+<http://data.lod2.eu/scoreboard/country/Iceland> rdfs:label "Iceland" .
+<http://data.lod2.eu/scoreboard/country/Italy> rdfs:label "Italy" .
+<http://data.lod2.eu/scoreboard/country/United+Kingdom> rdfs:label "UK" .
